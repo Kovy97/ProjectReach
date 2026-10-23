@@ -7,6 +7,7 @@ import { xpForLevel } from "./leveling";
 import { itemCount } from "./inventory";
 import { advanceActionQueue } from "./actions";
 import { stopCombat } from "./combat";
+import { trinityGatePasses } from "./enchant";
 import {
   abandonRaid,
   activeRaidFight,
@@ -259,5 +260,22 @@ describe("Warteschlange", () => {
     expect(s.raid!.run).toBeNull();
     expect(s.combat.dungeonId).toBeNull();
     expect(s.raid!.lastResult?.outcome).toBe("abandoned");
+  });
+});
+
+// claude:2026-10-25T16:55:00+02:00 — Ägis auf Raid-Rüstung jeder Klasse (Spec §2.1, Nachmessung §13 V1); sonst gilt die Trinität.
+describe("Ägis-Gate für Raid-Rüstung", () => {
+  it("Ägis III passt auf Raid-Leder und -Stoff (Stufe XIII), nicht auf Leder/Stoff des Bestands; Ausweich-Rune bleibt Leder-only", () => {
+    const aegis = base.affixes!.affix_aegis!;
+    const evasion = base.affixes!.affix_evasion!;
+    for (const id of ["gk_poison_chest", "gk_poison_chest_heroic", "gk_fire_head_mythic", "gk_bleed_legs"]) {
+      expect(trinityGatePasses(aegis, 3, base.items[id]!), id).toBe(true);
+    }
+    const oldLeather = Object.values(base.items).find((i) => i.type === "equipment" && (i.evasionRating ?? 0) > 0 && (i.armorRating ?? 0) <= 0 && i.tier !== 13)!;
+    const oldCloth = Object.values(base.items).find((i) => i.type === "equipment" && (i.wardCapacity ?? 0) > 0 && (i.armorRating ?? 0) <= 0 && i.slot === "body" && i.tier !== 13)!;
+    expect(trinityGatePasses(aegis, 3, oldLeather), oldLeather.id).toBe(false);
+    expect(trinityGatePasses(aegis, 3, oldCloth), oldCloth.id).toBe(false);
+    expect(trinityGatePasses(evasion, 3, base.items.gk_bleed_chest!)).toBe(false);
+    expect(trinityGatePasses(aegis, 3, base.items.gk_king_greatsword!)).toBe(false);
   });
 });

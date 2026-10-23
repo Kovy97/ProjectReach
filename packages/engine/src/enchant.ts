@@ -36,6 +36,7 @@ import {
   removeInstance,
   removeItem,
 } from "./inventory";
+import { RAID_ITEM_TIER } from "./tiers";
 
 /**
  * Stabile Fehlschlag-Codes statt lokalisierter Prosa. Die Engine bleibt sprachneutral &
@@ -426,7 +427,13 @@ export function trinityGatePasses(def: AffixDef, tier: number, base: ItemDef): b
   const tri = def.trinityByTier?.[tier - 1];
   if (!tri) return true;
   for (const key of TRINITY_KEYS) {
-    if ((tri[key] ?? 0) > 0 && (base[key] ?? 0) <= 0) return false;
+    if ((tri[key] ?? 0) > 0 && (base[key] ?? 0) <= 0) {
+      // claude:2026-10-25T16:40:00+02:00 — Raid-Ausrüstung (Stufe XIII) trägt Ägis (Schutz) auf jeder Rüstungsklasse:
+      // 1.4.0-balance-raid.md §2.1/§6.4 rechnet alle Raid-Sets mit 4× Ägis III; ohne sind Leder und Stoff im
+      // Heroisch/Mythisch nicht überlebensfähig (Nachmessung §13). Nur diese Achse, nur Stufe XIII, sonst gilt die Trinität.
+      if (key === "armorRating" && base.tier === RAID_ITEM_TIER && base.type === "equipment" && base.slot !== "mainhand") continue;
+      return false;
+    }
   }
   return true;
 }

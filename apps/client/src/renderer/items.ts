@@ -40,6 +40,9 @@ for (const [path, url] of Object.entries(ITEM_IMAGES)) {
  */
 const ITEM_IMAGE_ALIASES: Readonly<Record<string, string>> = {
   hunting_bow: "ashwood_longbow",
+  // claude:2026-10-25T17:10:00+02:00 — Spieler-Bugreport: ohne Bild zeigte die Haut das 🩹-Emoji („hellblaue Kapsel“).
+  // Übergang bis zum eigenen Bild aus der 1.4.0-Asset-Runde: die schwarzrote Drachenhaut passt zu „schwarz versengt“.
+  cinderwretch_hide: "raw_dragonhide",
 };
 
 /** Bild-URL zu einer Item-ID (oder null, wenn (noch) kein Bild hinterlegt ist). */

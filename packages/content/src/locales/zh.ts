@@ -4567,4 +4567,18 @@ export const zh: Record<string, string> = {
   "items:gk_king_cape_heroic:description": "边境的战地斗篷，为新主人截短过；下摆从没洗过。",
   "items:gk_king_cape_mythic:name": "继承者斗篷",
   "items:gk_king_cape_mythic:description": "边境的战地斗篷，为新主人截短过；下摆从没洗过。",
+  // claude:2026-10-25T15:40:00+02:00 — Namen der Auftraggeber (1.4.0 Arbeitsaufträge; Taverne war nie live, Namen fehlten)
+  "tavernGuests:brakka:name": "布拉卡·劈橡",
+  "tavernGuests:torvald:name": "托瓦尔德·量梁",
+  "tavernGuests:grumm:name": "格鲁姆·煤拳",
+  "tavernGuests:nessa:name": "内莎·网手",
+  "tavernGuests:dashk:name": "达什克·煤牙",
+  "tavernGuests:merrit:name": "梅里特·细砥",
+  "tavernGuests:odo:name": "奥多·盐胡",
+  "tavernGuests:tamsin:name": "塔姆辛·路畔",
+  "tavernGuests:kell:name": "凯尔·疤皮",
+  "tavernGuests:sefra:name": "瑟芙拉·温德林",
+  "tavernGuests:orin:name": "奥林·读布者",
+  "tavernGuests:wenna:name": "温娜·灰手",
+  "tavernGuests:ilvara:name": "伊尔瓦拉·棘歌",
 };

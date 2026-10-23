@@ -117,6 +117,18 @@ function ohneWerkzeuge<T extends object>(equipment: T): T {
  * claude:2026-10-18T19:40:00+02:00 — Format-Nachtrag Welle E1 (kein Bump, v88 nie live): Fixture um
  * `prestige.runStart` ergänzt (Zählerstände beim Aufstieg der Kette, belegt durch Laufanker und unveränderte
  * Lebenszeit-Zähler); der Historien-Eintrag bleibt bewusst ohne `tally` (vor E1 geschrieben, nichts erfunden).
+ *
+ * claude:2026-10-25T13:45:00+02:00 — SAVE 93 (1.4.0 „Feder und Stahl“, v89–v93 nie live, Migrationen bleiben einzeln):
+ * `v93-synthetic-1.4.0.json` ist SYNTHETISCH und über die REALE KETTE gebaut: v88-Fixture → Migration v89–v93 →
+ * Bognerei 42, Bogen mit Kupfer-Köcher und 250 geladenen Kupferpfeilen (`loadQuiver`), Mahlzeit-Platz
+ * (`marshroot_chowder`, „Mahlzeit halten“ an), Bergungs-Schloss, aktive Reiche Ader samt Logbuch, ein angenommener
+ * Lieferauftrag (`makeWorkOrderOffer` + `acceptWorkOrder`), Raid freigeschaltet, ein Normal-Lauf über alle fünf Räume
+ * geräumt mit offenem Abschluss-Dialog (`startRaid` + `onRaidRoomCleared`/`continueRaid`, Beute im Lauf), laufender
+ * Bergbau und dahinter ein Raid-Eintrag in der Warteschlange, Raid-Teile (heroisch/mythisch in der Bank, Normal-Ring
+ * angelegt) → serialize (Fixpunkt beim v88-savedAt). Bewusst KEIN Lauf in Rast oder Kampf: offline zieht der Raid
+ * weiter (A6), der schwache Fixture-Charakter stürbe, und der Tod hinterlässt transiente Kampffelder (`stopReason`
+ * u. a.), die absichtlich nicht gespeichert werden; das wäre kein Migrationsfehler, ließe aber den Round-Trip-Vergleich
+ * reißen. Laufender Raid über Save/Load steht in raid-persistence.test.ts. Generator war ein Einmal-Test, danach gelöscht.
  */
 const VAULT_DIR = join(__dirname, "..", "fixtures", "save-compat");
 

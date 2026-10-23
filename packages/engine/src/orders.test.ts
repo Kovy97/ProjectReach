@@ -17,6 +17,8 @@ import {
   rollWorkCrateContents,
   tickWorkOrders,
   workOrderCandidates,
+  workOrderCustomers,
+  workOrderKindFor,
   workOrderProgress,
   workOrdersFull,
 } from "./orders";
@@ -130,5 +132,26 @@ describe("Kundschaft im Live-Loop", () => {
     expect(offer).not.toBeNull();
     expect(offer!.skill).toBe("mining");
     expect(content.actions[offer!.actionId]!.levelRequired ?? 1).toBeLessThanOrEqual(levelFromXp(s.skills.mining!.xp));
+  });
+});
+
+// claude:2026-10-25T15:45:00+02:00 — Auftraggeber sind mit 1.4.0 in allen Sprachen sichtbar (die Taverne war nie live, ihre Gäste hatten nur EN/DE-Namen).
+describe("Auftraggeber-Texte", () => {
+  it("jeder mögliche Auftraggeber hat Name und Rolle in allen 7 Sprachen", () => {
+    const missing: string[] = [];
+    for (const skill of Object.keys(content.skills)) {
+      if (!workOrderKindFor(skill)) continue;
+      for (const id of workOrderCustomers(content, skill)) {
+        const c = (content.tavernGuests ?? []).find((g) => g.id === id) ?? (content.orderCustomers ?? []).find((g) => g.id === id);
+        for (const field of ["name", "role"] as const) {
+          const v = c?.[field];
+          for (const l of ["en", "de", "es", "fr", "pt-BR", "ru", "zh"] as const) {
+            const t = v && typeof v === "object" ? (v as Record<string, string | undefined>)[l] : undefined;
+            if (!t) missing.push(`${id}.${field} → ${l}`);
+          }
+        }
+      }
+    }
+    expect(missing).toEqual([]);
   });
 });

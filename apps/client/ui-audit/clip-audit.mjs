@@ -117,6 +117,7 @@ const FIXTURE_PREFS = ["mkt_camp", "t334_camp", "nh_busy", "endgame", "midgame"]
 const SKILL_PAGES = [
   "woodcutting", "mining", "fishing", "smithing", "cooking", "farming", "foraging",
   "thieving", "leatherworking", "jewelcrafting", "runecrafting", "herblore", "slayer",
+  "bowcraft", // claude:2026-10-25T14:50:00+02:00 — 1.4.0 Bognerei
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -298,6 +299,24 @@ function buildScenes() {
     await c.settle(700);
   });
 
+  // ── 1.4.0 „Feder und Stahl“ (claude:2026-10-25T14:50:00+02:00): Lager, Arbeitsaufträge, Raid ──
+  add("storage", "Lager", async (c) => { await c.nav("storage"); await c.settle(800); });
+  add("quests-orders", "Quests · Arbeitsaufträge (Angebot + offene Aufträge)", async (c) => {
+    await c.page.evaluate(() => {
+      const s = window.__hfDebug.state;
+      const o = (id, kind, skill, actionId, itemId, customerId) => ({ id, kind, skill, actionId, itemId, count: 327, minutes: 30, band: 3, gold: 1855800, xp: 4628600, customerId, baseline: 0 });
+      s.workOrders = {
+        open: [o(1, "deliver", "mining", "mine_sapphire_seam", "rough_sapphire", "grumm"), o(2, "produce", "tailoring", "weave_nettle", "cloth_nettle", "jorun")],
+        offer: o(3, "produce", "bowcraft", "fletch_copper_arrow", "copper_arrow", "caedren"),
+        offerMsLeft: 600000, seq: 3, delivered: 12,
+      };
+    });
+    await c.nav("quests");
+    await c.settle(400);
+    await c.clickNth(".quests-tab-btn", 3); // claude:2026-10-25T15:20:00+02:00 — Reiter „Aufträge“ (danach kommt der Belohnungsladen)
+    await c.settle(700);
+  });
+
   // ── New Haven ──
   add("newhaven-map", "New Haven · Karte", async (c) => { await c.nav("newhaven"); await c.settle(1200); });
   add("newhaven-building", "New Haven · Gebäude-Dialog", async (c) => {
@@ -337,6 +356,55 @@ function buildScenes() {
     await c.settle(500);
     await c.scrollBottom(".content, .opz-root, .options-page");
     await c.settle(600);
+  });
+
+  // claude:2026-10-25T15:20:00+02:00 — Raid-Szenen zuletzt: ihr Raid-Zustand (Dialoge, Zeremonie) bliebe sonst in den Folgeszenen stehen.
+  const raidUnlock = async (c) => {
+    await c.page.evaluate(() => {
+      const s = window.__hfDebug.state;
+      s.dungeonsCleared.behind_the_throne = 1;
+      s.character.gold = Math.max(s.character.gold, 9_876_543);
+      s.raid = s.raid ?? {};
+      s.raid.clears = { normal: 3, heroic: 1, mythic: 0 };
+      s.raid.fastestMs = { normal: 2_712_000, heroic: 3_640_000 };
+    });
+  };
+  const raidRun = async (c, patch) => {
+    await raidUnlock(c);
+    await c.page.evaluate((p) => {
+      const s = window.__hfDebug.state;
+      const loot = [{ itemId: "gk_fire_hands_heroic", qty: 1 }, { itemId: "gk_king_greatsword_mythic", qty: 1 }, { itemId: "relic_dust", qty: 12 }, { itemId: "godiron_bar", qty: 4 }];
+      s.raid.run = { raidId: "gobkharaz", difficulty: "normal", room: 1, phase: "rest", feePaid: 300000, restarts: 0, loot, lastLoot: loot, bossSeq: 0, startedAtMs: s.elapsedMs, modifier: "payday", restMs: 3000, ...p };
+    }, patch);
+  };
+  add("combat-raid", "Kampf · Raid-Karte in der Zonenwahl", async (c) => {
+    await raidUnlock(c);
+    await c.nav("combat");
+    await c.settle(600);
+    await c.scrollIntoView(".raid-panel");
+    await c.settle(500);
+  });
+  add("raid-rest", "Raid · Rast zwischen den Räumen", async (c) => {
+    await raidRun(c, {});
+    await c.nav("combat");
+    await c.settle(900);
+  });
+  add("raid-ceremony", "Raid · Beute-Zeremonie", async (c) => {
+    await raidRun(c, {});
+    await c.nav("combat");
+    await c.settle(500);
+    await c.page.evaluate(() => { window.__hfDebug.state.raid.run.bossSeq += 1; });
+    await c.settle(6500);
+  });
+  add("raid-defeat", "Raid · Tod-Dialog Heroisch", async (c) => {
+    await raidRun(c, { difficulty: "heroic", phase: "defeated", room: 2 });
+    await c.nav("combat");
+    await c.settle(900);
+  });
+  add("raid-complete", "Raid · Abschluss-Dialog", async (c) => {
+    await raidRun(c, { phase: "complete", room: 4 });
+    await c.nav("combat");
+    await c.settle(900);
   });
 
   return scenes;

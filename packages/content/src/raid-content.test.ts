@@ -340,7 +340,7 @@ describe("Raid Gobkha'raz — RaidDef, Räume, Monster, Phasen, Sets", () => {
     expect(raid.mythicRefundPct).toBe(0.25);
     expect(raid.scaling.normal).toEqual({ hpMult: 1, damageMult: 1, levelAdd: 0, defenseMult: 1 });
     expect(raid.scaling.heroic).toEqual({ hpMult: 2.0, damageMult: 1.6, levelAdd: 10, defenseMult: 1.1 });
-    expect(raid.scaling.mythic).toEqual({ hpMult: 2.4, damageMult: 1.85, levelAdd: 20, defenseMult: 1.2 });
+    expect(raid.scaling.mythic).toEqual({ hpMult: 2.4, damageMult: 1.7, levelAdd: 20, defenseMult: 1.2 }); // claude:2026-10-25T16:45:00+02:00 — Nachmessung §13 V2
     expect(raid.reinforcedWave).toEqual({ index: 3, hpMult: 1.5, damageMult: 1.15 });
     expect(raid.trashPieceChance).toEqual({ normal: 0.004, heroic: 0.005, mythic: 0.006 });
     expect(raid.suffixChance).toEqual({ normal: 0.3, heroic: 0.4, mythic: 0.5 });
@@ -481,7 +481,7 @@ describe("Raid Gobkha'raz — RaidDef, Räume, Monster, Phasen, Sets", () => {
     expect(kr[1]!.everyNth).toEqual({ n: 4, mult: 3 });
     const us = content.monsters.gk_pitmother!.phases!;
     expect(us[2]!.healPerHitPct).toBe(0.0015);
-    expect(us[1]).toMatchObject({ attackIntervalMult: 0.5, damageMult: 0.6 });
+    expect(us[1]).toMatchObject({ attackIntervalMult: 0.5, damageMult: 0.55 }); // claude:2026-10-25T16:45:00+02:00 — §13 V3
     const zg = content.monsters.gk_felmagus!.phases!;
     expect(zg[0]!.wardShieldPct).toBe(0.2);
     expect(zg[1]!.resist).toEqual(["burn"]);

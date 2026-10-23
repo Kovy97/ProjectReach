@@ -4568,4 +4568,18 @@ export const ptBR: Record<string, string> = {
   "items:gk_king_cape_heroic:description": "O manto de campanha da marca, encurtado para seu novo dono; a bainha nunca foi lavada.",
   "items:gk_king_cape_mythic:name": "Manto do Herdeiro",
   "items:gk_king_cape_mythic:description": "O manto de campanha da marca, encurtado para seu novo dono; a bainha nunca foi lavada.",
+  // claude:2026-10-25T15:40:00+02:00 — Namen der Auftraggeber (1.4.0 Arbeitsaufträge; Taverne war nie live, Namen fehlten)
+  "tavernGuests:brakka:name": "Brakka Racha-Carvalho",
+  "tavernGuests:torvald:name": "Torvald Mede-Viga",
+  "tavernGuests:grumm:name": "Grumm Punho-de-Carvão",
+  "tavernGuests:nessa:name": "Nessa Mão-de-Covo",
+  "tavernGuests:dashk:name": "Dashk Dente-de-Carvão",
+  "tavernGuests:merrit:name": "Merrit Fio-Fino",
+  "tavernGuests:odo:name": "Odo Barba-de-Sal",
+  "tavernGuests:tamsin:name": "Tamsin Beira-Estrada",
+  "tavernGuests:kell:name": "Kell Pele-Cicatriz",
+  "tavernGuests:sefra:name": "Sefra Windring",
+  "tavernGuests:orin:name": "Orin Lê-Tecido",
+  "tavernGuests:wenna:name": "Wenna Mão-Cinzenta",
+  "tavernGuests:ilvara:name": "Ilvara Canto-de-Espinho",
 };

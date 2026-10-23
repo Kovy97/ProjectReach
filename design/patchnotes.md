@@ -30,6 +30,8 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 **Klarheit:** DE: Eigener Platz für Mahlzeiten in der Kampfvorbereitung, das Auto-Essen fasst Mahlzeiten nicht mehr an, und „Mahlzeit halten“ isst sie rechtzeitig nach. Jede Waffe zeigt, ob sie ein- oder zweihändig ist. Ausrüstung zeigt ihre Stufe als Sterne, Bank und Inventar sortieren danach. Farming und Jagen stehen in der Gruppe „Ländereien“ mit Live-Status. / EN: Meals get their own slot in combat prep, auto-eat no longer touches meals, and "Keep meal up" refreshes them in time. Every weapon shows whether it is one- or two-handed. Gear shows its tier as stars, and bank and bags can sort by it. Farming and Hunting sit in a new Estates group with live status.
 
+**Fehlerbehebung:** DE: Die Aschenelend-Haut zeigt jetzt ein echtes Bild statt eines Platzhalters. / EN: Cinderwretch Hide now shows a proper image instead of a placeholder. <!-- claude:2026-10-25T17:10:00+02:00 Spieler-Bugreport; Übergang per Bildverweis auf raw_dragonhide, eigenes Bild in der Asset-Runde -->
+
 *Dev-Notiz: SAVE 89–93 (Mahlzeit, Lager, Bognerei/Köcher, Ereignisse/Aufträge, Raid). Goal design/1.4.0-goal.md, Sammelliste design/1.4.0-changelog.md, Balance design/1.4.0-balance-*.md. Raid-Nachmessung Apply #12 vor Release. EN-Namen gegen translations.ts und Content geprüft (25.10.).*
 
 ---

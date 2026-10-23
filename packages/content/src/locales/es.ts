@@ -4565,4 +4565,18 @@ export const es: Record<string, string> = {
   "items:gk_king_cape_heroic:description": "La capa de campaña de la marca, acortada para su nuevo portador; el dobladillo nunca se lavó.",
   "items:gk_king_cape_mythic:name": "Manto del Heredero",
   "items:gk_king_cape_mythic:description": "La capa de campaña de la marca, acortada para su nuevo portador; el dobladillo nunca se lavó.",
+  // claude:2026-10-25T15:40:00+02:00 — Namen der Auftraggeber (1.4.0 Arbeitsaufträge; Taverne war nie live, Namen fehlten)
+  "tavernGuests:brakka:name": "Brakka Rajarroble",
+  "tavernGuests:torvald:name": "Torvald Midevigas",
+  "tavernGuests:grumm:name": "Grumm Puñocarbón",
+  "tavernGuests:nessa:name": "Nessa Mano de Nasa",
+  "tavernGuests:dashk:name": "Dashk Dientecarbón",
+  "tavernGuests:merrit:name": "Merrit Filofino",
+  "tavernGuests:odo:name": "Odo Barbasal",
+  "tavernGuests:tamsin:name": "Tamsin Vera del Camino",
+  "tavernGuests:kell:name": "Kell Pielcicatriz",
+  "tavernGuests:sefra:name": "Sefra Windring",
+  "tavernGuests:orin:name": "Orin Lectortelas",
+  "tavernGuests:wenna:name": "Wenna Manogrís",
+  "tavernGuests:ilvara:name": "Ilvara Cantoespina",
 };

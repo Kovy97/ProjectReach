@@ -4565,4 +4565,18 @@ export const fr: Record<string, string> = {
   "items:gk_king_cape_heroic:description": "Le manteau de campagne de la marche, raccourci pour son nouveau porteur ; l'ourlet n'a jamais été lavé.",
   "items:gk_king_cape_mythic:name": "Manteau de l'Héritier",
   "items:gk_king_cape_mythic:description": "Le manteau de campagne de la marche, raccourci pour son nouveau porteur ; l'ourlet n'a jamais été lavé.",
+  // claude:2026-10-25T15:40:00+02:00 — Namen der Auftraggeber (1.4.0 Arbeitsaufträge; Taverne war nie live, Namen fehlten)
+  "tavernGuests:brakka:name": "Brakka Fend-Chêne",
+  "tavernGuests:torvald:name": "Torvald Mesure-Poutre",
+  "tavernGuests:grumm:name": "Grumm Poing-de-Charbon",
+  "tavernGuests:nessa:name": "Nessa Main-de-Nasse",
+  "tavernGuests:dashk:name": "Dashk Dent-de-Charbon",
+  "tavernGuests:merrit:name": "Merrit Fil-Fin",
+  "tavernGuests:odo:name": "Odo Barbe-de-Sel",
+  "tavernGuests:tamsin:name": "Tamsin Bord-de-Chemin",
+  "tavernGuests:kell:name": "Kell Peau-Balafrée",
+  "tavernGuests:sefra:name": "Sefra Windring",
+  "tavernGuests:orin:name": "Orin Lit-l'Étoffe",
+  "tavernGuests:wenna:name": "Wenna Main-Grise",
+  "tavernGuests:ilvara:name": "Ilvara Chant-d'Épine",
 };

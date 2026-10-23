@@ -19,6 +19,7 @@ import { useI18n } from "../i18n";
 import { ItemCell } from "./ItemCell";
 import { formatNum } from "../util/format";
 import { fillEventText, orderCustomer } from "../ordersApi";
+import { getPortrait } from "../portraits";
 
 function mmss(ms: number): string {
   const s = Math.max(0, Math.ceil(ms / 1000));
@@ -31,15 +32,18 @@ function OrderHead({ order }: { order: WorkOrder }): JSX.Element {
   const item = content.items[order.itemId];
   const target = item ? tr(item.name) : order.itemId;
   const line = c.line ? tr(c.line) : t(order.kind === "produce" ? "orders.guild.produce" : "orders.guild.deliver");
+  // claude:2026-10-25T14:10:00+02:00 — Kunden-Büste `portraits/npc_<kundenId>.webp` (Asset-Liste 1.4.0 Teil 2), bis dahin kein Bild.
+  const portrait = getPortrait(`npc_${c.id}`);
   return (
     <div className="work-order-head">
+      {portrait && <img src={portrait} alt="" className="work-order-portrait" loading="lazy" decoding="async" />}
       <ItemCell itemId={order.itemId} qty={order.count} />
       <div className="work-order-text">
         <span className="work-order-customer">
           {c.name ? tr(c.name) : t("orders.guild.name")}
           {c.role && <span className="muted"> · {tr(c.role)}</span>}
         </span>
-        <span className="work-order-line">„{fillEventText(line, { count: formatNum(order.count), target, zone: "" })}“</span>
+        <span className="work-order-line">{fillEventText(line, { count: formatNum(order.count), target, zone: "" })}</span>{/* claude:2026-10-25T14:10:00+02:00 — kursiv statt fester deutscher Anführungszeichen (galten in allen 7 Sprachen) */}
         <span className="work-order-meta muted">
           {t(order.kind === "produce" ? "orders.kind.produce" : "orders.kind.deliver")} · {tr(content.skills[order.skill]!.name)} ·{" "}
           {t("orders.minutes").replace("{n}", String(order.minutes))}

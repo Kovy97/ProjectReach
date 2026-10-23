@@ -78,6 +78,16 @@
   align-items: center;
   gap: 12px;
 }
+/* claude:2026-10-25T14:10:00+02:00 — Kunden-Büste (1122x1402) als schmales Hochformat neben dem Auftrags-Item */
+.work-order-portrait {
+  width: 48px;
+  height: 60px;
+  flex: none;
+  object-fit: cover;
+  object-position: top center;
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+}
 .work-order-head .item-cell {
   width: 56px;
   height: 56px;

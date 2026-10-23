@@ -23158,7 +23158,7 @@ export const content: ContentDB = {
   orderCustomers: [
     {
       id: "jorun",
-      name: { en: "Jorun Bannerstitch", de: "Jorun Bannernaht" },
+      name: { en: "Jorun Bannerstitch", de: "Jorun Bannernaht", es: "Jorun Cosestandartes", fr: "Jorun Couture-Bannière", "pt-BR": "Jorun Costura-Estandarte", ru: "Йорун Знаменный Шов", zh: "约伦·旗针" }, // claude:2026-10-25T15:40:00+02:00 — Name in 7 Sprachen
       race: "human",
       sex: "f",
       role: { en: "Tailor", de: "Schneiderin", es: "Sastra", fr: "Couturière", "pt-BR": "Alfaiate", ru: "Портниха", zh: "裁缝" },
@@ -23178,7 +23178,7 @@ export const content: ContentDB = {
         es: "Cóseme {count} {target}. Costuras dobles; el Confín trata mal a la tela.",
         fr: "Couds-moi {count} {target}. Double les coutures ; le Domaine est dur avec le tissu.",
         "pt-BR": "Costure {count} {target} para mim. Costuras duplas; o Confim é duro com o tecido.",
-        ru: "Сшей мне {count} {target}. Двойные швы: Предел не щадит ткань.",
+        ru: "Сшей мне: {target}, {count} шт. Шей двойными швами, Предел не щадит ткань.", // claude:2026-10-25T16:00:00+02:00
         zh: "替我缝制{count}份{target}。缝双道线，边域对布料很不客气。",
       },
       deliverLine: {
@@ -23187,13 +23187,13 @@ export const content: ContentDB = {
         es: "Tráeme {count} {target}. Tengo más encargos que rollos de tela.",
         fr: "Apporte-moi {count} {target}. J'ai plus de commandes que de rouleaux.",
         "pt-BR": "Traga-me {count} {target}. Tenho mais encomendas do que rolos de pano.",
-        ru: "Принеси мне {count} {target}. Заказов у меня больше, чем рулонов.",
+        ru: "Принеси мне: {target}, {count} шт. Заказов у меня больше, чем рулонов.", // claude:2026-10-25T16:00:00+02:00
         zh: "给我带{count}份{target}。我的订单比布匹还多。",
       },
     },
     {
       id: "caedren",
-      name: { en: "Caedren Yewhand", de: "Caedren Eibenhand" },
+      name: { en: "Caedren Yewhand", de: "Caedren Eibenhand", es: "Caedren Manotejo", fr: "Caedren Main-d'If", "pt-BR": "Caedren Mão-de-Teixo", ru: "Кэдрен Тисовая Рука", zh: "凯德伦·紫杉手" }, // claude:2026-10-25T15:40:00+02:00 — Name in 7 Sprachen
       race: "elf",
       sex: "m",
       role: { en: "Fletcher", de: "Bogner", es: "Flechero", fr: "Facteur d'arcs", "pt-BR": "Flecheiro", ru: "Лучный мастер", zh: "制弓匠" },
@@ -23213,7 +23213,7 @@ export const content: ContentDB = {
         es: "Haz {count} {target}. Los tensaré todos yo mismo, con hombro o sin él.",
         fr: "Fabrique {count} {target}. Je les banderai tous moi-même, épaule ou pas.",
         "pt-BR": "Faça {count} {target}. Vou puxar cada um eu mesmo, com ombro ou sem.",
-        ru: "Сделай {count} {target}. Каждый натяну сам, с плечом или без.",
+        ru: "Сделай: {target}, {count} шт. Каждый натяну сам, с плечом или без.", // claude:2026-10-25T16:00:00+02:00
         zh: "做{count}份{target}。每一把我都要亲手拉一拉，不管这肩膀答不答应。",
       },
       deliverLine: {
@@ -23222,7 +23222,7 @@ export const content: ContentDB = {
         es: "Tráeme {count} {target}. Los cazadores del Bosque Salvaje las gastan más rápido de lo que yo emplumo.",
         fr: "Apporte-moi {count} {target}. Les chasseurs de Bois-Sauvage les usent plus vite que je n'empenne.",
         "pt-BR": "Traga-me {count} {target}. Os caçadores da Floresta Selvagem gastam mais rápido do que eu consigo empenar.",
-        ru: "Принеси мне {count} {target}. Охотники из Дикого леса расходуют их быстрее, чем я оперяю.",
+        ru: "Принеси мне: {target}, {count} шт. Охотники из Дикого леса расходуют их быстрее, чем я оперяю.", // claude:2026-10-25T16:00:00+02:00
         zh: "给我带{count}份{target}。荒林的猎人用得比我粘羽毛还快。",
       },
     },

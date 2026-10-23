@@ -362,8 +362,8 @@ const RAID_PHASES: Record<string, BossPhase[]> = {
   // Ushka §3.3: Rudelruf (Gift) · Kette fällt (Doppelangriffe + Blutung) · Mutterwut (Wut + Heilung je Treffer 0,15 % maxHp)
   gk_pitmother: phasesOf("gk_pitmother", [
     { atHpPct: 0.75, inflict: infl("poison", 0.4, 1.8, 6000) },
-    { atHpPct: 0.5, attackIntervalMult: 0.5, damageMult: 0.6, inflict: infl("bleed", 0.3, 2.0, 6000) },
-    { atHpPct: 0.25, attackIntervalMult: 0.5, damageMult: 0.75, healPerHitPct: 0.0015, inflict: infl("poison", 0.4, 1.8, 6000) },
+    { atHpPct: 0.5, attackIntervalMult: 0.5, damageMult: 0.55, inflict: infl("bleed", 0.3, 2.0, 6000) }, // claude:2026-10-25T16:45:00+02:00 — 0,60 → 0,55 (§13 V3)
+    { atHpPct: 0.25, attackIntervalMult: 0.5, damageMult: 0.65, healPerHitPct: 0.0015, inflict: infl("poison", 0.4, 1.8, 6000) }, // claude:2026-10-25T16:45:00+02:00 — 0,75 → 0,65 (§13 V4, Ushka P3 war der Mythisch-Killer)
   ]),
   // Zil'gath §3.4: Felschild (Ward 20 %) · Brandopfer (Brand auf dich, Feuerresistenz) · Der Gläubiger blickt her (Schaden ×1,25, stärkerer Brand)
   gk_felmagus: phasesOf("gk_felmagus", [
@@ -557,7 +557,7 @@ export const RAID_GOBKHARAZ: RaidDef = {
   scaling: {
     normal: { hpMult: 1, damageMult: 1, levelAdd: 0, defenseMult: 1 },
     heroic: { hpMult: 2.0, damageMult: 1.6, levelAdd: 10, defenseMult: 1.1 },
-    mythic: { hpMult: 2.4, damageMult: 1.85, levelAdd: 20, defenseMult: 1.2 },
+    mythic: { hpMult: 2.4, damageMult: 1.7, levelAdd: 20, defenseMult: 1.2 }, // claude:2026-10-25T16:45:00+02:00 — 1,85 → 1,70 (Nachmessung §13 V2: Mythisch-Todesrisiko)
   },
   reinforcedWave: { index: 3, hpMult: 1.5, damageMult: 1.15 },
   // §4.2 Trash-Beute je Kill (Reliktstaub, Götzeneisen, Götzensplitter, Seelenopal, Onyx, Götzenherz; kein Gold)

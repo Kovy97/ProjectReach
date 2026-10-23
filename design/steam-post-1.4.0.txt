@@ -1,0 +1,75 @@
+Grim Reach 1.4.0 - Feather and Steel
+
+Hunters,
+
+1.4.0 is a big one. The goblins have a capital, the bow finally gets the care it deserved, and your workshop
+comes alive. Saves stay compatible as always.
+
+THE RAID: HALLS OF GOBKHA'RAZ
+
+- Defeat Drazhan and the goblin capital opens, built into the abandoned keep of the March. Five rooms, four
+  waves and a boss each. At the end waits War-King Rakkzul the Heir.
+- Three difficulties, unlocked in order: Normal, then Heroic after a Normal clear, then Mythic after Heroic.
+- Every attempt costs a fee: 300,000 gold on Normal, 900,000 on Heroic, 2,500,000 on Mythic. Raid enemies
+  drop no gold.
+- If you die on Normal, the room restarts for free. On Heroic a restart costs 100,000 gold. On Mythic the run
+  is over and you get a quarter of the fee back. Leaving the fight inside the raid counts as falling.
+- Bosses change phase at 75, 50 and 25% health, and they tell you when.
+- After every boss a chest opens. Then you rest: full health, time to sort gear and supplies, and on to the
+  next room by button or automatically after three seconds.
+- Each week brings a different modifier, and every boss has a weekly chest on each difficulty.
+- The queue and offline play work. Every run pays its own fee, and offline a Normal run restarts a room up to
+  three times.
+- Bring supplies. A full run eats a few hundred meals and some potions.
+
+RAID LOOT
+
+- 31 raid pieces in three versions: Normal (godly), Heroic (a new teal rarity) and Mythic (a new pink rarity).
+  Each version is a few percent stronger. Raid gear is tier XIII and wears a crown.
+- Three sets with bonuses at 2, 4 and 5 pieces: Regalia of the Borrowed Fire (magic), Pitpack Stalker's Garb
+  (ranged) and Bloodoath of the Crownguard (melee). Heroic and Mythic pieces count toward the same set.
+- Raid jewelry has a main attribute that counts as Strength, Dexterity or Intelligence, depending on your weapon.
+- The popup for godly loot now says "Godly find!". Heroic and Mythic finds get their own.
+
+NEW SKILL: FLETCHING
+
+- Bows, bowstrings and cords move from Crafting into the new Fletching skill. Everyone starts Fletching at
+  level 1. Crafting keeps all of its experience, and your mastery stays with each action.
+- New: arrow shafts, twelve arrow tiers, barbed, venom and fire arrows from tier IX, and twelve quivers.
+  Arrowheads are forged at the smithy.
+- A Fletching master ring waits at 99.
+
+THE RANGED REWORK
+
+- Plain arrows are always there and never run out. Real arrows go into your quiver and add damage to every
+  shot, and effect arrows add bleed, poison or burn. When the quiver is empty, the bow simply keeps shooting.
+- The quiver is the off-hand for bows. It saves arrows and can refill itself from your storage.
+- Crafted bows now match the best drop of their tier. The defensive stance costs ranged 10% damage instead
+  of attack speed. Every zone now drops leather armor and bows.
+
+STORAGE AND SALVAGE
+
+- A new Storage page with 14 shelves. Every material has its own spot, with no limit, and it uses no bank
+  space. New materials go straight there.
+- Heads up: on your first load, materials move from the bank into storage. Your bank closes the gaps once,
+  so its order will change. Bought bank expansions are not refunded.
+- Looted gear can now be salvaged into tier materials and relic dust for the high runes. Only loot can be
+  salvaged: crafted gear, shop items and master rings never can. You can lock pieces, and the game asks
+  before salvaging anything legendary or better.
+
+LIFE IN THE WORKSHOP
+
+- Small events now happen while you work: a Rich Vein, a Fish Shoal, a Masterpiece and more, plus Bountiful
+  Harvest and Fresh Trail on your estates.
+- Sometimes a customer brings a work order. Up to three run at once, with no time limit, and they pay gold,
+  experience and now and then a workshop crate.
+
+CLARITY
+
+- Meals get their own slot in combat prep. Auto-eat no longer touches meals, and "Keep meal up" refreshes
+  them in time.
+- Every weapon shows whether it is one- or two-handed.
+- Gear shows its tier as stars, and the bank and your bags can sort by tier.
+- Farming and Hunting sit in a new Estates group with live status.
+
+As always: if something looks off, tell me here or through the bug report button in the options.
