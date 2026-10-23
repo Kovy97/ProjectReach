@@ -4346,4 +4346,15 @@ export const zh: Record<string, string> = {
   "categories:arrows:name": "箭矢",
   "categories:arrows_effect:name": "特效箭矢",
   "categories:quivers:name": "箭袋",
+  // claude:2026-10-24T23:59:00+02:00 — Werkstattkiste (1.4.0 AU)
+  "items:work_crate_i:name": "工坊箱 I",
+  "items:work_crate_i:description": "一位满意的顾客留在你工作台边的结实箱子。里面是你这一行的材料，包装得很仔细。",
+  "items:work_crate_ii:name": "工坊箱 II",
+  "items:work_crate_ii:description": "一位满意的顾客留在你工作台边的结实箱子。里面是你这一行的材料，包装得很仔细。",
+  "items:work_crate_iii:name": "工坊箱 III",
+  "items:work_crate_iii:description": "一位满意的顾客留在你工作台边的结实箱子。里面是你这一行的材料，包装得很仔细。",
+  "items:work_crate_iv:name": "工坊箱 IV",
+  "items:work_crate_iv:description": "一位满意的顾客留在你工作台边的结实箱子。里面是你这一行的材料，包装得很仔细。",
+  "items:work_crate_v:name": "工坊箱 V",
+  "items:work_crate_v:description": "一位满意的顾客留在你工作台边的结实箱子。里面是你这一行的材料，包装得很仔细。",
 };

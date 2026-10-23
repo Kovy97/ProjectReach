@@ -103,6 +103,7 @@ export function rollSuffix(
   ilvl: number,
   baseChance: number,
   rng: RngState = state.rng,
+  rollFloor = 0,
 ): SuffixRoll | undefined {
   if (!content.suffixes) return undefined;
   if (!(baseChance > 0)) return undefined;
@@ -116,8 +117,9 @@ export function rollSuffix(
   if (nextFloat(rng) > chance) return undefined;
   // Roll 2 — welcher Suffix?
   const def = pickWeighted(rng, pool);
-  // Roll 3 — Stärke.
-  const roll = nextFloat(rng);
+  // Roll 3 — Stärke. claude:2026-10-24T23:35:00+02:00 — `rollFloor` (Meisterstück, 1.4.0 EV): roll = floor + (1 − floor) × Wurf; 0 = unverändert.
+  const raw = nextFloat(rng);
+  const roll = rollFloor > 0 ? rollFloor + (1 - rollFloor) * raw : raw;
   return { suffixId: def.id, ilvl: Math.max(1, Math.floor(ilvl)), roll };
 }
 
@@ -171,11 +173,12 @@ export function tryCraftSuffix(
   ilvl: number,
   baseChance: number,
   rng: RngState = state.rng,
+  rollFloor = 0,
 ): CraftSuffixResult | null {
   const base = content.items[baseItemId];
   if (!base || base.type !== "equipment") return null;
   const effectiveChance = !state.firstSuffixGranted && baseChance > 0 ? 1 : baseChance;
-  const suffix = rollSuffix(state, content, base, ilvl, effectiveChance, rng);
+  const suffix = rollSuffix(state, content, base, ilvl, effectiveChance, rng, rollFloor);
   if (!suffix) return null;
   const instance = createSuffixInstance(state, suffix, baseItemId);
   const intake = intakeInstance(state, content, instance);

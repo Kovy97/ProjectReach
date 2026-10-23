@@ -4347,4 +4347,15 @@ export const ptBR: Record<string, string> = {
   "categories:arrows:name": "Flechas",
   "categories:arrows_effect:name": "Flechas com Efeito",
   "categories:quivers:name": "Aljavas",
+  // claude:2026-10-24T23:59:00+02:00 — Werkstattkiste (1.4.0 AU)
+  "items:work_crate_i:name": "Caixa da Oficina I",
+  "items:work_crate_i:description": "Uma caixa resistente que um cliente satisfeito deixou na sua bancada. Materiais do seu ofício, embalados com cuidado.",
+  "items:work_crate_ii:name": "Caixa da Oficina II",
+  "items:work_crate_ii:description": "Uma caixa resistente que um cliente satisfeito deixou na sua bancada. Materiais do seu ofício, embalados com cuidado.",
+  "items:work_crate_iii:name": "Caixa da Oficina III",
+  "items:work_crate_iii:description": "Uma caixa resistente que um cliente satisfeito deixou na sua bancada. Materiais do seu ofício, embalados com cuidado.",
+  "items:work_crate_iv:name": "Caixa da Oficina IV",
+  "items:work_crate_iv:description": "Uma caixa resistente que um cliente satisfeito deixou na sua bancada. Materiais do seu ofício, embalados com cuidado.",
+  "items:work_crate_v:name": "Caixa da Oficina V",
+  "items:work_crate_v:description": "Uma caixa resistente que um cliente satisfeito deixou na sua bancada. Materiais do seu ofício, embalados com cuidado.",
 };

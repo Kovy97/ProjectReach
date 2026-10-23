@@ -4344,4 +4344,15 @@ export const es: Record<string, string> = {
   "categories:arrows:name": "Flechas",
   "categories:arrows_effect:name": "Flechas con efecto",
   "categories:quivers:name": "Carcajes",
+  // claude:2026-10-24T23:59:00+02:00 — Werkstattkiste (1.4.0 AU)
+  "items:work_crate_i:name": "Caja del Taller I",
+  "items:work_crate_i:description": "Una caja robusta que un cliente satisfecho dejó en tu banco de trabajo. Materiales de tu oficio, bien empaquetados.",
+  "items:work_crate_ii:name": "Caja del Taller II",
+  "items:work_crate_ii:description": "Una caja robusta que un cliente satisfecho dejó en tu banco de trabajo. Materiales de tu oficio, bien empaquetados.",
+  "items:work_crate_iii:name": "Caja del Taller III",
+  "items:work_crate_iii:description": "Una caja robusta que un cliente satisfecho dejó en tu banco de trabajo. Materiales de tu oficio, bien empaquetados.",
+  "items:work_crate_iv:name": "Caja del Taller IV",
+  "items:work_crate_iv:description": "Una caja robusta que un cliente satisfecho dejó en tu banco de trabajo. Materiales de tu oficio, bien empaquetados.",
+  "items:work_crate_v:name": "Caja del Taller V",
+  "items:work_crate_v:description": "Una caja robusta que un cliente satisfecho dejó en tu banco de trabajo. Materiales de tu oficio, bien empaquetados.",
 };

@@ -1,4 +1,6 @@
 import type { ContentDB, GameState, HuntCatch, HuntTrap, HuntZoneDef, ItemId, MonsterDef, MonsterId } from "@hearthforge/shared";
+import { rollEstateEvent } from "./events"; // claude:2026-10-24T23:40:00+02:00 — 1.4.0 EV
+import { FRESH_TRAIL_EXTRA_ROLLS } from "@hearthforge/shared";
 import {
   BAIT_ITEM_ID,
   huntBaitForZoneLevel,
@@ -275,7 +277,7 @@ export function setHuntAutoRebait(state: GameState, slot: number, on: boolean): 
  * RNG-Züge s. Kopfkommentar (Schritte 3–6; Schritt 4 = Leon-Glückswurf, Schritt 5 = Beute inkl.
  * Meisterring-Zug je getroffenem Eintrag, Schritt 6 = Begleiter-Wurf).
  */
-function grantCatch(state: GameState, content: ContentDB, zone: HuntZoneDef, monster: MonsterDef): HuntCatch {
+function grantCatch(state: GameState, content: ContentDB, zone: HuntZoneDef, monster: MonsterDef, live = false): HuntCatch {
   // 3. Gold: derselbe Streuungs-Wurf wie im Kill-Pfad (combat.ts rollKillGold), dann ×HUNT_LOOT_ROLLS
   //    (bewusst NICHT verdoppelt — Leons Glück gilt der Beutetabelle, nicht der Börse).
   const goldRoll = monster.gold + nextInt(state.rng, 0, Math.ceil(monster.gold * 0.4));
@@ -287,7 +289,10 @@ function grantCatch(state: GameState, content: ContentDB, zone: HuntZoneDef, mon
   //    `hunting` — sonst kein Zug (RNG-Sequenz ohne Leon bleibt bit-identisch, offline == online).
   const doubleChance = petHuntDoubleRollsChance(state, content, HUNTING_SKILL_ID);
   const doubled = doubleChance > 0 && nextFloat(state.rng) < doubleChance;
-  const passes = doubled ? HUNT_LOOT_ROLLS_DOUBLED : HUNT_LOOT_ROLLS;
+  // claude:2026-10-24T23:40:00+02:00 — Frische Fährte (1.4.0 EV): der vorgemerkte nächste Fang bekommt FRESH_TRAIL_EXTRA_ROLLS Würfe mehr (auch offline).
+  const trail = state.skillEvents?.trailReady === true;
+  if (trail) state.skillEvents!.trailReady = false;
+  const passes = (doubled ? HUNT_LOOT_ROLLS_DOUBLED : HUNT_LOOT_ROLLS) + (trail ? FRESH_TRAIL_EXTRA_ROLLS : 0);
 
   // 5. Beute: HUNT_LOOT_ROLLS komplette Tabellen-Durchläufe (J: „5 Beute-Würfe seiner Tabelle"), mit Leon-Glück zehn.
   //    Meisterring Jagen (Revision 29.08.2026, review-1.2.0 P1-4: der 99er-Ring tat beim Jagen nichts, weil der
@@ -326,6 +331,9 @@ function grantCatch(state: GameState, content: ContentDB, zone: HuntZoneDef, mon
     }
   }
 
+  // claude:2026-10-24T23:40:00+02:00 — nur online: 8 % je Fang, den nächsten Fang vorzumerken (eigener Strom eventRng).
+  if (live) rollEstateEvent(state, "fresh_trail");
+
   // Jagen-XP über den normalen Skill-Pfad (state.skills; Level-Ups liest die UI aus der XP-Differenz).
   const skill = (state.skills[HUNTING_SKILL_ID] ??= { xp: 0 });
   // Chef 28.08.2026: Kampf-XP des gefangenen Monsters ×HUNT_XP_PER_CATCH (huntCatchXp), Erstfang jeder Art ×HUNT_FIRST_CATCH_MULT.
@@ -355,7 +363,7 @@ function grantCatch(state: GameState, content: ContentDB, zone: HuntZoneDef, mon
  * EIN Wurf einer gestellten Falle (RNG-Schritte 1–2, dann `grantCatch`): Fangchance nur bei nicht-leerem
  * Pool würfeln, Monster gleichverteilt; Breadcrumbs `lastCatch`/`lastMissed`, Tally je Monster.
  */
-function throwTrap(state: GameState, content: ContentDB, trap: HuntTrap, zone: HuntZoneDef, tally?: HuntCatchTally): void {
+function throwTrap(state: GameState, content: ContentDB, trap: HuntTrap, zone: HuntZoneDef, tally?: HuntCatchTally, live = false): void {
   const pool = huntableMonsters(state, content, zone.zoneId);
   let caught: MonsterDef | null = null;
   if (pool.length > 0 && nextFloat(state.rng) < huntCatchChance(state, content, zone.zoneId)) {
@@ -363,7 +371,7 @@ function throwTrap(state: GameState, content: ContentDB, trap: HuntTrap, zone: H
     caught = content.monsters[id] ?? null;
   }
   if (caught) {
-    trap.lastCatch = grantCatch(state, content, zone, caught);
+    trap.lastCatch = grantCatch(state, content, zone, caught, live);
     trap.lastMissed = false;
     if (tally) tally[caught.id] = (tally[caught.id] ?? 0) + 1;
   } else {
@@ -390,7 +398,7 @@ function throwTrap(state: GameState, content: ContentDB, trap: HuntTrap, zone: H
  *
  * @param tally Optionaler Sammler „Fänge je Monster" für dieses Fenster (OfflineSummary.huntCatches).
  */
-export function tickHuntTraps(state: GameState, content: ContentDB, dtMs: number, tally?: HuntCatchTally): void {
+export function tickHuntTraps(state: GameState, content: ContentDB, dtMs: number, tally?: HuntCatchTally, live = false): void { // claude:2026-10-24T23:40:00+02:00 — live: Ereignis-Wurf
   const zones = content.huntingZones;
   if (!Array.isArray(zones) || zones.length === 0) return;
   const traps = state.huntTraps;
@@ -424,7 +432,7 @@ export function tickHuntTraps(state: GameState, content: ContentDB, dtMs: number
     let next: Pending | null = null;
     for (const p of pending) if (p.due <= dtMs && (next === null || p.due < next.due)) next = p;
     if (!next) break;
-    throwTrap(state, content, next.trap, next.zone, tally);
+    throwTrap(state, content, next.trap, next.zone, tally, live);
     if (next.trap.autoRebait && consumeBait(state, huntZoneBaitId(next.zone))) {
       next.due += next.trapMs;
       continue;

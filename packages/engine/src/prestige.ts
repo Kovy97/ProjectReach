@@ -117,6 +117,9 @@ export const PRESTIGE_STATE_FIELDS: Readonly<Record<keyof GameState, PrestigeFie
   bankOrder: "reset",
   bankSlotsPurchased: "reset", // mit Gold gekauft (Gold zurück)
   lockedItems: "keep", // claude:2026-10-23T22:50:00+02:00 — Bergungs-Schloss ist eine Spieler-Vorliebe (1.4.0 BG)
+  eventRng: "keep", // claude:2026-10-24T23:35:00+02:00 — Zufallsstrom läuft weiter (1.4.0 EV), Muster eliteRng
+  skillEvents: "reset", // laufendes Ereignis und Abklingzeit beginnen neu
+  workOrders: "reset", // Aufträge gelten dem alten Fortschritt (Lohn beim Angebot festgeschrieben)
   seenDrops: "keep", // Wiki-Funde
   seenActionDrops: "keep",
   discoveredItems: "keep", // vereinigt mit dem Starterbesitz des Neustands

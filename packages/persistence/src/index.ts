@@ -17,9 +17,13 @@ import type {
   PrestigeRecord,
   PrestigeRunTally,
   QuiverLoad,
+  SkillEventId,
+  SkillEventLogEntry,
+  WorkOrder,
   QueuedAction,
   SaveSummary,
 } from "@hearthforge/shared";
+import { defaultSkillEventState, defaultWorkOrderState, EVENT_COOLDOWN_MS, EVENT_EXPIRE_MS, EVENT_LOG_MAX, ORDER_MAX_OPEN, ORDER_OFFER_TTL_MS, SKILL_EVENT_IDS } from "@hearthforge/shared"; // claude:2026-10-24T23:55:00+02:00 — 1.4.0 Welle 3
 import {
   consumableHeal,
   AP_MILESTONE_STEP_PCT,
@@ -92,7 +96,7 @@ import {
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot, HuntCatch, HuntTrap } from "@hearthforge/shared";
 import type { HuntCatchTally } from "@hearthforge/engine";
-import { MAX_STACK, isQuiverItem, offhandFitsMain, storagePredicate, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotOwned, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
+import { MAX_STACK, deriveEventRngSeed, isQuiverItem, offhandFitsMain, storagePredicate, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotOwned, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
 
 /**
  * MAXIMAL MÖGLICHES Offline-Fenster (8 h Basis + 3 h Wachturm-Vollausbau) — die Korruptions-Klemme
@@ -453,6 +457,16 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   } else {
     state.eliteRng = createRng(eliteRngRaw.state);
   }
+  // claude:2026-10-24T23:55:00+02:00 — Ereignis-RNG (SAVE 92, 1.4.0 EV): dieselbe Härtung wie `rng`/`eliteRng`. Fehlt er, leitet die
+  // Migration ihn ab; ein kaputter Wert wird deterministisch ersetzt.
+  const eventRngRaw = (state.eventRng as { state?: unknown } | null | undefined) ?? null;
+  if (!eventRngRaw || typeof eventRngRaw !== "object" || typeof eventRngRaw.state !== "number" || !Number.isFinite(eventRngRaw.state)) {
+    state.eventRng = createRng(deriveEventRngSeed(typeof state.rng?.state === "number" ? state.rng.state : 1));
+  } else {
+    state.eventRng = createRng(eventRngRaw.state);
+  }
+  sanitizeSkillEvents(state, content);
+  sanitizeWorkOrders(state, content);
 
   // — Character: Gold/HP/Mana/totalLevel/autoEatTier —
   const c = state.character;
@@ -3745,6 +3759,19 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   // `bowcraft` nicht. Ein fehlendes Skill-Konto liest die Engine als 0 XP (wie bei jedem frischen Spiel), daher
   // braucht es keinen Eintrag. `character.quiver` startet leer, `quiverAutoRefill` an (beides Sanitize).
 
+  // ── Leben im Handwerk (SAVE_VERSION 91 → 92, 1.4.0 Welle 3 EV/AU, Chef 23.10.2026) ─────────────────────
+  // claude:2026-10-24T23:55:00+02:00 — neuer Zufallsstrom `eventRng` (aus `state.rng.state` abgeleitet, LIEST nur, verbraucht nichts;
+  // Muster eliteRng v72), leere Ereignis- und Auftragslisten. Die erste Ereignis-Chance kommt nach der normalen
+  // Abklingzeit. Härtung für jede Version macht sanitizeState.
+  if ((state.version ?? 0) < 92) {
+    if (state.eventRng === undefined) {
+      const seedSource = typeof state.rng?.state === "number" && Number.isFinite(state.rng.state) ? state.rng.state : 1;
+      state.eventRng = createRng(deriveEventRngSeed(seedSource));
+    }
+    if (!state.skillEvents) state.skillEvents = defaultSkillEventState();
+    if (!state.workOrders) state.workOrders = defaultWorkOrderState();
+  }
+
   // State auf die aktuelle Version heben (macht versions-abhängige Migrationen idempotent).
   state.version = SAVE_VERSION;
 
@@ -3752,6 +3779,108 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   // korrigieren, ohne legitime Saves zu verändern. Läuft NACH allen Rename-/Default-Migrationen,
   // damit Referenzen erst umbenannt und dann gegen den aktuellen Content geprüft werden.
   return sanitizeState(state, content);
+}
+
+// claude:2026-10-24T23:55:00+02:00 — Härtung der Ereignis- und Auftragsdaten (SAVE 92, 1.4.0 Welle 3). Alles, was nicht passt, fällt auf
+// den Default zurück; nichts davon trägt Besitz (Lohn wird erst bei der Abgabe gezahlt).
+function finiteInt(v: unknown, min: number, max: number, fallback: number): number {
+  return typeof v === "number" && Number.isFinite(v) ? Math.max(min, Math.min(max, Math.floor(v))) : fallback;
+}
+
+function sanitizeSkillEvents(state: GameState, content: ContentDB): void {
+  const raw = state.skillEvents as unknown;
+  const def = defaultSkillEventState();
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    state.skillEvents = def;
+    return;
+  }
+  const r = raw as Record<string, unknown>;
+  const ids = new Set<string>(SKILL_EVENT_IDS);
+  const a = r.active as Record<string, unknown> | null | undefined;
+  const active =
+    a && typeof a === "object" && typeof a.id === "string" && ids.has(a.id) && typeof a.skill === "string" && content.skills[a.skill]
+      ? {
+          id: a.id as SkillEventId,
+          skill: a.skill,
+          actionsLeft: finiteInt(a.actionsLeft, 0, 1000, 0),
+          msLeft: finiteInt(a.msLeft, 0, EVENT_EXPIRE_MS, 0),
+        }
+      : null;
+  const log: SkillEventLogEntry[] = [];
+  if (Array.isArray(r.log)) {
+    for (const e of r.log.slice(0, EVENT_LOG_MAX) as Array<Record<string, unknown>>) {
+      if (!e || typeof e !== "object" || typeof e.id !== "string" || !ids.has(e.id) || typeof e.skill !== "string") continue;
+      const entry: SkillEventLogEntry = {
+        seq: finiteInt(e.seq, 0, Number.MAX_SAFE_INTEGER, 0),
+        id: e.id as SkillEventId,
+        skill: e.skill,
+        atMs: finiteInt(e.atMs, 0, Number.MAX_SAFE_INTEGER, 0),
+      };
+      if (typeof e.itemId === "string" && content.items[e.itemId]) entry.itemId = e.itemId;
+      if (entry.itemId) entry.qty = finiteInt(e.qty, 0, 1_000_000_000, 0);
+      log.push(entry);
+    }
+  }
+  state.skillEvents = {
+    cooldownMs: finiteInt(r.cooldownMs, 0, EVENT_COOLDOWN_MS, EVENT_COOLDOWN_MS),
+    active: active && (active.msLeft > 0) ? active : null,
+    harvestReady: r.harvestReady === true,
+    trailReady: r.trailReady === true,
+    log,
+    seq: finiteInt(r.seq, 0, Number.MAX_SAFE_INTEGER, 0),
+  };
+}
+
+function sanitizeWorkOrder(raw: unknown, content: ContentDB): WorkOrder | null {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const o = raw as Record<string, unknown>;
+  if (o.kind !== "produce" && o.kind !== "deliver") return null;
+  if (typeof o.skill !== "string" || !content.skills[o.skill]) return null;
+  if (typeof o.actionId !== "string" || !content.actions[o.actionId]) return null;
+  if (typeof o.itemId !== "string" || !content.items[o.itemId]) return null;
+  return {
+    id: finiteInt(o.id, 1, Number.MAX_SAFE_INTEGER, 1),
+    kind: o.kind,
+    skill: o.skill,
+    actionId: o.actionId,
+    itemId: o.itemId,
+    count: finiteInt(o.count, 1, 1_000_000, 1),
+    minutes: finiteInt(o.minutes, 1, 600, 30),
+    band: finiteInt(o.band, 1, TAVERN_BANDS, 1),
+    gold: finiteInt(o.gold, 0, 1_000_000_000, 0),
+    xp: finiteInt(o.xp, 0, 1_000_000_000, 0),
+    customerId: typeof o.customerId === "string" ? o.customerId : "guild",
+    baseline: finiteInt(o.baseline, 0, Number.MAX_SAFE_INTEGER, 0),
+  };
+}
+
+function sanitizeWorkOrders(state: GameState, content: ContentDB): void {
+  const raw = state.workOrders as unknown;
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    state.workOrders = defaultWorkOrderState();
+    return;
+  }
+  const r = raw as Record<string, unknown>;
+  const open: WorkOrder[] = [];
+  const seen = new Set<number>();
+  if (Array.isArray(r.open)) {
+    for (const x of r.open) {
+      const o = sanitizeWorkOrder(x, content);
+      if (!o || seen.has(o.id) || open.length >= ORDER_MAX_OPEN) continue;
+      seen.add(o.id);
+      open.push(o);
+    }
+  }
+  const offer = sanitizeWorkOrder(r.offer, content);
+  const offerMsLeft = offer ? finiteInt(r.offerMsLeft, 0, ORDER_OFFER_TTL_MS, 0) : 0;
+  const maxId = Math.max(0, ...open.map((o) => o.id), offer?.id ?? 0);
+  state.workOrders = {
+    open,
+    offer: offer && offerMsLeft > 0 ? offer : null,
+    offerMsLeft: offer && offerMsLeft > 0 ? offerMsLeft : 0,
+    seq: Math.max(maxId, finiteInt(r.seq, 0, Number.MAX_SAFE_INTEGER, 0)),
+    delivered: finiteInt(r.delivered, 0, Number.MAX_SAFE_INTEGER, 0),
+  };
 }
 
 export interface SaveFile {

@@ -4344,4 +4344,15 @@ export const fr: Record<string, string> = {
   "categories:arrows:name": "Flèches",
   "categories:arrows_effect:name": "Flèches à effet",
   "categories:quivers:name": "Carquois",
+  // claude:2026-10-24T23:59:00+02:00 — Werkstattkiste (1.4.0 AU)
+  "items:work_crate_i:name": "Caisse d'atelier I",
+  "items:work_crate_i:description": "Une caisse solide qu'un client satisfait a laissée à ton établi. Des matériaux de ton métier, emballés avec soin.",
+  "items:work_crate_ii:name": "Caisse d'atelier II",
+  "items:work_crate_ii:description": "Une caisse solide qu'un client satisfait a laissée à ton établi. Des matériaux de ton métier, emballés avec soin.",
+  "items:work_crate_iii:name": "Caisse d'atelier III",
+  "items:work_crate_iii:description": "Une caisse solide qu'un client satisfait a laissée à ton établi. Des matériaux de ton métier, emballés avec soin.",
+  "items:work_crate_iv:name": "Caisse d'atelier IV",
+  "items:work_crate_iv:description": "Une caisse solide qu'un client satisfait a laissée à ton établi. Des matériaux de ton métier, emballés avec soin.",
+  "items:work_crate_v:name": "Caisse d'atelier V",
+  "items:work_crate_v:description": "Une caisse solide qu'un client satisfait a laissée à ton établi. Des matériaux de ton métier, emballés avec soin.",
 };

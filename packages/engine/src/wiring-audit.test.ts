@@ -1,3 +1,4 @@
+import { workCrateItemId } from "./orders"; // claude:2026-10-25T00:55:00+02:00
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import { BLACK_MARKET_CRATE_PREFIX, TAVERN_BANDS, masterRingItemId } from "@hearthforge/shared";
@@ -71,6 +72,8 @@ function obtainableSet(): Set<string> {
   for (let band = 1; band <= TAVERN_BANDS; band++) produced.add(tavernCrateItemId(band));
   // claude:2026-10-23T23:35:00+02:00 — Bergung (1.4.0 BG): Reliktstaub stammt aus dem Zerlegen gedroppter Ausrüstung (engine/salvage.ts).
   produced.add("relic_dust");
+  // claude:2026-10-25T00:55:00+02:00 — Arbeitsaufträge (1.4.0 AU): Werkstattkisten zahlt die Auftragsabgabe (engine/orders.ts deliverWorkOrder).
+  for (let band = 1; band <= TAVERN_BANDS; band++) produced.add(workCrateItemId(band));
   return produced;
 }
 
@@ -114,6 +117,7 @@ describe("Item-Verdrahtung", () => {
       // Schwarzmarktbehälter tragen laut Spec §7 BEWUSST Verkaufswert 0 (kein Shop, nicht verkaufbar
       // — man öffnet sie); benannte Ausnahme, s. obtainableSet.
       .filter((id) => !id.startsWith(BLACK_MARKET_CRATE_PREFIX))
+      .filter((id) => !id.startsWith("work_crate_")) // claude:2026-10-25T00:55:00+02:00 — Werkstattkisten: Wert 0 wie die Behälter, man öffnet sie
       .filter((id) => (content.items[id]!.value ?? 0) <= 0);
     expect(
       noSellValue,

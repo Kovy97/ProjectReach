@@ -1,4 +1,7 @@
 import { storagePredicate } from "./storage"; // claude:2026-10-23T21:50:00+02:00 — Materiallager (1.4.0 ML)
+import { activeEventFor, onSkillActionCompleted, spendEventAction, tickSkillEvents } from "./events"; // claude:2026-10-24T23:20:00+02:00 — 1.4.0 EV
+import { tickWorkOrders } from "./orders"; // 1.4.0 AU
+import { FISH_SHOAL_SPEED, GUARD_CHANGE_SUCCESS_BONUS, INSPIRATION_SUFFIX_MULT, MASTERPIECE_ROLL_FLOOR, THRIFTY_HAND_PRESERVE, THRIFTY_HAND_PRESERVE_CAP, WILD_GARDEN_MAX_CHANCE } from "@hearthforge/shared";
 import type { ActionId, ContentDB, GameState, ItemId } from "@hearthforge/shared";
 import {
   syncBankOrder, effectiveBankCapacity, CAMP_SKILL_SPEED_KIND, CAMP_SPEED_CUT_CAP, DEFAULT_CRAFT_SUFFIX_CHANCE, DEFAULT_STUN_MS, OUT_OF_COMBAT_HP_REGEN_PCT, TICK_MS, actionSuccessChance, masteryDoubleChance, masteryPreserveChance, masterySpeedMult, masteryXpPerCompletion, thievingRiskMods } from "@hearthforge/shared";
@@ -92,7 +95,13 @@ function consumeInput(state: GameState, itemId: ItemId, qty: number): void {
 // (kein stiller Material-Verlust mehr) und die Aktion muss nicht stoppen — der `inventory_full`-Stopp
 // entfällt komplett (nur `no_materials` bleibt Abbruchgrund fürs Skilling).
 
-function completeAction(state: GameState, content: ContentDB, action: ActionDef, nowMs?: number): void {
+function completeAction(state: GameState, content: ContentDB, action: ActionDef, nowMs?: number, live = false): void {
+  // claude:2026-10-24T23:20:00+02:00 — Zufallsereignis (1.4.0 EV): wirkt nur im Live-Loop (`live`) und nur auf Aktionen des auslösenden
+  // Skills. Ohne Ereignis ändert sich hier nichts (state.rng bitgleich).
+  const liveEv = live ? activeEventFor(state, action) : null;
+  const evId = liveEv?.id ?? null;
+  const mainItem = action.loot[0] ? content.items[action.loot[0].itemId] : undefined;
+  const equipOut = mainItem?.type === "equipment";
   // Skillweite Mastery-Pool-Boni (Checkpoint-System). Bei frischem State exakt 0 (Pool < 5 % =
   // 1. Checkpoint, s. MASTERY_POOL_CHECKPOINTS), daher keine zusätzlichen nextFloat-Würfe →
   // Determinismus bleibt bit-identisch.
@@ -105,11 +114,15 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
     // Meisterweihe (masterPerk `inputSaver`, capes.ts): der 5-%-Input-Sparer der Handwerks-Capes —
     // ADDITIV zum Pet-Passiv (Präzedenz petPreserveBonus) und zur Mastery-/Pool-Schiene. 0 ohne
     // ausgerüsteten Träger → der Preserve-nextFloat fällt weiterhin nur bei Chance > 0 (bit-identisch).
-    const preserveChance =
+    let preserveChance =
       masteryPreserveChance(levelFromXp(state.mastery[action.id]?.xp ?? 0))
       + pb.preserve
       + petPreserveBonus(state, content, action.skill)
       + masterPreserveBonus(state, content, action.skill);
+    // claude:2026-10-24T23:20:00+02:00 — Sparsame Hand: +30 Pp Materialerhalt, Gesamtdeckel 80 %.
+    if (evId === "thrifty_hand") {
+      preserveChance = Math.max(preserveChance, Math.min(THRIFTY_HAND_PRESERVE_CAP, preserveChance + THRIFTY_HAND_PRESERVE));
+    }
     const preserved = preserveChance > 0 && nextFloat(state.rng) <= preserveChance;
     if (!preserved) {
       for (const input of action.inputs) consumeInput(state, input.itemId, input.qty);
@@ -132,7 +145,8 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
     const successBonus =
       petThievingBonus(state, content, action.skill)
       + (risk?.successBonus ?? 0)
-      + masterSuccessBonus(state, content, action.skill);
+      + masterSuccessBonus(state, content, action.skill)
+      + (evId === "guard_change" ? GUARD_CHANGE_SUCCESS_BONUS : 0); // claude:2026-10-24T23:20:00+02:00 — Wachwechsel
     // Meisterweihe (masterPerk `alwaysSucceed`, capes.ts — die Soulchef-Hommage): Aktionen des
     // Perk-Skills misslingen NIE (Chance exakt 1, bewusst am 0.95-Cap von actionSuccessChance
     // vorbei). Der Erfolgs-nextFloat wird TROTZDEM gezogen (nextFloat < 1 immer ⇒ nie Fehlschlag)
@@ -153,6 +167,7 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
           * (1 - masterStunReduction(state, content, action.skill))
           * petThievingStunMult(state, content, action.skill),
       );
+      if (evId === "guard_change") state.stunMs = 0; // claude:2026-10-24T23:20:00+02:00 — Wachwechsel: Fehlschläge betäuben nicht
       return;
     }
   }
@@ -266,7 +281,10 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
   for (const roll of action.loot) {
     const mainRoll = isMainRoll;
     isMainRoll = false;
-    if (nextFloat(state.rng) <= Math.min(1, roll.chance * rareDropMult)) {
+    // claude:2026-10-24T23:20:00+02:00 — Wilder Garten: Nebenfunde bis 25 % fallen sicher (Rohsteine ausgenommen); der Wurf wird trotzdem gezogen.
+    const gardenForced =
+      evId === "wild_garden" && !mainRoll && roll.chance <= WILD_GARDEN_MAX_CHANCE && !roll.itemId.startsWith("rough_");
+    if (nextFloat(state.rng) <= Math.min(1, roll.chance * rareDropMult) || gardenForced) {
       let qty = nextInt(state.rng, roll.min, roll.max);
       let itemId = roll.itemId;
       if (mainRoll && tierUp) {
@@ -274,6 +292,7 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
         if (target && nextFloat(state.rng) < tierUp.chance) itemId = target;
       }
       if (bonusChance > 0 && nextFloat(state.rng) <= bonusChance) qty *= 2; // Mastery-Doppelertrag
+      if (mainRoll && evId === "rich_vein") qty *= 2; // claude:2026-10-24T23:20:00+02:00 — Reiche Ader: Haupt-Ertrag ×2 nach dem Doppelertrag
       // Thieving-Risiko skaliert die Beute-Menge; nie unter 1, wenn der Roll überhaupt traf.
       if (rewardMult !== 1) qty = Math.max(1, Math.round(qty * rewardMult));
       // Suffix-Roll (Phase 2, WoW-Stil Random Rolls): jeder Crafting-Equipment-Output ist scharf-
@@ -291,9 +310,16 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
         const petSuffix = petCraftSuffixBonus(state, content, action.skill);
         if (petSuffix > 0) suffixChance = Math.min(1, suffixChance + petSuffix);
       }
+      // claude:2026-10-24T23:20:00+02:00 — Eingebung (Suffix-Chance ×2, Deckel 1) und Meisterstück (Suffix sicher, Stärke im oberen Viertel).
+      let suffixRollFloor = 0;
+      if (isCraft && equipOut && mainRoll && evId === "inspiration") suffixChance = Math.min(1, suffixChance * INSPIRATION_SUFFIX_MULT);
+      if (isCraft && equipOut && mainRoll && evId === "masterpiece") {
+        suffixChance = 1;
+        suffixRollFloor = MASTERPIECE_ROLL_FLOOR;
+      }
       if (isCraft && qty > 0 && suffixChance > 0) {
         const ilvl = levelFromXp(state.skills[action.skill]?.xp ?? 0);
-        const res = tryCraftSuffix(state, content, itemId, ilvl, suffixChance);
+        const res = tryCraftSuffix(state, content, itemId, ilvl, suffixChance, state.rng, suffixRollFloor);
         if (res) {
           qty -= 1;
           instanceMade = 1;
@@ -341,6 +367,15 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
       (state.stats.producedById ??= {})[found] = (state.stats.producedById[found] ?? 0) + 1;
     }
   }
+
+  // claude:2026-10-24T23:20:00+02:00 — Zähl-Ereignisse verbrauchen (Reiche Ader/Wilder Garten je Aktion, Handwerk je passender Herstellung).
+  if (liveEv && liveEv.actionsLeft > 0) {
+    const counts =
+      evId === "rich_vein" || evId === "wild_garden"
+      || (evId === "thrifty_hand" && isCraft)
+      || ((evId === "inspiration" || evId === "masterpiece") && isCraft && equipOut);
+    if (counts) spendEventAction(state);
+  }
 }
 
 /**
@@ -375,7 +410,11 @@ export function effectiveActionDurationMs(
   content: ContentDB,
   action: ActionDef,
   nowMs?: number,
+  offline = false,
 ): number {
+  // claude:2026-10-24T23:20:00+02:00 — Fischschwarm (1.4.0 EV): Angel-Aktionen +50 % Tempo, nur online. Ohne Ereignis Faktor 1.
+  const ev = state.skillEvents?.active;
+  const shoal = !offline && ev?.id === "fish_shoal" && ev.skill === action.skill ? FISH_SHOAL_SPEED : 1;
   const masterySpeed = masterySpeedMult(levelFromXp(state.mastery[action.id]?.xp ?? 0));
   const poolSpeed = 1 - masteryPoolBonus(state, content, action.skill).speed;
   // Blessings of the Reach (Chef-Fix 2026-07-21): BEIDE Segens-Arten wirken jetzt als Tempo-Divisor,
@@ -410,7 +449,7 @@ export function effectiveActionDurationMs(
         poolSpeed *
         campSpeedMult(state, content, action) *
         prepMult) /
-        speedMult,
+        (speedMult * shoal),
     ),
   );
 }
@@ -459,6 +498,12 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
   // `nowMs` durchgereicht (Blessings of the Reach „Jagd-Paket" S1, s. advance()) — treibt AUSSCHLIESSLICH
   // die wildhunt-Cooldown-Beschleunigung (elites.ts `tickEliteSpawns`); ohne `nowMs` neutral.
   if (!offline) tickEliteSpawns(state, content, nowMs);
+  // claude:2026-10-24T23:20:00+02:00 — Ereignis- und Angebotsuhr (1.4.0 EV/AU): nur im Live-Loop mit echter Uhrzeit (Muster Segen: ohne
+  // nowMs neutral, Sim und Tests bleiben bitgleich).
+  if (!offline && nowMs !== undefined) {
+    tickSkillEvents(state, TICK_MS);
+    tickWorkOrders(state, TICK_MS);
+  }
 
   // Kampf hat Vorrang und schließt Sammeln aus (combatStep regeneriert selbst via tickPlayerRegen).
   // `nowMs` (Blessings of the Reach, s. advance()) durchgereicht — combatStep leitet daraus die
@@ -560,7 +605,7 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
     return;
   }
 
-  skillingStep(state, content, nowMs);
+  skillingStep(state, content, nowMs, offline);
 
   // Mana-/HP-Regeneration außerhalb des Kampfes — PRO TICK mit den Stats DIESES Ticks
   // (Sweep6 T7-F2): vorher lief der Regen 1× pro advance NACH der Tick-Schleife mit den
@@ -622,7 +667,9 @@ function endActionOrAdvanceQueue(
 }
 
 /** Sammel-/Verarbeitungs-Anteil eines Ticks (kein Kampf): Stun, Aktions-Fortschritt, Abschlüsse. */
-function skillingStep(state: GameState, content: ContentDB, nowMs?: number): void {
+function skillingStep(state: GameState, content: ContentDB, nowMs?: number, offline = false): void {
+  // claude:2026-10-24T23:20:00+02:00 — Ereignisse nur im Live-Loop mit echter Uhrzeit (1.4.0 EV).
+  const live = !offline && nowMs !== undefined;
   // Betäubung (z.B. nach Thieving-Fehlschlag) läuft ab und pausiert die Aktion.
   if (state.stunMs > 0) {
     state.stunMs = Math.max(0, state.stunMs - TICK_MS);
@@ -666,7 +713,7 @@ function skillingStep(state: GameState, content: ContentDB, nowMs?: number): voi
   // die Sammel-/Craft-Aktion läuft weiter. Die Action-Queue hält damit hier nicht mehr an (gewollt).
 
   // Effektive Dauer (Werkzeug × Aktions-Mastery × Mastery-Pool) — gemeinsame Quelle mit der UI-Leiste.
-  const dur = effectiveActionDurationMs(state, content, action, nowMs);
+  const dur = effectiveActionDurationMs(state, content, action, nowMs, offline);
 
   state.actionProgressMs += TICK_MS;
   // while statt if: bei sehr kurzen Aktionen können pro Tick mehrere fertig werden.
@@ -679,7 +726,9 @@ function skillingStep(state: GameState, content: ContentDB, nowMs?: number): voi
       return;
     }
     // Kein `inventory_full`-Stopp mehr (SAVE 71): Überlauf → Postfach (grantLoot), die Aktion läuft weiter.
-    completeAction(state, content, action, nowMs);
+    completeAction(state, content, action, nowMs, live);
+    // claude:2026-10-24T23:20:00+02:00 — nach dem Abschluss (auch nach einem Diebes-Fehlschlag): Abklingzeit zählen, ggf. Ereignis würfeln.
+    if (live) onSkillActionCompleted(state, content, action, dur, (a) => effectiveActionDurationMs(state, content, a, nowMs, offline));
     // Mengen-Craft-Ziel (1/5/10): jeder abgeschlossene Durchlauf zählt herunter. Erreicht das Ziel 0,
     // ist die Aktion PLANMÄSSIG fertig → Queue weiterschalten (oder sauber beenden, KEIN lastStop —
     // es ist kein Abbruch). `null` = unbegrenzt → Schleife läuft wie bisher bis Material/Platz leer.
@@ -752,14 +801,14 @@ export function advance(
     // Fensterlänge mitgeben (#p12, SAVE_VERSION 82): ein leeres Beet mit geplanter Folgesorte
     // wird zum FENSTERBEGINN eingesät, sobald Saat da ist — der einzige Zeitpunkt, den Live-Loop
     // und Offline-Catch-up gleich sehen (offline == online). Ohne Plan wirkungslos.
-    tickFarmPlots(state, content, steps * TICK_MS);
+    tickFarmPlots(state, content, steps * TICK_MS, !offline && opts.nowMs !== undefined);
 
     // Jagen (1.2.0, SAVE 85, spec-technik §3): Fallen ticken direkt NACH den Beeten, ebenfalls EINMAL
     // pro advance gegen das Fenster (offline == online, Rest-Übertrag in der Falle). Zieht RNG nur,
     // wenn eine gestellte Falle wirklich wirft; ohne `content.huntingZones`/ohne gestellte Fallen ein
     // No-op → bestehende RNG-Sequenzen bleiben bit-identisch. `huntTally` (optional) sammelt die
     // Fänge je Monster dieses Fensters für die OfflineSummary (persistence deserialize).
-    tickHuntTraps(state, content, steps * TICK_MS, opts.huntTally);
+    tickHuntTraps(state, content, steps * TICK_MS, opts.huntTally, !offline && opts.nowMs !== undefined);
 
     // Offline-Veredelung: tickt seit Task #335 PRO TICK in der Schleife oben (nach step()) —
     // nicht mehr einmal pro advance. Ihr Output fließt weiterhin VOR syncProgression/Quests/

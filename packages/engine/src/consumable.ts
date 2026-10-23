@@ -1,4 +1,5 @@
 import type { ContentDB, GameState, ItemId } from "@hearthforge/shared";
+import { openWorkCrate } from "./orders"; // claude:2026-10-24T23:45:00+02:00
 import { consumableHeal } from "@hearthforge/shared";
 import { computeStats } from "./character";
 import { itemCount, removeItem } from "./inventory";
@@ -169,6 +170,9 @@ function consumeInternal(state: GameState, content: ContentDB, itemId: ItemId, s
     // `openBlackMarketCrate` direkt (liefert das `CrateResult`); dieser Pfad ist der generische
     // „Benutzen"-Knopf des Inventars.
     if (!openBlackMarketCrate(state, content, itemId)) return false;
+  } else if (special?.kind === "workCrate") {
+    // claude:2026-10-24T23:45:00+02:00 — Werkstattkiste (1.4.0 AU): öffnet und verbraucht selbst (Inventar, sonst Lager), wie der Behälter oben.
+    if (!openWorkCrate(state, content, itemId)) return false;
   } else if (buffs && !heals && !cures && !special && source !== "rebuff" && qty > 1) {
     // Aufladen (Chef 27.08.2026): reine Dauer-Tonika dürfen MEHRERE Stücke auf einmal trinken — so viele wie
     // gewünscht, vorrätig und bis zum Deckel sinnvoll (mindestens eins). Heil-/Antidot-/Sonder-Items bleiben

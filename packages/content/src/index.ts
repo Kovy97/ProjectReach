@@ -9096,6 +9096,52 @@ export const content: ContentDB = {
         de: "Der Fremde wollte nicht sagen, wer diese hier gepackt hat. Allein das sollte dir etwas sagen.",
       },
     },
+    // claude:2026-10-24T23:59:00+02:00 — Werkstattkiste I–V (1.4.0 AU, Spec §4.6 A): Lohn der Arbeitsaufträge, drei Band-Materialien, selten eine Rune, keine Ausrüstung.
+    work_crate_i: {
+      id: "work_crate_i", name: { en: "Workshop Crate I", de: "Werkstattkiste I" },
+      icon: "📦", type: "consumable", stackable: true, rarity: "common", value: 0,
+      consumable: { kind: "workCrate", tier: 1 },
+      description: {
+        en: "A sturdy crate a satisfied customer left at your bench. Materials of your trade, packed with care.",
+        de: "Eine feste Kiste, die ein zufriedener Kunde an deiner Werkbank ließ. Material deines Handwerks, sorgfältig gepackt.",
+      },
+    },
+    work_crate_ii: {
+      id: "work_crate_ii", name: { en: "Workshop Crate II", de: "Werkstattkiste II" },
+      icon: "📦", type: "consumable", stackable: true, rarity: "common", value: 0,
+      consumable: { kind: "workCrate", tier: 2 },
+      description: {
+        en: "A sturdy crate a satisfied customer left at your bench. Materials of your trade, packed with care.",
+        de: "Eine feste Kiste, die ein zufriedener Kunde an deiner Werkbank ließ. Material deines Handwerks, sorgfältig gepackt.",
+      },
+    },
+    work_crate_iii: {
+      id: "work_crate_iii", name: { en: "Workshop Crate III", de: "Werkstattkiste III" },
+      icon: "📦", type: "consumable", stackable: true, rarity: "common", value: 0,
+      consumable: { kind: "workCrate", tier: 3 },
+      description: {
+        en: "A sturdy crate a satisfied customer left at your bench. Materials of your trade, packed with care.",
+        de: "Eine feste Kiste, die ein zufriedener Kunde an deiner Werkbank ließ. Material deines Handwerks, sorgfältig gepackt.",
+      },
+    },
+    work_crate_iv: {
+      id: "work_crate_iv", name: { en: "Workshop Crate IV", de: "Werkstattkiste IV" },
+      icon: "📦", type: "consumable", stackable: true, rarity: "common", value: 0,
+      consumable: { kind: "workCrate", tier: 4 },
+      description: {
+        en: "A sturdy crate a satisfied customer left at your bench. Materials of your trade, packed with care.",
+        de: "Eine feste Kiste, die ein zufriedener Kunde an deiner Werkbank ließ. Material deines Handwerks, sorgfältig gepackt.",
+      },
+    },
+    work_crate_v: {
+      id: "work_crate_v", name: { en: "Workshop Crate V", de: "Werkstattkiste V" },
+      icon: "📦", type: "consumable", stackable: true, rarity: "common", value: 0,
+      consumable: { kind: "workCrate", tier: 5 },
+      description: {
+        en: "A sturdy crate a satisfied customer left at your bench. Materials of your trade, packed with care.",
+        de: "Eine feste Kiste, die ein zufriedener Kunde an deiner Werkbank ließ. Material deines Handwerks, sorgfältig gepackt.",
+      },
+    },
 
     // ════════════════════════════════════════════════════════════════════
     // FASERN, STOFF UND JAGEN (1.2.0 „Fasern und Fallen", content-dev 27.08.2026)

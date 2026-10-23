@@ -1232,3 +1232,6 @@ export function tavernSeatSummary(state: GameState, content: ContentDB, seat: nu
     crateItemId: task?.paysCrate ? tavernCrateItemId(task.band) : null,
   };
 }
+
+// claude:2026-10-24T23:10:00+02:00 — geteilte Auftragslogik für die Arbeitsaufträge (1.4.0 AU, engine/orders.ts).
+export { mainOutput as tavernMainOutput, expectedQty as tavernExpectedQty, bandMaterials as tavernBandMaterials };

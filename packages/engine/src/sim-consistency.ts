@@ -599,6 +599,8 @@ export function obtainableItemIds(content: ContentDB): Set<ItemId> {
   // claude:2026-10-23T23:35:00+02:00 — Bergung (1.4.0 BG): Reliktstaub entsteht beim Zerlegen gedroppter Ausrüstung (engine/salvage.ts),
   // nicht über Loot/Shop. Eigener, benannter Erhältlichkeits-Pfad, sobald es zerlegbare Beute gibt.
   if (content.items[RELIC_DUST_ITEM_ID]) out.add(RELIC_DUST_ITEM_ID);
+  // claude:2026-10-25T00:55:00+02:00 — Werkstattkisten I–V: Lohn der Arbeitsaufträge (engine/orders.ts).
+  for (const id of Object.keys(content.items)) if (id.startsWith("work_crate_")) out.add(id);
   return out;
 }
 

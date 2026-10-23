@@ -1,4 +1,6 @@
 import type { ContentDB, GameState } from "@hearthforge/shared";
+import { deriveEventRngSeed } from "./events"; // claude:2026-10-24T23:45:00+02:00
+import { defaultSkillEventState, defaultWorkOrderState } from "@hearthforge/shared";
 import { BASE_INVENTORY_SLOTS, DEFAULT_THIEVING_RISK, SAVE_VERSION, defaultCampState, defaultEquipKits, defaultFarmPlots, defaultTavernState, defaultHuntTraps, defaultParagonState, defaultPrestigeState, defaultQuestState, defaultSettings, newGameOnboarding } from "@hearthforge/shared";
 import { createRng } from "./rng";
 import { syncActiveKit } from "./loadouts";
@@ -96,6 +98,10 @@ export function createGame(
     bankOrder: [],
     bankSlotsPurchased: 0,
     lockedItems: {}, // claude:2026-10-23T22:50:00+02:00 — Bergungs-Schloss (1.4.0 BG)
+    // claude:2026-10-24T23:45:00+02:00 — Zufallsereignisse und Arbeitsaufträge (1.4.0 Welle 3, SAVE 92): eigener Strom aus dem Haupt-Seed.
+    eventRng: createRng(deriveEventRngSeed(seed)),
+    skillEvents: defaultSkillEventState(),
+    workOrders: defaultWorkOrderState(),
     seenDrops: {},
     seenActionDrops: {},
     // Erst-Besitz-Marker (SAVE 58): startet leer; der Starterbesitz (Waffe/Rüstung/Food/Saat)

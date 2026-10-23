@@ -1,3 +1,5 @@
+import { createRng as createRngW3, deriveEventRngSeed } from "@hearthforge/engine"; // claude:2026-10-25T00:30:00+02:00
+import { defaultSkillEventState, defaultWorkOrderState } from "@hearthforge/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -207,6 +209,10 @@ describe("v86-Fixture: Round-Trip mit geteiltem Handwerk", () => {
     // claude:2026-10-24T20:25:00+02:00 — SAVE 91 (Bognerei): Köcher leer, Nachfüllen an.
     erwartet.state.settings.quiverAutoRefill = true;
     erwartet.state.character.quiver = null;
+    // claude:2026-10-25T00:30:00+02:00 — SAVE 92 (Ereignisse/Aufträge): Strom aus rng abgeleitet, leere Listen.
+    erwartet.state.eventRng = createRngW3(deriveEventRngSeed(erwartet.state.rng.state));
+    erwartet.state.skillEvents = defaultSkillEventState();
+    erwartet.state.workOrders = defaultWorkOrderState();
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });

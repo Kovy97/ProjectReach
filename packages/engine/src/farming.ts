@@ -1,4 +1,5 @@
 import type { ContentDB, CropDef, FarmPlot, GameState, ItemId } from "@hearthforge/shared";
+import { rollEstateEvent } from "./events"; // claude:2026-10-24T23:35:00+02:00 — 1.4.0 EV
 import { CAMP_SPEED_CUT_CAP, plotsUnlocked } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
 import { nextInt } from "./rng";
@@ -111,7 +112,7 @@ function flushReadyYield(state: GameState, content: ContentDB, plot: FarmPlot): 
  * Was nicht ins Inventar/Lager passt (Inventar voll + autoBank=off), parkt als `readyYield` auf dem
  * Plot („abholbar") statt verloren zu gehen. Spiegelt die Loot-/XP-Logik aus `completeAction`.
  */
-function grantHarvest(state: GameState, content: ContentDB, c: CropDef, plot: FarmPlot): void {
+function grantHarvest(state: GameState, content: ContentDB, c: CropDef, plot: FarmPlot, live = false): void {
   const skill = (state.skills.farming ??= { xp: 0 });
   // Passive Skilling-XP. Aktive Sammel-Tonika (gatherXpMult) multiplizieren wie bei Aktionen.
   // buffGatherXpMult zieht KEIN RNG → ohne Buff bit-identisch (Faktor 1).
@@ -119,7 +120,12 @@ function grantHarvest(state: GameState, content: ContentDB, c: CropDef, plot: Fa
   skill.xp += c.xp * buffGatherXpMult(state, content) * prestigeSkillXpMult(state, content, "farming", skill.xp);
 
   // Ertrag: ein nextInt-Zug pro Ernte (Plots speisen KEINE Mastery → kein Doppelertrag-Wurf, CEO #4).
-  const qty = nextInt(state.rng, c.yieldMin, c.yieldMax);
+  let qty = nextInt(state.rng, c.yieldMin, c.yieldMax);
+  // claude:2026-10-24T23:35:00+02:00 — Prächtige Ernte (1.4.0 EV): die vorgemerkte nächste Ernte zählt doppelt (auch offline).
+  if (state.skillEvents?.harvestReady && qty > 0) {
+    qty *= 2;
+    state.skillEvents.harvestReady = false;
+  }
   if (qty > 0) {
     // Taverne (SAVE 84): jedes frisch geerntete Stück zählt als „erzeugt" (Baseline der "produce"-
     // Aufgaben) — zum ERNTE-Zeitpunkt in voller Menge, auch wenn ein Rest als readyYield parkt
@@ -141,6 +147,8 @@ function grantHarvest(state: GameState, content: ContentDB, c: CropDef, plot: Fa
   // Farming ein noch nicht besessenes Pet gibt → für Content ohne Farming-Pet bit-identisch, und ohne
   // Ernte (kein grantHarvest-Aufruf) wird gar nicht gezogen (Determinismus-Guards unberührt).
   tryPetDrop(state, content, { kind: "skill", skill: "farming" });
+  // claude:2026-10-24T23:35:00+02:00 — nur online: 8 % je Ernte, die nächste Ernte vorzumerken (eigener Strom eventRng).
+  if (live) rollEstateEvent(state, "bountiful_harvest");
 }
 
 /**
@@ -197,7 +205,7 @@ export function effectiveGrowMs(state: GameState, content: ContentDB, c: CropDef
  * @param windowMs Länge des gerade verrechneten Tick-Fensters in ms (tick.ts: steps × TICK_MS).
  *   Default 0 = „jetzt" (Direktaufrufe in Tests).
  */
-export function tickFarmPlots(state: GameState, content: ContentDB, windowMs = 0): void {
+export function tickFarmPlots(state: GameState, content: ContentDB, windowMs = 0, live = false): void { // claude:2026-10-24T23:40:00+02:00 — live: Ereignis-Wurf (1.4.0 EV)
   const plots = state.farmPlots;
   if (!Array.isArray(plots) || plots.length === 0) return;
 
@@ -244,7 +252,7 @@ export function tickFarmPlots(state: GameState, content: ContentDB, windowMs = 0
     let stillPlanted = true;
 
     while (state.elapsedMs - t >= growMs) {
-      grantHarvest(state, content, c, plot);
+      grantHarvest(state, content, c, plot, live);
       t += growMs;
 
       if (plot.nextCropId !== null) {

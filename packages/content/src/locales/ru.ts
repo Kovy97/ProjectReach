@@ -4345,4 +4345,15 @@ export const ru: Record<string, string> = {
   "categories:arrows:name": "Стрелы",
   "categories:arrows_effect:name": "Стрелы с эффектом",
   "categories:quivers:name": "Колчаны",
+  // claude:2026-10-24T23:59:00+02:00 — Werkstattkiste (1.4.0 AU)
+  "items:work_crate_i:name": "Ящик мастерской I",
+  "items:work_crate_i:description": "Крепкий ящик, который довольный заказчик оставил у твоего верстака. Материалы твоего ремесла, аккуратно упакованные.",
+  "items:work_crate_ii:name": "Ящик мастерской II",
+  "items:work_crate_ii:description": "Крепкий ящик, который довольный заказчик оставил у твоего верстака. Материалы твоего ремесла, аккуратно упакованные.",
+  "items:work_crate_iii:name": "Ящик мастерской III",
+  "items:work_crate_iii:description": "Крепкий ящик, который довольный заказчик оставил у твоего верстака. Материалы твоего ремесла, аккуратно упакованные.",
+  "items:work_crate_iv:name": "Ящик мастерской IV",
+  "items:work_crate_iv:description": "Крепкий ящик, который довольный заказчик оставил у твоего верстака. Материалы твоего ремесла, аккуратно упакованные.",
+  "items:work_crate_v:name": "Ящик мастерской V",
+  "items:work_crate_v:description": "Крепкий ящик, который довольный заказчик оставил у твоего верстака. Материалы твоего ремесла, аккуратно упакованные.",
 };

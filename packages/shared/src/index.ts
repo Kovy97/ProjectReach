@@ -737,7 +737,10 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 // 91: Bognerei (1.4.0 Welle 2 FK, Chef 23.10.2026; claude:2026-10-24T17:45:00+02:00): neuer Skill `bowcraft` (Default 0 XP,
 //     kein Umbuchen aus Handwerk), `character.quiver` (geladener Pfeilstapel des Köchers, null = einfache Pfeile)
 //     und `settings.quiverAutoRefill` (Standard an). Bogen + Köcher ist die einzige gültige Zweihand-Nebenhand.
-export const SAVE_VERSION = 91;
+// 92: Leben im Handwerk (1.4.0 Welle 3 EV/AU, Chef 23.10.2026; claude:2026-10-24T22:40:00+02:00): eigener Zufallsstrom `eventRng`
+//     (wie `eliteRng`), `skillEvents` (Abklingzeit, aktives Ereignis, Ernte-/Fährten-Vormerkung, Logbuch) und
+//     `workOrders` (offene Arbeitsaufträge, Angebot, Sequenz). Alles nur online gewürfelt.
+export const SAVE_VERSION = 92;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -866,7 +869,8 @@ export type BuffCategory =
  * Save-State) ⇒ KEIN SAVE_VERSION-Bump. Sonder-Wirkungen feuern AUSSCHLIESSLICH beim spieler-
  * ausgelösten Verzehr — nie über Auto-Eat/Auto-Trank/Auto-Rebuff.
  */
-export type ConsumableEffectKind = "slayerReroll" | "blackMarketCrate";
+// claude:2026-10-24T22:40:00+02:00 — "workCrate": Werkstattkiste I–V der Arbeitsaufträge (1.4.0 AU, Spec §4.6 A: ohne Ausrüstung).
+export type ConsumableEffectKind = "slayerReroll" | "blackMarketCrate" | "workCrate";
 export interface ConsumableEffect {
   kind: ConsumableEffectKind;
   /** NUR kind "blackMarketCrate" (Taverne, SAVE 84): Behälter-Stufe 1..5 = Band (design/1.2.0-alive/taverne-spec-technik.md §7). */
@@ -2268,6 +2272,139 @@ export const WEAPON_TYPE_SPECIALTY: Record<WeaponType, LocalizedString> = {
   quiver:     { en: "Offhand · Arrows · Dexterity", de: "Nebenhand · Pfeile · Geschick", es: "Mano secundaria · Flechas · Destreza", fr: "Main secondaire · Flèches · Dextérité", "pt-BR": "Mão secundária · Flechas · Destreza", ru: "Вторая рука · Стрелы · Ловкость", zh: "副手 · 箭矢 · 敏捷" },
   scepter:    { en: "Magic · Ward Break",  de: "Magie · Ward-Bruch", es: "Magia · Ruptura de guarda", fr: "Magie · Brise-barrière", "pt-BR": "Magia · Quebra de guarda", ru: "Магия · Пробой оберега", zh: "魔法 · 破结界" },
 };
+
+// ───────────────────────────────────────────────────────────────────────────
+// claude:2026-10-24T22:40:00+02:00 — Zufallsereignisse und Arbeitsaufträge (1.4.0 „Feder und Stahl“ Welle 3 EV/AU, Chef 23.10.2026).
+// Zahlen wörtlich aus design/1.4.0-balance-werkstatt.md §3/§4/§5.7–5.8. Nur online gewürfelt, eigener Strom
+// `state.eventRng`; ohne Ereignis bleibt `state.rng` bitgleich.
+// ───────────────────────────────────────────────────────────────────────────
+export type SkillEventId =
+  | "rich_vein"
+  | "storm_fell"
+  | "fish_shoal"
+  | "wild_garden"
+  | "guard_change"
+  | "inspiration"
+  | "thrifty_hand"
+  | "masterpiece"
+  | "bountiful_harvest"
+  | "fresh_trail"
+  | "customer";
+export const SKILL_EVENT_IDS: readonly SkillEventId[] = [
+  "rich_vein", "storm_fell", "fish_shoal", "wild_garden", "guard_change", "inspiration",
+  "thrifty_hand", "masterpiece", "bountiful_harvest", "fresh_trail", "customer",
+];
+/** Ein laufendes Wirk-Ereignis (höchstens eins). Zähl-Ereignisse: `actionsLeft` > 0; `msLeft` = Online-Restzeit. */
+export interface ActiveSkillEvent {
+  id: SkillEventId;
+  skill: SkillId;
+  actionsLeft: number;
+  msLeft: number;
+}
+/** Logbuch-Eintrag (die letzten EVENT_LOG_MAX Ereignisse). `atMs` = state.elapsedMs beim Auslösen. */
+export interface SkillEventLogEntry {
+  seq: number;
+  id: SkillEventId;
+  skill: SkillId;
+  atMs: number;
+  itemId?: ItemId;
+  qty?: number;
+}
+export interface SkillEventState {
+  /** Online-Skilling-ms bis zum nächsten Wurf (zählt die effektive Dauer abgeschlossener Online-Aktionen). */
+  cooldownMs: number;
+  active: ActiveSkillEvent | null;
+  /** Prächtige Ernte vorgemerkt: die nächste Ernte (auch offline) zählt doppelt. */
+  harvestReady: boolean;
+  /** Frische Fährte vorgemerkt: der nächste Fang bekommt FRESH_TRAIL_EXTRA_ROLLS Würfe mehr. */
+  trailReady: boolean;
+  log: SkillEventLogEntry[];
+  /** Fortlaufende Nummer (UI-Diff für die Ereigniskarte). */
+  seq: number;
+}
+export function defaultSkillEventState(): SkillEventState {
+  return { cooldownMs: EVENT_COOLDOWN_MS, active: null, harvestReady: false, trailReady: false, log: [], seq: 0 };
+}
+export const EVENT_COOLDOWN_MS = 600_000;
+export const EVENT_HAZARD_MS = 900_000;
+export const EVENT_MAX_CHANCE = 0.25;
+/** Verfall der Zähl-Ereignisse (nur Online-Zeit). */
+export const EVENT_EXPIRE_MS = 600_000;
+export const EVENT_LOG_MAX = 10;
+export type SkillEventPool = "mining" | "woodcutting" | "fishing" | "foraging" | "thieving" | "craftGear" | "craftOther";
+export const EVENT_WEIGHTS: Readonly<Record<SkillEventPool, Partial<Record<SkillEventId, number>>>> = {
+  mining: { rich_vein: 90, customer: 10 },
+  woodcutting: { storm_fell: 90, customer: 10 },
+  fishing: { fish_shoal: 90, customer: 10 },
+  foraging: { wild_garden: 90, customer: 10 },
+  thieving: { guard_change: 100 },
+  craftGear: { thrifty_hand: 40, inspiration: 30, masterpiece: 20, customer: 10 },
+  craftOther: { thrifty_hand: 90, customer: 10 },
+};
+/** Die acht Handwerks-Skills mit Ereignissen (Pool craftGear/craftOther nach Haupt-Output der Aktion). */
+export const EVENT_CRAFT_SKILLS: ReadonlySet<SkillId> = new Set([
+  "smithing", "cooking", "leatherworking", "tailoring", "jewelcrafting", "runecrafting", "herblore", "bowcraft",
+]);
+export const RICH_VEIN_ACTIONS = 20;
+export const STORM_FELL_SECONDS = 90;
+export const STORM_FELL_MIN_QTY = 3;
+export const FISH_SHOAL_MS = 180_000;
+export const FISH_SHOAL_SPEED = 1.5;
+export const WILD_GARDEN_ACTIONS = 5;
+export const WILD_GARDEN_MAX_CHANCE = 0.25;
+export const GUARD_CHANGE_MS = 300_000;
+export const GUARD_CHANGE_SUCCESS_BONUS = 0.1;
+export const INSPIRATION_CRAFTS = 10;
+export const INSPIRATION_SUFFIX_MULT = 2;
+export const THRIFTY_HAND_CRAFTS = 25;
+export const THRIFTY_HAND_MAX_MS = 360_000;
+export const THRIFTY_HAND_PRESERVE = 0.3;
+export const THRIFTY_HAND_PRESERVE_CAP = 0.8;
+export const MASTERPIECE_ROLL_FLOOR = 0.75;
+export const ESTATE_EVENT_CHANCE = 0.08;
+export const FRESH_TRAIL_EXTRA_ROLLS = 5;
+
+export type WorkOrderKind = "produce" | "deliver";
+/** Ein Arbeitsauftrag. Alles Feste wird beim Angebot bestimmt (Spec §4). Fortschritt = producedById − baseline. */
+export interface WorkOrder {
+  id: number;
+  kind: WorkOrderKind;
+  skill: SkillId;
+  actionId: ActionId;
+  itemId: ItemId;
+  count: number;
+  minutes: number;
+  band: number;
+  gold: number;
+  xp: number;
+  customerId: string;
+  /** stats.producedById[itemId] bei Annahme (beim Angebot 0, gesetzt in acceptWorkOrder). */
+  baseline: number;
+}
+export interface WorkOrderState {
+  open: WorkOrder[];
+  offer: WorkOrder | null;
+  /** Online-Restzeit des Angebots. */
+  offerMsLeft: number;
+  seq: number;
+  delivered: number;
+}
+export function defaultWorkOrderState(): WorkOrderState {
+  return { open: [], offer: null, offerMsLeft: 0, seq: 0, delivered: 0 };
+}
+export const ORDER_MINUTES: readonly number[] = [20, 25, 30, 35, 40];
+export const ORDER_XP_MINUTE_FACTOR = 1.5;
+export const ORDER_GOLD_SELL_FACTOR = 1.2;
+export const ORDER_GOLD_KIND_FACTOR: Readonly<Record<WorkOrderKind, number>> = { deliver: 1.0, produce: 1.2 };
+export const ORDER_CRATE_CHANCE = 0.1;
+export const ORDER_OFFER_TTL_MS = 900_000;
+export const ORDER_MAX_OPEN = 3;
+export const ORDER_TIER_FLOOR_BELOW = 25;
+export const ORDER_TOP_TIER_WEIGHT = 3;
+export const ORDER_INPUT_REACH_DEPTH = 3;
+/** Sammel-Skills mit Lieferaufträgen (Chef: Erz, Holz, Fisch, Kräuter). */
+export const ORDER_GATHER_SKILLS: ReadonlySet<SkillId> = new Set(["mining", "woodcutting", "fishing", "foraging"]);
+export const WORK_CRATE_MATERIAL_KINDS = 3;
 
 // claude:2026-10-24T17:45:00+02:00 — Pfeile und Köcher (1.4.0 „Feder und Stahl“ FK, Chef 23.10.2026; Zahlen design/1.4.0-balance-fernkampf.md §3).
 /**
@@ -5603,6 +5740,8 @@ export interface ContentDB {
    */
   tavernGuests?: TavernGuestDef[];
   tavernTasks?: TavernTaskTemplateDef[];
+  /** claude:2026-10-24T23:00:00+02:00 — Zusätzliche Auftraggeber der Arbeitsaufträge (1.4.0 AU), z. B. für Schneidern und Bognerei. */
+  orderCustomers?: OrderCustomerDef[];
   /** Jagen (1.2.0): Gebiete mit Stufe, Fallenzeit und XP. OPTIONAL → Fehlen = Jagd inert. */
   huntingZones?: HuntZoneDef[];
 }
@@ -7044,6 +7183,12 @@ export interface GameState {
    * Spieler gegen Zerlegen gesperrt hat. Set als Record (Muster `discoveredItems`). Optional; fehlt ⇒ nichts gesperrt.
    */
   lockedItems?: Record<string, true>;
+  /** claude:2026-10-24T22:40:00+02:00 — Zufallsstrom der Ereignisse (SAVE 92, wie eliteRng). */
+  eventRng?: RngState;
+  /** claude:2026-10-24T22:40:00+02:00 — Zufallsereignisse (SAVE 92). */
+  skillEvents?: SkillEventState;
+  /** claude:2026-10-24T22:40:00+02:00 — Arbeitsaufträge (SAVE 92). */
+  workOrders?: WorkOrderState;
   /** Collection-Log: je Monster die bereits erbeuteten Drop-Item-IDs (für „???"-Anzeige bis entdeckt). */
   seenDrops: Record<MonsterId, ItemId[]>;
   /**
@@ -7519,6 +7664,23 @@ export interface TavernGuestDef {
   greeting: LocalizedString;
   /** "daily" = im normalen Pool; "rare" = nur an Hash-Tagen (stranger 1/12, ashka 1/4). */
   rarity: "daily" | "rare";
+}
+
+/**
+ * claude:2026-10-24T23:00:00+02:00 — Auftraggeber der Arbeitsaufträge, der keine Tavernen-Gast ist (1.4.0 AU). Die Tavernen-Gäste mit
+ * passendem Skill vergeben weiter Aufträge; diese Liste ergänzt fehlende Berufe (Schneidern, Bognerei).
+ */
+export interface OrderCustomerDef {
+  id: string;
+  name: LocalizedString;
+  race: TavernRace;
+  sex: "m" | "f";
+  role: LocalizedString;
+  skill: SkillId;
+  greeting: LocalizedString;
+  /** Ansprache mit {count}/{target} je Auftragsart. */
+  produceLine?: LocalizedString;
+  deliverLine?: LocalizedString;
 }
 
 export type TavernTaskKind = "deliver" | "produce" | "run" | "kill" | "dungeon" | "champion" | "assortment";
