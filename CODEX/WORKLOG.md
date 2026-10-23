@@ -83,6 +83,12 @@ SAVE_VERSION bleibt 88. Vorgabe-Stil bleibt reforged.
 
 **19.10. (claude:2026-10-19T20:40:00+02:00) — Ziel design/1.3.0-goal.md abgeschlossen.** Chef: „Ist abgnommen!“ (1.3.0 im Testprofil gespielt und freigegeben). Alle Punkte unter „Fertig, wenn“ erfüllt.
 
+**23.10. (claude:2026-10-23T15:50:00+02:00) — Plan 1.4.0 „Feder und Stahl“ entschieden, Goal-Prompt liegt bereit.**
+Chef hat den Bauplan 1.4 per Quiz beantwortet (`design/1.4-plan.html`, Artifact KQRSdym95JTdpNuE5EdnAR, Sammlung `answers`).
+Arbeitsauftrag: `design/1.4.0-goal.md`. Entschiedener Plan mit Raid-Design und 14 Annahmen zum Abhaken:
+`design/1.4.0-plan.html` (Artifact JLN1AnDrd5hmWExX7z4Mb7, Sammlung `annahmen`). Noch nichts gebaut, kein Commit.
+Wichtig für den Bau: interne Skill-ID der Bognerei `bowcraft` (persistence `SKILL_RENAME` faltet `fletching` bei jedem Laden).
+
 ## 2026-10-18 — Claude: Prestige „Der Aschesturz“ (1.3-Erweiterung)
 
 <!-- claude:2026-10-18T15:30:00+02:00 -->

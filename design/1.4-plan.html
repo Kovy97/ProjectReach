@@ -1,0 +1,1359 @@
+<title>Bauplan 1.4</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Alegreya:ital,wght@0,400;0,600;1,400&display=swap">
+<!-- claude:2026-10-23T14:15:00+02:00 — Plan 1.4 mit Ankreuz-Fragen; Antworten liegen im db-Capability (Sammlung "answers"), Rückfall localStorage -->
+<style>
+/* Layout: Dossier auf Basalt wie der Begleiter-Plan 1.3.0. Links eine mitlaufende Inhaltsleiste mit Fortschritt je System,
+   rechts Kopf, Überblick, Verbindungen, elf Systeme in vier Wellen, Fahrplan. Fragen sind eigene Karten mit Optionszeilen. */
+:root {
+  color-scheme: dark;
+  --bg: #121315;
+  --panel: #1b1d20;
+  --panel-2: #22252a;
+  --line: #34383e;
+  --line-2: #474c54;
+  --text: #ddd6c8;
+  --muted: #9a9488;
+  --gold: #d6b86c;
+  --gold-dim: #8c7442;
+  --ember: #d98a6a;
+  --ok: #8fbf86;
+  --warn: #e0a15a;
+  --bad: #d7766b;
+  --info: #7fa6c9;
+  --sel: rgba(214, 184, 108, .10);
+  --f-display: "Cinzel", "Trajan Pro", Georgia, serif;
+  --f-body: "Alegreya", Georgia, "Times New Roman", serif;
+  --f-mono: ui-monospace, "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: 72px; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--f-body); font-size: 17px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+.wrap {
+  max-width: 1240px; margin: 0 auto;
+  padding-block: 36px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px;
+}
+h1, h2, h3, h4 { font-family: var(--f-display); font-weight: 700; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(30px, 4.4vw, 48px); letter-spacing: .02em; color: var(--gold); }
+h2 { font-size: clamp(21px, 2.5vw, 27px); letter-spacing: .03em; color: var(--gold); }
+h3 { font-size: 16px; letter-spacing: .05em; color: var(--text); margin-bottom: 8px; }
+h4 { font-size: 15px; letter-spacing: .03em; color: var(--text); line-height: 1.35; }
+p { margin: 0 0 12px; max-width: 72ch; }
+ul, ol { margin: 0 0 12px; padding-left: 20px; max-width: 76ch; }
+li { margin-bottom: 6px; }
+b, strong { color: var(--gold); font-weight: 600; }
+code { font-family: var(--f-mono); font-size: .8em; color: var(--muted); background: var(--panel-2); padding: 1px 5px; border: 1px solid var(--line); white-space: nowrap; }
+.muted { color: var(--muted); }
+.eyebrow { font-family: var(--f-display); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 10px; }
+a { color: var(--gold); }
+a:focus-visible, button:focus-visible, input:focus-visible + .o-box, textarea:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* Inhaltsleiste */
+.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; max-height: calc(100vh - 48px); overflow: auto; padding-right: 4px; }
+.toc .eyebrow { margin-bottom: 14px; }
+.toc ol { list-style: none; padding: 0; margin: 0 0 18px; }
+.toc li { margin: 0; }
+.toc .wave { font-family: var(--f-display); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-dim); margin: 14px 0 6px; }
+.toc a { display: flex; justify-content: space-between; gap: 8px; padding: 5px 8px; color: var(--text); text-decoration: none; font-size: 15px; border-left: 2px solid transparent; }
+.toc a:hover { background: var(--panel); border-left-color: var(--gold-dim); }
+.toc .cnt { font-family: var(--f-mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.toc .cnt.full { color: var(--ok); }
+
+/* Kopf */
+header { border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 36px; }
+header .lead { font-size: 19px; margin-top: 14px; max-width: 70ch; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 24px; }
+.stat { background: var(--panel); border: 1px solid var(--line); padding: 12px 14px; }
+.stat .n { font-family: var(--f-display); font-size: 28px; color: var(--gold); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat .l { font-size: 14px; color: var(--muted); }
+.savebar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin-top: 16px; font-size: 15px; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--muted); margin-right: 6px; vertical-align: 1px; }
+.dot.ok { background: var(--ok); } .dot.warn { background: var(--warn); } .dot.bad { background: var(--bad); }
+.btn { font-family: var(--f-display); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); background: var(--panel-2); border: 1px solid var(--gold-dim); padding: 8px 14px; cursor: pointer; }
+.btn:hover { background: var(--panel); border-color: var(--gold); }
+
+section.block { margin-bottom: 56px; }
+section.block > h2 { margin-bottom: 14px; }
+
+/* Überblick-Tabelle */
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); background: var(--panel); }
+table { border-collapse: collapse; width: 100%; min-width: 860px; font-size: 15px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+th { font-family: var(--f-display); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-dim); background: var(--panel-2); }
+td a { text-decoration: none; font-weight: 600; }
+tr.wave-row td { background: var(--panel-2); font-family: var(--f-display); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+.size { font-family: var(--f-display); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border: 1px solid currentColor; white-space: nowrap; }
+.s-s { color: var(--ok); } .s-m { color: var(--info); } .s-l { color: var(--ember); }
+.yes { color: var(--warn); } .no { color: var(--muted); }
+
+/* Verbindungen */
+.links { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.link { background: var(--panel); border: 1px solid var(--line); padding: 14px 16px; min-width: 0; }
+.link .path { font-family: var(--f-display); font-size: 13px; letter-spacing: .06em; color: var(--gold); margin-bottom: 6px; }
+.link .path span { color: var(--gold-dim); padding: 0 6px; }
+.link p { font-size: 15.5px; margin: 0; }
+
+/* System-Abschnitt */
+.sys { border-top: 1px solid var(--line); padding-top: 30px; margin-bottom: 64px; }
+.sys-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; margin-bottom: 6px; }
+.sys-code { font-family: var(--f-mono); font-size: 13px; color: var(--gold-dim); border: 1px solid var(--line-2); padding: 1px 7px; }
+.sys .ask { font-size: 18px; color: var(--muted); font-style: italic; margin: 6px 0 18px; max-width: 72ch; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 22px; }
+.chip { font-size: 14px; padding: 3px 10px; background: var(--panel-2); border: 1px solid var(--line); color: var(--text); }
+.chip i { font-style: normal; color: var(--muted); margin-right: 4px; }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); gap: 18px; margin-bottom: 22px; }
+.pane { background: var(--panel); border: 1px solid var(--line); padding: 16px 18px; min-width: 0; }
+.pane.now { border-left: 3px solid var(--line-2); }
+.pane.plan { border-left: 3px solid var(--gold-dim); }
+.pane ul { padding-left: 18px; }
+.pane li { font-size: 16px; }
+.pane p { font-size: 16px; }
+.sub { margin-top: 14px; }
+.mini { width: 100%; min-width: 0; border-collapse: collapse; font-size: 14.5px; margin: 6px 0 12px; }
+.mini th, .mini td { padding: 6px 8px; }
+.mini td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mini-wrap { overflow-x: auto; }
+
+/* Fragen */
+.qs { display: grid; gap: 14px; }
+.qs-title { font-family: var(--f-display); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-dim); margin: 4px 0 2px; }
+.q { background: var(--panel); border: 1px solid var(--line); padding: 16px 18px; min-width: 0; }
+.q.done { border-color: var(--gold-dim); }
+.q-head { display: flex; gap: 10px; align-items: baseline; justify-content: space-between; flex-wrap: wrap; margin-bottom: 6px; }
+.q-head .left { display: flex; gap: 10px; align-items: baseline; min-width: 0; }
+.q-id { font-family: var(--f-mono); font-size: 12px; color: var(--gold-dim); white-space: nowrap; }
+.q-state { font-size: 13px; color: var(--muted); white-space: nowrap; }
+.q.done .q-state { color: var(--ok); }
+.q-ctx { font-size: 15.5px; color: var(--muted); margin: 0 0 10px; }
+.opts { display: grid; gap: 8px; }
+.opt { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 4px 10px; align-items: start; padding: 10px 12px; border: 1px solid var(--line); background: var(--panel-2); cursor: pointer; position: relative; }
+.opt:hover { border-color: var(--line-2); }
+.opt input { position: absolute; opacity: 0; pointer-events: none; }
+.o-box { width: 18px; height: 18px; border: 1.5px solid var(--line-2); margin-top: 3px; display: inline-block; position: relative; }
+.opt input[type="radio"] + .o-box { border-radius: 50%; }
+.opt input:checked + .o-box { border-color: var(--gold); background: var(--gold); box-shadow: inset 0 0 0 3px var(--panel-2); }
+.opt:has(input:checked) { border-color: var(--gold-dim); background: var(--sel); }
+.o-body { min-width: 0; }
+.o-t { font-weight: 600; color: var(--text); }
+.o-d { display: block; font-size: 15px; color: var(--muted); margin-top: 2px; }
+.rec { font-family: var(--f-display); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ok); border: 1px solid currentColor; padding: 0 6px; margin-left: 8px; white-space: nowrap; vertical-align: 2px; }
+.note { width: 100%; margin-top: 10px; min-height: 40px; resize: vertical; background: var(--bg); color: var(--text); border: 1px solid var(--line); padding: 8px 10px; font-family: var(--f-body); font-size: 15.5px; }
+.note::placeholder { color: var(--muted); }
+
+/* Item-Feld-Vorschau */
+.cells { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+.cell { width: 58px; height: 58px; position: relative; background: radial-gradient(circle at 50% 40%, #2b2f35, #17191c 70%); border: 1.5px solid var(--rar, #5b7fd1); flex: none; }
+.cell svg.ic { position: absolute; inset: 9px; width: 40px; height: 40px; color: #c9c2b2; }
+.cell .tl { position: absolute; top: 2px; left: 3px; font-size: 11px; color: var(--gold); }
+.cell .qty { position: absolute; bottom: 1px; right: 3px; font-family: var(--f-mono); font-size: 10px; color: var(--text); }
+.cell .roman { position: absolute; bottom: 2px; left: 2px; font-family: var(--f-display); font-size: 10px; font-weight: 700; color: #1b1d20; background: var(--gold); padding: 0 3px; line-height: 13px; }
+.cell .stars { position: absolute; bottom: 1px; left: 2px; right: 2px; font-size: 9px; letter-spacing: -1px; color: var(--gold); line-height: 10px; white-space: nowrap; }
+.cell .notches { position: absolute; bottom: 3px; left: 4px; right: 4px; height: 4px; display: grid; grid-template-columns: repeat(12, 1fr); gap: 1px; }
+.cell .notches i { background: #3c4048; }
+.cell .notches i.on { background: var(--gold); }
+.cell .hand { position: absolute; bottom: 2px; left: 2px; width: 15px; height: 15px; color: var(--gold); }
+.cell .hand-txt { position: absolute; bottom: 2px; left: 2px; font-family: var(--f-mono); font-size: 9px; color: var(--gold); border: 1px solid var(--gold-dim); padding: 0 2px; line-height: 11px; background: #17191c; }
+.cell .tab { position: absolute; left: -1px; top: 18px; width: 5px; height: 22px; background: var(--gold); }
+.cell-cap { font-size: 12.5px; color: var(--muted); text-align: center; margin-top: 4px; }
+.cellbox { display: flex; flex-direction: column; align-items: center; }
+
+/* Wellen und Fahrplan */
+.waves { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.wavecard { background: var(--panel); border: 1px solid var(--line); padding: 14px 16px; min-width: 0; }
+.wavecard .wn { font-family: var(--f-display); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-dim); }
+.wavecard h3 { color: var(--gold); margin: 4px 0 8px; font-size: 18px; }
+.wavecard ul { padding-left: 18px; margin: 0; }
+.wavecard li { font-size: 15.5px; }
+.foot { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 16px; margin-top: 30px; }
+.copybox { width: 100%; min-height: 160px; margin-top: 10px; background: var(--bg); color: var(--text); border: 1px solid var(--line); font-family: var(--f-mono); font-size: 13px; padding: 10px; }
+
+/* Schmale Fenster */
+.mbar { display: none; }
+@media (max-width: 1000px) {
+  .wrap { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .toc { display: none; }
+  .mbar { display: flex; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); padding: 8px 0; margin-bottom: 16px; gap: 6px; overflow-x: auto; }
+  .mbar a { flex: none; font-size: 13px; padding: 4px 9px; border: 1px solid var(--line); color: var(--text); text-decoration: none; background: var(--panel); white-space: nowrap; }
+  .mbar a .cnt { font-family: var(--f-mono); font-size: 11px; color: var(--muted); margin-left: 4px; }
+  .mbar a .cnt.full { color: var(--ok); }
+  .cols { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) { body { font-size: 16px; } .stat .n { font-size: 24px; } .q, .pane { padding: 14px; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-sword" viewBox="0 0 40 40"><path d="M30 4l6 0 0 6-17 17-3-3z" fill="currentColor"/><path d="M12 22l6 6-3 3-2-2-5 5-3-3 5-5-2-2z" fill="currentColor" opacity=".8"/></symbol>
+  <symbol id="i-bow" viewBox="0 0 40 40"><path d="M10 4c14 4 22 12 26 26" stroke="currentColor" stroke-width="3" fill="none"/><path d="M10 4L36 30" stroke="currentColor" stroke-width="1" opacity=".7"/><path d="M6 34l18-18" stroke="currentColor" stroke-width="2"/><path d="M24 16l-1 5 5-1z" fill="currentColor"/></symbol>
+  <symbol id="i-grips" viewBox="0 0 16 16"><rect x="2" y="6.5" width="12" height="3" fill="currentColor"/><rect x="4" y="3" width="3" height="10" fill="currentColor" opacity=".85"/><rect x="9" y="3" width="3" height="10" fill="currentColor" opacity=".85"/></symbol>
+  <symbol id="i-hands" viewBox="0 0 16 16"><path d="M2 14V7c0-1 1.5-1 1.5 0V4c0-1 1.5-1 1.5 0v5h.5V3c0-1 1.5-1 1.5 0v8L6 14z" fill="currentColor"/><path d="M14 14V7c0-1-1.5-1-1.5 0V4c0-1-1.5-1-1.5 0v5h-.5V3c0-1-1.5-1-1.5 0v8l1 3z" fill="currentColor" opacity=".8"/></symbol>
+</svg>
+
+<div class="wrap">
+
+<nav class="toc" aria-label="Inhalt">
+  <div class="eyebrow">Inhalt</div>
+  <ol>
+    <li><a href="#ueberblick">Auf einen Blick</a></li>
+    <li><a href="#verbindungen">Wie es zusammenhängt</a></li>
+    <li><a href="#grundsatz">Grundsatzfragen <span class="cnt" data-cnt="g"></span></a></li>
+  </ol>
+  <div class="wave">Welle 1 · Klarheit</div>
+  <ol>
+    <li><a href="#zweihand">Zweihand-Anzeige <span class="cnt" data-cnt="zh"></span></a></li>
+    <li><a href="#stufen">Stufen-Anzeige <span class="cnt" data-cnt="st"></span></a></li>
+    <li><a href="#laendereien">Farming &amp; Jagd <span class="cnt" data-cnt="la"></span></a></li>
+    <li><a href="#buff-food">Buff-Food <span class="cnt" data-cnt="bf"></span></a></li>
+  </ol>
+  <div class="wave">Welle 2 · Werkstatt</div>
+  <ol>
+    <li><a href="#lager">Materiallager <span class="cnt" data-cnt="ml"></span></a></li>
+    <li><a href="#bergung">Bergung <span class="cnt" data-cnt="bg"></span></a></li>
+    <li><a href="#bogenbau">Bogenbau &amp; Fernkampf <span class="cnt" data-cnt="fk"></span></a></li>
+  </ol>
+  <div class="wave">Welle 3 · Leben im Handwerk</div>
+  <ol>
+    <li><a href="#ereignisse">Ereignisse <span class="cnt" data-cnt="ev"></span></a></li>
+    <li><a href="#auftraege">Arbeitsaufträge <span class="cnt" data-cnt="au"></span></a></li>
+  </ol>
+  <div class="wave">Welle 4 · Endgame</div>
+  <ol>
+    <li><a href="#raids">Raids <span class="cnt" data-cnt="ra"></span></a></li>
+    <li><a href="#weltkarte">Weltkarte <span class="cnt" data-cnt="wk"></span></a></li>
+  </ol>
+  <ol>
+    <li><a href="#fahrplan">Fahrplan &amp; Antworten</a></li>
+  </ol>
+</nav>
+
+<main style="min-width:0">
+
+<div class="mbar" aria-label="Sprungleiste">
+  <a href="#grundsatz">Grundsatz<span class="cnt" data-cnt="g"></span></a>
+  <a href="#zweihand">Zweihand<span class="cnt" data-cnt="zh"></span></a>
+  <a href="#stufen">Stufen<span class="cnt" data-cnt="st"></span></a>
+  <a href="#laendereien">Farming &amp; Jagd<span class="cnt" data-cnt="la"></span></a>
+  <a href="#buff-food">Buff-Food<span class="cnt" data-cnt="bf"></span></a>
+  <a href="#lager">Lager<span class="cnt" data-cnt="ml"></span></a>
+  <a href="#bergung">Bergung<span class="cnt" data-cnt="bg"></span></a>
+  <a href="#bogenbau">Bogenbau<span class="cnt" data-cnt="fk"></span></a>
+  <a href="#ereignisse">Ereignisse<span class="cnt" data-cnt="ev"></span></a>
+  <a href="#auftraege">Aufträge<span class="cnt" data-cnt="au"></span></a>
+  <a href="#raids">Raids<span class="cnt" data-cnt="ra"></span></a>
+  <a href="#weltkarte">Weltkarte<span class="cnt" data-cnt="wk"></span></a>
+  <a href="#fahrplan">Antworten</a>
+</div>
+
+<header>
+  <div class="eyebrow">Grim Reach · Update 1.4 · Plan zur Abstimmung · 23.10.2026</div>
+  <h1>Bauplan 1.4</h1>
+  <p class="lead">Elf Systeme aus deiner Liste. Jedes habe ich gegen den heutigen Code geprüft, ausgebaut und so zugeschnitten, dass es an vorhandene Teile andockt statt daneben zu stehen. Wo du entscheiden musst, steht eine Frage zum Ankreuzen, meine Empfehlung ist markiert.</p>
+  <div class="stats">
+    <div class="stat"><div class="n">11</div><div class="l">Systeme</div></div>
+    <div class="stat"><div class="n">4</div><div class="l">Wellen, nach Abhängigkeit geordnet</div></div>
+    <div class="stat"><div class="n" id="q-total">–</div><div class="l">Fragen an dich</div></div>
+    <div class="stat"><div class="n" id="q-done">0</div><div class="l">beantwortet</div></div>
+  </div>
+  <div class="savebar"><span id="save-state"><span class="dot"></span>Verbinde mit dem Speicher …</span></div>
+</header>
+
+<section class="block" id="ueberblick">
+  <h2>Auf einen Blick</h2>
+  <p class="muted">„Spielstand“ heißt: das System braucht neue gespeicherte Felder, also eine neue Save-Version mit Migration und Kompatibilitätstest. Alte Spielstände laden weiter, das gilt für alles hier.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th style="width:17%">System</th><th style="width:43%">Kern der Lösung</th><th>Aufwand</th><th>Spielstand</th><th style="width:18%">Neue Bilder</th></tr></thead>
+    <tbody>
+      <tr class="wave-row"><td colspan="5">Welle 1 · Klarheit</td></tr>
+      <tr><td><a href="#zweihand">Zweihand-Anzeige</a></td><td>Kopfzeile der Itemkarte liest das Feld <code>twoHanded</code>, Symbol im Item-Feld, gesperrter Nebenhand-Platz.</td><td><span class="size s-s">klein</span></td><td class="no">nein</td><td>1 Symbol</td></tr>
+      <tr><td><a href="#stufen">Stufen-Anzeige</a></td><td>Stufe I–XII aus der Trage-Anforderung abgeleitet, auf jeder Karte und in jedem Feld, sortier- und filterbar.</td><td><span class="size s-s">klein</span></td><td class="no">nein</td><td>keine</td></tr>
+      <tr><td><a href="#laendereien">Farming &amp; Jagd</a></td><td>Eigene Gruppe „Ländereien“ mit Live-Status. Der Kopf zeigt nie mehr „Untätig“, solange Felder oder Fallen arbeiten.</td><td><span class="size s-s">klein</span></td><td class="no">nein</td><td>1–2 Symbole</td></tr>
+      <tr><td><a href="#buff-food">Buff-Food</a></td><td>Zwei Plätze: Heilnahrung und Mahlzeit. Auto-Essen frisst keine Mahlzeiten mehr weg.</td><td><span class="size s-s">klein</span></td><td class="yes">ja, 2 Felder</td><td>keine</td></tr>
+      <tr class="wave-row"><td colspan="5">Welle 2 · Werkstatt</td></tr>
+      <tr><td><a href="#lager">Materiallager</a></td><td>Materialien belegen keine Bankplätze mehr und haben feste Regalplätze. Technisch bleiben sie im Bankbestand, darum funktioniert jedes Rezept unverändert.</td><td><span class="size s-m">mittel</span></td><td class="yes">ja, 1 Einstellung</td><td>Regal-Grafik</td></tr>
+      <tr><td><a href="#bergung">Bergung</a></td><td>Zerlegbar ist, was kein Rezept hat. Das trennt Beute und Handwerk exakt, ohne Herkunft zu speichern.</td><td><span class="size s-m">mittel</span></td><td class="no">nein</td><td>1–2 Icons</td></tr>
+      <tr><td><a href="#bogenbau">Bogenbau &amp; Fernkampf</a></td><td>Bogenbau wird wieder eigener Skill, der Köcher wird Nebenhand der Bögen, die Bogenleiter kommt auf Bestwerte.</td><td><span class="size s-l">groß</span></td><td class="yes">ja, Skill-Split</td><td>~20 (Skill, Köcher)</td></tr>
+      <tr class="wave-row"><td colspan="5">Welle 3 · Leben im Handwerk</td></tr>
+      <tr><td><a href="#ereignisse">Ereignisse</a></td><td>Eigener Zufallsstrom, kurze Ereignisse je Skill-Art, Vorlage sind die Champion-Spawns.</td><td><span class="size s-m">mittel</span></td><td class="yes">ja</td><td>~12 Ereigniskarten</td></tr>
+      <tr><td><a href="#auftraege">Arbeitsaufträge</a></td><td>Kunden erscheinen als Handwerks-Ereignis. Die Auftrags-Engine der abgeschalteten Taverne steht schon.</td><td><span class="size s-m">mittel</span></td><td class="yes">ja</td><td>Kunden-Porträts</td></tr>
+      <tr class="wave-row"><td colspan="5">Welle 4 · Endgame</td></tr>
+      <tr><td><a href="#raids">Raids</a></td><td>Eintritt in Gold, Bosse mit Phasen, Raid-Beute über Götteisen, Wochen-Modifikatoren.</td><td><span class="size s-l">groß</span></td><td class="yes">ja</td><td>~25 (Bosse, Kulissen, Beute)</td></tr>
+      <tr><td><a href="#weltkarte">Weltkarte</a></td><td>Zweite Ansicht der Zonenwahl als gemalte Karte, das Raster bleibt.</td><td><span class="size s-m">mittel</span></td><td class="no">nein</td><td>1 große Karte</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="block" id="verbindungen">
+  <h2>Wie es zusammenhängt</h2>
+  <p>Die Reihenfolge der Wellen folgt diesen Verbindungen. Jedes System macht ein anderes stärker, deshalb kommen die kleinen Klarheits-Punkte zuerst und die Raids zuletzt.</p>
+  <div class="links">
+    <div class="link"><div class="path">Bergung<span>→</span>Materiallager</div><p>Zerlegte Beute liefert Material direkt ins passende Regal.</p></div>
+    <div class="link"><div class="path">Stufen<span>→</span>Lager, Bergung, Raids</div><p>Eine Stufenzahl ordnet die Regale, bestimmt den Bergungs-Ertrag und macht Raid-Beute als Stufe XIII lesbar.</p></div>
+    <div class="link"><div class="path">Bogenbau<span>→</span>Raids</div><p>Fernkampf ist heute der schwächste Stil. Ohne Rework wären Raids für Bogenschützen eine Wand.</p></div>
+    <div class="link"><div class="path">Buff-Food<span>→</span>Raids</div><p>Raids sind lange Läufe. Dort muss die Mahlzeit verlässlich halten und darf nicht als Heilung verschwinden.</p></div>
+    <div class="link"><div class="path">Ereignisse<span>→</span>Arbeitsaufträge</div><p>Ein Auftrag ist ein Handwerks-Ereignis. Ein System, ein Zufallsstrom, eine Anzeige.</p></div>
+    <div class="link"><div class="path">Raids<span>→</span>Goldkreislauf</div><p>Die Raid-Gebühr ersetzt den Goldabfluss, den das Lager der Bank wegnimmt, weil weniger Bankplätze gekauft werden.</p></div>
+    <div class="link"><div class="path">Bogenbau<span>→</span>Federn</div><p><code>feather</code> fällt heute aus 28 Beutetabellen und wird nirgends gebraucht. Köcher machen daraus wieder einen Rohstoff.</p></div>
+    <div class="link"><div class="path">Ereignisse<span>→</span>Ländereien</div><p>Prächtige Ernte und frische Fährte geben den Feldern und Fallen eigene Glücksmomente.</p></div>
+  </div>
+</section>
+
+<section class="block" id="grundsatz">
+  <h2>Grundsatzfragen</h2>
+  <div class="qs">
+    <div class="q" data-q="g-1" data-sec="g" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">G-1</span><h4>Wie schneiden wir 1.4?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Der Plan ist groß. Ich kann ihn als ein Update bauen oder Etappen veröffentlichen, die Spieler früher bekommen.</p>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="g-1" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Ein großes 1.4.0 mit allem</span><span class="rec">Empfehlung</span><span class="o-d">Wellen intern auf dem Testzweig, du nimmst jede Welle ab, veröffentlicht wird einmal. Die Weltkarte darf als 1.4.x nachkommen.</span></span></label>
+        <label class="opt"><input type="radio" name="g-1" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Zwei Schritte</span><span class="o-d">1.4.0 mit Wellen 1–3 (Klarheit, Werkstatt, Ereignisse), danach 1.5.0 mit den Raids.</span></span></label>
+        <label class="opt"><input type="radio" name="g-1" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Jede Welle ein eigenes Update</span><span class="o-d">1.4.0, 1.4.1, 1.4.2, 1.4.3. Schnellste Lieferung, aber vier Patchnotes und vier Uploads.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu G-1"></textarea>
+    </div>
+    <div class="q" data-q="g-2" data-sec="g" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">G-2</span><h4>Arbeitstitel des Updates?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Nur der Name für Plan und Patchnotes. Eigener Vorschlag gern in die Anmerkung.</p>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="g-2" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Feder und Stahl</span><span class="o-d">EN „Feather and Steel“. Betont Werkstatt und Bogenbau.</span></span></label>
+        <label class="opt"><input type="radio" name="g-2" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Die Kriegskasse</span><span class="o-d">EN „The War Chest“. Betont Raids und Gold.</span></span></label>
+        <label class="opt"><input type="radio" name="g-2" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Werkstatt und Heerzug</span><span class="o-d">EN „Forge and Warpath“. Nennt beide Hälften.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Eigener Name oder Anmerkung" aria-label="Anmerkung zu G-2"></textarea>
+    </div>
+    <div class="q" data-q="g-3" data-sec="g" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">G-3</span><h4>Passt die Reihenfolge der Wellen?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Klarheit → Werkstatt → Ereignisse → Raids. Raid-Lore und Raid-Bilder starten trotzdem in Welle 1, weil Bilder Vorlauf brauchen.</p>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="g-3" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Ja, so</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="radio" name="g-3" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Raids früher</span><span class="o-d">Dann Raids direkt nach Welle 1; der Fernkampf-Rework rückt mit nach vorn.</span></span></label>
+        <label class="opt"><input type="radio" name="g-3" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Andere Reihenfolge</span><span class="o-d">Bitte in die Anmerkung.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu G-3"></textarea>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== WELLE 1 ====================== -->
+
+<section class="sys" id="zweihand">
+  <div class="eyebrow">Welle 1 · Klarheit</div>
+  <div class="sys-head"><span class="sys-code">ZH</span><h2>Zweihand-Anzeige für Stäbe und Bögen</h2></div>
+  <p class="ask">Spieler sollen vor dem Anlegen sehen, dass eine Waffe beide Hände braucht und den Schild oder Fokus verdrängt.</p>
+  <div class="chips"><span class="chip"><i>Aufwand</i>klein</span><span class="chip"><i>Spielstand</i>unverändert</span><span class="chip"><i>Texte</i>vorhanden in 7 Sprachen</span><span class="chip"><i>Bilder</i>1 Symbol</span></div>
+  <div class="cols">
+    <div class="pane now">
+      <h3>Heute im Spiel</h3>
+      <ul>
+        <li>164 Waffen sind zweihändig: alle 66 Bögen, 33 Stäbe, 20 Großschwerter, 15 Großäxte, 13 Hämmer, 14 von 18 Speeren und 3 von 17 Streitkolben. Das Feld <code>twoHanded</code> steht am Item.</li>
+        <li>Die Itemkarte zeigt bei Waffen nur den Typ, etwa „Langbogen“. Das Abzeichen „Zweihändig“ erscheint nur bei Items <i>ohne</i> Waffentyp (<code>ItemTooltip.tsx:1017</code>). Der Code verlässt sich auf den Spezialitätstext, und bei Bögen steht dort nichts von zwei Händen.</li>
+        <li>Die Spezialitätstexte sind teils falsch: Speer sagt „Zweihändig“, vier Speere sind einhändig. Streitkolben sagt „Einhändig“, drei sind zweihändig.</li>
+        <li>Mit angelegtem Bogen sieht der Nebenhand-Platz einfach leer aus. Die CSS-Klasse <code>.it-twohand</code> existiert, wird aber nirgends benutzt.</li>
+      </ul>
+    </div>
+    <div class="pane plan">
+      <h3>Vorschlag</h3>
+      <ol>
+        <li><b>Kopfzeile aus dem Feld:</b> „Zweihändig · Langbogen“ bzw. „Einhändig · Schwert“, gelesen aus <code>twoHanded</code> statt aus dem Typtext. Die Hand-Angabe fliegt aus den Spezialitätstexten, damit sind die Speer- und Streitkolben-Fehler weg.</li>
+        <li><b>Symbol im Item-Feld</b> in Inventar, Bank, Shop und Ausrüstung, damit man es schon beim Durchsehen sieht.</li>
+        <li><b>Gesperrter Nebenhand-Platz:</b> Er zeigt die Zweihandwaffe als blassen Schatten mit Schloss. Tooltip: „Belegt durch Zweihandwaffe“.</li>
+        <li><b>Vergleich beim Anlegen:</b> Die vorhandene Zeile „ersetzt deine Nebenhand“ greift dann zuverlässig auch bei Bögen und Stäben.</li>
+      </ol>
+      <p class="muted">Kein Engine-Eingriff. Die Texte <code>item.twoHanded</code> und <code>itip.twoHandedPrefix</code> gibt es schon in allen sieben Sprachen.</p>
+    </div>
+  </div>
+  <div class="qs-title">Deine Entscheidung</div>
+  <div class="qs">
+    <div class="q" data-q="zh-1" data-sec="zh" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">ZH-1</span><h4>Wo sitzt das Zweihand-Symbol im Item-Feld?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Alle vier Ecken sind belegt: oben links der Verzauberungs-Stern, oben rechts der NEU-Punkt, unten rechts die Menge, unten links „Anforderung nicht erfüllt“.</p>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="zh-1" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Unten links, teilt sich die Ecke mit der Anforderungs-Warnung</span><span class="rec">Empfehlung</span><span class="o-d">Die rote Warnung hat Vorrang. Erfüllst du die Anforderung, steht dort das Zweihand-Symbol.</span>
+          <span class="cells"><span class="cellbox"><span class="cell" style="--rar:#b07be0"><svg class="ic"><use href="#i-bow"/></svg><svg class="hand"><use href="#i-grips"/></svg></span></span></span></span></label>
+        <label class="opt"><input type="radio" name="zh-1" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Als schmale Lasche am linken Rand</span><span class="o-d">Eigener Platz, kollidiert mit nichts, ist aber kleiner.</span>
+          <span class="cells"><span class="cellbox"><span class="cell" style="--rar:#b07be0"><svg class="ic"><use href="#i-bow"/></svg><span class="tab"></span></span></span></span></span></label>
+        <label class="opt"><input type="radio" name="zh-1" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Nicht im Feld, nur Itemkarte und Ausrüstungsfenster</span><span class="o-d">Ruhigere Felder, aber man sieht es erst beim Hovern.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu ZH-1"></textarea>
+    </div>
+    <div class="q" data-q="zh-2" data-sec="zh" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">ZH-2</span><h4>Wie sieht das Symbol aus?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="zh-2" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Zwei Griffe mit Querstrebe</span><span class="rec">Empfehlung</span><span class="o-d">Gemalt im Stil der Item-Ecken, sprachfrei.</span>
+          <span class="cells"><span class="cellbox"><span class="cell" style="--rar:#5ec46e"><svg class="ic"><use href="#i-sword"/></svg><svg class="hand"><use href="#i-grips"/></svg></span></span></span></span></label>
+        <label class="opt"><input type="radio" name="zh-2" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Textmarke „2H“</span><span class="o-d">Sofort klar für Genre-Spieler, aber Text in jeder Sprache gleich.</span>
+          <span class="cells"><span class="cellbox"><span class="cell" style="--rar:#5ec46e"><svg class="ic"><use href="#i-sword"/></svg><span class="hand-txt">2H</span></span></span></span></span></label>
+        <label class="opt"><input type="radio" name="zh-2" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Zwei Hände</span><span class="o-d">Am wörtlichsten, auf 15 Pixeln aber unruhig.</span>
+          <span class="cells"><span class="cellbox"><span class="cell" style="--rar:#5ec46e"><svg class="ic"><use href="#i-sword"/></svg><svg class="hand"><use href="#i-hands"/></svg></span></span></span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu ZH-2"></textarea>
+    </div>
+  </div>
+</section>
+
+<section class="sys" id="stufen">
+  <div class="eyebrow">Welle 1 · Klarheit</div>
+  <div class="sys-head"><span class="sys-code">ST</span><h2>Stufen-Anzeige</h2></div>
+  <p class="ask">Auf einen Blick sehen, wie stark ein Teil ist und ob es besser ist als das angelegte.</p>
+  <div class="chips"><span class="chip"><i>Aufwand</i>klein</span><span class="chip"><i>Spielstand</i>unverändert</span><span class="chip"><i>Daten</i>wird berechnet, keine Pflege</span><span class="chip"><i>Bilder</i>keine</span></div>
+  <div class="cols">
+    <div class="pane now">
+      <h3>Heute im Spiel</h3>
+      <ul>
+        <li>Es gibt kein Stufenfeld. Spieler erraten die Stufe aus dem Material im Namen, der Anforderung und der Raritätsfarbe.</li>
+        <li>Die Raritätsfarbe hilft wenig: Eisen, Stahl und Schwarzstahl sind alle „selten“, Mithril bis Blutstahl alle „sehr selten“.</li>
+        <li>Bögen verwirren besonders: intern heißen sie <code>copper_longbow</code>, <code>bronze_longbow</code>, angezeigt werden Holzarten (Normal, Birke, Eiche …).</li>
+        <li>Zwei Raritäts-Paletten widersprechen sich (<code>RARITY_COLORS</code> und die CSS-Farben). „Magisch“ und „sehr selten“ sind beide blau.</li>
+        <li>Ein Stern oben links im Item-Feld bedeutet heute schon „verzaubert oder mit Suffix“.</li>
+      </ul>
+    </div>
+    <div class="pane plan">
+      <h3>Vorschlag</h3>
+      <p><b>Eine Stufe I–XII für jedes Ausrüstungsteil</b>, berechnet aus der Trage-Anforderung mit denselben Bändern wie die Metallleiter. Drops, Leder, Stoff, Schmuck und Einzelstücke bekommen ihre Stufe so automatisch. Kein neues Feld, keine Liste, die gepflegt werden muss.</p>
+      <div class="mini-wrap"><table class="mini">
+        <thead><tr><th>Stufe</th><th>Anforderung</th><th>Metall</th><th>Stufe</th><th>Anforderung</th><th>Metall</th></tr></thead>
+        <tbody>
+          <tr><td>I</td><td class="num">1–4</td><td>Kupfer</td><td>VII</td><td class="num">50–59</td><td>Adamant</td></tr>
+          <tr><td>II</td><td class="num">5–9</td><td>Bronze</td><td>VIII</td><td class="num">60–69</td><td>Runit</td></tr>
+          <tr><td>III</td><td class="num">10–19</td><td>Eisen</td><td>IX</td><td class="num">70–79</td><td>Blutstahl</td></tr>
+          <tr><td>IV</td><td class="num">20–29</td><td>Stahl</td><td>X</td><td class="num">80–89</td><td>Titan</td></tr>
+          <tr><td>V</td><td class="num">30–39</td><td>Schwarzstahl</td><td>XI</td><td class="num">90–98</td><td>Ätherium</td></tr>
+          <tr><td>VI</td><td class="num">40–49</td><td>Mithril</td><td>XII</td><td class="num">99</td><td>Götteisen</td></tr>
+        </tbody>
+      </table></div>
+      <ul>
+        <li>Anzeige im Item-Feld und auf der Itemkarte neben der Rarität: „Stufe VII · Sehr selten“.</li>
+        <li>Sortieren und Filtern nach Stufe in Bank, Inventar und Lager.</li>
+        <li>Eine einzige Raritäts-Palette, „magisch“ und „sehr selten“ werden unterscheidbar.</li>
+        <li>Raid-Beute kann darüber als Stufe XIII stehen (siehe Raids).</li>
+      </ul>
+    </div>
+  </div>
+  <div class="qs-title">Deine Entscheidung</div>
+  <div class="qs">
+    <div class="q" data-q="st-1" data-sec="st" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">ST-1</span><h4>Wie wird die Stufe dargestellt?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Alle drei Vorschauen zeigen ein Stufe-VII-Schwert. Bei Sternen ziehe ich den Verzauberungs-Stern auf ein Runen-Zeichen um, damit es keine zwei Sternarten gibt.</p>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="st-1" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Römische Ziffer im Siegel</span><span class="rec">Empfehlung</span><span class="o-d">Höchstens vier Zeichen, lesbar auch in kleinen Feldern, passt zum Stil. Bis XIII erweiterbar.</span>
+          <span class="cells"><span class="cellbox"><span class="cell" style="--rar:#5b7fd1"><svg class="ic"><use href="#i-sword"/></svg><span class="tl">✦</span><span class="roman">VII</span></span></span></span></span></label>
+        <label class="opt"><input type="radio" name="st-1" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Sterne, bis sechs mit halben Sternen</span><span class="o-d">Stufe VII = dreieinhalb Sterne. Am vertrautesten, aber halbe Sterne sind in 46-Pixel-Feldern schwer zu erkennen.</span>
+          <span class="cells"><span class="cellbox"><span class="cell" style="--rar:#5b7fd1"><svg class="ic"><use href="#i-sword"/></svg><span class="stars">★★★⯪</span></span></span></span></span></label>
+        <label class="opt"><input type="radio" name="st-1" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Stufenleiste mit zwölf Kerben</span><span class="o-d">Gut zum Vergleichen nebeneinander, die genaue Zahl liest man aber schlecht ab.</span>
+          <span class="cells"><span class="cellbox"><span class="cell" style="--rar:#5b7fd1"><svg class="ic"><use href="#i-sword"/></svg><span class="notches"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></span></span></span></span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu ST-1"></textarea>
+    </div>
+    <div class="q" data-q="st-2" data-sec="st" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">ST-2</span><h4>Bekommen auch Materialien eine Stufe?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Erz, Barren, Holz, Leder und Stoff haben dieselbe Leiter. Mit Stufe sortiert das Lager sie von selbst und die Bergung kann „gibt Material der eigenen Stufe“ sagen.</p>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="st-2" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Ja, nach dem Ausrüstungsteil, in das sie gehen</span><span class="rec">Empfehlung</span><span class="o-d">Mithril-Erz und Mithril-Barren = VI.</span></span></label>
+        <label class="opt"><input type="radio" name="st-2" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Nein, nur Ausrüstung</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu ST-2"></textarea>
+    </div>
+  </div>
+</section>
+
+<section class="sys" id="laendereien">
+  <div class="eyebrow">Welle 1 · Klarheit</div>
+  <div class="sys-head"><span class="sys-code">LA</span><h2>Farming und Jagd als Ländereien</h2></div>
+  <p class="ask">Klar machen, dass Felder und Fallen von selbst laufen, neben der Hauptaktion und offline. Ich lese „Trennung“ als: getrennt von den aktiven Skills.</p>
+  <div class="chips"><span class="chip"><i>Aufwand</i>klein</span><span class="chip"><i>Spielstand</i>unverändert (außer Köderbeet, LA-2)</span><span class="chip"><i>Texte</i>neu in 7 Sprachen</span><span class="chip"><i>Bilder</i>1–2 Symbole</span></div>
+  <div class="cols">
+    <div class="pane now">
+      <h3>Heute im Spiel</h3>
+      <ul>
+        <li>Die Engine macht schon alles richtig. Felder (bis 9, Stufe 85) ernten und pflanzen automatisch nach, solange Samen da sind (<code>farming.ts:246</code>). Fallen (bis 6, 5–60 min) legen automatisch neuen Köder aus. Keins von beiden belegt die Hauptaktion, beide laufen offline.</li>
+        <li>Die Oberfläche erzählt etwas anderes: Jagen steht in der Seitenleiste direkt nach Angeln, Farming nach Kochen, mitten zwischen den aktiven Skills.</li>
+        <li>Die Laufanzeige kennt nur die Hauptaktion. Arbeiten nur Felder und Fallen, steht im Kopf „Untätig“.</li>
+        <li>Fänge melden sich nirgends außer auf der Fallen-Karte. Es gibt keinen Hinweis, wenn Samen oder Köder ausgehen.</li>
+        <li>Der Einführungstext sagt „ernte das Feld, wenn es reif ist“, die Engine erntet aber selbst.</li>
+        <li>Köder kommen nur aus der aktiven Angel-Aktion „Köder graben“.</li>
+      </ul>
+    </div>
+    <div class="pane plan">
+      <h3>Vorschlag</h3>
+      <ul>
+        <li><b>Eigene Gruppe „Ländereien“</b> in der Seitenleiste unter den aktiven Skills, mit eigenem Rahmen. Statt des Laufpunkts ein Live-Status: „Felder 6/9 · nächste Ernte 12 min“, „Fallen 4/6 · 1 wartet auf Köder“. Warnfarbe, wenn etwas steht (keine Samen, kein Köder, Inventar voll).</li>
+        <li><b>Kopfzeile:</b> nie mehr „Untätig“, solange Ländereien arbeiten. Dazu ein kleiner Zusatz „Nebenbei: 6 Felder, 4 Fallen“, auch wenn du gerade kämpfst.</li>
+        <li><b>Seitenkopf</b> auf beiden Seiten: „Läuft von selbst, auch offline und neben deiner Hauptaktion.“ Darunter der Ertrag der letzten Stunde.</li>
+        <li><b>Meldungen</b> für Fänge und Ernten, gebündelt statt Dauerfeuer.</li>
+        <li><b>Offline-Bericht:</b> eigener Block „Ländereien“.</li>
+        <li>Einführungstext korrigiert, neue Skill-Beschreibungen für beide.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="qs-title">Deine Entscheidung</div>
+  <div class="qs">
+    <div class="q" data-q="la-1" data-sec="la" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">LA-1</span><h4>Wo leben die Ländereien?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="la-1" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Eigene Gruppe in der Seitenleiste, zwei Seiten wie heute</span><span class="rec">Empfehlung</span><span class="o-d">Kleinster Umbau, größte Wirkung. Beide Seiten bleiben, wie Spieler sie kennen.</span></span></label>
+        <label class="opt"><input type="radio" name="la-1" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Eine gemeinsame Seite „Ländereien“ mit zwei Reitern</span><span class="o-d">Ein Eintrag weniger in der Seitenleiste, Übersicht über beides auf einen Blick.</span></span></label>
+        <label class="opt"><input type="radio" name="la-1" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">In New Haven als Gebäude</span><span class="o-d">Thematisch schön, aber Felder und Fallen wären dann zwei Klicks tief.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu LA-1"></textarea>
+    </div>
+    <div class="q" data-q="la-2" data-sec="la" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">LA-2</span><h4>Woher kommt der Köder?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Heute muss man für Köder aktiv angeln gehen. Das bricht das „läuft von selbst“.</p>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="la-2" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Zusätzlich als Feldfrucht: ein Feld zieht Köderwürmer</span><span class="rec">Empfehlung</span><span class="o-d">Verbindet beide Ländereien. Wer ein Feld opfert, hat Fallen ohne Eingreifen. „Köder graben“ beim Angeln bleibt.</span></span></label>
+        <label class="opt"><input type="radio" name="la-2" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Bleibt wie heute</span></span></label>
+        <label class="opt"><input type="radio" name="la-2" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Fallen brauchen gar keinen Köder mehr</span><span class="o-d">Einfach, aber Köder-Sorten und ihre Bindung an Beute fallen weg.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu LA-2"></textarea>
+    </div>
+    <div class="q" data-q="la-3" data-sec="la" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">LA-3</span><h4>Wie melden sich Fänge und Ernten?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="la-3" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Gebündelt, höchstens alle 15 Minuten</span><span class="rec">Empfehlung</span><span class="o-d">„3 Fänge, 2 Ernten“ mit den besten Funden.</span></span></label>
+        <label class="opt"><input type="radio" name="la-3" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Jeder Fang und jede Ernte einzeln</span></span></label>
+        <label class="opt"><input type="radio" name="la-3" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Keine Meldung, nur der Status in der Seitenleiste</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu LA-3"></textarea>
+    </div>
+  </div>
+</section>
+
+<section class="sys" id="buff-food">
+  <div class="eyebrow">Welle 1 · Klarheit</div>
+  <div class="sys-head"><span class="sys-code">BF</span><h2>Buff-Food getrennt vom Auto-Essen</h2></div>
+  <p class="ask">Spieler sollen selbst bestimmen, welche Mahlzeit wirkt, und sie soll nicht als Heilung verschwinden.</p>
+  <div class="chips"><span class="chip"><i>Aufwand</i>klein bis mittel</span><span class="chip"><i>Spielstand</i>2 neue Felder, Migration</span><span class="chip"><i>Texte</i>neu und korrigiert in 7 Sprachen</span><span class="chip"><i>Bilder</i>keine (leerer Essensplatz liegt schon ungenutzt bereit)</span></div>
+  <div class="cols">
+    <div class="pane now">
+      <h3>Heute im Spiel</h3>
+      <ul>
+        <li>Es gibt genau einen Essensplatz. 50 Speisen heilen, 15 davon sind Mahlzeiten mit Buff (alle aus Kochen, 180–360 s), 35 heilen nur.</li>
+        <li><b>Jeder Bissen</b> beim Auto-Essen löst auch den Buff aus. Gleiche Mahlzeit verlängert bis 3 h, eine andere Mahlzeit verdrängt den laufenden Buff.</li>
+        <li><b>Geht das Essen aus,</b> nimmt der Ersatz das erste heilende Item in Inventar-Reihenfolge, nicht das passendste (<code>combat.ts:169</code>). Das kann eine seltene Mahlzeit sein. Sie wird dann dauerhaft zum neuen Essen.</li>
+        <li><b>Die Tonika-Erneuerung</b> (50.000 Gold) isst auch abgelaufene Mahlzeiten nach, obwohl sie „Tonika erneuern“ heißt.</li>
+        <li>Der Text „Früher essen und mehr heilen“ stimmt nicht. Der Heilfaktor ist auf allen vier Auto-Ess-Stufen 1,0, nur die Schwelle steigt (45 → 70 %).</li>
+      </ul>
+    </div>
+    <div class="pane plan">
+      <h3>Vorschlag</h3>
+      <ul>
+        <li><b>Zwei Plätze</b> in der Kampfvorbereitung: <b>Heilnahrung</b> für das Auto-Essen und <b>Mahlzeit</b> für den Buff.</li>
+        <li><b>Auto-Essen</b> nimmt nur noch Heilnahrung. Geht sie aus, sucht der Ersatz nur unter reiner Heilnahrung und nimmt die passendste Heilmenge, nicht das erste Feld im Inventar.</li>
+        <li><b>„Mahlzeit halten“:</b> isst nach, sobald der Buff ausläuft. Die Wahl wird nie von der Ersatzlogik überschrieben.</li>
+        <li><b>Tonika-Erneuerung</b> betrifft dann wirklich nur Tonika.</li>
+        <li><b>Anzeige:</b> „Mahlzeit: Witherleek-Eintopf · 4:12 · 23 übrig“, Warnung bei weniger als 5.</li>
+        <li>Regel „ein Buff je Kategorie“ bleibt.</li>
+      </ul>
+      <p class="muted">Spielstand: <code>character.meal</code> und <code>character.mealKeep</code>, neue Save-Version 89 mit Migration und Vault-Test.</p>
+    </div>
+  </div>
+  <div class="qs-title">Deine Entscheidung</div>
+  <div class="qs">
+    <div class="q" data-q="bf-1" data-sec="bf" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">BF-1</span><h4>Darf das Auto-Essen je eine Mahlzeit essen?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="bf-1" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Nie, außer du legst sie selbst in den Heilplatz</span><span class="rec">Empfehlung</span><span class="o-d">Klare Regel, keine Überraschungen.</span></span></label>
+        <label class="opt"><input type="radio" name="bf-1" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Als Notfall, wenn keine Heilnahrung mehr da ist</span><span class="o-d">Schützt vor dem Tod, kostet aber im Ernstfall die Mahlzeit.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu BF-1"></textarea>
+    </div>
+    <div class="q" data-q="bf-2" data-sec="bf" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">BF-2</span><h4>Wann isst „Mahlzeit halten“ nach?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Buffs laufen heute immer ab, auch beim Skillen. Mahlzeiten geben fast nur Kampfwerte.</p>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="bf-2" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Nur in Kampf, Dungeon und Raid</span><span class="rec">Empfehlung</span><span class="o-d">Spart Mahlzeiten, die beim Holzfällen nichts bringen.</span></span></label>
+        <label class="opt"><input type="radio" name="bf-2" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Immer, sobald der Buff ausläuft</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu BF-2"></textarea>
+    </div>
+    <div class="q" data-q="bf-3" data-sec="bf" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">BF-3</span><h4>Kostet „Mahlzeit halten“ etwas?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="bf-3" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Frei für alle</span><span class="rec">Empfehlung</span><span class="o-d">Es behebt einen Ärger, den Spieler heute haben. Dafür sollen sie nicht zahlen.</span></span></label>
+        <label class="opt"><input type="radio" name="bf-3" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Teil der 50.000-Gold-Freischaltung der Tonika-Erneuerung</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu BF-3"></textarea>
+    </div>
+    <div class="q" data-q="bf-4" data-sec="bf" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">BF-4</span><h4>Was passiert beim Laden mit einer Mahlzeit im heutigen Essensplatz?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="bf-4" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Sie wandert in den Mahlzeit-Platz, der Heilplatz bekommt die beste Heilnahrung aus Inventar oder Bank</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="radio" name="bf-4" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Sie bleibt im Heilplatz, der Mahlzeit-Platz startet leer</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu BF-4"></textarea>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== WELLE 2 ====================== -->
+
+<section class="sys" id="lager">
+  <div class="eyebrow">Welle 2 · Werkstatt</div>
+  <div class="sys-head"><span class="sys-code">ML</span><h2>Materiallager</h2></div>
+  <p class="ask">Jedes Handwerksmaterial hat seinen festen Platz, die Bank bleibt frei für Ausrüstung, Essen und Tränke.</p>
+  <div class="chips"><span class="chip"><i>Aufwand</i>mittel</span><span class="chip"><i>Spielstand</i>1 Einstellung, Gebäudestufen</span><span class="chip"><i>Risiko</i>niedrig, kein Umbau an Rezepten</span><span class="chip"><i>Bilder</i>Regal-Grafik, Gebäudeausbau</span></div>
+  <div class="cols">
+    <div class="pane now">
+      <h3>Heute im Spiel</h3>
+      <ul>
+        <li>344 Materialien, darunter 50 Verzauberungsrunen, 35 Samen und 11 Schlüssel/Siegel. Ein Unterkategorie-Feld gibt es nicht, die Bank kennt nur den Filter „Materialien“.</li>
+        <li>Bank: 60 Plätze. Pakete à +10 bis +200 kosten 5.000 × 1,6ⁿ Gold, alle 20 zusammen rund 100,7 Mio. Der Vorratsspeicher in New Haven gibt +14. Ein Platz = ein Itemtyp, Menge unbegrenzt.</li>
+        <li>Neue Materialien landen erst im Inventar (20 Plätze), dann in der Bank.</li>
+        <li>Rezepte, Lagerbau, Raffinerie, Farming, Jagd und Verzauberung lesen schon heute direkt aus dem Bankbestand.</li>
+      </ul>
+    </div>
+    <div class="pane plan">
+      <h3>Vorschlag: ein eigener Bereich der Bank, keine zweite Kasse</h3>
+      <ul>
+        <li><b>Technisch</b> bleiben Materialien im Bankbestand. Deshalb funktioniert jedes Rezept, jedes Gebäude und jede Warteschlange ohne Umbau, und beim Update muss nichts verschoben werden.</li>
+        <li><b>Neu:</b> Materialien in einem freigeschalteten Regal belegen keinen Bankplatz mehr. Die Bank zeigt nur noch, was keine Materialien sind.</li>
+        <li><b>Feste Plätze:</b> Jedes Material steht immer an derselben Stelle, nach Familie und Stufe sortiert. Unentdeckte Materialien stehen als Schatten im Regal, der Name erscheint erst beim ersten Fund.</li>
+        <li><b>Regale:</b> Erze und Kohle · Barren · Holz und Balken · Häute und Leder · Fasern und Stoff · Kräuter und Ernte · Rohfisch und Fleisch · Edelsteine · Essenzen und Zauberrunen · Verzauberungsrunen · Samen und Köder · Monsterteile und Wertsachen · Schlüssel und Siegel.</li>
+        <li><b>Goldkreislauf:</b> Regale schaltet man über neue Ausbaustufen des Vorratsspeichers frei (Gold und Material). Das ersetzt den Goldabfluss, den die Bank verliert, weil weniger Bankplätze gebraucht werden.</li>
+        <li><b>Aschegang:</b> Das Lager verhält sich wie die Bank. Der Inhalt startet neu, die „Vergrabene Truhe“ wirkt weiter.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="qs-title">Deine Entscheidung</div>
+  <div class="qs">
+    <div class="q" data-q="ml-1" data-sec="ml" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">ML-1</span><h4>Wie kommen die Regale ins Spiel?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ml-1" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Ausbau des Vorratsspeichers in New Haven</span><span class="rec">Empfehlung</span><span class="o-d">Neue Stufen für Gold und Material, je Stufe ein paar Regale. Neuer Goldabfluss, und New Haven bekommt wieder etwas zu bauen.</span></span></label>
+        <label class="opt"><input type="radio" name="ml-1" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Alle Regale sofort frei</span><span class="o-d">Am bequemsten, aber die Bankplatz-Käufe verlieren Wert ohne Ersatz.</span></span></label>
+        <label class="opt"><input type="radio" name="ml-1" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Regale im Shop gegen Gold</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu ML-1"></textarea>
+    </div>
+    <div class="q" data-q="ml-2" data-sec="ml" data-type="multi">
+      <div class="q-head"><div class="left"><span class="q-id">ML-2</span><h4>Was kommt außer Erz, Barren, Holz, Leder und Stoff noch ins Lager?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Mehrfachauswahl. Alles, was nicht angekreuzt ist, bleibt in der Bank.</p>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="ml-2" value="fish"><span class="o-box"></span><span class="o-body"><span class="o-t">Rohfisch und rohes Fleisch</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="checkbox" name="ml-2" value="seeds"><span class="o-box"></span><span class="o-body"><span class="o-t">Samen und Köder</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="checkbox" name="ml-2" value="runes"><span class="o-box"></span><span class="o-body"><span class="o-t">Verzauberungsrunen</span><span class="rec">Empfehlung</span><span class="o-d">50 Stück, belegen heute am meisten Bankplätze.</span></span></label>
+        <label class="opt"><input type="checkbox" name="ml-2" value="keys"><span class="o-box"></span><span class="o-body"><span class="o-t">Schlüssel und Siegel</span></span></label>
+        <label class="opt"><input type="checkbox" name="ml-2" value="loot"><span class="o-box"></span><span class="o-body"><span class="o-t">Monsterteile und Diebes-Wertsachen</span><span class="rec">Empfehlung</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu ML-2"></textarea>
+    </div>
+    <div class="q" data-q="ml-3" data-sec="ml" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">ML-3</span><h4>Wohin gehen neue Materialien?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ml-3" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Direkt ins Lager, in den Optionen abschaltbar</span><span class="rec">Empfehlung</span><span class="o-d">Das Inventar bleibt frei für Beute und Ausrüstung.</span></span></label>
+        <label class="opt"><input type="radio" name="ml-3" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Erst ins Inventar wie heute, der Überlauf ins Lager</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu ML-3"></textarea>
+    </div>
+    <div class="q" data-q="ml-4" data-sec="ml" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">ML-4</span><h4>Haben Regale eine Obergrenze?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ml-4" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Nein, unbegrenzt wie ein Bankplatz</span><span class="rec">Empfehlung</span><span class="o-d">Ein Idle-Spieler soll nie wegen eines vollen Regals stehen bleiben.</span></span></label>
+        <label class="opt"><input type="radio" name="ml-4" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Fassungsvermögen je Regal, ausbaubar</span><span class="o-d">Mehr Goldabfluss, aber neue Stillstands-Fallen.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu ML-4"></textarea>
+    </div>
+    <div class="q" data-q="ml-5" data-sec="ml" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">ML-5</span><h4>Was ist mit Spielern, die viele Bankpakete gekauft haben?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ml-5" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Nichts erstatten, die Plätze bleiben nutzbar</span><span class="rec">Empfehlung</span><span class="o-d">Sie haben dann einfach viel Platz für Ausrüstung.</span></span></label>
+        <label class="opt"><input type="radio" name="ml-5" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Die ersten Regale sind für sie gratis</span><span class="o-d">Je gekauftes Paket ein Regal geschenkt.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu ML-5"></textarea>
+    </div>
+  </div>
+</section>
+
+<section class="sys" id="bergung">
+  <div class="eyebrow">Welle 2 · Werkstatt</div>
+  <div class="sys-head"><span class="sys-code">BG</span><h2>Bergung</h2></div>
+  <p class="ask">Beute-Ausrüstung in Material zurückverwandeln. Hergestelltes bleibt nur verkaufbar.</p>
+  <div class="chips"><span class="chip"><i>Aufwand</i>mittel</span><span class="chip"><i>Spielstand</i>unverändert</span><span class="chip"><i>Revidiert</i>deinen Entscheid vom Juli 2026</span><span class="chip"><i>Bilder</i>1–2 Icons</span></div>
+  <div class="cols">
+    <div class="pane now">
+      <h3>Heute im Spiel</h3>
+      <ul>
+        <li>Im Juli 2026 hast du entschieden: „Kein Salvage, ungewollte Items werden verkauft.“ Das alte Salvage machte aus verzauberten Einzelstücken wieder normale Items plus Schrott und Gold. Reste: <code>item_scrap</code>, <code>recycle_scrap</code>.</li>
+        <li>Gold kommt seitdem aus Verkäufen, Diebeskunst, Dungeon-Abschlüssen und Quests. Monster lassen kein Gold fallen. Verkaufspreis = halber Itemwert.</li>
+        <li><b>Wichtiger Befund:</b> Kein einziges herstellbares Ausrüstungsteil steht in einer Beutetabelle. 504 Teile haben ein Rezept, 298 sind reine Beute.</li>
+        <li>Beute-Ausrüstung ist selten: im Mittel 0,0018 Ausrüstungsdrops pro Kill, Champion-Unikate 20 %. Wert: Median 750, die obersten 10 % ab 15.000, Höchstwert 95.000 (Kronenlose Klinge).</li>
+      </ul>
+    </div>
+    <div class="pane plan">
+      <h3>Vorschlag</h3>
+      <ul>
+        <li><b>Regel ohne neues Feld:</b> Zerlegbar ist, was kein Rezept hat. Das erfüllt „Beute ja, Handwerk nein“ exakt, ohne die Herkunft jedes Items speichern zu müssen. Die Schleife Herstellen → Zerlegen → Herstellen ist damit ausgeschlossen.</li>
+        <li><b>Ertrag nach Stil und Stufe:</b> Platte und Nahkampfwaffen geben Barren, Leder und Bögen Leder und Holz, Stoff und Stäbe Stoff und Essenzen, Schmuck geschliffene Edelsteine. Dazu nach Rarität ein Bergungs-Rest.</li>
+        <li><b>Wertgrenze:</b> Der Verkaufswert des Ertrags liegt bei 70–90 % des Verkaufspreises des Teils. Wer Gold will, verkauft. Wer Material braucht, zerlegt. Zerlegen und Verkaufen bringt nie mehr Gold als direkt Verkaufen.</li>
+        <li><b>Verzauberte Teile:</b> Warnung vor dem Zerlegen. Runen rettet man vorher über das Entzaubern, das gibt es schon.</li>
+        <li><b>Schutz:</b> Legendär und göttlich nur mit Bestätigung, dazu ein Schloss für einzelne Teile.</li>
+        <li><b>Bedienung:</b> „Zerlegen“ im Kontextmenü von Inventar und Bank, dazu „Alle Beute bis Rarität X zerlegen“.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="qs-title">Deine Entscheidung</div>
+  <div class="qs">
+    <div class="q" data-q="bg-1" data-sec="bg" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">BG-1</span><h4>Was ist zerlegbar?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="bg-1" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Alles ohne Rezept: Monster-, Champion-, Dungeon- und Paragon-Teile</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="radio" name="bg-1" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Nur normale Monster-Beute, Unikate und Paragon-Teile nicht</span><span class="o-d">Schützt seltene Stücke vor Fehlklicks, macht die Regel aber schwerer zu erklären.</span></span></label>
+        <label class="opt"><input type="radio" name="bg-1" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Alles, auch Hergestelltes, dann ohne XP und mit halbem Ertrag</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu BG-1"></textarea>
+    </div>
+    <div class="q" data-q="bg-2" data-sec="bg" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">BG-2</span><h4>Was kommt heraus?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="bg-2" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Material der eigenen Stufe plus Bergungs-Rest nach Rarität</span><span class="rec">Empfehlung</span><span class="o-d">Der Rest („Reliktstaub“) gibt auch legendären Doppelten einen Zweck. Verwendung in BG-3.</span></span></label>
+        <label class="opt"><input type="radio" name="bg-2" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Nur Material der eigenen Stufe</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu BG-2"></textarea>
+    </div>
+    <div class="q" data-q="bg-3" data-sec="bg" data-type="multi">
+      <div class="q-head"><div class="left"><span class="q-id">BG-3</span><h4>Wofür braucht man den Reliktstaub?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Mehrfachauswahl. Gilt nur, wenn du in BG-2 den Rest willst.</p>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="bg-3" value="raid"><span class="o-box"></span><span class="o-body"><span class="o-t">Raid-Ausrüstung herstellen und veredeln</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="checkbox" name="bg-3" value="runes"><span class="o-box"></span><span class="o-body"><span class="o-t">Hohe Verzauberungsrunen (Runenkunst)</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="checkbox" name="bg-3" value="reroll"><span class="o-box"></span><span class="o-body"><span class="o-t">Suffix neu würfeln</span><span class="o-d">Neue Mechanik, braucht eigenes Balancing.</span></span></label>
+        <label class="opt"><input type="checkbox" name="bg-3" value="shop"><span class="o-box"></span><span class="o-body"><span class="o-t">Tauschhändler mit eigenem Sortiment</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu BG-3"></textarea>
+    </div>
+    <div class="q" data-q="bg-4" data-sec="bg" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">BG-4</span><h4>Automatisches Zerlegen nach Filter?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Das alte Auto-Salvage hast du im Juli mit entfernt.</p>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="bg-4" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Nein, nur der Sammel-Knopf</span><span class="rec">Empfehlung</span><span class="o-d">Kein Risiko, dass ein Chase-Item ungesehen verschwindet.</span></span></label>
+        <label class="opt"><input type="radio" name="bg-4" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Ja, als Einstellung bis zu einer Rarität</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu BG-4"></textarea>
+    </div>
+    <div class="q" data-q="bg-5" data-sec="bg" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">BG-5</span><h4>Gibt Zerlegen XP?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="bg-5" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Etwas XP im passenden Handwerks-Skill</span><span class="rec">Empfehlung</span><span class="o-d">Schmieden für Platte, Bogenbau für Bögen, Schneidern für Stoff und so weiter.</span></span></label>
+        <label class="opt"><input type="radio" name="bg-5" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Keine XP</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu BG-5"></textarea>
+    </div>
+  </div>
+</section>
+
+<section class="sys" id="bogenbau">
+  <div class="eyebrow">Welle 2 · Werkstatt</div>
+  <div class="sys-head"><span class="sys-code">FK</span><h2>Bogenbau und Fernkampf-Rework</h2></div>
+  <p class="ask">Fernkampf auf Augenhöhe mit Nahkampf und Magie bringen und dem Bogen einen eigenen Handwerksweg geben.</p>
+  <div class="chips"><span class="chip"><i>Aufwand</i>groß</span><span class="chip"><i>Spielstand</i>Skill-Split mit Migration</span><span class="chip"><i>Revidiert</i>evtl. deinen Entscheid vom 23.08. (FK-2)</span><span class="chip"><i>Bilder</i>Skill-Paket + Köcher</span></div>
+  <div class="cols">
+    <div class="pane now">
+      <h3>Heute im Spiel</h3>
+      <ul>
+        <li>Fletching gab es bis Juli 2026 als eigenen Skill mit Pfeilen. Mit Save-Version 57 hast du Munition gestrichen („Wir brauchen auch gar keine Pfeile generell mehr im Spiel“). Die XP ging verlustfrei in Handwerk, die Bogenrezepte heißen intern noch <code>fletch_*</code>.</li>
+        <li>Fernkampf ist der schwächste Stil (Stil-Parität vom 26.08.): Die beste Fernkampf-Ausrüstung liegt 13–39 % unter Nahkampf. Der beste Bogen ist auf allen fünf Stufen ein Drop, die herstellbare Bogenleiter ist das schwächste Glied.</li>
+        <li>Zwei Waffentypen (Kurz- und Langbogen) gegen zehn im Nahkampf. Keine Nebenhand, damit bis zu vier Runenplätze weniger als die anderen Stile.</li>
+        <li>Die Fernkampf-Rune „Jägerisch“ ist ein Drittel so viel wert wie „Scharf“ oder „Arkan“ und kommt 13 Runenkunst-Level später. Nur 3 Blutungs- und 2 Brand-Bögen.</li>
+        <li>60 von 89 Monstern mit Ausrüstungs-Drops lassen keine Fernkampf-Ausrüstung fallen.</li>
+        <li><code>feather</code> fällt aus 28 Beutetabellen und wird nirgends gebraucht. <code>ammoSaver</code> und <code>bonusAmmo</code> sind tote Haken im Code.</li>
+      </ul>
+    </div>
+    <div class="pane plan">
+      <h3>Vorschlag</h3>
+      <ol>
+        <li><b>Bogenbau wird wieder eigener Skill</b> (EN Fletching), abgetrennt von Handwerk wie Schneidern im August. Er bekommt Bögen, Sehnen und Köcher. Handwerk behält Leder und Schilde. Die XP wird nach tatsächlich Hergestelltem aufgeteilt, wie bei Schneidern (Save-Version 86).</li>
+        <li><b>Köcher als Nebenhand der Bögen.</b> Bögen bleiben zweihändig und sperren Schilde, erlauben aber einen Köcher. Damit hat Fernkampf seinen vierten Runenträger. Der Köcher wird nie verbraucht und trägt eine feste Pfeilart: Breitkopf (Blutung), Brand, Frost, Panzerbrecher (Rüstungsdurchschlag), Weitschuss (Präzision). Federn werden wieder gebraucht.</li>
+        <li><b>Bogenleiter auf Bestwert:</b> Herstellbare Bögen bekommen je Stufe die Werte, die heute der beste Drop hat. Die Regel „ein Drop schlägt die nächste Handwerks-Stufe“ bleibt, die Drops werden mit angehoben.</li>
+        <li><b>Rune „Jägerisch“</b> auf vollen Wert (Geschick 3/6/10) und auf Runenkunst 15/38/62 wie die anderen Stil-Runen.</li>
+        <li><b>Mehr Leder- und Bogenbeute</b> in den Tabellen, bis jede Zone Fernkampf-Ausrüstung liefert.</li>
+        <li><b>Haltungs-Faktor:</b> Fernkampf ist heute der einzige Stil ohne Schadensfaktor bei den Haltungen. Ausgleichen.</li>
+      </ol>
+      <p class="muted">Bilder: Skill-Symbol, Kulisse und Karte, Meisterring, Steam-Erfolg, 12 Köcher-Stufen. Pfeilarten als Varianten der Köcher-Bilder.</p>
+    </div>
+  </div>
+  <div class="qs-title">Deine Entscheidung</div>
+  <div class="qs">
+    <div class="q" data-q="fk-1" data-sec="fk" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">FK-1</span><h4>Kommen Pfeile zurück?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="fk-1" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Köcher mit fester Pfeilart, nichts wird verbraucht</span><span class="rec">Empfehlung</span><span class="o-d">Passt zu deinem Juli-Entscheid gegen Munition und zum Idle-Spiel. Kein Nachkaufen, kein Stillstand.</span></span></label>
+        <label class="opt"><input type="radio" name="fk-1" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Pfeile als Verbrauchsgut, klassisch</span><span class="o-d">Mehr Handwerks-Nachfrage, aber offline kann der Vorrat ausgehen.</span></span></label>
+        <label class="opt"><input type="radio" name="fk-1" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Keine Pfeile, kein Köcher</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu FK-1"></textarea>
+    </div>
+    <div class="q" data-q="fk-2" data-sec="fk" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">FK-2</span><h4>Darf der Köcher in die Nebenhand, obwohl Bögen zweihändig sind?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Das ändert deinen Entscheid vom 23.08. („Fernkampf hat keine Nebenhand“). Schilde bleiben für Bögen gesperrt.</p>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="fk-2" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Ja, Köcher als einzige Nebenhand für Bögen</span><span class="rec">Empfehlung</span><span class="o-d">Schließt die Runenplatz-Lücke ohne Werte-Gebastel.</span></span></label>
+        <label class="opt"><input type="radio" name="fk-2" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Nein, Fernkampf bleibt ohne Nebenhand</span><span class="o-d">Dann gleiche ich die vier fehlenden Runenplätze über Bogenwerte aus.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu FK-2"></textarea>
+    </div>
+    <div class="q" data-q="fk-3" data-sec="fk" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">FK-3</span><h4>Mit welchem Level startet Bogenbau?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="fk-3" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">XP nach Hergestelltem aufteilen, wie bei Schneidern</span><span class="rec">Empfehlung</span><span class="o-d">Wer viele Bögen gebaut hat, startet hoch. Handwerk sinkt um genau diese XP, nie unter 0. Angelegte Ausrüstung bleibt angelegt.</span></span></label>
+        <label class="opt"><input type="radio" name="fk-3" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Alle starten bei Level 1, Handwerk bleibt unangetastet</span></span></label>
+        <label class="opt"><input type="radio" name="fk-3" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Bogenbau übernimmt den Handwerk-Level</span><span class="o-d">Großzügig, verschenkt aber einen ganzen Skill.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu FK-3"></textarea>
+    </div>
+    <div class="q" data-q="fk-4" data-sec="fk" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">FK-4</span><h4>Armbrust als dritter Fernkampf-Waffentyp?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Langsam, schwer, Rüstungsdurchschlag. Im Juni wolltest du nur Kurz- und Langbogen.</p>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="fk-4" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Nein, die Bogenleiter richtig machen reicht</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="radio" name="fk-4" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Ja, Armbrust mit eigener 12-Stufen-Leiter</span><span class="o-d">+12 Items, +12 Bilder, eigenes Balancing.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu FK-4"></textarea>
+    </div>
+    <div class="q" data-q="fk-5" data-sec="fk" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">FK-5</span><h4>Deutscher Name des Skills?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="fk-5" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Bogenbau</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="radio" name="fk-5" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Pfeilmacherei</span></span></label>
+        <label class="opt"><input type="radio" name="fk-5" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Bognerei</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu FK-5"></textarea>
+    </div>
+    <div class="q" data-q="fk-6" data-sec="fk" data-type="multi">
+      <div class="q-head"><div class="left"><span class="q-id">FK-6</span><h4>Was gehört zum Fernkampf-Rework?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Mehrfachauswahl. Alles Angekreuzte kommt in den Balance-Auftrag.</p>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="fk-6" value="ladder"><span class="o-box"></span><span class="o-body"><span class="o-t">Bogenleiter auf Bestwert</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="checkbox" name="fk-6" value="rune"><span class="o-box"></span><span class="o-body"><span class="o-t">Rune „Jägerisch“ auf vollen Wert</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="checkbox" name="fk-6" value="drops"><span class="o-box"></span><span class="o-body"><span class="o-t">Mehr Leder- und Bogenbeute</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="checkbox" name="fk-6" value="stance"><span class="o-box"></span><span class="o-body"><span class="o-t">Schadensfaktor für Fernkampf-Haltungen</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="checkbox" name="fk-6" value="dots"><span class="o-box"></span><span class="o-body"><span class="o-t">Mehr Bögen mit Blutung und Brand</span><span class="o-d">Macht die Rune „Auszehrend“ für Bögen nutzbar.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu FK-6"></textarea>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== WELLE 3 ====================== -->
+
+<section class="sys" id="ereignisse">
+  <div class="eyebrow">Welle 3 · Leben im Handwerk</div>
+  <div class="sys-head"><span class="sys-code">EV</span><h2>Zufallsereignisse beim Skillen</h2></div>
+  <p class="ask">Kurze Glücksmomente, die Sammeln und Handwerk lebendiger machen, ohne das Idle-Spiel zu stören.</p>
+  <div class="chips"><span class="chip"><i>Aufwand</i>mittel</span><span class="chip"><i>Spielstand</i>laufendes Ereignis + eigener Zufallsstrom</span><span class="chip"><i>Determinismus</i>bestehende Abläufe bleiben bitgleich</span><span class="chip"><i>Bilder</i>~12 Ereigniskarten</span></div>
+  <div class="cols">
+    <div class="pane now">
+      <h3>Heute im Spiel</h3>
+      <ul>
+        <li>Beim Skillen gibt es keine Ereignisse. Seltene Zusatzfunde (Vogelnest 1 %, Rohgranat 1 %) kommen stumm, weil die Fund-Meldung erst ab Rarität „selten“ anspringt. Doppelertrag und Materialerhalt aus der Meisterschaft melden sich gar nicht.</li>
+        <li>Die Wochentags-Segen sind fest an den Kalendertag gebunden, ohne Zufall.</li>
+        <li><b>Vorlage:</b> die Champion-Spawns. Eigener Zufallsstrom (<code>eliteRng</code>), nur online, Ruhezeit 55–120 min, festes 15-Minuten-Fenster, Meldung und Fenster oben.</li>
+      </ul>
+    </div>
+    <div class="pane plan">
+      <h3>Vorschlag</h3>
+      <ul>
+        <li><b>Eigener Zufallsstrom</b> <code>eventRng</code>, damit Beute, Meisterschaft und Champions bitgleich bleiben.</li>
+        <li><b>Auslöser:</b> nach jeder abgeschlossenen Aktion eine kleine Chance, mit Abklingzeit. Ziel ist ein Ereignis je 20–30 Minuten aktiven Skillens, immer im Skill, den du gerade betreibst.</li>
+        <li><b>Kurz und ohne Pflicht:</b> 2–10 Minuten oder eine feste Zahl Aktionen.</li>
+        <li><b>Anzeige:</b> Ereigniskarte mit Bild als Meldung, Chip mit Restzeit im Kopf, Logbuch der letzten Ereignisse.</li>
+      </ul>
+      <div class="mini-wrap"><table class="mini">
+        <thead><tr><th>Bereich</th><th>Ereignisse zum Start</th></tr></thead>
+        <tbody>
+          <tr><td>Sammeln</td><td>Reiche Ader (Bergbau: 40 Aktionen doppelter Ertrag) · Sturmbruch (Holzfällen: Bündel der nächsthöheren Holzart) · Fischschwarm (Angeln: +50 % Tempo, 3 min) · Wilder Garten (Sammeln: seltene Pflanzen garantiert) · Wachwechsel (Diebeskunst: 5 min kein Betäuben)</td></tr>
+          <tr><td>Handwerk</td><td>Eingebung (10 Herstellungen mit doppelter Suffix-Chance) · Sparsame Hand (25 Herstellungen mit +30 % Materialerhalt) · Meisterstück (nächstes Teil mit garantiertem Suffix) · Kundschaft (ein Arbeitsauftrag, siehe unten)</td></tr>
+          <tr><td>Ländereien</td><td>Prächtige Ernte (nächste Ernte doppelt) · Frische Fährte (nächster Fang mit 10 statt 5 Würfen)</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="qs-title">Deine Entscheidung</div>
+  <div class="qs">
+    <div class="q" data-q="ev-1" data-sec="ev" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">EV-1</span><h4>Gibt es Ereignisse auch offline?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ev-1" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Nur online, wie Champion-Spawns</span><span class="rec">Empfehlung</span><span class="o-d">Belohnt das Dabeisein, die Offline-Bilanz bleibt planbar.</span></span></label>
+        <label class="opt"><input type="radio" name="ev-1" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Auch offline, gesammelt im Offline-Bericht</span><span class="o-d">Arbeitsaufträge würden dann offline nicht angeboten.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu EV-1"></textarea>
+    </div>
+    <div class="q" data-q="ev-2" data-sec="ev" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">EV-2</span><h4>Wie oft?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ev-2" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Etwa alle 20–30 Minuten</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="radio" name="ev-2" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Etwa einmal pro Stunde</span><span class="o-d">Seltener, dafür stärker.</span></span></label>
+        <label class="opt"><input type="radio" name="ev-2" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Etwa alle 10 Minuten</span><span class="o-d">Lebendig, aber Gefahr von Meldungs-Lärm.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu EV-2"></textarea>
+    </div>
+    <div class="q" data-q="ev-3" data-sec="ev" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">EV-3</span><h4>Muss man ein Ereignis annehmen?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ev-3" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Nein, es wirkt sofort. Nur Aufträge brauchen ein Ja</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="radio" name="ev-3" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Ja, Annehmen per Klick innerhalb von 2 Minuten</span><span class="o-d">Mehr Spannung, aber wer gerade nicht hinsieht, verpasst es.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu EV-3"></textarea>
+    </div>
+  </div>
+</section>
+
+<section class="sys" id="auftraege">
+  <div class="eyebrow">Welle 3 · Leben im Handwerk</div>
+  <div class="sys-head"><span class="sys-code">AU</span><h2>Arbeitsaufträge</h2></div>
+  <p class="ask">Kunden bestellen etwas in einem Handwerks-Skill. Lohn sind Gold und so viel XP, dass es sich lohnt.</p>
+  <div class="chips"><span class="chip"><i>Aufwand</i>mittel</span><span class="chip"><i>Spielstand</i>offene Aufträge</span><span class="chip"><i>Wiederverwendung</i>Tavernen-Engine mit Tests</span><span class="chip"><i>Bilder</i>Kunden-Porträts fehlen noch</span></div>
+  <div class="cols">
+    <div class="pane now">
+      <h3>Heute im Spiel</h3>
+      <ul>
+        <li>Die Taverne ist abgeschaltet (<code>TAVERN_ENABLED = false</code>, dein Entscheid vom 17.10.: „nur ein Test“). In ihr steckt aber eine fertige Auftrags-Engine:
+          <ul>
+            <li>Auftragsarten: herstellen, liefern, Aktionen ausführen;</li>
+            <li>Gäste für 16 Skills;</li>
+            <li>Gold 150–3.200 je Level-Band;</li>
+            <li>XP = Minuten × 1,5 × beste XP pro Minute;</li>
+            <li>Fortschritt über Herstellungszähler mit Startanker;</li>
+            <li>deterministisch per Hash, mit Tests.</li>
+          </ul>
+        </li>
+        <li>Es fehlen Gäste für Schneidern und Jagen. Die Gäste-Porträts wurden nie geliefert, nur die Tavernen-Kulisse.</li>
+        <li>Die täglichen Quests zahlen nur Marken (1–8), kein Gold und keine Skill-XP.</li>
+      </ul>
+    </div>
+    <div class="pane plan">
+      <h3>Vorschlag: Aufträge kommen als Handwerks-Ereignis</h3>
+      <ul>
+        <li>Während du in einem Handwerks-Skill arbeitest, erscheint ein Kunde: „Meisterin Varga braucht 40 Stahl-Langschwerter.“ Du nimmst an oder lehnst ab.</li>
+        <li><b>Umfang</b> 20–40 Minuten Arbeit in diesem Skill. Bestellt wird nur, was du mit deinem Level herstellen kannst und wofür du Material erreichst.</li>
+        <li><b>Lohn:</b> Gold über dem Verkaufswert der Teile, ein großer XP-Batzen im Skill (siehe AU-4) und 10 % Chance auf eine Kiste.</li>
+        <li><b>Auftragsbuch:</b> höchstens drei offene Aufträge, sichtbar als Reiter bei den Quests, mit „In Warteschlange legen“.</li>
+        <li><b>Engine:</b> Die Tavernen-Aufträge werden ohne Taverne wiederverwendet. Die Gäste werden zu Kunden, Schneidern und Bogenbau bekommen eigene Kunden.</li>
+        <li>Handwerks-Skills: Schmieden, Kochen, Handwerk, Schneidern, Juwelierskunst, Runenkunst, Kräuterkunde, Bogenbau.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="qs-title">Deine Entscheidung</div>
+  <div class="qs">
+    <div class="q" data-q="au-1" data-sec="au" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">AU-1</span><h4>Woher kommen Aufträge?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="au-1" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Als Ereignis beim Arbeiten</span><span class="rec">Empfehlung</span><span class="o-d">So, wie du es beschrieben hast. Überraschend und an den Skill gebunden, den du gerade spielst.</span></span></label>
+        <label class="opt"><input type="radio" name="au-1" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Tägliches Auftragsbrett mit drei Angeboten</span><span class="o-d">Planbar, aber eher eine zweite Quest-Liste.</span></span></label>
+        <label class="opt"><input type="radio" name="au-1" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Beides</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu AU-1"></textarea>
+    </div>
+    <div class="q" data-q="au-2" data-sec="au" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">AU-2</span><h4>Werden die Teile abgegeben?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="au-2" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Ja, der Kunde bekommt sie</span><span class="rec">Empfehlung</span><span class="o-d">Ehrlich und ein Materialabfluss. Gold liegt dafür über dem Verkaufswert.</span></span></label>
+        <label class="opt"><input type="radio" name="au-2" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Nein, Herstellen genügt, die Teile bleiben bei dir</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu AU-2"></textarea>
+    </div>
+    <div class="q" data-q="au-3" data-sec="au" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">AU-3</span><h4>Gibt es ein Zeitlimit?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="au-3" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Nein, aber höchstens drei offene Aufträge</span><span class="rec">Empfehlung</span><span class="o-d">Idle-freundlich, niemand verliert etwas über Nacht.</span></span></label>
+        <label class="opt"><input type="radio" name="au-3" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">24 Stunden</span></span></label>
+        <label class="opt"><input type="radio" name="au-3" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Wenige Stunden, dafür mehr Lohn</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu AU-3"></textarea>
+    </div>
+    <div class="q" data-q="au-4" data-sec="au" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">AU-4</span><h4>Wie groß ist der XP-Batzen?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Zusätzlich zur XP, die das Herstellen selbst bringt. Gemessen an der XP der Arbeitszeit.</p>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="au-4" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">1,5-fach (Tavernen-Formel)</span><span class="rec">Empfehlung</span><span class="o-d">Ein 30-Minuten-Auftrag zählt wie 75 Minuten Arbeit. Spürbar, ohne normales Skillen zu entwerten.</span></span></label>
+        <label class="opt"><input type="radio" name="au-4" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">1-fach</span><span class="o-d">Ein Auftrag verdoppelt die XP seiner Arbeitszeit.</span></span></label>
+        <label class="opt"><input type="radio" name="au-4" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">3-fach, dafür seltener</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu AU-4"></textarea>
+    </div>
+    <div class="q" data-q="au-5" data-sec="au" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">AU-5</span><h4>Auch für Sammel-Skills?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="au-5" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Nur Handwerk</span><span class="rec">Empfehlung</span><span class="o-d">Sammel-Skills bekommen ihre eigenen Ereignisse.</span></span></label>
+        <label class="opt"><input type="radio" name="au-5" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Auch Lieferaufträge für Erz, Holz, Fisch und Kräuter</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu AU-5"></textarea>
+    </div>
+    <div class="q" data-q="au-6" data-sec="au" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">AU-6</span><h4>Und die Taverne?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="au-6" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Bleibt aus, nur ihre Engine wird genutzt</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="radio" name="au-6" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Wird der Ort, an dem man Aufträge abholt und abgibt</span><span class="o-d">Die Kulisse gibt es, die Porträts fehlen.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu AU-6"></textarea>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== WELLE 4 ====================== -->
+
+<section class="sys" id="raids">
+  <div class="eyebrow">Welle 4 · Endgame</div>
+  <div class="sys-head"><span class="sys-code">RA</span><h2>Raids</h2></div>
+  <p class="ask">Ein Endgame-Ziel mit Eintrittsgebühr, das Gold aus dem Spiel zieht und die beste Ausrüstung liefert.</p>
+  <div class="chips"><span class="chip"><i>Aufwand</i>groß</span><span class="chip"><i>Spielstand</i>Raid-Fortschritt, Wochenstand</span><span class="chip"><i>Engine</i>neu: Bossphasen</span><span class="chip"><i>Bilder</i>~25 (Bosse, Kulissen, Beute)</span><span class="chip"><i>Lore</i>Auftrag an Lore-Dev</span></div>
+  <div class="cols">
+    <div class="pane now">
+      <h3>Heute im Spiel</h3>
+      <ul>
+        <li>Nirgends kostet etwas Eintritt. Dungeons sind frei, Schlüssel sind seit Save-Version 64 wirkungslos.</li>
+        <li>Gold hat oben kaum Abfluss: New Haven kostet zusammen rund 750.000 Gold, die Bankpakete bis rund 100 Mio., sonst Kleinbeträge. Einkommen im Endgame liegt bei 70.000–110.000 Gold pro Stunde (Diebeskunst-Tresor 91.920, Schattenkiefer 111.678).</li>
+        <li>Kampf ist immer einer gegen einen. Bosse haben als einzige Mechanik Wut, keine Phasen und keine Helfer.</li>
+        <li>Stärkster Gegner ist Drazhan (L310, 4–10 Minuten Kampf), stärkste Rarität „göttlich“ (10 Items), der Paragon-Turm geht bis Etage 5000.</li>
+        <li>Dungeons in der Warteschlange wiederholen sich offline endlos.</li>
+      </ul>
+    </div>
+    <div class="pane plan">
+      <h3>Vorschlag</h3>
+      <ul>
+        <li><b>Aufbau:</b> drei Flügel mit je zwei Wächtern und einem Flügelboss, am Ende der Raidboss. Zwischen den Flügeln eine Rast zum Essen und Buffen.</li>
+        <li><b>Neue Mechanik, Bossphasen:</b> Bei 75, 50 und 25 % HP wechselt der Boss die Phase, mit anderer Schadensart, Ward-Schild, Selbstheilung, Statuseffekten oder Wut. Das bleibt ein Kampf eins gegen eins und braucht keinen Umbau auf mehrere Gegner.</li>
+        <li><b>Eintritt in Gold pro Versuch,</b> nach Schwierigkeit: Normal etwa 50.000, Heroisch 150.000, Mythisch 400.000. Das sind rund eine halbe, anderthalb und vier Stunden Endgame-Einkommen. Die genauen Werte rechnet der Balance-Agent.</li>
+        <li><b>Beute:</b> Raid-Unikate als Stufe XIII über Götteisen, Raid-Material für Raid-Rezepte ab Handwerk 95, wöchentliche Erstkill-Truhe.</li>
+        <li><b>Wochen-Modifikatoren:</b> Jede Kalenderwoche ein anderer Raid-Modifikator, fest wie die Wochentags-Segen, ohne Zufall. Beispiele: „Blutdurst“ (Bosse heilen sich bei Treffern), „Eishauch“ (Frost-Schaden, Frost-Pfeile glänzen).</li>
+        <li><b>Freischaltung</b> über das Ende der Chronik. Der Raid kann Band 2 „Götterkriege“ eröffnen, wenn du den Rahmen gibst.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="qs-title">Deine Entscheidung</div>
+  <div class="qs">
+    <div class="q" data-q="ra-1" data-sec="ra" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">RA-1</span><h4>Wie funktioniert der Eintritt?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ra-1" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Gold pro Versuch</span><span class="rec">Empfehlung</span><span class="o-d">Einfach zu verstehen, der Abfluss wächst mit dem Spielen.</span></span></label>
+        <label class="opt"><input type="radio" name="ra-1" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Gold plus ein Raid-Siegel aus Beute</span><span class="o-d">Doppelte Hürde, macht Siegel zur Jagdbeute.</span></span></label>
+        <label class="opt"><input type="radio" name="ra-1" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Einmal pro Woche zahlen, dann frei</span><span class="o-d">Wochen-Abo, kleinerer Abfluss.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu RA-1"></textarea>
+    </div>
+    <div class="q" data-q="ra-2" data-sec="ra" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">RA-2</span><h4>Was passiert beim Tod?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ra-2" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Neustart am Anfang des Flügels, ohne neue Gebühr</span><span class="rec">Empfehlung</span><span class="o-d">Die Gebühr kauft einen Lauf durch alle drei Flügel. Wer stirbt, verliert Zeit, nicht noch einmal Gold.</span></span></label>
+        <label class="opt"><input type="radio" name="ra-2" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Lauf vorbei, Gebühr weg</span><span class="o-d">Hart. Passt zu Mythisch, auf Normal eher frustrierend.</span></span></label>
+        <label class="opt"><input type="radio" name="ra-2" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Lauf vorbei, halbe Gebühr zurück</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu RA-2"></textarea>
+    </div>
+    <div class="q" data-q="ra-3" data-sec="ra" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">RA-3</span><h4>Warteschlange und offline?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ra-3" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Erlaubt, jede Runde zahlt ihre Gebühr</span><span class="rec">Empfehlung</span><span class="o-d">Stoppt von selbst, wenn das Gold nicht mehr reicht. Passt zum Idle-Spiel.</span></span></label>
+        <label class="opt"><input type="radio" name="ra-3" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Nur aktiv, keine Warteschlange</span><span class="o-d">Raids als Ereignis, für das man da ist.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu RA-3"></textarea>
+    </div>
+    <div class="q" data-q="ra-4" data-sec="ra" data-type="multi">
+      <div class="q-head"><div class="left"><span class="q-id">RA-4</span><h4>Was droppt im Raid?</h4></div><span class="q-state">offen</span></div>
+      <p class="q-ctx">Mehrfachauswahl.</p>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="ra-4" value="uniques"><span class="o-box"></span><span class="o-body"><span class="o-t">Raid-Unikate, Stufe XIII</span><span class="rec">Empfehlung</span><span class="o-d">Je Stil Waffe und zwei Schmuckstücke.</span></span></label>
+        <label class="opt"><input type="checkbox" name="ra-4" value="sets"><span class="o-box"></span><span class="o-body"><span class="o-t">Raid-Sets je Stil mit Set-Bonus</span><span class="o-d">Stark, aber rund 18 zusätzliche Bilder.</span></span></label>
+        <label class="opt"><input type="checkbox" name="ra-4" value="mats"><span class="o-box"></span><span class="o-body"><span class="o-t">Raid-Material für Rezepte ab Handwerk 95</span><span class="rec">Empfehlung</span><span class="o-d">Gibt den Handwerks-Skills ein Endgame-Ziel.</span></span></label>
+        <label class="opt"><input type="checkbox" name="ra-4" value="chest"><span class="o-box"></span><span class="o-body"><span class="o-t">Wöchentliche Erstkill-Truhe</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="checkbox" name="ra-4" value="pet"><span class="o-box"></span><span class="o-body"><span class="o-t">Ein Raid-Begleiter</span><span class="o-d">Als 24. Begleiter, sehr selten.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu RA-4"></textarea>
+    </div>
+    <div class="q" data-q="ra-5" data-sec="ra" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">RA-5</span><h4>Schwierigkeitsgrade?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ra-5" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Drei: Normal, Heroisch, Mythisch</span><span class="rec">Empfehlung</span><span class="o-d">Gleiche Kulissen und Bosse, mehr Werte, mehr Gebühr, bessere Chancen. Wenig Mehraufwand.</span></span></label>
+        <label class="opt"><input type="radio" name="ra-5" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Einer</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu RA-5"></textarea>
+    </div>
+    <div class="q" data-q="ra-6" data-sec="ra" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">RA-6</span><h4>Wie viele Raids in 1.4?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ra-6" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Einer, richtig gut</span><span class="rec">Empfehlung</span><span class="o-d">Bossphasen und Raid-System einmal sauber bauen, weitere Raids sind dann vor allem Inhalt.</span></span></label>
+        <label class="opt"><input type="radio" name="ra-6" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Zwei</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu RA-6"></textarea>
+    </div>
+    <div class="q" data-q="ra-7" data-sec="ra" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">RA-7</span><h4>Woher kommt das Thema?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ra-7" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Lore-Dev schlägt drei Themen vor, du wählst</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="radio" name="ra-7" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Der Raid eröffnet Band 2 „Götterkriege“, du gibst den Rahmen</span></span></label>
+        <label class="opt"><input type="radio" name="ra-7" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Eigene Idee</span><span class="o-d">Bitte in die Anmerkung.</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu RA-7"></textarea>
+    </div>
+    <div class="q" data-q="ra-8" data-sec="ra" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">RA-8</span><h4>Wochen-Modifikatoren?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="ra-8" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Ja</span><span class="rec">Empfehlung</span><span class="o-d">Jede Woche ein anderer Kniff, gleicher Raid. Billige Abwechslung.</span></span></label>
+        <label class="opt"><input type="radio" name="ra-8" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Nein</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu RA-8"></textarea>
+    </div>
+  </div>
+</section>
+
+<section class="sys" id="weltkarte">
+  <div class="eyebrow">Welle 4 · Endgame · vielleicht</div>
+  <div class="sys-head"><span class="sys-code">WK</span><h2>Weltkarte</h2></div>
+  <p class="ask">Die Reach als Ort zeigen statt als Liste.</p>
+  <div class="chips"><span class="chip"><i>Aufwand</i>mittel</span><span class="chip"><i>Spielstand</i>unverändert</span><span class="chip"><i>Bilder</i>1 große gemalte Karte + Marker</span></div>
+  <div class="cols">
+    <div class="pane now">
+      <h3>Heute im Spiel</h3>
+      <ul>
+        <li>Die Zonenwahl ist ein Raster mit Suche: Zonen, Dungeons, Turm-Etagen und Paragon.</li>
+        <li>Eine Kampf-Zonenkarte gab es schon, sie ist abgeschaltet. Zehn Hotspot-Dateien liegen in <code>assets/zonemaps</code>, ein Karten-Editor existiert, ist aber nicht verlinkt.</li>
+        <li>New Haven hat eine Karte als zweiten Reiter. Eine Weltkarte gibt es nicht.</li>
+      </ul>
+    </div>
+    <div class="pane plan">
+      <h3>Vorschlag</h3>
+      <ul>
+        <li>Weltkarte als <b>zweite Ansicht</b> der Zonenwahl, umschaltbar, das Raster bleibt.</li>
+        <li>Gemalte Karte mit den zehn Zonen entlang einer Route. Gesperrte Zonen liegen im Nebel. Marker für Dungeons, den Raid, aktive Champions, den Slayer-Turm und New Haven.</li>
+        <li>Klick auf eine Zone öffnet die bestehende Monsterliste. Kein neuer Spielmechanik-Code.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="qs-title">Deine Entscheidung</div>
+  <div class="qs">
+    <div class="q" data-q="wk-1" data-sec="wk" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">WK-1</span><h4>Wann?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="wk-1" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Als 1.4.x nachliefern, wenn der Rest steht</span><span class="rec">Empfehlung</span></span></label>
+        <label class="opt"><input type="radio" name="wk-1" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Gleich in 1.4.0</span></span></label>
+        <label class="opt"><input type="radio" name="wk-1" value="c"><span class="o-box"></span><span class="o-body"><span class="o-t">Gar nicht</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu WK-1"></textarea>
+    </div>
+    <div class="q" data-q="wk-2" data-sec="wk" data-type="single">
+      <div class="q-head"><div class="left"><span class="q-id">WK-2</span><h4>Welche Rolle hat die Karte?</h4></div><span class="q-state">offen</span></div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="wk-2" value="a"><span class="o-box"></span><span class="o-body"><span class="o-t">Zusätzliche Ansicht, das Raster bleibt Standard</span><span class="rec">Empfehlung</span><span class="o-d">Wer schnell farmen will, behält die Liste.</span></span></label>
+        <label class="opt"><input type="radio" name="wk-2" value="b"><span class="o-box"></span><span class="o-body"><span class="o-t">Karte wird der Standard, das Raster bleibt als Umschalter</span></span></label>
+      </div>
+      <textarea class="note" placeholder="Anmerkung (optional)" aria-label="Anmerkung zu WK-2"></textarea>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="fahrplan">
+  <h2>Fahrplan</h2>
+  <p>Jede Welle endet mit einer Abnahme durch dich auf dem Testzweig, isoliert vom echten Spielstand. Save-Versionen steigen je Welle, jede mit Migration, Vault-Test und Kompatibilitäts-Fixture. Alle Texte in sieben Sprachen.</p>
+  <div class="waves">
+    <div class="wavecard"><div class="wn">Welle 1</div><h3>Klarheit</h3><ul><li>Zweihand- und Stufen-Anzeige</li><li>Ländereien</li><li>Buff-Food (Save 89)</li><li>Parallel: Bilder für Bogenbau, Köcher und Raid bestellen, Raid-Lore beauftragen</li></ul></div>
+    <div class="wavecard"><div class="wn">Welle 2</div><h3>Werkstatt</h3><ul><li>Materiallager</li><li>Bergung</li><li>Bogenbau-Split und Fernkampf-Balance (Save 90)</li><li>Parallel: Raid-Balance-Spezifikation</li></ul></div>
+    <div class="wavecard"><div class="wn">Welle 3</div><h3>Leben im Handwerk</h3><ul><li>Ereignis-System mit eigenem Zufallsstrom</li><li>Arbeitsaufträge auf der Tavernen-Engine (Save 91)</li></ul></div>
+    <div class="wavecard"><div class="wn">Welle 4</div><h3>Endgame</h3><ul><li>Bossphasen in der Engine</li><li>Raid, Gebühr, Wochen-Modifikatoren (Save 92)</li><li>Weltkarte je nach WK-1</li></ul></div>
+  </div>
+
+  <div class="qs" style="margin-top:22px">
+    <div class="q" data-q="g-notes" data-sec="g" data-type="text">
+      <div class="q-head"><div class="left"><span class="q-id">Frei</span><h4>Was fehlt dir, was soll anders?</h4></div><span class="q-state">offen</span></div>
+      <textarea class="note" style="min-height:90px" placeholder="Alles, was in keine Frage passt" aria-label="Freie Anmerkung"></textarea>
+    </div>
+  </div>
+
+  <div class="savebar" style="margin-top:18px">
+    <button class="btn" id="copy-btn" type="button">Antworten als Text kopieren</button>
+    <span class="muted" id="copy-state">Nur nötig, falls das Speichern hier nicht klappt.</span>
+  </div>
+  <textarea class="copybox" id="copy-box" hidden readonly aria-label="Antworten als Text"></textarea>
+
+  <div class="foot">Stand 23.10.2026. Datenbasis: Code und Content auf dem Zweig <code>test-ui-fundament</code> (Save-Version 88, Spielversion 1.3.1), Stil-Parität vom 26.08., Wirtschafts-Simulation vom 27.07. Alle Zahlen zu Gebühren und Erträgen sind Zielwerte, der Balance-Agent rechnet sie nach deinem GO nach.</div>
+</section>
+
+</main>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  // claude:2026-10-23T14:15:00+02:00 — Fragen lesen, Antworten in db "answers/<id>" schreiben, Rückfall localStorage
+  var KEY = "gr-plan-1.4-answers";
+  var qs = Array.prototype.slice.call(document.querySelectorAll(".q"));
+  var byId = {};
+  qs.forEach(function (q) { byId[q.dataset.q] = q; });
+  var countable = qs.filter(function (q) { return q.dataset.type !== "text"; });
+  document.getElementById("q-total").textContent = String(countable.length);
+
+  function readQ(q) {
+    var choice = Array.prototype.slice.call(q.querySelectorAll("input:checked")).map(function (i) { return i.value; });
+    var ta = q.querySelector("textarea");
+    return { choice: choice, note: ta ? ta.value.trim() : "" };
+  }
+  function labelsOf(q, choice) {
+    return choice.map(function (v) {
+      var inp = q.querySelector('input[value="' + v + '"]');
+      var t = inp && inp.closest("label").querySelector(".o-t");
+      return t ? t.textContent : v;
+    });
+  }
+  function isDone(q) {
+    var a = readQ(q);
+    return q.dataset.type === "text" ? a.note.length > 0 : a.choice.length > 0;
+  }
+  function applyQ(q, a) {
+    if (!a) return;
+    var choice = Array.isArray(a.choice) ? a.choice : (Array.isArray(a.wahl) ? a.wahl : []);
+    q.querySelectorAll("input").forEach(function (i) { i.checked = choice.indexOf(i.value) !== -1; });
+    var ta = q.querySelector("textarea");
+    if (ta && typeof a.note === "string" && document.activeElement !== ta) ta.value = a.note;
+  }
+  function refresh() {
+    var done = 0, per = {};
+    qs.forEach(function (q) {
+      var d = isDone(q);
+      q.classList.toggle("done", d);
+      var st = q.querySelector(".q-state");
+      if (st) st.textContent = d ? "beantwortet" : "offen";
+      if (q.dataset.type === "text") return;
+      var s = q.dataset.sec;
+      per[s] = per[s] || [0, 0];
+      per[s][1]++;
+      if (d) { per[s][0]++; done++; }
+    });
+    document.getElementById("q-done").textContent = String(done);
+    document.querySelectorAll("[data-cnt]").forEach(function (el) {
+      var p = per[el.dataset.cnt];
+      if (!p) return;
+      el.textContent = p[0] + "/" + p[1];
+      el.classList.toggle("full", p[0] === p[1]);
+    });
+  }
+
+  // Lokale Sicherung
+  function loadLocal() { try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { return {}; } }
+  function saveLocal() {
+    var all = {};
+    qs.forEach(function (q) { all[q.dataset.q] = readQ(q); });
+    try { localStorage.setItem(KEY, JSON.stringify(all)); } catch (e) { /* privat oder blockiert */ }
+  }
+  var local = loadLocal();
+  Object.keys(local).forEach(function (id) { if (byId[id]) applyQ(byId[id], local[id]); });
+  refresh();
+
+  // Speicherstatus
+  var stateEl = document.getElementById("save-state");
+  function setState(kind, text) {
+    var cls = kind === "ok" ? "ok" : kind === "warn" ? "warn" : kind === "bad" ? "bad" : "";
+    stateEl.innerHTML = "";
+    var dot = document.createElement("span"); dot.className = "dot " + cls;
+    stateEl.appendChild(dot);
+    stateEl.appendChild(document.createTextNode(text));
+  }
+
+  // db-Anbindung: je Frage ein Dokument, je Dokument immer nur ein Schreibvorgang gleichzeitig
+  var db = null;
+  var timers = {}, inflight = {}, again = {}, dirty = {};
+  function push(id) {
+    if (!db) { delete dirty[id]; return; }
+    if (inflight[id]) { again[id] = true; return; }
+    var q = byId[id], a = readQ(q);
+    inflight[id] = true;
+    db.doc("answers/" + id).set({
+      qid: id,
+      frage: (q.querySelector("h4") || {}).textContent || id,
+      choice: a.choice,
+      label: labelsOf(q, a.choice),
+      note: a.note,
+      at: new Date().toISOString()
+    }).then(function () {
+      setState("ok", "Gespeichert. Ich kann deine Antworten direkt lesen.");
+    }).catch(function (e) {
+      var code = e && e.code;
+      if (code === "invalid_argument" || code === "not_granted") setState("warn", "Nur lesend geöffnet. Antworten bleiben in diesem Browser, nutze unten „Antworten kopieren“.");
+      else setState("bad", "Speichern fehlgeschlagen (" + (code || "unbekannt") + "). Antworten sind lokal gesichert.");
+    }).then(function () {
+      inflight[id] = false;
+      if (again[id]) { again[id] = false; push(id); } else { delete dirty[id]; }
+    });
+  }
+  function schedule(q, delay) {
+    var id = q.dataset.q;
+    dirty[id] = true;
+    saveLocal();
+    refresh();
+    clearTimeout(timers[id]);
+    timers[id] = setTimeout(function () { push(id); }, delay);
+  }
+  qs.forEach(function (q) {
+    q.addEventListener("change", function (ev) { if (ev.target.matches("input")) schedule(q, 300); });
+    var ta = q.querySelector("textarea");
+    if (ta) ta.addEventListener("input", function () { schedule(q, 900); });
+  });
+
+  var use = window.claude && typeof window.claude.use === "function" ? window.claude.use.bind(window.claude) : null;
+  if (!use) {
+    setState("warn", "Antworten werden in diesem Browser gespeichert. Nutze unten „Antworten kopieren“, um sie mir zu geben.");
+  } else {
+    use("db").then(function (handle) {
+      if (!handle) {
+        setState("warn", "Antworten werden in diesem Browser gespeichert. Nutze unten „Antworten kopieren“, um sie mir zu geben.");
+        return;
+      }
+      db = handle;
+      setState("ok", "Verbunden. Antworten speichern sich sofort, ich lese sie direkt aus.");
+      db.collection("answers").onSnapshot(function (snap) {
+        snap.docs.forEach(function (d) {
+          if (!d.exists || dirty[d.id] || !byId[d.id]) return;
+          applyQ(byId[d.id], d.data());
+        });
+        saveLocal();
+        refresh();
+      }, function () {
+        setState("warn", "Live-Abgleich unterbrochen. Neue Antworten werden weiter gespeichert.");
+      });
+      // Antworten, die vor der Verbindung nur lokal lagen, einmal hochladen
+      Object.keys(local).forEach(function (id) {
+        var a = local[id];
+        if (byId[id] && a && ((a.choice && a.choice.length) || a.note)) { dirty[id] = true; push(id); }
+      });
+    }, function () {
+      setState("warn", "Antworten werden in diesem Browser gespeichert. Nutze unten „Antworten kopieren“, um sie mir zu geben.");
+    });
+  }
+
+  // Antworten als Text
+  function summary() {
+    var lines = ["Bauplan 1.4: Antworten"];
+    qs.forEach(function (q) {
+      var a = readQ(q);
+      if (!a.choice.length && !a.note) return;
+      var id = (q.querySelector(".q-id") || {}).textContent || q.dataset.q;
+      var title = (q.querySelector("h4") || {}).textContent || "";
+      var line = id + " " + title + " → " + (labelsOf(q, a.choice).join(" + ") || "–");
+      if (a.note) line += " | Notiz: " + a.note;
+      lines.push(line);
+    });
+    return lines.join("\n");
+  }
+  var box = document.getElementById("copy-box");
+  document.getElementById("copy-btn").addEventListener("click", function () {
+    var text = summary();
+    box.value = text;
+    var info = document.getElementById("copy-state");
+    try {
+      navigator.clipboard.writeText(text).then(function () {
+        info.textContent = "Kopiert. Einfach im Chat einfügen.";
+      }, function () {
+        box.hidden = false; box.focus(); box.select();
+        info.textContent = "Kopieren war blockiert. Der Text ist markiert, kopiere ihn mit Strg+C.";
+      });
+    } catch (e) {
+      box.hidden = false; box.focus(); box.select();
+      info.textContent = "Kopieren war blockiert. Der Text ist markiert, kopiere ihn mit Strg+C.";
+    }
+  });
+})();
+</script>

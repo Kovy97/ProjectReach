@@ -1,0 +1,593 @@
+<title>Feder und Stahl</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Alegreya:ital,wght@0,400;0,600;1,400&display=swap">
+<!-- claude:2026-10-23T15:40:00+02:00 — Entschiedener Plan 1.4.0; Annahmen-Abfrage über db-Sammlung "annahmen", Rückfall localStorage -->
+<style>
+/* Layout: Dossier auf Basalt wie der Bauplan 1.4. Links mitlaufender Inhalt, rechts: Entscheide, Raid als Herzstück
+   (Raum-Strecke, Schwierigkeitsleiter, Bosse, Beute, Sets), Bognerei, Werkstatt, Leben, Klarheit, Fahrplan, Annahmen. */
+:root {
+  color-scheme: dark;
+  --bg: #121315;
+  --panel: #1b1d20;
+  --panel-2: #22252a;
+  --line: #34383e;
+  --line-2: #474c54;
+  --text: #ddd6c8;
+  --muted: #9a9488;
+  --gold: #d6b86c;
+  --gold-dim: #8c7442;
+  --ok: #8fbf86;
+  --warn: #e0a15a;
+  --bad: #d7766b;
+  --godly: #f2cf4a;
+  --heroic: #40d6d0;
+  --mythic: #ff5fae;
+  --fire: #e8834f;
+  --poison: #8fcf5a;
+  --blood: #d0504a;
+  --sel: rgba(214, 184, 108, .10);
+  --f-display: "Cinzel", "Trajan Pro", Georgia, serif;
+  --f-body: "Alegreya", Georgia, "Times New Roman", serif;
+  --f-mono: ui-monospace, "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: 72px; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--f-body); font-size: 17px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+.wrap {
+  max-width: 1240px; margin: 0 auto;
+  padding-block: 36px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 40px;
+}
+h1, h2, h3, h4 { font-family: var(--f-display); font-weight: 700; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(32px, 4.8vw, 52px); letter-spacing: .02em; color: var(--gold); }
+h2 { font-size: clamp(21px, 2.5vw, 27px); letter-spacing: .03em; color: var(--gold); margin-bottom: 14px; }
+h3 { font-size: 16px; letter-spacing: .05em; color: var(--text); margin-bottom: 8px; }
+h4 { font-size: 15px; letter-spacing: .03em; color: var(--text); line-height: 1.35; }
+p { margin: 0 0 12px; max-width: 72ch; }
+ul, ol { margin: 0 0 12px; padding-left: 20px; max-width: 78ch; }
+li { margin-bottom: 6px; }
+b, strong { color: var(--gold); font-weight: 600; }
+code { font-family: var(--f-mono); font-size: .8em; color: var(--muted); background: var(--panel-2); padding: 1px 5px; border: 1px solid var(--line); white-space: nowrap; }
+.muted { color: var(--muted); }
+.eyebrow { font-family: var(--f-display); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 10px; }
+a { color: var(--gold); }
+a:focus-visible, button:focus-visible, input:focus-visible + .o-box, textarea:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; max-height: calc(100vh - 48px); overflow: auto; }
+.toc ol { list-style: none; padding: 0; margin: 0; }
+.toc li { margin: 0; }
+.toc a { display: flex; justify-content: space-between; gap: 8px; padding: 6px 8px; color: var(--text); text-decoration: none; font-size: 15px; border-left: 2px solid transparent; }
+.toc a:hover { background: var(--panel); border-left-color: var(--gold-dim); }
+.toc .cnt { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.toc .cnt.full { color: var(--ok); }
+
+header { border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 40px; }
+header .lead { font-size: 19px; margin-top: 14px; max-width: 70ch; }
+.files { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 16px; font-size: 15px; color: var(--muted); }
+
+section.block { margin-bottom: 60px; }
+.grid { display: grid; gap: 12px; }
+.g2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.g3 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+.card { background: var(--panel); border: 1px solid var(--line); padding: 14px 16px; min-width: 0; }
+.card p, .card li { font-size: 16px; }
+.card h3 { color: var(--gold); }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); background: var(--panel); }
+table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 15px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+th { font-family: var(--f-display); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-dim); background: var(--panel-2); }
+td .k { font-family: var(--f-mono); font-size: 12px; color: var(--gold-dim); }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Raid-Strecke */
+.raid-hero { border: 1px solid var(--line); background:
+  radial-gradient(ellipse at 20% 0%, rgba(232,131,79,.10), transparent 60%),
+  radial-gradient(ellipse at 90% 100%, rgba(143,207,90,.06), transparent 55%), var(--panel);
+  padding: 22px 22px 18px; margin-bottom: 18px; }
+.raid-hero h2 { font-size: clamp(24px, 3.2vw, 34px); }
+.route { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
+.room { background: var(--panel-2); border: 1px solid var(--line); padding: 12px; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.room .rn { font-family: var(--f-display); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-dim); }
+.room .place { font-family: var(--f-display); font-size: 14px; color: var(--text); line-height: 1.3; }
+.waves { display: flex; gap: 4px; align-items: center; }
+.waves i { width: 12px; height: 12px; border: 1px solid var(--line-2); background: #2c3036; transform: rotate(45deg); }
+.waves b { margin-left: 4px; width: 18px; height: 18px; border: 1.5px solid var(--gold); background: #3a2f1a; transform: rotate(45deg); display: inline-block; }
+.room .boss { font-size: 15px; color: var(--gold); font-weight: 600; line-height: 1.3; }
+.room .after { font-size: 13px; color: var(--muted); }
+.room.final { border-color: var(--gold-dim); }
+
+.ladder { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.diff { background: var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--c); padding: 14px 16px; min-width: 0; }
+.diff .dn { font-family: var(--f-display); font-size: 18px; color: var(--c); }
+.diff .fee { font-family: var(--f-display); font-size: 26px; color: var(--text); font-variant-numeric: tabular-nums; margin: 4px 0; }
+.diff dl { margin: 8px 0 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; font-size: 15px; }
+.diff dt { color: var(--muted); }
+.diff dd { margin: 0; }
+
+.set { background: var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--c); padding: 16px; min-width: 0; }
+.set .sn { font-family: var(--f-display); font-size: 17px; color: var(--c); line-height: 1.25; }
+.set .st { font-size: 14px; color: var(--muted); margin: 2px 0 12px; }
+.tier { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); }
+.tier .pc { font-family: var(--f-display); font-size: 18px; color: var(--c); text-align: center; line-height: 1.2; }
+.tier .pc small { display: block; font-size: 10px; letter-spacing: .1em; color: var(--muted); }
+.tier p { margin: 0; font-size: 15.5px; }
+.tier p b { color: var(--text); }
+
+.flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; }
+.flow .step { background: var(--panel-2); border: 1px solid var(--line); padding: 10px 12px; flex: 1 1 170px; min-width: 0; }
+.flow .step h4 { color: var(--gold); margin-bottom: 4px; }
+.flow .step p { font-size: 15px; margin: 0; }
+.flow .arr { align-self: center; color: var(--gold-dim); font-family: var(--f-display); }
+
+.rar { font-family: var(--f-display); font-size: 12px; letter-spacing: .08em; padding: 1px 8px; border: 1px solid currentColor; white-space: nowrap; }
+.r-godly { color: var(--godly); } .r-heroic { color: var(--heroic); } .r-mythic { color: var(--mythic); }
+
+/* Annahmen-Fragen */
+.qs { display: grid; gap: 12px; }
+.q { background: var(--panel); border: 1px solid var(--line); padding: 14px 16px; min-width: 0; }
+.q.done { border-color: var(--gold-dim); }
+.q-head { display: flex; gap: 10px; align-items: baseline; justify-content: space-between; flex-wrap: wrap; margin-bottom: 4px; }
+.q-head .left { display: flex; gap: 10px; align-items: baseline; min-width: 0; }
+.q-id { font-family: var(--f-mono); font-size: 12px; color: var(--gold-dim); white-space: nowrap; }
+.q-state { font-size: 13px; color: var(--muted); white-space: nowrap; }
+.q.done .q-state { color: var(--ok); }
+.q-ctx { font-size: 15px; color: var(--muted); margin: 0 0 10px; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt { display: inline-flex; gap: 8px; align-items: center; padding: 7px 12px; border: 1px solid var(--line); background: var(--panel-2); cursor: pointer; position: relative; }
+.opt input { position: absolute; opacity: 0; pointer-events: none; }
+.o-box { width: 16px; height: 16px; border: 1.5px solid var(--line-2); border-radius: 50%; display: inline-block; }
+.opt input:checked + .o-box { border-color: var(--gold); background: var(--gold); box-shadow: inset 0 0 0 3px var(--panel-2); }
+.opt:has(input:checked) { border-color: var(--gold-dim); background: var(--sel); }
+.o-t { font-weight: 600; }
+.note { width: 100%; margin-top: 10px; min-height: 38px; resize: vertical; background: var(--bg); color: var(--text); border: 1px solid var(--line); padding: 8px 10px; font-family: var(--f-body); font-size: 15.5px; }
+.note::placeholder { color: var(--muted); }
+.savebar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin: 12px 0 16px; font-size: 15px; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--muted); margin-right: 6px; vertical-align: 1px; }
+.dot.ok { background: var(--ok); } .dot.warn { background: var(--warn); } .dot.bad { background: var(--bad); }
+.btn { font-family: var(--f-display); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); background: var(--panel-2); border: 1px solid var(--gold-dim); padding: 8px 14px; cursor: pointer; }
+.btn:hover { background: var(--panel); border-color: var(--gold); }
+.copybox { width: 100%; min-height: 140px; margin-top: 10px; background: var(--bg); color: var(--text); border: 1px solid var(--line); font-family: var(--f-mono); font-size: 13px; padding: 10px; }
+
+.stars { color: var(--gold); letter-spacing: 1px; font-size: 15px; }
+.foot { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 16px; margin-top: 30px; }
+
+.mbar { display: none; }
+@media (max-width: 1000px) {
+  .wrap { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .toc { display: none; }
+  .mbar { display: flex; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); padding: 8px 0; margin-bottom: 16px; gap: 6px; overflow-x: auto; }
+  .mbar a { flex: none; font-size: 13px; padding: 4px 9px; border: 1px solid var(--line); color: var(--text); text-decoration: none; background: var(--panel); white-space: nowrap; }
+  .route { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .ladder { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) { body { font-size: 16px; } .card, .set, .q { padding: 13px; } }
+</style>
+
+<div class="wrap">
+
+<nav class="toc" aria-label="Inhalt">
+  <div class="eyebrow">Inhalt</div>
+  <ol>
+    <li><a href="#entschieden">Entschieden</a></li>
+    <li><a href="#raid">Raid</a></li>
+    <li><a href="#sets">Raid-Sets</a></li>
+    <li><a href="#bognerei">Bognerei &amp; Pfeile</a></li>
+    <li><a href="#werkstatt">Lager &amp; Bergung</a></li>
+    <li><a href="#leben">Ereignisse &amp; Aufträge</a></li>
+    <li><a href="#klarheit">Klarheit</a></li>
+    <li><a href="#fahrplan">Fahrplan &amp; Gates</a></li>
+    <li><a href="#annahmen">Annahmen <span class="cnt" id="toc-cnt"></span></a></li>
+  </ol>
+</nav>
+
+<main style="min-width:0">
+
+<div class="mbar" aria-label="Sprungleiste">
+  <a href="#entschieden">Entschieden</a><a href="#raid">Raid</a><a href="#sets">Sets</a><a href="#bognerei">Bognerei</a><a href="#werkstatt">Lager &amp; Bergung</a><a href="#leben">Ereignisse</a><a href="#klarheit">Klarheit</a><a href="#fahrplan">Fahrplan</a><a href="#annahmen">Annahmen</a>
+</div>
+
+<header>
+  <div class="eyebrow">Grim Reach 1.4.0 · Plan, entschieden am 23.10.2026</div>
+  <h1>Feder und Stahl</h1>
+  <p class="lead">Der erste Raid in die Hauptstadt der Goblins, die Bognerei mit Pfeilen und Köcher und eine Werkstatt, in der Material endlich Ordnung hat. Alles in einem großen Update, gebaut in vier Wellen.</p>
+  <div class="files"><span>Arbeitsauftrag: <code>design/1.4.0-goal.md</code></span><span>Deine Antworten: <code>design/1.4-plan.html</code></span></div>
+</header>
+
+<section class="block" id="entschieden">
+  <h2>Entschieden</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th style="width:18%">System</th><th>Deine Entscheidung</th></tr></thead>
+    <tbody>
+      <tr><td>Update</td><td>Ein großes 1.4.0 „Feder und Stahl“. Wellen: Klarheit → Werkstatt → Leben im Handwerk → Raid. Keine Weltkarte.</td></tr>
+      <tr><td>Zweihand</td><td>Textmarke „2H“ unten links im Item-Feld; die rote Anforderungs-Warnung hat Vorrang.</td></tr>
+      <tr><td>Stufen</td><td>Sterne, bis sechs mit halben Sternen (Stufe VII = <span class="stars">★★★⯪</span>). Materialien bekommen auch eine Stufe.</td></tr>
+      <tr><td>Ländereien</td><td>Eigene Gruppe in der Seitenleiste, zwei Seiten. Köder wie heute. Meldungen gebündelt alle 15 min, in den Optionen schaltbar.</td></tr>
+      <tr><td>Mahlzeiten</td><td>Auto-Essen isst nie eine Mahlzeit, außer du legst sie selbst in den Heilplatz. „Mahlzeit halten“ nur im Kampf, kostenlos. Alte Mahlzeit im Essensplatz wandert in den Mahlzeit-Platz.</td></tr>
+      <tr><td>Lager</td><td>Alle Regale sofort frei, unbegrenzt. Neue Materialien gehen direkt hinein (abschaltbar). Keine Erstattung für Bankpakete.</td></tr>
+      <tr><td>Bergung</td><td>Nur gedroppte Items, wegen der Herkunft. Ertrag: Material der Stufe des Gegenstands plus Reliktstaub nach Rarität, der nur in hohe Runen geht. Kein Auto-Zerlegen, keine XP.</td></tr>
+      <tr><td>Bognerei</td><td>Pfeile als Verbrauchsgut, einfache Pfeile immer unbegrenzt. Köcher als einzige Nebenhand für Bögen. Start für alle bei Level 1. Keine Armbrust.</td></tr>
+      <tr><td>Ereignisse</td><td>Nur online, etwa alle 20–30 min, wirken sofort.</td></tr>
+      <tr><td>Aufträge</td><td>Kommen als Ereignis, Teile werden abgegeben, höchstens drei offen, XP 1,5-fach. Auch Lieferaufträge für Erz, Holz, Fisch und Kräuter. Taverne bleibt aus.</td></tr>
+      <tr><td>Raid</td><td>„Halls of Gobkha'raz“, drei Schwierigkeiten nacheinander, sehr hohe Gebühr, eigene Raritäten, drei Sets, eigene Kulisse je Raum.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="block" id="raid">
+  <div class="raid-hero">
+    <div class="eyebrow">Welle 4 · Das Herzstück</div>
+    <h2>Die Hallen von Gobkha'raz</h2>
+    <p>Die verborgene Hauptstadt der Goblins. Hier verwalten sie die Schuld für das geliehene Feuer, horten das geplünderte Kriegsgerät der Mark und träumen unter ihrem Kriegskönig davon, aus der Bande wieder ein Heer zu machen. Wir reißen sie nieder, Raum für Raum.</p>
+    <div class="route">
+      <div class="room"><span class="rn">Raum 1</span><span class="place">Das Zolltor</span><span class="waves"><i></i><i></i><i></i><i></i><b></b></span><span class="boss">Zahlmeisterin Vrikka</span><span class="after">führt das Schuldbuch</span></div>
+      <div class="room"><span class="rn">Raum 2</span><span class="place">Die Zeughallen</span><span class="waves"><i></i><i></i><i></i><i></i><b></b></span><span class="boss">Zeugmeister Krogg</span><span class="after">hütet das Kriegsgerät der Mark</span></div>
+      <div class="room"><span class="rn">Raum 3</span><span class="place">Die Bestiengruben</span><span class="waves"><i></i><i></i><i></i><i></i><b></b></span><span class="boss">Grubenmutter Ushka</span><span class="after">züchtet die Belagerungsbestien</span></div>
+      <div class="room"><span class="rn">Raum 4</span><span class="place">Heiligtum des geliehenen Feuers</span><span class="waves"><i></i><i></i><i></i><i></i><b></b></span><span class="boss">Oberfelmagierin Zil'gath</span><span class="after">Priesterin des Fremden</span></div>
+      <div class="room final"><span class="rn">Raum 5 · Ende</span><span class="place">Der Erbthron</span><span class="waves"><i></i><i></i><i></i><i></i><b></b></span><span class="boss">Kriegskönig Rakkzul der Erbe</span><span class="after">will das Heer zurück</span></div>
+    </div>
+    <p class="muted" style="margin:14px 0 0">Vier Wellen, dann der Boss. Jeder Raum hat seine eigene gemalte Kulisse. Namen sind Arbeitstitel, Lore-Dev schärft sie, du nickst sie ab (Gate L).</p>
+  </div>
+
+  <h3 style="margin-top:26px">Nach jedem Boss</h3>
+  <div class="flow">
+    <div class="step"><h4>Boss fällt</h4><p>Letzter Treffer, kurze Stille.</p></div>
+    <span class="arr">→</span>
+    <div class="step"><h4>Beute-Zeremonie</h4><p>Die Raid-Truhe bebt, springt auf, die Gegenstände steigen einzeln auf, Lichtstrahl in Raritätsfarbe. Überspringbar.</p></div>
+    <span class="arr">→</span>
+    <div class="step"><h4>„Du rastest.“</h4><p>Dein Charakter mit Ausrüstung, Liste „Letzter Loot“, essen, buffen, umziehen.</p></div>
+    <span class="arr">→</span>
+    <div class="step"><h4>Nächster Raum</h4><p>Per Knopf, oder Häkchen „automatisch weiter nach 3 Sekunden“.</p></div>
+  </div>
+
+  <h3 style="margin-top:26px">Drei Schwierigkeiten, nacheinander freigeschaltet</h3>
+  <div class="ladder">
+    <div class="diff" style="--c: var(--godly)">
+      <div class="dn">Normal</div><div class="fee">300.000 Gold</div><span class="rar r-godly">Göttlich · Stufe XIII</span>
+      <dl><dt>Zugang</dt><dd>nach dem ersten Sieg über Drazhan</dd><dt>Tod</dt><dd>Raum neu starten, keine neue Gebühr</dd><dt>Beute</dt><dd>Grundwerte</dd></dl>
+    </div>
+    <div class="diff" style="--c: var(--heroic)">
+      <div class="dn">Heroisch</div><div class="fee">900.000 Gold</div><span class="rar r-heroic">Heroisch · neue Rarität</span>
+      <dl><dt>Zugang</dt><dd>nach einem Normal-Abschluss</dd><dt>Tod</dt><dd>Neustart für 100.000 Gold oder aufgeben</dd><dt>Beute</dt><dd>+6 % Werte, türkise Farbgebung</dd></dl>
+    </div>
+    <div class="diff" style="--c: var(--mythic)">
+      <div class="dn">Mythisch</div><div class="fee">2.500.000 Gold</div><span class="rar r-mythic">Mythisch · neue Rarität</span>
+      <dl><dt>Zugang</dt><dd>nach einem Heroisch-Abschluss</dd><dt>Tod</dt><dd>Lauf vorbei, 75 % der Gebühr weg</dd><dt>Beute</dt><dd>+12 % Werte, „entwickeltes“ Aussehen</dd></dl>
+    </div>
+  </div>
+  <p class="muted" style="margin-top:10px">Gebühren sind Startwerte, etwa 3, 10 und 28 Stunden Endgame-Einkommen. Der Balance-Agent rechnet sie nach, du nickst sie ab (Gate B). Warteschlange und offline sind erlaubt, jede Runde zahlt ihre Gebühr.</p>
+
+  <h3 style="margin-top:26px">Bosse, Phasen und Beute</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th style="width:17%">Boss</th><th style="width:33%">Phasen bei 75 / 50 / 25 %</th><th style="width:14%">Set-Teil</th><th>Unikate</th></tr></thead>
+    <tbody>
+      <tr><td><b>Vrikka</b><br><span class="muted">Zolltor</span></td><td>Schuldbuch-Ward · Zinseszins: Angriffe alle 10 s schneller · Eintreibung: Wut und Blutung</td><td>Hände</td><td>Pfandmesser (Dolch) · Das Schuldbuch (Fokus) · Siegelring des Zolls</td></tr>
+      <tr><td><b>Krogg</b><br><span class="muted">Zeughallen</span></td><td>Mark-Panzer: Rüstung hoch · Ballistensalve: jeder 4. Angriff ×3 · Ausverkauf: Panzer weg, +40 % Tempo</td><td>Schuhe</td><td>Belagerungshammer (Zweihand) · Turmschild der verlorenen Mark · Köcher des Zeugmeisters</td></tr>
+      <tr><td><b>Ushka</b><br><span class="muted">Bestiengruben</span></td><td>Rudelruf: Gift · Bestie entfesselt: Doppelangriffe und Blutung · Mutterwut: Wut und Heilung je Treffer</td><td>Hose</td><td>Rudelruf (Langbogen) · Reißzahn (Krummsäbel) · Halsband der Grubenmutter</td></tr>
+      <tr><td><b>Zil'gath</b><br><span class="muted">Heiligtum</span></td><td>Felschild: Ward · Brandopfer: Brand auf dich · Der Gläubiger blickt her: mehr Schaden, stärkerer Brand</td><td>Kopf</td><td>Stab des geliehenen Feuers · Glutzunge (Zauberstab) · Ring des Gläubigers</td></tr>
+      <tr><td><b>Rakkzul</b><br><span class="muted">Erbthron</span></td><td>Vier Phasen (75/50/25/10 %), je eine Mechanik der vier Vorgänger, zuletzt „Erbe des Krieges“</td><td>Brust</td><td>Erbklinge (Großschwert) · Kronbogen des Erben (Kurzbogen) · Thronszepter · Mantel des Erben</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted" style="margin-top:10px">31 Gegenstände, jeder in drei Fassungen: 93 Items. Jeder Boss gibt sicher einen Gegenstand, mit 15 % einen zweiten, der Kriegskönig sicher zwei. Dazu je Boss und Schwierigkeit eine wöchentliche Erstkill-Truhe. Bossphasen sind eine neue Engine-Mechanik, der Kampf bleibt eins gegen eins.</p>
+
+  <h3 style="margin-top:26px">Wochen-Modifikatoren</h3>
+  <div class="grid g3">
+    <div class="card"><h3>Zahltag</h3><p>Gebühr −20 %, Gegner +10 % HP.</p></div>
+    <div class="card"><h3>Geliehenes Feuer</h3><p>Gegner setzen Brand, dein Feuerschaden +10 %.</p></div>
+    <div class="card"><h3>Kriegstrommeln</h3><p>Gegner greifen 10 % schneller an.</p></div>
+    <div class="card"><h3>Bestienhunger</h3><p>Bosse heilen sich bei Treffern.</p></div>
+    <div class="card"><h3>Offenes Zeughaus</h3><p>Gegner +25 % Rüstung, Rüstungsdurchschlag zählt doppelt.</p></div>
+    <div class="card"><h3>Giftküche</h3><p>Gegner vergiften, dein Gift hält 50 % länger.</p></div>
+    <div class="card"><h3>Blutfest</h3><p>Gegner bluten länger, du auch.</p></div>
+    <div class="card"><h3>Stille Hallen</h3><p>Keine Änderung, eine Woche zum Durchatmen.</p></div>
+  </div>
+</section>
+
+<section class="block" id="sets">
+  <h2>Die drei Raid-Sets</h2>
+  <p>Jedes Set baut auf dem Ziel etwas auf und löst es mit dem fünften Teil ein. Die Themen kommen aus der Goblin-Kultur: geliehenes Feuer mit Zins, die Meute der Gruben, der Blutschwur der Königsgarde. Fünf Teile je Set: Kopf, Schuhe, Hose, Brust, Hände. Jede Schwierigkeits-Fassung zählt als dasselbe Teil.</p>
+  <div class="grid g3">
+    <div class="set" style="--c: var(--fire)">
+      <div class="sn">Ornat des geliehenen Feuers</div><div class="st">Magie · Stoff · Feuer</div>
+      <div class="tier"><div class="pc">2<small>Teile</small></div><p>+20 % Brandschaden, Brand hält 2 s länger.</p></div>
+      <div class="tier"><div class="pc">4<small>Teile</small></div><p><b>Zinsfeuer:</b> Jede volle Sekunde, die das Ziel brennt, gibt +2 % Zauberschaden gegen es, bis zu zehn Stufen. Erlischt der Brand, verfällt der Zins.</p></div>
+      <div class="tier"><div class="pc">5<small>Teile</small></div><p><b>Eintreibung:</b> Jeder fünfte Zauber treibt die Schuld ein. Der Brand detoniert mit seinem ganzen Restschaden plus 10 % je Zinsstufe und entzündet sich neu. Der Zins bleibt.</p></div>
+    </div>
+    <div class="set" style="--c: var(--poison)">
+      <div class="sn">Pirschgewand der Grubenmeute</div><div class="st">Fernkampf · Leder · Gift</div>
+      <div class="tier"><div class="pc">2<small>Teile</small></div><p>+20 % Giftschaden.</p></div>
+      <div class="tier"><div class="pc">4<small>Teile</small></div><p><b>Schleichende Seuche:</b> Gift stapelt bis 8 statt 5. Je Stapel ignorierst du 1,5 % Rüstung.</p></div>
+      <div class="tier"><div class="pc">5<small>Teile</small></div><p><b>Ausbruch:</b> Triffst du ein Ziel mit vollen Stapeln, platzt das Gift: sofort 150 % des verbleibenden Giftschadens, die Stapel halbieren sich. 6 s Abklingzeit.</p></div>
+    </div>
+    <div class="set" style="--c: var(--blood)">
+      <div class="sn">Blutschwur der Kronwache</div><div class="st">Nahkampf · Platte · Blutung</div>
+      <div class="tier"><div class="pc">2<small>Teile</small></div><p>+20 % Blutungsschaden.</p></div>
+      <div class="tier"><div class="pc">4<small>Teile</small></div><p><b>Offene Wunden:</b> Blutung stapelt bis 3. Je Stapel +8 % Kritschaden gegen das Ziel.</p></div>
+      <div class="tier"><div class="pc">5<small>Teile</small></div><p><b>Blutzoll:</b> Bei drei Stapeln reißt dein nächster Treffer alle Wunden auf. Der Restschaden wird sofort fällig (×1,25), du heilst 20 % davon. 8 s Abklingzeit.</p></div>
+    </div>
+  </div>
+  <p class="muted" style="margin-top:10px">Zusammenspiel: Giftpfeile und der Bogen „Rudelruf“ füttern das Pirschgewand, die Blutungswaffen den Blutschwur, die Feuerstäbe das Ornat. Die Zahlen sind Zielwerte für Gate B.</p>
+
+  <h3 style="margin-top:22px">So sehen die drei Fassungen aus</h3>
+  <div class="grid g3">
+    <div class="card"><span class="rar r-godly">Normal</span><p style="margin-top:8px">Die Grundform, Stufe XIII, Rarität göttlich.</p></div>
+    <div class="card"><span class="rar r-heroic">Heroisch</span><p style="margin-top:8px">Gleiche Form, andere Farbgebung in Hellblau und Türkis.</p></div>
+    <div class="card"><span class="rar r-mythic">Mythisch</span><p style="margin-top:8px">Gleiche Grundform, aber „entwickelt“: mehr Details, Gravuren, edlere Materialien. Kein Glühen, das Epische kommt aus der Form.</p></div>
+  </div>
+</section>
+
+<section class="block" id="bognerei">
+  <h2>Bognerei und Pfeile</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Pfeile, wie du sie willst</h3>
+      <ul>
+        <li><b>Einfache Pfeile</b> sind immer da und unbegrenzt. Sie machen den heutigen Grundschaden des Bogens.</li>
+        <li><b>Echte Pfeile</b> legst du in den Köcher. Sie werden je Schuss verbraucht und geben Bonusschaden.</li>
+        <li>Ab Stufe IX gibt es je Stufe drei Effektpfeile: Widerhaken (Blutung), Giftspitze (Gift), Brandkopf (Brand).</li>
+        <li>Ist der Köcher leer, schießt der Bogen mit einfachen Pfeilen weiter. Kein Stillstand, auch offline.</li>
+        <li>Der Köcher füllt sich auf Wunsch automatisch aus dem Lager nach.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Köcher und Skill</h3>
+      <ul>
+        <li>Der Köcher ist die einzige Nebenhand für Bögen, mit Werten und Runenplätzen in zwölf Stufen. Damit hat Fernkampf seinen vierten Runenträger.</li>
+        <li>Bognerei ist ein neuer Skill. Alle starten bei Level 1, Handwerk bleibt unangetastet. Bögen, Sehnen, Schäfte, Pfeile und Köcher wandern dorthin.</li>
+        <li>Kette: Spitzen schmieden, Schäfte schnitzen, mit Federn befiedern. Federn fallen heute aus 28 Beutetabellen und werden endlich gebraucht.</li>
+        <li>Rework: Bogenleiter auf Bestwert, Rune „Jägerisch“ auf vollen Wert, mehr Leder- und Bogenbeute, Schadensfaktor für Fernkampf-Haltungen. Ziel: Fernkampf ±5 % am Nahkampf.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="werkstatt">
+  <h2>Lager und Bergung</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Materiallager</h3>
+      <ul>
+        <li>Eigene Seite direkt unter der Bank. Jedes Material hat einen festen Regalplatz, sortiert nach Stufe. Unentdeckte stehen als Schatten im Regal.</li>
+        <li>Materialien belegen keinen Bankplatz mehr. Technisch bleiben sie im Bankbestand, darum funktioniert jedes Rezept unverändert.</li>
+        <li>Alle Regale sofort frei, unbegrenzt. Neue Materialien gehen direkt hinein, abschaltbar.</li>
+        <li>Schlüssel und Siegel bleiben in der Bank.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Bergung: nur Beute</h3>
+      <ul>
+        <li><b>Herkunft:</b> Zerlegbar ist nur, was aus einem Drop stammt. Kein herstellbares Teil steht in einer Beutetabelle, ein Test hält das dauerhaft so. Shop-Ware ist ausgeschlossen. So gibt es keinen Kreislauf aus Herstellen und Zerlegen.</li>
+        <li><b>Ertrag:</b> Material der Stufe des Gegenstands plus Reliktstaub nach Rarität. Zerlegen und Verkaufen bringt nie mehr Gold als direkt Verkaufen.</li>
+        <li><b>Reliktstaub</b> geht nur in hohe Verzauberungsrunen.</li>
+        <li>Sammel-Knopf „alle Beute bis Rarität X“, Schloss für einzelne Teile, ab legendär mit Bestätigung. Keine XP, kein Auto-Zerlegen.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="leben">
+  <h2>Ereignisse und Aufträge</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th style="width:20%">Bereich</th><th style="width:22%">Ereignis</th><th>Wirkung</th></tr></thead>
+    <tbody>
+      <tr><td>Bergbau</td><td>Reiche Ader</td><td>40 Aktionen doppelter Ertrag</td></tr>
+      <tr><td>Holzfällen</td><td>Sturmbruch</td><td>Bündel der nächsthöheren Holzart</td></tr>
+      <tr><td>Angeln</td><td>Fischschwarm</td><td>3 min +50 % Tempo</td></tr>
+      <tr><td>Sammeln</td><td>Wilder Garten</td><td>seltene Pflanzen garantiert für 10 Aktionen</td></tr>
+      <tr><td>Diebeskunst</td><td>Wachwechsel</td><td>5 min kein Betäuben</td></tr>
+      <tr><td>Alle 8 Handwerke</td><td>Eingebung · Sparsame Hand · Meisterstück</td><td>doppelte Suffix-Chance · +30 % Materialerhalt · garantierter Suffix</td></tr>
+      <tr><td>Ländereien</td><td>Prächtige Ernte · Frische Fährte</td><td>nächste Ernte doppelt · nächster Fang mit 10 statt 5 Würfen</td></tr>
+      <tr><td>Handwerk und Sammeln</td><td><b>Kundschaft</b></td><td>Ein Arbeitsauftrag: herstellen oder liefern (Erz, Holz, Fisch, Kräuter), Teile abgeben, Gold über Verkaufswert und 1,5-fache XP der Arbeitszeit. Höchstens drei offen, kein Zeitlimit.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted" style="margin-top:10px">Nur online, etwa alle 20–30 Minuten, eigener Zufallsstrom. Die Auftrags-Engine der Taverne wird ohne die Taverne wiederverwendet.</p>
+</section>
+
+<section class="block" id="klarheit">
+  <h2>Klarheit</h2>
+  <div class="grid g2">
+    <div class="card"><h3>Zweihand und Stufen</h3><p>„2H“ unten links im Item-Feld, Kopfzeile „Zweihändig · Langbogen“, gesperrter Nebenhand-Platz mit Schatten (bei Bögen „nur Köcher“). Sterne bis sechs mit halben Sternen, auch für Materialien. Der Verzauberungs-Stern wird ein Runen-Zeichen. Eine Raritäts-Palette, dazu Türkis und Pink für die Raid-Raritäten.</p></div>
+    <div class="card"><h3>Ländereien und Mahlzeiten</h3><p>Farming und Jagen in eigener Gruppe mit Live-Status. Der Kopf zeigt nie mehr „Untätig“, solange sie arbeiten. Zwei Plätze in der Kampfvorbereitung: Heilnahrung und Mahlzeit. Drei heutige Fehler sind damit weg: Buff bei jedem Bissen, seltene Mahlzeit als Ersatz, Tonika-Erneuerung isst Mahlzeiten.</p></div>
+  </div>
+</section>
+
+<section class="block" id="fahrplan">
+  <h2>Fahrplan und Gates</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th style="width:16%">Welle</th><th>Inhalt</th><th style="width:28%">Dein Teil</th></tr></thead>
+    <tbody>
+      <tr><td>0 · Vorlauf</td><td>Raid-Lore, Balance-Spezifikationen, Asset-Liste Teil 1 (Raid und Bognerei)</td><td><b>Gate L:</b> Namen und Texte · <b>Gate B:</b> Gebühren und Kernzahlen · Bilder generieren</td></tr>
+      <tr><td>1 · Klarheit</td><td>Zweihand, Stufen, Ländereien, Mahlzeiten</td><td>Anspielen im Testprofil</td></tr>
+      <tr><td>2 · Werkstatt</td><td>Lager, Bergung, Bognerei mit Pfeilen und Köcher, Fernkampf-Rework</td><td>Anspielen</td></tr>
+      <tr><td>3 · Leben</td><td>Ereignisse, Arbeitsaufträge</td><td>Anspielen</td></tr>
+      <tr><td>4 · Raid</td><td>Bossphasen, Raid, Raritäten, Sets, Zeremonie und Rast, Wochen-Modifikatoren</td><td>Anspielen, Bilder einbinden lassen</td></tr>
+      <tr><td>5 · Release</td><td>Version 1.4.0, Tests, Vault, Build, Patchnotes, Steam-Post (EN), Asset-Liste Teil 2</td><td><b>GO</b> für den Upload</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="block" id="annahmen">
+  <h2>Annahmen</h2>
+  <p>Diese Punkte hast du nicht ausdrücklich entschieden. Ich habe sie so festgelegt, damit der Auftrag durchlaufen kann. Hak ab, was passt, und schreib dazu, was anders sein soll. Ohne Widerspruch gelten sie.</p>
+  <div class="savebar"><span id="save-state"><span class="dot"></span>Verbinde mit dem Speicher …</span></div>
+  <div class="qs">
+    <div class="q" data-q="a1"><div class="q-head"><div class="left"><span class="q-id">A1</span><h4>Die Bognerei heißt intern <code>bowcraft</code>, nicht <code>fletching</code>.</h4></div><span class="q-state">offen</span></div><p class="q-ctx">Der alte Name wird bei jedem Laden in Handwerk gefaltet. Im Spiel steht trotzdem „Bognerei“ bzw. „Fletching“.</p><div class="opts"><label class="opt"><input type="radio" name="a1" value="ok"><span class="o-box"></span><span class="o-t">Passt</span></label><label class="opt"><input type="radio" name="a1" value="change"><span class="o-box"></span><span class="o-t">Anders</span></label></div><textarea class="note" placeholder="Was soll anders sein?" aria-label="Anmerkung zu A1"></textarea></div>
+    <div class="q" data-q="a2"><div class="q-head"><div class="left"><span class="q-id">A2</span><h4>Pfeile liegen im Lager, der Köcher füllt automatisch nach (abschaltbar).</h4></div><span class="q-state">offen</span></div><div class="opts"><label class="opt"><input type="radio" name="a2" value="ok"><span class="o-box"></span><span class="o-t">Passt</span></label><label class="opt"><input type="radio" name="a2" value="change"><span class="o-box"></span><span class="o-t">Anders</span></label></div><textarea class="note" placeholder="Was soll anders sein?" aria-label="Anmerkung zu A2"></textarea></div>
+    <div class="q" data-q="a3"><div class="q-head"><div class="left"><span class="q-id">A3</span><h4>Pfeilkette: Spitzen schmieden, Schäfte schnitzen, mit Federn befiedern. Effektpfeile ab Stufe IX mit einer Zutat.</h4></div><span class="q-state">offen</span></div><div class="opts"><label class="opt"><input type="radio" name="a3" value="ok"><span class="o-box"></span><span class="o-t">Passt</span></label><label class="opt"><input type="radio" name="a3" value="change"><span class="o-box"></span><span class="o-t">Anders</span></label></div><textarea class="note" placeholder="Was soll anders sein?" aria-label="Anmerkung zu A3"></textarea></div>
+    <div class="q" data-q="a4"><div class="q-head"><div class="left"><span class="q-id">A4</span><h4>Normal-Raidbeute ist „göttlich“. Der Fund-Toast für göttliche Items heißt künftig „Godly find!“ statt „Mythic find!“.</h4></div><span class="q-state">offen</span></div><p class="q-ctx">Sonst gäbe es zwei verschiedene Dinge namens „Mythic“.</p><div class="opts"><label class="opt"><input type="radio" name="a4" value="ok"><span class="o-box"></span><span class="o-t">Passt</span></label><label class="opt"><input type="radio" name="a4" value="change"><span class="o-box"></span><span class="o-t">Anders</span></label></div><textarea class="note" placeholder="Was soll anders sein?" aria-label="Anmerkung zu A4"></textarea></div>
+    <div class="q" data-q="a5"><div class="q-head"><div class="left"><span class="q-id">A5</span><h4>Fünf Räume mit je vier Wellen und Boss. Raum 5 ist Königsgarde plus Kriegskönig.</h4></div><span class="q-state">offen</span></div><div class="opts"><label class="opt"><input type="radio" name="a5" value="ok"><span class="o-box"></span><span class="o-t">Passt</span></label><label class="opt"><input type="radio" name="a5" value="change"><span class="o-box"></span><span class="o-t">Anders</span></label></div><textarea class="note" placeholder="Was soll anders sein?" aria-label="Anmerkung zu A5"></textarea></div>
+    <div class="q" data-q="a6"><div class="q-head"><div class="left"><span class="q-id">A6</span><h4>Neustart heißt: aktueller Raum ab Welle 1. Offline startet Normal höchstens dreimal neu, Heroisch kauft nur mit Option.</h4></div><span class="q-state">offen</span></div><div class="opts"><label class="opt"><input type="radio" name="a6" value="ok"><span class="o-box"></span><span class="o-t">Passt</span></label><label class="opt"><input type="radio" name="a6" value="change"><span class="o-box"></span><span class="o-t">Anders</span></label></div><textarea class="note" placeholder="Was soll anders sein?" aria-label="Anmerkung zu A6"></textarea></div>
+    <div class="q" data-q="a7"><div class="q-head"><div class="left"><span class="q-id">A7</span><h4>Der Raid öffnet nach dem ersten Sieg über Drazhan.</h4></div><span class="q-state">offen</span></div><div class="opts"><label class="opt"><input type="radio" name="a7" value="ok"><span class="o-box"></span><span class="o-t">Passt</span></label><label class="opt"><input type="radio" name="a7" value="change"><span class="o-box"></span><span class="o-t">Anders</span></label></div><textarea class="note" placeholder="Was soll anders sein?" aria-label="Anmerkung zu A7"></textarea></div>
+    <div class="q" data-q="a8"><div class="q-head"><div class="left"><span class="q-id">A8</span><h4>Gebühren 300.000 / 900.000 / 2.500.000 Gold als Startwerte.</h4></div><span class="q-state">offen</span></div><p class="q-ctx">Etwa 3, 10 und 28 Stunden Endgame-Einkommen. Kalibriert wird danach trotzdem.</p><div class="opts"><label class="opt"><input type="radio" name="a8" value="ok"><span class="o-box"></span><span class="o-t">Passt</span></label><label class="opt"><input type="radio" name="a8" value="change"><span class="o-box"></span><span class="o-t">Anders</span></label></div><textarea class="note" placeholder="Was soll anders sein?" aria-label="Anmerkung zu A8"></textarea></div>
+    <div class="q" data-q="a9"><div class="q-head"><div class="left"><span class="q-id">A9</span><h4>Erstkill-Truhe je Boss und je Schwierigkeit, einmal pro Kalenderwoche.</h4></div><span class="q-state">offen</span></div><div class="opts"><label class="opt"><input type="radio" name="a9" value="ok"><span class="o-box"></span><span class="o-t">Passt</span></label><label class="opt"><input type="radio" name="a9" value="change"><span class="o-box"></span><span class="o-t">Anders</span></label></div><textarea class="note" placeholder="Was soll anders sein?" aria-label="Anmerkung zu A9"></textarea></div>
+    <div class="q" data-q="a10"><div class="q-head"><div class="left"><span class="q-id">A10</span><h4>Ins Lager kommen auch Kräuter, Edelsteine, Essenzen, Zauberrunen, Pigmente und Reliktstaub. Nur Schlüssel und Siegel bleiben in der Bank.</h4></div><span class="q-state">offen</span></div><div class="opts"><label class="opt"><input type="radio" name="a10" value="ok"><span class="o-box"></span><span class="o-t">Passt</span></label><label class="opt"><input type="radio" name="a10" value="change"><span class="o-box"></span><span class="o-t">Anders</span></label></div><textarea class="note" placeholder="Was soll anders sein?" aria-label="Anmerkung zu A10"></textarea></div>
+    <div class="q" data-q="a11"><div class="q-head"><div class="left"><span class="q-id">A11</span><h4>Raid-Gegenstände (Stufe XIII) zeigen sechs volle Sterne in Raid-Farbe plus eine kleine Krone.</h4></div><span class="q-state">offen</span></div><div class="opts"><label class="opt"><input type="radio" name="a11" value="ok"><span class="o-box"></span><span class="o-t">Passt</span></label><label class="opt"><input type="radio" name="a11" value="change"><span class="o-box"></span><span class="o-t">Anders</span></label></div><textarea class="note" placeholder="Was soll anders sein?" aria-label="Anmerkung zu A11"></textarea></div>
+    <div class="q" data-q="a12"><div class="q-head"><div class="left"><span class="q-id">A12</span><h4>Der Verzauberungs-Stern im Item-Feld wird ein Runen-Zeichen.</h4></div><span class="q-state">offen</span></div><div class="opts"><label class="opt"><input type="radio" name="a12" value="ok"><span class="o-box"></span><span class="o-t">Passt</span></label><label class="opt"><input type="radio" name="a12" value="change"><span class="o-box"></span><span class="o-t">Anders</span></label></div><textarea class="note" placeholder="Was soll anders sein?" aria-label="Anmerkung zu A12"></textarea></div>
+    <div class="q" data-q="a13"><div class="q-head"><div class="left"><span class="q-id">A13</span><h4>Shop-Ware ist nie zerlegbar. Raid-Gegenstände schon, ab legendär mit Bestätigung.</h4></div><span class="q-state">offen</span></div><div class="opts"><label class="opt"><input type="radio" name="a13" value="ok"><span class="o-box"></span><span class="o-t">Passt</span></label><label class="opt"><input type="radio" name="a13" value="change"><span class="o-box"></span><span class="o-t">Anders</span></label></div><textarea class="note" placeholder="Was soll anders sein?" aria-label="Anmerkung zu A13"></textarea></div>
+    <div class="q" data-q="a14"><div class="q-head"><div class="left"><span class="q-id">A14</span><h4>Set-Teile zählen über alle Fassungen: heroischer Helm und normale Brust sind zwei Teile desselben Sets.</h4></div><span class="q-state">offen</span></div><div class="opts"><label class="opt"><input type="radio" name="a14" value="ok"><span class="o-box"></span><span class="o-t">Passt</span></label><label class="opt"><input type="radio" name="a14" value="change"><span class="o-box"></span><span class="o-t">Anders</span></label></div><textarea class="note" placeholder="Was soll anders sein?" aria-label="Anmerkung zu A14"></textarea></div>
+  </div>
+  <div class="savebar" style="margin-top:16px">
+    <button class="btn" id="copy-btn" type="button">Antworten als Text kopieren</button>
+    <span class="muted" id="copy-state">Nur nötig, falls das Speichern hier nicht klappt.</span>
+  </div>
+  <textarea class="copybox" id="copy-box" hidden readonly aria-label="Antworten als Text"></textarea>
+  <div class="foot">Stand 23.10.2026. Grundlage: deine Antworten im Bauplan 1.4 und der Code auf <code>test-ui-fundament</code> (Save-Version 88). Namen im Raid sind Arbeitstitel, alle Zahlen Startwerte für die Balance.</div>
+</section>
+
+</main>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  // claude:2026-10-23T15:40:00+02:00 — Annahmen-Abfrage: db-Sammlung "annahmen", ein Dokument je Annahme, Rückfall localStorage
+  var KEY = "gr-plan-1.4.0-annahmen";
+  var COL = "annahmen";
+  var qs = Array.prototype.slice.call(document.querySelectorAll(".q"));
+  var byId = {};
+  qs.forEach(function (q) { byId[q.dataset.q] = q; });
+
+  function readQ(q) {
+    var c = q.querySelector("input:checked");
+    var ta = q.querySelector("textarea");
+    return { choice: c ? [c.value] : [], note: ta ? ta.value.trim() : "" };
+  }
+  function applyQ(q, a) {
+    if (!a) return;
+    var choice = Array.isArray(a.choice) ? a.choice : [];
+    q.querySelectorAll("input").forEach(function (i) { i.checked = choice.indexOf(i.value) !== -1; });
+    var ta = q.querySelector("textarea");
+    if (ta && typeof a.note === "string" && document.activeElement !== ta) ta.value = a.note;
+  }
+  function refresh() {
+    var done = 0;
+    qs.forEach(function (q) {
+      var a = readQ(q), d = a.choice.length > 0;
+      q.classList.toggle("done", d);
+      q.querySelector(".q-state").textContent = d ? (a.choice[0] === "ok" ? "passt" : "ändern") : "offen";
+      if (d) done++;
+    });
+    var c = document.getElementById("toc-cnt");
+    c.textContent = done + "/" + qs.length;
+    c.classList.toggle("full", done === qs.length);
+  }
+  function loadLocal() { try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { return {}; } }
+  function saveLocal() {
+    var all = {};
+    qs.forEach(function (q) { all[q.dataset.q] = readQ(q); });
+    try { localStorage.setItem(KEY, JSON.stringify(all)); } catch (e) { /* privat oder blockiert */ }
+  }
+  var local = loadLocal();
+  Object.keys(local).forEach(function (id) { if (byId[id]) applyQ(byId[id], local[id]); });
+  refresh();
+
+  var stateEl = document.getElementById("save-state");
+  function setState(kind, text) {
+    stateEl.innerHTML = "";
+    var dot = document.createElement("span");
+    dot.className = "dot " + (kind || "");
+    stateEl.appendChild(dot);
+    stateEl.appendChild(document.createTextNode(text));
+  }
+  var LOCAL_MSG = "Antworten werden in diesem Browser gespeichert. Nutze unten „Antworten kopieren“, um sie mir zu geben.";
+
+  var db = null, timers = {}, inflight = {}, again = {}, dirty = {};
+  function push(id) {
+    if (!db) { delete dirty[id]; return; }
+    if (inflight[id]) { again[id] = true; return; }
+    var q = byId[id], a = readQ(q);
+    inflight[id] = true;
+    db.doc(COL + "/" + id).set({
+      qid: id,
+      text: (q.querySelector("h4") || {}).textContent || id,
+      choice: a.choice,
+      note: a.note,
+      at: new Date().toISOString()
+    }).then(function () {
+      setState("ok", "Gespeichert. Ich kann deine Antworten direkt lesen.");
+    }).catch(function (e) {
+      var code = e && e.code;
+      if (code === "invalid_argument" || code === "not_granted") setState("warn", "Nur lesend geöffnet. " + LOCAL_MSG);
+      else setState("bad", "Speichern fehlgeschlagen (" + (code || "unbekannt") + "). Antworten sind lokal gesichert.");
+    }).then(function () {
+      inflight[id] = false;
+      if (again[id]) { again[id] = false; push(id); } else { delete dirty[id]; }
+    });
+  }
+  function schedule(q, delay) {
+    var id = q.dataset.q;
+    dirty[id] = true;
+    saveLocal();
+    refresh();
+    clearTimeout(timers[id]);
+    timers[id] = setTimeout(function () { push(id); }, delay);
+  }
+  qs.forEach(function (q) {
+    q.addEventListener("change", function (ev) { if (ev.target.matches("input")) schedule(q, 300); });
+    var ta = q.querySelector("textarea");
+    if (ta) ta.addEventListener("input", function () { schedule(q, 900); });
+  });
+
+  var use = window.claude && typeof window.claude.use === "function" ? window.claude.use.bind(window.claude) : null;
+  if (!use) {
+    setState("warn", LOCAL_MSG);
+  } else {
+    use("db").then(function (handle) {
+      if (!handle) { setState("warn", LOCAL_MSG); return; }
+      db = handle;
+      setState("ok", "Verbunden. Antworten speichern sich sofort, ich lese sie direkt aus.");
+      db.collection(COL).onSnapshot(function (snap) {
+        snap.docs.forEach(function (d) {
+          if (!d.exists || dirty[d.id] || !byId[d.id]) return;
+          applyQ(byId[d.id], d.data());
+        });
+        saveLocal();
+        refresh();
+      }, function () {
+        setState("warn", "Live-Abgleich unterbrochen. Neue Antworten werden weiter gespeichert.");
+      });
+      Object.keys(local).forEach(function (id) {
+        var a = local[id];
+        if (byId[id] && a && ((a.choice && a.choice.length) || a.note)) { dirty[id] = true; push(id); }
+      });
+    }, function () { setState("warn", LOCAL_MSG); });
+  }
+
+  function summary() {
+    var lines = ["Feder und Stahl: Annahmen"];
+    qs.forEach(function (q) {
+      var a = readQ(q);
+      if (!a.choice.length && !a.note) return;
+      var id = (q.querySelector(".q-id") || {}).textContent || q.dataset.q;
+      var line = id + " → " + (a.choice[0] === "ok" ? "Passt" : a.choice[0] === "change" ? "Anders" : "–");
+      if (a.note) line += " | Notiz: " + a.note;
+      lines.push(line);
+    });
+    return lines.join("\n");
+  }
+  var box = document.getElementById("copy-box");
+  document.getElementById("copy-btn").addEventListener("click", function () {
+    var text = summary(), info = document.getElementById("copy-state");
+    box.value = text;
+    function fallback() {
+      box.hidden = false; box.focus(); box.select();
+      info.textContent = "Kopieren war blockiert. Der Text ist markiert, kopiere ihn mit Strg+C.";
+    }
+    try {
+      navigator.clipboard.writeText(text).then(function () { info.textContent = "Kopiert. Einfach im Chat einfügen."; }, fallback);
+    } catch (e) { fallback(); }
+  });
+})();
+</script>
