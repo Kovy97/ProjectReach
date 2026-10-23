@@ -671,7 +671,7 @@ export const zh: Record<string, string> = {
     "statdesc.mitigation": "来自板甲的伤害减免。收益递减，上限 80%。",
     "statdesc.dodge": "完全躲开一次攻击的固定几率（皮甲）。收益递减，上限 40%。",
     "statdesc.block": "格挡一次攻击以减少 85% 伤害的几率（盾牌，仅限单手近战）。上限 50%。",
-    "statdesc.wardPool": "在生命值之前吸收伤害（布甲）。施放法术时充能。",
+    "statdesc.wardPool": "在生命值之前吸收伤害，包括流血、灼烧和中毒（布甲）。每次施法会恢复最大结界值的 4%。",
     "statdesc.wardRegen": "结界通过你的结界术技能随时间自动充能。以结界姿态施法可使其提升 50%。",
     "statdesc.spellReserve": "施法不消耗任何东西。智慧充实储备：每点 +10。专注姿态：法术伤害 +{focusPct}%。结界姿态：结界回复 +{shieldPct}%。",
     "statdesc.armorPen": "无视披甲敌人的一部分伤害减免。",

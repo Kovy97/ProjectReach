@@ -11,6 +11,14 @@ Bestanden: native Alpha-/RGB-Kanäle, Maße/IDs, Nachbar- und Zielgrößen-QA, Q
 Aktueller Jägerkodex-Pfad `ui/talents/slayer/` und Prestige-Pfad `ui/talents/prestige/` eingehalten. Ausschließlich Staging; kein Spielstart, Build, Save-/Gameplaytest oder Release. Vorhandene Arbeit erhalten, kein Commit.
 
 
+## 2026-10-25 (Abend) — Claude: 1.4.0 Welle 5 und Stoff-/Ward-Rework
+
+<!-- claude:2026-10-25T21:15:00+02:00 -->
+
+Release-Vorbereitung committet (Version, Fixture v93, Patchnotes, Steam-Post, Clip-Audit). Chef: Assets zum Schluss.
+30-Magier-Messung zeigte, dass Stoff-Magier ohne Rüstungswert nicht überleben; Ward lädt jetzt 4 % je Zauber, Status
+trifft den Ward (Drazhan Stoff 0/10 → 10/10). Offen: Ward-Dämpfung 30 % als Chef-Entscheid. Alle Suiten grün.
+
 ## 2026-10-25 (Mittag) — Claude: 1.4.0 Welle 4 (Raid) fertig
 
 <!-- claude:2026-10-25T13:00:00+02:00 -->

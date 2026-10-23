@@ -15,7 +15,7 @@ import { advance } from "./tick";
  * claude:2026-10-25T17:40:00+02:00 — Chef-Auftrag: 30 simulierte Magier mit verschiedenen Endgame-Kombinationen (Rüstung,
  * Waffe, Runen, Verzauberungen, Suffixe, Schmuck), je 10 Läufe pro Raid-Stufe, statt eines einzigen Voll-Ägis-Kits.
  * Reine Messung, nur mit `RAID_MAGE=1` aktiv; `RAID_MAGE_DIFF=normal|heroic|mythic` wählt die Stufe (parallel startbar),
- * `RAID_MAGE_N` die Läufe je Magier (Default 10), `RAID_MAGE_OUT` eine Datei für die Ergebnis-Tabelle.
+ * `RAID_MAGE_N` die Läufe je Magier (Default 10), `RAID_MAGE_IDS` eine Auswahl, `RAID_MAGE_OUT` eine Datei für die Ergebnis-Tabelle.
  *
  * Rahmen wie das Referenz-Harness (raid-measure.test.ts): alle Skills 99, voller Buff-Stapel (obere Schranke, R7),
  * Begleiter Panzerhaut, Essen `cooked_idolscale` (Auto-Essen 3), Auto-Trank `godbloom_infusion` bei 40 %, Wochen-Modifikator
@@ -200,11 +200,14 @@ const median = (xs: number[]): number => {
 describe.skipIf(!ON)("Raid: 30 Magier-Builds", () => {
   const diffs = ((process.env.RAID_MAGE_DIFF ?? "normal,heroic,mythic").split(",") as RaidDifficulty[]);
   const N = Number(process.env.RAID_MAGE_N ?? 10);
+  // claude:2026-10-25T19:40:00+02:00 — RAID_MAGE_IDS=1,11,21 misst nur diese Builds (Stellschrauben-Experimente).
+  const ids = process.env.RAID_MAGE_IDS ? new Set(process.env.RAID_MAGE_IDS.split(",").map(Number)) : null;
   const rows: string[] = [];
   for (const d of diffs) {
     it(`Stufe ${d}: 30 Builds × ${N} Läufe`, () => {
       rows.push(`| Build | Stufe | Abschlüsse | Median min | Neustarts | Niederlagen-Ort | HP | Ward | Rüstung | Schaden | Krit | Essen | Tränke | verworfen |`);
       for (const b of B) {
+        if (ids && !ids.has(b.id)) continue;
         const runs: Run[] = [];
         let doc = { hp: 0, ward: 0, ar: 0, dmg: "", crit: "", dropped: [] as string[] };
         for (let i = 0; i < N; i++) {

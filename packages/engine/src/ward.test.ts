@@ -10,7 +10,9 @@ import {
   WARD_BREAK_CAP,
   WARD_CORE_PER_INT,
   WARD_RECHARGE_PER_CAST,
+  WARD_RECHARGE_PCT_PER_CAST,
   absorbWard,
+  castWardRecharge,
   rechargeWard,
 } from "@hearthforge/shared";
 import type { ContentDB } from "@hearthforge/shared";
@@ -168,6 +170,16 @@ describe("Rüstungs-Trinität: Ward-Helfer (Vertrag für combat.ts A2)", () => {
     expect(rechargeWard(98, 100, 10)).toBe(100); // Deckel
     expect(rechargeWard(50, 100, 0)).toBe(50); // kein Betrag, kein Recharge
     expect(rechargeWard(50, 100, -5)).toBe(50); // negativer Betrag ignoriert
+  });
+
+  // claude:2026-10-25T19:05:00+02:00 — 1.4.0 „Zauber laden den Schild“ (Chef-Entscheid Welle 5).
+  it("castWardRecharge: 4 % des Ward-Maximums je Zauber, nie weniger als der alte feste Betrag", () => {
+    expect(WARD_RECHARGE_PCT_PER_CAST).toBe(0.04);
+    expect(castWardRecharge(2000)).toBeCloseTo(80, 6);
+    expect(castWardRecharge(1000)).toBeCloseTo(40, 6);
+    expect(castWardRecharge(20)).toBe(WARD_RECHARGE_PER_CAST); // kleiner Pool: Boden 1,2
+    expect(castWardRecharge(0)).toBe(WARD_RECHARGE_PER_CAST);
+    expect(castWardRecharge(NaN)).toBe(WARD_RECHARGE_PER_CAST);
   });
 
   it("rechargeWard ist NaN-fest (nicht-endliche Eingaben lassen den Stand stehen)", () => {

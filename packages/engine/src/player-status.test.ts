@@ -33,6 +33,25 @@ describe("Spieler-Statuseffekte (Monster-Inflict)", () => {
     expect(base - burned).toBeGreaterThan(8);
   });
 
+  // claude:2026-10-25T20:00:00+02:00 — Chef-Entscheid 1.4.0 Welle 5: Status beschädigt den Ward, statt an ihm vorbeizugehen.
+  it("Blutung, Brand und Gift treffen zuerst den Ward; erst wenn er leer ist, die HP", () => {
+    for (const type of ["bleed", "burn", "poison"] as const) {
+      const s = createGame({ name: "W", baseAttributes: { con: 20 } }, content, 7);
+      s.character.hp = computeStats(s, content).maxHp;
+      startCombat(s, content, "chicken");
+      s.character.ward = 50;
+      s.combat.playerEffects.push({ type, remainingMs: 10_000, magnitude: 3 });
+      const hp0 = s.character.hp;
+      for (let i = 0; i < 10; i++) combatStep(s, content); // 1 s DoT ≈ 3 Schaden
+      expect(s.character.hp, type).toBe(hp0); // Ward hält, die HP bleiben unberührt
+      expect(s.character.ward, type).toBeLessThan(50);
+      // Ward leer: der DoT geht wieder auf die HP
+      s.character.ward = 0;
+      for (let i = 0; i < 10; i++) combatStep(s, content);
+      expect(s.character.hp, type).toBeLessThan(hp0);
+    }
+  });
+
   it("Schock am Spieler verursacht keinen HP-Schaden (stört nur den Angriffstimer)", () => {
     const s = createGame({ name: "X", baseAttributes: { con: 20 } }, content, 5);
     s.character.hp = computeStats(s, content).maxHp;

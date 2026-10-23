@@ -671,7 +671,7 @@ export const fr: Record<string, string> = {
     "statdesc.mitigation": "Réduction des dégâts par l'armure de plaques. Rendements décroissants, plafonnée à 80 %.",
     "statdesc.dodge": "Chance fixe d'éviter totalement un coup (armure de cuir). Rendements décroissants, plafonnée à 40 %.",
     "statdesc.block": "Chance de bloquer un coup pour −85 % de dégâts (bouclier, mêlée à une main uniquement). Plafonnée à 50 %.",
-    "statdesc.wardPool": "Absorbe les dégâts avant les PV (armure d'étoffe). Se recharge quand vous lancez un sort.",
+    "statdesc.wardPool": "Absorbe les dégâts avant les PV, saignement, brûlure et poison compris (armure d'étoffe). Chaque sort lancé recharge 4 % de votre barrière maximale.",
     "statdesc.wardRegen": "La barrière se recharge automatiquement au fil du temps grâce à votre compétence Barrière. Incanter en posture Barrière augmente cela de 50 %.",
     "statdesc.spellReserve": "Les sorts ne coûtent rien. La Sagesse nourrit la réserve : +10 par point. Posture de concentration : +{focusPct} % de dégâts de sort. Posture de barrière : +{shieldPct} % de régénération de barrière.",
     "statdesc.armorPen": "Ignore une partie de l'atténuation des dégâts d'un ennemi blindé.",

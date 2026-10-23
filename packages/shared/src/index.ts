@@ -1538,6 +1538,17 @@ export const WARD_KILL_REFILL_PCT = 0.10;
  * Cast-Trickle (Armor-Iteration 2.1 F1a: ≈0.40–0.59/s) bleibt damit in derselben Größenordnung.
  */
 export const WARD_RECHARGE_PER_CAST = 1.2;
+/**
+ * claude:2026-10-25T19:00:00+02:00 — Chef-Entscheid 1.4.0 Welle 5 („Zauber laden den Schild“): jeder Zauber lädt zusätzlich einen Anteil des
+ * Ward-Maximums, mindestens aber WARD_RECHARGE_PER_CAST (kleine Pools im Frühspiel laden nie weniger als vorher).
+ * Anlass: 30-Magier-Messung (design/1.4.0-raid-magier-builds.md) und Drazhan-Gegenprobe, Stoff-Magier 0/10 gegen
+ * Platten-Magier 10/10, weil der feste Trickle (~0,5/s) gegen Endgame-Schaden (60–100/s) nichts trägt.
+ */
+export const WARD_RECHARGE_PCT_PER_CAST = 0.04;
+/** Ward, den EIN Zauber lädt: max(fester Boden, Anteil des Ward-Maximums). */
+export function castWardRecharge(maxWard: number): number {
+  return Number.isFinite(maxWard) && maxWard > 0 ? Math.max(WARD_RECHARGE_PER_CAST, maxWard * WARD_RECHARGE_PCT_PER_CAST) : WARD_RECHARGE_PER_CAST;
+}
 /** Anti-One-Shot: kein Einzeltreffer > 50 % der max. HP. combat-dev (A2) wendet es an. Spec §1.6. */
 export const ONE_SHOT_CAP = 0.5;
 /**

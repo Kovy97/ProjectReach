@@ -4,7 +4,7 @@ import {
   BLOCK_DAMAGE_REDUCTION,
   ONE_SHOT_CAP,
   WARD_KILL_REFILL_PCT,
-  WARD_RECHARGE_PER_CAST,
+  castWardRecharge,
 } from "@hearthforge/shared";
 import { content } from "@hearthforge/content";
 import { createTestGame } from "./test-helpers";
@@ -204,7 +204,8 @@ describe("Rüstungs-Trinität A2: Ward-Absorb VOR HP (§1.4/§1.5)", () => {
 });
 
 describe("Rüstungs-Trinität A2: Ward-Recharge beim Cast (§1.4)", () => {
-  it("jeder Zauber lädt den Ward-Pool um WARD_RECHARGE_PER_CAST (Zauberreserve: fester Wert je Cast)", () => {
+  // claude:2026-10-25T19:05:00+02:00 — 1.4.0: der Recharge ist ein Anteil des Maximums (castWardRecharge, 4 %, Boden 1,2).
+  it("jeder Zauber lädt den Ward-Pool um castWardRecharge(maxWard) (4 % des Maximums, mindestens 1,2)", () => {
     // Riesiges Intervall → der Gegner schlägt in diesem Tick NICHT zu (Ward nur durch den Cast bewegt).
     const c = withMonster(
       withItems([WAND, armor("tt_robe2", "body", { wardCapacity: 1000 })]),
@@ -221,8 +222,9 @@ describe("Rüstungs-Trinität A2: Ward-Recharge beim Cast (§1.4)", () => {
     combatStep(s, c);
     // Armor-Iteration 2 §9.2: der Ward wird pro Tick zusätzlich um den passiven Warding-Regen
     // (st.wardRegenPerSec·dt) gehoben — ADDITIV zum Cast-Recharge. Erwartung = Cast-Recharge
-    // (WARD_RECHARGE_PER_CAST = 1.2, Zauberreserve 28.08.2026) + ein Warding-Regen-Tick.
-    expect(s.character.ward).toBeCloseTo(WARD_RECHARGE_PER_CAST + st.wardRegenPerSec * (100 / 1000), 6);
+    // (castWardRecharge: 4 % von 1000 = 40, seit 1.4.0) + ein Warding-Regen-Tick.
+    expect(castWardRecharge(st.maxWard)).toBeCloseTo(40, 6);
+    expect(s.character.ward).toBeCloseTo(castWardRecharge(st.maxWard) + st.wardRegenPerSec * (100 / 1000), 6);
   });
 
   it("Zauberreserve: auch mit mana 0 im Save castet der Magier (kein Weak-Melee mehr) ⇒ Cast-Recharge greift", () => {
@@ -242,7 +244,7 @@ describe("Rüstungs-Trinität A2: Ward-Recharge beim Cast (§1.4)", () => {
     combatStep(s, c);
     // Zauberreserve: der frühere Weak-Melee-Pfad (kein Cast, kein Recharge) existiert nicht mehr — der
     // Angriff ist ein echter Zauber (Spell-Status möglich) und lädt den Ward wie jeder Cast.
-    expect(s.character.ward).toBeCloseTo(WARD_RECHARGE_PER_CAST + st.wardRegenPerSec * (100 / 1000), 6);
+    expect(s.character.ward).toBeCloseTo(castWardRecharge(st.maxWard) + st.wardRegenPerSec * (100 / 1000), 6);
     expect(s.character.mana).toBe(computeStats(s, c).maxMana); // und die Reserve steht wieder voll
   });
 });

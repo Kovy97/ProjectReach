@@ -660,7 +660,7 @@ export const ptBR: Record<string, string> = {
     "statdesc.mitigation": "Redução de dano de armadura de Placa. Retornos decrescentes, limitada a 80%.",
     "statdesc.dodge": "Chance fixa de evitar totalmente um golpe (armadura de Couro). Retornos decrescentes, limitada a 40%.",
     "statdesc.block": "Chance de bloquear um golpe reduzindo o dano em 85% (Escudo, apenas corpo a corpo de uma mão). Limitada a 50%.",
-    "statdesc.wardPool": "Absorve dano antes dos PV (armadura de Tecido). Recarrega quando você conjura um feitiço.",
+    "statdesc.wardPool": "Absorve dano antes dos PV, incluindo sangramento, queimadura e veneno (armadura de Tecido). Cada feitiço que você conjura recarrega 4% da sua guarda máxima.",
     "statdesc.wardRegen": "A guarda recarrega automaticamente com o tempo pela sua perícia de Guarda arcana. Conjurar na postura de Guarda Arcana aumenta isso em 50%.",
     "statdesc.spellReserve": "Seus feitiços não custam nada. A Sabedoria alimenta a reserva: +10 por ponto. Postura de foco: +{focusPct}% de dano mágico. Postura de guarda arcana: +{shieldPct}% de regeneração de guarda.",
     "statdesc.armorPen": "Ignora uma parte da mitigação de dano de um inimigo blindado.",

@@ -5,7 +5,7 @@ import {
   MELEE_LIFESTEAL_CAP_ABS,
   MELEE_LIFESTEAL_CAP_PCT,
   WARD_KILL_REFILL_PCT,
-  WARD_RECHARGE_PER_CAST,
+  castWardRecharge,
 } from "@hearthforge/shared";
 import { createTestGame } from "./test-helpers";
 import { startCombat, combatStep } from "./combat";
@@ -175,10 +175,10 @@ describe("Ward statt Mana-Schild: Absorb + Respawn-Auffüllung (Itemization 2.5)
     expect(s.combat.kills).toBeGreaterThan(0);
     // Armor-Iteration 2 §2: WARD_CORE_PER_INT=0 ⇒ maxWard = Σ wardCapacity (kein INT-Kern) = 300 exakt.
     expect(st.maxWard).toBe(300);
-    // §6.1 Teil-Refill: der Kill-Tick castet einmal (Recharge +WARD_RECHARGE_PER_CAST = 1.2, Zauberreserve
-    // 28.08.2026), danach refillt der Respawn +0.10·300 = 30 → ward ≈ 4 + 1.2 + 30 = 35.2 (KEIN Voll-Reset auf 300).
+    // §6.1 Teil-Refill: der Kill-Tick castet einmal (Recharge castWardRecharge = 4 % von 300 = 12, seit 1.4.0;
+    // claude:2026-10-25T19:05:00+02:00), danach refillt der Respawn +0.10·300 = 30 → ward ≈ 4 + 12 + 30 = 46 (KEIN Voll-Reset auf 300).
     expect(s.character.ward).toBeLessThan(st.maxWard); // KEIN Gratis-Voll-Reset (§6.1)
     expect(s.character.ward).toBeGreaterThan(WARD_KILL_REFILL_PCT * st.maxWard); // ≥ 10 % (über der 4-Basis)
-    expect(s.character.ward).toBeCloseTo(4 + WARD_RECHARGE_PER_CAST + WARD_KILL_REFILL_PCT * st.maxWard, 0); // 4 + Recharge + 10 %
+    expect(s.character.ward).toBeCloseTo(4 + castWardRecharge(st.maxWard) + WARD_KILL_REFILL_PCT * st.maxWard, 0); // 4 + Recharge + 10 %
   });
 });

@@ -662,7 +662,7 @@ export const es: Record<string, string> = {
     "statdesc.mitigation": "Reducción de daño de la armadura de placas. Rendimientos decrecientes, con un tope del 80 %.",
     "statdesc.dodge": "Probabilidad fija de evitar por completo un golpe (armadura de cuero). Rendimientos decrecientes, con un tope del 40 %.",
     "statdesc.block": "Probabilidad de bloquear un golpe con -85 % de daño (escudo, solo cuerpo a cuerpo a una mano). Con un tope del 50 %.",
-    "statdesc.wardPool": "Absorbe daño antes que los PV (armadura de tela). Se recarga al lanzar un hechizo.",
+    "statdesc.wardPool": "Absorbe daño antes que los PV, incluidos sangrado, quemadura y veneno (armadura de tela). Cada hechizo que lanzas recarga un 4 % de tu guarda máxima.",
     "statdesc.wardRegen": "La guarda se recarga automáticamente con el tiempo gracias a tu habilidad de Guarda arcana. Lanzar hechizos en la postura de Guarda arcana la potencia un 50 %.",
     "statdesc.spellReserve": "Los hechizos no cuestan nada. La Sabiduría alimenta la reserva: +10 por punto. Postura de enfoque: +{focusPct}% de daño mágico. Postura de guarda arcana: +{shieldPct}% de regeneración de guarda.",
     "statdesc.armorPen": "Ignora una parte de la mitigación de daño de un enemigo blindado.",

@@ -57,6 +57,7 @@ import {
   WARDING_XP_PER_ABSORB,
   absorbWard,
   consumableHeal,
+  castWardRecharge,
   rechargeWard,
   PET_ABILITY_DEBUFF_MS,
   PET_ABILITY_DELAYED_DOT_MS,
@@ -2488,14 +2489,19 @@ function tickPlayerEffects(
     if (e.type === "poison" || e.type === "burn" || e.type === "bleed") {
       perSec = e.magnitude * (e.type === "poison" ? poisonStacks : 1) * vuln;
       const dmg = perSec * (TICK_MS / 1000);
-      state.character.hp -= dmg;
+      // claude:2026-10-25T19:55:00+02:00 — Chef-Entscheid 1.4.0 Welle 5: Status geht nicht mehr am Ward vorbei, sondern beschädigt ihn
+      // (wie ein Treffer, STEP 7): erst der Ward-Pool, der Rest auf die HP. Gegnerseite bleibt unberührt (Status-vs-Ward-Konter).
+      const wardRes = absorbWard(state.character.ward, dmg);
+      state.character.ward = wardRes.ward;
+      state.character.hp -= wardRes.hpDamage;
+      if (wardRes.absorbed > 0) addXp(state, content, "warding", wardRes.absorbed * WARDING_XP_PER_ABSORB, nowMs);
       // Überleben härtet ab — aber seit Chef-Entscheid (2026-07-08) mit derselben Level-Bandbreite
       // wie alle Kampf-XP: am über-levelten Trivial-Mob gibt auch Erleiden keine Vitality-XP mehr.
       const dotMonster = enemy ?? (cs.monsterId ? content.monsters[cs.monsterId] : undefined);
       const dotVitMult = dotMonster
         ? combatXpLevelMult(levelFromXp(state.skills.vitality?.xp ?? 0), dotMonster.level)
         : 1;
-      addXp(state, content, "vitality", dmg * VITALITY_XP_PER_DAMAGE * dotVitMult, nowMs, fx);
+      addXp(state, content, "vitality", wardRes.hpDamage * VITALITY_XP_PER_DAMAGE * dotVitMult, nowMs, fx);
       // OSRS-Fix (Task #197): erlittener DoT-Schaden gibt KEINE Defence-/magic_def-XP mehr —
       // Verteidigung trainiert nur durchs Kämpfen in der Defensiv-Stance (ausgeteilter Schaden),
       // nicht durchs Einstecken.
@@ -2573,9 +2579,9 @@ function performPlayerAttack(
     // Cast (voller Magie-Schaden + Spell-Status). Der frühere Mana-Depletion-Loop mit dem „schwachen
     // Stab-Schlag" (×0.35) ist entfallen; er griff faktisch nie (Regen > Kosten).
     casts = true;
-    // Ward-Recharge (Rüstungs-Trinität §1.4): jeder Cast lädt den Ward-Pool um WARD_RECHARGE_PER_CAST,
-    // gedeckelt auf maxWard (früher `cost · WARD_PER_MANA`; jetzt fester Wert je Zauber).
-    state.character.ward = rechargeWard(state.character.ward, stats.maxWard);
+    // Ward-Recharge (Rüstungs-Trinität §1.4): jeder Cast lädt den Ward-Pool, gedeckelt auf maxWard.
+    // claude:2026-10-25T19:00:00+02:00 — seit 1.4.0 Anteil des Maximums (castWardRecharge: 4 %, Boden WARD_RECHARGE_PER_CAST), vorher fest 1,2.
+    state.character.ward = rechargeWard(state.character.ward, stats.maxWard, castWardRecharge(stats.maxWard));
   }
   // claude:2026-10-24T18:20:00+02:00 — Fernkampf (1.4.0 FK): Die Bogenspanne ist der Schaden mit einfachen Pfeilen. Ein echter Pfeil im
   // Köcher addiert seinen Bonus über computeStats und seinen Status über applyWeaponEffects; verbraucht wird er
@@ -3013,7 +3019,8 @@ function tickCombatRegen(state: GameState, stats: DerivedStats): void {
  * Cast-Recharge (`rechargeWard`). Analog zu hpRegenPerSec, aber bewusst KAMPF-scoped: Ward ist eine
  * Kampf-Ressource (bei Start/Welle/Respawn gesetzt) — im Idle-Tick regeneriert sie NICHT (tickPlayerRegen
  * bleibt für den Idle-Pfad ward-frei). Nur wenn ein Stoff-Pool existiert (maxWard>0) und er nicht voll
- * ist. Deterministisch, kein RNG. Gesamt-Regen (Cast ~1.5/s + Warding ≤2.0/s) bleibt ≪ Endgame-DPS-in.
+ * ist. Deterministisch, kein RNG. claude:2026-10-25T19:00:00+02:00 — der Haupt-Zufluss ist seit 1.4.0 der Cast-Recharge (4 % des Maximums je
+ * Zauber, castWardRecharge); der Warding-Regen (≤2.0/s) bleibt die kleine Grundlast.
  */
 function tickWardRegen(state: GameState, stats: DerivedStats): void {
   if (stats.wardRegenPerSec <= 0 || stats.maxWard <= 0) return;
