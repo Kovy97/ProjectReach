@@ -47,6 +47,12 @@ THE RANGED REWORK
 - Crafted bows now match the best drop of their tier. The defensive stance costs ranged 10% damage instead
   of attack speed. Every zone now drops leather armor and bows.
 
+MAGES IN CLOTH
+
+- Ward now holds up. Every spell you cast recharges 4% of your maximum Ward, instead of a small fixed amount.
+- Bleeding, burning and poison now hit your Ward first and only then your health.
+- Mages in cloth can now last through long boss fights without switching to plate.
+
 STORAGE AND SALVAGE
 
 - A new Storage page with 14 shelves. Every material has its own spot, with no limit, and it uses no bank
