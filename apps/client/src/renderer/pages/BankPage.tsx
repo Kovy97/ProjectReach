@@ -16,13 +16,17 @@ import {
   groupInstancesByBase,
   hasInstanceRoom,
   isBankFull,
+  isSalvageable,
+  isSalvageLocked,
+  salvageBankItem,
   storagePredicate,
   itemCount,
+  toggleSalvageLock,
   withdrawInstance,
   withdrawItem,
   withdrawItemGroup,
 } from "@hearthforge/engine";
-import { effectiveBankCapacity, moveBankSlot, syncBankOrder } from "@hearthforge/shared";
+import { ITEM_RARITIES, effectiveBankCapacity, moveBankSlot, syncBankOrder } from "@hearthforge/shared";
 import type { ItemInstance } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
@@ -40,6 +44,7 @@ import { getPortrait } from "../portraits";
 import { BANK_TOUR_STEPS } from "../areaTourSteps";
 import { QTY_PRESETS, QuantityPicker } from "../components/QuantityPicker";
 import { VariantContainerCell } from "../components/VariantContainerCell";
+import { SalvageConfirmModal } from "../components/SalvageModals"; // claude:2026-10-26T07:05:00+02:00 — Zerlegen in der Bank (Chef BG1)
 import { getUiIcon } from "../uiIcons";
 import {
   compareItemsBy,
@@ -282,6 +287,7 @@ export function BankPage(): JSX.Element {
 
   // Teilmengen-Modal (Task #314 B2) — welches Item/welche Spalte gerade eine Zahl abfragt.
   const [qtyModal, setQtyModal] = useState<{ itemId: string; zone: BankZone } | null>(null);
+  const [salvage, setSalvage] = useState<{ itemId: string; instanceId: string | null; qty: number; hasRunes: boolean } | null>(null);
 
   // ── Pointer-basiertes Drag & Drop (Task #314, Chef-Zitat "aktuell fast kein sauberes Drag and
   // Drop möglich"): ersetzt HIER das frühere native HTML5-DnD (draggable/dragstart/dragover/drop —
@@ -792,6 +798,26 @@ export function BankPage(): JSX.Element {
                       },
                     ]
                   : [];
+              // claude:2026-10-26T07:05:00+02:00 — Zerlegen direkt in der Bank (Chef BG1), Regeln wie im Inventar: nur Beute, ab legendär mit Bestätigung.
+              const salvageable = isSalvageable(content, itemId);
+              if (qty > 0 && salvageable) {
+                const locked = isSalvageLocked(state, itemId);
+                const high = ITEM_RARITIES.indexOf(content.items[itemId]?.rarity ?? "common") >= ITEM_RARITIES.indexOf("legendary");
+                if (!locked) {
+                  plainActions.push({
+                    key: "salvage",
+                    label: t("salvage.action"),
+                    onClick: () => {
+                      if (high) setSalvage({ itemId, instanceId: null, qty: 1, hasRunes: false });
+                      else salvageBankItem(state, content, itemId, 1);
+                    },
+                  });
+                  if (qty > 1) {
+                    plainActions.push({ key: "salvageAll", label: t("salvage.actionAll"), onClick: () => setSalvage({ itemId, instanceId: null, qty, hasRunes: false }) });
+                  }
+                }
+                plainActions.push({ key: "salvageLock", label: locked ? t("salvage.unlock") : t("salvage.lock"), onClick: () => toggleSalvageLock(state, itemId) });
+              }
               return (
                 <div
                   key={itemId}
@@ -812,6 +838,18 @@ export function BankPage(): JSX.Element {
                           onClick: () => withdrawInstance(state, inst.instanceId, content),
                         },
                       ];
+                      // claude:2026-10-26T07:05:00+02:00 — Einzelstück in der Bank zerlegen: immer mit Bestätigung (Runen gehen verloren), Chef BG1.
+                      if (salvageable) {
+                        const instLocked = isSalvageLocked(state, inst.instanceId);
+                        if (!instLocked && !isSalvageLocked(state, itemId)) {
+                          acts.push({
+                            key: "salvage",
+                            label: t("salvage.action"),
+                            onClick: () => setSalvage({ itemId: inst.baseItemId, instanceId: inst.instanceId, qty: 1, hasRunes: inst.affixes.length > 0 }),
+                          });
+                        }
+                        acts.push({ key: "salvageLock", label: instLocked ? t("salvage.unlock") : t("salvage.lock"), onClick: () => toggleSalvageLock(state, inst.instanceId) });
+                      }
                       if (isEquipment) {
                         acts.push({
                           key: "equip",
@@ -852,6 +890,16 @@ export function BankPage(): JSX.Element {
       </div>
       </div>
 
+      {salvage && (
+        <SalvageConfirmModal
+          itemId={salvage.itemId}
+          instanceId={salvage.instanceId}
+          qty={salvage.qty}
+          hasRunes={salvage.hasRunes}
+          fromBank
+          onClose={() => setSalvage(null)}
+        />
+      )}
       {qtyModal && (
         <BankQtyModal
           itemId={qtyModal.itemId}

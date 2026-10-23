@@ -5,7 +5,7 @@
 // Gleiche Modal-Bausteine wie die Bank (modal-overlay/modal, Esc schließt).
 import { useEffect, useState } from "react";
 import { content } from "@hearthforge/content";
-import { salvageBatch, salvageInstance, salvageItem, salvagePlan, salvageYield } from "@hearthforge/engine";
+import { salvageBankInstance, salvageBankItem, salvageBatch, salvageInstance, salvageItem, salvagePlan, salvageYield } from "@hearthforge/engine";
 import type { ItemRarity } from "@hearthforge/shared";
 import { RARITY_LABEL, RELIC_DUST_ITEM_ID } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
@@ -32,12 +32,15 @@ export function SalvageConfirmModal({
   instanceId,
   qty,
   hasRunes,
+  fromBank = false,
   onClose,
 }: {
   itemId: string;
   instanceId: string | null;
   qty: number;
   hasRunes: boolean;
+  /** claude:2026-10-26T07:05:00+02:00 — Quelle Bank statt Inventar (Chef BG1). */
+  fromBank?: boolean;
   onClose: () => void;
 }): JSX.Element {
   const state = useGameState();
@@ -45,7 +48,10 @@ export function SalvageConfirmModal({
   const item = content.items[itemId];
   useEffect(() => registerEscCloser("modal", onClose), [onClose]);
   const confirm = (): void => {
-    if (instanceId) salvageInstance(state, content, instanceId);
+    if (fromBank) {
+      if (instanceId) salvageBankInstance(state, content, instanceId);
+      else salvageBankItem(state, content, itemId, qty);
+    } else if (instanceId) salvageInstance(state, content, instanceId);
     else salvageItem(state, content, itemId, qty);
     onClose();
   };

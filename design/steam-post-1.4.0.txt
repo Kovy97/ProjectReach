@@ -69,7 +69,7 @@ STORAGE AND SALVAGE
   so its order will change. Bought bank expansions are not refunded.
 - Looted gear can now be salvaged into tier materials and relic dust for the high runes. Only loot can be
   salvaged: crafted gear, shop items and master rings never can. You can lock pieces, and the game asks
-  before salvaging anything legendary or better.
+  before salvaging anything legendary or better. Salvage works in your bags and right in the bank.
 
 LIFE IN THE WORKSHOP
 

@@ -14,11 +14,14 @@ import {
   RELIC_DUST_ITEM_ID,
   SALVAGE_SHARES,
   SALVAGE_TARGET_RATIO,
+  effectiveBankCapacity,
   salvageLadder,
+  syncBankOrder,
 } from "@hearthforge/shared";
 import { dropSourcesOf } from "./drop-sources";
 import { itemTier } from "./tiers";
 import { itemCount, removeInstance, removeItem } from "./inventory";
+import { storagePredicate } from "./storage"; // claude:2026-10-26T06:55:00+02:00 — Bank-Bergung (Chef BG1)
 import { grantLoot } from "./mail";
 import { sellPrice } from "./shop";
 
@@ -179,6 +182,39 @@ export function salvageInstance(state: GameState, content: ContentDB, instanceId
   const y = salvageYield(content, inst.baseItemId);
   if (!y) return false;
   if (!removeInstance(state.inventory, instanceId)) return false;
+  payOut(state, content, y, 1);
+  return true;
+}
+
+/**
+ * claude:2026-10-26T06:55:00+02:00 — Zerlegen direkt in der Bank (Chef-Entscheid BG1, Spec „Zerlegen in Inventar und Bank“).
+ * Gleiche Regeln wie im Inventar: nur zerlegbare Beute, Schloss auf Item bzw. Basis. Das geleerte Fach bleibt leer stehen
+ * (OSRS-Verhalten wie beim Abheben). Gibt die zerlegte Stückzahl zurück.
+ */
+export function salvageBankItem(state: GameState, content: ContentDB, itemId: ItemId, qty = 1): number {
+  if (isSalvageLocked(state, itemId)) return 0;
+  const y = salvageYield(content, itemId);
+  if (!y) return 0;
+  const have = state.bank[itemId] ?? 0;
+  const n = Math.min(Math.max(0, Math.floor(qty)), have);
+  if (n <= 0) return 0;
+  if (n >= have) delete state.bank[itemId];
+  else state.bank[itemId] = have - n;
+  syncBankOrder(state, effectiveBankCapacity(state, content), storagePredicate(content));
+  payOut(state, content, y, n);
+  return n;
+}
+
+/** Zerlegt ein Einzelstück aus dem Gear-Vault der Bank (`bankInstances`); Runen gehen verloren (UI warnt vorher). */
+export function salvageBankInstance(state: GameState, content: ContentDB, instanceId: string): boolean {
+  if (isSalvageLocked(state, instanceId)) return false;
+  const idx = state.bankInstances.findIndex((i) => i.instanceId === instanceId);
+  const inst = idx >= 0 ? state.bankInstances[idx] : undefined;
+  if (!inst || isSalvageLocked(state, inst.baseItemId)) return false;
+  const y = salvageYield(content, inst.baseItemId);
+  if (!y) return false;
+  state.bankInstances.splice(idx, 1);
+  syncBankOrder(state, undefined, storagePredicate(content));
   payOut(state, content, y, 1);
   return true;
 }
