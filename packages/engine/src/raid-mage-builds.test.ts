@@ -95,6 +95,11 @@ const B: MageBuild[] = [
   { id: 28, label: "Raid-H Thronszepter + Fokus, Ägis, Koloss", weapon: "gk_king_scepter_heroic", offhand: "godiron_focus", weaponRunes: ["affix_precise", "affix_arcane"], weaponSuffix: "suffix_magus", armor: RAID_H, armorRunes: ["affix_aegis"], armorSuffix: "suffix_colossus", jewelry: MIX_JEW, jewelrySuffix: "suffix_bulwark" },
   { id: 29, label: "Raid gemischt (H-Brust/-Beine, N-Rest), Ward", weapon: "gk_fel_staff", weaponRunes: ["affix_arcane"], weaponSuffix: "suffix_magus", armor: { ...RAID_N, body: "gk_fire_chest_heroic", legs: "gk_fire_legs_heroic" }, armorRunes: ["affix_warding"], armorSuffix: "suffix_sage", jewelry: raidJew("_heroic"), jewelrySuffix: "suffix_sage" },
   { id: 30, label: "Raid-H Ward + Schleiertrinker gemischt, Bollwerk-Schmuck", weapon: "gk_fel_staff_heroic", weaponRunes: ["affix_arcane", "affix_frost"], weaponSuffix: "suffix_oracle", armor: RAID_H, armorRunes: ["affix_warding"], armorRunesBySlot: { body: ["affix_veil_drinker", "affix_aegis"], legs: ["affix_aegis"] }, armorSuffix: "suffix_colossus", jewelry: raidJew("_heroic"), jewelrySuffix: "suffix_bulwark" },
+  // claude:2026-10-25T21:30:00+02:00 — Diagnose F1 (Frost gegen Bosse): Build 2 mit einzeln entfernten Proc-Runen.
+  { id: 31, label: "Diagnose: Build 2 ohne Frost (Arkan/Flamme/Schock)", weapon: "crownless_stave", weaponRunes: ["affix_arcane", "affix_flame", "affix_shock"], weaponSuffix: "suffix_warlock", armor: CLOTH, armorRunes: ["affix_warding"], armorSuffix: "suffix_sage", jewelry: DMG_JEW, jewelrySuffix: "suffix_archon" },
+  { id: 32, label: "Diagnose: Build 2 ohne Schock (Arkan/Flamme/Frost)", weapon: "crownless_stave", weaponRunes: ["affix_arcane", "affix_flame", "affix_frost"], weaponSuffix: "suffix_warlock", armor: CLOTH, armorRunes: ["affix_warding"], armorSuffix: "suffix_sage", jewelry: DMG_JEW, jewelrySuffix: "suffix_archon" },
+  { id: 33, label: "Diagnose: Build 2 nur Arkan", weapon: "crownless_stave", weaponRunes: ["affix_arcane"], weaponSuffix: "suffix_warlock", armor: CLOTH, armorRunes: ["affix_warding"], armorSuffix: "suffix_sage", jewelry: DMG_JEW, jewelrySuffix: "suffix_archon" },
+  { id: 34, label: "Diagnose: Build 2 nur Frost + Arkan", weapon: "crownless_stave", weaponRunes: ["affix_frost", "affix_arcane"], weaponSuffix: "suffix_warlock", armor: CLOTH, armorRunes: ["affix_warding"], armorSuffix: "suffix_sage", jewelry: DMG_JEW, jewelrySuffix: "suffix_archon" },
 ];
 
 /** Höchste vorhandene Runenstufe je Affix (aus den Runen-Items des Katalogs). */
@@ -197,7 +202,7 @@ const median = (xs: number[]): number => {
   return a.length % 2 ? a[a.length >> 1]! : (a[(a.length >> 1) - 1]! + a[a.length >> 1]!) / 2;
 };
 
-describe.skipIf(!ON)("Raid: 30 Magier-Builds", () => {
+describe.skipIf(!ON)("Raid: 30 Magier-Builds (+ Diagnose 31–34, nur per RAID_MAGE_IDS)", () => {
   const diffs = ((process.env.RAID_MAGE_DIFF ?? "normal,heroic,mythic").split(",") as RaidDifficulty[]);
   const N = Number(process.env.RAID_MAGE_N ?? 10);
   // claude:2026-10-25T19:40:00+02:00 — RAID_MAGE_IDS=1,11,21 misst nur diese Builds (Stellschrauben-Experimente).
@@ -207,7 +212,7 @@ describe.skipIf(!ON)("Raid: 30 Magier-Builds", () => {
     it(`Stufe ${d}: 30 Builds × ${N} Läufe`, () => {
       rows.push(`| Build | Stufe | Abschlüsse | Median min | Neustarts | Niederlagen-Ort | HP | Ward | Rüstung | Schaden | Krit | Essen | Tränke | verworfen |`);
       for (const b of B) {
-        if (ids && !ids.has(b.id)) continue;
+        if (ids ? !ids.has(b.id) : b.id > 30) continue;
         const runs: Run[] = [];
         let doc = { hp: 0, ward: 0, ar: 0, dmg: "", crit: "", dropped: [] as string[] };
         for (let i = 0; i < N; i++) {
