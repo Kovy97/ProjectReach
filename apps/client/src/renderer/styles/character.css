@@ -1864,6 +1864,8 @@
 .cs-slot[data-rarity="epic"]      { --slot-glow: radial-gradient(circle at 50% 45%, rgba(176, 127, 216, 0.32), transparent 68%); }
 .cs-slot[data-rarity="legendary"] { --slot-glow: radial-gradient(circle at 50% 45%, rgba(224, 144, 42, 0.32), transparent 68%); }
 .cs-slot[data-rarity="godly"]     { --slot-glow: radial-gradient(circle at 50% 45%, rgba(255, 215, 0, 0.30), transparent 68%); }
+.cs-slot[data-rarity="heroic"] { --slot-glow: radial-gradient(circle at 50% 45%, rgba(63, 214, 200, 0.30), transparent 68%); }
+.cs-slot[data-rarity="mythic"] { --slot-glow: radial-gradient(circle at 50% 45%, rgba(255, 95, 180, 0.30), transparent 68%); }
 
 .cs-slot-icon-img {
   width: 78%;

@@ -26,6 +26,18 @@ describe("Statuseffekt-Abdeckung (Anti-Regression)", () => {
     expect([...unhandled], `nicht behandelte Inflict-Typen: ${[...unhandled].join(", ")}`).toEqual([]);
   });
 
+  // claude:2026-10-25T07:00:00+02:00 — Bossphasen (1.4.0 Raid R4): eine Phase ERSETZT den Basis-inflict, also gilt dieselbe
+  // Symmetrie-Pflicht für jeden Phasen-inflict (sonst liefe z. B. Vrikkas Blutung in Phase 3 still ins Leere).
+  it("jeder Phasen-inflict eines Bosses wird auf der Spielerseite behandelt", () => {
+    const unhandled = new Set<string>();
+    for (const m of Object.values(content.monsters)) {
+      for (const ph of m.phases ?? []) {
+        if (ph.inflict && !PLAYER_HANDLED.has(ph.inflict.type)) unhandled.add(ph.inflict.type);
+      }
+    }
+    expect([...unhandled], `nicht behandelte Phasen-inflict-Typen: ${[...unhandled].join(", ")}`).toEqual([]);
+  });
+
   it("jeder Waffen-Effekt-Typ (Status ODER Spezial-Kind, inkl. weaponEffects[]) ist implementiert", () => {
     const unhandled = new Set<string>();
     for (const it of Object.values(content.items)) {

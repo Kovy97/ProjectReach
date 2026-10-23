@@ -740,7 +740,10 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 // 92: Leben im Handwerk (1.4.0 Welle 3 EV/AU, Chef 23.10.2026; claude:2026-10-24T22:40:00+02:00): eigener Zufallsstrom `eventRng`
 //     (wie `eliteRng`), `skillEvents` (Abklingzeit, aktives Ereignis, Ernte-/Fährten-Vormerkung, Logbuch) und
 //     `workOrders` (offene Arbeitsaufträge, Angebot, Sequenz). Alles nur online gewürfelt.
-export const SAVE_VERSION = 92;
+// 93: Raid „Die Hallen von Gobkha'raz“ (1.4.0 Welle 4, Chef 23.10.2026; claude:2026-10-25T02:50:00+02:00): `raid` (laufender Lauf,
+//     Abschlüsse je Schwierigkeit, Boss-Kills, Wochentruhen, Zähler), neue Raritäten heroic/mythic,
+//     Warteschlangen-Art `raid`, Einstellungen `raidAutoContinue`/`raidAutoBuyRestart`.
+export const SAVE_VERSION = 93;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -2278,6 +2281,139 @@ export const WEAPON_TYPE_SPECIALTY: Record<WeaponType, LocalizedString> = {
 // Zahlen wörtlich aus design/1.4.0-balance-werkstatt.md §3/§4/§5.7–5.8. Nur online gewürfelt, eigener Strom
 // `state.eventRng`; ohne Ereignis bleibt `state.rng` bitgleich.
 // ───────────────────────────────────────────────────────────────────────────
+// ───────────────────────────────────────────────────────────────────────────
+// claude:2026-10-25T02:50:00+02:00 — Raid „Die Hallen von Gobkha'raz“ (1.4.0 Welle 4, Chef 23.10.2026; Zahlen 1.4.0-balance-raid.md,
+// Lore design/lore/raid-gobkharaz.md). Räume sind `DungeonDef` mit `raidOnly`; der Raid-Lauf steuert Gebühr,
+// Raum-Folge, Rast, Tod je Stufe, Wochen-Modifikator und Erstkill-Truhe (engine/raid.ts).
+// ───────────────────────────────────────────────────────────────────────────
+export type RaidDifficulty = "normal" | "heroic" | "mythic";
+export const RAID_DIFFICULTIES: readonly RaidDifficulty[] = ["normal", "heroic", "mythic"];
+/** Item-Varianten-Suffix je Schwierigkeit (Konvention gk_<name>, gk_<name>_heroic, gk_<name>_mythic). */
+export const RAID_VARIANT_SUFFIX: Readonly<Record<RaidDifficulty, string>> = { normal: "", heroic: "_heroic", mythic: "_mythic" };
+/** Wochen-Modifikatoren in Rotationsreihenfolge (Index = volle Wochen seit Mo 05.01.2026 mod 8, Spec §7). */
+export type RaidWeeklyModifierId =
+  | "quiet_halls"
+  | "borrowed_fire"
+  | "war_drums"
+  | "poison_kitchen"
+  | "payday"
+  | "blood_feast"
+  | "beast_hunger"
+  | "open_armory";
+export const RAID_WEEKLY_MODIFIERS: readonly RaidWeeklyModifierId[] = [
+  "quiet_halls", "borrowed_fire", "war_drums", "poison_kitchen", "payday", "blood_feast", "beast_hunger", "open_armory",
+];
+
+export interface RaidScaling {
+  hpMult: number;
+  damageMult: number;
+  levelAdd: number;
+  defenseMult: number;
+}
+export interface RaidLootRow {
+  itemId: ItemId;
+  chance: number;
+  /** Menge [min, max] je Schwierigkeit. */
+  qty: Readonly<Record<RaidDifficulty, readonly [number, number]>>;
+}
+export interface RaidBossTable {
+  /** Garantierte Ziehungen und Chance auf eine weitere (ohne Doppel innerhalb eines Kills). */
+  draws: number;
+  extraChance: number;
+  /** Basis-IDs (Normal); die Variante der Stufe hängt RAID_VARIANT_SUFFIX an. */
+  entries: readonly { itemId: ItemId; weight: number }[];
+}
+export interface RaidRoomDef {
+  id: string;
+  name: LocalizedString;
+  /** Der Raum als Dungeon (raidOnly): Wellen 1–4 + Boss. */
+  dungeonId: string;
+  bossId: MonsterId;
+  table: RaidBossTable;
+  /** Ansage beim Betreten (i18n-Schlüssel oder Text). */
+  intro?: LocalizedString;
+}
+export interface RaidDef {
+  id: string;
+  name: LocalizedString;
+  /** Freischaltung Normal: dieser Dungeon wurde einmal geschafft (A7: behind_the_throne). */
+  unlockDungeonId: string;
+  rooms: readonly RaidRoomDef[];
+  fees: Readonly<Record<RaidDifficulty, number>>;
+  /** Heroisch: Neustart des Raums nach dem Tod. */
+  heroicRestartCost: number;
+  /** Mythisch: Anteil der Gebühr, der beim Tod zurückkommt. */
+  mythicRefundPct: number;
+  scaling: Readonly<Record<RaidDifficulty, RaidScaling>>;
+  /** Verstärkte Welle (Index im Raum, z. B. 3 = Welle 4): HP/Ward und Schaden/inflict-Stärke × Faktor. */
+  reinforcedWave: { index: number; hpMult: number; damageMult: number };
+  trashLoot: readonly RaidLootRow[];
+  /** Chance je Trash-Kill auf ein Teil aus der Tabelle des Raum-Bosses. */
+  trashPieceChance: Readonly<Record<RaidDifficulty, number>>;
+  bossSideLoot: readonly RaidLootRow[];
+  /** Suffix-Chance je Raid-Teil. */
+  suffixChance: Readonly<Record<RaidDifficulty, number>>;
+  weeklyChest: { extraItems: readonly { itemId: ItemId; qty: number }[]; dust: Readonly<Record<RaidDifficulty, number>> };
+  /** Neustarts in Warteschlange/offline je Lauf (A6, nur Normal). */
+  maxAutoRestarts: number;
+}
+
+export type RaidRunPhase = "fight" | "rest" | "defeated" | "complete";
+/** Der laufende Raid (persistiert). Beute wird sofort gutgeschrieben; `loot`/`lastLoot` sind die Anzeige. */
+export interface RaidRun {
+  raidId: string;
+  difficulty: RaidDifficulty;
+  /** Raum-Index 0..4. */
+  room: number;
+  phase: RaidRunPhase;
+  feePaid: number;
+  restarts: number;
+  /** Beute des ganzen Laufs (Anzeige Abschluss/Rast). */
+  loot: { itemId: ItemId; qty: number }[];
+  /** Beute des zuletzt besiegten Bosses (Beute-Zeremonie). */
+  lastLoot: { itemId: ItemId; qty: number }[];
+  /** Fortlaufende Nummer des letzten Boss-Kills (UI erkennt daran die Zeremonie). */
+  bossSeq: number;
+  /** state.elapsedMs beim Start (Laufzeit). */
+  startedAtMs: number;
+  /** Wochen-Modifikator beim Start (fest für den Lauf). */
+  modifier: RaidWeeklyModifierId;
+  /** Rest-Rastzeit, bis der nächste Raum automatisch beginnt (nur bei Auto-Weiter, Warteschlange oder offline). */
+  restMs: number;
+}
+export interface RaidState {
+  run: RaidRun | null;
+  /** Abschlüsse (Endboss besiegt) je Schwierigkeit; schaltet die nächste frei. */
+  clears: Readonly<Record<RaidDifficulty, number>> | Record<RaidDifficulty, number>;
+  /** Boss-Kills je `${bossId}:${difficulty}` (Lebenszeit). */
+  bossKills: Record<string, number>;
+  /** Erstkill-Truhen der laufenden Kalenderwoche (`${bossId}:${difficulty}`). */
+  weekly: { week: number; chests: Record<string, true> };
+  /** Schnellster Abschluss je Schwierigkeit (Spiel-ms). */
+  fastestMs: Partial<Record<RaidDifficulty, number>>;
+  feesPaid: number;
+  /** Letzter Abschluss oder Abbruch (UI-Breadcrumb). */
+  lastResult: { seq: number; difficulty: RaidDifficulty; outcome: "complete" | "defeated" | "abandoned"; durationMs: number; refund: number } | null;
+  resultSeq: number;
+  /** claude:2026-10-25T03:30:00+02:00 — Laufzeit eines Raid-Warteschlangen-Eintrags (Muster queueDungeon): verbleibende Läufe inkl. des laufenden (null = ∞). */
+  queue: { raidId: string; difficulty: RaidDifficulty; remaining: number | null; completed: number } | null;
+}
+export function defaultRaidState(): RaidState {
+  return {
+    run: null,
+    clears: { normal: 0, heroic: 0, mythic: 0 },
+    bossKills: {},
+    weekly: { week: -1, chests: {} },
+    fastestMs: {},
+    feesPaid: 0,
+    lastResult: null,
+    resultSeq: 0,
+    queue: null,
+  };
+}
+/** Rast nach einem Boss, bevor der nächste Raum automatisch beginnt (Auto-Weiter, Warteschlange, offline). */
+export const RAID_REST_AUTO_MS = 3_000;
+
 export type SkillEventId =
   | "rich_vein"
   | "storm_fell"
@@ -2551,6 +2687,57 @@ export interface SetDef {
   modifiers?: Partial<Record<AttributeId, number>>;
   /** Stil-Boost-Krönung des Sets (genau 1 Boost je Set, Werte laut §4.4-Tier-Staffel). */
   skillBoost?: SkillBoostMap;
+  /**
+   * claude:2026-10-25T02:50:00+02:00 — Set-Stufen (1.4.0 Raid R7, Spec 1.4.0-balance-raid.md §6): KUMULATIVE Schwellen (2/4/5 Teile).
+   * Gesetzt ⇒ computeStats wertet die Stufen statt minPieces/bonus/modifiers/skillBoost (die bleiben für
+   * Alt-Sets mit einer Schwelle unverändert). Teile zählen über `ItemDef.variantOf` gemeinsam (A14).
+   */
+  tiers?: SetTierDef[];
+}
+
+/** Eine Set-Stufe (kumulativ: bei 5 Teilen gelten auch die 2- und 4-Teile-Stufen). */
+export interface SetTierDef {
+  pieces: number;
+  modifiers?: Partial<Record<AttributeId, number>>;
+  skillBoost?: SkillBoostMap;
+  bonus?: EquipBonus;
+  effects?: SetEffectDef[];
+}
+
+/**
+ * Set-Effekte der Raid-Sets (Spec §6.1, Werte dort). Zähler und Abklingzeiten sind transient im Kampf.
+ *  - burnDamagePct/poisonDamagePct/bleedDamagePct: `value` = Anteil mehr DoT-Schaden dieser Art.
+ *  - burnDurationMs: `value` = ms längerer Brand.
+ *  - fireInterest (Zinsfeuer): je volle Sekunde Brand +`perStack` Zauberschaden, bis `maxStacks`; endet der Brand, verfällt der Zins.
+ *  - fireCollection (Eintreibung): jeder `every`-te Zauber zündet den Brand: `value` + `perStack`·Zins des Restschadens
+ *    sofort, Neuentzündung mit voller Dauer, Zins bleibt; der Schaden füllt den Ward um `wardPct` seines Betrags.
+ *  - creepingPlague (Schleichende Seuche): Gift bis `maxStacks` Stapel; je Stapel `perStack` Rüstung ignoriert.
+ *  - outbreak (Ausbruch): Treffer bei vollen Stapeln: `value` × verbleibender Giftschaden sofort, Stapel halbieren, `cooldownMs`.
+ *  - openWounds (Offene Wunden): Blutung bis `maxStacks`; je weiterem Stapel +`value` Blutungsschaden; je Stapel
+ *    +`perStack` Schaden kritischer Treffer (nach dem Krit-Deckel).
+ *  - bloodToll (Blutzoll): bei vollen Stapeln reißt der nächste Treffer die Wunden auf: Restschaden × `value` sofort,
+ *    Heilung `healPct` davon, Blutung erlischt, `cooldownMs`.
+ */
+export type SetEffectKind =
+  | "burnDamagePct"
+  | "burnDurationMs"
+  | "poisonDamagePct"
+  | "bleedDamagePct"
+  | "fireInterest"
+  | "fireCollection"
+  | "creepingPlague"
+  | "outbreak"
+  | "openWounds"
+  | "bloodToll";
+export interface SetEffectDef {
+  kind: SetEffectKind;
+  value?: number;
+  perStack?: number;
+  maxStacks?: number;
+  every?: number;
+  cooldownMs?: number;
+  healPct?: number;
+  wardPct?: number;
 }
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -3083,7 +3270,10 @@ export type ItemRarity =
   | "superRare"
   | "epic"
   | "legendary"
-  | "godly";
+  | "godly"
+  // claude:2026-10-25T02:50:00+02:00 — Raid-Raritäten (1.4.0 A4): Heroisch (türkis) und Mythisch (pink), nach göttlich.
+  | "heroic"
+  | "mythic";
 
 /** Geordnet niedrig → hoch. „magic" ist ein Legacy-Tier (wird in content → „superRare" migriert). */
 export const ITEM_RARITIES: ItemRarity[] = [
@@ -3095,6 +3285,8 @@ export const ITEM_RARITIES: ItemRarity[] = [
   "epic",
   "legendary",
   "godly",
+  "heroic",
+  "mythic",
 ];
 
 /** Rarity-Farbe (färbt Name/Label/Item-Bild-Hintergrund im Tooltip). Plan #90. */
@@ -3109,6 +3301,8 @@ export const RARITY_COLORS: Record<ItemRarity, string> = {
   epic: "#b07fd8", // lila
   legendary: "#e0902a", // orange
   godly: "#ffd700", // gold
+  heroic: "#3fd6c8", // türkis (1.4.0 Raid Heroisch)
+  mythic: "#ff5fb4", // pink (1.4.0 Raid Mythisch)
 };
 
 /** Angezeigtes Rarity-Label (unter dem Item-Namen im Tooltip). */
@@ -3122,6 +3316,8 @@ export const RARITY_LABEL: Record<ItemRarity, LocalizedString> = {
   epic: { en: "Epic", de: "Episch", es: "Épico", fr: "Épique", "pt-BR": "Épico", ru: "Эпическое", zh: "史诗" },
   legendary: { en: "Legendary", de: "Legendär", es: "Legendario", fr: "Légendaire", "pt-BR": "Lendário", ru: "Легендарное", zh: "传说" },
   godly: { en: "Godly", de: "Göttlich", es: "Divino", fr: "Divin", "pt-BR": "Divino", ru: "Божественное", zh: "神圣" },
+  heroic: { en: "Heroic", de: "Heroisch", es: "Heroico", fr: "Héroïque", "pt-BR": "Heroico", ru: "Героическое", zh: "英雄" },
+  mythic: { en: "Mythic", de: "Mythisch", es: "Mítico", fr: "Mythique", "pt-BR": "Mítico", ru: "Мифическое", zh: "神话" },
 };
 
 /** Effektive Rarity eines Items (Default „common"). Volle Auto-Ableitung folgt in content (#90). */
@@ -3437,6 +3633,17 @@ export interface ItemDef {
   shelf?: StorageShelfId | null;
   /** claude:2026-10-24T17:45:00+02:00 — Echter Pfeil (1.4.0 FK): Material, das der Köcher lädt. Fehlt ⇒ kein Pfeil. */
   arrow?: ArrowDef;
+  /**
+   * claude:2026-10-25T02:50:00+02:00 — Raid-Variante (1.4.0 A14): Heroisch-/Mythisch-Fassung eines Raid-Teils zeigt auf das Normal-Teil.
+   * Set-Zählung und Beute-Tabellen nutzen die Basis-ID; das Item selbst ist ein eigenes Teil.
+   */
+  variantOf?: ItemId;
+  /**
+   * claude:2026-10-25T02:50:00+02:00 — Hauptattribut (1.4.0 Raid, Spec §10.5): zählt als Stärke, Geschick oder Intelligenz nach dem
+   * Stil der Haupthand (ohne Waffe: Nahkampf). `primarySkillBoost` entsprechend als Power, Fernkampf oder Magie.
+   */
+  primaryAttribute?: number;
+  primarySkillBoost?: number;
   // bagCapacity: GELÖSCHT (#278) — Taschenslot-System entfernt, small_pouch ist aus dem Katalog (#272).
   /** Nur für type === "tool": beschleunigt eine Fertigkeit (speedMult < 1 = schneller), wirkt aus dem Inventar. */
   tool?: { skill: SkillId; speedMult: number };
@@ -3824,6 +4031,8 @@ export function enchantSlotsFor(rarity: ItemRarity): number {
       return 3;
     case "legendary":
     case "godly":
+    case "heroic": // 1.4.0 Raid (Spec §5.1 Punkt 6)
+    case "mythic":
       return 4;
     default:
       return 1;
@@ -4143,6 +4352,39 @@ export type ItemRef =
 export type MonsterDefenseType = "armor" | "evasion" | "ward";
 export const MONSTER_DEFENSE_TYPES: readonly MonsterDefenseType[] = ["armor", "evasion", "ward"];
 
+/**
+ * claude:2026-10-25T02:50:00+02:00 — Bossphase (1.4.0 Raid R4, Vertrag 1.4.0-balance-raid.md §3). Phasen sind ABSOLUTE Zustände: ein Feld,
+ * das die Phase nicht nennt, fällt auf den Basiswert zurück (Ausnahme: der Ward-Schild ist einmalig). Gilt, sobald
+ * enemyHp/maxHp ≤ atHpPct. Beim Wechsel Patt-Zähler zurücksetzen. Transient im Kampf.
+ */
+export interface BossPhase {
+  atHpPct: number;
+  /** Log-Schlüssel der Phase (stabil, für Kampf-Log und UI). */
+  logKey: string;
+  /** claude:2026-10-25T03:15:00+02:00 — Ansage beim Phasenwechsel (Lore, 7 Sprachen inline). */
+  announce?: LocalizedString;
+  /** Name der Phase (Lore, z. B. „Zinseszins“). */
+  name?: LocalizedString;
+  attackIntervalMult?: number;
+  damageMult?: number;
+  /** ABSOLUTE Rüstung in dieser Phase (Normal-Wert, × Stufen-Rüstungsfaktor). */
+  defense?: number;
+  /** EINMALIG beim Betreten: Ward += Anteil der skalierten maxHp. */
+  wardShieldPct?: number;
+  /** Je gelandetem Treffer mit Schaden > 0: Heilung = Anteil maxHp (Gift auf dem Boss halbiert). */
+  healPerHitPct?: number;
+  /** Ersetzt den Basis-Regen. */
+  regen?: number;
+  /** Ersetzt den Basis-inflict. */
+  inflict?: { type: StatusType; chance: number; magnitude: number; durationMs: number };
+  /** Jeder n-te Angriff × mult. */
+  everyNth?: { n: number; mult: number };
+  /** Takt × mult je everyMs in der Phase, bis maxStacks. */
+  intervalRamp?: { everyMs: number; mult: number; maxStacks: number };
+  /** Ersetzt die Basis-Resistenzen für die Dauer der Phase. */
+  resist?: StatusType[];
+}
+
 export interface MonsterDef {
   id: MonsterId;
   name: LocalizedString;
@@ -4180,6 +4422,8 @@ export interface MonsterDef {
   regen?: number;
   /** Wut: unterhalb `belowHpPct` (0..1) seiner HP schlägt der Gegner mit `damageMult`-fachem Schaden. */
   enrage?: { belowHpPct: number; damageMult: number };
+  /** claude:2026-10-25T02:50:00+02:00 — Bossphasen (1.4.0 Raid). Aufsteigend nach Schwelle sortiert ist nicht nötig; die Engine wählt die tiefste erreichte. */
+  phases?: BossPhase[];
   /**
    * Kreaturen-Familie (Bane-System #213): Ziel-Taxonomie für `bane`-Waffeneffekte
    * (`weaponEffect.targetFamily`). Optional & rein additiv — ungetaggte Monster gehören
@@ -4844,6 +5088,8 @@ export interface DungeonDef {
   keysPerRun?: number;
   /** Gegner-Wellen in Reihenfolge (letzte = Boss). */
   encounters: MonsterId[];
+  /** claude:2026-10-25T02:50:00+02:00 — Raid-Raum (1.4.0): nur über den Raid startbar, erscheint in keiner Dungeon-Liste. */
+  raidOnly?: boolean;
   /**
    * Dramaturgie-Metadaten je Welle (Dungeon-Rework-Spec §5.1.2/§5.4), index-parallel zu
    * `encounters`. Optional & rein additiv: fehlend (oder kürzer als `encounters`) ⇒ exakt
@@ -5254,7 +5500,12 @@ export type AchievementConditionType =
   | "runes_discovered"
   | "farm_plots_planted"
   | "deaths"
-  | "play_hours";
+  | "play_hours"
+  // claude:2026-10-25T03:15:00+02:00 — Raid (1.4.0 R10, interne Erfolge): Boss-Kills je `${bossId}:${difficulty}`, Abschlüsse je
+  // Schwierigkeit (target = difficulty), entdeckte Mythisch-Unikate (Raid-Teile ohne Set mit Rarität mythic).
+  | "raid_boss_kills"
+  | "raid_clears"
+  | "raid_mythic_uniques";
 
 export interface AchievementCondition {
   type: AchievementConditionType;
@@ -5742,6 +5993,8 @@ export interface ContentDB {
   tavernTasks?: TavernTaskTemplateDef[];
   /** claude:2026-10-24T23:00:00+02:00 — Zusätzliche Auftraggeber der Arbeitsaufträge (1.4.0 AU), z. B. für Schneidern und Bognerei. */
   orderCustomers?: OrderCustomerDef[];
+  /** claude:2026-10-25T02:50:00+02:00 — Raids (1.4.0 Welle 4). Fehlt ⇒ kein Raid. */
+  raids?: RaidDef[];
   /** Jagen (1.2.0): Gebiete mit Stufe, Fallenzeit und XP. OPTIONAL → Fehlen = Jagd inert. */
   huntingZones?: HuntZoneDef[];
 }
@@ -6003,8 +6256,13 @@ export interface CombatEvent {
     | "xp"
     | "gold"
     | "pet"
-    | "petAbility";
+    | "petAbility"
+    // claude:2026-10-25T05:10:00+02:00 — Bossphase betreten (1.4.0 Raid R4): by "enemy", amount = Phasennummer (1-basiert),
+    // `phaseKey` = `BossPhase.logKey`. Die UI zeigt daraus die `announce` der Phase des Monsters.
+    | "phase";
   amount: number;
+  /** claude:2026-10-25T05:10:00+02:00 — Nur für kind === "phase": `BossPhase.logKey` der betretenen Phase. */
+  phaseKey?: string;
   /** Für kind === "status" (welcher Effekt ausgelöst) bzw. "dot" (welcher DoT Schaden tickt). */
   status?: StatusType;
   /**
@@ -6045,7 +6303,10 @@ export interface CombatEvent {
    * zeigt daraus „Überspringen: … für X" statt eines zweiten „Du triffst" und KEIN zweites volles
    * Geschoss (kurzer Bogen zum Ziel). Persistenz: Log läuft verbatim durch — kein SAVE_VERSION-Bump.
    */
-  hitKind?: "shockArc";
+  // claude:2026-10-25T05:10:00+02:00 — Raid-Set-Einlösungen (1.4.0 R7): "fireCollection" = Eintreibung (Ornat 5/5, Brand detoniert,
+  // `wardRestored` = aufgefüllter Ward), "outbreak" = Ausbruch (Pirschgewand 5/5), "bloodToll" = Blutzoll (Blutschwur 5/5).
+  // Alle drei by "player", gehen direkt auf die Gegner-HP (wie DoT-Ticks), ohne eigenen Wurf.
+  hitKind?: "shockArc" | "fireCollection" | "outbreak" | "bloodToll";
   /**
    * Lichtsegen (Aether, review-1.2.0 P2 29.08.2026) — nur für kind "hit"/"crit" mit by "player": der von
    * DIESEM Zauber tatsächlich aufgefüllte EIGENE Ward (1 Dezimale, nach Deckel maxWard). Nur gesetzt wenn
@@ -6216,6 +6477,16 @@ export interface CombatState {
    * (Respawn/Welle), beide Seiten bei Kampfende/Tod.
    */
   elemental?: ElementalCounters;
+  /**
+   * claude:2026-10-25T05:10:00+02:00 — Bossphasen (1.4.0 Raid R4, Spec 1.4.0-balance-raid.md §3), TRANSIENT wie `effectCounters`:
+   * `bossPhase` = Zahl der erreichten Phasen (0 = Basis; die Phasen absteigend nach `atHpPct` gezählt), `bossPhaseMs` =
+   * Kampfzeit seit dem Betreten der Phase (`intervalRamp`), `bossAttackCount` = Angriffe des Bosses in der Phase
+   * (`everyNth`). Fehlt `bossPhase` (nach dem Laden), leitet combat.ts die Phase still aus den HP ab (ohne Ward-Schild).
+   * Nie persistiert (Load-Whitelist baut `combat` ohne diese Felder neu auf).
+   */
+  bossPhase?: number;
+  bossPhaseMs?: number;
+  bossAttackCount?: number;
 }
 
 /** Elementar-Zähler EINER Seite (Ziel der Effekte). */
@@ -6268,6 +6539,17 @@ export interface EffectCounters {
   overkillCarry: number;
   /** plaguebearer: der nächste Gegner startet mit diesem Gift (null = nichts übergeben). */
   plague: { magnitude: number; durationMs: number } | null;
+  // claude:2026-10-25T05:10:00+02:00 — Raid-Set-Effekte (1.4.0 R7, Spec §6.1), alle optional (fehlend = 0) und transient.
+  /** Zinsfeuer: ms, die der aktuelle Gegner ohne Unterbrechung brennt (0, sobald der Brand erlischt). */
+  fireInterestMs?: number;
+  /** Eintreibung: gezählte Zauber dieses Kampfs (jeder `every`-te detoniert den Brand). */
+  castCount?: number;
+  /** Offene Wunden: Blutungs-Stapel auf dem aktuellen Gegner (0, sobald die Blutung endet). */
+  bleedStacks?: number;
+  /** Ausbruch: Rest-Abklingzeit in ms. */
+  outbreakCdMs?: number;
+  /** Blutzoll: Rest-Abklingzeit in ms. */
+  bloodTollCdMs?: number;
 }
 
 /** Frische (leere) Spezial-Effekt-Zähler. */
@@ -6630,13 +6912,27 @@ export interface PlayerStats {
  * Die Engine liest `actionId` für "fight"-/"dungeon"-Einträge NIE.
  */
 export interface QueuedAction {
-  kind: "action" | "fight" | "dungeon";
+  // claude:2026-10-25T02:50:00+02:00 — "raid": Raid-Läufe (1.4.0), `raidId` + `raidDifficulty`, `target` = Anzahl Läufe (jeder zahlt seine Gebühr).
+  kind: "action" | "fight" | "dungeon" | "raid";
   actionId: ActionId;
   /** NUR kind "fight": das Ziel-Monster. Für andere Einträge nie gesetzt. */
   monsterId?: MonsterId;
   /** NUR kind "dungeon" (SAVE_VERSION 83): der Dungeon. Für andere Einträge nie gesetzt. */
   dungeonId?: string;
+  /** NUR kind "raid" (SAVE 93): Raid und Schwierigkeit. */
+  raidId?: string;
+  raidDifficulty?: RaidDifficulty;
   target: number | null;
+}
+
+/** claude:2026-10-25T02:50:00+02:00 — Baut einen "raid"-Queue-Eintrag (einzige Konstruktions-Stelle, Muster makeDungeonQueueEntry). */
+export function makeRaidQueueEntry(raidId: string, difficulty: RaidDifficulty, target: number | null): QueuedAction {
+  return { kind: "raid", actionId: FIGHT_QUEUE_ACTION_ID, raidId, raidDifficulty: difficulty, target };
+}
+
+/** Type-Guard: Raid-Lauf-Eintrag. */
+export function isRaidQueueEntry(entry: QueuedAction): entry is QueuedAction & { kind: "raid"; raidId: string; raidDifficulty: RaidDifficulty } {
+  return entry.kind === "raid" && typeof entry.raidId === "string" && typeof entry.raidDifficulty === "string";
 }
 
 /**
@@ -6736,7 +7032,11 @@ export type QueueSkipReason =
   | "stalemate"
   /** Dungeon-Pendant (trägt `dungeonId`): Tod/Patt im Queue-Dungeon-Lauf, Rest-Läufe verfallen. */
   | "dungeon_defeated"
-  | "dungeon_stalemate";
+  | "dungeon_stalemate"
+  /** claude:2026-10-25T03:40:00+02:00 — "raid"-Eintrag (SAVE 93): Stufe gesperrt, Gold reicht nicht, unbekannter Raid. */
+  | "raid_locked"
+  | "raid_gold"
+  | "unknown_raid";
 
 /**
  * Breadcrumb des letzten übersprungenen Kampf-/Dungeon-/Aktions-Queue-Eintrags (Muster `lastStop`).
@@ -6750,6 +7050,8 @@ export interface QueueSkip {
   reason: QueueSkipReason;
   dungeonId?: string;
   actionId?: ActionId;
+  /** claude:2026-10-25T03:40:00+02:00 — Raid-Skip (SAVE 93). */
+  raidId?: string;
 }
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -7189,6 +7491,8 @@ export interface GameState {
   skillEvents?: SkillEventState;
   /** claude:2026-10-24T22:40:00+02:00 — Arbeitsaufträge (SAVE 92). */
   workOrders?: WorkOrderState;
+  /** claude:2026-10-25T02:50:00+02:00 — Raid (SAVE 93). */
+  raid?: RaidState;
   /** Collection-Log: je Monster die bereits erbeuteten Drop-Item-IDs (für „???"-Anzeige bis entdeckt). */
   seenDrops: Record<MonsterId, ItemId[]>;
   /**
@@ -7865,13 +8169,17 @@ export interface GameSettings {
    * dem Lager nach. Aus: der Bogen schießt mit einfachen Pfeilen weiter. Standard: an.
    */
   quiverAutoRefill: boolean;
+  /** claude:2026-10-25T02:50:00+02:00 — Raid: nach der Rast automatisch weiter nach 3 s (Standard aus). */
+  raidAutoContinue: boolean;
+  /** claude:2026-10-25T02:50:00+02:00 — Raid Heroisch: Neustart nach dem Tod in Warteschlange/offline automatisch kaufen (A6, Standard aus). */
+  raidAutoBuyRestart: boolean;
 }
 
 /** Default-Einstellungen für frische Spielstände (und Migration alter Saves). */
 export function defaultSettings(): GameSettings {
   // claude:2026-10-23T23:25:00+02:00 — materialsToStorage: Engine-Baseline aus (Sim/Tests). Echte Spieler bekommen es an: neue Charaktere über
   // `starterKit` (engine/state.ts), Alt-Saves über migrateState (fehlendes Feld ⇒ an).
-  return { autoBank: true, autoParagonAscend: false, estateNotifications: true, materialsToStorage: false, quiverAutoRefill: true };
+  return { autoBank: true, autoParagonAscend: false, estateNotifications: true, materialsToStorage: false, quiverAutoRefill: true, raidAutoContinue: false, raidAutoBuyRestart: false };
 }
 
 /** Mastery: gemeinsame Level-Kurve mit Fertigkeiten; höchstes Level. */

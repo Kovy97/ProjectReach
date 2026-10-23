@@ -361,6 +361,8 @@
 .shopv2-card.rarity-epic      { box-shadow: inset 0 0 0 2px var(--rar-epic); }
 .shopv2-card.rarity-legendary { box-shadow: inset 0 0 0 2px var(--rar-legendary); }
 .shopv2-card.rarity-godly     { box-shadow: inset 0 0 0 2px var(--rar-godly); }
+.shopv2-card.rarity-heroic { box-shadow: inset 0 0 0 2px var(--rar-heroic); }
+.shopv2-card.rarity-mythic { box-shadow: inset 0 0 0 2px var(--rar-mythic); }
 
 .shopv2-card-image-area {
   display: flex;
@@ -1120,6 +1122,8 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 #root .shopv2-card.rarity-epic .shopv2-card-image-area      { background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--rar-epic) 55%, transparent), transparent 72%); }
 #root .shopv2-card.rarity-legendary .shopv2-card-image-area { background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--rar-legendary) 55%, transparent), transparent 72%); }
 #root .shopv2-card.rarity-godly .shopv2-card-image-area     { background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--rar-godly) 55%, transparent), transparent 72%); }
+#root .shopv2-card.rarity-heroic .shopv2-card-image-area { background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--rar-heroic) 55%, transparent), transparent 72%); }
+#root .shopv2-card.rarity-mythic .shopv2-card-image-area { background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--rar-mythic) 55%, transparent), transparent 72%); }
 #root .shopv2-card[class*="rarity-"] { box-shadow: none; }
 #root .shopv2-card.selected { box-shadow: var(--rg-2) #cda85d, var(--sh-3); }
 

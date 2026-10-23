@@ -1,4 +1,5 @@
 import { storagePredicate } from "./storage"; // claude:2026-10-23T21:50:00+02:00 — Materiallager (1.4.0 ML)
+import { resetRaidForPrestige } from "./raid"; // claude:2026-10-25T04:30:00+02:00
 import type {
   CharacterState,
   ContentDB,
@@ -120,6 +121,7 @@ export const PRESTIGE_STATE_FIELDS: Readonly<Record<keyof GameState, PrestigeFie
   eventRng: "keep", // claude:2026-10-24T23:35:00+02:00 — Zufallsstrom läuft weiter (1.4.0 EV), Muster eliteRng
   skillEvents: "reset", // laufendes Ereignis und Abklingzeit beginnen neu
   workOrders: "reset", // Aufträge gelten dem alten Fortschritt (Lohn beim Angebot festgeschrieben)
+  raid: "keep", // claude:2026-10-25T03:00:00+02:00 — Freischaltungen/Zähler bleiben; laufender Lauf und Wochentruhen setzt applyPrestige zurück (raid.ts resetRaidForPrestige, R10)
   seenDrops: "keep", // Wiki-Funde
   seenActionDrops: "keep",
   discoveredItems: "keep", // vereinigt mit dem Starterbesitz des Neustands
@@ -1056,6 +1058,9 @@ export function ascend(state: GameState, content: ContentDB, choice?: PrestigeAs
   for (const key of PRESTIGE_KEEP_FIELDS) {
     if (key in source) target[key] = source[key];
   }
+  // claude:2026-10-25T04:30:00+02:00 — Raid (R10): Freischaltungen/Zähler bleiben (keep), laufender Lauf, Warteschlange und Wochentruhen nicht.
+  if (next.raid) next.raid = structuredClone(next.raid);
+  resetRaidForPrestige(next);
   const nextChar = next.character as unknown as Record<string, unknown>;
   const oldChar = old.character as unknown as Record<string, unknown>;
   for (const key of PRESTIGE_CHARACTER_KEEP_FIELDS) {

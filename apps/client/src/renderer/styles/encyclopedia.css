@@ -253,6 +253,8 @@
 .encp-card.rarity-epic { box-shadow: inset 0 0 0 2px var(--rar-epic); }
 .encp-card.rarity-legendary { box-shadow: inset 0 0 0 2px var(--rar-legendary); }
 .encp-card.rarity-godly { box-shadow: inset 0 0 0 2px var(--rar-godly); }
+.encp-card.rarity-heroic { box-shadow: inset 0 0 0 2px var(--rar-heroic); }
+.encp-card.rarity-mythic { box-shadow: inset 0 0 0 2px var(--rar-mythic); }
 
 .encp-card-img-area {
   display: flex;
@@ -299,6 +301,8 @@
 .encp-card.rarity-epic .encp-card-name { color: var(--rar-epic); }
 .encp-card.rarity-legendary .encp-card-name { color: var(--rar-legendary); }
 .encp-card.rarity-godly .encp-card-name { color: var(--rar-godly); }
+.encp-card.rarity-heroic .encp-card-name { color: var(--rar-heroic); }
+.encp-card.rarity-mythic .encp-card-name { color: var(--rar-mythic); }
 
 /* ─── Kein Treffer ────────────────────────────────────────────────────────────────────────── */
 .encp-empty {

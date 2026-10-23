@@ -1,6 +1,6 @@
 import type { ContentDB, GameState } from "@hearthforge/shared";
 import { deriveEventRngSeed } from "./events"; // claude:2026-10-24T23:45:00+02:00
-import { defaultSkillEventState, defaultWorkOrderState } from "@hearthforge/shared";
+import { defaultRaidState, defaultSkillEventState, defaultWorkOrderState } from "@hearthforge/shared";
 import { BASE_INVENTORY_SLOTS, DEFAULT_THIEVING_RISK, SAVE_VERSION, defaultCampState, defaultEquipKits, defaultFarmPlots, defaultTavernState, defaultHuntTraps, defaultParagonState, defaultPrestigeState, defaultQuestState, defaultSettings, newGameOnboarding } from "@hearthforge/shared";
 import { createRng } from "./rng";
 import { syncActiveKit } from "./loadouts";
@@ -102,6 +102,7 @@ export function createGame(
     eventRng: createRng(deriveEventRngSeed(seed)),
     skillEvents: defaultSkillEventState(),
     workOrders: defaultWorkOrderState(),
+    raid: defaultRaidState(), // claude:2026-10-25T04:55:00+02:00 — Raid (SAVE 93)
     seenDrops: {},
     seenActionDrops: {},
     // Erst-Besitz-Marker (SAVE 58): startet leer; der Starterbesitz (Waffe/Rüstung/Food/Saat)

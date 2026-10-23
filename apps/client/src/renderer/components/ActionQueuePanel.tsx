@@ -3,7 +3,7 @@ import type { PointerEvent as ReactPointerEvent } from "react";
 import { content } from "@hearthforge/content";
 import { actionInputsOnHand, actionLevelMet, clearActionQueue, dequeueAction, dungeonRunProgress, moveQueueItem, prioritizeQueueEntry, projectQueue, queueBlockReason, resumeActionQueue, setActiveAction, stopCombat } from "@hearthforge/engine";
 import type { DungeonRunProgress, ProjectedLink } from "@hearthforge/engine";
-import { isDungeonQueueEntry, isFightQueueEntry } from "@hearthforge/shared";
+import { isDungeonQueueEntry, isFightQueueEntry, isRaidQueueEntry } from "@hearthforge/shared";
 import type { ActionDef, GameState, LocalizedString, QueuedAction } from "@hearthforge/shared";
 // Direkt importiert statt über styles/index.css eingehängt — Kollisions-Schutz, gleiches Muster
 // wie components/ItemFilterBar.tsx + styles/inv-filter.css (index.css ist eine gemeinsame Datei,
@@ -86,6 +86,12 @@ function DungeonQueueIcon({ dungeonId }: { dungeonId: string }): JSX.Element {
   ) : (
     <span className="queue-row-icon-emoji">⚔</span>
   );
+}
+
+/** claude:2026-10-25T11:45:00+02:00 — Raid-Queue-Ziel (1.4.0 Welle 4): "Raid-Name, Stufe", Content-Drift-fest. */
+function raidQueueName(raidId: string, difficulty: string, t: (k: string) => string, tr: (loc: LocalizedString) => string): string {
+  const raid = (content.raids ?? []).find((r) => r.id === raidId);
+  return `${raid ? tr(raid.name) : raidId} · ${t(`raid.diff.${difficulty}`)}`;
 }
 
 /** Lokalisierter Anzeigename eines Dungeon-Queue-Ziels — Content-Drift-fest (Muster `fightMonsterName`). */
@@ -369,6 +375,7 @@ export function ActionQueuePanel(): JSX.Element {
     // wäre für JEDEN Dungeon-Eintrag dauerhaft ausgegraut, egal ob derselbe Dungeon schon läuft.
     const dungeonEntry = isDungeonQueueEntry(entry) ? entry : null;
     if (dungeonEntry) return state.queueDungeon !== null && state.queueDungeon.dungeonId === dungeonEntry.dungeonId;
+    if (isRaidQueueEntry(entry)) return true; // claude:2026-10-25T11:45:00+02:00 - Raid-Läufe starten nur in der Reihenfolge der Warteschlange
     // 27.08.2026: Sofort-Start braucht ECHTEN Bestand (Spiegel von `prioritizeQueueEntry`) — ein nur
     // über die Projektion gedeckter „werde haben"-Eintrag bekommt keinen toten ⚡-Klick.
     const entryAction = content.actions[entry.actionId];
@@ -678,25 +685,28 @@ export function ActionQueuePanel(): JSX.Element {
             // non-null bekannt.
             const fightEntry = isFightQueueEntry(entry) ? entry : null;
             const dungeonEntry = isDungeonQueueEntry(entry) ? entry : null;
-            const action = fightEntry || dungeonEntry ? null : content.actions[entry.actionId];
-            if (!fightEntry && !dungeonEntry && !action) return null;
+            const raidEntry = isRaidQueueEntry(entry) ? entry : null; // claude:2026-10-25T11:45:00+02:00 - Raid-Eintrag (1.4.0 Welle 4)
+            const action = fightEntry || dungeonEntry || raidEntry ? null : content.actions[entry.actionId];
+            if (!fightEntry && !dungeonEntry && !raidEntry && !action) return null;
             const i = vi + foldedCount; // echter Index ins rohe state.actionQueue (Rail-Faltung, s.o.)
             const label = fightEntry
               ? fightMonsterName(fightEntry.monsterId, tr)
               : dungeonEntry
                 ? dungeonQueueName(dungeonEntry.dungeonId, tr)
-                : tr(action!.name);
+                : raidEntry
+                  ? raidQueueName(raidEntry.raidId, raidEntry.raidDifficulty, t, tr)
+                  : tr(action!.name);
             // SAVE 83: Dungeon-Ziel-Anzeige spiegelt den Kampf-Eintrag (×n/∞), NICHT die
             // "Alle"-Beschriftung der Sammel-/Craft-Aktionen — ein Dungeon-Lauf ist immer eine
             // Zahl von Läufen (oder ∞), nie "alles vom Material, das gerade reicht".
-            const qtyLabel = fightEntry || dungeonEntry
+            const qtyLabel = fightEntry || dungeonEntry || raidEntry
               ? entry.target === null ? "∞" : `×${entry.target}`
               : entry.target === null ? t("skill.qty.all") : `×${entry.target}`;
             const rowTiming = timing.queue[i];
             return (
               <HoverTip
                 as="div"
-                key={`rail-${fightEntry ? fightEntry.monsterId : dungeonEntry ? dungeonEntry.dungeonId : entry.actionId}-${vi}`}
+                key={`rail-${fightEntry ? fightEntry.monsterId : dungeonEntry ? dungeonEntry.dungeonId : raidEntry ? raidEntry.raidId + raidEntry.raidDifficulty : entry.actionId}-${vi}`}
                 className="queue-rail-item"
                 content={
                   <span className="ct-tip-desc">
@@ -711,6 +721,8 @@ export function ActionQueuePanel(): JSX.Element {
                     <FightQueueIcon monsterId={fightEntry.monsterId} />
                   ) : dungeonEntry ? (
                     <DungeonQueueIcon dungeonId={dungeonEntry.dungeonId} />
+                  ) : raidEntry ? (
+                    <DungeonQueueIcon dungeonId="gk_room_1" />
                   ) : (
                     <QueueIcon action={action!} />
                   )}
@@ -793,7 +805,13 @@ export function ActionQueuePanel(): JSX.Element {
                     `{monster}` lösen das sauber auf. */}
                 {/* 27.08.2026: Aktions-Skip (`actionId`, Grund `no_materials`) — der Eintrag kam an
                     die Reihe, sein Produzent war aber aus der Kette verschwunden. */}
-                {skip.actionId
+                {skip.raidId
+                  // claude:2026-10-25T11:45:00+02:00 - Raid-Skips (1.4.0): raid_gold / raid_locked / unknown_raid, Tod/Abbruch als raid_ended.
+                  ? t(skip.reason === "defeated" || skip.reason === "dungeon_defeated" ? "queue.skip.raid_ended" : `queue.skip.${skip.reason}`).replace(
+                      "{raid}",
+                      (() => { const r = (content.raids ?? []).find((x) => x.id === skip.raidId); return r ? tr(r.name) : skip.raidId!; })(),
+                    )
+                  : skip.actionId
                   ? t(`queue.skip.${skip.reason}`).replace(
                       "{action}",
                       content.actions[skip.actionId] ? tr(content.actions[skip.actionId]!.name) : skip.actionId,
@@ -1002,8 +1020,9 @@ export function ActionQueuePanel(): JSX.Element {
                   // bestehende `!action`-Guard blendete die ganze Zeile aus (Vorher-Zustand, den
                   // dieser Auftrag ausdrücklich aufhebt).
                   const dungeonEntry = isDungeonQueueEntry(entry) ? entry : null;
-                  const action = fightEntry || dungeonEntry ? null : content.actions[entry.actionId];
-                  if (!fightEntry && !dungeonEntry && !action) return null;
+                  const raidEntry = isRaidQueueEntry(entry) ? entry : null; // claude:2026-10-25T11:45:00+02:00 - Raid-Eintrag (1.4.0 Welle 4)
+                  const action = fightEntry || dungeonEntry || raidEntry ? null : content.actions[entry.actionId];
+                  if (!fightEntry && !dungeonEntry && !raidEntry && !action) return null;
                   // Task #327 (Priority-UI): ⚡-Knopf ausgrauen, wenn `prioritizeQueueEntry` ein
                   // No-op wäre — s. `startNowDisabled` oben (seit #369 geteilt mit dem Sperr-Hinweis).
                   const rowStartDisabled = startNowDisabled(entry);
@@ -1019,10 +1038,10 @@ export function ActionQueuePanel(): JSX.Element {
                   // `i` trifft den richtigen Eintrag. Kampf-/Dungeon-Einträge liefern dort ohnehin
                   // `null` (queueLevels.ts kennt nur Sammel-/Handwerks-Skills), der explizite Guard
                   // hier spart nur den Array-Zugriff.
-                  const rowLevel = fightEntry || dungeonEntry ? null : levels.queue[i];
+                  const rowLevel = fightEntry || dungeonEntry || raidEntry ? null : levels.queue[i];
                   // Warteschlangen-Projektion (27.08.2026): gelber Punkt = Material kommt aus früheren
                   // Einträgen, roter Punkt = kommt auch dann nicht (wird beim Start übersprungen).
-                  const rowMat = fightEntry || dungeonEntry ? undefined : projectedStatus.get(i);
+                  const rowMat = fightEntry || dungeonEntry || raidEntry ? undefined : projectedStatus.get(i);
                   const rowMatDot = rowMat === "will_have" || rowMat === "missing" ? rowMat : null;
                   return (
                     // Chef 25.08.2026: die Zeile selbst ist ab jetzt ein PLAIN div (kein HoverTip
@@ -1035,7 +1054,7 @@ export function ActionQueuePanel(): JSX.Element {
                     // `mouseenter` auf dem äußeren div nie schließt, solange der Zeiger irgendwo in
                     // der Zeile bleibt. Aufgeteilt vermeiden beide Tooltips sich sauber.
                     <div
-                      key={`${fightEntry ? fightEntry.monsterId : dungeonEntry ? dungeonEntry.dungeonId : entry.actionId}-${i}`}
+                      key={`${fightEntry ? fightEntry.monsterId : dungeonEntry ? dungeonEntry.dungeonId : raidEntry ? raidEntry.raidId + raidEntry.raidDifficulty : entry.actionId}-${i}`}
                       className="queue-row"
                       ref={setRowRef(vi)}
                       onContextMenu={(e) => { e.preventDefault(); dequeueAction(state, i); }}
@@ -1056,7 +1075,7 @@ export function ActionQueuePanel(): JSX.Element {
                                 1.0.1) = Material stammt (teilweise) aus der erwarteten Ausbeute eines
                                 früheren Sammel-Eintrags derselben Warteschlange — je eigener Hinweistext. */}
                             {rowTiming?.isEstimate
-                              ? ` · ${t(fightEntry || dungeonEntry ? "queue.duration.estimateHint" : "queue.duration.materialEstimateHint")}`
+                              ? ` · ${t(fightEntry || dungeonEntry || raidEntry ? "queue.duration.estimateHint" : "queue.duration.materialEstimateHint")}`
                               : ""}
                             {rowTiming?.unknown ? ` · ${t("queue.duration.unknownHint")}` : ""}
                             {rowMatDot === "will_have" ? ` · ${t("queue.row.willHave")}` : ""}
@@ -1068,6 +1087,8 @@ export function ActionQueuePanel(): JSX.Element {
                           <FightQueueIcon monsterId={fightEntry.monsterId} />
                         ) : dungeonEntry ? (
                           <DungeonQueueIcon dungeonId={dungeonEntry.dungeonId} />
+                        ) : raidEntry ? (
+                          <DungeonQueueIcon dungeonId="gk_room_1" />
                         ) : (
                           <QueueIcon action={action!} />
                         )}
@@ -1077,7 +1098,9 @@ export function ActionQueuePanel(): JSX.Element {
                               ? fightMonsterName(fightEntry.monsterId, tr)
                               : dungeonEntry
                                 ? dungeonQueueName(dungeonEntry.dungeonId, tr)
-                                : tr(action!.name)}
+                                : raidEntry
+                                  ? raidQueueName(raidEntry.raidId, raidEntry.raidDifficulty, t, tr)
+                                  : tr(action!.name)}
                           </span>
                           {/* 1.0.2 (Spieler-Report): Menge und Dauer teilen sich eine Zeile UNTER
                               dem Namen. Vorher war die Menge eine eigene Spalte rechts und nahm
@@ -1085,7 +1108,7 @@ export function ActionQueuePanel(): JSX.Element {
                               buchstabenweise um. */}
                           <span className="queue-row-meta">
                             <span className="queue-row-target">
-                              {fightEntry || dungeonEntry
+                              {fightEntry || dungeonEntry || raidEntry
                                 ? entry.target === null ? "∞" : `×${entry.target}`
                                 : entry.target === null ? t("skill.qty.all") : `×${entry.target}`}
                             </span>

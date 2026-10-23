@@ -80,7 +80,9 @@ describe("Suffix-Klassen-Trennung (#p14): Pool-Tags", () => {
     // Schmuck-Rework Welle 3 (content-dev, 29.08.2026, §3.6): 5 neue Magie-Ringe + 5 neue
     // Magie-Amulette tragen `wardCapacity` als Trinity-Flavor (gleiches Muster) — 75→85. Ebenfalls
     // klassenfrei (JEWELRY_SLOTS-Ausnahme).
-    expect(counts).toEqual({ armor_plate: 178, armor_leather: 111, armor_cloth: 85 });
+    // claude:2026-10-25T10:00:00+02:00 — Raid Gobkha'raz (1.4.0 Welle 4): 5 Platten-Teile + Schild × 3 Stufen (+18), 5 Leder-Teile × 3 (+15), 5 Stoff-Teile × 3 (+15).
+    // 178→196, 111→126, 85→100.
+    expect(counts).toEqual({ armor_plate: 196, armor_leather: 126, armor_cloth: 100 });
   });
 
   it("jedes Rüstungsteil mit Klassen-Tag behält zusätzlich das allgemeine armor-Tag (Runen-Gate)", () => {

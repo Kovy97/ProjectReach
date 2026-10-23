@@ -124,15 +124,29 @@ interface Toast {
 const TOAST_MS = 4000;
 const MAX_TOASTS = 4;
 // superRare/godly gehören dazu — sonst ist der größte Jackpot des Spiels stumm (Fun-Retest Grete).
-const RARE = new Set(["rare", "epic", "legendary", "superRare", "godly"]);
+// claude:2026-10-25T09:10:00+02:00 — Raid-Raritäten heroic/mythic (1.4.0 A4) lösen ebenfalls den Fund-Toast aus.
+const RARE = new Set(["rare", "epic", "legendary", "superRare", "godly", "heroic", "mythic"]);
 // Welle KK (Grete-Retest, Fund #1): superRare/godly bekommen eine eigene, GRÖSSERE Jackpot-Stufe
 // (Stil-Variante des bestehenden Rare-Toasts) — bisher war der seltenste Fund des Spiels leiser
 // als ein 0,8-%-Cape, weil beide dieselbe 4s-Dauer und denselben Legendary-Puls teilten.
 const GODLY_TIER = new Set(["superRare", "godly"]);
+// claude:2026-10-25T09:10:00+02:00 — Raid-Funde (heroic türkis, mythic pink) mit eigener Inszenierung; Dauer wie die Jackpot-Stufe.
+const RAID_TIER = new Set(["heroic", "mythic"]);
+/** Titel des Fund-Toasts je Seltenheit (A4: godly heißt jetzt „Göttlicher Fund!“, Mythisch ist die neue Raid-Stufe). */
+function rareFindTitleKey(rarity: string | undefined): string {
+  switch (rarity) {
+    case "mythic": return "toast.rareFind.mythic";
+    case "heroic": return "toast.rareFind.heroic";
+    case "godly": return "toast.rareFind.godly";
+    case "superRare": return "toast.rareFind.superRare";
+    default: return "toast.rareFind";
+  }
+}
 /** Jackpot-Toast-Dauer: superRare/godly bekommen deutlich mehr Bühnenzeit als der Standard-Rare-
  *  Toast (bzw. mehr als die jeweilige Basis-Dauer des Aufrufers, z.B. der 7s-Suffix-Reveal). */
 function jackpotDurationMs(rarity: string | undefined, base = TOAST_MS): number {
-  return GODLY_TIER.has(rarity ?? "") ? Math.max(base, 12_000) : base;
+  if (rarity === "mythic") return Math.max(base, 16_000);
+  return GODLY_TIER.has(rarity ?? "") || RAID_TIER.has(rarity ?? "") ? Math.max(base, 12_000) : base;
 }
 
 /**
@@ -1089,7 +1103,7 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
               // Welle MM (Grete R3-Fund #9, "Godly-Wortstufe"): der seltenste Fund des Spiels trug
               // wortgleich denselben Titel wie ein 0,8-%-Cape — eigene, größere Wortstufe für
               // superRare/godly statt des generischen "Seltener Fund!".
-              title: GODLY_TIER.has(item?.rarity ?? "") ? t("toast.rareFind.godly") : t("toast.rareFind"),
+              title: t(rareFindTitleKey(item?.rarity)),
               detail: item ? tr(item.name) : itemId,
             },
             jackpotDurationMs(item?.rarity),
@@ -1469,6 +1483,8 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
         const rareCls = toast.kind === "rare"
           ? ` fx-${toast.fx ?? "off"}${
               toast.rarity === "legendary" ? " toast-rare-legendary"
+              : toast.rarity === "mythic" ? " toast-rare-mythic"
+              : toast.rarity === "heroic" ? " toast-rare-heroic"
               : GODLY_TIER.has(toast.rarity ?? "") ? " toast-rare-godly"
               : ""
             }`

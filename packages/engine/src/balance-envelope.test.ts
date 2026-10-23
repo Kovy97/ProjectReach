@@ -82,7 +82,8 @@ function bis(style: WeaponStyle, lvl: number, target: BisTarget): BisBuild {
   const key = `${style}|${lvl}|${target}`;
   let b = buildCache.get(key);
   if (!b) {
-    b = buildBisCharacter(content, style, lvl, target, { allBuffs: true });
+    // claude:2026-10-25T06:00:00+02:00 — 1.4.0: Raid-Teile außen vor, die Pins messen den Bestand (Raid: eigene Messung, Apply #12).
+    b = buildBisCharacter(content, style, lvl, target, { allBuffs: true, excludeRaid: true });
     buildCache.set(key, b);
   }
   return b;

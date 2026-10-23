@@ -1,0 +1,184 @@
+/* claude:2026-10-25T11:00:00+02:00 — Raid-Oberfläche (1.4.0 „Feder und Stahl“ Welle 4). Nutzt die Ashen-Iron-Variablen
+   (--panel, --border, --gold, --accent, --text) und die vorhandenen Rahmen (.dungeon-progress, .btn-iron, .shop-citadel-btn).
+   Strahlen und Funken sind reine UI-Ebenen; das Item-Bild selbst glüht nicht. */
+
+/* ── Zonenwahl-Abschnitt ─────────────────────────────────────────────────── */
+.raid-panel { max-width: 960px; display: flex; flex-direction: column; gap: 12px; }
+.raid-top { display: flex; gap: 14px; align-items: stretch; flex-wrap: wrap; }
+.raid-art {
+  flex: 0 0 240px; min-height: 140px; border: 1px solid var(--border); background: #14110e center / cover no-repeat;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6);
+}
+.raid-top-text { flex: 1 1 320px; min-width: 0; }
+.raid-name { font-family: var(--font-head); font-size: 24px; font-weight: 900; color: var(--gold); text-shadow: 0 1px 3px #000; letter-spacing: 0.02em; }
+.raid-intro { margin: 6px 0 0; line-height: 1.45; }
+.raid-invite { margin: 8px 0 0; font-style: italic; line-height: 1.45; }
+.raid-diff-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.raid-diff-btn {
+  flex: 1 1 120px; padding: 8px 12px; background: var(--panel); color: var(--text); border: 1px solid var(--border);
+  font-family: var(--font-head); font-weight: 700; cursor: pointer; letter-spacing: 0.03em;
+}
+.raid-diff-btn:hover:not(:disabled) { filter: brightness(1.15); }
+.raid-diff-btn.active { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); color: var(--gold); }
+.raid-diff-heroic.active { border-color: var(--rar-heroic); box-shadow: inset 0 0 0 1px var(--rar-heroic); color: var(--rar-heroic); }
+.raid-diff-mythic.active { border-color: var(--rar-mythic); box-shadow: inset 0 0 0 1px var(--rar-mythic); color: var(--rar-mythic); }
+.raid-diff-btn.locked { opacity: 0.55; cursor: not-allowed; }
+.raid-diff-clears { font-weight: 400; opacity: 0.8; }
+.raid-lock-hint { margin: 0; font-size: 0.9em; }
+.raid-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.raid-col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.raid-line { display: flex; flex-direction: column; gap: 2px; }
+.raid-label { font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); opacity: 0.9; }
+.raid-fee { font-family: var(--font-head); font-size: 1.35em; font-weight: 800; color: var(--gold); display: inline-flex; gap: 6px; align-items: center; }
+.raid-fee-old { font-size: 0.7em; opacity: 0.6; font-weight: 400; margin-right: 4px; }
+.raid-note { margin: 0; font-size: 0.92em; line-height: 1.4; }
+.raid-stats { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.95em; }
+.raid-mod { border: 1px solid var(--border); padding: 8px 10px; background: rgba(0, 0, 0, 0.25); }
+.raid-mod-name { font-family: var(--font-head); font-weight: 800; font-size: 1.1em; }
+.raid-mod-desc { line-height: 1.4; margin-top: 2px; }
+.raid-chests { display: flex; flex-direction: column; gap: 3px; }
+.raid-chest-row { display: flex; justify-content: space-between; gap: 8px; font-size: 0.92em; padding: 2px 6px; border-left: 3px solid var(--border); }
+.raid-chest-row.ready { border-left-color: var(--gold); }
+.raid-chest-row.claimed { opacity: 0.6; }
+.raid-chest-state { white-space: nowrap; }
+.raid-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+.raid-start-btn { min-width: 220px; }
+.raid-queue { display: flex; flex-direction: column; gap: 4px; min-width: 200px; flex: 1 1 220px; }
+.raid-msg { color: #e06c3a; margin: 0; flex-basis: 100%; }
+.raid-card-locked { min-height: 180px; }
+
+/* ── Kampf-HUD ───────────────────────────────────────────────────────────── */
+.raid-bossbar {
+  position: relative; margin: 6px 0; padding: 8px 12px 10px; background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--border); border-left: 4px solid var(--rar-legendary, #e0902a);
+}
+.raid-bossbar-head { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+.raid-bossbar-name { font-family: var(--font-head); font-weight: 800; color: var(--gold); flex: 1 1 auto; }
+.raid-bossbar-phase { font-size: 0.85em; opacity: 0.85; }
+.raid-bossbar-hp { font-variant-numeric: tabular-nums; font-size: 0.85em; }
+.raid-bossbar-track { position: relative; height: 14px; background: #1a1210; border: 1px solid #000; margin-top: 4px; }
+.raid-bossbar-fill { position: absolute; inset: 0 auto 0 0; background: linear-gradient(180deg, #c0392b, #7d1e14); transition: width 0.25s linear; }
+.raid-bossbar-ward { position: absolute; left: 0; bottom: 0; height: 4px; background: #5b8fd6; }
+.raid-bossbar-mark { position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--gold); opacity: 0.85; }
+.raid-bossbar-mark.passed { background: #555; opacity: 0.7; }
+.raid-phase-announce {
+  display: flex; flex-direction: column; gap: 2px; margin-top: 8px; padding: 8px 10px; background: rgba(20, 10, 6, 0.9);
+  border: 1px solid var(--gold); animation: raid-announce-in 0.35s ease-out;
+}
+.raid-phase-announce strong { font-family: var(--font-head); color: var(--gold); letter-spacing: 0.04em; text-transform: uppercase; }
+@keyframes raid-announce-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+/* ── Beute-Zeremonie ─────────────────────────────────────────────────────── */
+.rlc-backdrop {
+  position: fixed; inset: 0; z-index: 9000; display: flex; align-items: center; justify-content: center; padding: 16px;
+  background: radial-gradient(circle at 50% 45%, rgba(20, 14, 10, 0.88), rgba(0, 0, 0, 0.95)); animation: rlc-fade 0.4s ease-out;
+}
+.rlc-backdrop.rlc-top-mythic { background: radial-gradient(circle at 50% 45%, rgba(60, 14, 44, 0.9), rgba(0, 0, 0, 0.96)); }
+.rlc-backdrop.rlc-top-heroic { background: radial-gradient(circle at 50% 45%, rgba(8, 44, 44, 0.9), rgba(0, 0, 0, 0.96)); }
+.rlc-card {
+  width: min(880px, 100%); max-height: 100%; overflow: auto; padding: 22px 28px 18px; text-align: center;
+  border-style: solid; border-color: transparent; border-width: 12px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
+  background: linear-gradient(rgba(8, 6, 4, 0.55), rgba(8, 6, 4, 0.55)), url("../assets/bg_black.webp") repeat;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+}
+.rlc-eyebrow { font-size: 0.8em; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+.rlc-title { margin: 4px 0 8px; font-family: var(--font-head); color: var(--gold); text-shadow: 0 2px 6px #000; }
+.rlc-stage { position: relative; min-height: 300px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.rlc-chest { width: 96px; height: 96px; animation: rlc-shake 1.3s ease-in-out 0.2s both; }
+.rlc-skip .rlc-chest { animation: none; }
+.rlc-chest-svg, .rlc-chest-img { width: 100%; height: 100%; display: block; }
+.rlc-chest-svg .rlc-lid { transform-origin: 8px 30px; transition: transform 0.5s ease-out 1.5s; }
+.rlc-chest-svg.open .rlc-lid { transform: rotate(-38deg) translateY(-3px); }
+.rlc-skip .rlc-chest-svg .rlc-lid { transition: none; }
+.rlc-open-note { min-height: 1.2em; }
+.rlc-items { display: flex; flex-wrap: wrap; gap: 18px 22px; justify-content: center; align-items: flex-end; margin-top: 8px; }
+.rlc-item { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; max-width: 150px;
+  opacity: 0; animation: rlc-rise 0.7s cubic-bezier(0.2, 0.8, 0.3, 1) calc(1.9s + var(--i) * 0.8s) forwards; }
+.rlc-skip .rlc-item { opacity: 1; animation: none; }
+.rlc-item .item-cell { transform: scale(1.5); margin: 14px; }
+.rlc-item-name { font-weight: 700; font-size: 0.9em; line-height: 1.2; }
+.rlc-item-rar { font-size: 0.75em; }
+.rlc-beam {
+  position: absolute; left: 50%; bottom: 40px; width: 70px; height: 260px; margin-left: -35px; pointer-events: none; z-index: -1;
+  background: linear-gradient(to top, var(--beam, #fff), transparent); opacity: 0;
+  clip-path: polygon(30% 100%, 70% 100%, 100% 0, 0 0);
+  animation: rlc-beam 1.6s ease-out calc(1.9s + var(--i) * 0.8s) both;
+}
+.rlc-skip .rlc-beam { animation: none; opacity: 0.0; }
+.rlc-beam-2 { width: 120px; margin-left: -60px; animation-delay: calc(2.1s + var(--i) * 0.8s); filter: blur(2px); }
+.rlc-rar-common { --beam: rgba(255, 255, 255, 0.35); }
+.rlc-rar-rare { --beam: rgba(60, 176, 67, 0.5); }
+.rlc-rar-superRare { --beam: rgba(91, 143, 214, 0.55); }
+.rlc-rar-epic { --beam: rgba(176, 127, 216, 0.6); }
+.rlc-rar-legendary { --beam: rgba(224, 144, 42, 0.65); }
+.rlc-rar-godly { --beam: rgba(255, 215, 0, 0.7); }
+.rlc-rar-heroic { --beam: rgba(63, 214, 200, 0.8); }
+.rlc-rar-mythic { --beam: rgba(255, 95, 180, 0.9); }
+.rlc-rar-heroic .rlc-item-name { color: var(--rar-heroic); }
+.rlc-rar-mythic .rlc-item-name { color: var(--rar-mythic); text-transform: uppercase; letter-spacing: 0.05em; }
+.rlc-rar-godly .rlc-item-name { color: var(--rar-godly); }
+.rlc-rar-legendary .rlc-item-name { color: var(--rar-legendary); }
+.rlc-rar-epic .rlc-item-name { color: var(--rar-epic); }
+.rlc-rar-superRare .rlc-item-name { color: var(--rar-superRare); }
+.rlc-rar-rare .rlc-item-name { color: var(--rar-rare); }
+.rlc-rar-mythic::after {
+  content: ""; position: absolute; inset: -30px -40px; pointer-events: none; opacity: 0;
+  background:
+    radial-gradient(circle at 20% 25%, #ffb8e2 0 2px, transparent 3px), radial-gradient(circle at 80% 35%, #ffb8e2 0 2px, transparent 3px),
+    radial-gradient(circle at 35% 80%, #ffb8e2 0 2px, transparent 3px), radial-gradient(circle at 70% 85%, #ffb8e2 0 2px, transparent 3px);
+  animation: rlc-sparkle 1.8s ease-in-out calc(2.4s + var(--i) * 0.8s) 3;
+}
+.rlc-skip .rlc-rar-mythic::after { animation: none; }
+.rlc-footer { display: flex; gap: 12px; justify-content: center; margin-top: 14px; }
+@keyframes rlc-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rlc-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  10% { transform: translate(-3px, 1px) rotate(-3deg); } 20% { transform: translate(3px, -1px) rotate(3deg); }
+  30% { transform: translate(-4px, 0) rotate(-4deg); } 40% { transform: translate(4px, 1px) rotate(4deg); }
+  50% { transform: translate(-5px, -1px) rotate(-5deg); } 60% { transform: translate(5px, 0) rotate(5deg); }
+  75% { transform: translate(-2px, 0) rotate(-2deg); } 90% { transform: translate(2px, 0) rotate(2deg); }
+}
+@keyframes rlc-rise { from { opacity: 0; transform: translateY(70px) scale(0.6); } to { opacity: 1; transform: none; } }
+@keyframes rlc-beam { 0% { opacity: 0; transform: scaleY(0.2); transform-origin: bottom; } 30% { opacity: 1; transform: scaleY(1); } 100% { opacity: 0; transform: scaleY(1.05); } }
+@keyframes rlc-sparkle { 0%, 100% { opacity: 0; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.08); } }
+@media (prefers-reduced-motion: reduce) {
+  .rlc-chest, .rlc-item, .rlc-beam, .rlc-rar-mythic::after { animation: none !important; }
+  .rlc-item { opacity: 1; }
+  .rlc-beam, .rlc-rar-mythic::after { display: none; }
+  .rlc-chest-svg .rlc-lid { transition: none; }
+}
+
+/* ── Rast, Dialoge ───────────────────────────────────────────────────────── */
+.raid-rest { max-width: 980px; display: flex; flex-direction: column; gap: 10px; }
+.raid-rest-title { margin: 0; font-family: var(--font-head); color: var(--gold); font-size: 28px; }
+.raid-rest-line { margin: 0; font-style: italic; line-height: 1.45; }
+.raid-rest-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.raid-rest-col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.raid-rest-doll { transform-origin: top left; }
+.raid-rest-next { padding: 10px 12px; border: 1px solid var(--border); background: rgba(0, 0, 0, 0.35) center / cover no-repeat; }
+.raid-rest-next.has-bg { box-shadow: inset 0 0 0 100vmax rgba(8, 8, 10, 0.72); }
+.raid-rest-desc { margin: 4px 0 0; font-size: 0.92em; line-height: 1.4; }
+.raid-rest-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.raid-loot-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+.raid-check { display: inline-flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; justify-content: center; cursor: pointer; text-align: left; font-size: 0.92em; }
+.raid-check span { font-size: inherit; }
+.raid-dialog-overlay { z-index: 8900; }
+.raid-dialog { max-width: 520px; width: calc(100% - 32px); display: flex; flex-direction: column; gap: 10px; text-align: center; }
+.raid-dialog-title { margin: 0; font-family: var(--font-head); color: var(--gold); }
+.raid-dialog-heroic { border-color: var(--rar-heroic); }
+.raid-dialog-mythic { border-color: var(--rar-mythic); }
+.raid-dialog-room { margin: 0; font-size: 0.9em; opacity: 0.85; }
+.raid-dialog-body { margin: 0; line-height: 1.45; }
+.raid-dialog-footer { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 4px; }
+.raid-complete-stats { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+.raid-newbest { margin: 0; color: var(--gold); font-weight: 800; }
+.raid-gold { display: inline-flex; gap: 4px; align-items: center; }
+
+/* ── Item-Karte: Set-Stufen ──────────────────────────────────────────────── */
+.itip-set-tiers { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+.itip-set-tier { opacity: 0.6; padding-left: 6px; border-left: 2px solid var(--border); }
+.itip-set-tier.on { opacity: 1; border-left-color: var(--gold); }
+.itip-set-tier-head { font-weight: 700; }
+.itip-set-tier.on .itip-set-tier-head { color: var(--gold); }
+.itip-set-tier-fx { font-size: 0.92em; line-height: 1.35; }

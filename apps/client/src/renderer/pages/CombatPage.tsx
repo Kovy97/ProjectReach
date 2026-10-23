@@ -42,6 +42,9 @@ import {
   levelFromXp,
   monsterKills,
   paragonCombatMonster,
+  activeRaidFight, // claude:2026-10-25T11:10:00+02:00 — Raid (1.4.0 Welle 4)
+  raidCombatMonster,
+  raidStateOf,
   paragonFloorPreview,
   paragonStatus,
   seenDropCount,
@@ -62,7 +65,7 @@ import {
   xpForLevel,
 } from "@hearthforge/engine";
 import type { ParagonFloorPreview, ParagonStatus } from "@hearthforge/engine";
-import type { ActiveBuff, CombatEvent, CombatStyle, RangedStance, DerivedStats, DungeonDef, ElementalSideCounters, EliteVariantDef, LootRoll, MagicStance, GameState, ItemDef, LastKillSummary, LocalizedString, MonsterDef, PetAbilityKind, SlayerTowerFloor, StatusEffect, StatusType } from "@hearthforge/shared";
+import type { ActiveBuff, BossPhase, CombatEvent, CombatStyle, RangedStance, DerivedStats, DungeonDef, ElementalSideCounters, EliteVariantDef, LootRoll, MagicStance, GameState, ItemDef, LastKillSummary, LocalizedString, MonsterDef, PetAbilityKind, SlayerTowerFloor, StatusEffect, StatusType } from "@hearthforge/shared";
 import { autoEatHealMult, effectiveAutoEatThreshold, effectiveWeaponEffects, isStatusEffectType, EQUIP_SLOT_LABELS, AUTO_EAT_MAX_TIER, AUTO_POTION_COOLDOWN_MS, AUTO_REBUFF_UNLOCK_COST, COMBAT_SKILL_IDS, CRAFT_TARGET_PRESETS, CRIT_CHANCE_CAP, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, ELITE_UNIQUE_DROP_CHANCE_DEFAULT, combatXpLevelMult, consumableHeal, FROST_FREEZE_STACKS, KILL_COOLDOWN_MS, PARAGON_BOSS_INTERVAL, PARAGON_DUNGEON_ID, POISON_MAX_STACKS, PRE_BOSS_BREATHER_MS, SHOCK_DELAY_CAP_MS } from "@hearthforge/shared";
 import { getEliteMonsterSrc, getMonsterSrc } from "../monsters";
 import { AreaTourGuide } from "../components/AreaTourGuide";
@@ -70,6 +73,10 @@ import { ActiveBuffsBar } from "../components/ActiveBuffs";
 import { DefenseTypeBadge } from "../components/DefenseTypeBadge";
 import { openItemWikiModal } from "../components/ItemWikiModal";
 import { QuantityPicker } from "../components/QuantityPicker";
+import { RaidSection } from "../components/RaidSection";
+import { RaidBossBar } from "../components/RaidHud";
+import { RaidRestScreen } from "../components/RaidScreens";
+import { isRaidRoomId, raidRoomBackdrop } from "../raidArt";
 import { openQueueAmountModal } from "../components/QueueAmountModal";
 import { getPetSrc } from "../pets";
 import {
@@ -570,7 +577,20 @@ function logEventCategory(e: CombatEvent): CombatLogCategory {
     case "kill":
     case "defeat":
       return "deathVictory";
+    case "phase":
+      return "status"; // claude:2026-10-25T10:00:00+02:00 — Bossphasen-Ansage (1.4.0 Raid) läuft unter Status
   }
+}
+
+// claude:2026-10-25T10:00:00+02:00 — Bossphasen-Texte nach logKey (1.4.0 Raid R4), einmal aus dem Katalog gebaut.
+let PHASE_BY_LOGKEY: Map<string, BossPhase> | null = null;
+function bossPhaseByLogKey(logKey: string | undefined): BossPhase | undefined {
+  if (!logKey) return undefined;
+  if (!PHASE_BY_LOGKEY) {
+    PHASE_BY_LOGKEY = new Map();
+    for (const m of Object.values(content.monsters)) for (const ph of m.phases ?? []) PHASE_BY_LOGKEY.set(ph.logKey, ph);
+  }
+  return PHASE_BY_LOGKEY.get(logKey);
 }
 
 function eventText(
@@ -580,6 +600,11 @@ function eventText(
   tr: (loc: LocalizedString) => string,
 ): string {
   switch (e.kind) {
+    case "phase": {
+      // claude:2026-10-25T10:00:00+02:00 — Phasenwechsel: Ansage der Phase (Lore), sonst „Phase n“.
+      const ph = bossPhaseByLogKey(e.phaseKey);
+      return ph?.announce ? tr(ph.announce) : t("raid.hud.phase").replace("{n}", String(e.amount));
+    }
     case "loot": {
       const item = e.itemId ? content.items[e.itemId] : undefined;
       const name = item ? tr(item.name) : (e.itemId ?? "");
@@ -600,6 +625,10 @@ function eventText(
     case "gold":
       return t("combat.logGold").replace("{gold}", String(e.amount));
     case "hit": {
+      // claude:2026-10-25T10:00:00+02:00 — Raid-Set-Einlösungen (1.4.0 R7): eigene Zeile je Set.
+      if (e.by === "player" && (e.hitKind === "fireCollection" || e.hitKind === "outbreak" || e.hitKind === "bloodToll")) {
+        return t(`combat.log.${e.hitKind}`).replace("{name}", monsterName).replace("{amount}", formatDamage(e.amount));
+      }
       // Schock-Überspringen (review-1.2.0 P2, 29.08.2026): der Bonus-Treffer bekommt eine eigene
       // Zeile statt eines zweiten „Du triffst" — kein Mitigations-/Ward-Absorb-Zweig, der Bogen
       // umgeht den Gegner-Ward per Definition (s. combat.ts).
@@ -697,6 +726,12 @@ function eventText(
         return e.by === "player"
           ? t("combat.poisonStackEnemy").replace("{name}", monsterName).replace("{amount}", String(e.amount))
           : t("combat.poisonStackPlayer").replace("{amount}", String(e.amount));
+      }
+      // claude:2026-10-25T10:00:00+02:00 — Blutungs-Stapel (1.4.0 R7 „Offene Wunden“) loggen wie Gift-Stapel.
+      if (e.status === "bleed" && e.amount >= 2) {
+        return e.by === "player"
+          ? t("combat.bleedStackEnemy").replace("{name}", monsterName).replace("{amount}", String(e.amount))
+          : t("combat.bleedStackPlayer").replace("{amount}", String(e.amount));
       }
       const label = e.status ? t(`status.${e.status}`) : "";
       return e.by === "player"
@@ -1810,6 +1845,8 @@ function Battle({
   // Dungeon-Rework-Spec §5.6: Encounter-Leiste/Wellen-Ansage/Boss-Intro brauchen den Dungeon vor
   // den Hooks unten (JS-const, keine Hook-Reihenfolge-Sorge) — vorher erst kurz vorm `return` gesetzt.
   const dungeon = cs.dungeonId ? content.dungeons.find((d) => d.id === cs.dungeonId) : null;
+  // claude:2026-10-25T11:10:00+02:00 — Läuft ein Raid-Kampf? (Raum x/5, Bossleiste mit Phasenmarken)
+  const raidFight = dungeon?.raidOnly ? activeRaidFight(state, content) : null;
   // Boss-Intro-Fenster (§5.1.2/§5.1.5): die LETZTE Welle ist bereits im State (cs.monsterId zeigt
   // schon auf den Boss), aber der Wellen-Cooldown läuft die volle Atempause (PRE_BOSS_BREATHER_MS =
   // 8s statt der üblichen 2s KILL_COOLDOWN_MS) — kein neues Engine-Feld, reine Ableitung aus dem
@@ -3620,6 +3657,8 @@ function Battle({
     (towerFloor !== undefined ? getBattleScreen(`slayer_tower_${towerFloor}`) : null) ??
     getBattleScreen(monster.zone) ??
     getDungeonBackground(cs.dungeonId) ??
+    // claude:2026-10-25T11:10:00+02:00 — Raid-Raum ohne eigenes Bild: Goblin-Rückfall statt Zonen-Kulisse.
+    (isRaidRoomId(cs.dungeonId) ? raidRoomBackdrop(cs.dungeonId) : null) ??
     getZoneBackground(monster.zone);
   // Querformat-Kulissen (Turm-Etage 2-5, s. useBackdropAspect-JSDoc oben): eigener Zuschnitt/kein
   // Drift statt cover+Ken-Burns — die 20 Hochformat-Bestandskulissen bleiben unverändert.
@@ -3708,9 +3747,16 @@ function Battle({
               {KEY_ICON_URL ? <img loading="lazy" decoding="async" src={KEY_ICON_URL} alt="" className="ui-icon dungeon-progress-key-icon" /> : "🗝️"} {tr(dungeon.name)}
             </span>
             <span className="dungeon-progress-wave">
-              {t("combat.dungeonWave")
-                .replace("{cur}", String(cs.encounterIndex + 1))
-                .replace("{total}", String(dungeon.encounters.length))}
+              {raidFight
+                // claude:2026-10-25T11:10:00+02:00 — Raid-HUD: „Raum 2/5 · Welle 3/4“ (Welle 5 = Boss).
+                ? (cs.encounterIndex >= dungeon.encounters.length - 1
+                    ? t("raid.hud.roomBoss")
+                    : t("raid.hud.roomWave").replace("{wave}", String(cs.encounterIndex + 1)).replace("{waves}", String(dungeon.encounters.length - 1)))
+                    .replace("{room}", String(raidFight.run.room + 1))
+                    .replace("{rooms}", String(raidFight.def.rooms.length))
+                : t("combat.dungeonWave")
+                    .replace("{cur}", String(cs.encounterIndex + 1))
+                    .replace("{total}", String(dungeon.encounters.length))}
             </span>
           </div>
           <div className="dungeon-encounter-bar">
@@ -3758,6 +3804,9 @@ function Battle({
               );
             })}
           </div>
+          {raidFight && monster.phases && monster.phases.length > 0 && cs.encounterIndex >= dungeon.encounters.length - 1 && (
+            <RaidBossBar state={state} monster={monster} />
+          )}
         </div>
       )}
 
@@ -5164,7 +5213,7 @@ const MONSTER_SELECT_MONSTERS: MonsterDef[] = Object.values(content.monsters)
   .sort((a, b) => a.level - b.level);
 
 const MONSTER_SELECT_REGULAR_DUNGEONS = [...content.dungeons]
-  .filter((d) => d.id !== PARAGON_DUNGEON_ID)
+  .filter((d) => d.id !== PARAGON_DUNGEON_ID && !d.raidOnly) // claude:2026-10-25T11:20:00+02:00 — Raid-Räume nie in der Dungeon-Liste
   .sort((a, b) => (a.requiredLevel ?? 0) - (b.requiredLevel ?? 0));
 
 const MONSTER_SELECT_ZONE_ORDER = [
@@ -5797,6 +5846,8 @@ function MonsterSelectImpl(): JSX.Element {
         {/* codex:2026-08-02T12:18:00+02:00 — Frontline-Ribbon-Reihenfolge:
             The Reach → Dungeons → Slayer Tower → Paragon Tower. */}
         <ParagonTowerSection />
+        {/* claude:2026-10-25T11:10:00+02:00 — Raid „Die Hallen von Gobkha'raz“ (1.4.0 Welle 4) */}
+        <RaidSection />
       </div>
     );
   }
@@ -6762,6 +6813,8 @@ export function CombatPage(): JSX.Element {
   // (`eliteVariantId` gesetzt) — s. `eliteDisplayMonster`-JSDoc oben für den Titel-Override.
   const monster = state.combat.monsterId
     ? (state.combat.paragonFloor ? paragonCombatMonster(state, content) : undefined)
+        // claude:2026-10-25T11:10:00+02:00 — Raid: skalierte Instanz (HP/Ward/Werte der Stufe) wie bei Paragon/Elite.
+        ?? (state.combat.dungeonId && isRaidRoomId(state.combat.dungeonId) ? raidCombatMonster(state, content) : undefined)
         ?? (state.combat.eliteVariantId ? eliteDisplayMonster(state, content) : undefined)
         ?? content.monsters[state.combat.monsterId]
     : null;
@@ -6845,6 +6898,14 @@ export function CombatPage(): JSX.Element {
   // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes die Gegnerliste zeigen duerfen, um
   // nachzulegen. Rein lokal — sobald der Kampf endet, faellt die Seite ohnehin auf die Liste
   // zurueck, und der Merker wird zurueckgesetzt (s. Effekt unten).
+  // claude:2026-10-25T11:10:00+02:00 — Raid-Rast („Du rastest.“): kein Kampf, Dock links bleibt bedienbar (Essen, Tränke, Ausrüstung).
+  if (!monster && raidStateOf(state).run?.phase === "rest") {
+    return (
+      <div className="combat-page" ref={pageRef}>
+        <RaidRestScreen loadout={<CombatLoadoutBar collapsed={dockCollapsed} onToggleCollapsed={toggleDockCollapsed} />} />
+      </div>
+    );
+  }
   if (monster && !enemyListInCombat) {
     // claude:2026-10-17T11:40:00+02:00 — Tour-Overlay (position:fixed) steht NEBEN statt in
     // `.combat-page`: die Seite ist jetzt Container-Query-Wurzel, Containment würde das Overlay

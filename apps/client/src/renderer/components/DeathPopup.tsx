@@ -75,7 +75,9 @@ export function DeathPopup(): JSX.Element {
     const paragonFloor = state.combat.paragonFloor ?? null;
     const dungeonId = state.combat.dungeonId;
     const prev = snap.current;
-    if (prev && deaths > prev.deaths) {
+    // claude:2026-10-25T11:15:00+02:00 — Tod im Raid: der Raid-Dialog (RaidScreens) übernimmt, kein zweites Popup.
+    const raidDeath = !!prev?.dungeonId && !!content.dungeons.find((d) => d.id === prev.dungeonId)?.raidOnly;
+    if (prev && deaths > prev.deaths && !raidDeath) {
       const fought = prev.monsterId ?? monsterId;
       setDeadMonsterId(fought);
       setDiedInParagon(!!prev.paragonFloor);

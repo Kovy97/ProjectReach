@@ -363,6 +363,8 @@
 .ench-altar-name.rarity-epic      { color: var(--rar-epic); }
 .ench-altar-name.rarity-legendary { color: var(--rar-legendary); }
 .ench-altar-name.rarity-godly     { color: var(--rar-godly); }
+.ench-altar-name.rarity-heroic { color: var(--rar-heroic); }
+.ench-altar-name.rarity-mythic { color: var(--rar-mythic); }
 
 .ench-altar-badge {
   display: inline-flex;

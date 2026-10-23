@@ -3,6 +3,10 @@
 // damit die Zeile in kleinen Item-Feldern schmal bleibt. Stufe XIII (Raid) = sechs volle Sterne in Raritätsfarbe
 // plus Krone. Inline-SVG statt Schriftzeichen: scharf bei 6 px und ohne Font-Abdeckung.
 import { RAID_ITEM_TIER } from "@hearthforge/engine";
+import { getUiIcon } from "../uiIcons";
+
+// claude:2026-10-25T12:50:00+02:00 — gemalte Krone (Asset-Liste Gruppe E `icon_tier_crown`) gewinnt, sobald geliefert; bis dahin die SVG-Krone.
+const CROWN_ICON_URL = getUiIcon("icon_tier_crown");
 
 const STAR = "M5 0.4 6.35 3.6 9.8 3.9 7.2 6.15 7.95 9.55 5 7.75 2.05 9.55 2.8 6.15 0.2 3.9 3.65 3.6Z";
 
@@ -36,7 +40,8 @@ export function TierStars({ tier, className = "", color }: { tier: number; class
   return (
     <span className={`tier-stars${raid ? " tier-stars--raid" : ""} ${className}`.trim()} style={color ? { color } : undefined}>
       {stars}
-      {raid && (
+      {raid && CROWN_ICON_URL && <img src={CROWN_ICON_URL} alt="" className="tier-crown tier-crown--img" />}
+      {raid && !CROWN_ICON_URL && (
         <svg className="tier-crown" viewBox="0 0 12 10" aria-hidden="true">
           <path d="M1 8.5 0.4 2.2 3.4 4.6 6 0.6 8.6 4.6 11.6 2.2 11 8.5Z" fill="currentColor" />
         </svg>

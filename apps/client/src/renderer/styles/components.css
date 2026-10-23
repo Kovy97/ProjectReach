@@ -96,6 +96,8 @@
     epic       = LILA         (nur echtes Top-Tier: Titan/Aether/Götzeneisen)
     legendary  = ORANGE       (Spezial-/Boss-Drops)
     godly      = GOLD/ROT     (Ultra-Rare)
+    heroic     = TÜRKIS       (Raid Heroisch)
+    mythic     = PINK         (Raid Mythisch)
 */
 :root {
   --rar-poor:      #555555;   /* dunkelgrau */
@@ -110,6 +112,9 @@
   --rar-epic:      #b07fd8;   /* lila */
   --rar-legendary: #e0902a;   /* orange */
   --rar-godly:     #ffd700;   /* gold */
+  /* claude:2026-10-25T09:00:00+02:00 — Raid-Raritäten (1.4.0 A4), gleiche Werte wie RARITY_COLORS in shared. */
+  --rar-heroic:    #3fd6c8;   /* türkis */
+  --rar-mythic:    #ff5fb4;   /* pink */
 }
 
 .pixelart {
@@ -190,9 +195,19 @@ body .item-cell.rarity-superRare { border: 1px solid var(--rar-superRare); }
 body .item-cell.rarity-epic      { border: 1px solid var(--rar-epic); }
 body .item-cell.rarity-legendary { border: 1px solid var(--rar-legendary); }
 body .item-cell.rarity-godly     { border: 1px solid var(--rar-godly); }
+body .item-cell.rarity-heroic { border: 1px solid var(--rar-heroic); }
+body .item-cell.rarity-mythic { border: 1px solid var(--rar-mythic); }
 
 body .item-cell.rarity-legendary,
 body .item-cell.rarity-godly {
+  outline: 1px solid rgba(255, 255, 255, 0.22);
+  outline-offset: -3px;
+}
+body .item-cell.rarity-heroic {
+  outline: 1px solid rgba(255, 255, 255, 0.22);
+  outline-offset: -3px;
+}
+body .item-cell.rarity-mythic {
   outline: 1px solid rgba(255, 255, 255, 0.22);
   outline-offset: -3px;
 }
@@ -333,6 +348,8 @@ body .item-cell.rarity-godly {
 .inv-slot.rarity-epic.filled      { --slot-glow: radial-gradient(circle at 50% 45%, rgba(176, 127, 216, 0.34), transparent 66%); }
 .inv-slot.rarity-legendary.filled { --slot-glow: radial-gradient(circle at 50% 45%, rgba(224, 144, 42, 0.34), transparent 66%); }
 .inv-slot.rarity-godly.filled     { --slot-glow: radial-gradient(circle at 50% 45%, rgba(255, 215, 0, 0.32), transparent 66%); }
+.inv-slot.rarity-heroic.filled { --slot-glow: radial-gradient(circle at 50% 45%, rgba(63, 214, 200, 0.32), transparent 66%); }
+.inv-slot.rarity-mythic.filled { --slot-glow: radial-gradient(circle at 50% 45%, rgba(255, 95, 180, 0.32), transparent 66%); }
 
 /* Großes RPG-Tooltip am Cursor — Citadel: Holz-9-Slice-Rahmen statt schlichtem 1px-Strich (wie
    .stx-section/.category-header). border-radius entfällt (border-image + border-radius sind
@@ -601,6 +618,12 @@ body .item-cell.rarity-godly {
 .item-tooltip.rarity-godly {
   border-color: var(--rar-godly);
 }
+.item-tooltip.rarity-heroic {
+  border-color: var(--rar-heroic);
+}
+.item-tooltip.rarity-mythic {
+  border-color: var(--rar-mythic);
+}
 .item-tooltip.rarity-poor .it-name {
   color: var(--rar-poor);
 }
@@ -621,6 +644,12 @@ body .item-cell.rarity-godly {
 }
 .item-tooltip.rarity-godly .it-name {
   color: var(--rar-godly);
+}
+.item-tooltip.rarity-heroic .it-name {
+  color: var(--rar-heroic);
+}
+.item-tooltip.rarity-mythic .it-name {
+  color: var(--rar-mythic);
 }
 
 /* Drop-Icons mit echtem Item-Bild */
@@ -3082,6 +3111,8 @@ body .item-cell.rarity-godly {
   margin-left: 1px;
   filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.95));
 }
+/* claude:2026-10-25T12:50:00+02:00 — gemalte Krone (quadratisches Icon) nicht verzerren */
+.tier-crown--img { object-fit: contain; }
 .item-cell-stars {
   position: absolute;
   top: 4%;

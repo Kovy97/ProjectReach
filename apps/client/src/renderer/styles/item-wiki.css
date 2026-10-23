@@ -421,6 +421,8 @@
 .iwk-item-kicker.rarity-epic      { color: var(--rar-epic); }
 .iwk-item-kicker.rarity-legendary { color: var(--rar-legendary); }
 .iwk-item-kicker.rarity-godly     { color: var(--rar-godly); }
+.iwk-item-kicker.rarity-heroic { color: var(--rar-heroic); }
+.iwk-item-kicker.rarity-mythic { color: var(--rar-mythic); }
 
 .iwk-item-name {
   flex: 0 0 auto;
@@ -440,6 +442,8 @@
 .iwk-item-name.rarity-epic      { color: var(--rar-epic); }
 .iwk-item-name.rarity-legendary { color: var(--rar-legendary); }
 .iwk-item-name.rarity-godly     { color: var(--rar-godly); }
+.iwk-item-name.rarity-heroic { color: var(--rar-heroic); }
+.iwk-item-name.rarity-mythic { color: var(--rar-mythic); }
 
 /* Kein Rarity-Glühen auf dem Item-Bild (Chef-Regel) — neutraler Rahmen, nur ein Drop-Shadow auf
    dem Bild selbst, wie im Mockup. Die Seltenheitsfarbe steckt allein im Kicker-Text oben. */

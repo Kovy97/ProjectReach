@@ -323,6 +323,8 @@
 .mshop-row-name.rarity-epic      { color: var(--rar-epic); }
 .mshop-row-name.rarity-legendary { color: var(--rar-legendary); }
 .mshop-row-name.rarity-godly     { color: var(--rar-godly); }
+.mshop-row-name.rarity-heroic { color: var(--rar-heroic); }
+.mshop-row-name.rarity-mythic { color: var(--rar-mythic); }
 
 .mshop-row-qty {
   flex: 0 0 auto;

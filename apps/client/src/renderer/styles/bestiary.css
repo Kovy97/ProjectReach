@@ -570,6 +570,8 @@
 .bjw-loot-row.rarity-epic { border-left-color: var(--rar-epic); }
 .bjw-loot-row.rarity-legendary { border-left-color: var(--rar-legendary); }
 .bjw-loot-row.rarity-godly { border-left-color: var(--rar-godly); }
+.bjw-loot-row.rarity-heroic { border-left-color: var(--rar-heroic); }
+.bjw-loot-row.rarity-mythic { border-left-color: var(--rar-mythic); }
 
 .bjw-loot-icon {
   position: relative;

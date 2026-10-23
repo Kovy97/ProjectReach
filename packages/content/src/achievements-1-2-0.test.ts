@@ -83,7 +83,7 @@ describe("Achievements 1.2.0 — Katalog-Wächter", () => {
     expect(new Set(ids).size).toBe(ids.length);
     for (const a of content.achievements) expect(a.condition.count, a.id).toBeGreaterThan(0);
     expect(content.achievements.length).toBeGreaterThanOrEqual(300);
-    expect(content.achievements.length).toBeLessThanOrEqual(360);
+    expect(content.achievements.length).toBeLessThanOrEqual(380); // claude:2026-10-25T05:25:00+02:00 — 1.4.0 Raid: 22 interne Raid-Erfolge
     expect(content.achievements.filter((a) => a.hidden).length).toBe(12);
     expect(content.achievements.some((a) => (a.condition.type as string) === "skill_xp")).toBe(false);
     // Kill-Tripel sind Geschichte: kein Monster hat mehr die 10/100/1000-Leiter.
@@ -118,6 +118,7 @@ describe("Achievements 1.2.0 — Katalog-Wächter", () => {
     }
     for (const d of content.dungeons) {
       if (d.id === "paragon_tower") continue;
+      if (d.raidOnly) continue; // claude:2026-10-25T10:00:00+02:00 — Raid-Räume haben eigene Erfolge je Boss und Stufe (raid-content.test.ts), keine Dungeon-Leiter
       for (const n of [1, 10, 50]) expect(byId.has(`ach_dungeon_${d.id}_${n}`), `${d.id}_${n}`).toBe(true);
     }
   });

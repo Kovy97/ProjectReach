@@ -231,6 +231,12 @@ describe("Aschechronik: Dungeon-Gate-Mapping (Welle K, gepinnt)", () => {
     // codex:2026-10-17T14:55:00+02:00 — 1.3.0 E2: Getilgte Kapelle, frei mit Kapitel 26 (Boss-Kapitel 27).
     expunged_chapel: "chronicle_26",
     paragon_tower: undefined,
+    // claude:2026-10-25T11:40:00+02:00 — 1.4.0 Raid „Die Hallen von Gobkha'raz“: fünf Raum-Dungeons (raidOnly), Freischaltung Kapitel 20.
+    gk_room_1: "chronicle_20",
+    gk_room_2: "chronicle_20",
+    gk_room_3: "chronicle_20",
+    gk_room_4: "chronicle_20",
+    gk_room_5: "chronicle_20",
   };
 
   it("jeder Dungeon trägt exakt das erwartete Gate (oder keins) — Content-Drift-Guard", () => {

@@ -1,9 +1,12 @@
-import type { ActionId, ContentDB, GameState, MonsterId, QueuedAction, ThievingRisk } from "@hearthforge/shared";
+import type { ActionId, ContentDB, GameState, MonsterId, QueuedAction, RaidDifficulty, ThievingRisk } from "@hearthforge/shared";
+import { startRaidFromQueue } from "./raid"; // claude:2026-10-25T04:20:00+02:00 — Raid-Warteschlange (1.4.0 W4)
 import {
   FIGHT_QUEUE_ACTION_ID,
   isDungeonQueueEntry,
   isFightQueueEntry,
+  isRaidQueueEntry,
   makeDungeonQueueEntry,
+  makeRaidQueueEntry,
   makeFightQueueEntry,
 } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
@@ -250,6 +253,30 @@ export function enqueueDungeonRuns(
     return true;
   }
   state.actionQueue.push(makeDungeonQueueEntry(dungeonId, normalized));
+  return true;
+}
+
+/**
+ * claude:2026-10-25T05:35:00+02:00 — Raid-Läufe einreihen (1.4.0 W4, Muster enqueueDungeonRuns): `target` = Anzahl Läufe (null = ∞). Jeder Lauf
+ * zahlt beim Start seine Gebühr; Gate und Gold prüft der Start (advanceActionQueue → startRaidFromQueue).
+ */
+export function enqueueRaid(
+  state: GameState,
+  content: ContentDB,
+  raidId: string,
+  difficulty: RaidDifficulty,
+  target: number | null = null,
+): boolean {
+  if (!(content.raids ?? []).some((r) => r.id === raidId)) return false;
+  if (!Array.isArray(state.actionQueue)) state.actionQueue = [];
+  state.queuePaused = false;
+  const normalized = normalizeTarget(target);
+  const last = state.actionQueue[state.actionQueue.length - 1];
+  if (last !== undefined && isRaidQueueEntry(last) && last.raidId === raidId && last.raidDifficulty === difficulty && last.target !== null && normalized !== null) {
+    last.target = Math.min(last.target + normalized, QUEUE_TARGET_CAP);
+    return true;
+  }
+  state.actionQueue.push(makeRaidQueueEntry(raidId, difficulty, normalized));
   return true;
 }
 
@@ -606,7 +633,7 @@ export function moveQueueItem(state: GameState, from: number, to: number): void 
  * shiftet einen Eintrag ab, die Schleife terminiert also ohnehin — der Guard ist belt-and-suspenders).
  * Zieht KEIN RNG → determinismus-neutral (Offline-Catch-up == Live-Loop).
  */
-export function advanceActionQueue(state: GameState, content: ContentDB): boolean {
+export function advanceActionQueue(state: GameState, content: ContentDB, nowMs?: number): boolean { // claude:2026-10-25T04:20:00+02:00 — nowMs: Wochen-Modifikator des Raids
   const queue = state.actionQueue;
   if (!Array.isArray(queue) || queue.length === 0) return false;
   const maxIter = queue.length;
@@ -659,6 +686,21 @@ export function advanceActionQueue(state: GameState, content: ContentDB): boolea
       }
       state.actionTarget = null; // Invariante wie beim Kampf-Eintrag (startDungeon räumt sie ebenfalls)
       state.queueDungeon = { dungeonId, remaining: next.target ?? null, completed: 0 };
+      return true;
+    }
+    if (isRaidQueueEntry(next)) {
+      // claude:2026-10-25T04:20:00+02:00 — kind "raid" (SAVE 93): Gate und Gebühr beim Start; jeder Lauf zahlt seine Gebühr. Reicht das Gold
+      // nicht, stoppt der Eintrag mit Meldung, die Warteschlange läuft weiter.
+      const r = startRaidFromQueue(state, content, next.raidId, next.raidDifficulty, next.target ?? null, nowMs);
+      if (r !== "ok") {
+        setQueueSkip(state, {
+          monsterId: FIGHT_QUEUE_ACTION_ID,
+          raidId: next.raidId,
+          reason: r === "gold" ? "raid_gold" : r === "locked" ? "raid_locked" : "unknown_raid",
+        });
+        continue;
+      }
+      state.actionTarget = null;
       return true;
     }
     const nextAction = content.actions[next.actionId];

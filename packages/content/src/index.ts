@@ -1,6 +1,7 @@
 ﻿import type { ContentDB } from "@hearthforge/shared";
 import { applyContentLocales } from "./locales/apply";
 import { TALENT_TREES } from "./talents";
+import { RAID_ACHIEVEMENTS, RAID_DUNGEONS, RAID_GOBKHARAZ, RAID_ITEMS, RAID_MONSTERS, RAID_SETS } from "./raid"; // claude:2026-10-25T10:00:00+02:00 — Raid Gobkha'raz (1.4.0 Welle 4)
 
 /**
  * Platzhalter-Content, nur um das UI-Gerüst & die Engine durchticken zu lassen.
@@ -17416,7 +17417,7 @@ export const content: ContentDB = {
     // codex:2026-10-17T12:40:00+02:00 — 105 → 118: die 13 Turm-Spiegel der Etagen 6–8 (1.3.0 E3) sind
     // eigene Bestiarium-Einträge; zone-bestiary-dungeon-variants.test.ts verlangt count = sichtbare Wesen.
     // Folge: der Steam-Erfolg THE_WHOLE_BESTIARY braucht jetzt Slayer 95 (Etage 8). Bereits freigeschaltet bleibt freigeschaltet.
-    { id: "ach_bestiary_all", name: { en: "The Whole Bestiary", de: "Das ganze Bestiarium" }, description: { en: "Defeat every creature in the bestiary at least once.", de: "Besiege jedes Wesen im Bestiarium mindestens einmal." }, icon: "📕", category: "exploration", rarity: "legendary", condition: { type: "monsters_discovered", count: 126 } },
+    { id: "ach_bestiary_all", name: { en: "The Whole Bestiary", de: "Das ganze Bestiarium" }, description: { en: "Defeat every creature in the bestiary at least once.", de: "Besiege jedes Wesen im Bestiarium mindestens einmal." }, icon: "📕", category: "exploration", rarity: "legendary", condition: { type: "monsters_discovered", count: 141 } }, // claude:2026-10-25T10:00:00+02:00 — Raid Gobkha'raz: +15 Wesen (126→141)
 
     // -- Exploration: Slayer-Turm-Etagen (Name = Etagenname; Steam: THE_ABYSSAL_THRONE = ach_slayer_floor_5) --
     { id: "ach_slayer_floor_1", name: { en: "The Plague Chambers", de: "Die Pestkammern" }, description: { en: "Slay a creature on floor 1 of the Slayer Tower.", de: "Erlege ein Wesen auf Etage 1 des Slayer-Turms." }, category: "exploration", rarity: "common", condition: { type: "slayer_floor", count: 1 } },
@@ -17497,7 +17498,7 @@ export const content: ContentDB = {
     { id: "ach_sets_completed_1", name: { en: "Set Seeker", de: "Set-Sucher" }, description: { en: "Complete 1 full equipment set.", de: "Vervollständige 1 vollständiges Ausrüstungs-Set." }, icon: "🧩", category: "collection", rarity: "uncommon", condition: { type: "sets_completed", count: 1 } },
     { id: "ach_sets_completed_5", name: { en: "Set Collector", de: "Set-Sammler" }, description: { en: "Complete 5 full equipment sets.", de: "Vervollständige 5 vollständige Ausrüstungs-Sets." }, icon: "🧩", category: "collection", rarity: "rare", condition: { type: "sets_completed", count: 5 } },
     { id: "ach_sets_completed_10", name: { en: "Set Completionist", de: "Set-Vollender" }, description: { en: "Complete 10 full equipment sets.", de: "Vervollständige 10 vollständige Ausrüstungs-Sets." }, icon: "🏅", category: "collection", rarity: "epic", condition: { type: "sets_completed", count: 10 } },
-    { id: "ach_sets_all", name: { en: "Master of All Sets", de: "Meister aller Sets" }, description: { en: "Complete all 38 equipment sets.", de: "Vervollständige alle 38 Ausrüstungs-Sets." }, icon: "👑", category: "collection", rarity: "legendary", condition: { type: "sets_completed", count: 38 } }, // Schmuck-Rework W5 (§3.10): +3 Schmuck-Sets (hunters_accord/void_vow/warbound) — 35→38.
+    { id: "ach_sets_all", name: { en: "Master of All Sets", de: "Meister aller Sets" }, description: { en: "Complete all 41 equipment sets.", de: "Vervollständige alle 41 Ausrüstungs-Sets." }, icon: "👑", category: "collection", rarity: "legendary", condition: { type: "sets_completed", count: 41 } }, // Schmuck-Rework W5 (§3.10): +3 Schmuck-Sets (hunters_accord/void_vow/warbound) — 35→38. claude:2026-10-25T10:00:00+02:00 — Raid Gobkha'raz: +3 Raid-Sets (gk_fire/gk_poison/gk_bleed) — 38→41.
     { id: "ach_pets_1", name: { en: "A Friend in the Ash", de: "Ein Freund in der Asche" }, description: { en: "Own your first pet.", de: "Besitze deinen ersten Begleiter." }, icon: "🐾", category: "collection", rarity: "common", condition: { type: "pets_owned", count: 1 } },
     { id: "ach_pets_5", name: { en: "Animal Companion", de: "Tierbegleiter" }, description: { en: "Own 5 pets.", de: "Besitze 5 Begleiter." }, icon: "🐾", category: "collection", rarity: "uncommon", condition: { type: "pets_owned", count: 5 } },
     { id: "ach_pets_10", name: { en: "Beast Friend", de: "Tierfreund" }, description: { en: "Own 10 pets.", de: "Besitze 10 Begleiter." }, icon: "🐾", category: "collection", rarity: "rare", condition: { type: "pets_owned", count: 10 } },
@@ -23500,6 +23501,15 @@ export const content: ContentDB = {
     },
   ],
 };
+
+// claude:2026-10-25T10:00:00+02:00 — Raid „Die Hallen von Gobkha'raz“ (1.4.0 Welle 4): 93 Items, 15 Monster, 5 Raum-Dungeons, 3 Sets, interne Erfolge und
+// die RaidDef kommen aus raid.ts und werden VOR dem Lokalisierungs-Overlay eingehängt (das Overlay schreibt die fünf weiteren Sprachen).
+Object.assign(content.items, RAID_ITEMS);
+Object.assign(content.monsters, RAID_MONSTERS);
+content.dungeons.push(...RAID_DUNGEONS);
+content.sets.push(...RAID_SETS);
+content.achievements.push(...RAID_ACHIEVEMENTS);
+content.raids = [RAID_GOBKHARAZ];
 
 // Lokalisierungs-Overlay (es/pt-BR/fr/ru/zh, Task „5-Sprachen-Fundament"): mutiert die obigen
 // Entities in-place, BEVOR irgendetwas anderes `content` liest (Module werden top-to-bottom

@@ -1,4 +1,5 @@
 import { storagePredicate } from "./storage"; // claude:2026-10-23T21:50:00+02:00 — Materiallager (1.4.0 ML)
+import { raidOccupied, tickRaid } from "./raid"; // claude:2026-10-25T04:20:00+02:00 — Raid (1.4.0 W4)
 import { activeEventFor, onSkillActionCompleted, spendEventAction, tickSkillEvents } from "./events"; // claude:2026-10-24T23:20:00+02:00 — 1.4.0 EV
 import { tickWorkOrders } from "./orders"; // 1.4.0 AU
 import { FISH_SHOAL_SPEED, GUARD_CHANGE_SUCCESS_BONUS, INSPIRATION_SUFFIX_MULT, MASTERPIECE_ROLL_FLOOR, THRIFTY_HAND_PRESERVE, THRIFTY_HAND_PRESERVE_CAP, WILD_GARDEN_MAX_CHANCE } from "@hearthforge/shared";
@@ -504,6 +505,9 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
     tickSkillEvents(state, TICK_MS);
     tickWorkOrders(state, TICK_MS);
   }
+  // claude:2026-10-25T04:20:00+02:00 — Raid-Uhr (1.4.0 W4): Rast, Tod-Entscheidung in Warteschlange/offline, Abschluss. Kein RNG außer
+  // dem, den ein automatisch betretener Raum im Kampf zieht.
+  if (state.raid?.run) tickRaid(state, content, TICK_MS, offline, nowMs);
 
   // Kampf hat Vorrang und schließt Sammeln aus (combatStep regeneriert selbst via tickPlayerRegen).
   // `nowMs` (Blessings of the Reach, s. advance()) durchgereicht — combatStep leitet daraus die
@@ -595,11 +599,12 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
       // bleiben bit-identisch. Der neue Fortschritt beginnt ab dem nächsten Tick bei 0.
       if (
         !state.queuePaused &&
+        !raidOccupied(state) && // claude:2026-10-25T04:20:00+02:00 — Rast/Tod-Dialog im Raid hält die Warteschlange an
         state.activeActionId === null &&
         Array.isArray(state.actionQueue) &&
         state.actionQueue.length > 0
       ) {
-        advanceActionQueue(state, content);
+        advanceActionQueue(state, content, nowMs);
       }
     }
     return;
@@ -694,7 +699,8 @@ function skillingStep(state: GameState, content: ContentDB, nowMs?: number, offl
     // setActiveAction mehr), ist das der EINZIGE Weg, wie der erste eingereihte Eintrag aus dem
     // Stillstand startet. advanceActionQueue setzt activeActionId + progress 0 (bzw. startet den
     // Queue-Kampf); es geht ab dem nächsten Tick weiter (deterministisch, Offline == Live-Loop).
-    if (!state.queuePaused && state.actionQueue.length > 0) advanceActionQueue(state, content);
+    // claude:2026-10-25T04:20:00+02:00 — ein laufender Raid (Rast, Tod-Dialog) belegt den Helden: keine Warteschlange.
+    if (!state.queuePaused && !raidOccupied(state) && state.actionQueue.length > 0) advanceActionQueue(state, content, nowMs);
     return;
   }
 

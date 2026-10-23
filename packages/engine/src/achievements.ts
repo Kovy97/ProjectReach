@@ -35,9 +35,22 @@ function ownedItemIds(state: GameState): Set<ItemId> {
  * getragen" (das wäre durch die Slot-Anzahl auf ~3 gedeckelt und machte `sets_completed_5/_10`
  * unerreichbar). Ohne Content defensiv 0.
  */
+/** claude:2026-10-25T05:15:00+02:00 — Besitz auf Basis-IDs abgebildet: Raid-Varianten zählen als ihr Normal-Teil (A14). */
+function ownedBaseIds(state: GameState, content: ContentDB): Set<string> {
+  const out = new Set<string>();
+  for (const id of ownedItemIds(state)) out.add(content.items[id]?.variantOf ?? id);
+  return out;
+}
+
+/** Wird dieses Set vollständig besessen (Varianten zählen mit)? */
+function setFullyOwned(state: GameState, content: ContentDB, set: ContentDB["sets"][number]): boolean {
+  const owned = ownedBaseIds(state, content);
+  return set.pieces.length > 0 && set.pieces.every((p) => owned.has(p));
+}
+
 function ownedSetsCount(state: GameState, content?: ContentDB): number {
   if (!content) return 0;
-  const owned = ownedItemIds(state);
+  const owned = ownedBaseIds(state, content);
   // Distinkte VOLLSTÄNDIG besessene Sets. Mehrere Set-Defs können sich EXAKT dieselben Teile teilen —
   // die Slayer-Breakpoints (`slayer_set` / `slayer_set_4pc` mit identischer `pieces`-Liste) sind zwei
   // Defs, aber physisch EIN Set. Ohne Dedup zählte der Besitz der 4 Slayer-Teile +2, wodurch
@@ -98,9 +111,13 @@ function monstersDiscovered(state: GameState, content?: ContentDB): number {
  */
 function zoneBestiaryMin(state: GameState, zoneId: string, content?: ContentDB): number {
   if (!content) return 0;
+  // claude:2026-10-25T05:15:00+02:00 — Raid-Wesen (1.4.0) tragen die Zone der Götzenhalle, gehören aber nicht zur offenen Zone:
+  // „Zone gemeistert“ zählt sie nicht mit.
+  const raidMonsters = new Set(content.dungeons.filter((d) => d.raidOnly).flatMap((d) => d.encounters));
   let min = Number.POSITIVE_INFINITY;
   for (const m of Object.values(content.monsters)) {
     if (m.zone !== zoneId) continue;
+    if (raidMonsters.has(m.id)) continue;
     // Spieler-Report 31.08.2026 (FR, 1.2.3): „Crypt achievement is bugged ... I have defeated all
     // the crypt monsters more than 100 times, but my tracker remains stuck at 0/1 and 0/100."
     //
@@ -299,6 +316,11 @@ export function achievementProgress(
       // Besitz: Equipment + Instanzen + Inventar + Taschen + Bank + Gear-Vault). Bewusst NICHT
       // „gleichzeitig getragen" — das war durch die Slot-Anzahl auf ~3 gedeckelt und machte
       // ach_sets_completed_5/_10 mathematisch unerreichbar (29 Sets existieren).
+      // claude:2026-10-25T05:15:00+02:00 — mit `target` (Set-ID): 1, wenn genau dieses Set vollständig besessen wird (Raid-Sets, 1.4.0 R10).
+      if (cond.target && content) {
+        const set = content.sets.find((st) => st.id === cond.target);
+        return set && setFullyOwned(state, content, set) ? 1 : 0;
+      }
       return ownedSetsCount(state, content);
     case "paragon_floor":
       // Prestige-Rekord des Paragonturms (Welle JJ, A3-Voraussetzung): höchste JEMALS
@@ -350,6 +372,23 @@ export function achievementProgress(
       // Aktive Spielzeit (ohne Offline-Catch-up), volle Stunden. `activePlayMs` ist monoton (sanitize
       // klemmt nur nach oben auf elapsedMs) — ein Meilenstein kann also nie „zurückfallen".
       return Math.floor((state.activePlayMs ?? 0) / 3_600_000);
+    // claude:2026-10-25T04:30:00+02:00 — Raid (1.4.0 R10): Boss-Kills je `${bossId}:${difficulty}`, Abschlüsse je Stufe, entdeckte Mythisch-Unikate.
+    case "raid_boss_kills":
+      return cond.target ? (state.raid?.bossKills[cond.target] ?? 0) : Object.values(state.raid?.bossKills ?? {}).reduce((a, b) => a + b, 0);
+    case "raid_clears": {
+      const c = state.raid?.clears as Record<string, number> | undefined;
+      return cond.target ? (c?.[cond.target] ?? 0) : Object.values(c ?? {}).reduce((a, b) => a + b, 0);
+    }
+    case "raid_mythic_uniques": {
+      if (!content) return 0;
+      const inSet = new Set(content.sets.flatMap((st) => st.pieces));
+      let n = 0;
+      for (const id of Object.keys(state.discoveredItems ?? {})) {
+        const it = content.items[id];
+        if (it?.rarity === "mythic" && it.variantOf && !inSet.has(it.variantOf)) n++;
+      }
+      return n;
+    }
     default:
       return 0;
   }

@@ -11,6 +11,23 @@ Bestanden: native Alpha-/RGB-Kanäle, Maße/IDs, Nachbar- und Zielgrößen-QA, Q
 Aktueller Jägerkodex-Pfad `ui/talents/slayer/` und Prestige-Pfad `ui/talents/prestige/` eingehalten. Ausschließlich Staging; kein Spielstart, Build, Save-/Gameplaytest oder Release. Vorhandene Arbeit erhalten, kein Commit.
 
 
+## 2026-10-25 (Mittag) — Claude: 1.4.0 Welle 4 (Raid) fertig
+
+<!-- claude:2026-10-25T13:00:00+02:00 -->
+
+Raid „Die Hallen von Gobkha'raz“ fertig integriert (Engine, Content, SAVE 93, UI). Durchlauftest grün, Normal
+in allen Stilen 41–61 min ohne Neustart. Spaltenverschobene EN/DE-Namen korrigiert, Wächter ergänzt. Raid-Kampf
+verlassen zählt wie ein Tod (A15). Details: `CODEX/HANDOFF.md`.
+
+## 2026-10-25 — Claude: 1.4.0 Wellen 1–3 fertig, Welle 4 in Bau
+
+<!-- claude:2026-10-25T05:45:00+02:00 -->
+
+Wellen 1–3 committet auf `update-1.4.0` (SAVE 89–92), jede mit Gates grün (zuletzt: Typecheck 5/5, content 310,
+engine 1863, persistence 467, client 263, Build). Chef delegierte am 24.10. alle Gate-Fragen; Entscheide im Goal.
+Welle 4 (Raid): Typen, SAVE 93, Raid-Lauf, Content fertig und getestet; Kampf und UI bei Fachagenten.
+Details: `CODEX/HANDOFF.md`, `design/1.4.0-changelog.md`.
+
 ## 2026-10-19 — Claude: 1.3.0 vom Chef abgenommen, Painterly-UI
 
 <!-- claude:2026-10-19T03:00:00+02:00 -->

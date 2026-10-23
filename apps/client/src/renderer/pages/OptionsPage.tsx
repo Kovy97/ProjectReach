@@ -171,6 +171,33 @@ export function OptionsPage(): JSX.Element {
               {state.settings.estateNotifications !== false ? t("options.on") : t("options.off")}
             </button>
           </OptRow>
+          {/* claude:2026-10-25T11:40:00+02:00 — Raid-Schalter (1.4.0 Welle 4, Standard aus). */}
+          <OptRow label={t("options.raidAutoContinue")} hint={t("options.raidAutoContinueHint")}>
+            <button
+              className={optBtnCls(state.settings.raidAutoContinue === true)}
+              onClick={() => { state.settings.raidAutoContinue = state.settings.raidAutoContinue !== true; }}
+            >
+              <img
+                src={state.settings.raidAutoContinue === true ? iconCheckboxOn : iconCheckboxOff}
+                alt=""
+                className="ui-icon"
+              />{" "}
+              {state.settings.raidAutoContinue === true ? t("options.on") : t("options.off")}
+            </button>
+          </OptRow>
+          <OptRow label={t("options.raidAutoBuyRestart")} hint={t("options.raidAutoBuyRestartHint")}>
+            <button
+              className={optBtnCls(state.settings.raidAutoBuyRestart === true)}
+              onClick={() => { state.settings.raidAutoBuyRestart = state.settings.raidAutoBuyRestart !== true; }}
+            >
+              <img
+                src={state.settings.raidAutoBuyRestart === true ? iconCheckboxOn : iconCheckboxOff}
+                alt=""
+                className="ui-icon"
+              />{" "}
+              {state.settings.raidAutoBuyRestart === true ? t("options.on") : t("options.off")}
+            </button>
+          </OptRow>
           <OptRow label={t("options.help")}>
             {/* Startet den Spotlight-Guide (OnboardingGuide.tsx) komplett neu von Schritt 0 —
                 löst den alten, event-basierten reopenOnboarding()-Aufruf ab (das 21-Schritt-Modal

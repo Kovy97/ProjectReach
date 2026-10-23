@@ -13,6 +13,7 @@ import type {
   ItemDef,
   ItemId,
   SetDef,
+  SetEffectDef,
   SkillBoostMap,
   WeaponStyle,
 } from "@hearthforge/shared";
@@ -80,6 +81,10 @@ function clamp(value: number, min: number, max: number): number {
   if (!Number.isFinite(value)) return min;
   return Math.max(min, Math.min(max, value));
 }
+
+/** claude:2026-10-25T05:20:00+02:00 — Hauptattribut (1.4.0 Raid, Spec §10.5): Attribut und Stil-Skill je Waffenstil. */
+const PRIMARY_ATTRIBUTE_BY_STYLE: Readonly<Record<WeaponStyle, AttributeId>> = { melee: "str", ranged: "dex", magic: "int" };
+const PRIMARY_BOOST_BY_STYLE: Readonly<Record<WeaponStyle, BoostableCombatSkillId>> = { melee: "power", ranged: "ranged", magic: "magic" };
 
 export interface CharacterCreation {
   name: string;
@@ -281,6 +286,8 @@ function walkStatsKey(state: GameState, content: ContentDB, key: StatsCacheKey, 
   }
   if (!visit(state.skills["vitality"]?.xp ?? 0)) return false;
   // Ausrüstung: Slot-Belegung + aufgelöste ItemDef-Referenz.
+  // claude:2026-10-25T05:20:00+02:00 — 1.4.0 Raid geprüft: `variantOf` (Set-Zählung), `primaryAttribute`/`primarySkillBoost` und der
+  // Haupthand-Stil hängen nur an diesen ItemDef-Referenzen, Set-Stufen an `content.sets` (oben) — kein neuer Key-Eintrag nötig.
   for (const slot of EQUIP_SLOTS) {
     const itemId = c.equipment[slot];
     if (!visit(itemId ?? null)) return false;
@@ -432,6 +439,9 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
     eq.attackIntervalMs += b.attackIntervalMs ?? 0;
     eq.lifesteal += b.lifesteal ?? 0;
   };
+  // claude:2026-10-25T05:20:00+02:00 — Hauptattribut (1.4.0 Raid, Spec §10.5): Stil der Haupthand (ohne Waffe Nahkampf) bestimmt,
+  // worauf `primaryAttribute` (str/dex/int) und `primarySkillBoost` (power/ranged/magic) zählen. Dieselbe Ableitung wie `style` unten.
+  const mainStyle: WeaponStyle = mainhandItem?.weaponStyle || "melee";
   for (const slot of EQUIP_SLOTS) {
     const itemId = c.equipment[slot];
     if (!itemId) continue;
@@ -439,6 +449,12 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
     if (!item) continue;
     if (item.modifiers) {
       for (const id of ATTRIBUTE_IDS) attr[id] += item.modifiers[id] ?? 0;
+    }
+    // claude:2026-10-25T05:20:00+02:00 — Hauptattribut-Schmuck (s. o.); ohne die Felder kein Effekt (Bestand bitgleich).
+    if (item.primaryAttribute) attr[PRIMARY_ATTRIBUTE_BY_STYLE[mainStyle]] += item.primaryAttribute;
+    if (item.primarySkillBoost) {
+      const boostId = PRIMARY_BOOST_BY_STYLE[mainStyle];
+      boost[boostId] = (boost[boostId] ?? 0) + item.primarySkillBoost;
     }
     if (item.bonus) {
       if (weaponRange && slot === "mainhand") {
@@ -520,13 +536,22 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
   }
 
   // Set-Boni: genug Teile eines Sets getragen → Bonus zusätzlich.
-  const equippedIds = new Set<ItemId>();
-  for (const slot of EQUIP_SLOTS) {
-    const id = c.equipment[slot];
-    if (id) equippedIds.add(id);
-  }
+  // claude:2026-10-25T05:20:00+02:00 — Teile zählen über `variantOf` gemeinsam (A14); ohne Varianten ist der Schlüssel die Item-ID
+  // (Alt-Sets bitgleich). Sets mit `tiers` (Raid R7) werten die erreichten Stufen kumulativ statt minPieces/bonus/modifiers/skillBoost.
+  const equippedIds = equippedSetKeys(state, content);
   for (const set of content.sets) {
     const count = set.pieces.reduce((n, p) => n + (equippedIds.has(p) ? 1 : 0), 0);
+    if (set.tiers) {
+      for (const tier of set.tiers) {
+        if (count < tier.pieces) continue;
+        if (tier.bonus) addBonus(tier.bonus);
+        if (tier.modifiers) {
+          for (const id of ATTRIBUTE_IDS) attr[id] += tier.modifiers[id] ?? 0;
+        }
+        addBoost(tier.skillBoost);
+      }
+      continue;
+    }
     if (count >= set.minPieces) {
       // LEGACY-Flats (bis zum §6-Content-Umbau) + Itemization-2.0-Attribute/Boost-Krönung.
       addBonus(set.bonus);
@@ -546,7 +571,7 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
     if (petBoost > 0) boost[id] = (boost[id] ?? 0) + petBoost;
   }
 
-  const style: WeaponStyle = mainhandItem?.weaponStyle || "melee";
+  const style: WeaponStyle = mainStyle;
 
   // 4) Direkte Kampf-Skill-Boni (zusätzlich zum Attribut-Training).
   // Itemization 2.0 §4.2 „effektives Level": die boostbaren Kampf-Skills lesen hier Basis-Level +
@@ -823,14 +848,76 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
   };
 }
 
+/**
+ * claude:2026-10-25T05:20:00+02:00 — Set-Teil-Schlüssel (1.4.0 A14): eine Raid-Variante (`variantOf`) zählt als ihr Normal-Teil.
+ * Ohne `variantOf` ist der Schlüssel die Item-ID selbst (Alt-Sets unverändert).
+ */
+export function setPieceKey(content: ContentDB, itemId: ItemId): ItemId {
+  return content.items[itemId]?.variantOf ?? itemId;
+}
+
+/** claude:2026-10-25T05:20:00+02:00 — Set-Schlüssel aller ausgerüsteten Teile (Duplikate wie zwei gleiche Ringe zählen einmal). */
+function equippedSetKeys(state: GameState, content: ContentDB): Set<ItemId> {
+  const keys = new Set<ItemId>();
+  for (const slot of EQUIP_SLOTS) {
+    const id = state.character.equipment[slot];
+    if (id) keys.add(setPieceKey(content, id));
+  }
+  return keys;
+}
+
+/** claude:2026-10-25T05:20:00+02:00 — Getragene Teile eines Sets (Varianten zählen gemeinsam). Für Tooltip „3/5“ und Kampf. */
+export function countSetPieces(state: GameState, content: ContentDB, set: SetDef): number {
+  const keys = equippedSetKeys(state, content);
+  return set.pieces.reduce((n, p) => n + (keys.has(p) ? 1 : 0), 0);
+}
+
+/** claude:2026-10-25T05:20:00+02:00 — Kleinste wirksame Teilezahl: erste Stufe bei Stufen-Sets, sonst `minPieces`. */
+export function setMinPieces(set: SetDef): number {
+  if (!set.tiers || set.tiers.length === 0) return set.minPieces;
+  return Math.min(...set.tiers.map((t) => t.pieces));
+}
+
 /** Aktuell aktive Sets (genug Teile getragen) — für die Anzeige im Charakterblatt. */
 export function activeSets(state: GameState, content: ContentDB): SetDef[] {
-  const equipped = new Set(
-    Object.values(state.character.equipment).filter((id): id is ItemId => !!id),
-  );
+  // claude:2026-10-25T05:20:00+02:00 — Varianten zählen gemeinsam, Stufen-Sets ab ihrer ersten Stufe (1.4.0 R7/A14).
+  const equipped = equippedSetKeys(state, content);
   return content.sets.filter(
-    (s) => s.pieces.reduce((n, p) => n + (equipped.has(p) ? 1 : 0), 0) >= s.minPieces,
+    (s) => s.pieces.reduce((n, p) => n + (equipped.has(p) ? 1 : 0), 0) >= setMinPieces(s),
   );
+}
+
+/** claude:2026-10-25T05:20:00+02:00 — Stufen-Sets eines Katalogs (je `content.sets`-Array gecacht; leer ⇒ Fast-Path ohne Set-Effekte). */
+const tieredSetsCache = new WeakMap<readonly SetDef[], SetDef[]>();
+function tieredSets(content: ContentDB): SetDef[] {
+  let list = tieredSetsCache.get(content.sets);
+  if (!list) {
+    list = content.sets.filter((s) => (s.tiers?.length ?? 0) > 0);
+    tieredSetsCache.set(content.sets, list);
+  }
+  return list;
+}
+
+const NO_SET_EFFECTS: readonly SetEffectDef[] = Object.freeze([]);
+
+/**
+ * claude:2026-10-25T05:20:00+02:00 — Aktive Set-Effekte (1.4.0 Raid R7, Spec §6.1): alle `effects` der erreichten Stufen aller
+ * Stufen-Sets, kumulativ (bei 5 Teilen auch die der 2- und 4-Teile-Stufe), in Set- und Stufen-Reihenfolge. combat.ts
+ * wendet sie im Kampfpfad an, die UI kann damit aktive Stufen hervorheben. Ohne Stufen-Sets ein leeres, geteiltes Array.
+ */
+export function activeSetEffects(state: GameState, content: ContentDB): readonly SetEffectDef[] {
+  const sets = tieredSets(content);
+  if (sets.length === 0) return NO_SET_EFFECTS;
+  const keys = equippedSetKeys(state, content);
+  let out: SetEffectDef[] | null = null;
+  for (const set of sets) {
+    const count = set.pieces.reduce((n, p) => n + (keys.has(p) ? 1 : 0), 0);
+    for (const tier of set.tiers!) {
+      if (count < tier.pieces || !tier.effects) continue;
+      for (const e of tier.effects) (out ??= []).push(e);
+    }
+  }
+  return out ?? NO_SET_EFFECTS;
 }
 
 /** Hält das Gesamtlevel aktuell. (Attributpunkte gibt es nicht mehr — Werte kommen aus Skills & Items.) */

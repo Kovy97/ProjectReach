@@ -59,7 +59,8 @@ const WEAPON_LIFESTEAL_WHITELIST = new Set<string>(["nekro_reaperblade", "doomkn
  * Schwelle `rare`, weil der Bestandsträger `thornmail_gauntlets` selbst rare ist; alles darunter
  * (common/uncommon, also die gesamte Craft-Grundleiter) bleibt gesperrt.
  */
-const THORNS_MIN_RARITY = new Set<string>(["rare", "superRare", "epic", "legendary", "godly"]);
+// claude:2026-10-25T11:40:00+02:00 — 1.4.0 Raid: heroic/mythic liegen über godly (Raid-Stufen) und gelten als selten.
+const THORNS_MIN_RARITY = new Set<string>(["rare", "superRare", "epic", "legendary", "godly", "heroic", "mythic"]);
 const CHASE_ITEM_SET = new Set<string>(CHASE_ITEMS);
 
 /** Rüstungs-/Schmuck-Item im Sinne des Guards (kein weaponStyle, keine weapon-side-Offhand). */
@@ -85,7 +86,9 @@ function isSignature(item: ItemDef): boolean {
     item.id.startsWith("idol_") ||
     item.id.startsWith("slayer_") ||
     item.rarity === "legendary" ||
-    item.rarity === "godly"
+    item.rarity === "godly" ||
+    item.rarity === "heroic" || // claude:2026-10-25T11:40:00+02:00 — 1.4.0 Raid: Stufen über godly sind Signatur-Klasse
+    item.rarity === "mythic"
   );
 }
 

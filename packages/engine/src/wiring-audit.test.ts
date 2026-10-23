@@ -1,7 +1,7 @@
 import { workCrateItemId } from "./orders"; // claude:2026-10-25T00:55:00+02:00
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
-import { BLACK_MARKET_CRATE_PREFIX, TAVERN_BANDS, masterRingItemId } from "@hearthforge/shared";
+import { BLACK_MARKET_CRATE_PREFIX, RAID_VARIANT_SUFFIX, TAVERN_BANDS, masterRingItemId } from "@hearthforge/shared";
 import { tavernCrateItemId } from "./tavern";
 
 /**
@@ -72,6 +72,14 @@ function obtainableSet(): Set<string> {
   for (let band = 1; band <= TAVERN_BANDS; band++) produced.add(tavernCrateItemId(band));
   // claude:2026-10-23T23:35:00+02:00 — Bergung (1.4.0 BG): Reliktstaub stammt aus dem Zerlegen gedroppter Ausrüstung (engine/salvage.ts).
   produced.add("relic_dust");
+  // claude:2026-10-25T10:00:00+02:00 — Raid (1.4.0 Welle 4): Boss-Tabellen (Basis-ID + Varianten der Stufe), Trash-/Nebenbeute und Wochentruhe stehen in `content.raids`.
+  for (const raid of content.raids ?? []) {
+    for (const room of raid.rooms) {
+      for (const e of room.table.entries) for (const suffix of Object.values(RAID_VARIANT_SUFFIX)) produced.add(e.itemId + suffix);
+    }
+    for (const r of [...raid.trashLoot, ...raid.bossSideLoot]) produced.add(r.itemId);
+    for (const x of raid.weeklyChest.extraItems) produced.add(x.itemId);
+  }
   // claude:2026-10-25T00:55:00+02:00 — Arbeitsaufträge (1.4.0 AU): Werkstattkisten zahlt die Auftragsabgabe (engine/orders.ts deliverWorkOrder).
   for (let band = 1; band <= TAVERN_BANDS; band++) produced.add(workCrateItemId(band));
   return produced;

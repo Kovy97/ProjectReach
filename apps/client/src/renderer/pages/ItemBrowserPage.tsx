@@ -269,6 +269,9 @@ const RARITY_ORDER: Record<string, number> = {
   rare: 2,
   epic: 3,
   legendary: 4,
+  godly: 5,
+  heroic: 6,
+  mythic: 7,
 };
 
 type SortKey = "id" | "type" | "value" | "rarity";

@@ -661,6 +661,8 @@
 .slayer-page .slayer-shop-card .slayer-shop-cell.rarity-epic      { background: radial-gradient(circle at 50% 45%, rgba(176, 127, 216, 0.62), transparent 72%); }
 .slayer-page .slayer-shop-card .slayer-shop-cell.rarity-legendary { background: radial-gradient(circle at 50% 45%, rgba(224, 144, 42, 0.62), transparent 72%); }
 .slayer-page .slayer-shop-card .slayer-shop-cell.rarity-godly     { background: radial-gradient(circle at 50% 45%, rgba(255, 215, 0, 0.62), transparent 72%); }
+.slayer-page .slayer-shop-card .slayer-shop-cell.rarity-heroic { background: radial-gradient(circle at 50% 45%, rgba(63, 214, 200, 0.62), transparent 72%); }
+.slayer-page .slayer-shop-card .slayer-shop-cell.rarity-mythic { background: radial-gradient(circle at 50% 45%, rgba(255, 95, 180, 0.62), transparent 72%); }
 
 /* ─── Reiter Belohnungs-Shop | Jagdbuch ─────────────────────────────────────
    claude:2026-10-18T11:30:00+02:00 — Bedienelemente (Eisenrahmen, Rezept wie die Aufgaben-Reiter), sitzen in

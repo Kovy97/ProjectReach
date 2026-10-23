@@ -1,5 +1,5 @@
 import { createRng as createRngW3, deriveEventRngSeed } from "@hearthforge/engine"; // claude:2026-10-25T00:30:00+02:00
-import { defaultSkillEventState, defaultWorkOrderState } from "@hearthforge/shared";
+import { defaultRaidState, defaultSkillEventState, defaultWorkOrderState } from "@hearthforge/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -139,6 +139,9 @@ describe("Migration v84 → v85 (Jagen)", () => {
     erwartet.state.eventRng = createRngW3(deriveEventRngSeed(erwartet.state.rng.state));
     erwartet.state.skillEvents = defaultSkillEventState();
     erwartet.state.workOrders = defaultWorkOrderState();
+    // claude:2026-10-25T04:50:00+02:00 — SAVE 93 (Raid): leerer Raid-Zustand, Schalter aus.
+    erwartet.state.raid = defaultRaidState();
+    Object.assign(erwartet.state.settings, { raidAutoContinue: false, raidAutoBuyRestart: false });
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(withoutDiscovered(JSON.parse(serialize(s, raw.savedAt)) as SaveShape)).toEqual(withoutDiscovered(erwartet));
     const again = deserialize(serialize(s, raw.savedAt), content, raw.savedAt)!;
@@ -394,6 +397,9 @@ describe("v85-Fixture: Round-Trip mit Jagd-Stand", () => {
     erwartet.state.eventRng = createRngW3(deriveEventRngSeed(erwartet.state.rng.state));
     erwartet.state.skillEvents = defaultSkillEventState();
     erwartet.state.workOrders = defaultWorkOrderState();
+    // claude:2026-10-25T04:50:00+02:00 — SAVE 93 (Raid): leerer Raid-Zustand, Schalter aus.
+    erwartet.state.raid = defaultRaidState();
+    Object.assign(erwartet.state.settings, { raidAutoContinue: false, raidAutoBuyRestart: false });
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });

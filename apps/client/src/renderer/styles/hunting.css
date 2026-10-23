@@ -1006,6 +1006,8 @@
 .hzp-loot-chip-icon.rarity-epic      { border-color: var(--rar-epic); }
 .hzp-loot-chip-icon.rarity-legendary { border-color: var(--rar-legendary); }
 .hzp-loot-chip-icon.rarity-godly     { border-color: var(--rar-godly); }
+.hzp-loot-chip-icon.rarity-heroic { border-color: var(--rar-heroic); }
+.hzp-loot-chip-icon.rarity-mythic { border-color: var(--rar-mythic); }
 
 button.hzp-loot-chip-icon:hover {
   border-color: var(--accent-2);

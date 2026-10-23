@@ -1,5 +1,5 @@
 import { createRng as createRngW3, deriveEventRngSeed } from "@hearthforge/engine"; // claude:2026-10-25T00:30:00+02:00
-import { defaultSkillEventState, defaultWorkOrderState } from "@hearthforge/shared";
+import { defaultRaidState, defaultSkillEventState, defaultWorkOrderState } from "@hearthforge/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -188,6 +188,9 @@ describe("v88-Vault-Fixture (nach einem echten Aufstieg gepinnt)", () => {
     erwartet.state.eventRng = createRngW3(deriveEventRngSeed(erwartet.state.rng.state));
     erwartet.state.skillEvents = defaultSkillEventState();
     erwartet.state.workOrders = defaultWorkOrderState();
+    // claude:2026-10-25T04:50:00+02:00 — SAVE 93 (Raid): leerer Raid-Zustand, Schalter aus.
+    erwartet.state.raid = defaultRaidState();
+    Object.assign(erwartet.state.settings, { raidAutoContinue: false, raidAutoBuyRestart: false });
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
@@ -196,7 +199,7 @@ describe("v88-Vault-Fixture (nach einem echten Aufstieg gepinnt)", () => {
     const stateKeys = Object.keys(raw.state);
     expect(stateKeys.filter((k) => !(k in PRESTIGE_STATE_FIELDS))).toEqual([]);
     // claude:2026-10-24T17:05:00+02:00 — Felder späterer Versionen fehlen im v88-Pin naturgemäß (SAVE 90: lockedItems).
-    const SPAETER = ["lockedItems", "eventRng", "skillEvents", "workOrders"]; // SAVE 90/92
+    const SPAETER = ["lockedItems", "eventRng", "skillEvents", "workOrders", "raid"]; // SAVE 90/92/93
     expect(Object.keys(PRESTIGE_STATE_FIELDS).filter((k) => !stateKeys.includes(k) && !SPAETER.includes(k))).toEqual([]);
     const charKeys = Object.keys(raw.state.character);
     expect(charKeys.filter((k) => !(k in PRESTIGE_CHARACTER_FIELDS))).toEqual([]);

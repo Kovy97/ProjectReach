@@ -37,6 +37,7 @@ import { DungeonClearCeremony } from "./components/DungeonClearCeremony";
 import { ChampionDefeatCeremony } from "./components/ChampionDefeatCeremony";
 import { ApMilestoneCeremony } from "./components/ApMilestoneCeremony";
 import { DeathPopup } from "./components/DeathPopup";
+import { RaidOverlays } from "./components/RaidScreens"; // claude:2026-10-25T11:15:00+02:00 — Raid (1.4.0 Welle 4)
 import { StalematePopup } from "./components/StalematePopup";
 import { OnboardingGuide } from "./components/OnboardingGuide";
 import { FeatureTourGuide } from "./components/FeatureTourGuide";
@@ -1056,6 +1057,7 @@ function MainLayout(): JSX.Element {
       <PetCelebration />
       <MasteryCeremony />
       <DungeonClearCeremony />
+      <RaidOverlays />
       <ChampionDefeatCeremony />
       <ApMilestoneCeremony />
       <DeathPopup />

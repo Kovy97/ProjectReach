@@ -59,6 +59,10 @@ const HANDLED: ReadonlySet<AchievementConditionType> = new Set<AchievementCondit
   "farm_plots_planted",
   "deaths",
   "play_hours",
+  // claude:2026-10-25T10:00:00+02:00 — Raid Gobkha'raz (1.4.0 R10): achievementProgress behandelt die drei Raid-Typen (achievements.ts)
+  "raid_boss_kills",
+  "raid_clears",
+  "raid_mythic_uniques",
 ]);
 
 const VALID_RARITIES = new Set(["common", "uncommon", "rare", "epic", "legendary"]);

@@ -56,6 +56,8 @@
 .pouch-head-icon.rarity-epic      { border-color: var(--rar-epic); }
 .pouch-head-icon.rarity-legendary { border-color: var(--rar-legendary); }
 .pouch-head-icon.rarity-godly     { border-color: var(--rar-godly); }
+.pouch-head-icon.rarity-heroic { border-color: var(--rar-heroic); }
+.pouch-head-icon.rarity-mythic { border-color: var(--rar-mythic); }
 
 .pouch-head-emoji {
   font-size: 32px;
@@ -205,6 +207,8 @@
 .pouch-row-name.rarity-epic      { color: var(--rar-epic); }
 .pouch-row-name.rarity-legendary { color: var(--rar-legendary); }
 .pouch-row-name.rarity-godly     { color: var(--rar-godly); }
+.pouch-row-name.rarity-heroic { color: var(--rar-heroic); }
+.pouch-row-name.rarity-mythic { color: var(--rar-mythic); }
 
 .pouch-row-qty {
   flex: 0 0 auto;
@@ -577,6 +581,8 @@
 .pouch-row-rarity-label.rarity-epic      { color: var(--rar-epic); }
 .pouch-row-rarity-label.rarity-legendary { color: var(--rar-legendary); }
 .pouch-row-rarity-label.rarity-godly     { color: var(--rar-godly); }
+.pouch-row-rarity-label.rarity-heroic { color: var(--rar-heroic); }
+.pouch-row-rarity-label.rarity-mythic { color: var(--rar-mythic); }
 
 .pouch-row-badges {
   display: flex;

@@ -15,6 +15,43 @@
 - Briefrevision gesichert in `CODEX/work/1.3.0-assets-2026-10-18/brief-expanded-2026-10-18.md`. Arbeitshelfer und Scope-Historie im selben Ordner; Initial-`prepare.mjs` nicht zum Überschreiben der Baseline erneut starten. Branch `test-ui-fundament`; keine ungeprüften Release-Aussagen übernommen.
 
 
+### 25.10.2026 (Mittag) — Claude: 1.4.0 Welle 4 (Raid „Die Hallen von Gobkha'raz“) fertig
+
+<!-- claude:2026-10-25T13:00:00+02:00 -->
+
+- Raid komplett: Engine (`engine/raid.ts`, Bossphasen, Set-Stufen, Hauptattribut), Content (`content/src/raid.ts`,
+  `raid-text.ts`), SAVE 93, Raid-UI (`RaidSection`, `RaidHud`, `RaidScreens`, `raidArt.ts`, `styles/raid.css`).
+- Durchlauftest `engine/src/raid-e2e.test.ts`: Spec-Kit „BiS-2H“ schafft Normal offline. Stichprobe je Stil ohne
+  Begleiter: Nahkampf 60,5 min, Fernkampf 41,4, Magie 40,7, 0 Neustarts (Zielband 45–75). Volle Nachmessung
+  Heroisch/Mythisch (Apply #12) steht noch aus (Welle 5).
+- Neu entschieden (Annahme A15 im Goal): Raid-Kampf verlassen zählt wie ein Tod (sonst hing der Lauf fest).
+- Behoben: EN/DE-Namen von 10 Wellen-Gegnern und 16 Unikaten waren aus der Lore-Tabelle spaltenverschoben;
+  neuer Namens-Wächter in `raid-content.test.ts`. Wächter für heroic/mythic (Signatur-Klasse) und Raid-Räume.
+- Asset-Lader passend zur Liste Teil 1: Truhe `assets/ui/raid/raid_chest_closed|open.webp`, Raid-Karte
+  `assets/dungeons/gobkharaz(.card).webp`, Krone `icons/icon_tier_crown.webp`. **Ohne Verbraucher:**
+  `icon_rarity_heroic/mythic` (kein Bestand für andere Raritäten). Beim Einbinden entscheiden, wo sie hin.
+- Offen aus dem UI-Auftrag: Classic-CSS für Raid nicht generiert; kein `enqueueRaidAtFront`; Boss-Intro in der
+  Atempause nutzt die bestehende Dungeon-Ansage.
+
+### 25.10.2026 — Claude: 1.4.0 „Feder und Stahl“, Wellen 1–3 fertig, Welle 4 (Raid) in Bau
+
+<!-- claude:2026-10-25T05:45:00+02:00 -->
+
+Branch `update-1.4.0`, Goal `design/1.4.0-goal.md`. Chef-Delegation 24.10. („Entscheide du das Beste für alles“):
+alle Gate-Fragen (L, B Fernkampf/Werkstatt/Raid, N1) nach Spec-Empfehlung entschieden, protokolliert im Goal.
+
+- **Welle 1** (`d79d4f8`): Mahlzeit-Platz (SAVE 89), 2H-Anzeige, Stufen-Sterne, Ländereien-Gruppe.
+- **Welle 2** (`be0147f`, `608c2ab`): Materiallager + Bergung (SAVE 90), Bognerei `bowcraft` mit Pfeilen/Köchern,
+  Fernkampf-Rework, Balance-Hülle neu gepinnt (SAVE 91).
+- **Welle 3** (`9636799`, `d9b8180`): Zufallsereignisse (eigener Strom `eventRng`, nur Live-Loop), Arbeitsaufträge
+  (`engine/orders.ts`), Werkstattkisten, Reiter „Arbeitsaufträge“, Kopf-Chip, Logbuch (SAVE 92).
+- **Welle 4** (uncommittet, in Bau): Raid-Typen + SAVE 93, `engine/raid.ts` (Lauf, Gebühr, Rast, Tod je Stufe,
+  Warteschlange, Wochen-Modifikator, Erstkill-Truhe), Raid-Content (`content/src/raid.ts`, 93 Items, 15 Monster,
+  3 Sets) fertig; Kampfmechanik (Phasen, Set-Effekte) und Raid-UI laufen bei Fachagenten.
+- Asset-Liste Teil 1 komplett freigegeben (`design/1.4.0-assets.md`, Gate L eingetragen). Teil 2 offen:
+  Werkstattkisten, Kunden-Porträts Jorun/Caedren.
+- Running Changelog: `design/1.4.0-changelog.md`. Kein Push, kein Upload.
+
 ### 19.10.2026 — Claude: 1.3.0 vom Chef abgenommen, Painterly-UI
 
 <!-- claude:2026-10-19T03:00:00+02:00 -->

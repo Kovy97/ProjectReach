@@ -20,9 +20,14 @@ import type {
   SkillEventId,
   SkillEventLogEntry,
   WorkOrder,
+  RaidDifficulty,
+  RaidRun,
+  RaidWeeklyModifierId,
+  QueueSkipReason,
   QueuedAction,
   SaveSummary,
 } from "@hearthforge/shared";
+import { defaultRaidState, makeRaidQueueEntry, RAID_WEEKLY_MODIFIERS } from "@hearthforge/shared"; // claude:2026-10-25T04:40:00+02:00 — Raid (SAVE 93)
 import { defaultSkillEventState, defaultWorkOrderState, EVENT_COOLDOWN_MS, EVENT_EXPIRE_MS, EVENT_LOG_MAX, ORDER_MAX_OPEN, ORDER_OFFER_TTL_MS, SKILL_EVENT_IDS } from "@hearthforge/shared"; // claude:2026-10-24T23:55:00+02:00 — 1.4.0 Welle 3
 import {
   consumableHeal,
@@ -467,6 +472,7 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   }
   sanitizeSkillEvents(state, content);
   sanitizeWorkOrders(state, content);
+  sanitizeRaid(state, content);
 
   // — Character: Gold/HP/Mana/totalLevel/autoEatTier —
   const c = state.character;
@@ -1255,6 +1261,15 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
         cleanQueue.push(makeDungeonQueueEntry(dungeonId, target));
         continue;
       }
+      if ((raw as { kind?: unknown }).kind === "raid") {
+        // claude:2026-10-25T04:40:00+02:00 — kind "raid" (SAVE 93): bekannter Raid und gültige Stufe, sonst raus.
+        const raidId = (raw as { raidId?: unknown }).raidId;
+        const diff = (raw as { raidDifficulty?: unknown }).raidDifficulty;
+        if (typeof raidId !== "string" || !(content.raids ?? []).some((r) => r.id === raidId)) continue;
+        if (diff !== "normal" && diff !== "heroic" && diff !== "mythic") continue;
+        cleanQueue.push(makeRaidQueueEntry(raidId, diff, target));
+        continue;
+      }
       const actionId = (raw as { actionId?: unknown }).actionId;
       if (typeof actionId !== "string" || !content.actions[actionId]) continue;
       cleanQueue.push({ kind: "action", actionId, target });
@@ -1979,7 +1994,13 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   //   Konsistenz-Härtung macht der Paragon-Block oben). Idempotent, RNG-frei → Round-Trip-stabil. —
   if (cb.monsterId !== null && cb.paragonFloor === undefined) {
     let gateOpen: boolean;
-    if (typeof cb.dungeonId === "string") {
+    const raidRoom = typeof cb.dungeonId === "string" && content.dungeons.find((d) => d.id === cb.dungeonId)?.raidOnly === true;
+    if (raidRoom) {
+      // claude:2026-10-25T04:40:00+02:00 — Raid-Raum (SAVE 93): offen genau dann, wenn der laufende Raid-Lauf in diesem Raum kämpft.
+      const run = state.raid?.run;
+      const room = run ? (content.raids ?? []).find((r) => r.id === run.raidId)?.rooms[run.room] : undefined;
+      gateOpen = !!run && run.phase === "fight" && room?.dungeonId === cb.dungeonId;
+    } else if (typeof cb.dungeonId === "string") {
       // Dungeon-Kontext: das Dungeon-Gate zählt (inkl. Trägerzonen-Kohärenz). Für jeden BEKANNTEN
       // aktiven Run ist das per „(2b) aktiver Run ⇒ unlocked" oben immer offen — real beendet
       // dieser Zweig nur Kämpfe mit unauflösbarer (unbekannter/getamperter) dungeonId.
@@ -1991,6 +2012,14 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
       gateOpen = !zone || isZoneUnlocked(state, content, zone);
     }
     if (!gateOpen) stopCombat(state);
+  }
+  // claude:2026-10-25T04:40:00+02:00 — Raid-Lauf im Kampf ohne passenden Kampf (kaputter/getamperter Save): Lauf ohne Rückgabe beenden.
+  {
+    const run = state.raid?.run;
+    if (run && run.phase === "fight") {
+      const room = (content.raids ?? []).find((r) => r.id === run.raidId)?.rooms[run.room];
+      if (!room || state.combat.monsterId === null || state.combat.dungeonId !== room.dungeonId) state.raid!.run = null;
+    }
   }
 
   // — Elite-Zugangs-Load-Invariante (Spieler-Report 1.0.0: „The Ninth Warden … located in The Idol
@@ -2127,7 +2156,13 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
       const reason = (rawSkip as { reason?: unknown }).reason;
       const skipDungeonId = (rawSkip as { dungeonId?: unknown }).dungeonId;
       const skipActionId = (rawSkip as { actionId?: unknown }).actionId;
-      if (typeof skipActionId === "string" && skipActionId.length > 0) {
+      const skipRaidId = (rawSkip as { raidId?: unknown }).raidId;
+      if (typeof skipRaidId === "string" && skipRaidId.length > 0) {
+        // claude:2026-10-25T04:40:00+02:00 — Raid-Skip (SAVE 93): vergangenes Ereignis, bleibt bis zur Quittung, solange der Raid bekannt ist.
+        const known = (content.raids ?? []).some((r) => r.id === skipRaidId);
+        const okReason = reason === "raid_gold" || reason === "raid_locked" || reason === "defeated" || reason === "dungeon_defeated" || (reason === "unknown_raid" && !known);
+        if (okReason && (known || reason === "unknown_raid")) state.lastQueueSkip = { monsterId: "", raidId: skipRaidId, reason: reason as QueueSkipReason };
+      } else if (typeof skipActionId === "string" && skipActionId.length > 0) {
         // Aktions-Skip (27.08.2026, Warteschlangen-Projektion): `no_materials` nur, solange das
         // Material HEUTE noch fehlt (Inventar + Lager) — hat der Spieler inzwischen Nachschub,
         // wäre „keine Materialien" beim Start eine veraltete Meldung. Unbekannte Aktion → weg.
@@ -2642,6 +2677,9 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   if (typeof state.settings.quiverAutoRefill !== "boolean") {
     state.settings.quiverAutoRefill = defaultSettings().quiverAutoRefill;
   }
+  // claude:2026-10-25T04:40:00+02:00 — Raid (SAVE 93): beide Schalter strikt boolean, Standard aus.
+  if (typeof state.settings.raidAutoContinue !== "boolean") state.settings.raidAutoContinue = false;
+  if (typeof state.settings.raidAutoBuyRestart !== "boolean") state.settings.raidAutoBuyRestart = false;
   // Quest-State (SAVE_VERSION 25): leer defaulten. Quests werden beim nächsten advance via
   // evaluateQuests gegen die bestehenden Zähler (Kills etc.) neu ausgewertet.
   if (!state.quests || typeof state.quests !== "object") state.quests = defaultQuestState();
@@ -3772,6 +3810,11 @@ function migrateState(state: GameState, content: ContentDB): GameState {
     if (!state.workOrders) state.workOrders = defaultWorkOrderState();
   }
 
+  // ── Raid (SAVE_VERSION 92 → 93, 1.4.0 Welle 4, Chef 23.10.2026) ────────────────────────────────────────────
+  // claude:2026-10-25T04:40:00+02:00 — neues Feld `raid` (leer: nichts freigeschaltet außer über Drazhan, keine Läufe). Die Härtung jeder
+  // Version macht sanitizeState.
+  if ((state.version ?? 0) < 93 && !state.raid) state.raid = defaultRaidState();
+
   // State auf die aktuelle Version heben (macht versions-abhängige Migrationen idempotent).
   state.version = SAVE_VERSION;
 
@@ -3828,6 +3871,108 @@ function sanitizeSkillEvents(state: GameState, content: ContentDB): void {
     trailReady: r.trailReady === true,
     log,
     seq: finiteInt(r.seq, 0, Number.MAX_SAFE_INTEGER, 0),
+  };
+}
+
+// claude:2026-10-25T04:40:00+02:00 — Raid-Zustand härten (SAVE 93). Freischaltungen/Zähler sind Fortschritt: Zahlen klemmen, nie erfinden.
+const RAID_DIFFS = ["normal", "heroic", "mythic"] as const;
+function sanitizeRaid(state: GameState, content: ContentDB): void {
+  const raw = state.raid as unknown;
+  const def = defaultRaidState();
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    state.raid = def;
+    return;
+  }
+  const r = raw as Record<string, unknown>;
+  const rc = (r.clears ?? {}) as Record<string, unknown>;
+  const clears = {
+    normal: finiteInt(rc.normal, 0, Number.MAX_SAFE_INTEGER, 0),
+    heroic: finiteInt(rc.heroic, 0, Number.MAX_SAFE_INTEGER, 0),
+    mythic: finiteInt(rc.mythic, 0, Number.MAX_SAFE_INTEGER, 0),
+  };
+  const bossKills: Record<string, number> = {};
+  if (r.bossKills && typeof r.bossKills === "object" && !Array.isArray(r.bossKills)) {
+    for (const [k, v] of Object.entries(r.bossKills as Record<string, unknown>)) {
+      const n = finiteInt(v, 0, Number.MAX_SAFE_INTEGER, 0);
+      if (n > 0 && /^[\w-]+:(normal|heroic|mythic)$/.test(k)) bossKills[k] = n;
+    }
+  }
+  const rw = (r.weekly ?? {}) as Record<string, unknown>;
+  const chests: Record<string, true> = {};
+  if (rw.chests && typeof rw.chests === "object" && !Array.isArray(rw.chests)) {
+    for (const [k, v] of Object.entries(rw.chests as Record<string, unknown>)) if (v === true) chests[k] = true;
+  }
+  const fastestMs: Partial<Record<RaidDifficulty, number>> = {};
+  const rf = (r.fastestMs ?? {}) as Record<string, unknown>;
+  for (const d of RAID_DIFFS) if (typeof rf[d] === "number" && Number.isFinite(rf[d]) && (rf[d] as number) > 0) fastestMs[d] = Math.floor(rf[d] as number);
+  const lootList = (v: unknown): { itemId: ItemId; qty: number }[] =>
+    Array.isArray(v)
+      ? (v as Array<Record<string, unknown>>)
+          .filter((e) => e && typeof e.itemId === "string" && content.items[e.itemId as string])
+          .slice(0, 200)
+          .map((e) => ({ itemId: e.itemId as ItemId, qty: finiteInt(e.qty, 1, 1_000_000_000, 1) }))
+      : [];
+  let run: RaidRun | null = null;
+  const rr = r.run as Record<string, unknown> | null | undefined;
+  if (rr && typeof rr === "object") {
+    const raidDef = (content.raids ?? []).find((x) => x.id === rr.raidId);
+    const diff = rr.difficulty;
+    const phase = rr.phase;
+    const mod = rr.modifier;
+    if (
+      raidDef &&
+      (diff === "normal" || diff === "heroic" || diff === "mythic") &&
+      (phase === "fight" || phase === "rest" || phase === "defeated" || phase === "complete")
+    ) {
+      run = {
+        raidId: raidDef.id,
+        difficulty: diff,
+        room: finiteInt(rr.room, 0, Math.max(0, raidDef.rooms.length - 1), 0),
+        phase,
+        feePaid: finiteInt(rr.feePaid, 0, Number.MAX_SAFE_INTEGER, 0),
+        restarts: finiteInt(rr.restarts, 0, 1000, 0),
+        loot: lootList(rr.loot),
+        lastLoot: lootList(rr.lastLoot),
+        bossSeq: finiteInt(rr.bossSeq, 0, Number.MAX_SAFE_INTEGER, 0),
+        startedAtMs: finiteInt(rr.startedAtMs, 0, Number.MAX_SAFE_INTEGER, 0),
+        modifier: typeof mod === "string" && (RAID_WEEKLY_MODIFIERS as readonly string[]).includes(mod) ? (mod as RaidWeeklyModifierId) : "quiet_halls",
+        restMs: finiteInt(rr.restMs, 0, 60_000, 0),
+      };
+    }
+  }
+  const lr = r.lastResult as Record<string, unknown> | null | undefined;
+  const lastResult =
+    lr && typeof lr === "object" && (lr.difficulty === "normal" || lr.difficulty === "heroic" || lr.difficulty === "mythic") &&
+    (lr.outcome === "complete" || lr.outcome === "defeated" || lr.outcome === "abandoned")
+      ? {
+          seq: finiteInt(lr.seq, 0, Number.MAX_SAFE_INTEGER, 0),
+          difficulty: lr.difficulty as RaidDifficulty,
+          outcome: lr.outcome as "complete" | "defeated" | "abandoned",
+          durationMs: finiteInt(lr.durationMs, 0, Number.MAX_SAFE_INTEGER, 0),
+          refund: finiteInt(lr.refund, 0, Number.MAX_SAFE_INTEGER, 0),
+        }
+      : null;
+  const rq = r.queue as Record<string, unknown> | null | undefined;
+  const queue =
+    rq && typeof rq === "object" && (content.raids ?? []).some((x) => x.id === rq.raidId) &&
+    (rq.difficulty === "normal" || rq.difficulty === "heroic" || rq.difficulty === "mythic") && run
+      ? {
+          raidId: rq.raidId as string,
+          difficulty: rq.difficulty as RaidDifficulty,
+          remaining: rq.remaining === null ? null : finiteInt(rq.remaining, 1, 1_000_000, 1),
+          completed: finiteInt(rq.completed, 0, Number.MAX_SAFE_INTEGER, 0),
+        }
+      : null;
+  state.raid = {
+    run,
+    clears,
+    bossKills,
+    weekly: { week: finiteInt(rw.week, -1, Number.MAX_SAFE_INTEGER, -1), chests },
+    fastestMs,
+    feesPaid: finiteInt(r.feesPaid, 0, Number.MAX_SAFE_INTEGER, 0),
+    lastResult,
+    resultSeq: Math.max(lastResult?.seq ?? 0, finiteInt(r.resultSeq, 0, Number.MAX_SAFE_INTEGER, 0)),
+    queue,
   };
 }
 

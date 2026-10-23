@@ -490,6 +490,49 @@ body.bank-dragging-noselect {
   animation: toast-in 0.25s ease-out, toast-jackpot-pulse-godly 1.1s ease-in-out 0.25s 4;
 }
 
+/* claude:2026-10-25T09:10:00+02:00 — Raid-Funde (1.4.0 A4). Heroisch: türkiser Balken, kalter Puls, Sweep in Eisblau.
+   Mythisch: pinker Balken, doppelter Puls, zwei Sweeps und ein Funkenband (reine UI, kein Glühen am Item-Bild). */
+.toast-rare-heroic { box-shadow: inset 5px 0 0 var(--rar-heroic, #3fd6c8), 0 10px 30px rgba(0, 0, 0, 0.55); }
+.toast-rare-heroic .toast-title { color: var(--rar-heroic, #3fd6c8); }
+.toast-rare-heroic.fx-reduced,
+.toast-rare-heroic.fx-full {
+  animation: toast-in 0.25s ease-out, toast-jackpot-pulse-heroic 1.2s ease-in-out 0.25s 4;
+}
+.toast-rare-mythic { box-shadow: inset 6px 0 0 var(--rar-mythic, #ff5fb4), 0 10px 30px rgba(0, 0, 0, 0.55); border-color: var(--rar-mythic, #ff5fb4); }
+.toast-rare-mythic .toast-title { color: var(--rar-mythic, #ff5fb4); letter-spacing: 0.04em; text-transform: uppercase; }
+.toast-rare-mythic.fx-reduced,
+.toast-rare-mythic.fx-full {
+  position: relative;
+  overflow: hidden;
+  animation: toast-in 0.25s ease-out, toast-jackpot-pulse-mythic 1.4s ease-in-out 0.25s 5;
+}
+.toast-rare-mythic.fx-full::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 30%, rgba(255, 190, 230, 0.7) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 38% 75%, rgba(255, 190, 230, 0.55) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 66% 22%, rgba(255, 190, 230, 0.65) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 88% 64%, rgba(255, 190, 230, 0.6) 0 1.5px, transparent 2.5px);
+  animation: toast-mythic-sparkle 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes toast-jackpot-pulse-heroic {
+  0%, 100% { box-shadow: inset 5px 0 0 var(--rar-heroic, #3fd6c8), 0 10px 30px rgba(0, 0, 0, 0.55); }
+  50% { box-shadow: inset 5px 0 0 var(--rar-heroic, #3fd6c8), 0 0 38px 10px rgba(63, 214, 200, 0.85), 0 10px 30px rgba(0, 0, 0, 0.55); }
+}
+@keyframes toast-jackpot-pulse-mythic {
+  0%, 100% { box-shadow: inset 6px 0 0 var(--rar-mythic, #ff5fb4), 0 10px 30px rgba(0, 0, 0, 0.55); }
+  35% { box-shadow: inset 6px 0 0 var(--rar-mythic, #ff5fb4), 0 0 46px 14px rgba(255, 95, 180, 0.95), 0 10px 30px rgba(0, 0, 0, 0.55); }
+  60% { box-shadow: inset 6px 0 0 var(--rar-mythic, #ff5fb4), 0 0 20px 4px rgba(255, 95, 180, 0.5), 0 10px 30px rgba(0, 0, 0, 0.55); }
+}
+@keyframes toast-mythic-sparkle {
+  from { opacity: 0.25; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(-2px); }
+}
+
 @keyframes toast-jackpot-pulse {
   0%, 100% { box-shadow: inset 5px 0 0 var(--gold, #d8b35a), 0 10px 30px rgba(0, 0, 0, 0.55); }
   50% { box-shadow: inset 5px 0 0 var(--gold, #d8b35a), 0 0 26px 6px rgba(216, 179, 90, 0.75), 0 10px 30px rgba(0, 0, 0, 0.55); }
@@ -523,6 +566,16 @@ body.bank-dragging-noselect {
 .toast-rare-godly.fx-full::after {
   background: linear-gradient(115deg, transparent 25%, rgba(255, 236, 150, 0.75) 48%, transparent 71%);
   animation: toast-jackpot-sweep 0.9s ease-out 0.15s 3;
+}
+
+.toast-rare-heroic.fx-full::after {
+  background: linear-gradient(115deg, transparent 25%, rgba(160, 255, 244, 0.7) 48%, transparent 71%);
+  animation: toast-jackpot-sweep 0.9s ease-out 0.15s 3;
+}
+
+.toast-rare-mythic.fx-full::after {
+  background: linear-gradient(115deg, transparent 22%, rgba(255, 170, 224, 0.8) 48%, transparent 74%);
+  animation: toast-jackpot-sweep 0.8s ease-out 0.15s 5;
 }
 
 @keyframes toast-jackpot-sweep {
@@ -648,12 +701,19 @@ body.bank-dragging-noselect {
   .toast-rare-legendary.fx-reduced,
   .toast-rare-legendary.fx-full,
   .toast-rare-godly.fx-reduced,
-  .toast-rare-godly.fx-full {
+  .toast-rare-godly.fx-full,
+  .toast-rare-heroic.fx-reduced,
+  .toast-rare-heroic.fx-full,
+  .toast-rare-mythic.fx-reduced,
+  .toast-rare-mythic.fx-full {
     animation: toast-in 0.25s ease-out !important;
   }
   .toast-rare.fx-full::after,
   .toast-rare-legendary.fx-full::after,
-  .toast-rare-godly.fx-full::after {
+  .toast-rare-godly.fx-full::after,
+  .toast-rare-heroic.fx-full::after,
+  .toast-rare-mythic.fx-full::after,
+  .toast-rare-mythic.fx-full::before {
     display: none !important;
   }
 }
@@ -4709,6 +4769,8 @@ body.bank-dragging-noselect {
 .shop-item-card.rarity-epic      { box-shadow: inset 0 0 0 2px var(--rar-epic); }
 .shop-item-card.rarity-legendary { box-shadow: inset 0 0 0 2px var(--rar-legendary); }
 .shop-item-card.rarity-godly     { box-shadow: inset 0 0 0 2px var(--rar-godly); }
+.shop-item-card.rarity-heroic { box-shadow: inset 0 0 0 2px var(--rar-heroic); }
+.shop-item-card.rarity-mythic { box-shadow: inset 0 0 0 2px var(--rar-mythic); }
 
 /* Gerahmtes Bildfenster oben (innerer Holzrahmen + bg_black).
    Sweep 5, Finding 8: 220px min-height ließ das Artwork die Karte dominieren (nur ~1,5

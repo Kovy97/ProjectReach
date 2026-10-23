@@ -87,6 +87,8 @@ interface Contribution {
   attrs: Partial<Record<AttributeId, number>>;
   bonus: EquipBonus;
   trinity: TrinityStats;
+  /** claude:2026-10-25T05:30:00+02:00 — Hauptattribut (1.4.0 Raid §10.5): zählt im Score als str/dex/int des Build-Stils. */
+  primary: number;
 }
 
 function emptyContribution(): Contribution {
@@ -94,8 +96,12 @@ function emptyContribution(): Contribution {
     attrs: {},
     bonus: {},
     trinity: { armorRating: 0, evasionRating: 0, wardCapacity: 0, blockChance: 0 },
+    primary: 0,
   };
 }
+
+/** claude:2026-10-25T05:30:00+02:00 — Spiegel von computeStats: Hauptattribut je Waffenstil. */
+const PRIMARY_ATTRIBUTE_BY_STYLE: Readonly<Record<WeaponStyle, AttributeId>> = { melee: "str", ranged: "dex", magic: "int" };
 
 function addAttrs(
   into: Partial<Record<AttributeId, number>>,
@@ -121,7 +127,10 @@ function addBonus(into: EquipBonus, from: EquipBonus | undefined): void {
  * jeweiligen computeStats-Terme (Attribut-Sättigungskurven grob linearisiert).
  */
 function scoreContribution(target: BisTarget, c: Contribution, style: WeaponStyle): number {
-  const a = (id: AttributeId): number => c.attrs[id] ?? 0;
+  // claude:2026-10-25T05:30:00+02:00 — `primaryAttribute` zählt auf das Hauptattribut des Build-Stils (Spec §10.5), wie in computeStats.
+  // `primarySkillBoost` bleibt wie jeder skillBoost außerhalb des Scores (der Builder bewertet Boosts nicht).
+  const primaryId = PRIMARY_ATTRIBUTE_BY_STYLE[style];
+  const a = (id: AttributeId): number => (c.attrs[id] ?? 0) + (id === primaryId ? c.primary : 0);
   const b = c.bonus;
   switch (target) {
     case "crit":
@@ -169,6 +178,7 @@ function requirementsOk(item: ItemDef, targetLevel: number): boolean {
 function itemContribution(item: ItemDef, slot: EquipSlot): Contribution {
   const c = emptyContribution();
   addAttrs(c.attrs, item.modifiers);
+  c.primary = item.primaryAttribute ?? 0; // claude:2026-10-25T05:30:00+02:00 — Hauptattribut-Schmuck (1.4.0 Raid)
   const isRangeForm =
     typeof item.damageMin === "number" &&
     typeof item.damageMax === "number" &&
@@ -308,6 +318,11 @@ export interface BisBuildOptions {
   suffixIlvl?: number;
   /** RNG-Seed des Fixtures (rein kosmetisch — der Builder zieht kein RNG). */
   seed?: number;
+  /**
+   * claude:2026-10-25T06:00:00+02:00 — Raid-Teile (Stufe XIII, 1.4.0) auslassen: die Hülle misst die offene Welt und die Dungeons; der Raid
+   * wird mit vollen Raid-Kits und Set-Effekten eigens gemessen (1.4.0-balance-raid.md Apply #12).
+   */
+  excludeRaid?: boolean;
 }
 
 /** Slots, die der Builder bestückt (Werkzeug-Slots tragen keine Kampf-Stats). */
@@ -354,7 +369,11 @@ export function buildBisCharacter(
 
   const allItems = Object.values(content.items);
   const legalEquipment = allItems.filter(
-    (it) => it.type === "equipment" && !!it.slot && requirementsOk(it, targetLevel),
+    (it) =>
+      it.type === "equipment" &&
+      !!it.slot &&
+      requirementsOk(it, targetLevel) &&
+      !(opts.excludeRaid && (it.tier === 13 || it.id.startsWith("gk_"))),
   );
 
   // ── 1) Waffe (bestimmt den Stil) ─────────────────────────────────────────

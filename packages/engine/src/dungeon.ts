@@ -1,4 +1,4 @@
-import type { ContentDB, GameState, ItemId } from "@hearthforge/shared";
+import type { ContentDB, DungeonDef, GameState, ItemId } from "@hearthforge/shared";
 import { createPetAbilityRuntime, PARAGON_DUNGEON_ID, PARAGON_KEY_ITEM_ID } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
 import { isZoneUnlocked } from "./zones";
@@ -172,6 +172,7 @@ export function unlockParagonTower(state: GameState): boolean {
 export function canEnterDungeon(state: GameState, content: ContentDB, dungeonId: string): boolean {
   const d = content.dungeons.find((x) => x.id === dungeonId);
   if (!d) return false;
+  if (d.raidOnly) return false; // claude:2026-10-25T03:45:00+02:00 — Raid-Räume startet nur der Raid (engine/raid.ts)
   if (!isDungeonUnlocked(state, content, dungeonId)) return false;
   return true;
 }
@@ -192,6 +193,14 @@ export function canEnterDungeon(state: GameState, content: ContentDB, dungeonId:
 export function startDungeon(state: GameState, content: ContentDB, dungeonId: string): boolean {
   const d = content.dungeons.find((x) => x.id === dungeonId);
   if (!d || !canEnterDungeon(state, content, dungeonId)) return false;
+  return beginDungeonRun(state, content, d);
+}
+
+/**
+ * claude:2026-10-25T03:45:00+02:00 — Der eigentliche Lauf-Start ohne Gate (startDungeon und der Raid teilen ihn). Raid-Räume prüft
+ * engine/raid.ts selbst (Gebühr, Freischaltung) und setzt danach die skalierten Gegnerwerte.
+ */
+export function beginDungeonRun(state: GameState, content: ContentDB, d: DungeonDef): boolean {
   const firstId = d.encounters[0];
   const first = firstId ? content.monsters[firstId] : undefined;
   if (!first) return false;

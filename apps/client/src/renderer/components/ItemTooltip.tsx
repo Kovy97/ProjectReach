@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { content } from "@hearthforge/content";
-import { computeStats, meetsRequirements, spellFocusMult, itemTier } from "@hearthforge/engine";
-import type { AffixDef, ContentDB, EquipBonus, EquipSlot, ItemDef, ItemInstance, LocalizedString } from "@hearthforge/shared";
+import { computeStats, countSetPieces, meetsRequirements, spellFocusMult, itemTier } from "@hearthforge/engine";
+import type { AffixDef, ContentDB, EquipBonus, EquipSlot, ItemDef, ItemInstance, LocalizedString, SetDef, SetEffectDef, SetTierDef } from "@hearthforge/shared";
 import { ARROW_TIER_RANGED_LEVEL, ATTRIBUTES, EQUIP_SLOT_LABELS, TOOL_SLOTS, WEAPON_TYPE_SPECIALTY, effectiveWeaponEffects, isStatusEffectType, enchantSlotsFor, getItemRarity, RARITY_LABEL, instanceDisplayName, instanceBonusDelta, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, consumableHeal, TEMPO_REDUCTION_CAP } from "@hearthforge/shared";
 import { isEnchantable, runeFitsHint, runeTargetLabel } from "../runeTargets";
 import { useGameStateMaybe } from "../game/GameContext";
@@ -918,6 +918,10 @@ function DefenseGroup({
   return <StatGroupWrapper title={t("itip.group.defense")} className="itip-defense-group">{rows}</StatGroupWrapper>;
 }
 
+// claude:2026-10-25T11:30:00+02:00 — Stil der Haupthand → Hauptattribut / Hauptkampf-Skill (Spiegel von character.ts, Spec §10.5).
+const PRIMARY_ATTR_BY_STYLE: Record<string, string> = { melee: "str", ranged: "dex", magic: "int" };
+const PRIMARY_SKILL_BY_STYLE: Record<string, string> = { melee: "power", ranged: "ranged", magic: "magic" };
+
 /** ATTRIBUTES: ganzzahlige Attribut-Modifier (Itemization 2.0 §1). */
 function AttributesGroup({
   item,
@@ -930,9 +934,24 @@ function AttributesGroup({
   deltaMap?: Record<string, number> | null;
 }): JSX.Element | null {
   const { t, tr } = useI18n();
-  if (!item.modifiers) return null;
+  const gstate = useGameStateMaybe();
+  if (!item.modifiers && !item.primaryAttribute) return null;
   const rows: JSX.Element[] = [];
-  for (const [attr, v] of Object.entries(item.modifiers)) {
+  // claude:2026-10-25T11:30:00+02:00 — Hauptattribut (1.4.0 Raid, Spec §10.5): zählt als Stärke/Geschick/Intelligenz je nach Stil der getragenen Haupthand.
+  if (item.primaryAttribute) {
+    const main = gstate ? content.items[gstate.character.equipment.mainhand ?? ""] : undefined;
+    const attrId = PRIMARY_ATTR_BY_STYLE[main?.weaponStyle ?? "melee"] ?? "str";
+    const nameLS = ATTR_NAME[attrId];
+    rows.push(
+      <StatRow
+        key="primary"
+        icon={statIcon(ATTR_UI[attrId] ?? "", attributeIcon(attrId))}
+        label={t("itip.primaryAttr").replace("{attr}", nameLS ? tr(nameLS) : attrId.toUpperCase())}
+        value={fmtBonus(item.primaryAttribute)}
+      />,
+    );
+  }
+  for (const [attr, v] of Object.entries(item.modifiers ?? {})) {
     if (v) {
       const attrNameLS = ATTR_NAME[attr];
       const attrLabel = attrNameLS ? tr(attrNameLS) : attr.toUpperCase();
@@ -956,9 +975,24 @@ function AttributesGroup({
 /** SKILL (Boosts): OSRS-Stil Skill-Level-Boosts aus Schmuck/Signaturen/Sets (Itemization 2.0 §4). */
 function SkillGroup({ item, compareMap }: { item: ItemDef; compareMap?: Record<string, number> | null }): JSX.Element | null {
   const { t, tr } = useI18n();
-  if (!item.skillBoost) return null;
+  const gstate = useGameStateMaybe();
+  if (!item.skillBoost && !item.primarySkillBoost) return null;
   const rows: JSX.Element[] = [];
-  for (const [id, v] of Object.entries(item.skillBoost)) {
+  if (item.primarySkillBoost) {
+    const main = gstate ? content.items[gstate.character.equipment.mainhand ?? ""] : undefined;
+    const sid = PRIMARY_SKILL_BY_STYLE[main?.weaponStyle ?? "melee"] ?? "power";
+    const sk = content.skills[sid];
+    rows.push(
+      <StatRow
+        key="primarySkill"
+        icon={skillBoostIcon(sid)}
+        label={t("itip.primarySkill").replace("{skill}", sk ? tr(sk.name) : sid)}
+        value={fmtBonus(item.primarySkillBoost)}
+        tone="var(--boost)"
+      />,
+    );
+  }
+  for (const [id, v] of Object.entries(item.skillBoost ?? {})) {
     if (v) {
       const skill = content.skills[id];
       const label = skill ? tr(skill.name) : id;
@@ -1392,8 +1426,10 @@ function EffectBlock({ item }: { item: ItemDef }): JSX.Element | null {
 function SetBonusSection({ item }: { item: ItemDef }): JSX.Element | null {
   const state = useGameStateMaybe();
   const { t, tr } = useI18n();
-  const set = content.sets.find((s) => s.pieces.includes(item.id));
+  const set = content.sets.find((s) => s.pieces.includes(item.variantOf ?? item.id));
   if (!set) return null;
+  // claude:2026-10-25T11:30:00+02:00 — Stufen-Sets (Raid R7): alle Stufen mit Attributen und Effekttexten, Zähler über Varianten.
+  if (set.tiers && set.tiers.length > 0) return <SetTiersSection set={set} />;
   const equipped = state
     ? new Set(Object.values(state.character.equipment).filter((id): id is string => !!id))
     : new Set<string>();
@@ -1411,6 +1447,72 @@ function SetBonusSection({ item }: { item: ItemDef }): JSX.Element | null {
           („Ab 3 Teilen:") statt als kryptisches „(3)". */}
       <div className="itip-set-bonus">
         {t("itip.set.threshold").replace("{n}", String(set.minPieces))} {fx}
+      </div>
+    </div>
+  );
+}
+
+/** Zahl ohne Nachkomma-Rauschen (1.5, 20, 0.25). */
+function fxNum(x: number): string {
+  return String(Number(x.toFixed(1)));
+}
+
+/** Ein Satz je Set-Effekt (7 Sprachen über itip.setfx.<kind>). */
+function setEffectText(e: SetEffectDef, t: (k: string) => string): string {
+  const pct = (v: number | undefined): string => fxNum((v ?? 0) * 100);
+  return t(`itip.setfx.${e.kind}`)
+    .replace("{pct}", pct(e.value))
+    .replace("{value}", e.kind === "bloodToll" ? fxNum(e.value ?? 0) : pct(e.value))
+    .replace("{s}", fxNum((e.kind === "burnDurationMs" ? (e.value ?? 0) : (e.cooldownMs ?? 0)) / 1000))
+    .replace("{perStack}", pct(e.perStack))
+    .replace("{max}", String(e.maxStacks ?? 0))
+    .replace("{every}", String(e.every ?? 0))
+    .replace("{wardPct}", pct(e.wardPct))
+    .replace("{healPct}", pct(e.healPct));
+}
+
+function tierBonusText(tier: SetTierDef, tr: (v: LocalizedString) => string): string {
+  const p: string[] = [];
+  for (const [attr, v] of Object.entries(tier.modifiers ?? {})) {
+    if (!v) continue;
+    const nameLS = ATTR_NAME[attr];
+    p.push(`+${v} ${nameLS ? tr(nameLS) : attr.toUpperCase()}`);
+  }
+  for (const [id, v] of Object.entries(tier.skillBoost ?? {})) {
+    if (!v) continue;
+    const sk = content.skills[id];
+    p.push(`+${v} ${sk ? tr(sk.name) : id}`);
+  }
+  return p.join(", ");
+}
+
+function SetTiersSection({ set }: { set: SetDef }): JSX.Element {
+  const state = useGameStateMaybe();
+  const { t, tr } = useI18n();
+  const worn = state ? countSetPieces(state, content, set) : 0;
+  return (
+    <div className={`itip-set${worn >= (set.tiers?.[0]?.pieces ?? 99) ? " active" : ""}`}>
+      <div className="itip-set-name">
+        {tr(set.name)} <span className="itip-set-count">({worn}/{set.pieces.length})</span>
+      </div>
+      <div className="itip-set-tiers">
+        {set.tiers!.map((tier) => {
+          const on = worn >= tier.pieces;
+          const nameKey = `raid.setTier.${set.id}.${tier.pieces}`;
+          const nm = t(nameKey);
+          return (
+            <div key={tier.pieces} className={`itip-set-tier${on ? " on" : ""}`}>
+              <div className="itip-set-tier-head">
+                {t("itip.set.tier").replace("{n}", String(tier.pieces))}
+                {nm !== nameKey ? ` · ${nm}` : ""}
+              </div>
+              {tierBonusText(tier, tr) && <div className="itip-set-tier-fx">{tierBonusText(tier, tr)}</div>}
+              {(tier.effects ?? []).map((e, i) => (
+                <div key={i} className="itip-set-tier-fx">{setEffectText(e, t)}</div>
+              ))}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -1572,6 +1674,8 @@ function ItemTooltipCard({
     item.bonus ||
     item.modifiers ||
     item.skillBoost ||
+    item.primaryAttribute || // claude:2026-10-25T11:30:00+02:00 — Hauptattribut (1.4.0 Raid)
+    item.primarySkillBoost ||
     item.healAmount ||
     item.healPct != null ||
     item.curesPoison ||

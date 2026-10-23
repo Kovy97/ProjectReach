@@ -1,4 +1,5 @@
 import type {
+  BossPhase,
   CombatEvent,
   CombatState,
   ContentDB,
@@ -15,7 +16,9 @@ import type {
   MonsterDef,
   MonsterId,
   PetId,
+  RaidWeeklyModifierId,
   RngState,
+  SetEffectDef,
   SpecialEffectType,
   StatusEffect,
   StatusType,
@@ -104,6 +107,7 @@ import {
   PET_EXECUTE_BLEED_MULT,
   PET_FROSTBITE_FREEZE_EVERY,
   PET_POISON_SLOW_PCT,
+  ARMOR_PEN_CAP, // claude:2026-10-25T05:40:00+02:00 — Offenes Zeughaus (1.4.0 Raid §7): Deckel bleibt
 } from "@hearthforge/shared";
 import { nextFloat, nextInt } from "./rng";
 import { blessingChance, blessingMult, shrineAmplifiedMult } from "./blessing";
@@ -116,7 +120,7 @@ import { campShrineBonus } from "./camp";
 // denselben Intake-Pfad wie der Erst-Drop (tryCraftSuffix → intakeInstance).
 import { intakeInstance, mintInstanceId } from "./enchant";
 import { levelFromXp } from "./leveling";
-import { computeStats } from "./character";
+import { activeSetEffects, computeStats } from "./character";
 import { combatLevel } from "./dungeon";
 import { itemCount, removeItem } from "./inventory";
 import { grantLoot } from "./mail";
@@ -147,6 +151,17 @@ import { tryCraftSuffix } from "./suffix";
 // Kill-Abschluss in onEnemyDefeated, Aufräum-Zeilen in stopCombat/onPlayerDefeated). Die gesamte
 // Zyklus-/Kill-Logik lebt in elites.ts.
 import { eliteCombatMonster, onEliteKilled } from "./elites";
+// claude:2026-10-25T05:40:00+02:00 — Raid-Andockstellen (1.4.0 Welle 4; Modul engine/raid.ts entscheidet, combat.ts ruft): Gegner-
+// Auflösung (raidCombatMonster), Phasen-Faktoren, Wochen-Modifikator, Wellen-Kill, Raum-Abschluss, Tod/Patt.
+import {
+  activeRaidFight,
+  onRaidDefeat,
+  onRaidMonsterKilled,
+  onRaidRoomCleared,
+  raidCombatMonster,
+  raidDamageFactor,
+  raidDefenseFactor,
+} from "./raid";
 
 /** Quelle eines Heil-/Absorptions-Events fürs Combat-Log (Task #220). Siehe CombatEvent.source. */
 type HealSource = NonNullable<CombatEvent["source"]>;
@@ -511,6 +526,7 @@ export function stopCombat(state: GameState): void {
   state.combat.encounterXp = undefined; // Begegnung vorbei → XP-Akkumulator verfällt
   state.combat.effectCounters = undefined; // Spezial-Effekt-Zähler resetten bei Kampfende (§2.3.4)
   state.combat.elemental = undefined; // Elementar-Zähler (Frost/Schock/Gift) verfallen bei Kampfende
+  resetBossPhase(state.combat); // claude:2026-10-25T05:50:00+02:00 — Bossphasen-Zustand verfällt bei Kampfende
   // BEWUSST NICHT geleert: cooldownRemainingMs + lastKill. Der Kill-Cooldown gilt IMMER — Stop+Start
   // darf ihn nicht überspringen (startCombat übernimmt den Rest). Außerhalb des Kampfs ruht er
   // eingefroren (combatStep läuft nicht) und läuft beim nächsten Kampfstart zu Ende. Seit Sweep6
@@ -827,7 +843,15 @@ function delayNextAttack(cs: CombatState, side: Side, resist = 0): number {
  * braucht ab WIS_FROST_EXTRA_STACK_RESIST eine Anwendung mehr zum Einfrieren. Dauer/Magnitude der
  * DoTs skaliert bereits der Aufrufer (applyMonsterInflict).
  */
-function onStatusApplied(cs: CombatState, side: Side, type: StatusType, isNew: boolean, resist = 0): void {
+function onStatusApplied(
+  cs: CombatState,
+  side: Side,
+  type: StatusType,
+  isNew: boolean,
+  resist = 0,
+  // claude:2026-10-25T05:40:00+02:00 — Gift-Stapel-Deckel (Schleichende Seuche 4/5: 7 auf dem Gegner, Spec §6.1); sonst POISON_MAX_STACKS.
+  poisonMaxStacks = POISON_MAX_STACKS,
+): void {
   const by: Side = side === "enemy" ? "player" : "enemy";
   if (type === "shock") {
     if (delayNextAttack(cs, side, resist) <= 0 && isNew) pushLog(cs, { by, kind: "status", amount: 0, status: type });
@@ -835,7 +859,7 @@ function onStatusApplied(cs: CombatState, side: Side, type: StatusType, isNew: b
   }
   if (type === "poison") {
     const c = sideCounters(cs, side);
-    const stacks = Math.min(POISON_MAX_STACKS, (isNew ? 0 : Math.max(1, c.poisonStacks)) + 1);
+    const stacks = Math.min(poisonMaxStacks, (isNew ? 0 : Math.max(1, c.poisonStacks)) + 1);
     const grew = stacks !== c.poisonStacks;
     c.poisonStacks = stacks;
     if (isNew) pushLog(cs, { by, kind: "status", amount: 0, status: type });
@@ -901,6 +925,475 @@ function mainhandStatusEffects(state: GameState, content: ContentDB): WeaponEffe
 /** Trägt die Mainhand (Basis oder Enchant-Proc) einen Schock-Status? (Überspringen bei Krit, s. strikeEnemy.) */
 function weaponHasShock(state: GameState, content: ContentDB): boolean {
   return mainhandStatusEffects(state, content).some((e) => e.type === "shock");
+}
+
+// ── Raid: Set-Effekte und Wochen-Modifikatoren (1.4.0 Welle 4, Spec 1.4.0-balance-raid.md §6.1/§7) ─────────────
+// claude:2026-10-25T05:40:00+02:00 — Einmal je Tick gesammelt (combatMods). Ohne Stufen-Set und außerhalb des Raids ist es die
+// geteilte Konstante NO_COMBAT_MODS, und jeder Zweig unten ist ein No-op (gleiche Rechnung, keine neuen RNG-Züge).
+
+/** Aggregierte Set-Effekte der getragenen Stufen-Sets (Werte §6.1, Spezifikations-Spalte). */
+interface SetCombatFx {
+  burnDamagePct: number;
+  burnDurationMs: number;
+  poisonDamagePct: number;
+  bleedDamagePct: number;
+  fireInterest?: SetEffectDef;
+  fireCollection?: SetEffectDef;
+  creepingPlague?: SetEffectDef;
+  outbreak?: SetEffectDef;
+  openWounds?: SetEffectDef;
+  bloodToll?: SetEffectDef;
+}
+
+/** Kampf-Kontext je Tick: Set-Effekte + Raid (Wochen-Modifikator, Raum-Boss). */
+interface CombatMods {
+  set: SetCombatFx | null;
+  inRaid: boolean;
+  modifier: RaidWeeklyModifierId | null;
+  raidBossId: MonsterId | null;
+  /** Gift-Stapel-Deckel auf dem Gegner (Schleichende Seuche 7, sonst POISON_MAX_STACKS). */
+  poisonMaxStacks: number;
+  /** Blutungs-Stapel-Deckel auf dem Gegner; 0 = Blutung stapelt nicht (heutige Logik). */
+  bleedMaxStacks: number;
+}
+
+const NO_COMBAT_MODS: CombatMods = Object.freeze({
+  set: null,
+  inRaid: false,
+  modifier: null,
+  raidBossId: null,
+  poisonMaxStacks: POISON_MAX_STACKS,
+  bleedMaxStacks: 0,
+});
+
+/** Gleiche Kinds aus mehreren Stufen/Sets: Prozente und Dauern summieren, bei Mechanik-Kinds gilt der stärkere `value`. */
+function collectSetCombatFx(effects: readonly SetEffectDef[]): SetCombatFx | null {
+  if (effects.length === 0) return null;
+  const s: SetCombatFx = { burnDamagePct: 0, burnDurationMs: 0, poisonDamagePct: 0, bleedDamagePct: 0 };
+  for (const e of effects) {
+    const v = e.value ?? 0;
+    switch (e.kind) {
+      case "burnDamagePct":
+        s.burnDamagePct += v;
+        break;
+      case "burnDurationMs":
+        s.burnDurationMs += v;
+        break;
+      case "poisonDamagePct":
+        s.poisonDamagePct += v;
+        break;
+      case "bleedDamagePct":
+        s.bleedDamagePct += v;
+        break;
+      default: {
+        const prev = s[e.kind];
+        if (!prev || (prev.value ?? 0) < v) s[e.kind] = e;
+      }
+    }
+  }
+  return s;
+}
+
+/** claude:2026-10-25T05:40:00+02:00 — Set-Effekte + Raid-Kontext dieses Ticks (rein lesend, kein RNG). */
+function combatMods(state: GameState, content: ContentDB): CombatMods {
+  const set = collectSetCombatFx(activeSetEffects(state, content));
+  const raid = state.combat.dungeonId ? activeRaidFight(state, content) : null;
+  if (!set && !raid) return NO_COMBAT_MODS;
+  return {
+    set,
+    inRaid: !!raid,
+    modifier: raid?.run.modifier ?? null,
+    raidBossId: raid?.room.bossId ?? null,
+    poisonMaxStacks: set?.creepingPlague ? Math.max(1, Math.round(set.creepingPlague.maxStacks ?? 7)) : POISON_MAX_STACKS,
+    bleedMaxStacks: set?.openWounds ? Math.max(1, Math.round(set.openWounds.maxStacks ?? 3)) : 0,
+  };
+}
+
+/**
+ * Dauer eines SPIELER-Status auf dem Gegner nach Set und Woche: Ornat 2/5 Brand +ms, Giftküche Gift ×1,5, Blutfest
+ * Blutung ×1,5 (die Spielerseite des Blutfests trägt raidCombatMonster bzw. die Phasen-inflict). Sonst unverändert.
+ */
+function playerStatusDuration(type: StatusType, durationMs: number, cm: CombatMods): number {
+  if (cm === NO_COMBAT_MODS) return durationMs;
+  let d = durationMs;
+  if (type === "burn" && cm.set && cm.set.burnDurationMs > 0) d += cm.set.burnDurationMs;
+  if (type === "poison" && cm.modifier === "poison_kitchen") d = Math.round(d * 1.5);
+  if (type === "bleed" && cm.modifier === "blood_feast") d = Math.round(d * 1.5);
+  return d;
+}
+
+/** Schadensfaktor eines Spieler-DoT-Typs auf dem Gegner (Set 2/5, Offene Wunden, Geliehenes Feuer). 1 ohne Mods. */
+function playerDotSetMult(cs: CombatState, type: StatusType, cm: CombatMods): number {
+  if (cm === NO_COMBAT_MODS) return 1;
+  const set = cm.set;
+  if (type === "burn") return (1 + (set?.burnDamagePct ?? 0)) * (cm.modifier === "borrowed_fire" ? 1.1 : 1);
+  if (type === "poison") return 1 + (set?.poisonDamagePct ?? 0);
+  if (type === "bleed") {
+    let m = 1 + (set?.bleedDamagePct ?? 0);
+    const stacks = cs.effectCounters?.bleedStacks ?? 0;
+    if (set?.openWounds && stacks > 1) m *= 1 + (set.openWounds.value ?? 0) * (stacks - 1);
+    return m;
+  }
+  return 1;
+}
+
+/** Per-Tick-Konstanten der Gegner-DoTs (geteilt von tickEnemyEffects und den Set-Einlösungen). */
+interface EnemyDotCtx {
+  vuln: number;
+  poisonStacks: number;
+  burnPetMult: number;
+  bleedPetMult: number;
+  dotMult: number;
+  statusVsWardMult: number;
+  cm: CombatMods;
+}
+
+function enemyDotCtx(
+  state: GameState,
+  fx: SpecialEffects,
+  monster: MonsterDef | undefined,
+  petKind: ActivePetAbility["kind"] | undefined,
+  talentDmgMult: number,
+  cm: CombatMods,
+): EnemyDotCtx {
+  const cs = state.combat;
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-DoT-Modifikatoren (nur solange das Pet in Platz 1 aktiv ist):
+  // Schlackenscheusal (emberBrand): Brand-Ticks × (1 + 0.10 × (Glut-Stapel − 1));
+  // Blutbracke (executeBleed): Blutungs-Ticks × 2 unter 50 % Gegner-LP. Ohne Pet Faktor 1 (bit-identisch).
+  const burnPetMult =
+    petKind === "emberBrand"
+      ? 1 + PET_EMBER_BRAND_STACK_BONUS * Math.max(0, (cs.elemental?.enemy.emberStacks ?? 0) - 1)
+      : 1;
+  const bleedPetMult =
+    petKind === "executeBleed" && monster && cs.enemyHp < PET_EXECUTE_BLEED_BELOW * monster.maxHp
+      ? PET_EXECUTE_BLEED_MULT
+      : 1;
+  return {
+    // Elementar-Effekte: Glut (brennendes Ziel ×(1+BURN_VULNERABILITY) auf JEDEN DoT-Tick, auch den Brand
+    // selbst) und Gift-Stapel (Schaden × Stapel). Ohne Brand/Gift Faktor 1 bzw. Stapel 1 ⇒ bit-identisch.
+    vuln: burnVulnMult(cs.enemyEffects),
+    poisonStacks: poisonStacksOf(cs, "enemy"),
+    burnPetMult,
+    bleedPetMult,
+    // gutter (Ausweider, §2.1): eigene DoT-Ticks am Gegner (burn/bleed/poison — alle vom Spieler/Pet
+    // appliziert) schlagen um +Anteil härter. Kein RNG.
+    // claude:2026-10-18T12:00:00+02:00 — Narbenbuch „Narbenfaust" (damagePct): auch eigene DoT-Ticks; ohne Rang ×1.
+    dotMult: (fx.gutter ? 1 + Math.max(0, fx.gutter.magnitude) : 1) * talentDmgMult,
+    // Status-vs-Ward-Konter (Chef-Design, s. STATUS_VS_WARD_MULT-Doku in shared): TRAIT-basiert auf
+    // `wardCapacity > 0` — gilt den GESAMTEN Kampf über, auch nach Ward-Bruch (nicht an den aktuellen
+    // Pool-Stand `cs.enemyWard` gekoppelt). DoT-Ticks schlagen unten ohnehin schon direkt auf `enemyHp`
+    // durch (umgehen den Ward-Pool bereits vor diesem Fix) — hier NUR der reine Schadens-Mult.
+    statusVsWardMult: (monster?.wardCapacity ?? 0) > 0 ? STATUS_VS_WARD_MULT : 1,
+    cm,
+  };
+}
+
+/**
+ * Schaden je Sekunde eines Gegner-DoTs: `perSec` = Anzeige-Wert (wie bisher geloggt), `total` = tatsächlicher HP-Schaden
+ * je Sekunde (× gutter/Narbenbuch × Status-vs-Ward). Für frost/shock/void null. Die Faktor-Reihenfolge ist die der alten
+ * Inline-Rechnung (bit-identisch ohne Set/Raid).
+ */
+function enemyDotRate(cs: CombatState, ctx: EnemyDotCtx, e: StatusEffect): { perSec: number; total: number } | null {
+  if (e.type !== "poison" && e.type !== "burn" && e.type !== "bleed") return null;
+  const petMult = e.type === "burn" ? ctx.burnPetMult : e.type === "bleed" ? ctx.bleedPetMult : 1;
+  let perSec = e.magnitude * (e.type === "poison" ? ctx.poisonStacks : 1) * ctx.vuln * petMult;
+  const setMult = playerDotSetMult(cs, e.type, ctx.cm); // claude:2026-10-25T05:40:00+02:00 — Set 2/5, Offene Wunden, Geliehenes Feuer
+  if (setMult !== 1) perSec *= setMult;
+  return { perSec, total: perSec * ctx.dotMult * ctx.statusVsWardMult };
+}
+
+/** Restschaden eines Gegner-DoTs (Rate × Restdauer) für Eintreibung/Ausbruch/Blutzoll. */
+function enemyDotResidual(
+  state: GameState,
+  content: ContentDB,
+  monster: MonsterDef,
+  fx: SpecialEffects,
+  cm: CombatMods,
+  e: StatusEffect,
+): number {
+  const ctx = enemyDotCtx(state, fx, monster, petCombatAbility(state, content)?.kind, talentDamageMult(state, content), cm);
+  const rate = enemyDotRate(state.combat, ctx, e);
+  return rate ? rate.total * (Math.max(0, e.remainingMs) / 1000) : 0;
+}
+
+/** Zinsfeuer-Stufen (volle Sekunden Brand, gedeckelt). 0 ohne Effekt. */
+function fireInterestStacks(cs: CombatState, cm: CombatMods): number {
+  const fi = cm.set?.fireInterest;
+  if (!fi) return 0;
+  return Math.min(Math.max(0, Math.round(fi.maxStacks ?? 8)), Math.floor((cs.effectCounters?.fireInterestMs ?? 0) / 1000));
+}
+
+/** Set-Abklingzeiten (Ausbruch, Blutzoll) laufen in Kampf-Ticks, auch in der Kill-Pause. Ohne Zähler ein No-op. */
+function tickSetCooldowns(cs: CombatState): void {
+  const ec = cs.effectCounters;
+  if (!ec) return;
+  if ((ec.outbreakCdMs ?? 0) > 0) ec.outbreakCdMs = Math.max(0, (ec.outbreakCdMs ?? 0) - TICK_MS);
+  if ((ec.bloodTollCdMs ?? 0) > 0) ec.bloodTollCdMs = Math.max(0, (ec.bloodTollCdMs ?? 0) - TICK_MS);
+}
+
+/**
+ * Eintreibung (Ornat 5/5, Spec §6.1): jeder `every`-te Zauber (gezählt je Cast) detoniert den Brand: (value + perStack ×
+ * Zinsstufen) des Restschadens sofort auf die HP (wie ein DoT, am Ward vorbei), Neuentzündung mit voller Dauer, Zins bleibt;
+ * der Ward füllt sich um `wardPct` des Betrags. Ohne Brand auf dem Ziel zählt der Zauber, detoniert aber nichts. Kein RNG.
+ */
+function tryFireCollection(
+  state: GameState,
+  content: ContentDB,
+  stats: DerivedStats,
+  monster: MonsterDef,
+  fx: SpecialEffects,
+  cm: CombatMods,
+): void {
+  const fc = cm.set?.fireCollection;
+  if (!fc) return;
+  const cs = state.combat;
+  const ec = effectCounters(cs);
+  ec.castCount = (ec.castCount ?? 0) + 1;
+  const every = Math.max(1, Math.round(fc.every ?? 5));
+  if (ec.castCount % every !== 0 || cs.enemyHp <= 0) return;
+  const burn = cs.enemyEffects.find((e) => e.type === "burn");
+  if (!burn) return;
+  const share = (fc.value ?? 0) + (fc.perStack ?? 0) * fireInterestStacks(cs, cm);
+  const dmg = Math.round(enemyDotResidual(state, content, monster, fx, cm, burn) * share);
+  // Neuentzündung: volle Dauer des eigenen Brands (Waffe/Pfeil + Katalysator + Set), nie kürzer als der Rest.
+  const catalystMs = fx.catalyst ? Math.max(0, fx.catalyst.durationMs) : 0;
+  let full = 0;
+  for (const e of mainhandStatusEffects(state, content)) if (e.type === "burn") full = Math.max(full, e.durationMs);
+  const arrowFx = activeArrow(state, content)?.def.effect;
+  if (arrowFx?.type === "burn") full = Math.max(full, arrowFx.durationMs);
+  if (full > 0) burn.remainingMs = Math.max(burn.remainingMs, playerStatusDuration("burn", full + catalystMs, cm));
+  if (dmg <= 0) return;
+  cs.enemyHp -= dmg;
+  let restored = 0;
+  if ((fc.wardPct ?? 0) > 0 && stats.maxWard > 0) {
+    const before = state.character.ward;
+    state.character.ward = Math.min(stats.maxWard, before + dmg * (fc.wardPct ?? 0));
+    restored = Math.round((state.character.ward - before) * 10) / 10;
+  }
+  pushLog(cs, {
+    by: "player",
+    kind: "hit",
+    amount: dmg,
+    hitKind: "fireCollection",
+    ...(restored > 0 ? { wardRestored: restored } : {}),
+  });
+}
+
+/**
+ * Ausbruch (Pirschgewand 5/5) und Blutzoll (Blutschwur 5/5), Spec §6.1: ein GELANDETER Treffer auf ein Ziel mit vollen
+ * Stapeln (Stand VOR den Status-Procs dieses Treffers) löst sie aus. Ausbruch: `value` × Gift-Restschaden sofort, Stapel
+ * halbieren (7 → 3). Blutzoll: `value` × Blutungs-Restschaden sofort, Heilung `healPct` davon, Blutung erlischt. Beide mit
+ * eigener Abklingzeit, beide direkt auf die HP (wie DoTs), ohne XP und ohne RNG.
+ */
+function trySetDetonations(
+  state: GameState,
+  content: ContentDB,
+  stats: DerivedStats,
+  monster: MonsterDef,
+  fx: SpecialEffects,
+  cm: CombatMods,
+): void {
+  const set = cm.set;
+  if (!set || (!set.outbreak && !set.bloodToll)) return;
+  const cs = state.combat;
+  if (set.outbreak && cs.enemyHp > 0) {
+    const ec = effectCounters(cs);
+    const poison = cs.enemyEffects.find((e) => e.type === "poison");
+    const stacks = cs.elemental?.enemy.poisonStacks ?? 0;
+    if (poison && (ec.outbreakCdMs ?? 0) <= 0 && stacks >= cm.poisonMaxStacks) {
+      const dmg = Math.round(enemyDotResidual(state, content, monster, fx, cm, poison) * (set.outbreak.value ?? 1));
+      sideCounters(cs, "enemy").poisonStacks = Math.max(1, Math.floor(stacks / 2));
+      ec.outbreakCdMs = Math.max(0, set.outbreak.cooldownMs ?? 8000);
+      if (dmg > 0) {
+        cs.enemyHp -= dmg;
+        pushLog(cs, { by: "player", kind: "hit", amount: dmg, hitKind: "outbreak" });
+      }
+    }
+  }
+  if (set.bloodToll && cs.enemyHp > 0 && cm.bleedMaxStacks > 0) {
+    const ec = effectCounters(cs);
+    const bleed = cs.enemyEffects.find((e) => e.type === "bleed");
+    if (bleed && (ec.bloodTollCdMs ?? 0) <= 0 && (ec.bleedStacks ?? 0) >= cm.bleedMaxStacks) {
+      const dmg = Math.round(enemyDotResidual(state, content, monster, fx, cm, bleed) * (set.bloodToll.value ?? 1));
+      cs.enemyEffects = cs.enemyEffects.filter((e) => e.type !== "bleed");
+      ec.bleedStacks = 0;
+      ec.bloodTollCdMs = Math.max(0, set.bloodToll.cooldownMs ?? 8000);
+      if (dmg > 0) {
+        cs.enemyHp -= dmg;
+        pushLog(cs, { by: "player", kind: "hit", amount: dmg, hitKind: "bloodToll" });
+        if (state.character.hp > 0) healPlayer(state, stats.maxHp, dmg * (set.bloodToll.healPct ?? 0), "effect");
+      }
+    }
+  }
+}
+
+// ── Bossphasen (1.4.0 Raid R4, Spec §3 Regeln 1–6) ───────────────────────────────────────────────────────────
+// claude:2026-10-25T05:40:00+02:00 — Die Phase ist die tiefste erreichte HP-Schwelle (absolut, monoton je Begegnung). Felder,
+// die die Phase nicht nennt, fallen auf die (skalierte) Basis zurück. Zustand transient in CombatState.bossPhase*.
+
+/** Phasen absteigend nach Schwelle (je Content-Array gecacht). null ohne Phasen. */
+const sortedPhasesCache = new WeakMap<readonly BossPhase[], BossPhase[]>();
+function sortedPhases(m: MonsterDef): BossPhase[] | null {
+  const p = m.phases;
+  if (!p || p.length === 0) return null;
+  let sorted = sortedPhasesCache.get(p);
+  if (!sorted) {
+    sorted = [...p].sort((a, b) => b.atHpPct - a.atHpPct);
+    sortedPhasesCache.set(p, sorted);
+  }
+  return sorted;
+}
+
+/** Aktive Phase des laufenden Bosses (undefined in der Basis oder ohne Phasen). */
+function currentBossPhase(cs: CombatState, m: MonsterDef): BossPhase | undefined {
+  const k = cs.bossPhase ?? 0;
+  return k > 0 ? sortedPhases(m)?.[k - 1] : undefined;
+}
+
+/**
+ * Neuer Gegner (Welle/Respawn): Phasen-Zustand frisch. Mit Phasen explizit 0 (dann gilt jede Schwelle, auch durch
+ * overkillCarry beim Spawn, als im Kampf betreten → Schild), ohne Phasen werden vorhandene Felder geräumt.
+ */
+function resetBossPhase(cs: CombatState, next?: MonsterDef): void {
+  if (next && sortedPhases(next)) {
+    cs.bossPhase = 0;
+    cs.bossPhaseMs = 0;
+    cs.bossAttackCount = 0;
+  } else if (cs.bossPhase !== undefined || cs.bossPhaseMs !== undefined || cs.bossAttackCount !== undefined) {
+    cs.bossPhase = undefined;
+    cs.bossPhaseMs = undefined;
+    cs.bossAttackCount = undefined;
+  }
+}
+
+/**
+ * Gleicht die Phase mit den aktuellen HP ab und liefert die Gegner-Instanz der aktiven Phase. `resolved` ist die aufgelöste
+ * (ggf. Raid-/Paragon-/Elite-skalierte) Instanz ohne Phase. Regeln:
+ *  - Fehlt `bossPhase` (nach dem Laden), wird die Phase STILL aus den HP abgeleitet (kein Schild, kein Log; Regel 4).
+ *  - Sonst: neu erreichte Schwellen werden betreten; jeder Ward-Schild der übersprungenen Phasen gilt (Regel 2), Schild in %
+ *    der skalierten maxHp (Regel 5), Log `phase` je Phase, Patt-Zähler zurück (Regel 3), Rampe/Zähler neu, laufende
+ *    Status, gegen die die neue Phase resistent ist, erlöschen.
+ *  - Werte: Takt × attackIntervalMult × Rampe, Schaden × damageMult, absolute Rüstung × raidDefenseFactor, regen ersetzt
+ *    (skaliert wie der Basis-Regen der Instanz), inflict ersetzt (Stärke × raidDamageFactor, Blutfest-Blutung ×1,5),
+ *    resist ersetzt.
+ * Ohne Phasen liefert sie `resolved` unverändert (kein Zugriff, keine Allokation).
+ */
+function syncBossPhase(state: GameState, content: ContentDB, resolved: MonsterDef, cm: CombatMods): MonsterDef {
+  const sorted = sortedPhases(resolved);
+  if (!sorted) return resolved;
+  const cs = state.combat;
+  const reached = phasesReachedByHp(sorted, cs.enemyHp, resolved.maxHp);
+  if (cs.bossPhase === undefined) {
+    cs.bossPhase = reached;
+    cs.bossPhaseMs = 0;
+    cs.bossAttackCount = 0;
+  } else if (reached > cs.bossPhase) {
+    let shield = 0;
+    for (let k = cs.bossPhase + 1; k <= reached; k++) {
+      const ph = sorted[k - 1]!;
+      if ((ph.wardShieldPct ?? 0) > 0) shield += (ph.wardShieldPct ?? 0) * resolved.maxHp;
+      pushLog(cs, { by: "enemy", kind: "phase", amount: k, phaseKey: ph.logKey });
+    }
+    if (shield > 0) cs.enemyWard = (cs.enemyWard ?? resolved.wardCapacity ?? 0) + Math.round(shield);
+    cs.bossPhase = reached;
+    cs.bossPhaseMs = 0;
+    cs.bossAttackCount = 0;
+    const res = sorted[reached - 1]!.resist;
+    if (res && res.length > 0 && cs.enemyEffects.some((e) => res.includes(e.type))) {
+      cs.enemyEffects = cs.enemyEffects.filter((e) => !res.includes(e.type));
+    }
+    resetStalemate(cs);
+  }
+  return phasedMonster(state, content, resolved, cs.bossPhase > 0 ? sorted[cs.bossPhase - 1] : undefined, cm.modifier);
+}
+
+/** Zahl der erreichten Phasen bei diesen HP (Phasen absteigend; erreicht = HP-Anteil ≤ atHpPct). */
+function phasesReachedByHp(sorted: readonly BossPhase[], enemyHp: number, maxHp: number): number {
+  const frac = maxHp > 0 ? enemyHp / maxHp : 1;
+  let reached = 0;
+  while (reached < sorted.length && frac <= sorted[reached]!.atHpPct) reached++;
+  return reached;
+}
+
+/** claude:2026-10-25T05:50:00+02:00 — Gegner-Auflösung des Kampfs: Paragon → Elite → Raid → Content (ohne Phase). */
+function resolveCombatMonster(state: GameState, content: ContentDB): MonsterDef | undefined {
+  const cs = state.combat;
+  if (cs.monsterId === null) return undefined;
+  return cs.paragonFloor
+    ? paragonCombatMonster(state, content)
+    : cs.eliteVariantId
+      ? eliteCombatMonster(state, content)
+      : (raidCombatMonster(state, content) ?? content.monsters[cs.monsterId]);
+}
+
+/** Rein lesend: Instanz einer Phase (s. syncBossPhase, Abschnitt „Werte“). Ohne Phase `resolved` selbst. */
+function phasedMonster(
+  state: GameState,
+  content: ContentDB,
+  resolved: MonsterDef,
+  phase: BossPhase | undefined,
+  modifier: RaidWeeklyModifierId | null,
+): MonsterDef {
+  if (!phase) return resolved;
+  const cs = state.combat;
+  let interval = resolved.attackIntervalMs * (phase.attackIntervalMult ?? 1);
+  const ramp = phase.intervalRamp;
+  if (ramp && ramp.everyMs > 0) {
+    const steps = Math.min(Math.max(0, ramp.maxStacks), Math.floor((cs.bossPhaseMs ?? 0) / ramp.everyMs));
+    if (steps > 0) interval *= Math.pow(ramp.mult, steps);
+  }
+  const m: MonsterDef = { ...resolved, attackIntervalMs: interval, damage: resolved.damage * (phase.damageMult ?? 1) };
+  if (phase.defense !== undefined) m.defense = Math.round(phase.defense * raidDefenseFactor(state, content));
+  if (phase.regen !== undefined) {
+    // Phasen-Regen ist ein Normal-Wert: × derselbe Faktor, mit dem die Instanz ihren Basis-Regen skaliert (Raid-Stufe).
+    const base = content.monsters[resolved.id];
+    const factor =
+      base && (base.regen ?? 0) > 0 && resolved.regen !== undefined
+        ? resolved.regen / base.regen!
+        : base && base.maxHp > 0
+          ? resolved.maxHp / base.maxHp
+          : 1;
+    m.regen = phase.regen * factor;
+  }
+  if (phase.inflict) {
+    const inf = phase.inflict;
+    m.inflict = {
+      ...inf,
+      magnitude: inf.magnitude * raidDamageFactor(state, content),
+      durationMs: inf.type === "bleed" && modifier === "blood_feast" ? Math.round(inf.durationMs * 1.5) : inf.durationMs,
+    };
+  }
+  if (phase.resist) m.resist = phase.resist;
+  return m;
+}
+
+/**
+ * claude:2026-10-25T05:50:00+02:00 — Der Gegner, wie der Kampf ihn gerade sieht (rein lesend, kein RNG, keine Mutation): aufgelöst
+ * Paragon → Elite → Raid → Content und mit der aktiven Bossphase (`bossPhase`, sonst aus den HP abgeleitet). Für die UI
+ * (Raid-HUD, Bossleiste, Gegnerwerte) und Tests. undefined ohne Kampf.
+ */
+export function combatMonsterView(state: GameState, content: ContentDB): MonsterDef | undefined {
+  const resolved = resolveCombatMonster(state, content);
+  if (!resolved) return undefined;
+  const phase = combatBossPhase(state, content, resolved);
+  if (!phase) return resolved;
+  const raid = state.combat.dungeonId ? activeRaidFight(state, content) : null;
+  return phasedMonster(state, content, resolved, phase.phase ?? undefined, raid?.run.modifier ?? null);
+}
+
+/**
+ * claude:2026-10-25T05:50:00+02:00 — Aktive Bossphase (1-basiert, 0 = Basis) und ihre Definition; null ohne Phasen-Gegner. Für das
+ * Raid-HUD (Bossleiste mit Phasenmarken). Rein lesend; ohne `bossPhase` (nach dem Laden) aus den HP abgeleitet.
+ */
+export function combatBossPhase(
+  state: GameState,
+  content: ContentDB,
+  resolved: MonsterDef | undefined = resolveCombatMonster(state, content),
+): { index: number; phase: BossPhase | null } | null {
+  const sorted = resolved ? sortedPhases(resolved) : null;
+  if (!resolved || !sorted) return null;
+  const k = state.combat.bossPhase ?? phasesReachedByHp(sorted, state.combat.enemyHp, resolved.maxHp);
+  return { index: k, phase: k > 0 ? (sorted[k - 1] ?? null) : null };
 }
 
 /**
@@ -1177,6 +1670,8 @@ function onEnemyDefeated(
 ): void {
   const cs = state.combat;
   const style = stats.style;
+  // claude:2026-10-25T05:50:00+02:00 — Raid-Kampf? Einmal vor allen Änderungen am Kampfzustand feststellen (Wellen-Kill/Raum-Abschluss unten).
+  const raidFight = cs.dungeonId ? activeRaidFight(state, content) : null;
   // Überschuss-Schaden des Todesstoßes (enemyHp ist hier ≤ 0) — Quelle für overkillCarry (§2.1).
   const overkill = Math.max(0, -cs.enemyHp);
   cs.kills++;
@@ -1413,6 +1908,10 @@ function onEnemyDefeated(
     ec.vengeancePrimed = false;
     ec.overkillCarry = fx.overkillCarry ? overkill : 0;
     ec.plague = null;
+    // claude:2026-10-25T05:50:00+02:00 — Raid-Sets: Zins und Wunden hängen am Ziel und enden mit ihm (Zauber-Zähler und
+    // Abklingzeiten laufen über den Gegnerwechsel weiter). Nur vorhandene Felder anfassen (Form ohne Set unverändert).
+    if (ec.fireInterestMs) ec.fireInterestMs = 0;
+    if (ec.bleedStacks) ec.bleedStacks = 0;
     if (fx.plaguebearer) {
       // Gift-Parameter: der Poison-Status der Basiswaffe/Enchants („Magnitude der Basiswaffe",
       // §2.1); Fallback = eigene plaguebearer-Werte, falls die Waffe keinen Gift-Proc trägt.
@@ -1451,14 +1950,20 @@ function onEnemyDefeated(
   if (cs.dungeonId) {
     const dungeon = content.dungeons.find((d) => d.id === cs.dungeonId);
     if (dungeon && cs.encounterIndex + 1 < dungeon.encounters.length) {
+      // claude:2026-10-25T05:50:00+02:00 — Raid: Wellen-Kill (nicht der Boss) an raid.ts (Trash-Beute), vor dem Wellenwechsel.
+      if (raidFight) onRaidMonsterKilled(state, content, monster, nowMs);
       cs.encounterIndex++;
-      const next = content.monsters[dungeon.encounters[cs.encounterIndex]!];
-      if (next) {
-        cs.monsterId = next.id;
+      const nextBase = content.monsters[dungeon.encounters[cs.encounterIndex]!];
+      if (nextBase) {
+        cs.monsterId = nextBase.id;
+        // claude:2026-10-25T05:50:00+02:00 — Raid: die nächste Welle als skalierte Instanz (Stufe, verstärkte Welle 4, Woche);
+        // raidCombatMonster liest monsterId/encounterIndex (oben gesetzt). Außerhalb des Raids exakt das Content-Monster.
+        const next = (raidFight ? raidCombatMonster(state, content) : undefined) ?? nextBase;
         cs.enemyHp = next.maxHp;
         // Gegner-Ward (Combat-Depth §3.2): frischer Voll-Pool je Welle (KEIN Regen, kein Teil-Refill
         // wie beim Spieler-Ward unten) — jeder neue Gegner bringt seinen eigenen Schild voll mit.
         cs.enemyWard = next.wardCapacity ?? 0;
+        resetBossPhase(cs, next); // claude:2026-10-25T05:50:00+02:00 — Boss-Welle startet in der Basis (vor overkillCarry)
         cs.enemyTimerMs = 0;
         cs.enemyEffects = [];
         resetEnemyElemental(cs); // neue Welle = frische Frost-/Schock-/Gift-Zähler (vor applyCarryToNewEnemy)
@@ -1472,7 +1977,7 @@ function onEnemyDefeated(
         );
         resetEnemyPetDebuffs(cs);
         resetStalemate(cs); // neue Welle = neue Begegnung
-        applyCarryToNewEnemy(state, next); // overkillCarry/plaguebearer treffen die neue Welle
+        applyCarryToNewEnemy(state, next, combatMods(state, content)); // overkillCarry/plaguebearer treffen die neue Welle
         // Schatztruhe + Atempause VOR dem Boss (Dungeon-Rework-Spec §5.1.2, Leitplanke 1): beim
         // Übergang in die LETZTE Welle rollen die Chest-Rows (genau 1× pro Run — dieser Übergang
         // existiert nur einmal; kein State-Flag nötig) und der Wellen-Cooldown beträgt einmalig
@@ -1494,7 +1999,10 @@ function onEnemyDefeated(
     // Letzte Welle besiegt (oder defekter Dungeon) → Abschluss-Belohnung, Run beenden.
     // Bewusst OHNE Kill-Cooldown/lastKill (Chef: „Dungeon-Abschluss unverändert"; außerdem würde
     // lastKill ohne laufenden combatStep nie ablaufen). endDungeon leert den Encounter-Akkumulator.
-    if (dungeon) grantDungeonRewards(state, content, dungeon, nowMs, fx);
+    // claude:2026-10-25T05:50:00+02:00 — Raid-Raum: Boss besiegt ⇒ raid.ts vergibt Beute/Truhe und schaltet auf Rast bzw.
+    // Abschluss; statt der Dungeon-Abschlussbelohnung (kein Clear-Gold, kein dungeonsCleared-Zähler). Danach wie gehabt endDungeon.
+    if (raidFight) onRaidRoomCleared(state, content, nowMs);
+    else if (dungeon) grantDungeonRewards(state, content, dungeon, nowMs, fx);
     endDungeon(state);
     return;
   }
@@ -1519,7 +2027,8 @@ function onEnemyDefeated(
   );
   resetEnemyPetDebuffs(cs);
   resetStalemate(cs); // Respawn = neue Begegnung
-  applyCarryToNewEnemy(state, monster); // overkillCarry/plaguebearer treffen den Respawn
+  resetBossPhase(cs, monster); // claude:2026-10-25T05:50:00+02:00 — Respawn startet in der Basis
+  applyCarryToNewEnemy(state, monster, combatMods(state, content)); // overkillCarry/plaguebearer treffen den Respawn
   beginKillCooldown(cs, monster.id, gold, lootSummary, cooldownMs, bloodMoonProc);
 }
 
@@ -1530,7 +2039,11 @@ function onEnemyDefeated(
  *  - plaguebearer: der Neue startet vergiftet (respektiert Monster-Resistenzen via applyEnemyStatus).
  * Beide Übergaben werden hier KONSUMIERT (genau ein Gegnerwechsel). Kein RNG.
  */
-function applyCarryToNewEnemy(state: GameState, monster: MonsterDef): void {
+function applyCarryToNewEnemy(
+  state: GameState,
+  monster: MonsterDef,
+  cm: CombatMods = NO_COMBAT_MODS, // claude:2026-10-25T05:50:00+02:00 — Raid-Sets/Woche (Gift-Dauer/-Stapel)
+): void {
   const cs = state.combat;
   const ec = cs.effectCounters;
   if (!ec) return;
@@ -1543,11 +2056,16 @@ function applyCarryToNewEnemy(state: GameState, monster: MonsterDef): void {
     ec.overkillCarry = 0;
   }
   if (ec.plague) {
-    applyEnemyStatus(state, monster, {
-      type: "poison",
-      magnitude: ec.plague.magnitude,
-      durationMs: ec.plague.durationMs,
-    });
+    applyEnemyStatus(
+      state,
+      monster,
+      {
+        type: "poison",
+        magnitude: ec.plague.magnitude,
+        durationMs: ec.plague.durationMs,
+      },
+      cm,
+    );
     ec.plague = null;
   }
 }
@@ -1566,6 +2084,7 @@ function endDungeon(state: GameState): void {
   cs.encounterXp = undefined; // Begegnung/Run vorbei → Kill-Summary-Akkumulator verfällt
   cs.effectCounters = undefined; // Spezial-Effekt-Zähler resetten bei Kampfende (§2.3.4)
   cs.elemental = undefined; // Elementar-Zähler verfallen mit dem Run
+  resetBossPhase(cs); // claude:2026-10-25T05:50:00+02:00 — Bossphasen-Zustand verfällt mit dem Run
 }
 
 /**
@@ -1728,8 +2247,10 @@ function grantDungeonRewards(
  * Mess-Harness: der SimPlayer startet in `fightFor` bei `monsterId === null` (das ist jetzt AUCH der
  * Tod-Pfad) unter `restartOnDeath` selbst neu — der Spiel-Abbruch bricht die Personas/Sim also NICHT.
  */
-function onPlayerDefeated(state: GameState, maxHp: number): void {
+function onPlayerDefeated(state: GameState, content: ContentDB, maxHp: number): void {
   const cs = state.combat;
+  // claude:2026-10-25T05:50:00+02:00 — Raid-Tod (R3): VOR dem Aufräumen feststellen (es nullt dungeonId), danach an raid.ts melden.
+  const inRaid = cs.dungeonId !== null && activeRaidFight(state, content) !== null;
   // Paragonturm (§7, GRANT-Stelle 3/3): Tod im Turm = kompletter Reset auf Etage 1
   // (state.paragon.checkpoint → 0; Rekord `best` bleibt) + paragonFloor räumen. Außerhalb
   // des Turms ein No-op. MUSS vor dem Nullen der Kampf-Felder laufen (liest cs.paragonFloor).
@@ -1754,8 +2275,10 @@ function onPlayerDefeated(state: GameState, maxHp: number): void {
   cs.encounterXp = undefined; // Begegnung vorbei → Kill-Summary-Akkumulator verfällt
   cs.effectCounters = undefined; // Spezial-Effekt-Zähler resetten bei Tod (§2.3.4)
   cs.elemental = undefined; // Elementar-Zähler (Frost/Schock/Gift, beide Seiten) verfallen beim Tod
+  resetBossPhase(cs); // claude:2026-10-25T05:50:00+02:00 — Bossphasen-Zustand verfällt mit dem Kampf
   // cooldownRemainingMs/lastKill bleiben BEWUSST stehen (falls der Tod in einen laufenden Kill-
   // Cooldown fiel): der Cooldown gilt immer — der nächste manuelle startCombat übernimmt den Rest.
+  if (inRaid) onRaidDefeat(state, content, "defeated"); // claude:2026-10-25T05:50:00+02:00 — nach dem bestehenden Aufräumen
 }
 
 /** Ist der Gegner gegen diesen Statuseffekt immun? */
@@ -1778,21 +2301,36 @@ export function applyEnemyStatus(
   state: GameState,
   monster: MonsterDef,
   effect: { type: StatusType; magnitude: number; durationMs: number },
+  // claude:2026-10-25T05:40:00+02:00 — Raid-Sets/Wochen-Modifikator (intern; externe Aufrufer ohne = heutige Logik).
+  cm: CombatMods = NO_COMBAT_MODS,
 ): void {
   if (monsterResists(monster, effect.type)) return; // immune Gegner ignorieren den Effekt
-  const existing = state.combat.enemyEffects.find((e) => e.type === effect.type);
+  const cs = state.combat;
+  // claude:2026-10-25T05:40:00+02:00 — Dauer nach Set/Woche (Ornat Brand +2 s, Giftküche, Blutfest); ohne Mods unverändert.
+  const durationMs = playerStatusDuration(effect.type, effect.durationMs, cm);
+  const existing = cs.enemyEffects.find((e) => e.type === effect.type);
   if (existing) {
-    existing.remainingMs = Math.max(existing.remainingMs, effect.durationMs);
+    existing.remainingMs = Math.max(existing.remainingMs, durationMs);
     existing.magnitude = Math.max(existing.magnitude, effect.magnitude);
   } else {
-    state.combat.enemyEffects.push({
+    cs.enemyEffects.push({
       type: effect.type,
-      remainingMs: effect.durationMs,
+      remainingMs: durationMs,
       magnitude: effect.magnitude,
     });
   }
   // Elementar-Nachlauf (Log + Einfrieren/Verzögerung/Stapel) — auch bei Refresh (jede Anwendung zählt).
-  onStatusApplied(state.combat, "enemy", effect.type, !existing);
+  onStatusApplied(cs, "enemy", effect.type, !existing, 0, cm.poisonMaxStacks);
+  // claude:2026-10-25T05:40:00+02:00 — Offene Wunden (Blutschwur 4/5, Spec §6.1): Blutung stapelt bis `maxStacks` (eine
+  // Instanz, Stapel im Zähler); jeder weitere Stapel loggt wie beim Gift `amount` = Stapelzahl. Ohne Set kein Zähler.
+  if (effect.type === "bleed" && cm.bleedMaxStacks > 0) {
+    const ec = effectCounters(cs);
+    const prev = existing ? Math.max(1, ec.bleedStacks ?? 0) : 0;
+    const stacks = Math.min(cm.bleedMaxStacks, prev + 1);
+    const grew = stacks !== (ec.bleedStacks ?? 0);
+    ec.bleedStacks = stacks;
+    if (existing && grew) pushLog(cs, { by: "player", kind: "status", amount: stacks, status: "bleed" });
+  }
 }
 
 /**
@@ -1809,6 +2347,7 @@ function applyWeaponEffects(
   content: ContentDB,
   monster: MonsterDef,
   fx: SpecialEffects,
+  cm: CombatMods = NO_COMBAT_MODS, // claude:2026-10-25T05:40:00+02:00 — Raid-Sets/Woche (Dauer, Stapel)
 ): void {
   const catalystMs = fx.catalyst ? Math.max(0, fx.catalyst.durationMs) : 0;
   const mainEffects = mainhandStatusEffects(state, content);
@@ -1816,22 +2355,32 @@ function applyWeaponEffects(
     const type = effect.type;
     if (!isStatusEffectType(type)) continue; // defensive (mainhandStatusEffects filtert bereits)
     if (nextFloat(state.rng) > statusApplyChance(effect)) continue;
-    applyEnemyStatus(state, monster, {
-      type,
-      magnitude: effect.magnitude,
-      durationMs: effect.durationMs + catalystMs,
-    });
+    applyEnemyStatus(
+      state,
+      monster,
+      {
+        type,
+        magnitude: effect.magnitude,
+        durationMs: effect.durationMs + catalystMs,
+      },
+      cm,
+    );
   }
   // claude:2026-10-24T18:20:00+02:00 — Effektpfeil (1.4.0 FK §3.3): eigener Proc-Wurf je Treffer, NACH den Waffen-Procs. Trägt der Bogen
   // denselben Status schon, bringt der Pfeil davon nichts (gewollte Wahl, Spec); kein Wurf ⇒ keine Sequenzänderung.
   const arrowFx = activeArrow(state, content)?.def.effect;
   if (arrowFx && isStatusEffectType(arrowFx.type) && !mainEffects.some((e) => e.type === arrowFx.type)) {
     if (nextFloat(state.rng) <= statusApplyChance(arrowFx)) {
-      applyEnemyStatus(state, monster, {
-        type: arrowFx.type,
-        magnitude: arrowFx.magnitude,
-        durationMs: arrowFx.durationMs + catalystMs,
-      });
+      applyEnemyStatus(
+        state,
+        monster,
+        {
+          type: arrowFx.type,
+          magnitude: arrowFx.magnitude,
+          durationMs: arrowFx.durationMs + catalystMs,
+        },
+        cm,
+      );
     }
   }
 }
@@ -1882,39 +2431,19 @@ function tickEnemyEffects(
   petKind?: ActivePetAbility["kind"],
   // claude:2026-10-18T12:00:00+02:00 — Narbenbuch-Schadensfaktor (talentDamageMult), vom Aufrufer mit content berechnet.
   talentDmgMult = 1,
+  // claude:2026-10-25T05:40:00+02:00 — Raid-Set-Effekte/Wochen-Modifikator (combatMods); Default = keine (bit-identisch).
+  cm: CombatMods = NO_COMBAT_MODS,
 ): { frost: boolean } {
   const cs = state.combat;
   let frost = false;
-  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-DoT-Modifikatoren (nur solange das Pet in Platz 1 aktiv ist):
-  // Schlackenscheusal (emberBrand): Brand-Ticks × (1 + 0.10 × (Glut-Stapel − 1));
-  // Blutbracke (executeBleed): Blutungs-Ticks × 2 unter 50 % Gegner-LP. Ohne Pet Faktor 1 (bit-identisch).
-  const burnPetMult =
-    petKind === "emberBrand"
-      ? 1 + PET_EMBER_BRAND_STACK_BONUS * Math.max(0, (cs.elemental?.enemy.emberStacks ?? 0) - 1)
-      : 1;
-  const bleedPetMult =
-    petKind === "executeBleed" && monster && cs.enemyHp < PET_EXECUTE_BLEED_BELOW * monster.maxHp
-      ? PET_EXECUTE_BLEED_MULT
-      : 1;
-  // Elementar-Effekte: Glut (brennendes Ziel ×(1+BURN_VULNERABILITY) auf JEDEN DoT-Tick, auch den Brand
-  // selbst) und Gift-Stapel (Schaden × Stapel). Ohne Brand/Gift Faktor 1 bzw. Stapel 1 ⇒ bit-identisch.
-  const vuln = burnVulnMult(cs.enemyEffects);
-  const poisonStacks = poisonStacksOf(cs, "enemy");
-  // gutter (Ausweider, §2.1): eigene DoT-Ticks am Gegner (burn/bleed/poison — alle vom Spieler/Pet
-  // appliziert) schlagen um +Anteil härter. Kein RNG.
-  // claude:2026-10-18T12:00:00+02:00 — Narbenbuch „Narbenfaust" (damagePct): auch eigene DoT-Ticks; ohne Rang ×1.
-  const dotMult = (fx.gutter ? 1 + Math.max(0, fx.gutter.magnitude) : 1) * talentDmgMult;
-  // Status-vs-Ward-Konter (Chef-Design, s. STATUS_VS_WARD_MULT-Doku in shared): TRAIT-basiert auf
-  // `wardCapacity > 0` — gilt den GESAMTEN Kampf über, auch nach Ward-Bruch (nicht an den aktuellen
-  // Pool-Stand `cs.enemyWard` gekoppelt). DoT-Ticks schlagen unten ohnehin schon direkt auf `enemyHp`
-  // durch (umgehen den Ward-Pool bereits vor diesem Fix) — hier NUR der reine Schadens-Mult.
-  const statusVsWardMult = (monster?.wardCapacity ?? 0) > 0 ? STATUS_VS_WARD_MULT : 1;
+  // Per-Tick-Konstanten (Glut, Gift-Stapel, Begleiter, gutter/Narbenbuch, Status-vs-Ward, Set) — s. enemyDotCtx.
+  const ctx = enemyDotCtx(state, fx, monster, petKind, talentDmgMult, cm);
   for (const e of cs.enemyEffects) {
     let perSec = e.magnitude;
-    if (e.type === "poison" || e.type === "burn" || e.type === "bleed") {
-      const petMult = e.type === "burn" ? burnPetMult : e.type === "bleed" ? bleedPetMult : 1;
-      perSec = e.magnitude * (e.type === "poison" ? poisonStacks : 1) * vuln * petMult;
-      cs.enemyHp -= perSec * dotMult * statusVsWardMult * (TICK_MS / 1000);
+    const rate = enemyDotRate(cs, ctx, e);
+    if (rate) {
+      perSec = rate.perSec;
+      cs.enemyHp -= rate.total * (TICK_MS / 1000);
     } else if (e.type === "frost") frost = true;
     // shock/void: keine Tick-Wirkung — Verzögerung passiert bei der Anwendung, Entzug ist ein
     // Multiplikator im Schadenspfad (voidWeakenMult).
@@ -1924,6 +2453,15 @@ function tickEnemyEffects(
   }
   cs.enemyEffects = cs.enemyEffects.filter((e) => e.remainingMs > 0);
   tickElementalSide(cs, "enemy", cs.enemyEffects);
+  // claude:2026-10-25T05:40:00+02:00 — Raid-Sets (Spec §6.1): Zinsfeuer zählt die Zeit, die der Gegner ohne Unterbrechung brennt,
+  // und verfällt mit dem Brand; Offene-Wunden-Stapel enden mit der Blutung. Ohne Set/Zähler kein Zugriff.
+  const ec = cs.effectCounters;
+  if (cm.set?.fireInterest) {
+    const burning = hasStatus(cs.enemyEffects, "burn");
+    if (burning) effectCounters(cs).fireInterestMs = (cs.effectCounters?.fireInterestMs ?? 0) + TICK_MS;
+    else if (ec?.fireInterestMs) ec.fireInterestMs = 0;
+  } else if (ec?.fireInterestMs) ec.fireInterestMs = 0;
+  if (ec?.bleedStacks && !hasStatus(cs.enemyEffects, "bleed")) ec.bleedStacks = 0;
   return { frost };
 }
 
@@ -1937,6 +2475,8 @@ function tickPlayerEffects(
   content: ContentDB,
   nowMs?: number,
   fx?: SpecialEffects,
+  // claude:2026-10-25T05:40:00+02:00 — aufgelöste Gegner-Instanz (Raid/Paragon/Elite) für die Vitality-Level-Bandbreite; fehlt ⇒ Content.
+  enemy?: MonsterDef,
 ): { frost: boolean } {
   const cs = state.combat;
   let frost = false;
@@ -1951,7 +2491,7 @@ function tickPlayerEffects(
       state.character.hp -= dmg;
       // Überleben härtet ab — aber seit Chef-Entscheid (2026-07-08) mit derselben Level-Bandbreite
       // wie alle Kampf-XP: am über-levelten Trivial-Mob gibt auch Erleiden keine Vitality-XP mehr.
-      const dotMonster = cs.monsterId ? content.monsters[cs.monsterId] : undefined;
+      const dotMonster = enemy ?? (cs.monsterId ? content.monsters[cs.monsterId] : undefined);
       const dotVitMult = dotMonster
         ? combatXpLevelMult(levelFromXp(state.skills.vitality?.xp ?? 0), dotMonster.level)
         : 1;
@@ -2020,6 +2560,7 @@ function performPlayerAttack(
   monster: MonsterDef,
   fx: SpecialEffects,
   nowMs?: number,
+  cm: CombatMods = NO_COMBAT_MODS, // claude:2026-10-25T05:40:00+02:00 — Raid-Sets/Woche
 ): void {
   const profile = playerProfile(stats);
 
@@ -2048,9 +2589,11 @@ function performPlayerAttack(
     monster,
     fx,
     profile,
-    { casts, wardBeforeCast, allowDoubleStrike: true },
+    { casts, wardBeforeCast, allowDoubleStrike: true, cm },
     nowMs,
   );
+  // claude:2026-10-25T05:40:00+02:00 — Eintreibung (Ornat 5/5): jeder Zauber zählt, der `every`-te detoniert den Brand (nach dem Schlag).
+  if (casts && cm.set?.fireCollection) tryFireCollection(state, content, stats, monster, fx, cm);
   if (stats.style === "ranged") consumeArrow(state, content, state.rng);
 }
 
@@ -2061,6 +2604,8 @@ interface StrikeContext {
   wardBeforeCast: number;
   /** doubleStrike darf nur EINEN Zweitschlag auslösen (keine Kaskade). */
   allowDoubleStrike: boolean;
+  /** claude:2026-10-25T05:40:00+02:00 — Raid-Sets/Wochen-Modifikator dieses Ticks (NO_COMBAT_MODS = keine). */
+  cm: CombatMods;
 }
 
 /**
@@ -2092,9 +2637,19 @@ function strikeEnemy(
   // Beide klemmt computeStats auf ihren Cap (0..0.6); bei 0 (kein Konter-Gear) sind effEva/effDef
   // == monster.evasion/defense → RNG- und Schadens-bit-identisch zum Alt-Verhalten. Der Ward-Konter
   // (Ward-Break) greift NICHT hier, sondern erst nach der Mitigation im Ward-Absorb-Schritt unten.
+  // claude:2026-10-25T05:40:00+02:00 — Offenes Zeughaus (Raid §7): armorPen ×2, Deckel ARMOR_PEN_CAP bleibt. Schleichende Seuche
+  // (Pirschgewand 4/5, §6.1): je Gift-Stapel auf dem Ziel `perStack` der (Rest-)Rüstung ignoriert. Ohne beides die alte Rechnung.
+  const cm = ctx.cm;
+  const armorPen = cm.modifier === "open_armory" ? Math.min(ARMOR_PEN_CAP, stats.armorPen * 2) : stats.armorPen;
+  let effDefense = monster.defense * (1 - armorPen);
+  const plague = cm.set?.creepingPlague;
+  if (plague && hasStatus(cs.enemyEffects, "poison")) {
+    const ignore = Math.min(1, Math.max(0, (plague.perStack ?? 0) * poisonStacksOf(cs, "enemy")));
+    if (ignore > 0) effDefense *= 1 - ignore;
+  }
   const result = resolveAttack(state.rng, profile, {
     evasion: monster.evasion * (1 - stats.precision),
-    defense: monster.defense * (1 - stats.armorPen),
+    defense: effDefense,
   });
   if (!result.hit) {
     pushLog(cs, { by: "player", kind: "miss", amount: 0 });
@@ -2147,6 +2702,24 @@ function strikeEnemy(
     if (fx.vengeance && ec.vengeancePrimed) {
       mult *= 1 + fx.vengeance.magnitude;
       ec.vengeancePrimed = false; // verbraucht — zündet nicht doppelt
+    }
+  }
+  // claude:2026-10-25T05:40:00+02:00 — Raid (Spec §6.1/§7), multiplikativ wie die Spezial-Mods; ohne Set/Woche kein Faktor:
+  //  · Zinsfeuer (Ornat 4/5): echter Zauber × (1 + perStack · Zinsstufen).
+  //  · Geliehenes Feuer (Woche): Treffer einer Waffe mit magicTheme "fire" × 1,10.
+  //  · Offene Wunden (Blutschwur 4/5): kritischer Treffer × (1 + perStack · Blutungs-Stapel), NACH dem Krit-Deckel
+  //    (resolveAttack hat critDamage schon gedeckelt angewandt).
+  if (cm !== NO_COMBAT_MODS) {
+    const interest = stats.style === "magic" && ctx.casts ? fireInterestStacks(cs, cm) : 0;
+    if (interest > 0) mult *= 1 + (cm.set?.fireInterest?.perStack ?? 0) * interest;
+    if (cm.modifier === "borrowed_fire") {
+      const weaponId = state.character.equipment.mainhand;
+      if (weaponId && content.items[weaponId]?.magicTheme === "fire") mult *= 1.1;
+    }
+    const ow = cm.set?.openWounds;
+    const bleedStacks = cs.effectCounters?.bleedStacks ?? 0;
+    if (result.crit && ow && bleedStacks > 0 && hasStatus(cs.enemyEffects, "bleed")) {
+      mult *= 1 + (ow.perStack ?? 0) * bleedStacks;
     }
   }
   // critBurst (Funkenschlag, §2.1): FLACHER Zusatzschaden bei Krit (nach Mitigation, unmitigiert drauf).
@@ -2298,9 +2871,12 @@ function strikeEnemy(
       ec.momentumStacks = Math.min(maxStacks, ec.momentumStacks + 1);
     }
   }
+  // claude:2026-10-25T05:40:00+02:00 — Ausbruch/Blutzoll (5/5): Stand VOR den Status-Procs dieses Treffers (der Treffer, der den
+  // vollen Stapel erst legt, löst noch nicht aus). Nur mit Set; der Rest des Schlags läuft unverändert.
+  if (cm.set && cs.enemyHp > 0) trySetDetonations(state, content, stats, monster, fx, cm);
   // Waffeneffekt: Magie an echten Zauber gekoppelt, sonst bei jedem Treffer (#286: Fernkampf hat
   // keine Munitions-Bedingung mehr — jeder Schuss ist scharf und trägt den Effekt).
-  if (appliesEffect) applyWeaponEffects(state, content, monster, fx);
+  if (appliesEffect) applyWeaponEffects(state, content, monster, fx, cm);
 
   // Combat-Log-Anreicherung (Task #220): der geloggte `damage` (amount) ist bereits post-Mitigation.
   // `rawDamage` rekonstruiert proportional den Schaden VOR der effDef-Reduktion (reduction aus
@@ -2523,12 +3099,10 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   // Gegner analog zum Paragonturm über eine synthetisch skalierte Instanz auf (eliteCombatMonster,
   // elites.ts). Reihenfolge egal (nie gleichzeitig gesetzt — startEliteCombat/startParagonFloor
   // verlangen beide `monsterId === null`, s. Invariante in CombatState).
-  const monster = cs.paragonFloor
-    ? paragonCombatMonster(state, content)
-    : cs.eliteVariantId
-      ? eliteCombatMonster(state, content)
-      : content.monsters[cs.monsterId];
-  if (!monster) {
+  // claude:2026-10-25T05:50:00+02:00 — Raid (1.4.0 Welle 4): Reihenfolge Paragon → Elite → Raid → Content. raidCombatMonster
+  // liefert außerhalb eines laufenden Raid-Kampfs undefined (dann exakt der alte Content-Pfad).
+  const resolved = resolveCombatMonster(state, content);
+  if (!resolved) {
     cs.monsterId = null;
     cs.paragonFloor = undefined; // defekte/verwaiste Turm-Etage sauber schließen (kein Verlust)
     cs.eliteVariantId = undefined; // defekte/verwaiste Elite-Variante sauber schließen (kein Verlust)
@@ -2539,6 +3113,14 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   // Spezial-Waffeneffekte (Waffen 2.0 §2) einmal pro Tick aggregieren — Alt-Content ohne
   // Spezial-Kinds liefert ein leeres Objekt (alle fx-Zweige unten sind dann No-ops).
   const fx = collectSpecialEffects(state, content);
+  // claude:2026-10-25T05:50:00+02:00 — Raid-Set-Effekte + Wochen-Modifikator einmal je Tick (NO_COMBAT_MODS ohne beides).
+  const cm = combatMods(state, content);
+  // Bossphasen (Spec §3): `monster` ist ab hier die Instanz der aktiven Phase und wird nach jedem Schadensblock neu
+  // abgeglichen (refreshPhase). Ohne Phasen ist sie `resolved` selbst.
+  let monster = resolved;
+  const refreshPhase = (): void => {
+    if (cs.monsterId === resolved.id && cs.enemyHp > 0) monster = syncBossPhase(state, content, resolved, cm);
+  };
 
   // Auto-Eat-/Auto-Trank-Cooldowns einmal pro Tick herunterzählen (vor allen tryAutoEat-/
   // tryAutoPotion-Aufrufen dieses Ticks).
@@ -2570,11 +3152,12 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   if (killCooldownActive(cs)) {
     tickCombatRegen(state, stats); // HP-/Mana-Regen + sichtbares HoT-Log (FIX B), auch in der Pause
     tickWardRegen(state, stats); // Warding-Regen läuft auch in der Kill-Cooldown-Verschnaufpause weiter
-    tickPlayerEffects(state, content, nowMs, fx);
+    tickPlayerEffects(state, content, nowMs, fx, resolved);
+    tickSetCooldowns(cs); // claude:2026-10-25T05:50:00+02:00 — Ausbruch/Blutzoll-Abklingzeit läuft auch in der Pause
     // KEIN tryAutoEat/tryAutoPotion hier (s.o.) — der Gratis-Refill zwischen den Mobs ist gegatet.
     // Der Tod-durch-DoT-Check bleibt: ein im Cooldown weitertickender Gift-DoT kann jetzt töten.
     if (state.character.hp <= 0) {
-      onPlayerDefeated(state, stats.maxHp);
+      onPlayerDefeated(state, content, stats.maxHp);
       return;
     }
     cs.cooldownRemainingMs = Math.max(0, (cs.cooldownRemainingMs ?? 0) - TICK_MS);
@@ -2587,6 +3170,12 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   }
 
   // Munitions-Stopp: ENTFERNT (#286 Ammo-Removal) — Bögen feuern immer, es gibt nichts zu leeren.
+
+  // claude:2026-10-25T05:50:00+02:00 — Set-Abklingzeiten und Phasen-Uhr (intervalRamp) laufen je aktivem Kampf-Tick; danach die
+  // Phase mit den HP abgleichen (betritt Schwellen aus dem letzten Tick, leitet sie nach dem Laden still ab).
+  tickSetCooldowns(cs);
+  if (cs.bossPhase !== undefined && cs.bossPhase > 0) cs.bossPhaseMs = (cs.bossPhaseMs ?? 0) + TICK_MS;
+  refreshPhase();
 
   // Mana-Regeneration + HP-Regeneration, gekappt aufs (evtl. gesunkene) Maximum. tickCombatRegen
   // ergänzt tickPlayerRegen um die sichtbare grüne HoT-Heil-Zeile (FIX B, throttled ~1×/Sek).
@@ -2623,22 +3212,24 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   // Handschuhe 2000 ms = 4000 ms < KILL_COOLDOWN_MS), aber ein Content-/Tuning-Drop macht den Pfad scharf. Der Normalkampf-Respawn behält dieselbe monsterId → weiter erlaubt.
   // claude:2026-10-18T02:00:00+02:00 — das aktive Pet-Kind einmal je Tick (Brand-/Blutungs-Modifikatoren, Gegner-Tempo).
   const activePetKind = petCombatAbility(state, content)?.kind;
-  const status = tickEnemyEffects(state, fx, monster, activePetKind, talentDamageMult(state, content));
+  const status = tickEnemyEffects(state, fx, monster, activePetKind, talentDamageMult(state, content), cm);
   if (cs.enemyHp <= 0) onEnemyDefeated(state, content, monster, stats, fx, nowMs);
   if (cs.monsterId !== monster.id || killCooldownActive(cs)) return;
+  refreshPhase(); // claude:2026-10-25T05:50:00+02:00 — Schwelle durch DoT erreicht ⇒ Phase sofort (Schild vor dem nächsten Schlag)
 
   // Getriggerte Pet-Ability (eigener Intervall-Timer, unabhängig vom Spieler-Angriff).
   // Tickt die timed Pet-Debuffs herunter und löst bei Fälligkeit die Ability aus.
   tickPetAbility(state, content, monster, fx, stats);
   if (cs.enemyHp <= 0) onEnemyDefeated(state, content, monster, stats, fx, nowMs);
   if (cs.monsterId !== monster.id || killCooldownActive(cs)) return;
+  refreshPhase(); // claude:2026-10-25T05:50:00+02:00
 
   // Statuseffekte auf den Spieler (DoT durch Gift/Brennen/Blutung; Frost verlangsamt, Einfrieren/Schock greifen am Timer).
-  const pStatus = tickPlayerEffects(state, content, nowMs, fx);
+  const pStatus = tickPlayerEffects(state, content, nowMs, fx, monster);
   tryAutoEat(state, content, stats.maxHp); // auch DoT-Schaden soll Heilung auslösen (nicht nur Gegner-Schläge)
   tryAutoPotion(state, content, stats.maxHp); // unabhängig von Auto-Eat (eigene Schwelle/Cooldown)
   if (state.character.hp <= 0) {
-    onPlayerDefeated(state, stats.maxHp);
+    onPlayerDefeated(state, content, stats.maxHp);
     return;
   }
 
@@ -2664,13 +3255,14 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
       pc.frozen = false;
       pushLog(cs, { by: "player", kind: "miss", amount: 0, missReason: "frozen" });
     } else {
-      performPlayerAttack(state, content, stats, monster, fx, nowMs);
+      performPlayerAttack(state, content, stats, monster, fx, nowMs, cm);
       if (cs.enemyHp <= 0) onEnemyDefeated(state, content, monster, stats, fx, nowMs);
     }
   }
 
   // Kampf beendet ODER Kill-Cooldown gestartet (der Respawn ruht) → Tick hier zu Ende.
   if (cs.monsterId !== monster.id || killCooldownActive(cs)) return;
+  refreshPhase(); // claude:2026-10-25T05:50:00+02:00 — neue Phase wirkt schon auf den Gegner-Schlag dieses Ticks
 
   // Gegner-Angriff (Frost verlangsamt seinen Timer; Pet-`stun` friert ihn ganz ein).
   // Gleicher Intervall-Guard wie beim Spieler.
@@ -2715,6 +3307,15 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
         stats.dodgeChance,
         contestHitChance(enemyAccuracy, stats.evasion),
       );
+      // claude:2026-10-25T05:50:00+02:00 — Bossphase (Spec §3): `everyNth` zählt jeden ausgeführten Angriff der Phase (auch
+      // Ausweichen/Fehlschlag); der n-te schlägt × mult. Ohne Phasen kein Zähler.
+      const bossPhases = sortedPhases(monster) !== null;
+      const activePhase = bossPhases ? currentBossPhase(cs, monster) : undefined;
+      let nthMult = 1;
+      if (activePhase?.everyNth) {
+        cs.bossAttackCount = (cs.bossAttackCount ?? 0) + 1;
+        if (cs.bossAttackCount % Math.max(1, Math.round(activePhase.everyNth.n)) === 0) nthMult = activePhase.everyNth.mult;
+      }
       // STEP 1 — Leder-Dodge (flache Voll-Vermeidung, §1.3): ausgewichen ⇒ 0 Schaden, kein Contest.
       if (stats.dodgeChance > 0 && nextFloat(state.rng) < effectiveDodge) {
         // ausgewichen (Leder-Dodge) — missReason (E+ §E+): Rüstungs-Trinität wird im Log lesbar
@@ -2722,11 +3323,13 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
         pushLog(cs, { by: "enemy", kind: "miss", amount: 0, missReason: "dodge" });
       } else {
         // Wut: unter dem HP-Schwellwert schlägt der Gegner härter.
-        const enraged = monster.enrage && cs.enemyHp / monster.maxHp <= monster.enrage.belowHpPct;
+        // claude:2026-10-25T05:50:00+02:00 — Bossphasen-Monster haben keine Wut (Spec §3 Regel 6; ihr Schadensfaktor IST die Wut).
+        const enraged = !bossPhases && monster.enrage && cs.enemyHp / monster.maxHp <= monster.enrage.belowHpPct;
         // Entzug (Elementar-Effekte, void): ein entkräfteter Gegner schlägt VOID_WEAKEN schwächer — auf die
         // ganze Spanne, vor dem Wurf (Faktor 1 ohne Status ⇒ bit-identisch).
-        const enemyDamage =
+        let enemyDamage =
           (enraged ? monster.damage * monster.enrage!.damageMult : monster.damage) * voidWeakenMult(cs.enemyEffects);
+        if (nthMult !== 1) enemyDamage *= nthMult; // claude:2026-10-25T05:50:00+02:00 — Phase „jeder n-te Angriff × mult“
         // STEP 2 (Accuracy-Contest) + STEP 3 (Mitigation, def/(def+K)) laufen beide in resolveAttack;
         // `result.damage` ist bereits post-Mitigation. Gegner-Spanne = Legacy-Ableitung aus dem flachen
         // `damage` (identische Breite wie der alte 0,52–1,48-Wurf), bis Content Monster-Spannen liefert.
@@ -2842,6 +3445,13 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
             healPlayer(state, stats.maxHp, Math.min(stats.maxHp * pct, BLOCK_RESTORE_CAP_ABS), "effect");
           }
           applyMonsterInflict(state, monster, stats); // z.B. Gift bei Treffer (Weisheits-Widerstand aus stats)
+          // claude:2026-10-25T05:50:00+02:00 — Heilung je gelandetem Treffer mit Schaden > 0 (Ward + HP): Phase `healPerHitPct`
+          // plus Bestienhunger (Woche, nur der Raum-Boss, +0,20 %). Anteil der (skalierten) maxHp, Gift auf dem Boss halbiert.
+          const healPct =
+            (activePhase?.healPerHitPct ?? 0) + (cm.modifier === "beast_hunger" && cm.raidBossId === monster.id ? 0.002 : 0);
+          if (healPct > 0 && wardRes.absorbed + hpDamage > 0 && cs.enemyHp > 0) {
+            cs.enemyHp = Math.min(monster.maxHp, cs.enemyHp + monster.maxHp * healPct * poisonSustainMult(cs.enemyEffects));
+          }
           // vengeance (Rache, §2.1): ein ERLITTENER Treffer lädt den nächsten eigenen Schlag auf.
           if (fx.vengeance) effectCounters(cs).vengeancePrimed = true;
           // thorns (Spiegelhaut, §2.1/§5-Rüstungs-Chase): der Angreifer erleidet flachen Rückschaden
@@ -2864,19 +3474,26 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
     tryAutoEat(state, content, stats.maxHp);
     tryAutoPotion(state, content, stats.maxHp); // unabhängig von Auto-Eat (eigene Schwelle/Cooldown)
     if (state.character.hp <= 0) {
-      onPlayerDefeated(state, stats.maxHp);
+      onPlayerDefeated(state, content, stats.maxHp);
       return;
     }
     // thorns kann den Gegner töten (Rückschaden) → gleicher Kill-Pfad wie beim aktiven Schlag.
     // Der Spieler-Tod oben hat Vorrang (harte Niederlage schlägt Rückschaden-Kill).
     if (cs.enemyHp <= 0) onEnemyDefeated(state, content, monster, stats, fx, nowMs);
     if (cs.monsterId !== monster.id || killCooldownActive(cs)) return;
+    refreshPhase(); // claude:2026-10-25T05:50:00+02:00 — Dornen können eine Schwelle reißen
   }
 
   // Stalemate-Erkennung: hier leben Gegner UND Spieler (alle Tod-Pfade sind oben zurückgekehrt) →
   // cs.enemyHp/enemyWard sind am Tick-Tiefpunkt. Stoppt den Kampf, wenn über STALEMATE_NO_PROGRESS_MS
   // kein neuer HP+Ward-Tiefstwert erreicht wurde (kein Netto-Fortschritt; Spec §5.1.1).
   trackStalemate(state.combat, monster);
+  // claude:2026-10-25T05:50:00+02:00 — Patt im Raid = Tod der Stufe (R3): nach dem Patt-Aufräumen (das dungeonId nullt) an
+  // raid.ts melden. Ob es ein Raid-Kampf war, steht in `cm` vom Tick-Anfang (bis hier kein Kampfende).
+  if (cs.monsterId === null && cs.stopReason === "stalemate") {
+    resetBossPhase(cs);
+    if (cm.inRaid) onRaidDefeat(state, content, "stalemate");
+  }
 }
 
 // ── Getriggertes Pet-Ability-Framework ───────────────────────────────────────
@@ -3025,11 +3642,16 @@ function firePetAbility(
       // Umrechnung läuft über den EINEN shared-Helfer `petDotMagnitude` (max(1, round(maxHp·value))),
       // damit Sim/Tests/Kampf identisch rechnen. frost bleibt reiner Slow-Timer (Magnitude 0).
       const magnitude = isDot ? petDotMagnitude(monster.maxHp, value) : 0;
-      applyEnemyStatus(state, monster, {
-        type: ability.status,
-        magnitude,
-        durationMs: ability.kind === "delayedDot" ? PET_ABILITY_DELAYED_DOT_MS : PET_ABILITY_STATUS_MS,
-      });
+      applyEnemyStatus(
+        state,
+        monster,
+        {
+          type: ability.status,
+          magnitude,
+          durationMs: ability.kind === "delayedDot" ? PET_ABILITY_DELAYED_DOT_MS : PET_ABILITY_STATUS_MS,
+        },
+        combatMods(state, content), // claude:2026-10-25T05:50:00+02:00 — Raid-Sets/Woche gelten für jeden eigenen Status
+      );
       amount = magnitude; // Log zeigt die tatsächliche Schadens-Magnitude/s (0 bei frost)
       break;
     }
@@ -3056,11 +3678,16 @@ function firePetAbility(
       // combatStep/tickEnemyEffects, solange das Pet aktiv ist.
       const type = ability.kind === "cripplingPoison" ? "poison" : ability.kind === "executeBleed" ? "bleed" : "burn";
       const magnitude = petDotMagnitude(monster.maxHp, value);
-      applyEnemyStatus(state, monster, {
-        type,
-        magnitude,
-        durationMs: ability.kind === "emberBrand" ? (ability.durationMs ?? PET_EMBER_BRAND_MS) : PET_ABILITY_STATUS_MS,
-      });
+      applyEnemyStatus(
+        state,
+        monster,
+        {
+          type,
+          magnitude,
+          durationMs: ability.kind === "emberBrand" ? (ability.durationMs ?? PET_EMBER_BRAND_MS) : PET_ABILITY_STATUS_MS,
+        },
+        combatMods(state, content), // claude:2026-10-25T05:50:00+02:00
+      );
       amount = magnitude;
       break;
     }
@@ -3068,11 +3695,16 @@ function firePetAbility(
       // Scheiterling „Funkenregen": legt zuerst Brand an (zählt als Stapel), zündet dann ALLE Glut-Stapel
       // als Sofortschaden (Stapel × value × maxHp, inkl. Glut) und setzt sie auf 0; der Brand bleibt.
       if (ability.burnValue && ability.burnValue > 0) {
-        applyEnemyStatus(state, monster, {
-          type: "burn",
-          magnitude: petDotMagnitude(monster.maxHp, ability.burnValue),
-          durationMs: PET_EMBER_DETONATE_BURN_MS,
-        });
+        applyEnemyStatus(
+          state,
+          monster,
+          {
+            type: "burn",
+            magnitude: petDotMagnitude(monster.maxHp, ability.burnValue),
+            durationMs: PET_EMBER_DETONATE_BURN_MS,
+          },
+          combatMods(state, content), // claude:2026-10-25T05:50:00+02:00
+        );
       }
       const ec = sideCounters(cs, "enemy");
       const stacks = ec.emberStacks ?? 0;
