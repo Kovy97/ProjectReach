@@ -725,7 +725,12 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //        Bilanz je Historien-Eintrag). sanitizeState defaultet `runStart` für JEDE Version (alle Zähler 0 = seit
 //        Spielbeginn; `activePlayMs` aus dem jüngsten Historien-Eintrag, der genau diesen Wert festhält) und
 //        übernimmt `tally` nur vollständig gültig; Einträge ohne `tally` (Test-Saves vor E1) bleiben erhalten.
-export const SAVE_VERSION = 88;
+// 89: Mahlzeit-Platz (1.4.0 „Feder und Stahl“ Welle 1, Chef 23.10.2026; claude:2026-10-23T16:45:00+02:00):
+//     `character.meal` (Buff-Mahlzeit, getrennt vom Heilplatz `food`) und `character.mealKeep` (Standard an).
+//     Migration verschiebt eine Mahlzeit aus `food` nach `meal` und füllt `food` mit der besten reinen
+//     Heilnahrung aus Inventar/Bank. 1.4.0-Zwischenversionen sind nie live und dürfen vor dem Release
+//     konsolidiert werden.
+export const SAVE_VERSION = 89;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -1947,6 +1952,8 @@ export interface OfflineSummary {
   campRefined?: { buildingId: CampBuildingId; itemId: ItemId; qty: number }[];
   /** Jagen (SAVE 85): Fänge im Offline-Fenster je Monster. */
   huntCatches?: { monsterId: MonsterId; count: number }[];
+  /** claude:2026-10-23T20:00:00+02:00 — Ländereien (1.4.0 LA): Ernte-Stücke je Feldfrucht im Offline-Fenster (transient). */
+  farmHarvests?: { itemId: ItemId; qty: number }[];
   /** claude:2026-10-17T20:00:00+02:00 — K4: übersprungene Queue-Einträge im Offline-Fenster (transient, fehlt bei 0). */
   queueSkips?: number;
 }
@@ -2227,23 +2234,25 @@ export type WeaponType =
  * Bonus-Profilen der Items. ui-dev rendert sie im Tooltip unter der Typ-Zeile.
  * Werte spiegeln die tatsächlichen Stat-Tendenzen wider (kein Marketing-Text).
  */
+// claude:2026-10-23T17:30:00+02:00 — 1.4.0 ZH: Hand-Angaben raus aus den Spezialitätstexten (Speer/Streitkolben
+// waren falsch, Bögen fehlten); die Kopfzeile der Itemkarte liest jetzt `twoHanded` (buildItemTypeLine).
 export const WEAPON_TYPE_SPECIALTY: Record<WeaponType, LocalizedString> = {
   dagger:     { en: "Fast · High Crit · Precision",   de: "Schnell · Hohe Krit · Präzision", es: "Rápida · Crítico alto · Precisión", fr: "Rapide · Crit élevé · Précision", "pt-BR": "Rápida · Crítico alto · Precisão", ru: "Быстрый · Высокий крит · Точность", zh: "迅捷 · 高暴击 · 精准" },
   sword:      { en: "Balanced",                       de: "Ausgewogen", es: "Equilibrada", fr: "Équilibrée", "pt-BR": "Equilibrada", ru: "Сбалансированный", zh: "均衡" },
   scimitar:   { en: "Fast · Crit · Precision",        de: "Schnell · Krit · Präzision", es: "Rápida · Crítico · Precisión", fr: "Rapide · Crit · Précision", "pt-BR": "Rápida · Crítico · Precisão", ru: "Быстрый · Крит · Точность", zh: "迅捷 · 暴击 · 精准" },
-  mace:       { en: "One-Handed · Armor Penetration", de: "Einhändig · Rüstungsdurchdringung", es: "A una mano · Penetración de armadura", fr: "Une main · Perforation d'armure", "pt-BR": "Uma mão · Penetração de armadura", ru: "Одноручный · Пробитие брони", zh: "单手 · 破甲" },
+  mace:       { en: "Armor Penetration", de: "Rüstungsdurchdringung", es: "Penetración de armadura", fr: "Perforation d'armure", "pt-BR": "Penetração de armadura", ru: "Пробитие брони", zh: "破甲" },
   axe:        { en: "Versatile · Woodcutting",        de: "Vielseitig · Holzfällen", es: "Versátil · Tala", fr: "Polyvalente · Bûcheronnage", "pt-BR": "Versátil · Lenhador", ru: "Универсальный · Древорубство", zh: "多用途 · 伐木" },
   battleaxe:  { en: "High Crit Damage · Medium Speed", de: "Hoher Krit-Schaden · Mittelschnell", es: "Daño crítico alto · Velocidad media", fr: "Gros dégâts critiques · Vitesse moyenne", "pt-BR": "Dano crítico alto · Velocidade média", ru: "Высокий крит. урон · Средняя скорость", zh: "高暴击伤害 · 中速" },
-  spear:      { en: "Two-Handed · Fastest · Precision", de: "Zweihändig · Schnellste · Präzision", es: "A dos manos · La más rápida · Precisión", fr: "Deux mains · La plus rapide · Précision", "pt-BR": "Duas mãos · A mais rápida · Precisão", ru: "Двуручный · Самый быстрый · Точность", zh: "双手 · 最快 · 精准" },
-  greataxe:   { en: "Two-Handed · High Strength, Slow", de: "Zweihändig · Hohe Stärke, Langsam", es: "A dos manos · Mucha fuerza, lenta", fr: "Deux mains · Grande force, lente", "pt-BR": "Duas mãos · Muita força, lenta", ru: "Двуручный · Много силы, медленный", zh: "双手 · 高力量，缓慢" },
-  greatsword: { en: "Two-Handed · Balanced, Fastest Heavy", de: "Zweihändig · Ausgewogen, Schnellste Schwere", es: "A dos manos · Equilibrada, la pesada más rápida", fr: "Deux mains · Équilibrée, la plus rapide des lourdes", "pt-BR": "Duas mãos · Equilibrada, a pesada mais rápida", ru: "Двуручный · Сбалансированный, самый быстрый из тяжёлых", zh: "双手 · 均衡，重型中最快" },
-  maul:       { en: "Two-Handed · Max Impact · Armor Pen", de: "Zweihändig · Max. Impact · Rüstungsbruch", es: "A dos manos · Impacto máximo · Penetración de armadura", fr: "Deux mains · Impact maximal · Perforation d'armure", "pt-BR": "Duas mãos · Impacto máximo · Penetração de armadura", ru: "Двуручный · Максимальный удар · Пробитие брони", zh: "双手 · 极限冲击 · 破甲" },
+  spear:      { en: "Fastest · Precision", de: "Schnellste · Präzision", es: "La más rápida · Precisión", fr: "La plus rapide · Précision", "pt-BR": "A mais rápida · Precisão", ru: "Самый быстрый · Точность", zh: "最快 · 精准" },
+  greataxe:   { en: "High Strength, Slow", de: "Hohe Stärke, Langsam", es: "Mucha fuerza, lenta", fr: "Grande force, lente", "pt-BR": "Muita força, lenta", ru: "Много силы, медленный", zh: "高力量，缓慢" },
+  greatsword: { en: "Balanced, Fastest Heavy", de: "Ausgewogen, Schnellste Schwere", es: "Equilibrada, la pesada más rápida", fr: "Équilibrée, la plus rapide des lourdes", "pt-BR": "Equilibrada, a pesada mais rápida", ru: "Сбалансированный, самый быстрый из тяжёлых", zh: "均衡，重型中最快" },
+  maul:       { en: "Max Impact · Armor Pen", de: "Max. Impact · Rüstungsbruch", es: "Impacto máximo · Penetración de armadura", fr: "Impact maximal · Perforation d'armure", "pt-BR": "Impacto máximo · Penetração de armadura", ru: "Максимальный удар · Пробитие брони", zh: "极限冲击 · 破甲" },
   shortbow:   { en: "Fast Shots · Precision",         de: "Schnelle Schüsse · Präzision", es: "Disparos rápidos · Precisión", fr: "Tirs rapides · Précision", "pt-BR": "Disparos rápidos · Precisão", ru: "Быстрые выстрелы · Точность", zh: "快速射击 · 精准" },
   longbow:    { en: "Range · High Precision",         de: "Reichweite · Hohe Präzision", es: "Alcance · Gran precisión", fr: "Portée · Grande précision", "pt-BR": "Alcance · Alta precisão", ru: "Дальность · Высокая точность", zh: "射程 · 高精准" },
-  staff:      { en: "Two-Handed · Magic · Ward Break", de: "Zweihändig · Magie · Ward-Bruch", es: "A dos manos · Magia · Ruptura de guarda", fr: "Deux mains · Magie · Brise-barrière", "pt-BR": "Duas mãos · Magia · Quebra de guarda", ru: "Двуручный · Магия · Пробой оберега", zh: "双手 · 魔法 · 破结界" },
+  staff:      { en: "Magic · Ward Break", de: "Magie · Ward-Bruch", es: "Magia · Ruptura de guarda", fr: "Magie · Brise-barrière", "pt-BR": "Magia · Quebra de guarda", ru: "Магия · Пробой оберега", zh: "魔法 · 破结界" },
   wand:       { en: "Fast · Ward Break · Frost/Shock", de: "Schnell · Ward-Bruch · Frost/Schock", es: "Rápida · Ruptura de guarda · Escarcha/Descarga", fr: "Rapide · Brise-barrière · Givre/Foudre", "pt-BR": "Rápida · Quebra de guarda · Gelo/Choque", ru: "Быстрый · Пробой оберега · Холод/Шок", zh: "迅捷 · 破结界 · 冰霜/电击" },
   focus:      { en: "Offhand · +Spell Reserve",       de: "Nebenhand · +Zauberreserve", es: "Mano secundaria · +Reserva de hechizos", fr: "Main secondaire · +Réserve de sorts", "pt-BR": "Mão secundária · +Reserva de feitiços", ru: "Вторая рука · +Запас заклинаний", zh: "副手 · +法术储备" },
-  scepter:    { en: "One-Handed Magic · Ward Break",  de: "Einhändige Magie · Ward-Bruch", es: "Magia a una mano · Ruptura de guarda", fr: "Magie à une main · Brise-barrière", "pt-BR": "Magia de uma mão · Quebra de guarda", ru: "Одноручная магия · Пробой оберега", zh: "单手魔法 · 破结界" },
+  scepter:    { en: "Magic · Ward Break",  de: "Magie · Ward-Bruch", es: "Magia · Ruptura de guarda", fr: "Magie · Brise-barrière", "pt-BR": "Magia · Quebra de guarda", ru: "Магия · Пробой оберега", zh: "魔法 · 破结界" },
 };
 
 /** Flache Boni eines Ausrüstungsstücks auf abgeleitete Werte. */
@@ -2892,15 +2901,17 @@ export const ITEM_RARITIES: ItemRarity[] = [
 ];
 
 /** Rarity-Farbe (färbt Name/Label/Item-Bild-Hintergrund im Tooltip). Plan #90. */
+// claude:2026-10-23T18:30:00+02:00 — 1.4.0 ST: an die CSS-Palette (--rar-*, components.css) angeglichen. Vorher
+// wichen rare/godly/poor/epic ab, und magic war hier dasselbe Blau wie superRare.
 export const RARITY_COLORS: Record<ItemRarity, string> = {
-  poor: "#8a8a8a", // grau (Müll/junk)
-  common: "#e8e8e8", // weiß
-  magic: "#5b8fd6", // blau (Legacy)
-  rare: "#5ec46e", // grün
-  superRare: "#5b8fd6", // blau
-  epic: "#a85fd6", // lila
+  poor: "#555555", // dunkelgrau
+  common: "#c8c8c8", // hellgrau/weiß
+  magic: "#4a6d99", // blau, gedämpft (Legacy)
+  rare: "#3cb043", // grün
+  superRare: "#5b8fd6", // blau, kräftig
+  epic: "#b07fd8", // lila
   legendary: "#e0902a", // orange
-  godly: "#ffe24a", // hellgelb
+  godly: "#ffd700", // gold
 };
 
 /** Angezeigtes Rarity-Label (unter dem Item-Namen im Tooltip). */
@@ -3219,6 +3230,12 @@ export interface ItemDef {
   description?: LocalizedString;
   /** Seltenheitsstufe (Diablo-Stil, färbt Name/Rahmen). Default „common". */
   rarity?: ItemRarity;
+  /**
+   * claude:2026-10-23T18:00:00+02:00 — Stufen-Anzeige (1.4.0 ST): Die Stufe I–XII wird aus der Trage-Anforderung
+   * abgeleitet (engine `itemTier`). Dieses Feld überschreibt das nur für Sonderfälle, z. B. Raid-Beute = 13.
+   * Nur ContentDB, kein Save-Feld.
+   */
+  tier?: number;
   // bagCapacity: GELÖSCHT (#278) — Taschenslot-System entfernt, small_pouch ist aus dem Katalog (#272).
   /** Nur für type === "tool": beschleunigt eine Fertigkeit (speedMult < 1 = schneller), wirkt aus dem Inventar. */
   tool?: { skill: SkillId; speedMult: number };
@@ -5485,6 +5502,15 @@ export interface CharacterState {
   equipment: Record<EquipSlot, ItemId | null>;
   /** Gewähltes Essen für Auto-Heilung im Kampf (null = keins). */
   food: ItemId | null;
+  /**
+   * claude:2026-10-23T16:30:00+02:00 — Mahlzeit-Platz (1.4.0 „Feder und Stahl“, Chef 23.10., SAVE 89): die
+   * Buff-Mahlzeit, getrennt vom Heilplatz `food`. Das Auto-Essen fasst sie nie an; „Mahlzeit halten“
+   * (`mealKeep`) isst sie im Kampf nach, sobald kein Mahlzeit-Buff (Kategorie "food") mehr läuft.
+   * Alt-Saves: die Migration verschiebt eine Mahlzeit aus `food` hierher (persistence, v89).
+   */
+  meal?: ItemId | null;
+  /** „Mahlzeit halten“ (Standard an, kostenlos): Mahlzeit im Kampf, Dungeon und Raid nachessen. */
+  mealKeep?: boolean;
   /** Gekaufte Auto-Eat-Upgrade-Stufe (0 = Basis). Hebt Schwelle & Heil-Effizienz. */
   autoEatTier: number;
   /**
@@ -7506,11 +7532,17 @@ export interface GameSettings {
    * (Chef-Leitplanke 4) bleibt das Default-Verhalten, der Dauerlauf ist Opt-in.
    */
   autoParagonAscend: boolean;
+  /**
+   * claude:2026-10-23T19:20:00+02:00 — Ländereien-Meldungen (1.4.0 LA, Chef 23.10.: „aktivier- und deaktivierbar
+   * in den Optionen“): gebündelte Meldung über Fänge und Ernten, höchstens alle 15 Minuten. Standard: an.
+   * Fehlt das Feld (jeder Save vor 1.4.0), setzt migrateState den Default.
+   */
+  estateNotifications: boolean;
 }
 
 /** Default-Einstellungen für frische Spielstände (und Migration alter Saves). */
 export function defaultSettings(): GameSettings {
-  return { autoBank: true, autoParagonAscend: false };
+  return { autoBank: true, autoParagonAscend: false, estateNotifications: true };
 }
 
 /** Mastery: gemeinsame Level-Kurve mit Fertigkeiten; höchstes Level. */

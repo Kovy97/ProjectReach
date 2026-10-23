@@ -199,6 +199,8 @@ describe("v86-Fixture: Round-Trip mit geteiltem Handwerk", () => {
     erwartet.state.character.companionPetId2 = null;
     // claude:2026-10-17T23:30:00+02:00 — SAVE 88 (Prestige-Fundament): Default-Zustand für den Alt-Save.
     erwartet.state.prestige = defaultPrestigeState();
+    Object.assign(erwartet.state.character, { meal: null, mealKeep: true }); // claude:2026-10-23T16:50:00+02:00 — SAVE 89 (Mahlzeit-Platz)
+    erwartet.state.settings.estateNotifications = true;
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
 });

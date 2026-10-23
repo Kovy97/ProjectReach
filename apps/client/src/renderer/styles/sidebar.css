@@ -1723,3 +1723,61 @@
   border: 0 !important;
   box-shadow: none !important;
 }
+
+/* ─── Ländereien (1.4.0 „Feder und Stahl“ LA, claude:2026-10-23T19:00:00+02:00) ─────────────────────────
+   Eigene Gruppe unter den aktiven Skills: feiner Goldrahmen oben, kleine Überschrift in Kapitälchen, je Eintrag
+   eine Statuszeile unter dem Namen (Felder 6/9 · Ernte in 12 min). Warnfarbe bei Stillstand. Gilt für Reforged
+   und Classic (beide rendern SidebarEstates). Unter der Icon-Rail-Schwelle verschwinden Überschrift und Status. */
+.sb-estates {
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+  margin-top: calc(8px * var(--sb-scale-eff, 1));
+  padding-top: calc(6px * var(--sb-scale-eff, 1));
+  border-top: 1px solid rgba(216, 192, 106, 0.35);
+  position: relative;
+}
+.sb-estates-head {
+  font-family: var(--font-head);
+  font-variant: small-caps;
+  font-size: calc(11px * var(--sb-scale-eff, 1));
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(216, 192, 106, 0.72);
+  text-align: center;
+  padding-bottom: calc(3px * var(--sb-scale-eff, 1));
+}
+.sb-estate-btn .sb-skill-name {
+  bottom: calc(11px * var(--sb-scale-eff, 1));
+}
+.sb-estate-status {
+  position: absolute;
+  left: calc(48px * var(--sb-scale-eff, 1));
+  right: calc(48px * var(--sb-scale-eff, 1));
+  bottom: calc(4px * var(--sb-scale-eff, 1));
+  z-index: 1;
+  font-size: calc(9.5px * var(--sb-scale-eff, 1));
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(221, 214, 200, 0.62);
+  font-family: var(--font-body, Georgia, serif);
+  font-variant: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  pointer-events: none;
+}
+.sb-estate-status--warn {
+  color: #e0a15a;
+}
+@container sidebar (max-width: 150px) {
+  .sb-estates-head,
+  .sb-estate-status {
+    display: none;
+  }
+  .sb-estate-btn .sb-skill-name {
+    bottom: 0;
+  }
+}

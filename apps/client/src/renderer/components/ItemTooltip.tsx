@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { content } from "@hearthforge/content";
-import { computeStats, meetsRequirements, spellFocusMult } from "@hearthforge/engine";
+import { computeStats, meetsRequirements, spellFocusMult, itemTier } from "@hearthforge/engine";
 import type { AffixDef, ContentDB, EquipBonus, EquipSlot, ItemDef, ItemInstance, LocalizedString } from "@hearthforge/shared";
 import { ATTRIBUTES, EQUIP_SLOT_LABELS, TOOL_SLOTS, WEAPON_TYPE_SPECIALTY, effectiveWeaponEffects, isStatusEffectType, enchantSlotsFor, getItemRarity, RARITY_LABEL, instanceDisplayName, instanceBonusDelta, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, consumableHeal, TEMPO_REDUCTION_CAP } from "@hearthforge/shared";
 import { isEnchantable, runeFitsHint, runeTargetLabel } from "../runeTargets";
@@ -224,27 +224,10 @@ const ATTR_NAME: Record<string, LocalizedString> = Object.fromEntries(
   ATTRIBUTES.map((a) => [a.id, a.name]),
 );
 
-/** Derives the localised type subtitle from item fields. */
-export function buildItemTypeLine(
-  item: ItemDef,
-  t: (k: string) => string,
-  tr: (v: LocalizedString) => string,
-): string {
-  // Specific weapon type takes priority — each of the 16 types has its own i18n key.
-  if (item.weaponType) {
-    return t(`item.weaponType.${item.weaponType}`);
-  }
-  // Weapons without a weaponType yet: fall back to the old style label.
-  if (item.weaponStyle) {
-    const hand = item.twoHanded ? t("itip.twoHandedPrefix") : t("itip.oneHandedPrefix");
-    const style = t(`itip.weaponStyle.${item.weaponStyle}`);
-    return `${hand} ${style}`;
-  }
-  if (item.slot) {
-    return tr(EQUIP_SLOT_LABELS[item.slot]);
-  }
-  return t(`item.type.${item.type}`);
-}
+// claude:2026-10-23T17:40:00+02:00 — buildItemTypeLine wohnt jetzt in util/itemTypeLine.ts (testbar ohne DOM).
+import { buildItemTypeLine } from "../util/itemTypeLine";
+import { TierStars, tierRoman } from "./TierStars";
+export { buildItemTypeLine };
 
 /** Icon per status-effect type. */
 export function statusEffectIcon(type: string): string {
@@ -1014,8 +997,8 @@ function MiscRows({
   const state = useGameStateMaybe();
   const rows: JSX.Element[] = [];
 
-  // Two-handed badge — suppressed when weaponType is set because the specialty
-  // line below the type header already communicates 2H status ("Two-Handed · …").
+  // Two-handed badge — suppressed when weaponType is set because the type line in the header
+  // already reads "Two-Handed · <type>" (buildItemTypeLine, 1.4.0).
   if (item.twoHanded && !item.weaponType) {
     rows.push(<div key="2h" className="itip-badge">{t("item.twoHanded")}</div>);
   }
@@ -1546,6 +1529,7 @@ function ItemTooltipCard({
 
   const img = getItemImage(item.id);
   const typeLine = buildItemTypeLine(item, t, tr);
+  const tierOfItem = itemTier(content, item.id);
   const rarity = getItemRarity(item);
   // Sourced from the --rar-* CSS custom properties (components.css :root) instead of the
   // shared RARITY_COLORS hex map — keeps the tooltip's rarity accent (name/glow/effect-block)
@@ -1675,6 +1659,13 @@ function ItemTooltipCard({
           <div className="itip-type-line">
             {typeLine} · {tr(RARITY_LABEL[rarity])}
           </div>
+          {/* claude:2026-10-23T18:20:00+02:00 — 1.4.0 ST: Stufe als Sterne plus „Stufe VII“ (Chef 23.10.). */}
+          {tierOfItem !== null && (
+            <div className="itip-tier-line">
+              <TierStars tier={tierOfItem} color={tierOfItem >= 13 ? rarityCol : undefined} />
+              <span className="itip-tier-label">{t("item.tier").replace("{n}", tierRoman(tierOfItem))}</span>
+            </div>
+          )}
         </div>
       </div>
 

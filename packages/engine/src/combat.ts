@@ -119,7 +119,7 @@ import { computeStats } from "./character";
 import { combatLevel } from "./dungeon";
 import { itemCount, removeItem } from "./inventory";
 import { grantLoot } from "./mail";
-import { applyConsumableBuff, useConsumable } from "./consumable";
+import { applyConsumableBuff, tickMealKeep, useConsumable } from "./consumable";
 import { isHealPotion } from "./consume-gate";
 import { familyBestiaryComplete, markDropSeen } from "./drops";
 import { talentEffect } from "./talents";
@@ -164,22 +164,46 @@ function healPlayer(state: GameState, maxHp: number, amount: number, source: Hea
   pushLog(state.combat, { by: "player", kind: "heal", amount: heal, source });
 }
 
-/** Nächstes verfügbares Auto-Eat-Food im Inventar (Consumable mit Heilung, KEIN Heiltrank — Tränke
- *  laufen über den Auto-Trank). Für den automatischen Futter-Wechsel, wenn das gewählte Food leer ist. */
-function findNextFood(state: GameState, content: ContentDB): ItemId | null {
+/**
+ * Ersatz-Essen, wenn das gewählte Food leer ist. Tränke laufen über den Auto-Trank.
+ *
+ * claude:2026-10-23T16:30:00+02:00 — 1.4.0 (Chef 23.10.: „Auto-Essen isst nie eine Mahlzeit, außer du legst
+ * sie selbst in den Heilplatz“): nur noch REINE Heilnahrung (ohne `buff`), und nicht mehr das erste Feld im
+ * Inventar, sondern die passendste Heilmenge: die kleinste Heilung, die die fehlende HP an der Ess-Schwelle
+ * deckt; deckt keine, die größte. Gleichstand → Inventar-Reihenfolge (deterministisch). Vorher konnte der
+ * Ersatz eine seltene Mahlzeit greifen und sie dauerhaft zum Essen machen.
+ */
+export function findNextFood(state: GameState, content: ContentDB, maxHp: number): ItemId | null {
+  const need = Math.max(1, Math.round(maxHp * (1 - effectiveAutoEatThreshold(state.character))));
+  let best: { id: ItemId; heal: number } | null = null;
+  let bestCovers = false;
+  const seen = new Set<ItemId>();
   for (const slot of state.inventory.slots) {
     const id = slot?.itemId;
-    if (!id) continue;
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
     const item = content.items[id];
     if (
-      item?.type === "consumable" &&
-      ((item.healAmount ?? 0) > 0 || (item.healPct ?? 0) > 0) &&
-      !isHealPotion(content, id)
+      item?.type !== "consumable" ||
+      item.buff ||
+      ((item.healAmount ?? 0) <= 0 && (item.healPct ?? 0) <= 0) ||
+      isHealPotion(content, id)
     ) {
-      return id;
+      continue;
+    }
+    const heal = consumableHeal(item, maxHp);
+    const covers = heal >= need;
+    if (
+      !best ||
+      (covers && !bestCovers) ||
+      (covers && bestCovers && heal < best.heal) ||
+      (!covers && !bestCovers && heal > best.heal)
+    ) {
+      best = { id, heal };
+      bestCovers = covers;
     }
   }
-  return null;
+  return best?.id ?? null;
 }
 
 /** Isst automatisch gewähltes Essen, wenn die HP unter die Schwelle fallen. */
@@ -196,7 +220,7 @@ function tryAutoEat(state: GameState, content: ContentDB, maxHp: number): void {
   // gewählt (null) bleibt unverändert — der Spieler wählt bewusst.
   let foodId = state.character.food;
   if (foodId && itemCount(state.inventory, foodId) < 1) {
-    foodId = findNextFood(state, content);
+    foodId = findNextFood(state, content, maxHp);
     state.character.food = foodId;
   }
   if (!foodId) return;
@@ -504,6 +528,42 @@ export function selectFood(state: GameState, content: ContentDB, itemId: ItemId 
   if (item?.type === "consumable" && ((item.healAmount ?? 0) > 0 || (item.healPct ?? 0) > 0)) {
     state.character.food = itemId;
   }
+}
+
+/**
+ * Mahlzeit-Platz wählen (1.4.0, claude:2026-10-23T16:30:00+02:00). Nur Mahlzeiten (Buff der Kategorie
+ * "food") sind gültig; null leert den Platz. Ein ungültiges Item lässt die Wahl unverändert.
+ */
+export function selectMeal(state: GameState, content: ContentDB, itemId: ItemId | null): void {
+  if (itemId === null) {
+    state.character.meal = null;
+    return;
+  }
+  const item = content.items[itemId];
+  if (item?.type === "consumable" && item.buff?.category === "food") state.character.meal = itemId;
+}
+
+/** „Mahlzeit halten“ an/aus (kostenlos, Chef 23.10.). claude:2026-10-23T16:30:00+02:00 */
+export function setMealKeep(state: GameState, on: boolean): void {
+  state.character.mealKeep = on;
+}
+
+/**
+ * Kandidaten für den Mahlzeit-Picker: alle Mahlzeiten aus Inventar und Bank (inkl. Lager),
+ * dedupliziert, Inventar zuerst. Rein lesend. claude:2026-10-23T16:30:00+02:00
+ */
+export function eligibleMeals(state: GameState, content: ContentDB): ItemId[] {
+  const out: ItemId[] = [];
+  const seen = new Set<ItemId>();
+  const consider = (id: ItemId | undefined | null) => {
+    if (!id || seen.has(id)) return;
+    seen.add(id);
+    const it = content.items[id];
+    if (it?.type === "consumable" && it.buff?.category === "food") out.push(id);
+  };
+  for (const slot of state.inventory.slots) consider(slot?.itemId);
+  for (const id of Object.keys(state.bank)) if ((state.bank[id] ?? 0) > 0) consider(id);
+  return out;
 }
 
 // ── Auto-Trank: Engine-API für die UI (Settings + Trank-Erkennung) ──────────
@@ -2473,6 +2533,9 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   if (cs.autoPotionCooldownMs && cs.autoPotionCooldownMs > 0) {
     cs.autoPotionCooldownMs = Math.max(0, cs.autoPotionCooldownMs - TICK_MS);
   }
+  // claude:2026-10-23T16:30:00+02:00 — „Mahlzeit halten“ (1.4.0): einmal pro Kampf-Tick, auch in der Kill-Pause
+  // (ein Buff ist kein Heil-Refill). Isst nur, wenn kein Mahlzeit-Buff läuft; ohne gewählte Mahlzeit ein No-op.
+  tickMealKeep(state, content);
 
   // — Kill-Cooldown (Chef-Feature „Kampf entschleunigen"): Nach jedem Kill ruht der Kampf für
   //   KILL_COOLDOWN_MS (deterministisch tick-basiert → gilt aktiv, idle UND offline identisch).

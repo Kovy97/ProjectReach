@@ -1369,6 +1369,41 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.totalTicks]);
 
+  // claude:2026-10-23T20:10:00+02:00 — Ländereien-Meldung (1.4.0 LA, Chef 23.10.: „Gebündelt, höchstens alle 15 Minuten,
+  // aber aktivier- und deaktivierbar in den Optionen“). Zählt Fänge (`stats.huntCatches`) und Ernte-Stücke (`producedById`
+  // der Feldfrüchte) seit der letzten Meldung und meldet frühestens 15 Minuten danach gesammelt. Nur der Renderer (keine
+  // Engine-Zeit), Prüfung höchstens einmal pro Sekunde. Offline-Fänge zeigt der Offline-Bericht, nicht diese Meldung.
+  const estateRef = useRef<{ catches: number; harvest: number; pendC: number; pendH: number; lastAt: number; checkedAt: number } | null>(null);
+  useEffect(() => {
+    const now = performance.now();
+    const cur = estateRef.current;
+    if (cur && now - cur.checkedAt < 1000) return;
+    const catches = state.stats.huntCatches ?? 0;
+    let harvest = 0;
+    for (const c of Object.values(content.crops ?? {})) harvest += state.stats.producedById?.[c.yieldItem] ?? 0;
+    if (!cur) {
+      estateRef.current = { catches, harvest, pendC: 0, pendH: 0, lastAt: now, checkedAt: now };
+      return;
+    }
+    cur.checkedAt = now;
+    if (catches > cur.catches) cur.pendC += catches - cur.catches;
+    if (harvest > cur.harvest) cur.pendH += harvest - cur.harvest;
+    cur.catches = catches;
+    cur.harvest = harvest;
+    if ((cur.pendC > 0 || cur.pendH > 0) && now - cur.lastAt >= 15 * 60_000) {
+      if (state.settings.estateNotifications !== false) {
+        const parts: string[] = [];
+        if (cur.pendC > 0) parts.push(t("estates.toast.catches").replace("{n}", String(cur.pendC)));
+        if (cur.pendH > 0) parts.push(t("estates.toast.harvest").replace("{n}", String(cur.pendH)));
+        push({ kind: "drop", icon: "🌾", title: t("estates.toast.title"), detail: parts.join(" · "), priority: "low" });
+      }
+      cur.pendC = 0;
+      cur.pendH = 0;
+      cur.lastAt = now;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.totalTicks]);
+
   if (toasts.length === 0) return <></>;
   return (
     <div className="toast-stack">

@@ -129,6 +129,20 @@ export function OptionsPage(): JSX.Element {
               {state.settings.autoBank ? t("options.on") : t("options.off")}
             </button>
           </OptRow>
+          {/* claude:2026-10-23T20:10:00+02:00 — Ländereien-Meldungen (1.4.0 LA, Chef 23.10.: in den Optionen schaltbar). */}
+          <OptRow label={t("options.estateNotifications")} hint={t("options.estateNotificationsHint")}>
+            <button
+              className={optBtnCls(state.settings.estateNotifications !== false)}
+              onClick={() => { state.settings.estateNotifications = state.settings.estateNotifications === false; }}
+            >
+              <img
+                src={state.settings.estateNotifications !== false ? iconCheckboxOn : iconCheckboxOff}
+                alt=""
+                className="ui-icon"
+              />{" "}
+              {state.settings.estateNotifications !== false ? t("options.on") : t("options.off")}
+            </button>
+          </OptRow>
           <OptRow label={t("options.help")}>
             {/* Startet den Spotlight-Guide (OnboardingGuide.tsx) komplett neu von Schritt 0 —
                 löst den alten, event-basierten reopenOnboarding()-Aufruf ab (das 21-Schritt-Modal

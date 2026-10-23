@@ -1907,6 +1907,32 @@
   inset: 0;
   z-index: 2;
 }
+/* claude:2026-10-23T17:30:00+02:00 — 1.4.0 ZH: Nebenhand gesperrt durch Zweihandwaffe: blasser, entsättigter
+   Schatten der Waffe plus kleines Schloss. Bleibt ein Hover-Ziel (Tooltip „Belegt durch Zweihandwaffe“). */
+.cs-slot-2h-ghost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cs-slot-2h-ghost-img {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+  opacity: 0.22;
+  filter: grayscale(0.9) brightness(0.8);
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+.cs-slot-2h-lock {
+  position: absolute;
+  right: 8%;
+  bottom: 8%;
+  width: 34%;
+  max-width: 22px;
+  height: auto;
+  opacity: 0.85;
+  pointer-events: none;
+}
 .cs-slot-empty-label {
   position: absolute;
   inset: 0;

@@ -1,10 +1,11 @@
 import { useRef, useState } from "react";
 import { content } from "@hearthforge/content";
-import { meetsRequirements } from "@hearthforge/engine";
+import { meetsRequirements, itemTier } from "@hearthforge/engine";
 import type { ItemInstance } from "@hearthforge/shared";
 import { useGameStateMaybe } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getItemImage, rarityClass } from "../items";
+import { TierStars } from "./TierStars";
 import { getUiIcon } from "../uiIcons";
 import { consumeSparkleOnce } from "../util/discoveryBadge";
 import { effectiveFxLevel } from "../util/fxLevel";
@@ -100,6 +101,7 @@ export function ItemCell({
   const item = content.items[itemId];
   if (!item) return null;
   const img = getItemImage(itemId);
+  const tier = itemTier(content, itemId);
   // Chef-Test 25.08.2026: "Wenn Requirements fehlen für ein Item im Inventar oder Bank, sollte
   // unten links ein Verbotssymbol sein." Bisher stand die Anforderung nur rot im Tooltip; wer im
   // Lager nach tragbarer Ausrüstung suchte, musste jedes Teil einzeln anfassen. Unten LINKS ist die
@@ -209,12 +211,23 @@ export function ItemCell({
       )}
       {(hasVariants || (instance && (instance.affixes.length > 0 || !!instance.suffix))) && (
         <span className="item-cell-inst-badge" aria-hidden="true">
-          {getUiIcon("icon_suffix_star")
-            ? <img src={getUiIcon("icon_suffix_star")!} alt="" className="item-cell-inst-badge-img" loading="lazy" decoding="async" />
-            : "✦"}
+          {/* claude:2026-10-23T18:20:00+02:00 — 1.4.0 A12: Runen-Zeichen statt Stern (Sterne zeigen jetzt die Stufe).
+              Bis das Bild `icon_enchant_rune` geliefert ist, ein CSS-Rautenzeichen. */}
+          {getUiIcon("icon_enchant_rune")
+            ? <img src={getUiIcon("icon_enchant_rune")!} alt="" className="item-cell-inst-badge-img" loading="lazy" decoding="async" />
+            : <span className="item-cell-rune-mark" />}
         </span>
       )}
+      {/* claude:2026-10-23T18:20:00+02:00 — 1.4.0 ST: Stufen-Sterne oben mittig (Chef: Sterne, halbe Sterne). */}
+      {tier !== null && <TierStars tier={tier} className="item-cell-stars" color={tier >= 13 ? `var(--rar-${item.rarity ?? "godly"})` : undefined} />}
       {gesperrt && <span className="item-cell-req-badge" aria-hidden="true" />}
+      {/* claude:2026-10-23T17:30:00+02:00 — 1.4.0 ZH (Chef 23.10.): Textmarke „2H“ unten links für Zweihandwaffen;
+          die Anforderungs-Warnung belegt dieselbe Ecke und hat Vorrang. */}
+      {!gesperrt && item.twoHanded && (
+        <span className="item-cell-2h-badge" title={t("item.twoHanded")}>
+          {t("item.twoHandedShort")}
+        </span>
+      )}
       {newBadge && (
         <span className="item-cell-new-badge" title={t("inv.newBadge.title")}>
           {sparkle && <span className="item-cell-new-sparkle" aria-hidden="true" />}

@@ -48,7 +48,7 @@ describe("Migration v87 → v88", () => {
     expect((raw.state as unknown as Record<string, unknown>).prestige).toBeUndefined();
     const res = deserialize(json, content, raw.savedAt)!;
     expect(res.offlineTicks).toBe(0);
-    expect(res.state.version).toBe(88);
+    expect(res.state.version).toBe(SAVE_VERSION); // claude:2026-10-23T16:50:00+02:00 — seit 1.4.0 läuft die Kette weiter (v89+)
     expect(res.state.prestige).toEqual(defaultPrestigeState());
 
     // Gegenprobe: derselbe v87-Save, in dem das Feld schon als Default steht, lädt byte-gleich. Damit ist
@@ -169,9 +169,15 @@ describe("v88-Vault-Fixture (nach einem echten Aufstieg gepinnt)", () => {
     expect(questStatus(s, content, ch2)).toBe("locked");
   });
 
-  it("Sanitize-Fixpunkt: Laden + Speichern ist byte-gleich", () => {
+  it("Sanitize-Fixpunkt: Laden + Speichern ist byte-gleich (bis auf die Felder späterer Versionen)", () => {
+    // claude:2026-10-23T16:50:00+02:00 — seit SAVE 89 (1.4.0) ergänzt die Kette den Mahlzeit-Platz; sonst bleibt alles gleich.
     const s = deserialize(json, content, raw.savedAt)!.state;
-    expect(serialize(s, raw.savedAt)).toBe(json);
+    const erwartet = JSON.parse(json) as SaveShape;
+    erwartet.version = SAVE_VERSION;
+    erwartet.state.version = SAVE_VERSION;
+    Object.assign(erwartet.state.character, { meal: null, mealKeep: true });
+    erwartet.state.settings.estateNotifications = true;
+    expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
 
   it("Wächter: jedes Feld des voll befüllten Spielstands ist eingestuft, und jede Einstufung existiert dort", () => {

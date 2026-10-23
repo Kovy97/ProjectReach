@@ -1,3 +1,4 @@
+import { EstatesNote, IdleOrEstates } from "./components/EstatesNote"; // claude:2026-10-23T19:10:00+02:00 — Ländereien (1.4.0)
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import { content } from "@hearthforge/content";
 import { combatLevel, computeStats, dungeonRunProgress, effectiveActionDurationMs, effectiveCapacity, levelFromXp, stopCombat, usedCapacityUnits, xpForLevel } from "@hearthforge/engine";
@@ -629,6 +630,8 @@ function GameStats({
       <span className="hs-line hs-act-text">
         <span className="hs-muted">{t("header.doing")}</span>{" "}
         <span className="hs-act-name">{a ? tr(a.name) : ""}</span>
+        {/* claude:2026-10-23T19:10:00+02:00 — 1.4.0 LA: Ländereien als Zusatz („ · Nebenbei: 6 Felder“). */}
+        <EstatesNote className="hs-muted" />
       </span>
     );
   } else if (lastStopActionId) {
@@ -644,7 +647,8 @@ function GameStats({
       </span>
     );
   } else {
-    activity = <span className="hs-line hs-act-text hs-muted">{t("header.idle")}</span>;
+    // claude:2026-10-23T19:10:00+02:00 — 1.4.0 LA: nie „Untätig“, solange Felder oder Fallen arbeiten.
+    activity = <IdleOrEstates idleText={t("header.idle")} className="hs-line hs-act-text hs-muted" />;
   }
 
   const invFull = used >= cap;

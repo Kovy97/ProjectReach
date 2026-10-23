@@ -241,7 +241,8 @@ export function OfflinePopup({
   const hasCampResults =
     (o.campBuilds?.length ?? 0) > 0 ||
     (o.campRefined?.length ?? 0) > 0 ||
-    (o.huntCatches?.length ?? 0) > 0;
+    (o.huntCatches?.length ?? 0) > 0 ||
+    (o.farmHarvests?.length ?? 0) > 0;
   const hasIncident =
     (o.petDrops?.length ?? 0) > 0 || deaths > 0 || showStopHint || Boolean(lastStop) || (o.queueSkips ?? 0) > 0;
 
@@ -495,6 +496,19 @@ export function OfflinePopup({
                         {o.campRefined!.map((r, i) => (
                           <div key={`${r.buildingId}-${r.itemId}-${i}`} className="ofs-loot-cell">
                             <ItemCell itemId={r.itemId} qty={r.qty} className="ofs-loot-item" />
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  )}
+                  {/* claude:2026-10-23T20:00:00+02:00 — Ländereien (1.4.0 LA): eigener Block für die Ernten der Felder. */}
+                  {(o.farmHarvests?.length ?? 0) > 0 && (
+                    <section className="ofs-section">
+                      <h3 className="ofs-section-title">{t("offline.estates.farmTitle")}</h3>
+                      <div className="ofs-loot-grid">
+                        {o.farmHarvests!.map((h) => (
+                          <div key={h.itemId} className="ofs-loot-cell">
+                            <ItemCell itemId={h.itemId} qty={h.qty} className="ofs-loot-item" />
                           </div>
                         ))}
                       </div>

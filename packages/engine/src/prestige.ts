@@ -172,6 +172,8 @@ export const PRESTIGE_CHARACTER_FIELDS: Readonly<Record<keyof CharacterState, Pr
   hp: "reset", // neu berechnet (maxHp des Neustands)
   equipment: "reset",
   food: "reset",
+  meal: "reset", // claude:2026-10-23T16:30:00+02:00 — Mahlzeit-Wahl verweist auf Inventar/Bank (beide zurück)
+  mealKeep: "keep", // Schalter (kostenlos, Einstellung)
   autoEatTier: "reset", // mit Gold gekauft
   autoEatThreshold: "keep", // Regler, wirkt nur auf Max-Stufe
   autoPotion: "reset", // enthält den gekauften Auto-Rebuff und eine Item-Wahl

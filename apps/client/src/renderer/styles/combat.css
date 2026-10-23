@@ -4465,6 +4465,8 @@
 .cl-food-meta { display: flex; flex-direction: column; gap: 2px; }
 .cl-food-name { font-family: var(--font-head); font-size: 15px; color: var(--text); }
 .cl-food-heal { font-size: 15px; color: #8fd28f; }
+/* claude:2026-10-23T17:10:00+02:00 — Mahlzeit-Platz: Vorrat unter 5 in Warnfarbe (1.4.0). */
+.cl-food-heal.cl-meal-low { color: #e0a15a; }
 .cl-food-hint { font-size: 14px; }
 
 .cl-food-choices { display: flex; flex-wrap: wrap; gap: 6px; }

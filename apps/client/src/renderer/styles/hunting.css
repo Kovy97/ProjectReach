@@ -1540,3 +1540,32 @@ button.hzp-loot-chip-icon:hover {
   background-origin: border-box;
   background-clip: border-box;
 }
+
+/* claude:2026-10-23T19:50:00+02:00 — Ländereien-Banner (1.4.0 LA) für Farming- und Jagd-Seite: schmaler Hinweisstreifen mit
+   Goldkante links, Live-Status rechts; Warnfarbe bei Stillstand. Liegt hier, weil hunting.css auf beiden Seiten geladen ist. */
+.estate-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+  margin: 4px 0 10px;
+  padding: 7px 12px;
+  border-left: 3px solid rgba(216, 192, 106, 0.6);
+  background: rgba(14, 12, 10, 0.55);
+  font-size: 14px;
+}
+.estate-banner-lead {
+  color: var(--gold, #d8c06a);
+  font-family: var(--font-head);
+  letter-spacing: 0.03em;
+}
+.estate-banner-status {
+  color: rgba(221, 214, 200, 0.75);
+}
+.estate-banner--warn {
+  border-left-color: #e0a15a;
+}
+.estate-banner-warn {
+  color: #e0a15a;
+}

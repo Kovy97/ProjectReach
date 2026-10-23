@@ -1,4 +1,5 @@
 import { content } from "@hearthforge/content";
+import { itemTier } from "@hearthforge/engine"; // claude:2026-10-23T18:30:00+02:00 — Stufen-Sortierung (1.4.0)
 import {
   ITEM_RARITIES,
   instanceDisplayName,
@@ -56,9 +57,10 @@ export function rarityClass(rarity: ItemRarity | undefined): string {
 /** Sortiermodi für Item-Listen: "newest" = unveränderte/natürliche Reihenfolge. "qty" (Menge,
  * absteigend) ist NUR in der Bank sinnvoll (Charakter-Inventar hat feste Slot-Mengen) — s.
  * BankPage, die "qty" lokal behandelt (compareItemsBy kennt nur itemId-abgeleitete Modi). */
-export type ItemSortMode = "newest" | "name" | "value" | "rarity" | "qty" | "type";
+// claude:2026-10-23T18:30:00+02:00 — 1.4.0 ST: neuer Modus "tier" (Stufe absteigend, dann Seltenheit, dann Name).
+export type ItemSortMode = "newest" | "name" | "value" | "rarity" | "qty" | "type" | "tier";
 
-export const ITEM_SORT_MODES: ItemSortMode[] = ["newest", "type", "name", "value", "rarity", "qty"];
+export const ITEM_SORT_MODES: ItemSortMode[] = ["newest", "type", "name", "value", "rarity", "tier", "qty"];
 
 // Abgeleitet aus dem vollständigen 8-Tier-Enum (shared: ITEM_RARITIES, aufsteigend niedrig→hoch),
 // statt einer eigenen Teil-Liste zu pflegen — sonst fallen neue/seltene Tiers (poor/superRare/godly)
@@ -92,6 +94,13 @@ export function compareItemsBy(
   const defB = content.items[idB];
   if (mode === "name") return tr(defA?.name ?? "").localeCompare(tr(defB?.name ?? ""));
   if (mode === "value") return (defB?.value ?? 0) - (defA?.value ?? 0);
+  if (mode === "tier") {
+    const d = (itemTier(content, idB) ?? 0) - (itemTier(content, idA) ?? 0);
+    if (d !== 0) return d;
+    const r = (ITEM_RARITY_ORDER[defB?.rarity ?? "common"] ?? 0) - (ITEM_RARITY_ORDER[defA?.rarity ?? "common"] ?? 0);
+    if (r !== 0) return r;
+    return tr(defA?.name ?? "").localeCompare(tr(defB?.name ?? ""));
+  }
   if (mode === "type") {
     // Chef-Wunsch 29.08.2026: „Inventar sortieren nach Typ — Materialien, Essen, Ruestung usw."
     // Gruppiert nach denselben Kategorien wie die Filter-Leiste (`FILTER_CATEGORIES`) und in

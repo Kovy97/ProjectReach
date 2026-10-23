@@ -5,6 +5,10 @@ import { content } from "@hearthforge/content";
 import {
   autoEatUpgradeCost,
   buyAutoEatUpgrade,
+  eligibleMeals,
+  mealStock,
+  selectMeal,
+  setMealKeep,
   canEnterDungeon,
   combatLevel,
   combinedFloorDodge,
@@ -5981,6 +5985,91 @@ function CombatFoodAutoEat(): JSX.Element {
 }
 
 /**
+ * Mahlzeit-Platz (1.4.0 „Feder und Stahl“, Chef 23.10.2026; claude:2026-10-23T17:10:00+02:00).
+ * Die Buff-Mahlzeit lebt getrennt vom Heilplatz: Das Auto-Essen fasst sie nie an, „Mahlzeit halten“ isst
+ * sie im Kampf nach, sobald ihr Buff ausläuft (kostenlos). Vorrat zählt Inventar und Bank (inkl. Lager).
+ * Gleiche `cl-food-*`-Bausteine wie Essen und Tränke (einheitlicher Sektions-Stil).
+ */
+function CombatMealSlot(): JSX.Element {
+  const state = useGameState();
+  const { t, tr } = useI18n();
+  const tooltip = useItemTooltip();
+  const c = state.character;
+  const meals = eligibleMeals(state, content);
+  const sel = c.meal ? content.items[c.meal] : null;
+  const selImg = c.meal ? getItemImage(c.meal) : null;
+  const stock = c.meal ? mealStock(state, c.meal) : 0;
+  const active = c.meal ? c.buffs.find((b) => b.itemId === c.meal) : undefined;
+  const remainS = active ? Math.max(0, Math.ceil(active.remainingMs / 1000)) : 0;
+  const remain = `${Math.floor(remainS / 60)}:${String(remainS % 60).padStart(2, "0")}`;
+  const keep = c.mealKeep !== false;
+
+  return (
+    <div className="cl-food-body cl-meal-body">
+      <div className="cl-food-current">
+        <div
+          className={`cl-food-slot${sel ? " filled" : ""}`}
+          onMouseEnter={sel && c.meal ? (e) => tooltip.show(c.meal!, e.clientX, e.clientY, []) : undefined}
+          onMouseLeave={sel ? () => tooltip.hide() : undefined}
+        >
+          {selImg ? (
+            <img loading="lazy" decoding="async" src={selImg} alt="" />
+          ) : (
+            <span className="cl-food-empty">{sel?.icon ?? (FOOD_ICON_URL ? <img loading="lazy" decoding="async" src={FOOD_ICON_URL} alt="" className="ui-icon" /> : "🍲")}</span>
+          )}
+          {sel && stock > 0 && <span className="cl-food-qty">{formatNum(stock)}</span>}
+        </div>
+        <div className="cl-food-meta">
+          <span className="cl-food-name">{sel ? tr(sel.name) : t("combat.meal.none")}</span>
+          {sel ? (
+            <span className={`cl-food-heal${stock < 5 ? " cl-meal-low" : ""}`}>
+              {active ? t("combat.meal.active").replace("{time}", remain) : t("combat.meal.inactive")}
+              {" · "}
+              {t("combat.meal.left").replace("{n}", formatNum(stock))}
+            </span>
+          ) : (
+            <span className="cl-food-hint muted">{t("combat.meal.pick")}</span>
+          )}
+        </div>
+      </div>
+
+      <div className="cl-food-choices">
+        <button
+          className={`cl-food-btn${!c.meal ? " active" : ""}`}
+          onClick={() => selectMeal(state, content, null)}
+          title={t("combat.meal.none")}
+        >
+          ✕
+        </button>
+        {meals.map((id) => {
+          const item = content.items[id];
+          const img = getItemImage(id);
+          return (
+            <button
+              key={id}
+              className={`cl-food-btn${c.meal === id ? " active" : ""}`}
+              onClick={() => selectMeal(state, content, id)}
+              onMouseEnter={(e) => tooltip.show(id, e.clientX, e.clientY, [])}
+              onMouseLeave={() => tooltip.hide()}
+            >
+              {img ? <img loading="lazy" decoding="async" src={img} alt="" /> : <span>{item?.icon ?? "🍲"}</span>}
+              <span className="cl-food-btn-qty">{formatNum(mealStock(state, id))}</span>
+            </button>
+          );
+        })}
+        {meals.length === 0 && <span className="cl-food-hint muted">{t("combat.meal.noMeals")}</span>}
+      </div>
+
+      <label className="cl-potion-rebuff-label" title={t("combat.meal.keepHint")}>
+        <input type="checkbox" checked={keep} onChange={(e) => setMealKeep(state, e.target.checked)} />
+        <span>{t("combat.meal.keep")}</span>
+      </label>
+      <span className="cl-potion-cooldown-hint muted">{t("combat.meal.keepHint")}</span>
+    </div>
+  );
+}
+
+/**
  * Auto-Trank-Steuerung (Chef-Feature 2026-07-02): welchen Heiltrank automatisch trinken, bei
  * welcher HP-Schwelle, und ob ablaufende Buff-Tonika automatisch nachgetrunken werden. Das
  * Gegenstück zu Auto-Eat (natürliche HP-Regen ist weg — Vorbereitung ist überlebenswichtig),
@@ -6450,6 +6539,12 @@ function CombatLoadoutBar({
       {activeTab === "prep" && <div className="cl-dock-pane" role="tabpanel"><div className="cl-section cl-section-food">
         <span className="cl-title">{t("combat.foodAutoEat")}</span>
         <CombatFoodAutoEat />
+      </div>
+
+      {/* claude:2026-10-23T17:10:00+02:00 — Mahlzeit-Platz (1.4.0, Chef 23.10.): Buff-Mahlzeit getrennt vom Heilplatz. */}
+      <div className="cl-section cl-section-meal">
+        <span className="cl-title">{t("combat.meal.title")}</span>
+        <CombatMealSlot />
       </div>
 
       {/* Tränke: Auto-Trank-Wahl + HP-Schwelle + Auto-Rebuff (Chef-Feature 2026-07-02, das

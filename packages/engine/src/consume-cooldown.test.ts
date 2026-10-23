@@ -198,26 +198,39 @@ describe("Konsum-Abklingzeit (jeder Pfad)", () => {
     expect(s.combat.autoPotionCooldownMs ?? 0).toBe(0);
   });
 
-  it("Auto-Rebuff (Tonikum läuft ab) funktioniert weiter - auch bei laufendem Ess-Takt", () => {
-    // Combo-Food (heilt UND trägt buff.category) wird von tickBuffs nachgetrunken. Der Rebuff feuert
-    // höchstens einmal pro Buff-DAUER (90-300 s) und ist damit kein Chugging-Vektor - er ist die EINE
-    // dokumentierte Ausnahme vom Gate (sonst ginge der Tonikum-Buff im Kampf ersatzlos verloren).
+  it("Mahlzeit halten isst nach - auch bei laufendem Ess-Takt (1.4.0, ersetzt den alten Food-Rebuff)", () => {
+    // claude:2026-10-23T16:50:00+02:00 — Seit 1.4.0 erneuert die Tonika-Erneuerung keine Mahlzeiten mehr; das
+    // macht „Mahlzeit halten“ (nur im Kampf). Wie der alte Rebuff ist es taktfrei: ein laufender Ess-Takt
+    // darf den Buff nicht verhindern, sonst ginge er mitten im Kampf ersatzlos verloren.
     const s = createTestGame({ name: "X" }, content, 1);
     addItem(s.inventory, content, "marshroot_chowder", 2);
-    expect(content.items.marshroot_chowder?.buff?.category).toBeTruthy();
+    expect(content.items.marshroot_chowder?.buff?.category).toBe("food");
     expect((content.items.marshroot_chowder?.healAmount ?? 0) > 0).toBe(true);
-    s.character.autoPotion.autoRebuffUnlocked = true;
-    setAutoRebuffTonics(s, true);
+    s.character.meal = "marshroot_chowder";
+    s.character.mealKeep = true;
     expect(useConsumable(s, content, "marshroot_chowder")).toBe(true);
 
     startCombat(s, content, "goblin");
     s.combat.autoEatCooldownMs = AUTO_EAT_COOLDOWN_MS; // Ess-Takt läuft
     s.character.buffs[0]!.remainingMs = 50;
 
-    advance(s, content, 100); // Buff läuft ab -> Rebuff
+    advance(s, content, 100); // Buff läuft ab -> Mahlzeit halten
 
     expect(itemCount(s.inventory, "marshroot_chowder")).toBe(0);
     expect(s.character.buffs.some((b) => b.itemId === "marshroot_chowder")).toBe(true);
+  });
+
+  it("Tonika-Erneuerung isst keine Mahlzeiten mehr (1.4.0)", () => {
+    const s = createTestGame({ name: "X" }, content, 1);
+    addItem(s.inventory, content, "marshroot_chowder", 2);
+    s.character.autoPotion.autoRebuffUnlocked = true;
+    setAutoRebuffTonics(s, true);
+    s.character.mealKeep = false;
+    expect(useConsumable(s, content, "marshroot_chowder")).toBe(true);
+    s.character.buffs[0]!.remainingMs = 50;
+    advance(s, content, 100);
+    expect(itemCount(s.inventory, "marshroot_chowder")).toBe(1);
+    expect(s.character.buffs.some((b) => b.itemId === "marshroot_chowder")).toBe(false);
   });
 
   it("Klassifikation folgt isHealPotion (Trank) bzw. Food - für den GESAMTEN Katalog", () => {

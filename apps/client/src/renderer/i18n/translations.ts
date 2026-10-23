@@ -1170,7 +1170,7 @@ const en = {
     "combat.autoEatTier": "Auto-Eat T{n}",
     "combat.autoEatEatsAt": "eats at {p}% HP",
     "combat.autoEatUpgrade": "Upgrade",
-    "combat.autoEatUpgradeHint": "Eat earlier and heal more. Higher tiers keep you alive in tougher fights.",
+    "combat.autoEatUpgradeHint": "Eat earlier. Higher tiers eat at a higher HP threshold, which keeps you alive in tougher fights.",
     "combat.autoEatMax": "Max tier",
     "combat.autoPotion.title": "Potions",
     "combat.autoPotion.none": "None",
@@ -1181,7 +1181,7 @@ const en = {
     "combat.autoPotion.rebuff": "Auto-renew buff tonics",
     // codex:2026-08-02T16:20:00+02:00 — Combat-Prep Auto-Buff unlock.
     "combat.autoPotion.rebuffUnlock": "Unlock Auto-Buff",
-    "combat.autoPotion.rebuffUnlockHint": "Automatically renew the selected tonic when its effect expires.",
+    "combat.autoPotion.rebuffUnlockHint": "Automatically drink a tonic again when its effect expires and you still carry one. Meals are handled by the meal slot.",
     "combat.autoPotion.cooldownHint": "{n}s cooldown between auto-drinks",
     "combat.kills": "Kills: {n}",
     // Session-Ertrags-Zeile (Chef-Feature): renderer-only Tally seit Sitzungsbeginn.
@@ -1913,7 +1913,7 @@ const en = {
     "hunting.book.noMatches": "No species match this filter.",
     "hunting.book.speciesCount": "{n}/{total} caught",
 
-    "offline.hunt.title": "Hunting",
+    "offline.hunt.title": "Estates: traps",
 
     "offline.queueSkips": "{count} queue entries were skipped",
 
@@ -2349,7 +2349,7 @@ const en = {
     "onboarding.guide.sidebarSkill.cooking.title": "Cooking",
     "onboarding.guide.sidebarSkill.cooking.body": "This is Cooking. You turn raw fish and meat into meals that Auto-Eat consumes automatically in combat to refill your HP. To train it, pick an ingredient and cook it; leveling up unlocks better meals with more healing.",
     "onboarding.guide.sidebarSkill.farming.title": "Farming",
-    "onboarding.guide.sidebarSkill.farming.body": "This is Farming. You plant seeds in a plot; they keep growing over time — even while you're offline — and yield herbs, crops and fibres for Herblore, Cooking and Crafting. To train it, plant seeds and harvest the plot once it's ready; leveling up unlocks more plots and better crops.",
+    "onboarding.guide.sidebarSkill.farming.body": "This is Farming. You plant seeds in a plot and they keep growing over time, even while you're offline. Ripe crops are harvested and replanted on their own as long as you have seeds, and they yield herbs, crops and fibres for Herblore, Cooking and Crafting. Leveling up unlocks more plots and better crops.",
     "onboarding.guide.sidebarSkill.foraging.title": "Foraging",
     "onboarding.guide.sidebarSkill.foraging.body": "This is Foraging. You gather wild plants, bark and seeds from the land — an important early source of materials for Herblore and Crafting. To train it, pick a plant and gather it; leveling up unlocks rarer finds.",
     "onboarding.guide.sidebarSkill.thieving.title": "Thieving",
@@ -2891,6 +2891,47 @@ const en = {
     "tavern.toast.newGuests.title": "New Guests at the Tavern",
     "tavern.toast.newGuests.detail": "Fresh faces are sitting at the tables.",
     "tavern.toast.delivered.title": "{name} is Satisfied",
+    // claude:2026-10-23T17:10:00+02:00 — Mahlzeit-Platz (1.4.0)
+    "combat.meal.title": "Meal",
+    "combat.meal.none": "No meal",
+    "combat.meal.pick": "Pick a cooked meal for its buff. Auto-eat never touches it.",
+    "combat.meal.noMeals": "No meals in your inventory or bank. Cook a dish that grants a buff.",
+    "combat.meal.active": "Active {time}",
+    "combat.meal.inactive": "Not active",
+    "combat.meal.left": "{n} left",
+    "combat.meal.keep": "Keep meal up",
+    "combat.meal.keepHint": "In fights, dungeons and raids you eat the meal again as soon as its buff runs out. Free.",
+    // claude:2026-10-23T17:30:00+02:00 — Zweihand-Anzeige (1.4.0)
+    "item.twoHandedShort": "2H",
+    "equip.offhandBlocked2h": "Taken by your two-handed weapon",
+    // claude:2026-10-23T18:20:00+02:00 — Stufen-Anzeige (1.4.0)
+    "item.tier": "Tier {n}",
+    "char.sortTier": "Tier",
+    // claude:2026-10-23T20:10:00+02:00 — Ländereien (1.4.0)
+    "nav.section.estates": "Estates",
+    "estates.hint": "Farming and Hunting run on their own: online, offline and alongside your main activity.",
+    "estates.banner": "Runs on its own, offline too and alongside your main activity.",
+    "estates.farm.status": "Plots {n}/{m}",
+    "estates.farm.next": "{min} min",
+    "estates.farm.blocked": "{n} harvest stuck",
+    "estates.farm.idle": "Nothing planted",
+    "estates.hunt.status": "Traps {n}/{m}",
+    "estates.hunt.next": "{min} min",
+    "estates.hunt.waiting": "{n} needs bait",
+    "estates.hunt.idle": "No trap set",
+    "estates.note": "Alongside: {list}",
+    "estates.note.plot": "{n} plot",
+    "estates.note.plots": "{n} plots",
+    "estates.note.trap": "{n} trap",
+    "estates.note.traps": "{n} traps",
+    "estates.toast.title": "Your estates worked",
+    "estates.toast.catches": "{n} catches",
+    "estates.toast.harvest": "{n} harvested",
+    "offline.estates.farmTitle": "Estates: harvest",
+    "options.estateNotifications": "Estate reports",
+    "options.estateNotificationsHint": "A combined note on catches and harvests, at most every 15 minutes.",
+    "skilldesc.farming": "Plant seeds in plots. Crops grow and are harvested and replanted on their own, online and offline, while you do something else.",
+    "skilldesc.hunting": "Set baited traps in zones where you have already defeated the prey. Traps catch, re-bait and keep running on their own, online and offline.",
 };
 
 /** Schlüssel-Parität-Guard: jeder fehlende/zusätzliche Key gegenüber `en` ist ein tsc-Fehler. */
@@ -3984,7 +4025,7 @@ const de: Record<keyof typeof en, string> = {
     "combat.autoEatTier": "Auto-Eat S{n}",
     "combat.autoEatEatsAt": "isst bei {p}% HP",
     "combat.autoEatUpgrade": "Upgrade",
-    "combat.autoEatUpgradeHint": "Isst früher und heilt mehr. Höhere Stufen halten dich in härteren Kämpfen am Leben.",
+    "combat.autoEatUpgradeHint": "Isst früher. Höhere Stufen essen bei mehr HP und halten dich in härteren Kämpfen am Leben.",
     "combat.autoEatMax": "Max-Stufe",
     "combat.autoPotion.title": "Tränke",
     "combat.autoPotion.none": "Keiner",
@@ -3995,7 +4036,7 @@ const de: Record<keyof typeof en, string> = {
     "combat.autoPotion.rebuff": "Buff-Tonika automatisch erneuern",
     // codex:2026-08-02T16:20:00+02:00 — Combat-Prep Auto-Buff-Freischaltung.
     "combat.autoPotion.rebuffUnlock": "Auto-Buff freischalten",
-    "combat.autoPotion.rebuffUnlockHint": "Erneuert das ausgewählte Tonikum automatisch, sobald sein Effekt ausläuft.",
+    "combat.autoPotion.rebuffUnlockHint": "Trinkt ein Tonikum automatisch nach, sobald sein Effekt ausläuft und du noch eins dabeihast. Mahlzeiten übernimmt der Mahlzeit-Platz.",
     "combat.autoPotion.cooldownHint": "{n}s Abklingzeit zwischen Auto-Schlucken",
     "combat.kills": "Kills: {n}",
     "combat.session.label": "Diese Sitzung",
@@ -4682,7 +4723,7 @@ const de: Record<keyof typeof en, string> = {
     "hunting.book.noMatches": "Keine Art passt zu diesem Filter.",
     "hunting.book.speciesCount": "{n}/{total} gefangen",
 
-    "offline.hunt.title": "Jagd",
+    "offline.hunt.title": "Ländereien: Fallen",
 
     "offline.queueSkips": "{count} Warteschlangen-Einträge wurden übersprungen",
 
@@ -5110,7 +5151,7 @@ const de: Record<keyof typeof en, string> = {
     "onboarding.guide.sidebarSkill.cooking.title": "Kochen",
     "onboarding.guide.sidebarSkill.cooking.body": "Das ist Kochen. Du verwandelst rohen Fisch und rohes Fleisch in Mahlzeiten, die Auto-Eat im Kampf automatisch isst, um deine HP zu füllen. Zum Trainieren wählst du eine Zutat und kochst sie; mit steigendem Level schaltest du bessere Gerichte mit mehr Heilung frei.",
     "onboarding.guide.sidebarSkill.farming.title": "Anbau",
-    "onboarding.guide.sidebarSkill.farming.body": "Das ist Anbau. Du pflanzt Samen auf ein Beet; sie wachsen mit der Zeit weiter — auch offline — und liefern Kräuter, Feldfrüchte und Fasern für Kräuterkunde, Kochen und Handwerk. Zum Trainieren pflanzt du Samen und erntest das Beet, sobald es reif ist; mit steigendem Level schaltest du mehr Beete und bessere Pflanzen frei.",
+    "onboarding.guide.sidebarSkill.farming.body": "Das ist Anbau. Du pflanzt Samen auf ein Beet, und sie wachsen mit der Zeit weiter, auch offline. Reife Pflanzen werden von selbst geerntet und neu gesät, solange du Samen hast, und liefern Kräuter, Feldfrüchte und Fasern für Kräuterkunde, Kochen und Handwerk. Mit steigendem Level schaltest du mehr Beete und bessere Pflanzen frei.",
     "onboarding.guide.sidebarSkill.foraging.title": "Sammeln",
     "onboarding.guide.sidebarSkill.foraging.body": "Das ist Sammeln. Du sammelst Wildpflanzen, Rinde und Samen aus der Natur — eine wichtige frühe Rohstoffquelle für Kräuterkunde und Handwerk. Zum Trainieren wählst du eine Pflanze und sammelst sie ein; mit steigendem Level schaltest du seltenere Funde frei.",
     "onboarding.guide.sidebarSkill.thieving.title": "Diebeskunst",
@@ -5613,6 +5654,47 @@ const de: Record<keyof typeof en, string> = {
     "tavern.toast.newGuests.title": "Neue Gäste in der Taverne",
     "tavern.toast.newGuests.detail": "Frische Gesichter sitzen an den Tischen.",
     "tavern.toast.delivered.title": "{name} ist zufrieden",
+    // claude:2026-10-23T17:10:00+02:00 — Mahlzeit-Platz (1.4.0)
+    "combat.meal.title": "Mahlzeit",
+    "combat.meal.none": "Keine Mahlzeit",
+    "combat.meal.pick": "Wähle ein gekochtes Gericht für seinen Buff. Das Auto-Essen rührt es nie an.",
+    "combat.meal.noMeals": "Keine Mahlzeiten in Inventar oder Bank. Koche ein Gericht mit Buff.",
+    "combat.meal.active": "Aktiv {time}",
+    "combat.meal.inactive": "Nicht aktiv",
+    "combat.meal.left": "{n} übrig",
+    "combat.meal.keep": "Mahlzeit halten",
+    "combat.meal.keepHint": "In Kämpfen, Dungeons und Raids isst du die Mahlzeit nach, sobald ihr Buff ausläuft. Kostenlos.",
+    // claude:2026-10-23T17:30:00+02:00 — Zweihand-Anzeige (1.4.0)
+    "item.twoHandedShort": "2H",
+    "equip.offhandBlocked2h": "Belegt durch deine Zweihandwaffe",
+    // claude:2026-10-23T18:20:00+02:00 — Stufen-Anzeige (1.4.0)
+    "item.tier": "Stufe {n}",
+    "char.sortTier": "Stufe",
+    // claude:2026-10-23T20:10:00+02:00 — Ländereien (1.4.0)
+    "nav.section.estates": "Ländereien",
+    "estates.hint": "Anbau und Jagen laufen von selbst: online, offline und neben deiner Hauptaktion.",
+    "estates.banner": "Läuft von selbst, auch offline und neben deiner Hauptaktion.",
+    "estates.farm.status": "Felder {n}/{m}",
+    "estates.farm.next": "{min} Min.",
+    "estates.farm.blocked": "{n} Ernte wartet",
+    "estates.farm.idle": "Nichts gepflanzt",
+    "estates.hunt.status": "Fallen {n}/{m}",
+    "estates.hunt.next": "{min} Min.",
+    "estates.hunt.waiting": "{n} ohne Köder",
+    "estates.hunt.idle": "Keine Falle",
+    "estates.note": "Nebenbei: {list}",
+    "estates.note.plot": "{n} Feld",
+    "estates.note.plots": "{n} Felder",
+    "estates.note.trap": "{n} Falle",
+    "estates.note.traps": "{n} Fallen",
+    "estates.toast.title": "Deine Ländereien haben gearbeitet",
+    "estates.toast.catches": "{n} Fänge",
+    "estates.toast.harvest": "{n} geerntet",
+    "offline.estates.farmTitle": "Ländereien: Ernte",
+    "options.estateNotifications": "Meldungen der Ländereien",
+    "options.estateNotificationsHint": "Eine gesammelte Meldung über Fänge und Ernten, höchstens alle 15 Minuten.",
+    "skilldesc.farming": "Pflanze Samen in Beete. Die Pflanzen wachsen, werden von selbst geerntet und neu gesät, online wie offline, während du etwas anderes tust.",
+    "skilldesc.hunting": "Stelle beköderte Fallen in Gebieten, deren Beute du schon besiegt hast. Die Fallen fangen, legen neuen Köder aus und laufen von selbst weiter, online wie offline.",
 };
 
 // `en` ist Pflicht (Referenz-/Fallback-Sprache, s. `useI18n().t`); die übrigen 5 Locales

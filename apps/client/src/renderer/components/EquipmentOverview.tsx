@@ -21,6 +21,7 @@ import { equipSucceeded, reportEquipFailure } from "../util/equipFeedback";
 import { formatSeconds1, formatStat } from "../util/format";
 import { CitadelTip, HoverTip, useCitadelTip } from "./CitadelTip";
 import { ItemCell } from "./ItemCell";
+import { getItemImage } from "../items";
 
 /**
  * Ausrüstungs-/Attribut-/Kampfwerte-Anzeige — extrahiert aus CharacterPage.tsx (Chef-Fix
@@ -315,6 +316,20 @@ export function EquipmentDoll({ interactive = false, dragItem = null, onDragItem
                         : []
                     }
                   />
+                ) : slot === "offhand" && c.equipment.mainhand && content.items[c.equipment.mainhand]?.twoHanded ? (
+                  // claude:2026-10-23T17:30:00+02:00 — 1.4.0 ZH: Nebenhand gesperrt durch eine Zweihandwaffe. Blasser
+                  // Schatten der Waffe mit Schloss statt eines scheinbar freien Platzes.
+                  <HoverTip
+                    as="span"
+                    focusable={false}
+                    className="cs-slot-empty-hit cs-slot-2h-ghost"
+                    content={<span className="ct-tip-desc">{t("equip.offhandBlocked2h")}</span>}
+                  >
+                    {getItemImage(c.equipment.mainhand) && (
+                      <img src={getItemImage(c.equipment.mainhand)!} alt="" className="cs-slot-2h-ghost-img" draggable={false} loading="lazy" decoding="async" />
+                    )}
+                    {getUiIcon("icon_lock") ? <img src={getUiIcon("icon_lock")!} alt="" className="cs-slot-2h-lock" aria-hidden="true" /> : <span className="cs-slot-2h-lock" aria-hidden="true" />}
+                  </HoverTip>
                 ) : (
                   // claude:2026-10-17T12:45:00+02:00 — s. useSlotLabelCapacity: Etikett nur, wenn
                   // es ohne Wortbruch passt; der Hover-Tooltip nennt den Slot immer.

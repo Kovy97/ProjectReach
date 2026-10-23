@@ -59,7 +59,7 @@ import { getInvFilterCat, setInvFilterCat } from "../util/uiPrefs";
 
 // ── types ────────────────────────────────────────────────────────────────────
 
-type SortMode = "newest" | "type" | "name" | "value" | "rarity";
+type SortMode = "newest" | "type" | "name" | "value" | "rarity" | "tier"; // claude:2026-10-23T18:30:00+02:00 — 1.4.0 ST
 
 // ── sub-components ───────────────────────────────────────────────────────────
 
@@ -635,6 +635,7 @@ export function CharacterPage(): JSX.Element {
               <option value="name">{t("char.sortName")}</option>
               <option value="value">{t("char.sortValue")}</option>
               <option value="rarity">{t("char.sortRarity")}</option>
+              <option value="tier">{t("char.sortTier")}</option>
             </select>
             {/* Chef 31.08.2026: Das Dropdown WAEHLT nur noch die Art, dieser Knopf FUEHRT AUS —
                 sonst wuerde jede Auswahl sofort die Faecher umwerfen. */}

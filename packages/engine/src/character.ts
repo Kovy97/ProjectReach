@@ -145,6 +145,8 @@ export function createCharacter(input: CharacterCreation, now?: number): Charact
     hp: 0,
     equipment,
     food: null,
+    meal: null, // claude:2026-10-23T16:50:00+02:00 — Mahlzeit-Platz (SAVE 89)
+    mealKeep: true,
     autoEatTier: 0,
     // Auto-Trank-System (SAVE_VERSION 49): Default AUS — der Spieler konfiguriert es im Kampf-UI.
     autoPotion: defaultAutoPotion(),

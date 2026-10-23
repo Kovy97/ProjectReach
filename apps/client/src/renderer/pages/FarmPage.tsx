@@ -1,3 +1,4 @@
+import { EstateBanner } from "../components/EstateBanner"; // claude:2026-10-23T19:50:00+02:00 — 1.4.0 LA
 import { useState } from "react";
 import { content } from "@hearthforge/content";
 import {
@@ -592,6 +593,8 @@ export function FarmPage(): JSX.Element {
 
           {plotsOpen && (
             <div className="farm-section-content">
+              {/* claude:2026-10-23T19:50:00+02:00 — 1.4.0 LA: Ländereien-Banner (läuft von selbst). */}
+              <EstateBanner kind="farm" />
               {/* Farm status bar */}
               <div className="farm-info-bar">
                 <span className="muted">

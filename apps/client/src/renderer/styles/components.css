@@ -1912,6 +1912,26 @@ body .item-cell.rarity-godly {
   background: #e04a35;
   transform: translate(-50%, -50%) rotate(-45deg);
 }
+/* claude:2026-10-23T17:30:00+02:00 — 1.4.0 ZH: Textmarke „2H“ für Zweihandwaffen, unten LINKS (dieselbe Ecke wie das
+   Verbotssymbol, das Vorrang hat). Eisen-Schild statt Glanz: dunkler Grund, Goldschrift, feiner Rand. */
+.item-cell-2h-badge {
+  position: absolute;
+  bottom: 7%;
+  left: 7%;
+  padding: 0 3px;
+  font-family: var(--font-display, "Cinzel", Georgia, serif);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 13px;
+  letter-spacing: 0.02em;
+  color: var(--gold, #d8c06a);
+  background: rgba(14, 12, 10, 0.86);
+  border: 1px solid rgba(216, 192, 106, 0.55);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  z-index: 3;
+}
 .item-cell-inst-badge-img {
   width: 15px;
   height: 15px;
@@ -3039,3 +3059,60 @@ body .item-cell.rarity-godly {
 .devspeed-reset:disabled { opacity: 0.4; cursor: default; }
 .devspeed-reset:not(:disabled):hover { color: #e8dcc4; border-color: rgba(216, 184, 112, 0.6); }
 .devspeed-warn { color: #c4573a; font-size: 10px; letter-spacing: 0.06em; }
+
+/* ─── Stufen-Sterne (1.4.0 ST, claude:2026-10-23T18:20:00+02:00) ──────────────────────────────────
+   Chef 23.10.: Sterne, bis sechs mit halben Sternen. Im Item-Feld oben mittig, klein und mit dunklem
+   Rand für Lesbarkeit auf hellen Bildern; im Tooltip unter der Typzeile mit „Stufe VII“. Kein Glühen. */
+.tier-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  color: var(--gold, #d8c06a);
+  line-height: 0;
+}
+.tier-star {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.95)) drop-shadow(0 1px 1px rgba(0, 0, 0, 0.8));
+}
+.tier-crown {
+  width: 10px;
+  height: 8px;
+  margin-left: 1px;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.95));
+}
+.item-cell-stars {
+  position: absolute;
+  top: 4%;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 2;
+}
+.item-cell-stars .tier-star { width: 7px; height: 7px; }
+.itip-tier-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.itip-tier-line .tier-star { width: 12px; height: 12px; }
+.itip-tier-line .tier-crown { width: 15px; height: 12px; }
+.itip-tier-label {
+  font-size: calc(var(--itip-fs-scale, 1) * 14px);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(216, 192, 106, 0.7);
+}
+/* 1.4.0 A12: Runen-Zeichen statt Stern als Verzauberungs-/Suffix-Marke (Fallback, bis icon_enchant_rune kommt). */
+.item-cell-rune-mark {
+  display: block;
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--gold, #d8c06a);
+  transform: rotate(45deg);
+  background: rgba(14, 12, 10, 0.85);
+  box-shadow: inset 0 0 0 1.5px rgba(14, 12, 10, 0.85), inset 0 0 0 3px var(--gold, #d8c06a);
+}

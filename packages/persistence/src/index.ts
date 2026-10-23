@@ -20,6 +20,7 @@ import type {
   SaveSummary,
 } from "@hearthforge/shared";
 import {
+  consumableHeal,
   AP_MILESTONE_STEP_PCT,
   ATTRIBUTE_IDS,
   AUTO_POTION_DEFAULT_THRESHOLD,
@@ -612,6 +613,12 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
 
   // — Food: nur ein bekanntes Item —
   if (c.food && !known(c.food)) c.food = null;
+  // claude:2026-10-23T16:45:00+02:00 — Mahlzeit-Platz (SAVE 89): nur eine bekannte Mahlzeit (Buff "food"), sonst null;
+  // „Mahlzeit halten“ strikt boolean, Standard an.
+  if (c.meal === undefined || (c.meal !== null && (typeof c.meal !== "string" || content.items[c.meal]?.buff?.category !== "food"))) {
+    c.meal = null;
+  }
+  c.mealKeep = c.mealKeep !== false;
 
   // — Buffs: nur bekannte Items, endliche remainingMs —
   if (Array.isArray(c.buffs)) {
@@ -2282,6 +2289,35 @@ export function tailoringXpFromCraftLog(state: GameState, content: ContentDB): n
   return moved;
 }
 
+/**
+ * Beste REINE Heilnahrung (heilt, kein Buff, kein Heiltrank) aus Inventar, sonst Bank — für die
+ * v89-Migration des Essensplatzes. claude:2026-10-23T16:45:00+02:00
+ */
+function bestPlainHealFood(state: GameState, content: ContentDB): ItemId | null {
+  const refMaxHp = Math.max(100, Number.isFinite(state.character.hp) ? state.character.hp : 0);
+  const plain = (id: ItemId): number => {
+    const it = content.items[id];
+    if (!it || it.type !== "consumable" || it.buff) return -1;
+    if ((it.healAmount ?? 0) <= 0 && (it.healPct ?? 0) <= 0) return -1;
+    if (id.includes("potion")) return -1;
+    return consumableHeal(it, refMaxHp);
+  };
+  const pick = (ids: Iterable<ItemId>): ItemId | null => {
+    let best: ItemId | null = null;
+    let bestHeal = -1;
+    for (const id of ids) {
+      const h = plain(id);
+      if (h > bestHeal) {
+        best = id;
+        bestHeal = h;
+      }
+    }
+    return bestHeal > 0 ? best : null;
+  };
+  const inv = (state.inventory?.slots ?? []).map((sl) => sl?.itemId).filter((x): x is ItemId => !!x);
+  return pick(inv) ?? pick(Object.keys(state.bank ?? {}).filter((id) => (state.bank[id] ?? 0) > 0));
+}
+
 function migrateState(state: GameState, content: ContentDB): GameState {
   // — Inventar einmalig geradeziehen (SAVE 87, Chef-Report 31.08.2026 mit Bildbeleg) —
   //   Bis v86 legte jeder Fund sich in die ERSTE freie Luecke, und beim Verbrauchen blieb ein
@@ -2542,6 +2578,10 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   // autoBank): jeder Nicht-boolean-Wert (String "true", 1, null, …) fällt auf false zurück.
   if (typeof state.settings.autoParagonAscend !== "boolean") {
     state.settings.autoParagonAscend = defaultSettings().autoParagonAscend;
+  }
+  // claude:2026-10-23T19:20:00+02:00 — Ländereien-Meldungen (1.4.0, SAVE 89-Nachtrag, nie live): strikt boolean, Standard an.
+  if (typeof state.settings.estateNotifications !== "boolean") {
+    state.settings.estateNotifications = defaultSettings().estateNotifications;
   }
   // Quest-State (SAVE_VERSION 25): leer defaulten. Quests werden beim nächsten advance via
   // evaluateQuests gegen die bestehenden Zähler (Kills etc.) neu ausgewertet.
@@ -3625,6 +3665,24 @@ function migrateState(state: GameState, content: ContentDB): GameState {
     state.prestige = defaultPrestigeState();
   }
 
+  // ── Mahlzeit-Platz (SAVE_VERSION 88 → 89, 1.4.0 „Feder und Stahl“ Welle 1, Chef 23.10.2026) ──────
+  // claude:2026-10-23T16:45:00+02:00 — neue Felder `character.meal` (Buff-Mahlzeit) und `mealKeep`
+  // (Standard an). Chef-Entscheid BF-4: Liegt heute eine Mahlzeit (Buff der Kategorie "food") im
+  // Essensplatz, wandert sie in den Mahlzeit-Platz, und der Heilplatz bekommt die beste reine Heilnahrung
+  // aus Inventar, sonst Bank (oder bleibt leer). „Beste“ = höchste Heilung bei der aktuellen HP als
+  // Max-HP-Näherung (Laden passiert außerhalb des Kampfes, dort regeneriert man auf voll).
+  if ((state.version ?? 0) < 89) {
+    const ch = state.character;
+    if (ch.meal === undefined) ch.meal = null;
+    if (ch.mealKeep === undefined) ch.mealKeep = true;
+    const isMeal = (id: ItemId | null | undefined): boolean =>
+      !!id && content.items[id]?.type === "consumable" && content.items[id]?.buff?.category === "food";
+    if (isMeal(ch.food)) {
+      ch.meal = ch.food;
+      ch.food = bestPlainHealFood(state, content);
+    }
+  }
+
   // State auf die aktuelle Version heben (macht versions-abhängige Migrationen idempotent).
   state.version = SAVE_VERSION;
 
@@ -3799,6 +3857,11 @@ export function deserialize(
   for (const [id, slot] of Object.entries(state.camp.refine ?? {})) {
     campRefinedBefore[id] = slot?.produced ?? 0;
   }
+  // claude:2026-10-23T20:00:00+02:00 — Ländereien im Offline-Bericht (1.4.0 LA): Ernte-Stücke je Feldfrucht im Fenster
+  // aus dem Lebenszeit-Zähler `producedById` (farming.ts schreibt ihn), ohne neues Save-Feld.
+  const cropYieldIds = [...new Set(Object.values(content.crops ?? {}).map((c) => c.yieldItem))];
+  const harvestBefore: Record<string, number> = {};
+  for (const id of cropYieldIds) harvestBefore[id] = state.stats.producedById?.[id] ?? 0;
 
   // Offline-Catch-up: `offline: true` → die versäumten Ticks laufen wie sonst, aber `activePlayMs`
   // (angezeigte Spielzeit) zählt NICHT mit. `elapsedMs` (Sim-/Farming-Uhr) läuft weiter.
@@ -3913,6 +3976,10 @@ export function deserialize(
     .filter(([, n]) => n > 0)
     .map(([monsterId, count]) => ({ monsterId, count }));
   if (huntCatches.length > 0) offline.huntCatches = huntCatches;
+  const farmHarvests = cropYieldIds
+    .map((itemId) => ({ itemId, qty: (state.stats.producedById?.[itemId] ?? 0) - (harvestBefore[itemId] ?? 0) }))
+    .filter((h) => h.qty > 0);
+  if (farmHarvests.length > 0) offline.farmHarvests = farmHarvests;
   // claude:2026-10-17T20:00:00+02:00 — K4: Anzahl übersprungener Queue-Einträge (fehlt bei 0)
   if (skipTally.count > 0) offline.queueSkips = skipTally.count;
 

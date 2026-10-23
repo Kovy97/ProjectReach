@@ -4,6 +4,7 @@
  * App.tsx von 1.2.3 (Commit ec86af5), unverändert übernommen. Die Reforged-Oberfläche nutzt stattdessen die
  * kompakte Statusleiste (hs-strip) in App.tsx. Styles: styles/classic-chrome.css (.layout--classic).
  */
+import { EstatesNote, IdleOrEstates, useEstatesNote } from "./EstatesNote"; // claude:2026-10-23T19:10:00+02:00 — Ländereien (1.4.0)
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import { content } from "@hearthforge/content";
 import { combatLevel, computeStats, dungeonRunProgress, effectiveActionDurationMs, effectiveCapacity, levelFromXp, stopCombat, usedCapacityUnits, xpForLevel } from "@hearthforge/engine";
@@ -86,6 +87,7 @@ function ActionProgressBar(): JSX.Element {
   );
   const state = getState()!;
   const { t, tr } = useI18n();
+  const estatesNote = useEstatesNote(); // claude:2026-10-23T19:10:00+02:00 — Ländereien statt „Untätig“ (1.4.0)
   const inCombat = inCombatGate;
   const action = activeActionId ? content.actions[activeActionId] : undefined;
   // Effektive (nicht Basis-)Dauer: Mastery/Werkzeuge machen Aktionen schneller, die Engine schließt
@@ -108,7 +110,7 @@ function ActionProgressBar(): JSX.Element {
     ? `${t("skill.doing")} · ${tr(action.name)}`
     : inCombat
       ? t("topbar.bar.inCombat")
-      : t("header.idle");
+      : estatesNote ?? t("header.idle"); // claude:2026-10-23T19:10:00+02:00 — 1.4.0 LA
   const rightLabel = action
     ? primaryLoot
       ? `${t("skill.xpRate").replace("{n}", formatNum(xpPerHour))} · ${t("skill.itemRate").replace("{n}", formatNum(primaryLoot.perHour))}`
@@ -514,6 +516,8 @@ function GameStats({
       <span className="activity">
         <span className="muted">{t("header.doing")}</span>{" "}
         <span className="activity-name">{a ? tr(a.name) : ""}</span>
+        {/* claude:2026-10-23T19:10:00+02:00 — 1.4.0 LA: Ländereien als Zusatz. */}
+        <EstatesNote className="muted" />
       </span>
     );
   } else if (lastStopActionId) {
@@ -529,7 +533,8 @@ function GameStats({
       </span>
     );
   } else {
-    activity = <span className="activity muted">{t("header.idle")}</span>;
+    // claude:2026-10-23T19:10:00+02:00 — 1.4.0 LA: nie „Untätig“, solange Felder oder Fallen arbeiten.
+    activity = <IdleOrEstates idleText={t("header.idle")} className="activity muted" />;
   }
 
   const invFull = used >= cap;

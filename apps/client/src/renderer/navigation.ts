@@ -38,6 +38,8 @@ export interface NavPage {
    * Default: "sidebar".
    */
   placement?: "topbar" | "sidebar" | "footer";
+  /** claude:2026-10-23T19:00:00+02:00 — Seitenleisten-Gruppe; "estates" = Ländereien (1.4.0 LA). */
+  group?: "estates";
 }
 
 export interface NavSection {
@@ -96,13 +98,8 @@ export const navigation: NavSection[] = [
       { id: "woodcutting", label: "nav.woodcutting", icon: "🪓", view: "skill", skillId: "woodcutting" },
       { id: "mining", label: "nav.mining", icon: "⛏️", view: "skill", skillId: "mining" },
       { id: "fishing", label: "nav.fishing", icon: "🎣", view: "skill", skillId: "fishing" },
-      // Jagen (1.2.0 „Fasern und Fallen", design/handwerk-fasern-jagen/spec-technik.md §4): direkt
-      // hinter Angeln (Chef-Vorgabe) — Emoji-Fallback 🪤 bis Miras `sidebaricon_hunting.webp`
-      // liegt (Auto-Discovery, s. sidebarIcons.ts — kein Code-Eintrag nötig, sobald sie da ist).
-      { id: "hunting", label: "nav.hunting", icon: "🪤", view: "skill", skillId: "hunting" },
       { id: "smithing", label: "nav.smithing", icon: "🔨", view: "skill", skillId: "smithing" },
       { id: "cooking", label: "nav.cooking", icon: "🍳", view: "skill", skillId: "cooking" },
-      { id: "farming", label: "nav.farming", icon: "🌾", view: "skill", skillId: "farming" },
       { id: "foraging", label: "nav.foraging", icon: "🌿", view: "skill", skillId: "foraging" },
       { id: "thieving", label: "nav.thieving", icon: "🗝️", view: "skill", skillId: "thieving" },
       { id: "leatherworking", label: "nav.leatherworking", icon: "🧵", view: "skill", skillId: "leatherworking" },
@@ -117,6 +114,17 @@ export const navigation: NavSection[] = [
       { id: "slayer", label: "nav.slayer", icon: "💀", view: "skill", skillId: "slayer" },
       // Enchanting direkt unter Slayer und über Shop (Chef-Wunsch).
       { id: "enchanting", label: "nav.enchanting", icon: "✦", view: "enchanting" },
+    ],
+  },
+  // claude:2026-10-23T19:00:00+02:00 — Ländereien (1.4.0 „Feder und Stahl“ LA, Chef 23.10.2026): Farming und Jagen
+  // laufen von selbst und stehen deshalb nicht mehr zwischen den aktiven Skills, sondern als eigene Gruppe darunter
+  // (SidebarEstates.tsx rendert Rahmen, Überschrift und Live-Status). Seiten und IDs bleiben unverändert.
+  {
+    id: "estates",
+    label: "nav.section.estates",
+    pages: [
+      { id: "farming", label: "nav.farming", icon: "🌾", view: "skill", skillId: "farming", group: "estates" },
+      { id: "hunting", label: "nav.hunting", icon: "🪤", view: "skill", skillId: "hunting", group: "estates" },
     ],
   },
   {

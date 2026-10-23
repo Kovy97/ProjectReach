@@ -120,6 +120,8 @@ describe("Migration v83 → v84 (Taverne)", () => {
     Object.assign(erwartet.state, { talents: {}, petPity: {} });
     erwartet.state.character.companionPetId2 = null;
     erwartet.state.prestige = defaultPrestigeState(); // claude:2026-10-17T23:30:00+02:00 — SAVE 88 (Prestige)
+    Object.assign(erwartet.state.character, { meal: null, mealKeep: true }); // claude:2026-10-23T16:50:00+02:00 — SAVE 89 (Mahlzeit-Platz)
+    erwartet.state.settings.estateNotifications = true;
     expect(withoutDiscovered(JSON.parse(serialize(s, raw.savedAt)) as SaveShape)).toEqual(withoutDiscovered(erwartet));
     const again = deserialize(serialize(s, raw.savedAt), content, raw.savedAt)!;
     expect(again.state).toEqual(s);
@@ -358,6 +360,8 @@ describe("v84-Fixture: Round-Trip mit befüllter Taverne", () => {
     Object.assign(erwartet.state, { talents: {}, petPity: {} });
     erwartet.state.character.companionPetId2 = null;
     erwartet.state.prestige = defaultPrestigeState(); // claude:2026-10-17T23:30:00+02:00 — SAVE 88 (Prestige)
+    Object.assign(erwartet.state.character, { meal: null, mealKeep: true }); // claude:2026-10-23T16:50:00+02:00 — SAVE 89 (Mahlzeit-Platz)
+    erwartet.state.settings.estateNotifications = true;
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
 });

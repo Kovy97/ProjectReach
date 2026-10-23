@@ -181,6 +181,22 @@ function consumeInternal(state: GameState, content: ContentDB, itemId: ItemId, s
     removeItem(state.inventory, itemId, 1);
   }
 
+  applyEatEffects(state, content, itemId);
+  // Takt starten (nur im Kampf, nur für heilende Items) — dieselben Felder/Werte, die
+  // tryAutoEat/tryAutoPotion setzen. Der Rebuff bleibt bewusst taktfrei (s. ConsumeSource).
+  if (source !== "rebuff") noteConsumeCooldown(state, content, itemId);
+  return true;
+}
+
+/**
+ * Wirkung eines Verzehrs (Heilung, Gift-Heilung, Buff) OHNE Verbrauch und ohne Takt. Gemeinsamer
+ * Kern von `consumeInternal` und „Mahlzeit halten“ (`tickMealKeep`), damit beide Wege identisch wirken.
+ * claude:2026-10-23T16:30:00+02:00 — aus consumeInternal herausgelöst (1.4.0), Verhalten unverändert.
+ */
+function applyEatEffects(state: GameState, content: ContentDB, itemId: ItemId): void {
+  const item = content.items[itemId];
+  if (!item) return;
+  const heals = (item.healAmount ?? 0) > 0 || (item.healPct ?? 0) > 0;
   if (heals) {
     const max = computeStats(state, content).maxHp;
     // Zentraler Heilbetrag (Hybrid, Balance-Kette Schritt 4): max(healAmount, round(maxHp·healPct))
@@ -192,15 +208,47 @@ function consumeInternal(state: GameState, content: ContentDB, itemId: ItemId, s
     const heal = foodMult !== 1 ? Math.round(baseHeal * foodMult) : baseHeal;
     state.character.hp = Math.min(max, state.character.hp + heal);
   }
-  if (cures) {
+  if (item.curesPoison) {
     state.combat.playerEffects = state.combat.playerEffects.filter((e) => e.type !== "poison");
   }
-  if (buffs) {
+  if (item.buff) {
     applyConsumableBuff(state, content, itemId);
   }
-  // Takt starten (nur im Kampf, nur für heilende Items) — dieselben Felder/Werte, die
-  // tryAutoEat/tryAutoPotion setzen. Der Rebuff bleibt bewusst taktfrei (s. ConsumeSource).
-  if (source !== "rebuff") noteConsumeCooldown(state, content, itemId);
+}
+
+/** Ist das Item eine Mahlzeit (Buff der Kategorie "food")? claude:2026-10-23T16:30:00+02:00 */
+export function isMealItem(content: ContentDB, itemId: ItemId | null | undefined): boolean {
+  return !!itemId && content.items[itemId]?.type === "consumable" && content.items[itemId]?.buff?.category === "food";
+}
+
+/** Vorrat einer Mahlzeit über Inventar und Bank (inkl. Lager). claude:2026-10-23T16:30:00+02:00 */
+export function mealStock(state: GameState, itemId: ItemId): number {
+  return itemCount(state.inventory, itemId) + (state.bank[itemId] ?? 0);
+}
+
+/**
+ * „Mahlzeit halten“ (1.4.0, Chef 23.10.: nur in Kampf, Dungeon und Raid, kostenlos).
+ * claude:2026-10-23T16:30:00+02:00
+ *
+ * Läuft einmal pro Kampf-Tick (combat.ts `combatStep`). Isst die gewählte Mahlzeit `character.meal`,
+ * wenn KEIN Mahlzeit-Buff (Kategorie "food") aktiv ist — so überschreibt sie nie eine Mahlzeit, die der
+ * Spieler gerade selbst gegessen hat, sondern übernimmt erst, wenn diese ausläuft. Vorrat: zuerst
+ * Inventar (über `useConsumable`, Quelle "rebuff" = ohne Konsum-Takt), sonst die Bank (= Lager).
+ * Deterministisch, kein RNG. Gibt zurück, ob gegessen wurde.
+ */
+export function tickMealKeep(state: GameState, content: ContentDB): boolean {
+  const ch = state.character;
+  const meal = ch.meal;
+  if (!meal || ch.mealKeep === false) return false;
+  if (state.combat.monsterId === null) return false;
+  if (!isMealItem(content, meal)) return false;
+  if (ch.buffs.some((b) => content.items[b.itemId]?.buff?.category === "food")) return false;
+  if (itemCount(state.inventory, meal) > 0) return useConsumable(state, content, meal, "rebuff");
+  const inBank = state.bank[meal] ?? 0;
+  if (inBank <= 0) return false;
+  if (inBank <= 1) delete state.bank[meal];
+  else state.bank[meal] = inBank - 1;
+  applyEatEffects(state, content, meal);
   return true;
 }
 
@@ -294,6 +342,9 @@ export function tickBuffs(state: GameState, content: ContentDB, deltaMs: number)
     // 2-s-Draught verbrannte alle 2 Sekunden einen Trank). Heil-Nachschub ist allein Sache von
     // tryAutoPotion (Schwelle + Cooldown + HoT-Guard).
     if (!def.category) continue;
+    // claude:2026-10-23T16:30:00+02:00 — Mahlzeiten (Kategorie "food") erneuert nur noch „Mahlzeit halten“
+    // (tickMealKeep, nur im Kampf). Die Tonika-Erneuerung betrifft ab 1.4.0 wirklich nur Tonika (Chef 23.10.).
+    if (def.category === "food") continue;
     // Kategorie-Verdrängung respektieren (L3): ist inzwischen ein ANDERER Buff derselben Kategorie
     // aktiv (Alt-Save-Mehrfachbelegung bzw. mehrere Abläufe im selben Tick), NICHT nachtrinken —
     // sonst würde der Rebuff den aktiven Buff verdrängen (Trank-Verbrauch ohne Nutzen, Kategorie-

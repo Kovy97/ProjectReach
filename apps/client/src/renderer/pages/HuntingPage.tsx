@@ -1,3 +1,4 @@
+import { EstateBanner } from "../components/EstateBanner"; // claude:2026-10-23T19:50:00+02:00 — 1.4.0 LA
 import { useEffect, useState } from "react";
 import { content } from "@hearthforge/content";
 import { isZoneUnlocked, levelFromXp, xpForLevel } from "@hearthforge/engine";
@@ -1305,6 +1306,8 @@ export function HuntingPage({ onNavigate }: { onNavigate: (id: string) => void }
   return (
     <div className="hunt-page">
       <HuntHeader onNavigate={onNavigate} />
+      {/* claude:2026-10-23T19:50:00+02:00 — 1.4.0 LA: Ländereien-Banner (läuft von selbst). */}
+      <EstateBanner kind="hunt" />
 
       {allZones.length === 0 && <p className="muted">{t("hunting.inert")}</p>}
 

@@ -7,6 +7,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { getSidebarPages } from "../navigation";
+import { SidebarEstates } from "./SidebarEstates";
 import { prestigeNavVisible } from "../util/prestigeNav";
 import { getSidebarIcon } from "../sidebarIcons";
 import { getSkillIcon } from "../skillIcons";
@@ -280,6 +281,18 @@ export function SidebarClassic({ activePageId, onNavigate }: SidebarProps): JSX.
          getrimmt (Cinzel, uppercase, Gold). */}
       <nav className={`sb-nav${navScrollable ? " sb-nav--scrollable" : ""}`} ref={navRef}>
         {pages.map((page, pageIdx) => {
+          // claude:2026-10-23T19:00:00+02:00 — Ländereien (1.4.0 LA): eigene Gruppe an der Stelle ihres ersten Eintrags.
+          if (page.group === "estates") {
+            if (pages.find((p) => p.group === "estates") !== page) return null;
+            return (
+              <SidebarEstates
+                key="estates"
+                pages={pages.filter((p) => p.group === "estates")}
+                activePageId={activePageId}
+                onNavigate={onNavigate}
+              />
+            );
+          }
           const iconSrc = getSidebarIcon(page.id);
           const isActive = page.id === activePageId;
           const isRunning = page.id === activeSkillId;
