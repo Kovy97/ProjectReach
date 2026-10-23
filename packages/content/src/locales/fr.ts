@@ -4199,4 +4199,7 @@ export const fr: Record<string, string> = {
   "talentNodes:prestige.goldFind:description": "{value} d'or en plus grâce aux actions, combats, donjons et quêtes, mais pas aux ventes. Tu ramasses ce qui appartenait aux idoles, comme les pies ramassent l'argent.",
   "talentNodes:prestige.pointsBoost:name": "L'entaille plus profonde",
   "talentNodes:prestige.pointsBoost:description": "Chaque future Chute des Cendres accorde {value} de cicatrices en plus. La prochaine chute entaille plus profond et laisse davantage derrière elle.",
+  // claude:2026-10-23T22:55:00+02:00 — Reliktstaub (1.4.0 Bergung)
+  "items:relic_dust:name": "Poussière de relique",
+  "items:relic_dust:description": "Ce qui reste d'une pièce trouvée quand on lui ôte son fer : une poussière qui se souvient de ce pour quoi elle fut forgée.",
 };

@@ -384,7 +384,7 @@ export class SimPlayer {
         capacity: this.inventoryCapacity(),
         top,
       },
-      bank: { used: bankSlotsUsed(s), capacity: effectiveBankCapacity(s, this.content) },
+      bank: { used: bankSlotsUsed(s, this.content), capacity: effectiveBankCapacity(s, this.content) }, // claude:2026-10-23T23:45:00+02:00 — Lagerware zählt nicht (1.4.0 ML)
       // [Sweep5 T4] Lebenszeit-Statistik der Engine — NICHT die fightFor-Fenster-Summe (die
       // meldete bei pursue/advanceTime-Kämpfen 0/0, bei real zigtausend Kills).
       kills: s.stats.kills,

@@ -1,3 +1,4 @@
+import { storagePredicate } from "./storage"; // claude:2026-10-23T21:50:00+02:00 — Materiallager (1.4.0 ML)
 import type {
   CharacterState,
   ContentDB,
@@ -115,6 +116,7 @@ export const PRESTIGE_STATE_FIELDS: Readonly<Record<keyof GameState, PrestigeFie
   bank: "reset", // Ausnahmen über Narbenbuch-Knoten (Vergrabene Truhe, Erbstück, Schwielen) landen im neuen Lager
   bankOrder: "reset",
   bankSlotsPurchased: "reset", // mit Gold gekauft (Gold zurück)
+  lockedItems: "keep", // claude:2026-10-23T22:50:00+02:00 — Bergungs-Schloss ist eine Spieler-Vorliebe (1.4.0 BG)
   seenDrops: "keep", // Wiki-Funde
   seenActionDrops: "keep",
   discoveredItems: "keep", // vereinigt mit dem Starterbesitz des Neustands
@@ -1093,7 +1095,7 @@ export function ascend(state: GameState, content: ContentDB, choice?: PrestigeAs
     const c = sc.find((x) => x.itemId === itemId);
     if (c) keepPlain(itemId, c.keep);
   }
-  syncBankOrder(next);
+  syncBankOrder(next, undefined, storagePredicate(content)); // claude:2026-10-23T21:50:00+02:00 — ohne Lagerware
 
   // Post-Sperre (Chef 18.10.): jede Mail mit Inhalt, die jetzt im Postfach liegt, bleibt bis zu den nächsten
   // 4×99 gesperrt (`mailCollectBlocked`); gelöscht wird nichts. Briefe ohne Geschenk bleiben lesbar.

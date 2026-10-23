@@ -4199,4 +4199,7 @@ export const es: Record<string, string> = {
   "talentNodes:prestige.goldFind:description": "Un {value} más de oro de acciones, combates, mazmorras y misiones, pero no de ventas. Recoges lo que perteneció a los ídolos, como las urracas recogen plata.",
   "talentNodes:prestige.pointsBoost:name": "El corte más hondo",
   "talentNodes:prestige.pointsBoost:description": "Cada futura Caída de Ceniza otorga un {value} más de cicatrices. La próxima caída corta más hondo y deja más atrás.",
+  // claude:2026-10-23T22:55:00+02:00 — Reliktstaub (1.4.0 Bergung)
+  "items:relic_dust:name": "Polvo de reliquia",
+  "items:relic_dust:description": "Lo que queda de una pieza hallada cuando se le quita el hierro: polvo que recuerda para qué fue forjado.",
 };

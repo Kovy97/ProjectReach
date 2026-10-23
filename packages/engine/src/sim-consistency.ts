@@ -32,8 +32,7 @@ import {
   BOOSTABLE_COMBAT_SKILL_IDS,
   PARAGON_DUNGEON_ID,
   effectiveWeaponEffects,
-  resolveText,
-} from "@hearthforge/shared";
+  resolveText, RELIC_DUST_ITEM_ID } from "@hearthforge/shared";
 import type { Finding } from "./sim-report";
 
 /**
@@ -597,6 +596,9 @@ export function obtainableItemIds(content: ContentDB): Set<ItemId> {
   for (const c of Object.values(content.crops ?? {})) out.add(c.yieldItem);
   for (const e of content.slayerShop ?? []) out.add(e.itemId);
   for (const id of STARTER_ITEMS) if (content.items[id]) out.add(id);
+  // claude:2026-10-23T23:35:00+02:00 — Bergung (1.4.0 BG): Reliktstaub entsteht beim Zerlegen gedroppter Ausrüstung (engine/salvage.ts),
+  // nicht über Loot/Shop. Eigener, benannter Erhältlichkeits-Pfad, sobald es zerlegbare Beute gibt.
+  if (content.items[RELIC_DUST_ITEM_ID]) out.add(RELIC_DUST_ITEM_ID);
   return out;
 }
 

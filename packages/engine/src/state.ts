@@ -95,6 +95,7 @@ export function createGame(
     // Bank-Platzierung (SAVE 87): leer starten, `syncBankOrder` fuellt beim ersten Einlagern.
     bankOrder: [],
     bankSlotsPurchased: 0,
+    lockedItems: {}, // claude:2026-10-23T22:50:00+02:00 — Bergungs-Schloss (1.4.0 BG)
     seenDrops: {},
     seenActionDrops: {},
     // Erst-Besitz-Marker (SAVE 58): startet leer; der Starterbesitz (Waffe/Rüstung/Food/Saat)
@@ -198,6 +199,9 @@ export function createGame(
   // der leeren Baseline (kein Flag). Die echte Charaktererstellung im Renderer setzt das Flag.
   // Determinismus-sicher: addItem zieht KEIN RNG. Mit Content-Guard wie die Waffe.
   if (creation.starterKit) {
+    // claude:2026-10-23T23:25:00+02:00 — Materiallager (1.4.0 ML): echte Spieler starten mit „Direkt ins Lager“ (Chef 23.10.). Sim und
+    // Tests bleiben auf der Inventar-Baseline (Muster Startpaket, s. oben).
+    state.settings.materialsToStorage = true;
     const STARTER_FOOD = "cooked_shrimp"; // basales Low-Level-Koch-Food (healAmount 1, Squish-Skala)
     if (content.items[STARTER_FOOD]) {
       // Start-Nahrung (Fix run5 #3): 10 → 20, etwas mehr Puffer für die ersten Dauerkämpfe.

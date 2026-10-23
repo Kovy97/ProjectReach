@@ -39,6 +39,8 @@ export * from "./camp";
 export * from "./refine";
 export * from "./tavern";
 export * from "./tiers";
-export * from "./drop-sources"; // claude:2026-10-23T20:30:00+02:00 — Drop-Quellen-Index (1.4.0)
+export * from "./drop-sources";
+export * from "./storage";
+export * from "./salvage"; // claude:2026-10-23T22:50:00+02:00 — Bergung (1.4.0) // claude:2026-10-23T21:50:00+02:00 — Materiallager (1.4.0) // claude:2026-10-23T20:30:00+02:00 — Drop-Quellen-Index (1.4.0)
 export * from "./estates"; // claude:2026-10-23T18:45:00+02:00 — Ländereien (1.4.0) // claude:2026-10-23T18:00:00+02:00 — Stufen-Anzeige (1.4.0)
 export * from "./features";

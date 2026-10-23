@@ -4201,4 +4201,7 @@ export const zh: Record<string, string> = {
   "talentNodes:prestige.goldFind:description": "从行动、战斗、地下城和任务中获得的金币提高 {value}，出售除外。你收集曾属于神像的东西，就像喜鹊收集银子。",
   "talentNodes:prestige.pointsBoost:name": "更深的一刀",
   "talentNodes:prestige.pointsBoost:description": "此后每次烬落获得的伤痕提高 {value}。下一次坠落切得更深，留下的也更多。",
+  // claude:2026-10-23T22:55:00+02:00 — Reliktstaub (1.4.0 Bergung)
+  "items:relic_dust:name": "遗物之尘",
+  "items:relic_dust:description": "拾得之物被取走铁料后剩下的东西：一捧还记得自己为何被锻造的尘埃。",
 };

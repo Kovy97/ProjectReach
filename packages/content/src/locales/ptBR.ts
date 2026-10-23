@@ -4202,4 +4202,7 @@ export const ptBR: Record<string, string> = {
   "talentNodes:prestige.goldFind:description": "{value} mais ouro de ações, combates, masmorras e missões, mas não de vendas. Você recolhe o que pertencia aos ídolos, como as pegas recolhem prata.",
   "talentNodes:prestige.pointsBoost:name": "O corte mais fundo",
   "talentNodes:prestige.pointsBoost:description": "Cada futura Queda das Cinzas concede {value} mais cicatrizes. A próxima queda corta mais fundo e deixa mais para trás.",
+  // claude:2026-10-23T22:55:00+02:00 — Reliktstaub (1.4.0 Bergung)
+  "items:relic_dust:name": "Pó de relíquia",
+  "items:relic_dust:description": "O que resta de uma peça encontrada quando se tira o ferro dela: pó que lembra para que foi forjado.",
 };

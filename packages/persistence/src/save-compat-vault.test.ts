@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { GameState } from "@hearthforge/shared";
 import { TOOL_SLOTS, SAVE_VERSION, defaultHuntTraps, defaultPrestigeState, defaultTavernState, eliteZoneCooldownBand, emptyEquipKit } from "@hearthforge/shared";
-import { computeStats } from "@hearthforge/engine";
+import { computeStats, storagePredicate } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
 /**
@@ -401,6 +401,10 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     erwartet.state.prestige = defaultPrestigeState();
     Object.assign(erwartet.state.character, { meal: null, mealKeep: true }); // claude:2026-10-23T16:50:00+02:00 — SAVE 89 (Mahlzeit-Platz)
     erwartet.state.settings.estateNotifications = true;
+    // claude:2026-10-23T22:05:00+02:00 — SAVE 90 (Materiallager): Option an, Lagerware ohne Bankfach, Lücken einmal geschlossen.
+    erwartet.state.settings.materialsToStorage = true;
+    erwartet.state.lockedItems = {}; // claude:2026-10-24T17:05:00+02:00 — SAVE 90 (Bergung): Schloss-Liste
+    erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(result!.state, raw.savedAt))).toEqual(erwartet);
   });
 

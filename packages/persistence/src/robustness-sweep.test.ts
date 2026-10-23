@@ -72,8 +72,8 @@ function invariants(state: GameState, c: ContentDB): string[] {
   if (usedSlots(inv) > inv.slots.length) bad.push(`used(${usedSlots(inv)}) > slots.length(${inv.slots.length})`);
   if (inv.slots.length > cap) bad.push(`slots.length(${inv.slots.length}) > effectiveCap(${cap})`);
   if (state.character.gold < 0) bad.push(`gold<0 (${state.character.gold})`);
-  if (bankSlotsUsed(state) > effectiveBankCapacity(state, c)) {
-    bad.push(`bankUsed(${bankSlotsUsed(state)}) > bankCap(${effectiveBankCapacity(state, c)})`);
+  if (bankSlotsUsed(state, c) > effectiveBankCapacity(state, c)) {
+    bad.push(`bankUsed(${bankSlotsUsed(state, c)}) > bankCap(${effectiveBankCapacity(state, c)})`);
   }
   // Ammo-Removal (#286): `ammoCount` existiert nicht mehr — Invariante: der Alt-Key ist nach jedem Load restlos weg.
   if ("ammoCount" in state) bad.push(`ammoCount-Alt-Key überlebt den Load (muss restlos gelöscht sein)`);
@@ -283,20 +283,20 @@ describe("robustness sweep", () => {
     // Bank bis Cap füllen.
     const bankCap = effectiveBankCapacity(s, content);
     let k = 0;
-    while (bankSlotsUsed(s) < bankCap && k < ids.length) {
+    while (bankSlotsUsed(s, content) < bankCap && k < ids.length) {
       const id = ids[k++]!;
       if (itemCount(s.inventory, id) < 1) addItem(s.inventory, content, id, 1);
       depositItem(s, content, id, 1);
     }
-    expect(bankSlotsUsed(s)).toBeLessThanOrEqual(bankCap);
+    expect(bankSlotsUsed(s, content)).toBeLessThanOrEqual(bankCap);
     // Neue Art in volle Bank → deposit lehnt ab.
     const newBankKind = ids.find((id) => (s.bank[id] ?? 0) === 0)!;
     if (itemCount(s.inventory, newBankKind) < 1) addItem(s.inventory, content, newBankKind, 1);
-    const beforeUsed = bankSlotsUsed(s);
+    const beforeUsed = bankSlotsUsed(s, content);
     const dep = depositItem(s, content, newBankKind, 1);
     if (isBankFull(s, content)) {
       expect(dep).toBe(0);
-      expect(bankSlotsUsed(s)).toBe(beforeUsed);
+      expect(bankSlotsUsed(s, content)).toBe(beforeUsed);
     }
     expect(invariants(s, content)).toEqual([]);
     expect(invariants(roundtrip(s), content)).toEqual([]);

@@ -1,3 +1,4 @@
+import { storagePredicate } from "./storage"; // claude:2026-10-23T21:50:00+02:00 — Materiallager (1.4.0 ML)
 import type {
   ContentDB,
   GameState,
@@ -262,7 +263,7 @@ function canHoldRewards(
   // [Sweep6 W2-T5-P3] usedBankSlots statt Object.keys(...).length: 0-qty-Geister-Keys belegen
   // keinen Slot (einheitliche Zählung mit bank.ts/inventory.ts/tick.ts).
   let bankFreeKinds = state.settings.autoBank
-    ? Math.max(0, effectiveBankCapacity(state, content) - usedBankSlots(state))
+    ? Math.max(0, effectiveBankCapacity(state, content) - usedBankSlots(state, storagePredicate(content)))
     : 0;
   const plannedBankKinds = new Set<string>();
   for (const { id } of items) {

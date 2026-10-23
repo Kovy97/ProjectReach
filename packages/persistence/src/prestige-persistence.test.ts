@@ -18,8 +18,7 @@ import {
   questStatus,
   secondPetSlotUnlocked,
   talentEffect,
-  xpForLevel,
-} from "@hearthforge/engine";
+  xpForLevel, storagePredicate } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
 // claude:2026-10-17T23:30:00+02:00 — Prestige-Fundament (SAVE 88, 1.3 Welle B1): Migration v87 → v88,
@@ -177,13 +176,19 @@ describe("v88-Vault-Fixture (nach einem echten Aufstieg gepinnt)", () => {
     erwartet.state.version = SAVE_VERSION;
     Object.assign(erwartet.state.character, { meal: null, mealKeep: true });
     erwartet.state.settings.estateNotifications = true;
+    // claude:2026-10-23T22:05:00+02:00 — SAVE 90 (Materiallager): Option an, Lagerware ohne Bankfach, Lücken einmal geschlossen.
+    erwartet.state.settings.materialsToStorage = true;
+    erwartet.state.lockedItems = {}; // claude:2026-10-24T17:05:00+02:00 — SAVE 90 (Bergung): Schloss-Liste
+    erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
 
   it("Wächter: jedes Feld des voll befüllten Spielstands ist eingestuft, und jede Einstufung existiert dort", () => {
     const stateKeys = Object.keys(raw.state);
     expect(stateKeys.filter((k) => !(k in PRESTIGE_STATE_FIELDS))).toEqual([]);
-    expect(Object.keys(PRESTIGE_STATE_FIELDS).filter((k) => !stateKeys.includes(k))).toEqual([]);
+    // claude:2026-10-24T17:05:00+02:00 — Felder späterer Versionen fehlen im v88-Pin naturgemäß (SAVE 90: lockedItems).
+    const SPAETER = ["lockedItems"];
+    expect(Object.keys(PRESTIGE_STATE_FIELDS).filter((k) => !stateKeys.includes(k) && !SPAETER.includes(k))).toEqual([]);
     const charKeys = Object.keys(raw.state.character);
     expect(charKeys.filter((k) => !(k in PRESTIGE_CHARACTER_FIELDS))).toEqual([]);
   });

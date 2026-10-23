@@ -730,7 +730,11 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //     Migration verschiebt eine Mahlzeit aus `food` nach `meal` und füllt `food` mit der besten reinen
 //     Heilnahrung aus Inventar/Bank. 1.4.0-Zwischenversionen sind nie live und dürfen vor dem Release
 //     konsolidiert werden.
-export const SAVE_VERSION = 89;
+// 90: Materiallager (1.4.0 Welle 2 ML, Chef 23.10.2026; claude:2026-10-23T22:00:00+02:00): Lagerware (Materialien mit Regal,
+//     engine `storageShelfOf`) belegt keinen Bankplatz und kein `bankOrder`-Fach mehr; die Migration entfernt
+//     ihre alten Fächer einmal und schließt die Lücken. Neue Einstellung `settings.materialsToStorage`
+//     (Standard an). Bestand unverändert in `state.bank`.
+export const SAVE_VERSION = 90;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -2878,6 +2882,28 @@ export interface SkillDef {
 }
 
 /** Seltenheitsstufen (Diablo-Stil). Reihenfolge = aufsteigende Wertigkeit. */
+/**
+ * claude:2026-10-23T21:45:00+02:00 — Regale des Materiallagers (1.4.0 ML), in Anzeige-Reihenfolge. Die Zuordnung
+ * eines Materials leitet engine `storageShelfOf` ab; `ItemDef.shelf` überschreibt im Einzelfall.
+ */
+export const STORAGE_SHELVES = [
+  "ores",
+  "bars",
+  "wood",
+  "hides",
+  "fibers",
+  "gems",
+  "essences",
+  "enchant_runes",
+  "herbs",
+  "fish",
+  "seeds",
+  "arrows",
+  "loot",
+  "misc",
+] as const;
+export type StorageShelfId = (typeof STORAGE_SHELVES)[number];
+
 export type ItemRarity =
   | "poor"
   | "common"
@@ -3236,6 +3262,8 @@ export interface ItemDef {
    * Nur ContentDB, kein Save-Feld.
    */
   tier?: number;
+  /** claude:2026-10-23T21:45:00+02:00 — Regal im Materiallager (1.4.0 ML); null = bleibt in der Bank. Fehlt ⇒ abgeleitet. */
+  shelf?: StorageShelfId | null;
   // bagCapacity: GELÖSCHT (#278) — Taschenslot-System entfernt, small_pouch ist aus dem Katalog (#272).
   /** Nur für type === "tool": beschleunigt eine Fertigkeit (speedMult < 1 = schneller), wirkt aus dem Inventar. */
   tool?: { skill: SkillId; speedMult: number };
@@ -3541,6 +3569,70 @@ export const DEFAULT_DROP_SUFFIX_CHANCE = 0.08;
 
 /** Item-ID des Schrott-Materials aus Salvage (content-dev legt das Item in Welle 2 an). */
 export const SCRAP_ITEM_ID: ItemId = "item_scrap";
+
+// ───────────────────────────────────────────────────────────────────────────
+// Bergung (1.4.0 „Feder und Stahl“ BG, Chef 23.10.2026; claude:2026-10-23T22:40:00+02:00).
+// Zahlen wörtlich aus design/1.4.0-balance-werkstatt.md §5 (Apply-Liste Schritt 4). Nur gedroppte Teile sind
+// zerlegbar (Herkunftsregel, engine/salvage.ts); der Ertrag ist Material der Stufe des Gegenstands plus
+// Reliktstaub nach Rarität. Deterministisch, ohne RNG, ohne XP.
+// ───────────────────────────────────────────────────────────────────────────
+
+/** Ziel: Verkaufswert des Material-Ertrags = 80 % des Verkaufspreises des Teils (Band 70–90 %). */
+export const SALVAGE_TARGET_RATIO = 0.8;
+export const SALVAGE_MIN_RATIO = 0.7;
+export const SALVAGE_MAX_RATIO = 0.9;
+export const RELIC_DUST_ITEM_ID: ItemId = "relic_dust";
+/** Reliktstaub je Rarität (Chef-Werte; heroic/mythic kommen mit den Raid-Raritäten in Welle 4). */
+export const RELIC_DUST_BY_RARITY: Readonly<Record<string, number>> = {
+  poor: 0,
+  common: 0,
+  magic: 0,
+  rare: 1,
+  superRare: 2,
+  epic: 4,
+  legendary: 10,
+  godly: 25,
+  heroic: 40,
+  mythic: 60,
+};
+export type SalvageClass = "plate" | "leather" | "cloth" | "jewel" | "cape";
+/** Anteile am Budget je Klasse, in der Reihenfolge der Leiter-Spalten. */
+export const SALVAGE_SHARES: Readonly<Record<SalvageClass, readonly number[]>> = {
+  plate: [1.0],
+  leather: [0.6, 0.4],
+  cloth: [0.6, 0.4],
+  jewel: [1.0],
+  cape: [0.5, 0.5],
+};
+const T13 = <T,>(a: T[]): T[] => [...a, a[a.length - 1]!];
+const BARS = T13(["copper_bar", "bronze_bar", "iron_bar", "steel_bar", "blacksteel_bar", "mithril_bar", "adamantium_bar", "runite_bar", "bloodiron_bar", "titanium_bar", "aetherium_bar", "godiron_bar"]);
+const ORES = T13(["copper_ore", "tin_ore", "iron_ore", "iron_ore", "coal", "mithril_ore", "adamantite_ore", "runite_ore", "bloodiron_ore", "titanium_ore", "aetherite_ore", "godiron_ore"]);
+const LEATHER = T13(["cured_leather", "cured_leather", "cured_leather", "hardened_leather", "hardened_leather", "scaled_leather", "studded_leather", "studded_leather", "warhide", "dragonhide", "shadowhide", "shadowhide"]);
+const LOGS = T13(["normal_log", "birchwood_log", "oak_log", "ashbark_log", "blackwood_log", "blightwood_log", "ironbark_log", "bloodoak_log", "shadowpine_log", "wraithwood_log", "bonewood_log", "godwood_log"]);
+const CLOTH = T13(["cloth_nettle", "cloth_nettle", "cloth_nettle", "cloth_linen", "cloth_linen", "cloth_thornlinen", "cloth_thornlinen", "cloth_ghostweave", "cloth_ghostweave", "cloth_starweave", "cloth_starweave", "cloth_starweave"]);
+const ESSENCE = T13(["dim_essence", "dim_essence", "dim_essence", "frost_essence", "ember_essence", "aether_essence", "aether_essence", "void_essence", "void_essence", "void_essence", "void_essence", "void_essence"]);
+const FIBER = T13(["fiber_nettle", "fiber_nettle", "fiber_nettle", "fiber_flax", "fiber_flax", "fiber_thornhemp", "fiber_thornhemp", "fiber_ghostsilk", "fiber_ghostsilk", "fiber_starflax", "fiber_starflax", "fiber_starflax"]);
+const GEMS = T13(["garnet", "garnet", "sapphire", "sapphire", "ruby", "bloodstone", "diamond", "diamond", "onyx", "voidstone", "godgem", "godgem"]);
+const ROUGH = T13(["rough_garnet", "rough_garnet", "rough_sapphire", "rough_sapphire", "rough_ruby", "rough_bloodstone", "rough_diamond", "rough_diamond", "rough_onyx", "rough_voidstone", "rough_godgem", "rough_godgem"]);
+/**
+ * Material-Leitern je Klasse und Stufe (Index 0 = Stufe I … 12 = Stufe XIII): `mats` in der Reihenfolge von
+ * `SALVAGE_SHARES`, `fill` = Füller-Materialien in Prüfreihenfolge (Werkstatt-Spec §1.3).
+ */
+export function salvageLadder(cls: SalvageClass, tier: number): { mats: ItemId[]; fill: ItemId[] } {
+  const i = Math.max(0, Math.min(12, Math.floor(tier) - 1));
+  switch (cls) {
+    case "plate":
+      return { mats: [BARS[i]!], fill: [ORES[i]!] };
+    case "leather":
+      return { mats: [LEATHER[i]!, LOGS[i]!], fill: [LOGS[i]!] };
+    case "cloth":
+      return { mats: [CLOTH[i]!, ESSENCE[i]!], fill: [ESSENCE[i]!, FIBER[i]!] };
+    case "jewel":
+      return { mats: [GEMS[i]!], fill: [ROUGH[i]!] };
+    case "cape":
+      return { mats: [CLOTH[i]!, LEATHER[i]!], fill: [FIBER[i]!] };
+  }
+}
 
 /**
  * Enchant-Slots pro Item nach RARITY (Chef: „Enchant-Slots pro Item nach Rarity").
@@ -6192,10 +6284,11 @@ export function effectiveBankCapacity(state: GameState, content: ContentDB): num
  * `Object.keys(bank).length` inklusive Geister — Auto-Bank verwarf Loot still, obwohl manuelles
  * Einlagern (qty>0-Zählung in bank.ts) noch ging. Defensiv gegen Nicht-Zahlen im Record.
  */
-export function usedBankSlots(state: GameState): number {
+export function usedBankSlots(state: GameState, isStorage?: (itemId: ItemId) => boolean): number {
+  // claude:2026-10-23T21:45:00+02:00 — Materiallager (1.4.0 ML): Lagerware belegt keinen Bankplatz.
   let n = 0;
-  for (const qty of Object.values(state.bank)) {
-    if (typeof qty === "number" && qty > 0) n++;
+  for (const [id, qty] of Object.entries(state.bank)) {
+    if (typeof qty === "number" && qty > 0 && !isStorage?.(id)) n++;
   }
   return n;
 }
@@ -6213,7 +6306,8 @@ export function usedBankSlots(state: GameState): number {
  * Der Aufruf lohnt an den zentralen Stellen (nach dem Laden, nach Ein-/Auslagern, im Tick). Weil
  * sie selbstheilend ist, muss KEINE der 54 Schreibstellen für `bank` die Reihenfolge selbst pflegen.
  */
-export function syncBankOrder(state: GameState, capacity?: number): void {
+export function syncBankOrder(state: GameState, capacity?: number, isStorage?: (itemId: ItemId) => boolean): void {
+  // claude:2026-10-23T21:45:00+02:00 — Materiallager (1.4.0 ML): Lagerware hat keine Bankzelle (Prädikat aus engine).
   // claude:2026-10-17T21:00:00+02:00 Fach belegt = Menge > 0 ODER verzauberte Instanz der Basis im Lager;
   // neue Items haengen HINTEN an (nach dem letzten belegten Fach), Luecken nur wenn hinten nichts frei ist.
   if (!Array.isArray(state.bankOrder)) state.bankOrder = [];
@@ -6226,6 +6320,7 @@ export function syncBankOrder(state: GameState, capacity?: number): void {
   }
   const belegt = (id: ItemId | null): boolean =>
     typeof id === "string" &&
+    !isStorage?.(id) &&
     ((typeof state.bank[id] === "number" && (state.bank[id] as number) > 0) || instanzBasen.has(id));
 
   const gesehen = new Set<ItemId>();
@@ -6892,6 +6987,11 @@ export interface GameState {
    * erhöht; Cap `MAX_BANK_SLOTS_PURCHASED`. SAVE_VERSION 40→41: Alt-Saves defaulten auf 0.
    */
   bankSlotsPurchased: number;
+  /**
+   * claude:2026-10-23T22:50:00+02:00 — Bergungs-Schloss (1.4.0 BG, SAVE 90): Item-IDs (Stapel) und Instanz-IDs (Einzelstücke), die der
+   * Spieler gegen Zerlegen gesperrt hat. Set als Record (Muster `discoveredItems`). Optional; fehlt ⇒ nichts gesperrt.
+   */
+  lockedItems?: Record<string, true>;
   /** Collection-Log: je Monster die bereits erbeuteten Drop-Item-IDs (für „???"-Anzeige bis entdeckt). */
   seenDrops: Record<MonsterId, ItemId[]>;
   /**
@@ -7538,11 +7638,19 @@ export interface GameSettings {
    * Fehlt das Feld (jeder Save vor 1.4.0), setzt migrateState den Default.
    */
   estateNotifications: boolean;
+  /**
+   * claude:2026-10-23T21:45:00+02:00 — Materiallager (1.4.0 ML, Chef 23.10.: „Direkt ins Lager, in den Optionen
+   * abschaltbar“): Materialien mit Regal gehen ohne Umweg über das Inventar ins Lager (= Bankbestand ohne
+   * Bankplatz). Aus: wie früher erst Inventar, der Überlauf ins Lager. Standard: an.
+   */
+  materialsToStorage: boolean;
 }
 
 /** Default-Einstellungen für frische Spielstände (und Migration alter Saves). */
 export function defaultSettings(): GameSettings {
-  return { autoBank: true, autoParagonAscend: false, estateNotifications: true };
+  // claude:2026-10-23T23:25:00+02:00 — materialsToStorage: Engine-Baseline aus (Sim/Tests). Echte Spieler bekommen es an: neue Charaktere über
+  // `starterKit` (engine/state.ts), Alt-Saves über migrateState (fehlendes Feld ⇒ an).
+  return { autoBank: true, autoParagonAscend: false, estateNotifications: true, materialsToStorage: false };
 }
 
 /** Mastery: gemeinsame Level-Kurve mit Fertigkeiten; höchstes Level. */

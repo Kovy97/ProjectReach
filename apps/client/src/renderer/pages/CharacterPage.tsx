@@ -1,3 +1,5 @@
+import { ITEM_RARITIES } from "@hearthforge/shared"; // claude:2026-10-23T23:10:00+02:00 — Bergung: Rarität-Rang
+import { SalvageBatchModal, SalvageConfirmModal } from "../components/SalvageModals"; // claude:2026-10-23T23:10:00+02:00 — Bergung (1.4.0)
 import { Fragment, useRef, useState, type CSSProperties, type ReactElement, type KeyboardEvent, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { getUiIcon } from "../uiIcons";
@@ -14,7 +16,7 @@ import {
   sellItem,
   buffChargeInfo, itemCount, useConsumable, useConsumableMany,
   usedCapacityUnits,
-  consumeFailReason,
+  consumeFailReason, isSalvageable, isSalvageLocked, salvageItem, toggleSalvageLock
 } from "@hearthforge/engine";
 import { ActiveBuffsBar } from "../components/ActiveBuffs";
 import { HoverTip } from "../components/CitadelTip";
@@ -217,6 +219,9 @@ export function CharacterPage(): JSX.Element {
   // Tier-/Mengen-Wahl des Dialogs, s. CrateOpenModal). Eigener Dirty-Zähler (Muster NewHavenPage
   // `onDirty`), unabhängig vom Portrait-Upload-Zähler oben.
   const [crateItemId, setCrateItemId] = useState<string | null>(null);
+  // claude:2026-10-23T23:10:00+02:00 — Bergung (1.4.0 BG): Bestätigung (ab legendär, Einzelstücke, ganze Stapel) und Sammel-Knopf.
+  const [salvage, setSalvage] = useState<{ itemId: string; instanceId: string | null; qty: number; hasRunes: boolean } | null>(null);
+  const [salvageBatchOpen, setSalvageBatchOpen] = useState(false);
   const [, bumpCrate] = useState(0);
   // Prompt-Extractor (Chef-Auftrag 28.08.2026, "Charakter exportieren"): sperrt den Knopf während
   // Canvas-Rendern + IPC-Schreiben laufen — verhindert Doppel-Klicks, die denselben Export zweimal
@@ -294,6 +299,26 @@ export function CharacterPage(): JSX.Element {
         if (all > 1) acts.push({ key: "charge", label: t("item.useCharge").replace("{n}", String(all)), onClick: () => useMany(all) });
       }
     }
+    // claude:2026-10-23T23:10:00+02:00 — Bergung (1.4.0 BG, Chef 23.10.): nur gedroppte Teile; ab legendär immer mit Bestätigung; Schloss je Item.
+    if (isSalvageable(content, itemId)) {
+      const locked = isSalvageLocked(state, itemId);
+      const stack = itemCount(state.inventory, itemId);
+      const high = ITEM_RARITIES.indexOf(it?.rarity ?? "common") >= ITEM_RARITIES.indexOf("legendary");
+      if (!locked) {
+        acts.push({
+          key: "salvage",
+          label: t("salvage.action"),
+          onClick: () => {
+            if (high) setSalvage({ itemId, instanceId: null, qty: 1, hasRunes: false });
+            else salvageItem(state, content, itemId, 1);
+          },
+        });
+        if (stack > 1) {
+          acts.push({ key: "salvageAll", label: t("salvage.actionAll"), onClick: () => setSalvage({ itemId, instanceId: null, qty: stack, hasRunes: false }) });
+        }
+      }
+      acts.push({ key: "salvageLock", label: locked ? t("salvage.unlock") : t("salvage.lock"), onClick: () => toggleSalvageLock(state, itemId) });
+    }
     acts.push({ key: "sell", label: t("item.sell"), onClick: () => sellItem(state, content, itemId, 1) });
     return acts;
   };
@@ -313,6 +338,18 @@ export function CharacterPage(): JSX.Element {
           else reportEquipFailure(state, content);
         },
       });
+    }
+    // claude:2026-10-23T23:10:00+02:00 — Bergung (1.4.0 BG): Einzelstücke immer mit Bestätigung (Runen gingen verloren).
+    if (isSalvageable(content, inst.baseItemId)) {
+      const locked = isSalvageLocked(state, inst.instanceId);
+      if (!locked) {
+        acts.push({
+          key: "salvage",
+          label: t("salvage.action"),
+          onClick: () => setSalvage({ itemId: inst.baseItemId, instanceId: inst.instanceId, qty: 1, hasRunes: inst.affixes.length > 0 }),
+        });
+      }
+      acts.push({ key: "salvageLock", label: locked ? t("salvage.unlock") : t("salvage.lock"), onClick: () => toggleSalvageLock(state, inst.instanceId) });
     }
     acts.push({ key: "sell", label: t("item.sell"), onClick: () => sellInstance(state, content, inst.instanceId) });
     return acts;
@@ -642,6 +679,10 @@ export function CharacterPage(): JSX.Element {
             <button type="button" className="cs-inv-sortbtn" onClick={sortiereJetzt}>
               {t("char.sortApply")}
             </button>
+            {/* claude:2026-10-23T23:10:00+02:00 — Bergung: Sammel-Knopf „Beute zerlegen …“ (1.4.0 BG). */}
+            <button type="button" className="cs-inv-sortbtn" onClick={() => setSalvageBatchOpen(true)}>
+              {t("salvage.batchButton")}
+            </button>
           </div>
         </div>
 
@@ -770,6 +811,16 @@ export function CharacterPage(): JSX.Element {
         />,
         document.body,
       )}
+      {salvage && (
+        <SalvageConfirmModal
+          itemId={salvage.itemId}
+          instanceId={salvage.instanceId}
+          qty={salvage.qty}
+          hasRunes={salvage.hasRunes}
+          onClose={() => setSalvage(null)}
+        />
+      )}
+      {salvageBatchOpen && <SalvageBatchModal onClose={() => setSalvageBatchOpen(false)} />}
       {crateItemId && (
         <CrateOpenModal
           initialItemId={crateItemId}

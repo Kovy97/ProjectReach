@@ -20,7 +20,8 @@ export type NavView =
   | "newhaven"
   | "tavern"
   | "mail"
-  | "prestige"; // claude:2026-10-18T14:00:00+02:00 — Scherbenaltar (Der Aschesturz, 1.3)
+  | "prestige" // claude:2026-10-18T14:00:00+02:00 — Scherbenaltar (Der Aschesturz, 1.3)
+  | "storage"; // claude:2026-10-23T22:20:00+02:00 — Materiallager (1.4.0 ML)
 
 export interface NavPage {
   id: string;
@@ -136,6 +137,8 @@ export const navigation: NavSection[] = [
       // ihnen dorthin (Task #274, Tausch mit Skills-Overview → siehe combat-Sektion oben).
       { id: "shop",   label: "nav.shop",   icon: "🪙", view: "shop",   placement: "topbar" },
       { id: "bank",   label: "nav.bank",   icon: "🏦", view: "bank",   placement: "topbar" },
+      // claude:2026-10-23T22:20:00+02:00 — Materiallager (1.4.0 ML): eigene Seite direkt neben der Bank (die Bank ist ein Kopfleisten-Eintrag).
+      { id: "storage", label: "nav.storage", icon: "📦", view: "storage", placement: "topbar" },
       { id: "quests", label: "nav.quests", icon: "📜", view: "quests", placement: "topbar" },
     ],
   },
@@ -183,6 +186,7 @@ export const topBarPages: NavPage[] = [
   // Stadt (City-Map) auf Eis — kein eigener Top-Bar-Button, aber Shop/Bank ziehen an ihre Stelle.
   { id: "shop",            label: "nav.shop",            icon: "🪙", view: "shop",            placement: "topbar" },
   { id: "bank",            label: "nav.bank",            icon: "🏦", view: "bank",            placement: "topbar" },
+  { id: "storage",         label: "nav.storage",         icon: "📦", view: "storage",         placement: "topbar" },
   { id: "achievements",    label: "nav.achievements",    icon: "🏆", view: "achievements",    placement: "topbar" },
 ];
 

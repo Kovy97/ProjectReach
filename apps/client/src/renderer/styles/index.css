@@ -122,6 +122,8 @@
 @import "./chrome.css";
 @import "./chrome-sidebar.css";
 @import "./chrome-queue.css";
+/* claude:2026-10-23T22:20:00+02:00 — Materiallager (1.4.0 ML) */
+@import "./storage.css";
 
 /* claude:2026-10-19T10:15:00+02:00 — Chef 19.10.: Oberflächen-Stil „Classic“ (Look von 1.2.3), s. uiStyle.ts.
    classic-skin.css: alte Texturen/Rahmen seitenweit, nur unter :root[data-ui-style="classic"] (generiert).

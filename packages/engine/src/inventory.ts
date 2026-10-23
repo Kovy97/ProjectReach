@@ -1,3 +1,4 @@
+import { isStorageItem, storagePredicate } from "./storage"; // claude:2026-10-23T21:50:00+02:00 — Materiallager (1.4.0 ML)
 import type {
   ContentDB,
   GameState,
@@ -194,6 +195,13 @@ export function addItemOrBank(
     }
     return { toInventory: qty, toBank: 0 };
   }
+  // claude:2026-10-23T21:50:00+02:00 — Materiallager (1.4.0 ML, Chef 23.10.: „Direkt ins Lager, in den Optionen abschaltbar“): Materialien
+  // mit Regal gehen ohne Umweg ins Lager (= Bankbestand ohne Bankplatz, unbegrenzt). Aus: wie früher.
+  if (state.settings.materialsToStorage !== false && isStorageItem(content, itemId)) {
+    state.bank[itemId] = (state.bank[itemId] ?? 0) + qty;
+    markItemDiscovered(state, itemId);
+    return { toInventory: 0, toBank: qty };
+  }
   const toInventory = addItem(state.inventory, content, itemId, qty);
   // Erst-Besitz-Marker (Bestiarium/Item-Wiki, SAVE 58): dies ist der ZENTRALE Stack-Zugangs-Pfad
   // (Combat-Loot, Aktions-/Craft-Output, Farming-Ernte, Quest-/Token-Belohnungen laufen hier durch).
@@ -208,7 +216,8 @@ export function addItemOrBank(
   // Object.keys().length — 0-qty-Geister-Keys blockierten Auto-Bank, obwohl manuelles
   // Einlagern (bank.ts zählt qty>0) noch ging.
   const isNewKind = state.bank[itemId] === undefined;
-  if (isNewKind && usedBankSlots(state) >= effectiveBankCapacity(state, content)) {
+  // claude:2026-10-23T21:50:00+02:00 — Lagerware belegt keinen Bankplatz (Überlauf ins Lager auch bei voller Bank).
+  if (isNewKind && !isStorageItem(content, itemId) && usedBankSlots(state, storagePredicate(content)) >= effectiveBankCapacity(state, content)) {
     return { toInventory, toBank: 0 };
   }
   state.bank[itemId] = (state.bank[itemId] ?? 0) + overflow;

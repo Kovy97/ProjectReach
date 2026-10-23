@@ -69,6 +69,8 @@ function obtainableSet(): Set<string> {
   // 10-%-Bonuswurf jeder Abgabe (engine/tavern.ts deliverTavernTask). Benannte Ausnahme nach dem
   // Muster der Elite-uniqueItemId oben; das Öffnen (openBlackMarketCrate) liefert nur Katalog-Items.
   for (let band = 1; band <= TAVERN_BANDS; band++) produced.add(tavernCrateItemId(band));
+  // claude:2026-10-23T23:35:00+02:00 — Bergung (1.4.0 BG): Reliktstaub stammt aus dem Zerlegen gedroppter Ausrüstung (engine/salvage.ts).
+  produced.add("relic_dust");
   return produced;
 }
 

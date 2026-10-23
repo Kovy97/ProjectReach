@@ -16,6 +16,7 @@ import {
   groupInstancesByBase,
   hasInstanceRoom,
   isBankFull,
+  storagePredicate,
   itemCount,
   withdrawInstance,
   withdrawItem,
@@ -196,7 +197,7 @@ export function BankPage(): JSX.Element {
   // Charakterbogen. Der Sortierknopf unten wirkt deshalb ausschliesslich auf die BANKFAECHER.
   const depositable = depositEntriesUnsorted.filter(matchesFilter);
   const stored = storedEntriesUnsorted.filter(matchesFilter);
-  const used = bankSlotsUsed(state);
+  const used = bankSlotsUsed(state, content); // claude:2026-10-23T22:20:00+02:00 — Lagerware zählt nicht
   const full = isBankFull(state, content);
   const bankCap = effectiveBankCapacity(state, content); // Basis + gekaufte Slots + Lager-Erdgewölbe
   // Task #334 (UI-Welle 2 "Boosts sichtbar"): der Vorratsspeicher-Anteil an `bankCap` steckte bisher
@@ -501,7 +502,7 @@ export function BankPage(): JSX.Element {
           // claude:2026-10-17T21:00:00+02:00 Das neue Fach haengt die Engine hinten an (depositItem und
           // depositInstance synchronisieren selbst) — von dort auf das gewaehlte Fach tauschen.
           // Der Sync hier ist nur ein idempotenter Sicherheitsgurt.
-          syncBankOrder(state);
+          syncBankOrder(state, undefined, storagePredicate(content));
           const neu = state.bankOrder.indexOf(itemId);
           if (neu >= 0 && neu !== zielFach) moveBankSlot(state, neu, zielFach);
         }
@@ -685,7 +686,7 @@ export function BankPage(): JSX.Element {
                         {
                           key: "depositInstance",
                           label: t("bank.depositInstance"),
-                          onClick: () => depositInstance(state, inst.instanceId),
+                          onClick: () => depositInstance(state, inst.instanceId, content),
                         },
                       ]}
                       onShiftClick={
@@ -808,7 +809,7 @@ export function BankPage(): JSX.Element {
                         {
                           key: "withdrawInstance",
                           label: t("bank.withdrawInstance"),
-                          onClick: () => withdrawInstance(state, inst.instanceId),
+                          onClick: () => withdrawInstance(state, inst.instanceId, content),
                         },
                       ];
                       if (isEquipment) {
@@ -821,7 +822,7 @@ export function BankPage(): JSX.Element {
                             // Kapazitäts-Check des Ziel-Slots scheitern (kein Platz, das vorher dort
                             // getragene Item zurückzulegen). Beides landet gemeinsam im Alert-Fallback,
                             // die Bag-Voll-Meldung greift nur, wenn das Inventar es wirklich ist.
-                            const withdrawn = withdrawInstance(state, inst.instanceId);
+                            const withdrawn = withdrawInstance(state, inst.instanceId, content);
                             if (withdrawn && equipSucceeded(equipInstance(state, content, inst.instanceId))) {
                               playSfx("equip");
                             } else {

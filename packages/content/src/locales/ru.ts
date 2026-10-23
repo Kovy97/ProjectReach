@@ -4200,4 +4200,7 @@ export const ru: Record<string, string> = {
   "talentNodes:prestige.goldFind:description": "На {value} больше золота от действий, боёв, подземелий и заданий, но не от продажи. Ты собираешь то, что принадлежало идолам, как сороки собирают серебро.",
   "talentNodes:prestige.pointsBoost:name": "Глубокий надрез",
   "talentNodes:prestige.pointsBoost:description": "Каждый следующий Пеплопад приносит на {value} больше шрамов. Следующее падение режет глубже и оставляет больше.",
+  // claude:2026-10-23T22:55:00+02:00 — Reliktstaub (1.4.0 Bergung)
+  "items:relic_dust:name": "Пыль реликвий",
+  "items:relic_dust:description": "То, что остаётся от найденной вещи, когда из неё забирают железо: пыль, которая помнит, для чего её ковали.",
 };

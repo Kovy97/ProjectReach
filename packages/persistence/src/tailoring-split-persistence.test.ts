@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { ActionDef, ContentDB, GameState } from "@hearthforge/shared";
 import { LEATHERWORKING_SKILL_ID, SAVE_VERSION, TAILORING_SKILL_ID, defaultPrestigeState } from "@hearthforge/shared";
-import { createGame, levelFromXp, xpForLevel } from "@hearthforge/engine";
+import { createGame, levelFromXp, xpForLevel, storagePredicate } from "@hearthforge/engine";
 import { deserialize, serialize, tailoringXpFromCraftLog } from "./index";
 
 /**
@@ -201,6 +201,10 @@ describe("v86-Fixture: Round-Trip mit geteiltem Handwerk", () => {
     erwartet.state.prestige = defaultPrestigeState();
     Object.assign(erwartet.state.character, { meal: null, mealKeep: true }); // claude:2026-10-23T16:50:00+02:00 — SAVE 89 (Mahlzeit-Platz)
     erwartet.state.settings.estateNotifications = true;
+    // claude:2026-10-23T22:05:00+02:00 — SAVE 90 (Materiallager): Option an, Lagerware ohne Bankfach, Lücken einmal geschlossen.
+    erwartet.state.settings.materialsToStorage = true;
+    erwartet.state.lockedItems = {}; // claude:2026-10-24T17:05:00+02:00 — SAVE 90 (Bergung): Schloss-Liste
+    erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
 });

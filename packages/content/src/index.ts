@@ -941,6 +941,22 @@ export const content: ContentDB = {
 
     // ── Salvage-Schrott (Enchanting-System: Salvage-Output) ──────────────
     item_scrap: { id: "item_scrap", name: { en: "Scrap Metal", de: "Metallschrott" }, type: "material", stackable: true, icon: "🔩", value: 3 },
+    // claude:2026-10-23T22:55:00+02:00 — Reliktstaub (1.4.0 „Feder und Stahl“ BG): Bergungs-Rest nach Rarität (engine/salvage.ts),
+    // einzige Verwendung: Tier-IV-Verzauberungsrunen (Chef BG-3). Wert 1 (Verkaufspreis 1), damit Zerlegen nie ein Gold-Trick ist.
+    relic_dust: {
+      id: "relic_dust",
+      name: { en: "Relic Dust", de: "Reliktstaub" },
+      type: "material",
+      stackable: true,
+      icon: "✨",
+      value: 1,
+      rarity: "rare",
+      shelf: "misc",
+      description: {
+        en: "What remains of a found piece when the iron is taken from it: dust that remembers what it was forged for.",
+        de: "Was von einem Fundstück bleibt, wenn man ihm das Eisen nimmt: Staub, der sich erinnert, wofür er geschmiedet wurde.",
+      },
+    },
 
     // ── Verzauberungs-Runen (Runecrafting → Affix-Enchantment) ───────────
     // Tier I — early (~L15-30): Pigment_umber / Reed_pale / low essences
@@ -13302,88 +13318,89 @@ export const content: ContentDB = {
     // gerundet). Schilf (`reed_void`) bewusst in den Waffen-/Rüstungs-Rezepten (Chef-Vorgabe:
     // Farming bleibt im Endgame relevant) — die Schmuck-Linie nutzt stattdessen Götteratem, da
     // ihre Rezepte kein Platte-/Schild-Barren-Gegenstück brauchen (Zutaten-Landkarte §6).
+    // claude:2026-10-23T22:55:00+02:00 — 1.4.0 BG (Werkstatt-Spec §2.4): die 14 Tier-IV-Runen nehmen Reliktstaub statt je 1 Pigment/Essenz.
     craft_rune_warpath_iv: {
       id: "craft_rune_warpath_iv", name: { en: "Craft Warpath Rune IV", de: "Kriegspfad-Rune IV herstellen" },
       skill: "runecrafting", category: "rune_affixes", durationMs: 24000, xp: 2330, levelRequired: 85,
-      inputs: [{ itemId: "essence_void", qty: 3 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 2 }, { itemId: "herb_godsbreath", qty: 1 }],
+      inputs: [{ itemId: "essence_void", qty: 3 }, { itemId: "pigment_radiant", qty: 2 }, { itemId: "reed_void", qty: 2 }, { itemId: "herb_godsbreath", qty: 1 }, { itemId: "relic_dust", qty: 2 }],
       loot: [{ itemId: "rune_warpath_iv", chance: 1, min: 1, max: 1 }],
     },
     craft_rune_second_arrow_iv: {
       id: "craft_rune_second_arrow_iv", name: { en: "Craft Second Arrow Rune IV", de: "Zweitpfeil-Rune IV herstellen" },
       skill: "runecrafting", category: "rune_affixes", durationMs: 24000, xp: 2330, levelRequired: 85,
-      inputs: [{ itemId: "essence_void", qty: 3 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 2 }, { itemId: "herb_godsbreath", qty: 1 }],
+      inputs: [{ itemId: "essence_void", qty: 3 }, { itemId: "pigment_radiant", qty: 2 }, { itemId: "reed_void", qty: 2 }, { itemId: "herb_godsbreath", qty: 1 }, { itemId: "relic_dust", qty: 2 }],
       loot: [{ itemId: "rune_second_arrow_iv", chance: 1, min: 1, max: 1 }],
     },
     craft_rune_thin_veil_iv: {
       id: "craft_rune_thin_veil_iv", name: { en: "Craft Thin Veil Rune IV", de: "Dünner-Schleier-Rune IV herstellen" },
       skill: "runecrafting", category: "rune_affixes", durationMs: 24000, xp: 2330, levelRequired: 85,
-      inputs: [{ itemId: "essence_void", qty: 3 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "aether_essence", qty: 3 }, { itemId: "herb_godsbreath", qty: 1 }],
+      inputs: [{ itemId: "essence_void", qty: 3 }, { itemId: "pigment_radiant", qty: 2 }, { itemId: "aether_essence", qty: 3 }, { itemId: "herb_godsbreath", qty: 1 }, { itemId: "relic_dust", qty: 2 }],
       loot: [{ itemId: "rune_thin_veil_iv", chance: 1, min: 1, max: 1 }],
     },
     craft_rune_iron_answer_iv: {
       id: "craft_rune_iron_answer_iv", name: { en: "Craft Iron Answer Rune IV", de: "Eiserne-Antwort-Rune IV herstellen" },
       skill: "runecrafting", category: "rune_affixes", durationMs: 25000, xp: 2680, levelRequired: 87,
-      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 3 }, { itemId: "godiron_bar", qty: 1 }],
+      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 2 }, { itemId: "reed_void", qty: 3 }, { itemId: "godiron_bar", qty: 1 }, { itemId: "relic_dust", qty: 2 }],
       loot: [{ itemId: "rune_iron_answer_iv", chance: 1, min: 1, max: 1 }],
     },
     craft_rune_ambush_iv: {
       id: "craft_rune_ambush_iv", name: { en: "Craft Ambush Rune IV", de: "Hinterhalt-Rune IV herstellen" },
       skill: "runecrafting", category: "rune_affixes", durationMs: 25000, xp: 2680, levelRequired: 87,
-      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 3 }, { itemId: "herb_godsbreath", qty: 1 }],
+      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 2 }, { itemId: "reed_void", qty: 3 }, { itemId: "herb_godsbreath", qty: 1 }, { itemId: "relic_dust", qty: 2 }],
       loot: [{ itemId: "rune_ambush_iv", chance: 1, min: 1, max: 1 }],
     },
     craft_rune_veil_drinker_iv: {
       id: "craft_rune_veil_drinker_iv", name: { en: "Craft Veil-Drinker Rune IV", de: "Schleiertrinker-Rune IV herstellen" },
       skill: "runecrafting", category: "rune_affixes", durationMs: 25000, xp: 2680, levelRequired: 87,
-      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "aether_essence", qty: 3 }, { itemId: "herb_godsbreath", qty: 1 }],
+      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 2 }, { itemId: "aether_essence", qty: 3 }, { itemId: "herb_godsbreath", qty: 1 }, { itemId: "relic_dust", qty: 2 }],
       loot: [{ itemId: "rune_veil_drinker_iv", chance: 1, min: 1, max: 1 }],
     },
     craft_rune_bounty: {
       id: "craft_rune_bounty", name: { en: "Craft Bounty Rune", de: "Kopfgeld-Rune herstellen" },
       skill: "runecrafting", category: "rune_affixes", durationMs: 26000, xp: 2930, levelRequired: 88,
-      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 2 }, { itemId: "reed_void", qty: 2 }, { itemId: "herb_godsbreath", qty: 2 }],
+      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 1 }, { itemId: "reed_void", qty: 2 }, { itemId: "herb_godsbreath", qty: 2 }, { itemId: "relic_dust", qty: 2 }],
       loot: [{ itemId: "rune_bounty", chance: 1, min: 1, max: 1 }],
     },
     craft_rune_tallyman: {
       id: "craft_rune_tallyman", name: { en: "Craft Tallyman Rune", de: "Zähler-Rune herstellen" },
       skill: "runecrafting", category: "rune_affixes", durationMs: 26000, xp: 2930, levelRequired: 88,
-      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 2 }, { itemId: "reed_void", qty: 2 }, { itemId: "herb_godsbreath", qty: 2 }],
+      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 1 }, { itemId: "reed_void", qty: 2 }, { itemId: "herb_godsbreath", qty: 2 }, { itemId: "relic_dust", qty: 2 }],
       loot: [{ itemId: "rune_tallyman", chance: 1, min: 1, max: 1 }],
     },
     craft_rune_wasting_iv: {
       id: "craft_rune_wasting_iv", name: { en: "Craft Wasting Rune IV", de: "Auszehrungs-Rune IV herstellen" },
       skill: "runecrafting", category: "rune_affixes", durationMs: 26000, xp: 3075, levelRequired: 89,
-      inputs: [{ itemId: "essence_divine", qty: 2 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "ember_essence", qty: 3 }, { itemId: "herb_godsbreath", qty: 1 }],
+      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "ember_essence", qty: 3 }, { itemId: "herb_godsbreath", qty: 1 }, { itemId: "relic_dust", qty: 3 }],
       loot: [{ itemId: "rune_wasting_iv", chance: 1, min: 1, max: 1 }],
     },
     craft_rune_restless: {
       id: "craft_rune_restless", name: { en: "Craft Restless Rune", de: "Rastlose-Rune herstellen" },
       skill: "runecrafting", category: "rune_affixes", durationMs: 27000, xp: 3360, levelRequired: 90,
-      inputs: [{ itemId: "essence_divine", qty: 2 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 2 }, { itemId: "herb_godsbreath", qty: 2 }],
+      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 2 }, { itemId: "herb_godsbreath", qty: 2 }, { itemId: "relic_dust", qty: 3 }],
       loot: [{ itemId: "rune_restless", chance: 1, min: 1, max: 1 }],
     },
     craft_rune_unbroken_wall_iv: {
       id: "craft_rune_unbroken_wall_iv", name: { en: "Craft Unbroken Wall Rune IV", de: "Ungebrochene-Mauer-Rune IV herstellen" },
       skill: "runecrafting", category: "rune_affixes", durationMs: 27000, xp: 3530, levelRequired: 91,
-      inputs: [{ itemId: "essence_divine", qty: 2 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 3 }, { itemId: "godiron_bar", qty: 2 }],
+      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 3 }, { itemId: "godiron_bar", qty: 2 }, { itemId: "relic_dust", qty: 3 }],
       loot: [{ itemId: "rune_unbroken_wall_iv", chance: 1, min: 1, max: 1 }],
     },
     craft_rune_judgement_iv: {
       id: "craft_rune_judgement_iv", name: { en: "Craft Judgement Rune IV", de: "Gerichts-Rune IV herstellen" },
       skill: "runecrafting", category: "rune_affixes", durationMs: 28000, xp: 3850, levelRequired: 92,
-      inputs: [{ itemId: "essence_divine", qty: 2 }, { itemId: "pigment_radiant", qty: 4 }, { itemId: "reed_void", qty: 2 }, { itemId: "idol_shard", qty: 1 }],
+      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 4 }, { itemId: "reed_void", qty: 2 }, { itemId: "idol_shard", qty: 1 }, { itemId: "relic_dust", qty: 3 }],
       loot: [{ itemId: "rune_judgement_iv", chance: 1, min: 1, max: 1 }],
     },
     craft_rune_chronicle: {
       id: "craft_rune_chronicle", name: { en: "Craft Chronicle Rune", de: "Chronik-Rune herstellen" },
       skill: "runecrafting", category: "rune_affixes", durationMs: 28000, xp: 4040, levelRequired: 93,
-      inputs: [{ itemId: "essence_divine", qty: 2 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 2 }, { itemId: "godbloom", qty: 1 }],
+      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 2 }, { itemId: "godbloom", qty: 1 }, { itemId: "relic_dust", qty: 3 }],
       loot: [{ itemId: "rune_chronicle", chance: 1, min: 1, max: 1 }],
     },
     craft_rune_gleaning: {
       id: "craft_rune_gleaning", name: { en: "Craft Gleaning Rune", de: "Nachlese-Rune herstellen" },
       skill: "runecrafting", category: "rune_affixes", durationMs: 30000, xp: 4780, levelRequired: 95,
-      inputs: [{ itemId: "essence_divine", qty: 3 }, { itemId: "pigment_radiant", qty: 4 }, { itemId: "reed_void", qty: 3 }, { itemId: "godbloom", qty: 2 }],
+      inputs: [{ itemId: "essence_divine", qty: 2 }, { itemId: "pigment_radiant", qty: 4 }, { itemId: "reed_void", qty: 3 }, { itemId: "godbloom", qty: 2 }, { itemId: "relic_dust", qty: 3 }],
       loot: [{ itemId: "rune_gleaning", chance: 1, min: 1, max: 1 }],
     },
 

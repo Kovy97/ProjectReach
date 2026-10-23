@@ -11,6 +11,8 @@ import {
   type ItemId,
 } from "@hearthforge/shared";
 import { addInstance, addItem, canHold, hasInstanceRoom, itemCount, removeInstance, removeItem } from "./inventory";
+import { isStorageItem, storagePredicate } from "./storage";
+import { addGold, effectiveSellPrice } from "./shop"; // claude:2026-10-23T21:50:00+02:00 — Verkauf aus dem Lager // claude:2026-10-23T21:50:00+02:00 — Materiallager (1.4.0 ML)
 
 /** Menge eines Items im Lager. */
 export function bankCount(state: GameState, itemId: ItemId): number {
@@ -18,11 +20,12 @@ export function bankCount(state: GameState, itemId: ItemId): number {
 }
 
 /** Belegte Bank-Slots = Anzahl distinkter eingelagerter Item-Arten (nur mit echtem Bestand &gt;0). */
-export function bankSlotsUsed(state: GameState): number {
+export function bankSlotsUsed(state: GameState, content?: ContentDB): number {
+  // claude:2026-10-23T21:50:00+02:00 — Materiallager (1.4.0 ML): mit `content` zählt Lagerware nicht als Bankplatz.
   // Ein 0-qty-Geister-Key (Alt-/Korrupt-Save) darf keinen Slot belegen/die Kapazität blockieren
   // (konsistent zu bankList; Tester-Sweep3 T13). [Sweep6 W2-T5-P3] Zähl-Logik lebt jetzt in
   // shared.usedBankSlots — EINE Quelle für bank.ts, inventory.ts (Auto-Bank), tick.ts, quests.ts.
-  return usedBankSlots(state);
+  return usedBankSlots(state, content ? storagePredicate(content) : undefined);
 }
 
 /**
@@ -34,7 +37,7 @@ export function bankSlotsUsed(state: GameState): number {
  * exakt 0 ⇒ Alt-Verhalten unverändert.
  */
 export function isBankFull(state: GameState, content: ContentDB): boolean {
-  return bankSlotsUsed(state) >= effectiveBankCapacity(state, content);
+  return bankSlotsUsed(state, content) >= effectiveBankCapacity(state, content);
 }
 
 /**
@@ -43,14 +46,16 @@ export function isBankFull(state: GameState, content: ContentDB): boolean {
  */
 export function canDeposit(state: GameState, content: ContentDB, itemId: ItemId): boolean {
   if (state.bank[itemId] !== undefined) return true;
+  if (isStorageItem(content, itemId)) return true; // claude:2026-10-23T21:50:00+02:00 — Lagerware braucht keinen Bankplatz
   return !isBankFull(state, content);
 }
 
 /** Alle Lager-Einträge als Liste (für die UI), in Content-Reihenfolge der Items. */
 export function bankList(state: GameState, content: ContentDB): Array<{ itemId: ItemId; qty: number }> {
   const order = Object.keys(content.items);
+  // claude:2026-10-23T21:50:00+02:00 — Materiallager (1.4.0 ML): die Bank-Seite zeigt keine Lagerware mehr (eigene Lager-Seite).
   return order
-    .filter((id) => (state.bank[id] ?? 0) > 0)
+    .filter((id) => (state.bank[id] ?? 0) > 0 && !isStorageItem(content, id))
     .map((id) => ({ itemId: id, qty: state.bank[id]! }));
 }
 
@@ -69,7 +74,7 @@ export function depositItem(state: GameState, content: ContentDB, itemId: ItemId
   if (move <= 0) return 0;
   removeItem(state.inventory, itemId, move);
   state.bank[itemId] = (state.bank[itemId] ?? 0) + move;
-  syncBankOrder(state, effectiveBankCapacity(state, content)); // claude:2026-10-17T21:00:00+02:00 Platzierung (SAVE 87): neues Item haengt hinten an
+  syncBankOrder(state, effectiveBankCapacity(state, content), storagePredicate(content)); // claude:2026-10-17T21:00:00+02:00 Platzierung (SAVE 87): neues Item haengt hinten an
   return move;
 }
 
@@ -122,7 +127,7 @@ export function withdrawItem(state: GameState, content: ContentDB, itemId: ItemI
   state.bank[itemId] = stored - move;
   if (state.bank[itemId]! <= 0) delete state.bank[itemId];
   // Leergeraeumtes Fach bleibt LEER stehen (OSRS-Verhalten) — syncBankOrder nullt es, rueckt aber nichts nach.
-  syncBankOrder(state, effectiveBankCapacity(state, content)); // claude:2026-10-17T21:00:00+02:00
+  syncBankOrder(state, effectiveBankCapacity(state, content), storagePredicate(content)); // claude:2026-10-17T21:00:00+02:00
   return move;
 }
 
@@ -136,11 +141,11 @@ export function withdrawItem(state: GameState, content: ContentDB, itemId: ItemI
  * Lagert die Instanz `instanceId` aus der Inventar-Tasche in den Gear-Vault (`bankInstances`) ein.
  * `true` = verschoben; `false` = Instanz nicht in der Tasche.
  */
-export function depositInstance(state: GameState, instanceId: string): boolean {
+export function depositInstance(state: GameState, instanceId: string, content?: ContentDB): boolean {
   const inst = removeInstance(state.inventory, instanceId);
   if (!inst) return false;
   state.bankInstances.push(inst);
-  syncBankOrder(state); // claude:2026-10-17T21:00:00+02:00 reine Instanz-Basis bekommt ein Fach
+  syncBankOrder(state, undefined, content ? storagePredicate(content) : undefined); // claude:2026-10-17T21:00:00+02:00 reine Instanz-Basis bekommt ein Fach (claude:2026-10-23T21:50:00+02:00: ohne Lagerware)
   return true;
 }
 
@@ -170,7 +175,7 @@ export function depositBaseWithVariants(
     .filter((inst) => inst.baseItemId === itemId)
     .map((inst) => inst.instanceId);
   let instancesMoved = 0;
-  for (const id of ids) if (depositInstance(state, id)) instancesMoved++;
+  for (const id of ids) if (depositInstance(state, id, content)) instancesMoved++;
   return { deposited, instancesMoved };
 }
 
@@ -178,12 +183,12 @@ export function depositBaseWithVariants(
  * Hebt die Instanz `instanceId` aus dem Gear-Vault zurück in die (unbegrenzte) Inventar-Tasche.
  * `true` = verschoben; `false` = Instanz nicht im Vault.
  */
-export function withdrawInstance(state: GameState, instanceId: string): boolean {
+export function withdrawInstance(state: GameState, instanceId: string, content?: ContentDB): boolean {
   const idx = state.bankInstances.findIndex((i) => i.instanceId === instanceId);
   if (idx === -1) return false;
   addInstance(state.inventory, state.bankInstances[idx]!);
   state.bankInstances.splice(idx, 1);
-  syncBankOrder(state); // claude:2026-10-17T21:00:00+02:00
+  syncBankOrder(state, undefined, content ? storagePredicate(content) : undefined); // claude:2026-10-17T21:00:00+02:00 (claude:2026-10-23T21:50:00+02:00: ohne Lagerware)
   return true;
 }
 
@@ -317,4 +322,44 @@ export function buyBankSlots(state: GameState): boolean {
   const purchased = Math.max(0, state.bankSlotsPurchased ?? 0);
   state.bankSlotsPurchased = Math.min(MAX_BANK_SLOTS_PURCHASED, purchased + BANK_SLOT_PACKAGE);
   return true;
+}
+
+// ── Materiallager (1.4.0 „Feder und Stahl“ ML, claude:2026-10-23T21:50:00+02:00) ──────────────────────────
+// Das Lager ist ein Bereich der Bank (Lagerware in `state.bank`, ohne Bankplatz). Diese zwei Helfer gehören zur
+// Lager-Seite: alles Lagerbare aus dem Inventar einlagern und direkt aus dem Lager verkaufen.
+
+/** Lagert jedes Material mit Regal aus dem Inventar ins Lager ein. Gibt die bewegte Stückzahl zurück. */
+export function depositStorageMaterials(state: GameState, content: ContentDB): number {
+  const counts = new Map<ItemId, number>();
+  for (const slot of state.inventory.slots) {
+    if (!slot || slot.instance) continue;
+    if (!isStorageItem(content, slot.itemId)) continue;
+    counts.set(slot.itemId, (counts.get(slot.itemId) ?? 0) + slot.qty);
+  }
+  let moved = 0;
+  for (const [id, qty] of counts) {
+    const removed = removeItem(state.inventory, id, qty);
+    if (removed <= 0) continue;
+    state.bank[id] = (state.bank[id] ?? 0) + removed;
+    moved += removed;
+  }
+  return moved;
+}
+
+/**
+ * Verkauft `qty` eines Lager-Materials direkt aus dem Lager (ohne Umweg über das Inventar), zum selben Stückpreis
+ * wie `sellItem` (inkl. Begleiter-/Lager-Bonus). Kein Rückkauf-Eintrag: Rohstoffe sind jederzeit nachsammelbar,
+ * und der Rückkauf landet im Inventar, das dafür evtl. keinen Platz hat. Gibt das erlöste Gold zurück.
+ */
+export function sellFromStorage(state: GameState, content: ContentDB, itemId: ItemId, qty: number): number {
+  if (!Number.isFinite(qty) || qty <= 0) return 0;
+  if (!isStorageItem(content, itemId)) return 0;
+  const have = state.bank[itemId] ?? 0;
+  const n = Math.min(Math.floor(qty), have);
+  if (n <= 0) return 0;
+  const gold = n * effectiveSellPrice(state, content, itemId);
+  if (n >= have) delete state.bank[itemId];
+  else state.bank[itemId] = have - n;
+  addGold(state, gold);
+  return gold;
 }

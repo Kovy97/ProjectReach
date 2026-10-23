@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { content } from "@hearthforge/content";
 import { computeStats, isEliteZoneHuntable, levelFromXp, masteryPoolCapacity, queueBlockReason, slayerTaskPointsPayout } from "@hearthforge/engine";
 import type { AchievementDef, SkillId } from "@hearthforge/shared";
-import { achievementPoints, MASTERY_POOL_CHECKPOINTS, ELITE_UNIQUE_DROP_CHANCE_DEFAULT, TAVERN_ENABLED } from "@hearthforge/shared";
+import { achievementPoints, MASTERY_POOL_CHECKPOINTS, ELITE_UNIQUE_DROP_CHANCE_DEFAULT, RELIC_DUST_ITEM_ID, TAVERN_ENABLED } from "@hearthforge/shared";
 import { useGameControl, useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { playSfx } from "../util/audio";
@@ -805,6 +805,7 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
     const addRare = (itemId: string | null | undefined, qty: number): void => {
       if (!itemId || qty <= 0) return;
       if (!RARE.has(content.items[itemId]?.rarity ?? "")) return;
+      if (itemId === RELIC_DUST_ITEM_ID) return; // claude:2026-10-24T17:20:00+02:00 — Reliktstaub (1.4.0 BG) kommt bei jedem Zerlegen: kein „Seltener Fund!“
       rares[itemId] = (rares[itemId] ?? 0) + qty;
     };
     // claude:2026-10-17T21:00:00+02:00 Herstellungszaehler fuer ALLE seltenen Items, nicht nur fuer

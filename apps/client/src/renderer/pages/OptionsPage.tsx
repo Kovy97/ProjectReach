@@ -129,6 +129,20 @@ export function OptionsPage(): JSX.Element {
               {state.settings.autoBank ? t("options.on") : t("options.off")}
             </button>
           </OptRow>
+          {/* claude:2026-10-23T22:20:00+02:00 — Materiallager (1.4.0 ML, Chef 23.10.: „Direkt ins Lager, in den Optionen abschaltbar“). */}
+          <OptRow label={t("options.materialsToStorage")} hint={t("options.materialsToStorageHint")}>
+            <button
+              className={optBtnCls(state.settings.materialsToStorage !== false)}
+              onClick={() => { state.settings.materialsToStorage = state.settings.materialsToStorage === false; }}
+            >
+              <img
+                src={state.settings.materialsToStorage !== false ? iconCheckboxOn : iconCheckboxOff}
+                alt=""
+                className="ui-icon"
+              />{" "}
+              {state.settings.materialsToStorage !== false ? t("options.on") : t("options.off")}
+            </button>
+          </OptRow>
           {/* claude:2026-10-23T20:10:00+02:00 — Ländereien-Meldungen (1.4.0 LA, Chef 23.10.: in den Optionen schaltbar). */}
           <OptRow label={t("options.estateNotifications")} hint={t("options.estateNotificationsHint")}>
             <button

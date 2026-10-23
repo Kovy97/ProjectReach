@@ -91,7 +91,7 @@ import {
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot, HuntCatch, HuntTrap } from "@hearthforge/shared";
 import type { HuntCatchTally } from "@hearthforge/engine";
-import { MAX_STACK, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotOwned, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
+import { MAX_STACK, storagePredicate, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotOwned, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
 
 /**
  * MAXIMAL MÖGLICHES Offline-Fenster (8 h Basis + 3 h Wachturm-Vollausbau) — die Korruptions-Klemme
@@ -952,11 +952,26 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   //   sich nach dem Update nichts verschiebt. `syncBankOrder` raeumt danach Unbekanntes weg,
   //   entfernt Doppelte und haengt fehlende Items an; es verliert dabei nie Bestand.
   if (!Array.isArray(state.bankOrder)) {
-    state.bankOrder = (Object.keys(bank) as ItemId[]).sort();
+    // claude:2026-10-23T22:10:00+02:00 — 1.4.0 ML: Lagerware bekommt kein Bankfach (sie steht im Materiallager).
+    const isStore = storagePredicate(content);
+    state.bankOrder = (Object.keys(bank) as ItemId[]).filter((id) => !isStore(id)).sort();
   } else {
     state.bankOrder = state.bankOrder.map((id) =>
       typeof id === "string" && known(id as ItemId) ? (id as ItemId) : null,
     );
+  }
+
+  // claude:2026-10-23T22:50:00+02:00 — Bergungs-Schloss (1.4.0 BG, SAVE 90): nur Strings mit exakt `true`, gedeckelt; fehlt ⇒ {}.
+  {
+    const raw = (state as { lockedItems?: unknown }).lockedItems;
+    const clean: Record<string, true> = {};
+    if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+      let n = 0;
+      for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
+        if (v === true && typeof k === "string" && k.length <= 200 && n++ < 5000) clean[k] = true;
+      }
+    }
+    state.lockedItems = clean;
   }
 
   // — Bank-Ausbau: gekaufte Zusatz-Slots endlich, ≥ 0, ganzzahlig, ≤ Cap. Ein manipulierter Wert
@@ -2241,7 +2256,7 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   //   ein frueherer Aufruf machte den Round-Trip nicht-idempotent: der erste Load schrieb noch
   //   `["paragon_key"]`, der zweite `[null]`, weil der Schluessel erst danach eingezogen wurde.
   //   Selbstheilend: leert Faecher verschwundener Items, entfernt Doppelte, haengt Fehlende an. —
-  syncBankOrder(state);
+  syncBankOrder(state, undefined, storagePredicate(content)); // claude:2026-10-23T22:00:00+02:00 — Lagerware hat kein Bankfach (1.4.0 ML)
 
   syncActiveKit(state);
 
@@ -2582,6 +2597,10 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   // claude:2026-10-23T19:20:00+02:00 — Ländereien-Meldungen (1.4.0, SAVE 89-Nachtrag, nie live): strikt boolean, Standard an.
   if (typeof state.settings.estateNotifications !== "boolean") {
     state.settings.estateNotifications = defaultSettings().estateNotifications;
+  }
+  // claude:2026-10-23T22:00:00+02:00 — Materiallager (1.4.0 ML): „Direkt ins Lager“, strikt boolean, Standard an.
+  if (typeof state.settings.materialsToStorage !== "boolean") {
+    state.settings.materialsToStorage = true; // Alt-Saves: Chef-Vorgabe „an“ (die Engine-Baseline aus gilt nur für Sim/Tests)
   }
   // Quest-State (SAVE_VERSION 25): leer defaulten. Quests werden beim nächsten advance via
   // evaluateQuests gegen die bestehenden Zähler (Kills etc.) neu ausgewertet.
@@ -3683,6 +3702,16 @@ function migrateState(state: GameState, content: ContentDB): GameState {
     }
   }
 
+  // ── Materiallager (SAVE_VERSION 89 → 90, 1.4.0 „Feder und Stahl“ Welle 2 ML, Chef 23.10.2026) ──────────
+  // claude:2026-10-23T22:00:00+02:00 — Materialien mit Regal stehen nicht mehr in der Bank-Ansicht, sondern im Lager (gleicher Bestand
+  // `state.bank`, kein Bankplatz). Ihre alten Fächer in `bankOrder` werden EINMAL entfernt und die Lücken
+  // geschlossen (Goal ML: „Migration verdichtet bankOrder“), damit die Bank nicht mit Löchern startet.
+  // Danach gehört die Reihenfolge wieder dem Spieler. Kein Bestand ändert sich.
+  if ((state.version ?? 0) < 90 && Array.isArray(state.bankOrder)) {
+    const isStore = storagePredicate(content);
+    state.bankOrder = state.bankOrder.filter((id): id is ItemId => typeof id === "string" && !isStore(id));
+  }
+
   // State auf die aktuelle Version heben (macht versions-abhängige Migrationen idempotent).
   state.version = SAVE_VERSION;
 
@@ -3999,7 +4028,7 @@ export function deserialize(
   //   v85-Fixture die Koeder). Gemessen: Sync in sanitizeState ergab beim ersten Laden
   //   `["bait_worm"]`, beim zweiten `[null]` — der Round-Trip war also nicht idempotent, und der
   //   Kompat-Vault hat genau das aufgedeckt. Hier steht er nach allem, was `bank` anfasst. —
-  syncBankOrder(state);
+  syncBankOrder(state, undefined, storagePredicate(content)); // claude:2026-10-23T22:00:00+02:00 — ohne Lagerware (1.4.0 ML)
 
   return { state, offlineMs, offlineTicks, offline };
 }

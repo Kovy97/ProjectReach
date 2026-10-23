@@ -65,6 +65,7 @@ import { OfflinePopup } from "./pages/OfflinePopup";
 import { OptionsPage } from "./pages/OptionsPage";
 import { ShopPage } from "./pages/ShopPage";
 import { BankPage } from "./pages/BankPage";
+import { StoragePage } from "./pages/StoragePage"; // claude:2026-10-23T22:20:00+02:00 — Materiallager (1.4.0)
 import { StatsPage } from "./pages/StatsPage";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
 import { SkillPage } from "./pages/SkillPage";
@@ -117,6 +118,8 @@ function PageContent({
       return <ShopPage />;
     case "bank":
       return <BankPage />;
+    case "storage":
+      return <StoragePage />;
     case "options":
       return <OptionsPage />;
     case "mail":

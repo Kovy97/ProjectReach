@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { ContentDB, GameState, HuntTrap, HuntZoneDef, ItemDef } from "@hearthforge/shared";
 import { TOOL_SLOTS, BAIT_ITEM_ID, HUNT_FIRST_CATCH_MULT, huntCatchXp, HUNTING_SKILL_ID, HUNT_TRAP_SLOTS, SAVE_VERSION, defaultHuntTraps, defaultPrestigeState, emptyEquipKit, emptyHuntTrap } from "@hearthforge/shared";
-import { addItem, advance, createGame, huntBaitCount, huntTrapWaiting, setHuntTrap, xpForLevel } from "@hearthforge/engine";
+import { addItem, advance, createGame, huntBaitCount, huntTrapWaiting, setHuntTrap, xpForLevel, storagePredicate } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
 /**
@@ -127,6 +127,10 @@ describe("Migration v84 → v85 (Jagen)", () => {
     erwartet.state.prestige = defaultPrestigeState(); // claude:2026-10-17T23:30:00+02:00 — SAVE 88 (Prestige)
     Object.assign(erwartet.state.character, { meal: null, mealKeep: true }); // claude:2026-10-23T16:50:00+02:00 — SAVE 89 (Mahlzeit-Platz)
     erwartet.state.settings.estateNotifications = true;
+    // claude:2026-10-23T22:05:00+02:00 — SAVE 90 (Materiallager): Option an, Lagerware ohne Bankfach, Lücken einmal geschlossen.
+    erwartet.state.settings.materialsToStorage = true;
+    erwartet.state.lockedItems = {}; // claude:2026-10-24T17:05:00+02:00 — SAVE 90 (Bergung): Schloss-Liste
+    erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(withoutDiscovered(JSON.parse(serialize(s, raw.savedAt)) as SaveShape)).toEqual(withoutDiscovered(erwartet));
     const again = deserialize(serialize(s, raw.savedAt), content, raw.savedAt)!;
     expect(again.state).toEqual(s);
@@ -371,6 +375,10 @@ describe("v85-Fixture: Round-Trip mit Jagd-Stand", () => {
     erwartet.state.prestige = defaultPrestigeState(); // claude:2026-10-17T23:30:00+02:00 — SAVE 88 (Prestige)
     Object.assign(erwartet.state.character, { meal: null, mealKeep: true }); // claude:2026-10-23T16:50:00+02:00 — SAVE 89 (Mahlzeit-Platz)
     erwartet.state.settings.estateNotifications = true;
+    // claude:2026-10-23T22:05:00+02:00 — SAVE 90 (Materiallager): Option an, Lagerware ohne Bankfach, Lücken einmal geschlossen.
+    erwartet.state.settings.materialsToStorage = true;
+    erwartet.state.lockedItems = {}; // claude:2026-10-24T17:05:00+02:00 — SAVE 90 (Bergung): Schloss-Liste
+    erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
 });

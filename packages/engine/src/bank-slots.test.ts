@@ -22,39 +22,39 @@ function einlagern(s: ReturnType<typeof spiel>, id: string, n = 1): void {
 describe("Bankfaecher: Platzierung gehoert dem Spieler", () => {
   it("neu eingelagerte Arten bekommen der Reihe nach ein Fach", () => {
     const s = spiel();
-    einlagern(s, "copper_ore", 3);
-    einlagern(s, "oak_log", 2);
-    expect(s.bankOrder.slice(0, 2)).toEqual(["copper_ore", "oak_log"]);
+    einlagern(s, "cooked_shrimp", 3);
+    einlagern(s, "cooked_trout", 2);
+    expect(s.bankOrder.slice(0, 2)).toEqual(["cooked_shrimp", "cooked_trout"]);
   });
 
   it("ein leergeraeumtes Fach bleibt als Luecke stehen und rueckt NICHT nach", () => {
     const s = spiel();
-    einlagern(s, "copper_ore", 1);
-    einlagern(s, "oak_log", 1);
-    einlagern(s, "raw_hide", 1);
-    expect(withdrawItem(s, content, "oak_log", 1)).toBe(1);
+    einlagern(s, "cooked_shrimp", 1);
+    einlagern(s, "cooked_trout", 1);
+    einlagern(s, "cooked_cod", 1);
+    expect(withdrawItem(s, content, "cooked_trout", 1)).toBe(1);
     // Fach 1 ist jetzt leer, „raw_hide" bleibt auf Fach 2.
-    expect(s.bankOrder[0]).toBe("copper_ore");
+    expect(s.bankOrder[0]).toBe("cooked_shrimp");
     expect(s.bankOrder[1]).toBeNull();
-    expect(s.bankOrder[2]).toBe("raw_hide");
+    expect(s.bankOrder[2]).toBe("cooked_cod");
   });
 
   it("die naechste neue Art haengt HINTEN an, die Luecke bleibt stehen", () => {
     const s = spiel();
-    einlagern(s, "copper_ore", 1);
-    einlagern(s, "oak_log", 1);
-    einlagern(s, "raw_hide", 1);
-    withdrawItem(s, content, "oak_log", 1);
-    einlagern(s, "coal", 1);
+    einlagern(s, "cooked_shrimp", 1);
+    einlagern(s, "cooked_trout", 1);
+    einlagern(s, "cooked_cod", 1);
+    withdrawItem(s, content, "cooked_trout", 1);
+    einlagern(s, "cooked_salmon", 1);
     expect(s.bankOrder[1]).toBeNull();
-    expect(s.bankOrder[3]).toBe("coal");
+    expect(s.bankOrder[3]).toBe("cooked_salmon");
   });
 
   it("ohne Platz hinten (Kapazitaet) fuellt die neue Art die Luecke davor", () => {
     const s = spiel();
-    s.bankOrder = ["copper_ore", null, "raw_hide"];
-    s.bank.copper_ore = 1;
-    s.bank.raw_hide = 1;
+    s.bankOrder = ["cooked_shrimp", null, "cooked_cod"];
+    s.bank.cooked_shrimp = 1;
+    s.bank.cooked_cod = 1;
     s.bank.coal = 1;
     syncBankOrder(s, 3);
     expect(s.bankOrder[1]).toBe("coal");
@@ -73,35 +73,35 @@ describe("Bankfaecher: Platzierung gehoert dem Spieler", () => {
 
   it("ein Stapel laesst sich auf ein weit hinten liegendes leeres Fach ziehen", () => {
     const s = spiel();
-    einlagern(s, "copper_ore", 5);
+    einlagern(s, "cooked_shrimp", 5);
     expect(moveBankSlot(s, 0, 64)).toBe(true);
     expect(s.bankOrder[0]).toBeNull();
-    expect(s.bankOrder[64]).toBe("copper_ore");
+    expect(s.bankOrder[64]).toBe("cooked_shrimp");
     // Der Bestand selbst bleibt voellig unberuehrt — verschoben wird nur die Platzierung.
-    expect(s.bank.copper_ore).toBe(5);
+    expect(s.bank.cooked_shrimp).toBe(5);
   });
 
   it("zwei belegte Faecher tauschen ihren Platz", () => {
     const s = spiel();
-    einlagern(s, "copper_ore", 1);
-    einlagern(s, "oak_log", 1);
+    einlagern(s, "cooked_shrimp", 1);
+    einlagern(s, "cooked_trout", 1);
     expect(moveBankSlot(s, 0, 1)).toBe(true);
-    expect(s.bankOrder.slice(0, 2)).toEqual(["oak_log", "copper_ore"]);
+    expect(s.bankOrder.slice(0, 2)).toEqual(["cooked_trout", "cooked_shrimp"]);
   });
 
   it("ein weit hinten geparktes Fach ueberlebt das Aufraeumen", () => {
     const s = spiel();
-    einlagern(s, "copper_ore", 5);
+    einlagern(s, "cooked_shrimp", 5);
     moveBankSlot(s, 0, 64);
     syncBankOrder(s);
-    expect(s.bankOrder[64]).toBe("copper_ore");
-    expect(s.bankOrder.filter((id) => id === "copper_ore")).toHaveLength(1);
+    expect(s.bankOrder[64]).toBe("cooked_shrimp");
+    expect(s.bankOrder.filter((id) => id === "cooked_shrimp")).toHaveLength(1);
   });
 
   it("syncBankOrder ist idempotent", () => {
     const s = spiel();
-    einlagern(s, "copper_ore", 1);
-    einlagern(s, "oak_log", 1);
+    einlagern(s, "cooked_shrimp", 1);
+    einlagern(s, "cooked_trout", 1);
     moveBankSlot(s, 1, 30);
     const einmal = JSON.stringify(s.bankOrder);
     syncBankOrder(s);
@@ -111,7 +111,7 @@ describe("Bankfaecher: Platzierung gehoert dem Spieler", () => {
 
   it("Bestand, der direkt in `bank` landet, bekommt spaetestens im Sync ein Fach", () => {
     const s = spiel();
-    einlagern(s, "copper_ore", 1);
+    einlagern(s, "cooked_shrimp", 1);
     // Genau das tun Auto-Einlagern, Lager-Verbrauch und Meisterweihe: direkt in den Record.
     s.bank.coal = 7;
     syncBankOrder(s);

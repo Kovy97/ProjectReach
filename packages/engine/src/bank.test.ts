@@ -1,3 +1,4 @@
+import { isStorageItem } from "./storage"; // claude:2026-10-23T23:40:00+02:00 — Lagerware belegt keinen Bankplatz (1.4.0 ML)
 import { describe, expect, it } from "vitest";
 import {
   BANK_SLOT_BASE_COST,
@@ -34,32 +35,32 @@ describe("Bank/Lager", () => {
 
   it("Einlagern verschiebt Items aus dem Inventar ins Lager", () => {
     const s = createGame({ name: "X" }, content, 1);
-    addItem(s.inventory, content, "copper_ore", 50);
-    const moved = depositItem(s, content, "copper_ore", 30);
+    addItem(s.inventory, content, "cooked_shrimp", 50);
+    const moved = depositItem(s, content, "cooked_shrimp", 30);
     expect(moved).toBe(30);
-    expect(bankCount(s, "copper_ore")).toBe(30);
-    expect(itemCount(s.inventory, "copper_ore")).toBe(20);
+    expect(bankCount(s, "cooked_shrimp")).toBe(30);
+    expect(itemCount(s.inventory, "cooked_shrimp")).toBe(20);
   });
 
   it("Einlagern ist durch den Inventarbestand begrenzt", () => {
     const s = createGame({ name: "X" }, content, 1);
-    addItem(s.inventory, content, "coal", 5);
-    expect(depositItem(s, content, "coal", 999)).toBe(5);
-    expect(itemCount(s.inventory, "coal")).toBe(0);
-    expect(bankCount(s, "coal")).toBe(5);
+    addItem(s.inventory, content, "cooked_cod", 5);
+    expect(depositItem(s, content, "cooked_cod", 999)).toBe(5);
+    expect(itemCount(s.inventory, "cooked_cod")).toBe(0);
+    expect(bankCount(s, "cooked_cod")).toBe(5);
   });
 
   it("Abheben holt Items zurück und leert den Eintrag bei 0", () => {
     const s = createGame({ name: "X" }, content, 1);
-    addItem(s.inventory, content, "iron_ore", 10);
-    depositItem(s, content, "iron_ore", 10);
-    const back = withdrawItem(s, content, "iron_ore", 4);
+    addItem(s.inventory, content, "cooked_trout", 10);
+    depositItem(s, content, "cooked_trout", 10);
+    const back = withdrawItem(s, content, "cooked_trout", 4);
     expect(back).toBe(4);
-    expect(itemCount(s.inventory, "iron_ore")).toBe(4);
-    expect(bankCount(s, "iron_ore")).toBe(6);
-    withdrawItem(s, content, "iron_ore", 6);
-    expect(bankCount(s, "iron_ore")).toBe(0);
-    expect(s.bank.iron_ore).toBeUndefined(); // Eintrag entfernt
+    expect(itemCount(s.inventory, "cooked_trout")).toBe(4);
+    expect(bankCount(s, "cooked_trout")).toBe(6);
+    withdrawItem(s, content, "cooked_trout", 6);
+    expect(bankCount(s, "cooked_trout")).toBe(0);
+    expect(s.bank.cooked_trout).toBeUndefined(); // Eintrag entfernt
   });
 
   it("Abheben ist durch freien Inventarplatz begrenzt (kein Verlust)", () => {
@@ -67,23 +68,23 @@ describe("Bank/Lager", () => {
     // Inventar mit lauter verschiedenen, nicht-stapelbaren Items vollstopfen.
     const cap = s.inventory.slots.length;
     for (let i = 0; i < cap; i++) s.inventory.slots[i] = { itemId: "rusty_sword", qty: 1 };
-    s.bank.copper_ore = 20;
-    const back = withdrawItem(s, content, "copper_ore", 5);
+    s.bank.cooked_shrimp = 20;
+    const back = withdrawItem(s, content, "cooked_shrimp", 5);
     expect(back).toBe(0); // kein Platz → nichts abgehoben, nichts verloren
-    expect(bankCount(s, "copper_ore")).toBe(20);
+    expect(bankCount(s, "cooked_shrimp")).toBe(20);
   });
 
   it("depositAll lagert das gesamte Inventar ein", () => {
     const s = createGame({ name: "X" }, content, 1);
     const before = s.inventory.slots.reduce((n, slot) => n + (slot?.qty ?? 0), 0); // inkl. Start-Schwert
-    addItem(s.inventory, content, "copper_ore", 7);
-    addItem(s.inventory, content, "coal", 3);
+    addItem(s.inventory, content, "cooked_shrimp", 7);
+    addItem(s.inventory, content, "cooked_cod", 3);
     const total = depositAll(s, content);
     expect(total).toBe(before + 10);
     // Inventar leer (alles eingelagert).
     expect(s.inventory.slots.every((slot) => slot === null)).toBe(true);
-    expect(bankCount(s, "copper_ore")).toBe(7);
-    expect(bankCount(s, "coal")).toBe(3);
+    expect(bankCount(s, "cooked_shrimp")).toBe(7);
+    expect(bankCount(s, "cooked_cod")).toBe(3);
     expect(bankList(s, content).length).toBeGreaterThanOrEqual(2);
   });
 
@@ -99,14 +100,14 @@ describe("Bank/Lager", () => {
     const s = createGame({ name: "X" }, content, 1);
     // Bank künstlich bis zur (effektiven) Basis-Kapazität mit distinkten Arten füllen.
     const cap = effectiveBankCapacity(s, content);
-    const ids = Object.keys(content.items).slice(0, cap);
+    const ids = Object.keys(content.items).filter((id) => !isStorageItem(content, id)).slice(0, cap);
     expect(ids.length).toBe(cap);
     for (const id of ids) s.bank[id] = 1;
     expect(isBankFull(s, content)).toBe(true);
     expect(bankSlotsUsed(s)).toBe(cap);
 
     // Eine NEUE Art (nicht in der Bank) im Inventar → Einlagern wird abgelehnt, kein Verlust.
-    const newId = Object.keys(content.items).find((id) => s.bank[id] === undefined)!;
+    const newId = Object.keys(content.items).find((id) => s.bank[id] === undefined && !isStorageItem(content, id))!;
     addItem(s.inventory, content, newId, 5);
     expect(canDeposit(s, content, newId)).toBe(false);
     expect(depositItem(s, content, newId, 5)).toBe(0);
@@ -167,33 +168,33 @@ describe("Bank/Lager", () => {
 
   it("depositItem: nicht-endliche Menge (NaN/Infinity) ist ein No-op (kein Bank-Vergiften)", () => {
     const s = createGame({ name: "X" }, content, 1);
-    addItem(s.inventory, content, "copper_ore", 20);
-    expect(depositItem(s, content, "copper_ore", Number.NaN)).toBe(0);
-    expect(depositItem(s, content, "copper_ore", Number.POSITIVE_INFINITY)).toBe(0);
+    addItem(s.inventory, content, "cooked_shrimp", 20);
+    expect(depositItem(s, content, "cooked_shrimp", Number.NaN)).toBe(0);
+    expect(depositItem(s, content, "cooked_shrimp", Number.POSITIVE_INFINITY)).toBe(0);
     // Bank-Bestand endlich & unverändert (ohne Guard würde NaN in `state.bank` einsickern).
-    expect(s.bank.copper_ore).toBeUndefined();
-    expect(itemCount(s.inventory, "copper_ore")).toBe(20);
+    expect(s.bank.cooked_shrimp).toBeUndefined();
+    expect(itemCount(s.inventory, "cooked_shrimp")).toBe(20);
   });
 
   it("depositBaseWithVariants lagert Stack + alle Instanzen mit gleichem baseItemId ein; inv.instances danach frei von diesen", () => {
     const s = createGame({ name: "X" }, content, 1);
     // Fungibler Basis-Stapel + zwei verzauberte Varianten derselben Basis + eine fremde Variante.
-    addItem(s.inventory, content, "copper_ore", 30);
-    addInstance(s.inventory, { instanceId: "inst_ore_a", baseItemId: "copper_ore", affixes: [{ affixId: "affix_x", tier: 1 }] });
-    addInstance(s.inventory, { instanceId: "inst_ore_b", baseItemId: "copper_ore", affixes: [] });
-    addInstance(s.inventory, { instanceId: "inst_other", baseItemId: "iron_ore", affixes: [] });
+    addItem(s.inventory, content, "cooked_shrimp", 30);
+    addInstance(s.inventory, { instanceId: "inst_ore_a", baseItemId: "cooked_shrimp", affixes: [{ affixId: "affix_x", tier: 1 }] });
+    addInstance(s.inventory, { instanceId: "inst_ore_b", baseItemId: "cooked_shrimp", affixes: [] });
+    addInstance(s.inventory, { instanceId: "inst_other", baseItemId: "cooked_trout", affixes: [] });
 
-    const res = depositBaseWithVariants(s, content, "copper_ore");
+    const res = depositBaseWithVariants(s, content, "cooked_shrimp");
     expect(res.deposited).toBe(30); // gesamter fungibler Stapel
     expect(res.instancesMoved).toBe(2); // beide copper_ore-Varianten
 
     // Fungibler Stack im Lager, Inventar-Grundmenge leer.
-    expect(bankCount(s, "copper_ore")).toBe(30);
-    expect(itemCount(s.inventory, "copper_ore")).toBe(0);
+    expect(bankCount(s, "cooked_shrimp")).toBe(30);
+    expect(itemCount(s.inventory, "cooked_shrimp")).toBe(0);
 
     // Beide Varianten liegen jetzt im Gear-Vault; die Inventar-Tasche ist frei von copper_ore-Instanzen.
     expect(s.bankInstances.map((i) => i.instanceId).sort()).toEqual(["inst_ore_a", "inst_ore_b"]);
-    expect(s.inventory.instances.some((i) => i.baseItemId === "copper_ore")).toBe(false);
+    expect(s.inventory.instances.some((i) => i.baseItemId === "cooked_shrimp")).toBe(false);
     // Fremde Variante bleibt unangetastet in der Tasche.
     expect(s.inventory.instances.map((i) => i.instanceId)).toEqual(["inst_other"]);
   });
@@ -202,17 +203,17 @@ describe("Bank/Lager", () => {
     const s = createGame({ name: "X" }, content, 1);
     // Bank bis zur Kapazität mit distinkten Arten füllen (copper_ore NICHT dabei).
     const cap = effectiveBankCapacity(s, content);
-    const ids = Object.keys(content.items).filter((id) => id !== "copper_ore").slice(0, cap);
+    const ids = Object.keys(content.items).filter((id) => id !== "cooked_shrimp" && !isStorageItem(content, id)).slice(0, cap);
     for (const id of ids) s.bank[id] = 1;
     expect(isBankFull(s, content)).toBe(true);
 
-    addItem(s.inventory, content, "copper_ore", 5); // NEUE Art → fungibel abgelehnt
-    addInstance(s.inventory, { instanceId: "inst_v", baseItemId: "copper_ore", affixes: [] });
+    addItem(s.inventory, content, "cooked_shrimp", 5); // NEUE Art → fungibel abgelehnt
+    addInstance(s.inventory, { instanceId: "inst_v", baseItemId: "cooked_shrimp", affixes: [] });
 
-    const res = depositBaseWithVariants(s, content, "copper_ore");
+    const res = depositBaseWithVariants(s, content, "cooked_shrimp");
     expect(res.deposited).toBe(0); // volle Bank lehnt neue fungible Art ab (kein Verlust)
     expect(res.instancesMoved).toBe(1); // Variante wandert trotzdem in den Vault
-    expect(itemCount(s.inventory, "copper_ore")).toBe(5); // Grundmenge bleibt im Inventar
+    expect(itemCount(s.inventory, "cooked_shrimp")).toBe(5); // Grundmenge bleibt im Inventar
     expect(s.bankInstances.map((i) => i.instanceId)).toEqual(["inst_v"]);
   });
 });
@@ -220,28 +221,28 @@ describe("Bank/Lager", () => {
 describe("Bank/Lager — atomare Gruppen-Ops (Task #314, depositItemGroup/withdrawItemGroup)", () => {
   it("depositItemGroup lagert Stack + ALLE Instanzen verlustfrei ein, dann zurück mit withdrawItemGroup", () => {
     const s = createGame({ name: "X" }, content, 1);
-    addItem(s.inventory, content, "copper_ore", 30);
-    addInstance(s.inventory, { instanceId: "inst_a", baseItemId: "copper_ore", affixes: [{ affixId: "affix_x", tier: 1 }] });
-    addInstance(s.inventory, { instanceId: "inst_b", baseItemId: "copper_ore", affixes: [] });
-    addInstance(s.inventory, { instanceId: "inst_c", baseItemId: "copper_ore", affixes: [] });
-    addInstance(s.inventory, { instanceId: "inst_other", baseItemId: "iron_ore", affixes: [] }); // fremde Basis bleibt unangetastet
+    addItem(s.inventory, content, "cooked_shrimp", 30);
+    addInstance(s.inventory, { instanceId: "inst_a", baseItemId: "cooked_shrimp", affixes: [{ affixId: "affix_x", tier: 1 }] });
+    addInstance(s.inventory, { instanceId: "inst_b", baseItemId: "cooked_shrimp", affixes: [] });
+    addInstance(s.inventory, { instanceId: "inst_c", baseItemId: "cooked_shrimp", affixes: [] });
+    addInstance(s.inventory, { instanceId: "inst_other", baseItemId: "cooked_trout", affixes: [] }); // fremde Basis bleibt unangetastet
 
     const unitsBefore = usedCapacityUnits(s.inventory);
-    const down = depositItemGroup(s, content, "copper_ore");
+    const down = depositItemGroup(s, content, "cooked_shrimp");
     expect(down).toEqual({ deposited: 30, instancesMoved: 3 });
-    expect(bankCount(s, "copper_ore")).toBe(30);
-    expect(itemCount(s.inventory, "copper_ore")).toBe(0);
+    expect(bankCount(s, "cooked_shrimp")).toBe(30);
+    expect(itemCount(s.inventory, "cooked_shrimp")).toBe(0);
     expect(s.bankInstances.map((i) => i.instanceId).sort()).toEqual(["inst_a", "inst_b", "inst_c"]);
     expect(s.inventory.instances.map((i) => i.instanceId)).toEqual(["inst_other"]); // fremde Instanz unberührt
     // Die Basis-Item-Zelle ist frei geworden (Stack + alle Instanzen weg) — Kapazitätseinheiten sinken.
     expect(usedCapacityUnits(s.inventory)).toBeLessThan(unitsBefore);
 
-    const up = withdrawItemGroup(s, content, "copper_ore");
+    const up = withdrawItemGroup(s, content, "cooked_shrimp");
     expect(up).toEqual({ withdrawn: 30, instancesMoved: 3 });
-    expect(bankCount(s, "copper_ore")).toBe(0);
-    expect(s.bank.copper_ore).toBeUndefined();
+    expect(bankCount(s, "cooked_shrimp")).toBe(0);
+    expect(s.bank.cooked_shrimp).toBeUndefined();
     expect(s.bankInstances.length).toBe(0);
-    expect(itemCount(s.inventory, "copper_ore")).toBe(30);
+    expect(itemCount(s.inventory, "cooked_shrimp")).toBe(30);
     expect(s.inventory.instances.map((i) => i.instanceId).sort()).toEqual(["inst_a", "inst_b", "inst_c", "inst_other"]);
     expect(usedCapacityUnits(s.inventory)).toBe(unitsBefore); // rundtrip: exakt wieder der Ausgangswert
   });
@@ -249,36 +250,36 @@ describe("Bank/Lager — atomare Gruppen-Ops (Task #314, depositItemGroup/withdr
   it("depositItemGroup: volle Bank OHNE bestehende Zelle lehnt die GESAMTE Gruppe ab (kein Teiltransfer)", () => {
     const s = createGame({ name: "X" }, content, 1);
     const cap = effectiveBankCapacity(s, content);
-    const ids = Object.keys(content.items).filter((id) => id !== "copper_ore").slice(0, cap);
+    const ids = Object.keys(content.items).filter((id) => id !== "cooked_shrimp" && !isStorageItem(content, id)).slice(0, cap);
     for (const id of ids) s.bank[id] = 1;
     expect(isBankFull(s, content)).toBe(true);
 
-    addItem(s.inventory, content, "copper_ore", 5);
-    addInstance(s.inventory, { instanceId: "inst_v1", baseItemId: "copper_ore", affixes: [] });
-    addInstance(s.inventory, { instanceId: "inst_v2", baseItemId: "copper_ore", affixes: [] });
+    addItem(s.inventory, content, "cooked_shrimp", 5);
+    addInstance(s.inventory, { instanceId: "inst_v1", baseItemId: "cooked_shrimp", affixes: [] });
+    addInstance(s.inventory, { instanceId: "inst_v2", baseItemId: "cooked_shrimp", affixes: [] });
 
-    const res = depositItemGroup(s, content, "copper_ore");
+    const res = depositItemGroup(s, content, "cooked_shrimp");
     expect(res).toEqual({ deposited: 0, instancesMoved: 0 }); // GANZ oder GAR NICHT — anders als depositBaseWithVariants
-    expect(itemCount(s.inventory, "copper_ore")).toBe(5); // nichts verloren
+    expect(itemCount(s.inventory, "cooked_shrimp")).toBe(5); // nichts verloren
     expect(s.inventory.instances.map((i) => i.instanceId).sort()).toEqual(["inst_v1", "inst_v2"]);
     expect(s.bankInstances.length).toBe(0);
-    expect(bankCount(s, "copper_ore")).toBe(0);
+    expect(bankCount(s, "cooked_shrimp")).toBe(0);
   });
 
   it("depositItemGroup: volle Bank MIT bestehender Zelle (Basis-Item schon eingelagert) nimmt die Gruppe trotzdem an", () => {
     const s = createGame({ name: "X" }, content, 1);
     const cap = effectiveBankCapacity(s, content);
-    const ids = Object.keys(content.items).filter((id) => id !== "copper_ore").slice(0, cap - 1);
+    const ids = Object.keys(content.items).filter((id) => id !== "cooked_shrimp" && !isStorageItem(content, id)).slice(0, cap - 1);
     for (const id of ids) s.bank[id] = 1;
-    s.bank.copper_ore = 2; // bestehende Zelle für copper_ore
+    s.bank.cooked_shrimp = 2; // bestehende Zelle für copper_ore
     expect(isBankFull(s, content)).toBe(true);
 
-    addItem(s.inventory, content, "copper_ore", 5);
-    addInstance(s.inventory, { instanceId: "inst_v", baseItemId: "copper_ore", affixes: [] });
+    addItem(s.inventory, content, "cooked_shrimp", 5);
+    addInstance(s.inventory, { instanceId: "inst_v", baseItemId: "cooked_shrimp", affixes: [] });
 
-    const res = depositItemGroup(s, content, "copper_ore");
+    const res = depositItemGroup(s, content, "cooked_shrimp");
     expect(res).toEqual({ deposited: 5, instancesMoved: 1 }); // bestehende Zelle → passt immer
-    expect(bankCount(s, "copper_ore")).toBe(7);
+    expect(bankCount(s, "cooked_shrimp")).toBe(7);
     expect(s.bankInstances.map((i) => i.instanceId)).toEqual(["inst_v"]);
   });
 
@@ -287,18 +288,18 @@ describe("Bank/Lager — atomare Gruppen-Ops (Task #314, depositItemGroup/withdr
     // Inventar mit lauter verschiedenen, nicht-stapelbaren Items bis zur Kapazität vollstopfen.
     const cap = s.inventory.slots.length;
     for (let i = 0; i < cap; i++) s.inventory.slots[i] = { itemId: "rusty_sword", qty: 1 };
-    s.bank.copper_ore = 20;
-    s.bankInstances.push({ instanceId: "inst_x", baseItemId: "copper_ore", affixes: [] });
+    s.bank.cooked_shrimp = 20;
+    s.bankInstances.push({ instanceId: "inst_x", baseItemId: "cooked_shrimp", affixes: [] });
 
-    const res = withdrawItemGroup(s, content, "copper_ore");
+    const res = withdrawItemGroup(s, content, "cooked_shrimp");
     expect(res).toEqual({ withdrawn: 0, instancesMoved: 0 });
-    expect(bankCount(s, "copper_ore")).toBe(20); // Zelle bleibt in der Bank
+    expect(bankCount(s, "cooked_shrimp")).toBe(20); // Zelle bleibt in der Bank
     expect(s.bankInstances.map((i) => i.instanceId)).toEqual(["inst_x"]);
   });
 
   it("depositItemGroup/withdrawItemGroup: leere Gruppe ist ein No-op", () => {
     const s = createGame({ name: "X" }, content, 1);
-    expect(depositItemGroup(s, content, "copper_ore")).toEqual({ deposited: 0, instancesMoved: 0 });
-    expect(withdrawItemGroup(s, content, "copper_ore")).toEqual({ withdrawn: 0, instancesMoved: 0 });
+    expect(depositItemGroup(s, content, "cooked_shrimp")).toEqual({ deposited: 0, instancesMoved: 0 });
+    expect(withdrawItemGroup(s, content, "cooked_shrimp")).toEqual({ withdrawn: 0, instancesMoved: 0 });
   });
 });
