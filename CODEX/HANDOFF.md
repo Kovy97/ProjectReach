@@ -7,6 +7,10 @@
 - **Raid-Sets (Chef):** „Tier-Sets thematisch dem Raid anpassen, Goblin-like“. `design/1.4.0-assets-final.md` hat jetzt den
   Abschnitt „Gobkha'raz-Machart“ (Baustein `<GOBLIN>`, 15 neue Set-Prompts, Farben bleiben); die drei Muster vom 23.10. sind
   **nicht abgenommen** und werden neu gemacht. Nachricht an Codex steht oben im Dokument.
+- **Raid-Sets Runde 3 (Chef, 26.10.):** Runde 2 (`gobkharaz-samples`) „Goblin gut, aber unepisch, viel zu schlicht“, nicht
+  abgenommen. Abschnitt jetzt „Gobkha'raz-Machart: königliche Meisterarbeit“: Goblinformen plus Prunk (Blickfang je Teil,
+  Gravur, Filigran, Reliefs), kein Flickwerk; Maßstab sichtbar über `voidweave_vestment`/`voidhide_body`/`godiron_platebody`.
+  Nachricht „Runde 3“ oben im Dokument. <!-- claude:2026-10-26T06:30:00+02:00 -->
 - **QA-Runde:** 7 Prüf-Agenten, alle Befunde P1–P3 zentral behoben (Liste im Changelog `design/1.4.0-changelog.md`, Abschnitt
   „QA-Runde“). Neue Regressionstests `packages/*/src/qa-*.test.ts` (Befund-Tests auf Soll umgestellt).
 - **Ward-Fix mit Balance-Folge:** Dämpfung nur auf den Teil, den der Ward trägt (`combat.ts` STEP 7). Mythisch für reine
