@@ -235,7 +235,8 @@ export function depositItemGroup(
     .filter((inst) => inst.baseItemId === itemId)
     .map((inst) => inst.instanceId);
   if (qty <= 0 && instanceIds.length === 0) return { deposited: 0, instancesMoved: 0 }; // leere Gruppe
-  if (!bankHasCell(state, itemId) && isBankFull(state, content)) return { deposited: 0, instancesMoved: 0 }; // atomar abgelehnt
+  // claude:2026-10-26T01:35:00+02:00 — Lagerware braucht keinen Bankplatz (QA-Lager P2).
+  if (!bankHasCell(state, itemId) && !isStorageItem(content, itemId) && isBankFull(state, content)) return { deposited: 0, instancesMoved: 0 }; // atomar abgelehnt
 
   if (qty > 0) {
     removeItem(state.inventory, itemId, qty);
@@ -273,10 +274,14 @@ export function withdrawItemGroup(
     .map((inst) => inst.instanceId);
   if (stored <= 0 && instanceIds.length === 0) return { withdrawn: 0, instancesMoved: 0 }; // leere Gruppe
   if (!hasInstanceRoom(state.inventory, content, itemId)) return { withdrawn: 0, instancesMoved: 0 }; // atomar abgelehnt
+  let withdrawnQty = 0;
 
   if (stored > 0) {
-    delete state.bank[itemId];
-    addItem(state.inventory, content, itemId, stored);
+    // claude:2026-10-26T01:35:00+02:00 — nur abbuchen, was das Inventar wirklich aufnimmt (vorher ging der Rest verloren, QA-Lager P1).
+    const added = addItem(state.inventory, content, itemId, stored);
+    if (added >= stored) delete state.bank[itemId];
+    else state.bank[itemId] = stored - added;
+    withdrawnQty = added;
   }
   let instancesMoved = 0;
   for (const id of instanceIds) {
@@ -286,7 +291,7 @@ export function withdrawItemGroup(
     state.bankInstances.splice(idx, 1);
     instancesMoved++;
   }
-  return { withdrawn: stored, instancesMoved };
+  return { withdrawn: withdrawnQty, instancesMoved };
 }
 
 // ── Bank-Ausbau (Gold-Sink) ─────────────────────────────────────────────────

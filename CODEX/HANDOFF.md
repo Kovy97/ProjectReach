@@ -1,5 +1,76 @@
 # Übergabe — Codex-Projektleitung
 
+### 26.10.2026 — Claude: 1.4.0 QA-Runde, Goblin-Machart für die Raid-Sets
+
+<!-- claude:2026-10-26T05:55:00+02:00 -->
+
+- **Raid-Sets (Chef):** „Tier-Sets thematisch dem Raid anpassen, Goblin-like“. `design/1.4.0-assets-final.md` hat jetzt den
+  Abschnitt „Gobkha'raz-Machart“ (Baustein `<GOBLIN>`, 15 neue Set-Prompts, Farben bleiben); die drei Muster vom 23.10. sind
+  **nicht abgenommen** und werden neu gemacht. Nachricht an Codex steht oben im Dokument.
+- **QA-Runde:** 7 Prüf-Agenten, alle Befunde P1–P3 zentral behoben (Liste im Changelog `design/1.4.0-changelog.md`, Abschnitt
+  „QA-Runde“). Neue Regressionstests `packages/*/src/qa-*.test.ts` (Befund-Tests auf Soll umgestellt).
+- **Ward-Fix mit Balance-Folge:** Dämpfung nur auf den Teil, den der Ward trägt (`combat.ts` STEP 7). Mythisch für reine
+  Ward-Builds strenger, `RAID_DAMAGE_SCALE` bleibt 1,3 (Messreihe ×1,3/×1,15/×1,0 in `design/1.4.0-raid-magier-builds.md`).
+  **Chef-Entscheid offen.**
+- Neues Modul `packages/engine/src/combat-stop.ts` (stopCombat/clearBossPhase, gegen den Kreis raid ↔ combat);
+  `resolveLeftRaidFight` in `raid.ts` gilt für Tick und Laden.
+- Nicht hochgeladen (Chef: „Noch nicht hochladen“).
+
+### 23.10.2026 — Codex: drei Gobkha’raz-Muster neu gebaut, zweite Chef-Abnahme offen
+
+<!-- codex:2026-10-23T21:22:29.304Z -->
+
+- Chef hat die ersten Muster ausdrücklich wegen fehlender Goblin-Identität verworfen. Neue verbindliche Quelle: erneuerter Abschnitt „Gobkha’raz-Machart“ und 15 neue Set-Prompts in `design/1.4.0-assets-final.md`; Farben bleiben. Asymmetrische Konstruktion hat Vorrang vor altem symmetrischem Framing. Nur drei Normal-Brustteile neu beauftragt; keine Ohr-/Kopf-/Körperteile hinzugefügt.
+- Drei Fachagenten produzierten parallel, jeder prüfte anschließend ein fremdes Motiv. Ausgewählte neue Raw-Revisionen 1/2/2 für Stoff/Leder/Platte. Drei Erstgenerationen ohne Bildinput; danach nur eigene neue Raw-Bilder als Input für zwei Korrekturen (schwarze Lederstopfen, abgeriebene Plattenheraldik). Kein altes C/D-Bild oder abgelehntes Muster als Vorlage.
+- Alle drei ausgewählten Finals unabhängig PASS. Goblin-Zuschnitt, Flickbauweise, asymmetrische Schultern, Haken/Sägezähne, Fangtrophäen und Schuldzeichen bei fünf tatsächlichen Nachbarn und 46 px geprüft. Leere Kleidung/Rüstung, keine Trägeranatomie oder Emission. Kleine Details bleiben bei 46 px begrenzt; geordnete Plattenwinkel sind bewusste Elite-Konstruktion. Endgültige Stilabnahme liegt beim Chef.
+- Technik: 640×640 RGBA mit nativem Alpha, q92/Alpha100; ganze Canvas skalieren und transparent auffüllen, keine Maskierung/Keying. 30 zentrale Exportchecks, fünf Quell-/Promptketten, drei ZIP-Einträge und 18 Galerieziele bestanden. Finalrand vollständig Alpha 0; schwache originale Alpha 1/3/1-Randspuren erhalten. Hell/Dunkel/Signal und 46/96 px kontrolliert. Galeriehintergrundaktionen geprüft; keine Browser-/Spielabnahme behauptet.
+- Erste Musterrunde vollständig mit 48 bytegleichen Dateien archiviert: `CODEX/assets/1.4.0-final-2026-10-23/archive/chef-rejected-first-samples-2026-10-23/`. Alte Root-Galerie und Root-Manifest sind als Chef-abgelehnt markiert. Rohbilder weder gelöscht noch überschrieben.
+- Neue Abnahmerunde ausschließlich `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-samples/`; Arbeitshilfen unter `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-samples/`. [Galerie](assets/1.4.0-final-2026-10-23/gobkharaz-samples/REVIEW.html) · [ZIP](assets/1.4.0-final-2026-10-23/gobkharaz-samples/1.4.0-gobkharaz-samples.zip) · [Prüfbericht](assets/1.4.0-final-2026-10-23/gobkharaz-samples/INDEPENDENT-REVIEW.md)
+- **Chef-Abnahme offen; vor weiteren Motiven oder Varianten warten.** Brief/Checkbox nicht geändert. Keine Runtime-, Content-, Loader- oder Saveänderungen durch diesen Auftrag; zwölf gezielt erfasste Runtimepfade unverändert. Keine Builds, Spieltests, Live-Starts, Commits oder Pushes. Branch `update-1.4.0`; bestehende und zeitgleich entstehende Fremddiffs erhalten. Ein paralleler Shell-Statusaufruf scheiterte vor Prozessstart mit Windows-Zugriff5; derselbe lesende Statusaufruf anschließend regulär bestanden.
+- JSON-Marker in den neuen Staging-/Work-READMEs und kommentierten technischen Helfern; beim alten Root-Manifest im neuen `CHEF-REJECTED.md`. Exakte JSON-Pfade dieser Runde:
+
+<details><summary>JSON-Nachweise und Exportstände</summary>
+
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-samples/MANIFEST.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-samples/AUDIT.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-samples/ARCHIVE-AUDIT.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-samples/PREVIOUS-SAMPLES-ARCHIVE.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-samples/evidence/gk_fire_chest-producer.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-samples/evidence/gk_poison_chest-producer.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-samples/evidence/gk_bleed_chest-producer.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-samples/evidence/gk_poison_chest-independent-review.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-samples/evidence/gk_bleed_chest-independent-review.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-samples/sample-spec.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-samples/runtime-baseline.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-samples/gk_fire_chest-export.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-samples/gk_fire_chest-export-r1.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-samples/gk_poison_chest-export.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-samples/gk_poison_chest-export-r2.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-samples/gk_bleed_chest-export.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-samples/gk_bleed_chest-export-r2.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-samples/fire/gk_fire_chest-goblin-r1-report.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-samples/fire/independent-poison-review.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-samples/poison/provenance.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-samples/poison/independent-bleed-review.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-samples/bleed/gk_bleed_chest-evidence.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/MANIFEST.json`
+
+</details>
+
+
+### 23.10.2026 — Codex: finales 1.4.0-Farbkonzept, drei Normal-Beispiele zur Chef-Abnahme
+
+<!-- codex:2026-10-23T20:44:38.441Z -->
+
+- Neue verbindliche Quelle `design/1.4.0-assets-final.md`; Auftrag nach vorherigem STOP neu aufgenommen, auf ausdrücklichen Chef-Wunsch mit drei parallelen Fachagenten. Erste Abnahmestufe abgeschlossen: `gk_fire_chest` (Stoff), `gk_poison_chest` (Leder), `gk_bleed_chest` (Platte), ausgewählte Raw-Revisionen 1/2/3. [Galerie](assets/1.4.0-final-2026-10-23/REVIEW.html) · [ZIP](assets/1.4.0-final-2026-10-23/1.4.0-normal-samples.zip) · [Prüfbericht](assets/1.4.0-final-2026-10-23/INDEPENDENT-REVIEW.md)
+- Jede Familie nutzt ihre eigene Materialpalette. Ausschließlich leere Kleidung/Rüstung; Hand am Stoff ist Stickerei. Keine Raritätsfärbung oder Emission. Alte Teil 1-C/D-Positionen vollständig verworfen, Rohdateien unverändert archiviert und nicht als Vorlage benutzt; 93 abgelöste Auftragspositionen in `SUPERSEDED-RAID-LOOT.json` (keine Behauptung einer damaligen Vollproduktion).
+- Unabhängiges Kreuzreview aller 3 Finals PASS: Stoff durch raid_uniques_14, Leder durch raid_sets_14, Platte durch bowcraft_14. Hauptinstanz sichtete Nachbarn und Finals ebenfalls. Leder-Nieten zu stumpfem Oliv korrigiert. Platten-Revision 2 im unabhängigen Review wegen getrennter Wappen FAIL, Revision 3 mit tatsächlicher Krone-über-Turm-Überdeckung PASS; frühere Fassungen und FAIL-Nachweis erhalten.
+- Technisch bestanden: 640×640 RGBA, echte native Transparenz, Randalpha0 nach vollständiger Canvas-Skalierung/Padding, WebP q92/Alpha100, 21 Einzelchecks, sechs nachvollziehbare Generation-/Edit-Schritte, Quell-/Prompt-/Referenzhashes und bytegenaue Exportreproduktion. Drei ZIP-Einträge bytegleich gegen Manifest. Hell/Dunkel/Signal, echte 46 px und jeweils zwei Bestandsnachbarn geprüft. Schwache native Alpha-Randspuren wurden dokumentiert und nicht herausgekeyt.
+- **Chef-Abnahme steht aus.** Die entsprechende Checkbox in der Final-Liste bleibt offen. Restlicher Auftrag (156 nach den drei Beispielen) und Varianten noch nicht gestartet; nach Freigabe weiter mit maximal nutzbarer Parallelität und den neuen Paletten. Die alte Queue darf nicht wieder als Auftrag aktiviert werden. Kein Vollständigkeitsanspruch für 159 Motive.
+- Staging `CODEX/assets/1.4.0-final-2026-10-23/`; Arbeitshilfen und Brief-Snapshots `CODEX/work/1.4.0-final-2026-10-23/`. Keine Runtime-/Content-/Loader-/Saveänderungen durch diesen Auftrag. Neun erfasste Runtime-Ziel-/Referenzpfade unverändert. Keine Builds/Spieltests/Spielstarts, kein Commit/Push; bestehende und parallel entstehende fremde Diffs erhalten.
+- JSON-Marker in Staging-/Work-README und kommentierten Helfern. Exakte zentrale JSON-Pfade: `CODEX/assets/1.4.0-final-2026-10-23/MANIFEST.json`, `CODEX/assets/1.4.0-final-2026-10-23/AUDIT.json`, `CODEX/assets/1.4.0-final-2026-10-23/ARCHIVE-AUDIT.json`, `CODEX/assets/1.4.0-final-2026-10-23/SUPERSEDED-RAID-LOOT.json`, `CODEX/work/1.4.0-final-2026-10-23/sample-spec.json`, `CODEX/work/1.4.0-final-2026-10-23/runtime-baseline.json`; vollständige motivbezogene Export-, Prompt-, Producer- und Reviewpfade stehen im Manifest. Ausgewählte Exportdatensätze: `CODEX/work/1.4.0-final-2026-10-23/gk_fire_chest-export.json`, `CODEX/work/1.4.0-final-2026-10-23/gk_poison_chest-export.json`, `CODEX/work/1.4.0-final-2026-10-23/gk_bleed_chest-export.json`; bewahrte Plattenstände `CODEX/work/1.4.0-final-2026-10-23/gk_bleed_chest-export-before-r3.json` und `CODEX/work/1.4.0-final-2026-10-23/gk_bleed_chest-export-r3.json`.
+
+
 ### 18.10.2026 — Codex: alle 73 Assets fertig, Bogenkorrektur und Aschesturz-Nachtrag
 
 <!-- codex:2026-10-18T17:21:48.717Z -->

@@ -139,7 +139,9 @@ export function useConsumableMany(state: GameState, content: ContentDB, itemId: 
 function consumeInternal(state: GameState, content: ContentDB, itemId: ItemId, source: ConsumeSource, qty: number): boolean {
   const item = content.items[itemId];
   if (!item || item.type !== "consumable") return false;
-  if (itemCount(state.inventory, itemId) < 1) return false;
+  // claude:2026-10-26T01:25:00+02:00 — Kisten (Werkstatt, Schwarzmarkt) öffnen auch direkt aus der Bank; sie verbrauchen sich selbst „Inventar, sonst Lager“ (QA-Aufträge P3-1).
+  const crate = item.consumable?.kind === "workCrate" || item.consumable?.kind === "blackMarketCrate";
+  if (itemCount(state.inventory, itemId) < 1 && !(crate && (state.bank[itemId] ?? 0) > 0)) return false;
 
   // Combat-Feel v2 #0a: healPct-only-Items (ohne flachen healAmount) heilen ebenfalls.
   const heals = (item.healAmount ?? 0) > 0 || (item.healPct ?? 0) > 0;

@@ -26,6 +26,7 @@ export function tierForLevel(level: number): number {
 
 function gearTier(content: ContentDB, item: ItemDef): number | null {
   if (typeof item.tier === "number") return item.tier;
+  if (typeof item.arrow?.tier === "number") return item.arrow.tier; // claude:2026-10-26T03:05:00+02:00 — Pfeile tragen ihre Stufe selbst (QA-Klarheit P2)
   if (item.type !== "equipment") return null;
   const reqs = Object.values(item.requirements ?? {}).filter((v): v is number => typeof v === "number" && v > 0);
   if (reqs.length > 0) return tierForLevel(Math.max(...reqs));
@@ -56,11 +57,13 @@ function buildTierMap(content: ContentDB): Map<ItemId, number> {
         const t = map.get(l.itemId);
         if (t !== undefined && (outTier === null || t < outTier)) outTier = t;
       }
-      if (outTier === null) continue;
+      // claude:2026-10-26T03:05:00+02:00 — Rezepte ohne Stufen-Ausgabe (Tränke, Essen, Brennen) stimmen für „keine Stufe“ (0). So bleiben
+      // Trank-Kräuter ohne Sterne, auch wenn ein einzelnes Ausrüstungsrezept sie braucht (Pestmaske, QA-Klarheit P3).
+      const vote = outTier ?? 0;
       for (const inp of a.inputs!) {
         if (!isMat(inp.itemId)) continue;
         const v = votes.get(inp.itemId) ?? new Map<number, number>();
-        v.set(outTier, (v.get(outTier) ?? 0) + 1);
+        v.set(vote, (v.get(vote) ?? 0) + 1);
         votes.set(inp.itemId, v);
       }
     }
@@ -68,8 +71,17 @@ function buildTierMap(content: ContentDB): Map<ItemId, number> {
     for (const [id, v] of votes) {
       let best = 0;
       let bestN = -1;
-      for (const [t, n] of v) if (n > bestN || (n === bestN && t < best)) { best = t; bestN = n; }
-      if (map.get(id) !== best) {
+      // „Keine Stufe“ gewinnt nur gegen ALLE Stufen-Stimmen zusammen (echte Mehrheit); sonst die häufigste Stufe, Gleichstand → niedriger.
+      let tiered = 0;
+      for (const [t, n] of v) {
+        if (t === 0) continue;
+        tiered += n;
+        if (n > bestN || (n === bestN && t < best)) { best = t; bestN = n; }
+      }
+      if ((v.get(0) ?? 0) > tiered) best = 0;
+      if (best === 0) {
+        if (map.delete(id)) changed = true;
+      } else if (map.get(id) !== best) {
         map.set(id, best);
         changed = true;
       }

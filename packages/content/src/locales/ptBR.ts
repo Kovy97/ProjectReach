@@ -4582,4 +4582,10 @@ export const ptBR: Record<string, string> = {
   "tavernGuests:orin:name": "Orin Lê-Tecido",
   "tavernGuests:wenna:name": "Wenna Mão-Cinzenta",
   "tavernGuests:ilvara:name": "Ilvara Canto-de-Espinho",
+  // claude:2026-10-26T04:35:00+02:00
+  "tavernGuests:billy:name": "Billy Ervassulco",
+  "tavernGuests:pim:name": "Pim Dozededos",
+  "tavernGuests:halvard:name": "Halvard Caldeirão",
+  "tavernGuests:viktor:name": "Viktor Talhaespinho",
+  "tavernGuests:ashka:name": "Ashka Correareia",
 };

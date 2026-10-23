@@ -73,6 +73,7 @@ import { ActiveBuffsBar } from "../components/ActiveBuffs";
 import { DefenseTypeBadge } from "../components/DefenseTypeBadge";
 import { openItemWikiModal } from "../components/ItemWikiModal";
 import { QuantityPicker } from "../components/QuantityPicker";
+import { ConfirmModal, type ConfirmRequest } from "../components/ConfirmModal"; // claude:2026-10-26T01:05:00+02:00 — Raid: Fliehen bestätigen
 import { RaidSection } from "../components/RaidSection";
 import { RaidBossBar } from "../components/RaidHud";
 import { RaidRestScreen } from "../components/RaidScreens";
@@ -1826,6 +1827,8 @@ function Battle({
   const getState = useGetGameState();
   const state = getState()!;
   const { t, tr } = useI18n();
+  // claude:2026-10-26T01:05:00+02:00 — Raid: Fliehen zählt wie ein Tod (A15), darum erst bestätigen (QA-Raid #2).
+  const [leaveConfirm, setLeaveConfirm] = useState<ConfirmRequest | null>(null);
   const c = state.character;
   const cs = state.combat;
   const monsterName = tr(monster.name);
@@ -1847,6 +1850,8 @@ function Battle({
   const dungeon = cs.dungeonId ? content.dungeons.find((d) => d.id === cs.dungeonId) : null;
   // claude:2026-10-25T11:10:00+02:00 — Läuft ein Raid-Kampf? (Raum x/5, Bossleiste mit Phasenmarken)
   const raidFight = dungeon?.raidOnly ? activeRaidFight(state, content) : null;
+  // claude:2026-10-26T04:45:00+02:00 — Raid: Wellen-Ansage unter die Raumzeile setzen (verdeckte sonst „Raum x/5 · Boss …“, QA-UI P3).
+  const progressRef = useRef<HTMLDivElement | null>(null);
   // Boss-Intro-Fenster (§5.1.2/§5.1.5): die LETZTE Welle ist bereits im State (cs.monsterId zeigt
   // schon auf den Boss), aber der Wellen-Cooldown läuft die volle Atempause (PRE_BOSS_BREATHER_MS =
   // 8s statt der üblichen 2s KILL_COOLDOWN_MS) — kein neues Engine-Feld, reine Ableitung aus dem
@@ -3741,7 +3746,7 @@ function Battle({
           Collection-Log-Regel monsterKills — dg_-Varianten fragen ihre Basis-Id ab, Kill-Credit-
           Alias combat.ts). */}
       {dungeon && (
-        <div className="dungeon-progress">
+        <div className="dungeon-progress" ref={progressRef}>
           <div className="dungeon-progress-head">
             <span className="dungeon-progress-name">
               {KEY_ICON_URL ? <img loading="lazy" decoding="async" src={KEY_ICON_URL} alt="" className="ui-icon dungeon-progress-key-icon" /> : "🗝️"} {tr(dungeon.name)}
@@ -3835,6 +3840,7 @@ function Battle({
         <div
           key={`${waveAnnounce.cur}-${waveAnnounce.name}`}
           className={`dungeon-wave-announce${fxMotion ? "" : " fx-no-motion"}`}
+          style={raidFight && progressRef.current ? { top: progressRef.current.offsetTop + progressRef.current.offsetHeight + 6 } : undefined}
         >
           {t("dungeon.waveAnnounce")
             .replace("{cur}", String(waveAnnounce.cur))
@@ -3881,10 +3887,32 @@ function Battle({
         <button className="btn-iron combat-stop-btn combat-zones-btn" onClick={onShowEnemyList}>
           {t("combat.zones")}
         </button>
-        <button className="btn-iron btn-iron--danger combat-stop-btn" onClick={() => stopCombat(state)}>
+        <button
+          className="btn-iron btn-iron--danger combat-stop-btn"
+          onClick={() => {
+            if (!raidFight) {
+              stopCombat(state);
+              return;
+            }
+            // claude:2026-10-26T01:05:00+02:00 — im Raid erst bestätigen; der Text nennt die Todesregel der Stufe.
+            const d = raidFight.run.difficulty;
+            const rule =
+              d === "normal" ? t("raid.deathRule.normal")
+              : d === "heroic" ? t("raid.deathRule.heroic").replace("{gold}", formatNum(raidFight.def.heroicRestartCost))
+              : t("raid.deathRule.mythic").replace("{pct}", String(Math.round((1 - raidFight.def.mythicRefundPct) * 100)));
+            setLeaveConfirm({
+              title: t("raid.leave.confirmTitle"),
+              body: `${t("raid.leave.confirmBody")} ${rule}`,
+              confirmLabel: t("combat.flee"),
+              danger: true,
+              onConfirm: () => stopCombat(state),
+            });
+          }}
+        >
           {t("combat.flee")}
         </button>
       </div>
+      <ConfirmModal request={leaveConfirm} onClose={() => setLeaveConfirm(null)} />
 
       {/* (Kampfstil-Wahl steht jetzt dauerhaft in der linken Combat-Loadout-Sidebar — Melee Focus —
           daher hier keine redundante Leiste über den Portraits mehr.) */}

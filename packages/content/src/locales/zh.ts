@@ -4581,4 +4581,10 @@ export const zh: Record<string, string> = {
   "tavernGuests:orin:name": "奥林·读布者",
   "tavernGuests:wenna:name": "温娜·灰手",
   "tavernGuests:ilvara:name": "伊尔瓦拉·棘歌",
+  // claude:2026-10-26T04:35:00+02:00
+  "tavernGuests:billy:name": "比利·犁草",
+  "tavernGuests:pim:name": "皮姆·十二指",
+  "tavernGuests:halvard:name": "哈尔瓦德·铁壶",
+  "tavernGuests:viktor:name": "维克托·斩棘",
+  "tavernGuests:ashka:name": "阿什卡·沙行",
 };

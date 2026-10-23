@@ -6,6 +6,7 @@
 // Grundlage für (a) die Herkunftsregel der Bergung (Chef 23.10.: „nur gedroppte Items“) und (b) den Stufen-Rückfall
 // für Ausrüstung ohne Trage-Anforderung (design/1.4.0-balance-werkstatt.md §1.2). Rein, kein State, kein RNG.
 import type { ContentDB, ItemId, LootRoll } from "@hearthforge/shared";
+import { RAID_DIFFICULTIES, RAID_VARIANT_SUFFIX } from "@hearthforge/shared";
 
 export type DropSourceKind = "monster" | "elite" | "dungeon" | "tower" | "paragon" | "raid";
 
@@ -43,6 +44,18 @@ function build(content: ContentDB): Map<ItemId, DropSource[]> {
     addRolls(d.loot, { kind: "dungeon", level: d.requiredLevel });
   }
   for (const tier of content.paragon?.chest ?? []) addRolls(tier.loot, { kind: "paragon", level: 300 });
+  // claude:2026-10-26T01:35:00+02:00 — Raid-Beute (Boss-Tabellen samt Stufen-Varianten, Trash- und Nebenbeute, Wochentruhe): sonst hatten die
+  // Raid-Teile keine Drop-Quelle und galten für die Bergung als nicht zerlegbar (A13, QA-Lager P2).
+  for (const raid of content.raids ?? []) {
+    for (const room of raid.rooms) {
+      const level = content.monsters[room.bossId]?.level ?? 300;
+      for (const e of room.table.entries) {
+        for (const d of RAID_DIFFICULTIES) add(`${e.itemId}${RAID_VARIANT_SUFFIX[d]}`, { kind: "raid", level });
+      }
+    }
+    for (const row of [...raid.trashLoot, ...raid.bossSideLoot]) add(row.itemId, { kind: "raid", level: 300 });
+    for (const e of raid.weeklyChest.extraItems) add(e.itemId, { kind: "raid", level: 300 });
+  }
   return map;
 }
 

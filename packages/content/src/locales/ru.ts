@@ -4581,4 +4581,10 @@ export const ru: Record<string, string> = {
   "tavernGuests:orin:name": "Орин Чтец Полотна",
   "tavernGuests:wenna:name": "Венна Серая Рука",
   "tavernGuests:ilvara:name": "Ильвара Песнь Шипов",
+  // claude:2026-10-26T04:35:00+02:00
+  "tavernGuests:billy:name": "Билли Бороздник",
+  "tavernGuests:pim:name": "Пим Двенадцатипалый",
+  "tavernGuests:halvard:name": "Хальвард Котёл",
+  "tavernGuests:viktor:name": "Виктор Терносек",
+  "tavernGuests:ashka:name": "Ашка Песчаный Бег",
 };

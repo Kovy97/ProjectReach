@@ -266,7 +266,10 @@ function canHoldRewards(
     ? Math.max(0, effectiveBankCapacity(state, content) - usedBankSlots(state, storagePredicate(content)))
     : 0;
   const plannedBankKinds = new Set<string>();
+  const toStorage = state.settings.materialsToStorage !== false ? storagePredicate(content) : null;
   for (const { id } of items) {
+    // claude:2026-10-26T02:20:00+02:00 — „Direkt ins Lager“: Lagerware braucht weder Inventar- noch Bankplatz (wie addItemOrBank), QA-Lager P3.
+    if (toStorage?.(id)) continue;
     // 1) vorhandener (plain) Stack mit Platz → kein neuer Slot nötig
     if (state.inventory.slots.some((s) => s !== null && s.itemId === id && !s.instance && s.qty < MAX_STACK)) continue;
     // 2) freier Inventar-Slot

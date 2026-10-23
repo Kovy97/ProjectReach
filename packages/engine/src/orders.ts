@@ -1,4 +1,4 @@
-import type { ActionDef, ContentDB, GameState, ItemId, RngState, SkillId, WorkOrder, WorkOrderKind, WorkOrderState } from "@hearthforge/shared";
+import type { ActionDef, ContentDB, GameState, ItemId, ItemInstance, RngState, SkillId, WorkOrder, WorkOrderKind, WorkOrderState } from "@hearthforge/shared";
 import {
   defaultWorkOrderState,
   EVENT_CRAFT_SKILLS,
@@ -20,7 +20,7 @@ import {
 } from "@hearthforge/shared";
 import { nextFloat } from "./rng";
 import { levelFromXp } from "./leveling";
-import { itemCount, removeItem } from "./inventory";
+import { itemCount, removeInstance, removeItem } from "./inventory";
 import { grantLoot } from "./mail";
 import { sellPrice } from "./shop";
 import { goldFindMult, prestigeSkillXpMult } from "./prestige-effects";
@@ -74,8 +74,22 @@ export function workOrderKindFor(skill: SkillId): WorkOrderKind | null {
   return null;
 }
 
+/**
+ * claude:2026-10-26T01:25:00+02:00 — Einzelstücke (Ausrüstung mit Suffix/Runen als Instanz) zählen mit: sonst zeigte ein Herstellauftrag auf
+ * Ausrüstung „erledigt“, ließ sich aber nie abgeben (QA-Aufträge P2-1). Gesperrte Instanzen (Bergungs-Schloss) zählen nicht.
+ */
+function deliverableInstances(state: GameState, itemId: ItemId): Array<{ inst: ItemInstance; inBank: boolean }> {
+  const locked = state.lockedItems ?? {};
+  const out: Array<{ inst: ItemInstance; inBank: boolean }> = [];
+  for (const inst of state.inventory.instances ?? []) if (inst.baseItemId === itemId && !locked[inst.instanceId]) out.push({ inst, inBank: false });
+  for (const inst of state.bankInstances ?? []) if (inst.baseItemId === itemId && !locked[inst.instanceId]) out.push({ inst, inBank: true });
+  // Die schwächsten zuerst: ohne Runen/Suffix, dann nach Suffix-Wurf.
+  const score = (i: ItemInstance): number => i.affixes.length * 10 + (i.suffix ? 1 + (i.suffix.roll ?? 0) : 0);
+  return out.sort((a, b) => score(a.inst) - score(b.inst));
+}
+
 function stockOf(state: GameState, itemId: ItemId): number {
-  return itemCount(state.inventory, itemId) + (state.bank[itemId] ?? 0);
+  return itemCount(state.inventory, itemId) + (state.bank[itemId] ?? 0) + deliverableInstances(state, itemId).length;
 }
 
 /** Herstellbar über eine erreichbare Aktion (Tiefe ≤ ORDER_INPUT_REACH_DEPTH), Bestand > 0 oder Gold-Shop. */
@@ -188,7 +202,10 @@ export function makeWorkOrderOffer(
   if (!kind || workOrdersFull(state)) return null;
   const minutes = ORDER_MINUTES[Math.min(ORDER_MINUTES.length - 1, Math.floor(nextFloat(rng) * ORDER_MINUTES.length))]!;
   const pool: { c: WorkOrderCandidate; count: number }[] = [];
+  // claude:2026-10-26T01:25:00+02:00 — kein zweiter Auftrag auf ein Item, für das schon einer offen ist (sonst erfüllte dieselbe Arbeit beide, QA-Aufträge P2-2).
+  const openItems = new Set((state.workOrders?.open ?? []).map((x) => x.itemId));
   for (const c of workOrderCandidates(state, content, action.skill)) {
+    if (openItems.has(c.itemId)) continue;
     const count = Math.max(1, Math.round(((minutes * 60_000) / Math.max(1, durOf(c.action))) * c.perRun));
     if (kind === "produce" && !inputsReachable(state, content, c.action, count, c.perRun)) continue;
     pool.push({ c, count });
@@ -248,7 +265,13 @@ export function tickWorkOrders(state: GameState, dtMs: number): void {
 export function acceptWorkOrder(state: GameState): boolean {
   const o = workOrdersOf(state);
   if (!o.offer || o.open.length >= ORDER_MAX_OPEN) return false;
-  const order = { ...o.offer, baseline: state.stats.producedById?.[o.offer.itemId] ?? 0 };
+  // claude:2026-10-26T01:25:00+02:00 — Startanker hinter dem Restbedarf schon offener Aufträge auf dasselbe Item (Alt-Stände, QA-Aufträge P2-2).
+  const offer = o.offer;
+  const produced = state.stats.producedById?.[offer.itemId] ?? 0;
+  const pending = o.open
+    .filter((x) => x.itemId === offer.itemId)
+    .reduce((sum, x) => sum + Math.max(0, x.count - Math.max(0, Math.min(x.count, produced - x.baseline))), 0);
+  const order = { ...offer, baseline: produced + pending };
   o.open.push(order);
   o.offer = null;
   o.offerMsLeft = 0;
@@ -275,7 +298,7 @@ export interface WorkOrderProgress {
   count: number;
   /** Arbeit erledigt (Startanker erreicht). */
   ready: boolean;
-  /** Abgebbarer Bestand (Inventar + Lager, ohne Einzelstücke). */
+  /** Abgebbarer Bestand (Inventar + Lager + ungesperrte Einzelstücke). claude:2026-10-26T02:35:00+02:00 */
   stock: number;
 }
 
@@ -304,6 +327,17 @@ function takeFromStock(state: GameState, itemId: ItemId, qty: number): number {
       else delete state.bank[itemId];
       taken += take;
     }
+  }
+  // claude:2026-10-26T01:25:00+02:00 — danach Einzelstücke, die schwächsten zuerst (QA-Aufträge P2-1).
+  for (const { inst, inBank } of deliverableInstances(state, itemId)) {
+    if (taken >= qty) break;
+    if (inBank) {
+      const i = state.bankInstances.findIndex((x) => x.instanceId === inst.instanceId);
+      if (i >= 0) state.bankInstances.splice(i, 1);
+    } else {
+      removeInstance(state.inventory, inst.instanceId);
+    }
+    taken += 1;
   }
   return taken;
 }

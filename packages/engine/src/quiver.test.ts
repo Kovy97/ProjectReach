@@ -53,7 +53,7 @@ describe("Köcher-Regel", () => {
     expect(loadQuiver(s, content, "copper_arrow")).toEqual({ ok: true, qty: 40 });
     expect(s.bank.copper_arrow).toBeUndefined();
     expect(unequipItem(s, content, "offhand")).toBe(true);
-    expect(s.character.quiver).toBeNull();
+    expect(s.character.quiver).toEqual({ itemId: "copper_arrow", qty: 0 }); // claude:2026-10-26T04:15:00+02:00 — Art gemerkt (QA-Fernkampf P3)
     expect(s.bank.copper_arrow).toBe(40);
   });
 });

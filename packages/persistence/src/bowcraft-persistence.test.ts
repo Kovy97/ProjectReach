@@ -65,7 +65,7 @@ describe("Köcher über Save/Load", () => {
     s.character.quiver = { itemId: "copper_arrow", qty: 12 };
     const out = deserialize(serialize(s, AT), content, AT)!.state;
     expect(out.character.equipment.offhand).toBeNull();
-    expect(out.character.quiver).toBeNull();
+    expect(out.character.quiver).toEqual({ itemId: "copper_arrow", qty: 0 }); // claude:2026-10-26T05:30:00+02:00 — ohne Köcher bleibt die Art als leere Ladung gemerkt (QA-Fernkampf P3)
     expect(out.bank.copper_arrow).toBe(12);
     const quivers =
       out.inventory.slots.filter((x) => x?.itemId === "copper_quiver").reduce((a, x) => a + (x?.qty ?? 0), 0) +
@@ -77,7 +77,7 @@ describe("Köcher über Save/Load", () => {
     const s = createGame({ name: "Bogner" }, content, 3);
     s.character.quiver = { itemId: "copper_arrow", qty: 5.7 };
     const a = deserialize(serialize(s, AT), content, AT)!.state;
-    expect(a.character.quiver).toBeNull();
+    expect(a.character.quiver).toEqual({ itemId: "copper_arrow", qty: 0 }); // claude:2026-10-26T05:30:00+02:00 — ohne Köcher bleibt die Art als leere Ladung gemerkt (QA-Fernkampf P3)
     expect(a.bank.copper_arrow).toBe(5);
     s.character.equipment.mainhand = "copper_shortbow";
     s.character.equipment.offhand = "copper_quiver";

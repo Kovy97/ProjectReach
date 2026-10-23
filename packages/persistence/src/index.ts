@@ -101,7 +101,7 @@ import {
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot, HuntCatch, HuntTrap } from "@hearthforge/shared";
 import type { HuntCatchTally } from "@hearthforge/engine";
-import { MAX_STACK, deriveEventRngSeed, isQuiverItem, offhandFitsMain, storagePredicate, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotOwned, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
+import { MAX_STACK, deriveEventRngSeed, isQuiverItem, offhandFitsMain, storagePredicate, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isHealPotion, resolveLeftRaidFight, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotOwned, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
 
 /**
  * MAXIMAL MÖGLICHES Offline-Fenster (8 h Basis + 3 h Wachturm-Vollausbau) — die Korruptions-Klemme
@@ -642,12 +642,13 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     if (raw && typeof raw === "object" && !Array.isArray(raw)) {
       const id = (raw as { itemId?: unknown }).itemId;
       if (typeof id === "string" && content.items[id]?.arrow) {
-        load = { itemId: id, qty: Math.floor(finiteNonNeg((raw as { qty?: unknown }).qty, 0)) };
+        // claude:2026-10-26T02:10:00+02:00 — Deckel wie bei Bank/Lager (QTY_HARD_CAP), QA-Saves #5.
+        load = { itemId: id, qty: finiteIntNonNeg((raw as { qty?: unknown }).qty, QTY_HARD_CAP, 0) };
       }
     }
     if (load && !isQuiverItem(c.equipment.offhand ? content.items[c.equipment.offhand] : undefined)) {
       if (load.qty > 0) state.bank[load.itemId] = finiteNonNeg(state.bank[load.itemId], 0) + load.qty;
-      load = null;
+      load = { itemId: load.itemId, qty: 0 }; // claude:2026-10-26T03:50:00+02:00 — Art gemerkt wie syncQuiverLoad (QA-Fernkampf P3)
     }
     c.quiver = load;
   }
@@ -1925,7 +1926,9 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     //      (ein Save-Edit könnte dungeonsUnlocked ohnehin direkt setzen).
     {
       const active = state.combat?.dungeonId;
-      if (typeof active === "string" && knownDungeon(active)) cleanUnlocked[active] = true;
+      // claude:2026-10-26T02:10:00+02:00 — Raid-Räume sind keine freischaltbaren Dungeons (eigenes Stufen-Gate), QA-Saves #4.
+      const raidOnly = typeof active === "string" && content.dungeons.find((d) => d.id === active)?.raidOnly === true;
+      if (typeof active === "string" && knownDungeon(active) && !raidOnly) cleanUnlocked[active] = true;
     }
     // (3) Paragon-Schlüssel-Sweep (Selbstheilung; Story-Schlüssel s. Kopf-Kommentar → v64-Migration).
     {
@@ -2013,12 +2016,20 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     }
     if (!gateOpen) stopCombat(state);
   }
-  // claude:2026-10-25T04:40:00+02:00 — Raid-Lauf im Kampf ohne passenden Kampf (kaputter/getamperter Save): Lauf ohne Rückgabe beenden.
+  // claude:2026-10-25T04:40:00+02:00 — Raid-Lauf im Kampf ohne passenden Kampf (kaputter/getamperter Save).
+  // claude:2026-10-26T00:55:00+02:00 — Nur ein unbekannter Raid/Raum wird verworfen (samt Warteschlange). Passt nur der Kampf nicht, gilt die
+  // Engine-Regel „Kampf verlassen = Tod“ schon beim Laden (Mythisch mit 25 % Rückgabe, Warteschlange endet), QA-Raid #9 / QA-Saves.
   {
     const run = state.raid?.run;
     if (run && run.phase === "fight") {
       const room = (content.raids ?? []).find((r) => r.id === run.raidId)?.rooms[run.room];
-      if (!room || state.combat.monsterId === null || state.combat.dungeonId !== room.dungeonId) state.raid!.run = null;
+      if (!room) {
+        state.raid!.run = null;
+        state.raid!.queue = null;
+      } else if (state.combat.monsterId === null || state.combat.dungeonId !== room.dungeonId) {
+        stopCombat(state);
+        resolveLeftRaidFight(state, content); // claude:2026-10-26T04:00:00+02:00
+      }
     }
   }
 
@@ -2385,7 +2396,7 @@ function bestPlainHealFood(state: GameState, content: ContentDB): ItemId | null 
     const it = content.items[id];
     if (!it || it.type !== "consumable" || it.buff) return -1;
     if ((it.healAmount ?? 0) <= 0 && (it.healPct ?? 0) <= 0) return -1;
-    if (id.includes("potion")) return -1;
+    if (isHealPotion(content, id)) return -1; // claude:2026-10-26T02:10:00+02:00 — dieselbe Trank-Regel wie Auto-Essen (Kräuterkunde-Salben), QA-Saves #2
     return consumableHeal(it, refMaxHp);
   };
   const pick = (ids: Iterable<ItemId>): ItemId | null => {
@@ -3938,6 +3949,9 @@ function sanitizeRaid(state: GameState, content: ContentDB): void {
         modifier: typeof mod === "string" && (RAID_WEEKLY_MODIFIERS as readonly string[]).includes(mod) ? (mod as RaidWeeklyModifierId) : "quiet_halls",
         restMs: finiteInt(rr.restMs, 0, 60_000, 0),
       };
+      // claude:2026-10-26T02:10:00+02:00 — Rast im letzten Raum gibt es nicht (dort setzt der Raumabschluss „complete“). Nach Content-Schrumpf
+      // oder Tamper hinge der Lauf sonst für immer in der Rast und hielte Warteschlange und Aktionen an (QA-Saves #3).
+      if (run.phase === "rest" && run.room >= raidDef.rooms.length - 1) run.phase = "complete";
     }
   }
   const lr = r.lastResult as Record<string, unknown> | null | undefined;
@@ -4246,7 +4260,8 @@ export function deserialize(
   // ── Offline-Tod & Kampf-Auto-Stopp (nur Summary, transient — der GameState bleibt unverändert) ──
   // deaths-Delta: die EINZIGE Inkrement-Stelle ist onPlayerDefeated (combat.ts:661), und der Tod
   // beendet den Kampf hart (kein Auto-Neustart; offline kann kein neuer Kampf gestartet werden)
-  // → das Delta ist 0 oder 1.
+  // → das Delta ist 0 oder 1. claude:2026-10-26T02:10:00+02:00 — Ausnahme Raid (1.4.0): offline startet Normal einen Raum bis zu
+  //   dreimal neu, Heroisch mit „Neustart automatisch kaufen“ ebenso ⇒ dort bis zu 1 + maxAutoRestarts (QA-Saves #7).
   const deaths = Math.max(0, state.stats.deaths - deathsBefore);
   // Kill-Delta des Catch-ups (transient, fürs Offline-Popup-Medaillon — #306):
   const offlineKills = Math.max(0, state.stats.kills - killsBefore);

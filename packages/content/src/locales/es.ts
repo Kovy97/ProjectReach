@@ -4579,4 +4579,10 @@ export const es: Record<string, string> = {
   "tavernGuests:orin:name": "Orin Lectortelas",
   "tavernGuests:wenna:name": "Wenna Manogrís",
   "tavernGuests:ilvara:name": "Ilvara Cantoespina",
+  // claude:2026-10-26T04:35:00+02:00
+  "tavernGuests:billy:name": "Billy Hierbasurco",
+  "tavernGuests:pim:name": "Pim Docededos",
+  "tavernGuests:halvard:name": "Halvard Caldero",
+  "tavernGuests:viktor:name": "Viktor Tajaespinas",
+  "tavernGuests:ashka:name": "Ashka Correarena",
 };

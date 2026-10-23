@@ -15,7 +15,7 @@ import {
 } from "@hearthforge/engine";
 import type { QuestStatus } from "@hearthforge/engine";
 import type { GameState, ItemDef, LocalizedString, QuestDef, QuestObjective, TokenShopOffer } from "@hearthforge/shared";
-import { QUEST_DIFFICULTIES } from "@hearthforge/shared";
+import { ORDER_MAX_OPEN, QUEST_DIFFICULTIES } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getItemImage } from "../items";
@@ -1354,7 +1354,7 @@ export function QuestsPage(): JSX.Element {
           {t("orders.tab")}
           {(state.workOrders?.open.length ?? 0) + (state.workOrders?.offer ? 1 : 0) > 0 && (
             <span className="quests-tab-count muted">
-              {" "}{state.workOrders?.open.length ?? 0}/3
+              {" "}{state.workOrders?.open.length ?? 0}/{ORDER_MAX_OPEN}{/* claude:2026-10-26T05:00:00+02:00 — Konstante statt fester 3 */}
             </span>
           )}
         </button>

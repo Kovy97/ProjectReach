@@ -4579,4 +4579,10 @@ export const fr: Record<string, string> = {
   "tavernGuests:orin:name": "Orin Lit-l'Étoffe",
   "tavernGuests:wenna:name": "Wenna Main-Grise",
   "tavernGuests:ilvara:name": "Ilvara Chant-d'Épine",
+  // claude:2026-10-26T04:35:00+02:00
+  "tavernGuests:billy:name": "Billy Herbesillon",
+  "tavernGuests:pim:name": "Pim Douzedoigts",
+  "tavernGuests:halvard:name": "Halvard Chaudron",
+  "tavernGuests:viktor:name": "Viktor Tailleronce",
+  "tavernGuests:ashka:name": "Ashka Courseable",
 };

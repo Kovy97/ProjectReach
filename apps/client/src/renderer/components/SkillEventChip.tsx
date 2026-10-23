@@ -6,6 +6,7 @@ import { useI18n } from "../i18n";
 import { requestQuestsTab } from "../navigation";
 import { jumpToPage } from "../util/monsterJump";
 import { EVENT_ICON } from "../eventArt";
+import { eventCardValues, fillEventText } from "../ordersApi"; // claude:2026-10-26T04:55:00+02:00 — Platzhalter im Tooltip füllen (QA-Ereignisse P3)
 import type { SkillEventId } from "@hearthforge/shared";
 
 function mmss(ms: number): string {
@@ -30,7 +31,7 @@ export function SkillEventChip(): JSX.Element | null {
   return (
     <span className="skill-event-chips">
       {active && (
-        <span className="skill-event-chip" title={t(`events.${active}.card`)}>
+        <span className="skill-event-chip" title={fillEventText(t(`events.${active}.card`), eventCardValues(active))}>
           <span aria-hidden="true">{EVENT_ICON[active]}</span> {t(`events.${active}.name`)} · {rest}
         </span>
       )}

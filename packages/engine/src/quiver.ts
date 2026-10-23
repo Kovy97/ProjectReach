@@ -77,8 +77,11 @@ export function loadQuiver(state: GameState, content: ContentDB, itemId: ItemId,
   if (!def) return { ok: false, reason: "notArrow" };
   if (levelFromXp(state.skills.ranged?.xp ?? 0) < arrowRequiredLevel(def)) return { ok: false, reason: "level" };
   const cur = state.character.quiver;
+  // claude:2026-10-26T03:45:00+02:00 — erst Vorrat prüfen, dann die alte Art entladen (sonst leerer Köcher bei „none“), QA-Fernkampf P3.
+  if (arrowStock(state, itemId) <= 0 && !(cur?.itemId === itemId && cur.qty > 0)) return { ok: false, reason: "none" };
   if (cur && cur.itemId !== itemId) unloadQuiver(state);
-  const want = Math.max(0, Math.floor(qty ?? Number.POSITIVE_INFINITY));
+  // claude:2026-10-26T03:45:00+02:00 — NaN/Unendlich = „alles“ (Math.floor(NaN) fiel durch alle Vergleiche: unendliche Pfeile), QA-Fernkampf P3.
+  const want = qty === undefined || !Number.isFinite(qty) ? Number.POSITIVE_INFINITY : Math.max(0, Math.floor(qty));
   const fromBank = Math.min(state.bank[itemId] ?? 0, want);
   if (fromBank > 0) {
     const rest = (state.bank[itemId] ?? 0) - fromBank;
@@ -93,10 +96,13 @@ export function loadQuiver(state: GameState, content: ContentDB, itemId: ItemId,
   return { ok: true, qty: moved };
 }
 
-/** „Pfeile herausnehmen“: der ganze Stapel geht zurück ins Lager, der Köcher ist leer (einfache Pfeile). */
-export function unloadQuiver(state: GameState): number {
+/**
+ * „Pfeile herausnehmen“: der ganze Stapel geht zurück ins Lager, der Köcher ist leer (einfache Pfeile). Mit `keepArt` bleibt die
+ * Art als leere Ladung gemerkt, damit „Automatisch nachfüllen“ nach einem Kit-Wechsel zurück wieder greift.
+ */
+export function unloadQuiver(state: GameState, keepArt = false): number {
   const load = state.character.quiver;
-  state.character.quiver = null;
+  state.character.quiver = keepArt && load ? { itemId: load.itemId, qty: 0 } : null;
   if (!load || load.qty <= 0) return 0;
   state.bank[load.itemId] = (state.bank[load.itemId] ?? 0) + load.qty;
   return load.qty;
@@ -107,7 +113,12 @@ export function unloadQuiver(state: GameState): number {
  * jedem Ausrüsten, Ablegen und Kit-Wechsel aufrufen (equipment.ts, loadouts.ts) und beim Laden (persistence).
  */
 export function syncQuiverLoad(state: GameState, content: ContentDB): void {
-  if (state.character.quiver && !quiverEquipped(state, content)) unloadQuiver(state);
+  const load = state.character.quiver;
+  if (!load) return;
+  // claude:2026-10-26T03:45:00+02:00 — Kit-Wechsel/Ablegen merkt die Art; zurück am Köcher füllt die Option wieder nach (QA-Fernkampf P3).
+  if (!quiverEquipped(state, content)) {
+    if (load.qty > 0) unloadQuiver(state, true);
+  } else if (load.qty <= 0) refillQuiver(state, content);
 }
 
 /** Summe der Pfeil-Sparchance aus Haupthand und Köcher (Deckel AMMO_SAVER_CAP). */
@@ -136,16 +147,20 @@ export function consumeArrow(state: GameState, content: ContentDB, rng: RngState
   return arrow.itemId;
 }
 
-/** Leeren Köcher aus dem Lager nachfüllen (nur mit Option an); bleibt sonst als „leer, Art gemerkt“ stehen. */
+/**
+ * Leeren Köcher aus Lager und Inventar nachfüllen (nur mit Option an); bleibt sonst als „leer, Art gemerkt“ stehen. Das Inventar
+ * zählt mit, weil Pfeile bei „Direkt ins Lager“ aus dort landen (QA-Fernkampf P3). claude:2026-10-26T03:45:00+02:00
+ */
 export function refillQuiver(state: GameState, content: ContentDB): boolean {
   const load = state.character.quiver;
   if (!load || load.qty > 0) return false;
   if (state.settings.quiverAutoRefill === false) return false;
-  const stock = state.bank[load.itemId] ?? 0;
-  if (stock <= 0) return false;
-  delete state.bank[load.itemId];
-  load.qty = stock;
-  void content;
+  if (!quiverEquipped(state, content)) return false;
+  const inBank = state.bank[load.itemId] ?? 0;
+  if (inBank > 0) delete state.bank[load.itemId];
+  const fromInv = removeItem(state.inventory, load.itemId, itemCount(state.inventory, load.itemId));
+  if (inBank + fromInv <= 0) return false;
+  load.qty = inBank + fromInv;
   return true;
 }
 

@@ -1051,6 +1051,14 @@ body .item-cell.rarity-mythic {
   font-size: calc(var(--itip-fs-scale) * 220px);
   color: var(--muted);
 }
+/* claude:2026-10-26T05:10:00+02:00 — Emoji-Rückfall (Teile ohne Bild, z. B. Raid-Beute vor der Asset-Lieferung) an die Bühnenhöhe
+   der Kriegsbanner-Karte binden (Bühne clamp(170px, 31vh, 330px)); mit festen 320 px quoll es über die Beschreibung (QA-UI P3). */
+.itip-warbanner-main .itip-emoji {
+  font-size: clamp(90px, 18vh, 190px);
+}
+.itip-warbanner-main .itip-placeholder {
+  font-size: clamp(70px, 14vh, 150px);
+}
 
 /* ─── Stat-Gruppen: Kapitälchen-Label + Haarlinien-Trenner. attribute_bg (grauer
    Stein, dezent/dunkel) als leichte Textur hinter der ganzen Stat-Liste statt

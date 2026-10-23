@@ -24,6 +24,8 @@ import type {
   StatusType,
   WeaponEffect,
 } from "@hearthforge/shared";
+import { clearBossPhase, stopCombat } from "./combat-stop"; // claude:2026-10-26T02:45:00+02:00 — eigenes Modul gegen den Kreis raid ↔ combat
+export { clearBossPhase, stopCombat } from "./combat-stop";
 import { activeArrow, consumeArrow } from "./quiver"; // claude:2026-10-24T18:20:00+02:00 — Köcher/Pfeile (1.4.0 FK)
 import {
   AUTO_EAT_COOLDOWN_MS,
@@ -510,31 +512,6 @@ export function startCombat(state: GameState, content: ContentDB, monsterId: Mon
   // Gear-Wechsel seit dem letzten Kampf ab (sonst bliebe `ward` auf einem veralteten maxWard hängen).
   state.character.ward = computeStats(state, content).maxWard;
   return true;
-}
-
-export function stopCombat(state: GameState): void {
-  state.combat.monsterId = null;
-  // Dungeon-Run-Zustand mit aufräumen (konsistent zu endDungeon/onPlayerDefeated) —
-  // sonst bleibt ein Geister-Run (dungeonId/encounterIndex) zurück, der sogar persistiert wird.
-  state.combat.dungeonId = null;
-  state.combat.encounterIndex = 0;
-  // Paragonturm (§7): freiwilliges Verlassen = PAUSE, kein Verlust — nur die aktive Etage
-  // schließen; der Checkpoint (state.paragon) bleibt unangetastet („Weiter ab Etage N").
-  state.combat.paragonFloor = undefined;
-  // Elite-/World-Spawns: freiwilliges Verlassen räumt NUR den Kampf-Zeiger. Kein Belohnungs-/
-  // Despawn-Sonderfall hier — die Zone bleibt „Aktiv" (der Elite ist ja nicht besiegt) und läuft im
-  // nächsten Tick regulär weiter (Fenster tickt herunter/despawnt bei Ablauf wie ohne den Besuch).
-  state.combat.eliteVariantId = undefined;
-  state.combat.stopReason = undefined; // manueller Stopp = kein Auto-Grund
-  state.combat.encounterXp = undefined; // Begegnung vorbei → XP-Akkumulator verfällt
-  state.combat.effectCounters = undefined; // Spezial-Effekt-Zähler resetten bei Kampfende (§2.3.4)
-  state.combat.elemental = undefined; // Elementar-Zähler (Frost/Schock/Gift) verfallen bei Kampfende
-  resetBossPhase(state.combat); // claude:2026-10-25T05:50:00+02:00 — Bossphasen-Zustand verfällt bei Kampfende
-  // BEWUSST NICHT geleert: cooldownRemainingMs + lastKill. Der Kill-Cooldown gilt IMMER — Stop+Start
-  // darf ihn nicht überspringen (startCombat übernimmt den Rest). Außerhalb des Kampfs ruht er
-  // eingefroren (combatStep läuft nicht) und läuft beim nächsten Kampfstart zu Ende. Seit Sweep6
-  // T7-F1 gilt das auch über Save/Load: cooldownRemainingMs wird persistiert (nur die lastKill-
-  // Summary ist transient) — vorher war der Reload die einzige Cooldown-Skip-Lücke.
 }
 
 /** Wählt das Essen für die Auto-Heilung (null = keins). */
@@ -1262,10 +1239,8 @@ function resetBossPhase(cs: CombatState, next?: MonsterDef): void {
     cs.bossPhase = 0;
     cs.bossPhaseMs = 0;
     cs.bossAttackCount = 0;
-  } else if (cs.bossPhase !== undefined || cs.bossPhaseMs !== undefined || cs.bossAttackCount !== undefined) {
-    cs.bossPhase = undefined;
-    cs.bossPhaseMs = undefined;
-    cs.bossAttackCount = undefined;
+  } else {
+    clearBossPhase(cs);
   }
 }
 
@@ -2425,9 +2400,16 @@ function statusApplyChance(effect: { type: string; chance: number; magnitude: nu
  * keine Schadens-DoTs und emittieren weiterhin nichts. Log-only: kein RNG-Draw, keine Schadens-/
  * Timing-Änderung — offline==online bleibt byte-gleich (beide Pfade laufen durch combatStep).
  */
-function emitDotTick(cs: CombatState, by: "player" | "enemy", e: StatusEffect, before: number, perSec = e.magnitude): void {
+function emitDotTick(cs: CombatState, by: "player" | "enemy", e: StatusEffect, before: number, perSec = e.magnitude, wardFrac = 0): void {
   if (e.type !== "burn" && e.type !== "bleed" && e.type !== "poison") return;
   if (Math.floor(before / 1000) === Math.floor(e.remainingMs / 1000)) return;
+  // claude:2026-10-26T03:15:00+02:00 — DoT am Spieler-Ward (W2): geschluckter Anteil als Ward-Absorb, nur der Rest als DoT (QA-Ward P3).
+  if (wardFrac > 0) {
+    const onWard = perSec * wardFrac;
+    if (onWard >= 0.5) pushLog(cs, { by: "player", kind: "shield", amount: Math.max(1, Math.round(onWard)), source: "ward" });
+    if (perSec - onWard < 0.5) return;
+    perSec -= onWard;
+  }
   pushLog(cs, { by, kind: "dot", amount: Math.max(1, Math.round(perSec)), status: e.type });
 }
 
@@ -2497,6 +2479,7 @@ function tickPlayerEffects(
   const poisonStacks = poisonStacksOf(cs, "player");
   for (const e of cs.playerEffects) {
     let perSec = e.magnitude;
+    let wardFrac = 0;
     if (e.type === "poison" || e.type === "burn" || e.type === "bleed") {
       perSec = e.magnitude * (e.type === "poison" ? poisonStacks : 1) * vuln;
       const dmg = perSec * (TICK_MS / 1000);
@@ -2506,6 +2489,7 @@ function tickPlayerEffects(
       state.character.ward = wardRes.ward;
       state.character.hp -= wardRes.hpDamage;
       if (wardRes.absorbed > 0) addXp(state, content, "warding", wardRes.absorbed * WARDING_XP_PER_ABSORB, nowMs);
+      wardFrac = dmg > 0 ? wardRes.absorbed / dmg : 0;
       // Überleben härtet ab — aber seit Chef-Entscheid (2026-07-08) mit derselben Level-Bandbreite
       // wie alle Kampf-XP: am über-levelten Trivial-Mob gibt auch Erleiden keine Vitality-XP mehr.
       const dotMonster = enemy ?? (cs.monsterId ? content.monsters[cs.monsterId] : undefined);
@@ -2522,7 +2506,7 @@ function tickPlayerEffects(
     // shock/void: keine Tick-Wirkung (s. tickEnemyEffects).
     const before = e.remainingMs;
     e.remainingMs -= TICK_MS;
-    emitDotTick(cs, "enemy", e, before, perSec); // DoT am Spieler → vom Gegner verursacht
+    emitDotTick(cs, "enemy", e, before, perSec, wardFrac); // DoT am Spieler → vom Gegner verursacht
   }
   cs.playerEffects = cs.playerEffects.filter((e) => e.remainingMs > 0);
   tickElementalSide(cs, "player", cs.playerEffects);
@@ -3150,7 +3134,11 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   }
   // claude:2026-10-23T16:30:00+02:00 — „Mahlzeit halten“ (1.4.0): einmal pro Kampf-Tick, auch in der Kill-Pause
   // (ein Buff ist kein Heil-Refill). Isst nur, wenn kein Mahlzeit-Buff läuft; ohne gewählte Mahlzeit ein No-op.
-  tickMealKeep(state, content);
+  // claude:2026-10-26T03:20:00+02:00 — Mahlzeit = Heilessen: der Mahlzeit-Bissen zählt als Auto-Ess-Bissen (Takt), sonst äße der Held
+  // im selben Tick zwei Portionen (QA-Klarheit P3).
+  if (tickMealKeep(state, content) && state.character.meal === state.character.food) {
+    cs.autoEatCooldownMs = Math.max(cs.autoEatCooldownMs ?? 0, AUTO_EAT_COOLDOWN_MS);
+  }
 
   // — Kill-Cooldown (Chef-Feature „Kampf entschleunigen"): Nach jedem Kill ruht der Kampf für
   //   KILL_COOLDOWN_MS (deterministisch tick-basiert → gilt aktiv, idle UND offline identisch).
@@ -3407,7 +3395,13 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
           dmg = Math.min(dmg, ONE_SHOT_CAP * stats.maxHp);
           // STEP 7 — Ward-Absorb (Stoff, §1.4): der Ward-Pool fängt zuerst ab, der Rest geht auf HP.
           // claude:2026-10-25T21:55:00+02:00 — W4: solange Ward steht, dämpft er den Treffer um WARD_HIT_DAMPING (30 %).
-          if (state.character.ward > 0) dmg *= 1 - WARD_HIT_DAMPING;
+          // claude:2026-10-26T02:55:00+02:00 — gedämpft wird nur der Teil des Treffers, den der Ward trägt (QA-Ward P1): sonst
+          // gäbe ein Ring mit 7 Ward-Punkten plus Regen-Krümeln jedem Stil dauerhaft 30 % weniger Schaden. Bei vollem Pool unverändert.
+          if (state.character.ward > 0) {
+            const keep = 1 - WARD_HIT_DAMPING;
+            const covered = Math.min(dmg, state.character.ward / keep); // Rohschaden, den der Ward gedämpft schluckt
+            dmg = covered * keep + (dmg - covered);
+          }
           const wardRes = absorbWard(state.character.ward, dmg);
           state.character.ward = wardRes.ward;
           if (wardRes.absorbed >= 1) {

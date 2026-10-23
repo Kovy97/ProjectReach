@@ -1,5 +1,36 @@
 # Codex-Arbeitslog
 
+## 2026-10-26 — Claude: 1.4.0 QA-Runde und Goblin-Set-Prompts
+
+<!-- claude:2026-10-26T05:55:00+02:00 -->
+
+Sieben Fable-Prüfer über Raid, Spielstände, Aufträge/Ereignisse, Lager/Bergung, Fernkampf, Klarheit/Ward, Oberfläche/Sprachen;
+Befunde zentral behoben, Befund-Tests als Regressionstests übernommen. Ward-Dämpfung korrigiert (Exploit), 30 Magier-Builds neu
+gemessen. Raid-Set-Prompts auf Goblin-Machart umgeschrieben, Codex-Muster nicht abgenommen. Kein Upload.
+
+
+## 2026-10-23 — Gobkha’raz-Machart: drei abgelehnte Muster neu erzeugt
+
+<!-- codex:2026-10-23T21:22:29.304Z -->
+
+Chefkorrektur umgesetzt: drei Normal-Brustteile nach den neuen Goblin-Prompts vollständig frisch produziert, Farben erhalten. Die erste Musterrunde mit 48 Dateien bytegleich archiviert und als abgelehnt gekennzeichnet; keine verworfenen Bilder als Vorlagen. Drei Produzenten und unabhängiges Kreuzreview mit drei PASS-Ergebnissen. Kurze Goblin-Rümpfe, asymmetrische Haken-/Sägezahnformen und Flickbauweise bei fünf Nachbarn, 46 px und drei Hintergründen geprüft.
+
+30 zentrale Exportchecks, fünf native Quell-/Edit-Schritte, drei bytegleiche ZIP-Dateien und 18 Galerieziele bestanden; zwölf Runtime-Ziel-/Referenzpfade unverändert. Neue Galerie, Manifest, ZIP und Prüfbericht fertig. [Galerie](assets/1.4.0-final-2026-10-23/gobkharaz-samples/REVIEW.html) · [ZIP](assets/1.4.0-final-2026-10-23/gobkharaz-samples/1.4.0-gobkharaz-samples.zip) · [Prüfbericht](assets/1.4.0-final-2026-10-23/gobkharaz-samples/INDEPENDENT-REVIEW.md)
+
+Chef-Abnahme erneut offen. Keine weiteren Motive/Varianten, Runtimeintegration oder Änderungen am Designbrief; keine Builds/Spielstarts/Commits. Frühere drei Muster waren trotz technischer QA vom Chef verworfen und gelten ausdrücklich nicht als Stilfreigabe.
+
+
+## 2026-10-23 — Finale 1.4.0-Liste: drei Normal-Beispiele, Abnahme offen
+
+<!-- codex:2026-10-23T20:44:38.441Z -->
+
+Neuer Chefauftrag nach STOP, drei Fachagenten parallel eingesetzt. Stoff-/Leder-/Platten-Brustteil nach neuem Farbkonzept produziert, alte C/D-Bilder verworfen und unverändert archiviert. Ausschließlich native Alpha-Generierung; Originale/Prompts/Revisionen erhalten. Leder-Nieten korrigiert, Plattenheraldik nach unabhängigem FAIL nochmals gezielt korrigiert.
+
+Alle 3 ausgewählten Finals unabhängig PASS und zentral geprüft: 640²RGBA/q92/Alpha100, 21 technische Checks, sechs Quell-/Edit-Schritte, drei bytegleiche ZIP-Einträge, 46 px und Hell/Dunkel/Signal mit Nachbarn. Neun gezielt erfasste Runtimepfade unverändert; keine Runtimeintegration, Builds, Spielstarts oder Commits. [Galerie](assets/1.4.0-final-2026-10-23/REVIEW.html) · [ZIP](assets/1.4.0-final-2026-10-23/1.4.0-normal-samples.zip) · [Prüfbericht](assets/1.4.0-final-2026-10-23/INDEPENDENT-REVIEW.md)
+
+Wie beauftragt vor restlicher Produktion auf Chef-Abnahme warten. Checkbox unverändert offen; nicht als vollständige 159-Motiv-Lieferung behandeln. Weitere 156 neue Motive folgen nach Freigabe.
+
+
 ## 2026-10-18 — Codex: 73 Motive / 78 Dateien vollständig geliefert
 
 <!-- codex:2026-10-18T17:21:48.717Z -->

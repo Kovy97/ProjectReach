@@ -12,6 +12,7 @@ import type {
 } from "@hearthforge/shared";
 import { RAID_REST_AUTO_MS, RAID_VARIANT_SUFFIX, RAID_WEEKLY_MODIFIERS, RELIC_DUST_ITEM_ID, defaultRaidState } from "@hearthforge/shared";
 import { computeStats } from "./character";
+import { stopCombat } from "./combat-stop"; // claude:2026-10-26T00:50:00+02:00 — Aufgeben räumt den Kampf vollständig (QA-Raid #6)
 import { beginDungeonRun } from "./dungeon";
 import { grantLoot } from "./mail";
 import { nextFloat, nextInt } from "./rng";
@@ -170,7 +171,8 @@ export function raidChestAvailable(state: GameState, bossId: string, difficulty:
 /** Läuft ein Raid (Kampf, Rast oder Tod-Entscheidung)? Dann bleibt die Warteschlange stehen. */
 export function raidOccupied(state: GameState): boolean {
   const ph = state.raid?.run?.phase;
-  return ph === "fight" || ph === "rest" || ph === "defeated";
+  // claude:2026-10-26T00:50:00+02:00 — auch „complete“: sonst rückt die Warteschlange im Abschluss-Countdown weiter und überschreibt den Lauf (QA-Raid #3).
+  return ph === "fight" || ph === "rest" || ph === "defeated" || ph === "complete";
 }
 
 /** Betritt den aktuellen Raum: Rast heilt voll (HP und Ward, §10.4), dann Welle 1 mit skalierten Werten. */
@@ -239,7 +241,9 @@ export function continueRaid(state: GameState, content: ContentDB): boolean {
   const def = run ? raidDef(content, run.raidId) : undefined;
   if (!run || !def || run.phase !== "rest" || run.room + 1 >= def.rooms.length) return false;
   run.room += 1;
-  return enterRaidRoom(state, content, run);
+  if (enterRaidRoom(state, content, run)) return true;
+  run.room -= 1; // claude:2026-10-26T00:50:00+02:00 — Fehlschlag: in der Rast bleiben
+  return false;
 }
 
 export type RaidRestartReason = "ok" | "no_run" | "gold" | "not_allowed";
@@ -254,7 +258,10 @@ export function restartRaidRoom(state: GameState, content: ContentDB): RaidResta
   if (state.character.gold < cost) return "gold";
   state.character.gold -= cost;
   run.restarts += 1;
-  return enterRaidRoom(state, content, run) ? "ok" : "no_run";
+  if (enterRaidRoom(state, content, run)) return "ok";
+  state.character.gold += cost; // claude:2026-10-26T00:50:00+02:00 — Fehlschlag: Gold zurück
+  run.restarts -= 1;
+  return "no_run";
 }
 
 function mergeLoot(list: { itemId: ItemId; qty: number }[], itemId: ItemId, qty: number): void {
@@ -295,13 +302,11 @@ function finishRun(state: GameState, content: ContentDB, outcome: "complete" | "
 export function abandonRaid(state: GameState, content: ContentDB): void {
   const run = state.raid?.run;
   if (!run) return;
-  if (run.phase === "fight") {
-    state.combat.monsterId = null;
-    state.combat.dungeonId = null;
-    state.combat.encounterIndex = 0;
-  }
+  if (run.phase === "fight") stopCombat(state); // claude:2026-10-26T00:50:00+02:00 — Bossphase, XP-Sammler, Effekte mit räumen (QA-Raid #6)
   if (run.phase === "complete") {
-    raidStateOf(state).run = null;
+    // claude:2026-10-26T00:50:00+02:00 — Abschluss sauber verbuchen und eine laufende Warteschlange beenden (QA-Raid #5).
+    raidStateOf(state).queue = null;
+    finishRun(state, content, "complete", 0);
     return;
   }
   finishRun(state, content, "abandoned", 0);
@@ -370,7 +375,8 @@ export function onRaidRoomCleared(state: GameState, content: ContentDB, nowMs?: 
   const rs = raidStateOf(state);
   const key = raidChestKey(room.bossId, run.difficulty);
   rs.bossKills[key] = (rs.bossKills[key] ?? 0) + 1;
-  const ilvl = content.monsters[room.bossId]?.level ?? 100;
+  // claude:2026-10-26T00:50:00+02:00 — Boss-Teile mit der Stufe des skalierten Bosses wie die Trash-Teile (QA-Raid #7).
+  const ilvl = (content.monsters[room.bossId]?.level ?? 100) + (def.scaling[run.difficulty]?.levelAdd ?? 0);
   const got: { itemId: ItemId; qty: number }[] = [];
   // claude:2026-10-25T23:30:00+02:00 — Teil-Chance je Boss (pieceChance); ohne Feld kein Zug, bisherige Sequenz bleibt gleich.
   const pc = room.table.pieceChance;
@@ -440,6 +446,24 @@ export function onRaidDefeat(state: GameState, content: ContentDB, reason: "defe
 }
 
 /**
+ * Lauf steht in „fight“, aber der Held kämpft nicht (mehr) im Raum: zählt wie ein Tod (A15). In einer Warteschlangen-Runde endet
+ * die Warteschlange (der Spieler hat bewusst gestoppt), danach Tod-Dialog bzw. Mythisch-Ende mit Rückgabe. Gemeinsame Regel für
+ * tickRaid und das Laden (persistence). Gibt true zurück, wenn sie gegriffen hat.
+ * claude:2026-10-26T04:00:00+02:00 — aus tickRaid gezogen (QA-Raid #4/#9, QA-Saves: Laden im Stopp-Fenster).
+ */
+export function resolveLeftRaidFight(state: GameState, content: ContentDB): boolean {
+  const rs = state.raid;
+  const run = rs?.run;
+  if (!rs || !run || run.phase !== "fight" || activeRaidFight(state, content)) return false;
+  if (rs.queue) {
+    state.lastQueueSkip = { monsterId: "", reason: "defeated", raidId: rs.queue.raidId };
+    rs.queue = null;
+  }
+  onRaidDefeat(state, content, "stalemate");
+  return true;
+}
+
+/**
  * Raid-Uhr je Tick: Rast-Countdown (nur Auto-Weiter, Warteschlange oder offline), Tod-Entscheidung in Warteschlange/
  * offline (A6: Normal bis maxAutoRestarts gratis, Heroisch nur mit „Neustart automatisch kaufen“), Abschluss-
  * Bildschirm schließt in Warteschlange/offline/Auto-Weiter selbst. Kein RNG.
@@ -451,14 +475,13 @@ export function tickRaid(state: GameState, content: ContentDB, dtMs: number, off
   // claude:2026-10-25T11:55:00+02:00 — Kampf verlassen (Stopp, andere Aktion, anderer Kampf) zählt wie ein Tod: Normal gratis neu,
   // Heroisch gegen Gold, Mythisch vorbei. Sonst hinge der Lauf in „fight“ fest und hielte die Warteschlange an; der Stopp-Knopf
   // ist so auch kein Ausweg aus der Mythisch-Todesregel.
-  if (run.phase === "fight" && !activeRaidFight(state, content)) {
-    onRaidDefeat(state, content, "stalemate");
-    if (!rs.run) return;
-  }
+  if (resolveLeftRaidFight(state, content) && !rs.run) return;
   const fromQueue = rs.queue !== null;
   const auto = offline || fromQueue || state.settings.raidAutoContinue === true;
   if (run.phase === "rest" || run.phase === "complete") {
     if (!auto) return;
+    // claude:2026-10-26T00:50:00+02:00 — der Abschluss-Dialog (Laufzeit, Gebühr, Bestzeit) schließt nur in Warteschlange/offline selbst (QA-Raid #10).
+    if (run.phase === "complete" && !(offline || fromQueue)) return;
     run.restMs -= dtMs;
     if (run.restMs > 0) return;
     if (run.phase === "rest") continueRaid(state, content);
@@ -473,6 +496,8 @@ export function tickRaid(state: GameState, content: ContentDB, dtMs: number, off
     const underLimit = !!def && run.restarts < def.maxAutoRestarts;
     if (underLimit && run.difficulty === "normal" && restartRaidRoom(state, content) === "ok") return;
     if (underLimit && run.difficulty === "heroic" && state.settings.raidAutoBuyRestart === true && restartRaidRoom(state, content) === "ok") return;
+    // claude:2026-10-26T00:50:00+02:00 — Heroisch ohne Auto-Kauf und ohne Warteschlange: offline nicht selbst entscheiden, der Spieler wählt (QA-Raid #8).
+    if (!fromQueue && run.difficulty === "heroic" && state.settings.raidAutoBuyRestart !== true) return;
     finishRun(state, content, "defeated", 0, nowMs);
   }
 }

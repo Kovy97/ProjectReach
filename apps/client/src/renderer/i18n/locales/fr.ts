@@ -671,7 +671,7 @@ export const fr: Record<string, string> = {
     "statdesc.mitigation": "Réduction des dégâts par l'armure de plaques. Rendements décroissants, plafonnée à 80 %.",
     "statdesc.dodge": "Chance fixe d'éviter totalement un coup (armure de cuir). Rendements décroissants, plafonnée à 40 %.",
     "statdesc.block": "Chance de bloquer un coup pour −85 % de dégâts (bouclier, mêlée à une main uniquement). Plafonnée à 50 %.",
-    "statdesc.wardPool": "Absorbe les dégâts avant les PV, saignement, brûlure et poison compris (armure d'étoffe). Tant qu'elle tient, les coups infligent 30 % de dégâts en moins. Chaque sort lancé recharge 4 % de votre barrière maximale.",
+    "statdesc.wardPool": "Absorbe les dégâts avant les PV, saignement, brûlure et poison compris (armure d'étoffe). La part d'un coup que la barrière encaisse est réduite de 30 %. Chaque sort lancé recharge 4 % de votre barrière maximale.",
     "statdesc.wardRegen": "La barrière se recharge automatiquement au fil du temps grâce à votre compétence Barrière. Incanter en posture Barrière augmente cela de 50 %.",
     "statdesc.spellReserve": "Les sorts ne coûtent rien. La Sagesse nourrit la réserve : +10 par point. Posture de concentration : +{focusPct} % de dégâts de sort. Posture de barrière : +{shieldPct} % de régénération de barrière.",
     "statdesc.armorPen": "Ignore une partie de l'atténuation des dégâts d'un ennemi blindé.",
@@ -1224,7 +1224,7 @@ export const fr: Record<string, string> = {
     "skillguide.farming": "Cultive herbes, récoltes et fibres pour l'Herboristerie et l'Artisanat.",
     "skillguide.foraging": "Récolte plantes sauvages, écorce et graines sur les terres.",
     "skillguide.thieving": "Détrousse des cibles et cambriole des lieux pour de l'or et du butin.",
-    "skillguide.leatherworking": "Tanne des peaux et fabrique des armures de cuir, des armures à distance et des arcs.",
+    "skillguide.leatherworking": "Tanne des peaux et fabrique des armures de cuir et à distance.",
     "skillguide.tailoring": "Tisse des fibres en tissu et coud des robes magiques et des capes pour chaque style.",
     "skillguide.jewelcrafting": "Sertit des gemmes dans des anneaux et amulettes qui améliorent les stats.",
     "skillguide.runecrafting": "Fabrique des runes élémentaires utilisées comme matériau d'enchantement et pour forger des armes magiques.",
@@ -2917,4 +2917,13 @@ export const fr: Record<string, string> = {
     "raid.setTier.gk_bleed.2": "Lame assermentée",
     "raid.setTier.gk_bleed.4": "Plaies ouvertes",
     "raid.setTier.gk_bleed.5": "Péage de sang",
+    // claude:2026-10-26T01:10:00+02:00 — Raid: Fliehen bestätigen (QA-Raid #2)
+    "raid.leave.confirmTitle": "Quitter le combat du raid ?",
+    "raid.leave.confirmBody": "Quitter le combat compte comme une défaite.",
+    // claude:2026-10-26T04:30:00+02:00
+    "skillguide.bowcraft": "Taille des hampes, empenne des flèches et fabrique arcs, cordes et carquois pour le combat à distance.",
+    "skillguide.hunting": "Pose des pièges appâtés dans les terrains de chasse où tu as combattu. Chaque prise rapporte cinq tirages du butin de la créature.",
+    // claude:2026-10-26T05:15:00+02:00
+    "orders.deliverInstances.title": "Remettre des pièces uniques ?",
+    "orders.deliverInstances.body": "Il manque des pièces ordinaires. {n} pièces uniques (avec suffixe ou runes) partent avec la commande, les plus faibles d'abord. Les pièces verrouillées restent.",
 };

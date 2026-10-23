@@ -46,6 +46,12 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  /* claude:2026-10-26T04:20:00+02:00 — Scroll-Vertrag der Contract-Wall (Eltern clippen, das Kind scrollt selbst; wie .quest-shelf-list).
+     Bei 1366×768 lagen die unteren Auftragskarten samt Knöpfen sonst unerreichbar unter dem Rahmen (QA-UI P1). */
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding-right: 4px;
 }
 .work-orders-lead,
 .work-orders-empty {

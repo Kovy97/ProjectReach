@@ -111,7 +111,9 @@ function ActionProgressBar(): JSX.Element {
     ? `${t("skill.doing")} · ${tr(action.name)}`
     : inCombat
       ? t("topbar.bar.inCombat")
-      : estatesNote ?? t("header.idle"); // claude:2026-10-23T19:10:00+02:00 — 1.4.0 LA
+      : estatesNote
+        ? "" // claude:2026-10-26T04:40:00+02:00 — die Ländereien-Zeile steht schon in der Aktivitätszeile, nicht doppelt (QA-UI P3)
+        : t("header.idle"); // claude:2026-10-23T19:10:00+02:00 — 1.4.0 LA
   const rightLabel = action
     ? primaryLoot
       ? `${t("skill.xpRate").replace("{n}", formatNum(xpPerHour))} · ${t("skill.itemRate").replace("{n}", formatNum(primaryLoot.perHour))}`

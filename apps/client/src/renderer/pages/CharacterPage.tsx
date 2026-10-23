@@ -342,7 +342,8 @@ export function CharacterPage(): JSX.Element {
     // claude:2026-10-23T23:10:00+02:00 — Bergung (1.4.0 BG): Einzelstücke immer mit Bestätigung (Runen gingen verloren).
     if (isSalvageable(content, inst.baseItemId)) {
       const locked = isSalvageLocked(state, inst.instanceId);
-      if (!locked) {
+      // claude:2026-10-26T05:05:00+02:00 — das Stapel-Schloss der Basis sperrt auch das Einzelstück (wie salvageInstance), QA-Bergung P3.
+      if (!locked && !isSalvageLocked(state, inst.baseItemId)) {
         acts.push({
           key: "salvage",
           label: t("salvage.action"),

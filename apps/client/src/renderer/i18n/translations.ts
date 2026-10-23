@@ -774,7 +774,7 @@ const en = {
     "statdesc.mitigation": "Damage reduction from Plate armor. Diminishing returns, capped at 80%.",
     "statdesc.dodge": "Flat chance to fully avoid a hit (Leather armor). Diminishing returns, capped at 40%.",
     "statdesc.block": "Chance to block a hit for -85% damage (Shield, one-handed melee only). Capped at 50%.",
-    "statdesc.wardPool": "Absorbs damage before HP, bleeding, burning and poison included (Cloth armor). While it stands, hits deal 30% less damage. Every spell you cast recharges 4% of your maximum Ward.",
+    "statdesc.wardPool": "Absorbs damage before HP, bleeding, burning and poison included (Cloth armor). Whatever part of a hit your Ward takes is reduced by 30%. Every spell you cast recharges 4% of your maximum Ward.",
     "statdesc.wardRegen": "Ward recharges automatically over time from your Warding skill. Casting in the Warding stance boosts this by 50%.",
     "statdesc.spellReserve": "Spells cost nothing to cast. Wisdom feeds the reserve: +10 per point. Focus stance: +{focusPct}% spell damage. Warding stance: +{shieldPct}% ward regeneration.",
     "statdesc.armorPen": "Ignores a portion of an armored enemy's damage mitigation.",
@@ -1481,7 +1481,7 @@ const en = {
     "skillguide.farming": "Grows herbs, crops & fibres for Herblore & Crafting.",
     "skillguide.foraging": "Gathers wild plants, bark & seeds from the land.",
     "skillguide.thieving": "Pickpockets targets & burgles locations for gold & loot.",
-    "skillguide.leatherworking": "Tans hides and crafts leather & ranged armour and bows.",
+    "skillguide.leatherworking": "Tans hides and crafts leather and ranged armour.",
     "skillguide.tailoring": "Weaves fibres into cloth and sews magic robes and capes for every style.",
     "skillguide.jewelcrafting": "Sets gems into rings and amulets that boost stats.",
     "skillguide.runecrafting": "Crafts elemental runes used as enchanting material and for forging magic weapons.",
@@ -3193,6 +3193,15 @@ const en = {
     "raid.setTier.gk_bleed.2": "Sworn Blade",
     "raid.setTier.gk_bleed.4": "Open Wounds",
     "raid.setTier.gk_bleed.5": "Blood Toll",
+    // claude:2026-10-26T01:10:00+02:00 — Raid: Fliehen bestätigen (QA-Raid #2)
+    "raid.leave.confirmTitle": "Leave the raid fight?",
+    "raid.leave.confirmBody": "Leaving the fight counts as falling.",
+    // claude:2026-10-26T04:30:00+02:00
+    "skillguide.bowcraft": "Carves shafts, fletches arrows and builds bows, bowstrings and quivers for ranged fighters.",
+    "skillguide.hunting": "Sets baited traps in hunting grounds you have fought in. Each catch brings home five rolls of the creature's loot.",
+    // claude:2026-10-26T05:15:00+02:00
+    "orders.deliverInstances.title": "Hand over unique pieces?",
+    "orders.deliverInstances.body": "There are not enough plain pieces. {n} unique pieces (with suffix or runes) go with the order, weakest first. Locked pieces stay.",
 };
 
 /** Schlüssel-Parität-Guard: jeder fehlende/zusätzliche Key gegenüber `en` ist ein tsc-Fehler. */
@@ -3495,7 +3504,7 @@ const de: Record<keyof typeof en, string> = {
     "bank.full": "Bank voll — gib einen Slot frei, um neue Item-Arten einzulagern.",
     "bank.noSlot": "Bank voll",
     "bank.inventory": "Inventar",
-    "bank.storage": "Lager",
+    "bank.storage": "Bank",
     "bank.depositAll": "Alles einlagern",
     "bank.stackAll": "Vorhandenes einlagern",
     "bank.stackAll.tip": "Legt alle Gegenstände ins Lager, die dort schon liegen",
@@ -3918,7 +3927,7 @@ const de: Record<keyof typeof en, string> = {
     "statdesc.mitigation": "Schadensreduktion durch Platten-Rüstung. Mit abnehmendem Ertrag, gedeckelt bei 80 %.",
     "statdesc.dodge": "Flache Chance, einen Treffer komplett zu vermeiden (Leder-Rüstung). Mit abnehmendem Ertrag, gedeckelt bei 40 %.",
     "statdesc.block": "Chance, einen Treffer um -85 % Schaden zu blocken (Schild, nur Einhand-Nahkampf). Gedeckelt bei 50 %.",
-    "statdesc.wardPool": "Absorbiert Schaden vor dem Leben, auch Blutung, Brand und Gift (Stoff-Rüstung). Solange er steht, richten Treffer 30 % weniger Schaden an. Jeder Zauber lädt 4 % deines maximalen Wards auf.",
+    "statdesc.wardPool": "Absorbiert Schaden vor dem Leben, auch Blutung, Brand und Gift (Stoff-Rüstung). Was der Ward von einem Treffer abfängt, ist um 30 % gedämpft. Jeder Zauber lädt 4 % deines maximalen Wards auf.",
     "statdesc.wardRegen": "Ward lädt sich automatisch über Zeit durch deine Abwehr-Fertigkeit auf. Zaubern in der Abwehr-Haltung erhöht dies um 50 %.",
     "statdesc.spellReserve": "Zauber kosten nichts. Weisheit füllt die Reserve: +10 je Punkt. Fokus-Haltung: +{focusPct} % Zauberschaden. Abwehr-Haltung: +{shieldPct} % Ward-Regeneration.",
     "statdesc.armorPen": "Ignoriert einen Teil der Schadensminderung eines gepanzerten Gegners.",
@@ -4562,7 +4571,7 @@ const de: Record<keyof typeof en, string> = {
     "skillguide.farming": "Anbau von Kräutern, Früchten & Fasern für Kräuterkunde & Handwerk.",
     "skillguide.foraging": "Sammelt Wildpflanzen, Rinden & Samen aus der Natur.",
     "skillguide.thieving": "Taschendiebstahl & Einbrüche liefern Gold und Beute.",
-    "skillguide.leatherworking": "Gerbt Häute und fertigt Leder- & Fernkampf-Rüstung sowie Bögen.",
+    "skillguide.leatherworking": "Gerbt Häute und fertigt Leder- und Fernkampf-Rüstung.",
     "skillguide.tailoring": "Webt Fasern zu Stoff und näht Magie-Roben und Umhänge für jeden Stil.",
     "skillguide.jewelcrafting": "Fasst Edelsteine in Ringe und Amulette für Stat-Boni.",
     "skillguide.runecrafting": "Stellt elementare Runen her — Verzauberungsmaterial und Grundlage für Magiewaffen.",
@@ -6217,6 +6226,15 @@ const de: Record<keyof typeof en, string> = {
     "raid.setTier.gk_bleed.2": "Geschworene Klinge",
     "raid.setTier.gk_bleed.4": "Offene Wunden",
     "raid.setTier.gk_bleed.5": "Blutzoll",
+    // claude:2026-10-26T01:10:00+02:00 — Raid: Fliehen bestätigen (QA-Raid #2)
+    "raid.leave.confirmTitle": "Raid-Kampf verlassen?",
+    "raid.leave.confirmBody": "Den Kampf zu verlassen zählt wie ein Tod.",
+    // claude:2026-10-26T04:30:00+02:00
+    "skillguide.bowcraft": "Schnitzt Schäfte, befiedert Pfeile und baut Bögen, Sehnen und Köcher für Fernkämpfer.",
+    "skillguide.hunting": "Stellt beköderte Fallen in Jagdgründen, in denen du gekämpft hast. Jeder Fang bringt fünf Beutewürfe der Kreatur.",
+    // claude:2026-10-26T05:15:00+02:00
+    "orders.deliverInstances.title": "Einzelstücke abgeben?",
+    "orders.deliverInstances.body": "Es fehlen gewöhnliche Stücke. {n} Einzelstücke (mit Suffix oder Runen) gehen mit, die schwächsten zuerst. Gesperrte Teile bleiben.",
 };
 
 // `en` ist Pflicht (Referenz-/Fallback-Sprache, s. `useI18n().t`); die übrigen 5 Locales

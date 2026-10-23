@@ -51,7 +51,7 @@ THE RANGED REWORK
 
 MAGES IN CLOTH
 
-- Ward now holds up. While it stands, hits deal 30% less damage.
+- Ward now holds up. Whatever part of a hit your Ward takes is reduced by 30%.
 - Every spell you cast recharges 4% of your maximum Ward, instead of a small fixed amount.
 - Bleeding, burning and poison now hit your Ward first and only then your health.
 - Mages in cloth can now last through long boss fights without switching to plate.

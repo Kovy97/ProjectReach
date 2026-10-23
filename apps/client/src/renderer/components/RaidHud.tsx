@@ -53,8 +53,8 @@ export function RaidBossBar({ state, monster }: { state: GameState; monster: Mon
           <span
             key={ph.logKey}
             className={`raid-bossbar-mark${i < phaseIdx ? " passed" : ""}`}
-            style={{ left: `${ph.atHpPct}%` }}
-            title={t("raid.hud.phaseMark").replace("{pct}", String(ph.atHpPct))}
+            style={{ left: `${ph.atHpPct * 100}%` }} // claude:2026-10-26T01:05:00+02:00 — atHpPct ist ein Anteil 0..1 (QA-Raid #1)
+            title={t("raid.hud.phaseMark").replace("{pct}", String(Math.round(ph.atHpPct * 100)))}
           />
         ))}
       </div>

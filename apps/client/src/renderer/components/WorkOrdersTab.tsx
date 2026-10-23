@@ -10,6 +10,9 @@ import {
   deliverWorkOrder,
   enqueueAction,
   eventRngOf,
+  itemCount,
+  tavernExpectedQty,
+  tavernMainOutput,
   workOrderProgress,
 } from "@hearthforge/engine";
 import type { WorkOrder } from "@hearthforge/shared";
@@ -17,6 +20,7 @@ import { ORDER_MAX_OPEN } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { ItemCell } from "./ItemCell";
+import { ConfirmModal, type ConfirmRequest } from "./ConfirmModal"; // claude:2026-10-26T05:15:00+02:00 — Einzelstücke nur nach Rückfrage (Spec §4.3)
 import { formatNum } from "../util/format";
 import { fillEventText, orderCustomer } from "../ordersApi";
 import { getPortrait } from "../portraits";
@@ -61,6 +65,7 @@ export function WorkOrdersTab(): JSX.Element {
   const state = useGameState();
   const { t, tr } = useI18n();
   const [msg, setMsg] = useState<string | null>(null);
+  const [confirm, setConfirm] = useState<ConfirmRequest | null>(null);
   const o = state.workOrders;
   const offer = o?.offer ?? null;
   const open = o?.open ?? [];
@@ -112,8 +117,10 @@ export function WorkOrdersTab(): JSX.Element {
                   type="button"
                   className="shop-citadel-btn"
                   onClick={() => {
-                    const main = content.actions[order.actionId]?.loot[0];
-                    const perRun = main ? Math.max(1e-9, ((main.min + main.max) / 2) * Math.min(1, main.chance)) : 1;
+                    // claude:2026-10-26T05:00:00+02:00 — die Beutezeile des Auftrags-Items zählt, nicht loot[0] (QA-Ereignisse P3)
+                    const action = content.actions[order.actionId];
+                    const roll = action ? action.loot.find((l) => l.itemId === order.itemId) ?? tavernMainOutput(content, action) : null;
+                    const perRun = roll ? tavernExpectedQty(roll) : 1;
                     if (enqueueAction(state, content, order.actionId, Math.max(1, Math.ceil((p.count - p.done) / perRun)))) setMsg(t("orders.queued"));
                   }}
                 >
@@ -125,13 +132,28 @@ export function WorkOrdersTab(): JSX.Element {
                 className="btn-iron"
                 disabled={!canDeliver}
                 onClick={() => {
-                  const r = deliverWorkOrder(state, content, order.id, eventRngOf(state));
-                  if (r.reason !== "ok") return;
-                  const crate = r.crateItemId ? content.items[r.crateItemId] : undefined;
-                  setMsg(
-                    t("orders.delivered").replace("{gold}", formatNum(r.gold)).replace("{xp}", formatNum(r.xp))
-                      + (crate ? ` · ${t("orders.crate").replace("{item}", tr(crate.name))}` : ""),
-                  );
+                  const deliver = (): void => {
+                    const r = deliverWorkOrder(state, content, order.id, eventRngOf(state));
+                    if (r.reason !== "ok") return;
+                    const crate = r.crateItemId ? content.items[r.crateItemId] : undefined;
+                    setMsg(
+                      t("orders.delivered").replace("{gold}", formatNum(r.gold)).replace("{xp}", formatNum(r.xp))
+                        + (crate ? ` · ${t("orders.crate").replace("{item}", tr(crate.name))}` : ""),
+                    );
+                  };
+                  // claude:2026-10-26T05:15:00+02:00 — reichen gewöhnliche Stücke nicht, gehen Einzelstücke (Suffix/Runen) mit: erst fragen (Spec §4.3).
+                  const plain = itemCount(state.inventory, order.itemId) + (state.bank[order.itemId] ?? 0);
+                  const fromInstances = order.count - plain;
+                  if (fromInstances > 0) {
+                    setConfirm({
+                      title: t("orders.deliverInstances.title"),
+                      body: t("orders.deliverInstances.body").replace("{n}", formatNum(fromInstances)),
+                      confirmLabel: t("orders.deliver"),
+                      onConfirm: deliver,
+                    });
+                    return;
+                  }
+                  deliver();
                 }}
               >
                 {t("orders.deliver")}
@@ -141,6 +163,7 @@ export function WorkOrdersTab(): JSX.Element {
         );
       })}
       {msg && <p className="work-orders-msg">{msg}</p>}
+      <ConfirmModal request={confirm} onClose={() => setConfirm(null)} />
     </div>
   );
 }

@@ -660,7 +660,7 @@ export const ptBR: Record<string, string> = {
     "statdesc.mitigation": "Redução de dano de armadura de Placa. Retornos decrescentes, limitada a 80%.",
     "statdesc.dodge": "Chance fixa de evitar totalmente um golpe (armadura de Couro). Retornos decrescentes, limitada a 40%.",
     "statdesc.block": "Chance de bloquear um golpe reduzindo o dano em 85% (Escudo, apenas corpo a corpo de uma mão). Limitada a 50%.",
-    "statdesc.wardPool": "Absorve dano antes dos PV, incluindo sangramento, queimadura e veneno (armadura de Tecido). Enquanto ela se mantém, os golpes causam 30% menos dano. Cada feitiço que você conjura recarrega 4% da sua guarda máxima.",
+    "statdesc.wardPool": "Absorve dano antes dos PV, incluindo sangramento, queimadura e veneno (armadura de Tecido). A parte de um golpe que a guarda absorve é reduzida em 30%. Cada feitiço que você conjura recarrega 4% da sua guarda máxima.",
     "statdesc.wardRegen": "A guarda recarrega automaticamente com o tempo pela sua perícia de Guarda arcana. Conjurar na postura de Guarda Arcana aumenta isso em 50%.",
     "statdesc.spellReserve": "Seus feitiços não custam nada. A Sabedoria alimenta a reserva: +10 por ponto. Postura de foco: +{focusPct}% de dano mágico. Postura de guarda arcana: +{shieldPct}% de regeneração de guarda.",
     "statdesc.armorPen": "Ignora uma parte da mitigação de dano de um inimigo blindado.",
@@ -1204,7 +1204,7 @@ export const ptBR: Record<string, string> = {
     "skillguide.farming": "Cultiva ervas, plantações & fibras para Herbologia & Artesanato.",
     "skillguide.foraging": "Coleta plantas silvestres, cascas & sementes da terra.",
     "skillguide.thieving": "Furta alvos & assalta locais por ouro & saque.",
-    "skillguide.leatherworking": "Curte peles e fabrica armaduras de couro & à distância, além de arcos.",
+    "skillguide.leatherworking": "Curte peles e fabrica armaduras de couro e à distância.",
     "skillguide.tailoring": "Tece fibras em tecido e costura mantos mágicos e capas para todo estilo.",
     "skillguide.jewelcrafting": "Engasta gemas em anéis e amuletos que aumentam atributos.",
     "skillguide.runecrafting": "Cria runas elementais usadas como material de encantamento e para forjar armas mágicas.",
@@ -2871,4 +2871,13 @@ export const ptBR: Record<string, string> = {
     "raid.setTier.gk_bleed.2": "Lâmina Juramentada",
     "raid.setTier.gk_bleed.4": "Feridas Abertas",
     "raid.setTier.gk_bleed.5": "Pedágio de Sangue",
+    // claude:2026-10-26T01:10:00+02:00 — Raid: Fliehen bestätigen (QA-Raid #2)
+    "raid.leave.confirmTitle": "Sair do combate da incursão?",
+    "raid.leave.confirmBody": "Sair do combate conta como cair.",
+    // claude:2026-10-26T04:30:00+02:00
+    "skillguide.bowcraft": "Entalha hastes, empluma flechas e fabrica arcos, cordas e aljavas para o combate à distância.",
+    "skillguide.hunting": "Arma armadilhas com isca em territórios onde você lutou. Cada captura traz cinco rolagens do saque da criatura.",
+    // claude:2026-10-26T05:15:00+02:00
+    "orders.deliverInstances.title": "Entregar peças únicas?",
+    "orders.deliverInstances.body": "Faltam peças comuns. {n} peças únicas (com sufixo ou runas) vão junto, as mais fracas primeiro. Peças travadas ficam.",
 };

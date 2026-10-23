@@ -450,6 +450,9 @@ function buildLedger(state: GameState, content: ContentDB): Ledger {
   }
   for (const inst of state.inventory?.instances ?? []) addInstance(inst, "inventory");
   for (const [id, qty] of Object.entries(state.bank ?? {})) addPlain(id, positiveInt(qty), "bank");
+  // claude:2026-10-26T03:45:00+02:00 — geladene Pfeile sind Lagerware: als Truhen-Kandidat wie ein Lagerstapel (QA-Fernkampf P3).
+  const q = state.character.quiver;
+  if (q) addPlain(q.itemId, positiveInt(q.qty), "bank");
   for (const inst of state.bankInstances ?? []) addInstance(inst, "bank");
   return { plain, plainLocation, stackable, instances };
 }
