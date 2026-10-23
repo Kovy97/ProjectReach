@@ -11,6 +11,8 @@
   abgenommen. Abschnitt jetzt „Gobkha'raz-Machart: königliche Meisterarbeit“: Goblinformen plus Prunk (Blickfang je Teil,
   Gravur, Filigran, Reliefs), kein Flickwerk; Maßstab sichtbar über `voidweave_vestment`/`voidhide_body`/`godiron_platebody`.
   Nachricht „Runde 3“ oben im Dokument. <!-- claude:2026-10-26T06:30:00+02:00 -->
+- **Chef-Quiz 26.10.:** Mythisch bleibt streng (W5), Heroisch-Tod wartet offline (R3), Zerlegen auch in der Bank (BG1, gebaut),
+  16 Raid-Einzelstücke ebenfalls prunkvoll-goblinisch neu beschrieben (AS1). Commit `9f743a4`. <!-- claude:2026-10-26T07:15:00+02:00 -->
 - **QA-Runde:** 7 Prüf-Agenten, alle Befunde P1–P3 zentral behoben (Liste im Changelog `design/1.4.0-changelog.md`, Abschnitt
   „QA-Runde“). Neue Regressionstests `packages/*/src/qa-*.test.ts` (Befund-Tests auf Soll umgestellt).
 - **Ward-Fix mit Balance-Folge:** Dämpfung nur auf den Teil, den der Ward trägt (`combat.ts` STEP 7). Mythisch für reine
