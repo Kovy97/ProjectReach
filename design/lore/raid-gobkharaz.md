@@ -1,8 +1,9 @@
 # Raid-Lore — Die Hallen von Gobkha'raz (Halls of Gobkha'raz)
 
 <!-- claude:2026-10-23T15:32:00+02:00 -->
+<!-- claude:2026-10-24T22:15:00+02:00 — Gate L entschieden (Chef-Delegation 24.10.2026); Übersetzungen ES/FR/PT-BR/RU/ZH in raid-gobkharaz-i18n.md; Glossar-Nachtrag § 12 in weltlore-grim-reach.md § 9 eingepflegt -->
 
-Lore-Dev, 2026-10-23. Auftrag: `design/1.4.0-goal.md` Welle 0 (Gate L) und Welle 4 (R1–R10, Annahmen A5/A7). Kanon: `weltlore-grim-reach.md` § 1.3–1.5 (Fremder, geliehenes Feuer, Götzeneisen), § 3.4/3.5 (Goblins, Mux), § 4.2/§ 5.1/§ 6 (Mark, Kriegsbande, Nutznießer), § 8 (Sprachfarbe); `aschechronik-spec.md` Kap. 4, 5, 20, 21; `band2-auftakt-1.3.0.md`; `player-character-codex.md` § 2.4 (Goblin ~1,50 m). **Status: Chef-Gate L.** Erst nach dem Nicken folgen die übrigen fünf Sprachen und die Content-Übernahme.
+Lore-Dev, 2026-10-23. Auftrag: `design/1.4.0-goal.md` Welle 0 (Gate L) und Welle 4 (R1–R10, Annahmen A5/A7). Kanon: `weltlore-grim-reach.md` § 1.3–1.5 (Fremder, geliehenes Feuer, Götzeneisen), § 3.4/3.5 (Goblins, Mux), § 4.2/§ 5.1/§ 6 (Mark, Kriegsbande, Nutznießer), § 8 (Sprachfarbe); `aschechronik-spec.md` Kap. 4, 5, 20, 21; `band2-auftakt-1.3.0.md`; `player-character-codex.md` § 2.4 (Goblin ~1,50 m). **Status: Gate L ENTSCHIEDEN am 24.10.2026** („Entscheide du das Beste“, `1.4.0-goal.md` Chef-Entscheide vom 24.10.2026, Zeile Gate L). Die Namen und Texte dieses Dokuments sind damit Kanon; die fünf weiteren Sprachen liegen in **`design/lore/raid-gobkharaz-i18n.md`** (gleiche Paragraphen-Nummern), der Glossar-Nachtrag § 12 steht jetzt auch in `weltlore-grim-reach.md` § 9.
 
 Regeln für alle Spieltexte in dieser Datei: natürliche Prosa, höchstens ein Gedankenstrich je Text (hier: keiner), keine Emojis. **Kanon-Regel für den Raid:** Der Wächter darf Drazhan beim Namen nennen (der Raid öffnet nach Kapitel 20). Die Goblins kennen den Namen nicht; sie sagen immer **„der Gläubiger“ / „the Creditor“**, nie „Drazhan“, nie „der Fremde“.
 
@@ -106,13 +107,16 @@ Regeln für alle Spieltexte in dieser Datei: natürliche Prosa, höchstens ein G
 
 ---
 
-## Offen für den Chef
+## Entschieden (Gate L, Chef-Delegation 24.10.2026)
 
-1. **Raum 4 auf Englisch:** „Shrine of the Borrowed Fire“ statt „Sanctum“, damit nichts mit „Sanctum of the Last Idol“ kollidiert. Deutsch bleibt „Heiligtum“. Einverstanden?
-2. **Rakkzuls vier Phasen:** Vorschlag unten (§ 5.5): 75 % Vrikkas Ward, 50 % Kroggs „jeder 4. Angriff ×3“, 25 % Ushkas Doppelangriffe mit Blutung, 10 % Wut mit Zil'gaths Brand. Die Zuordnung ist mein Vorschlag; combat-dev/balance dürfen tauschen, die Ansagen sind so geschrieben, dass sie jede Reihenfolge der vier Vorgänger tragen.
-3. **Brücke nach Drazhan:** Die Einladung nennt Drazhan offen (Raid öffnet nach Kapitel 20), lässt den Wächter die Gläubigerhälfte eines Kerbholzes unter den zurückgelassenen Schätzen finden und Mux den Namen bestätigen. Empfehlung: **kein neues Chronik-Kapitel** (Band 2 läuft in der Götzenhalle), der Einladungstext steht auf der Raid-Karte. Falls der Chef ein Kapitel 28 will, liefere ich es nach.
-4. **Zwei Umbenennungen gegenüber den Arbeitstiteln:** Raum-5-Einheit „Kronwächter / Crownguard“ statt „Königsgardist“ (passt zum Set „Blutschwur der Kronwache“); Ushkas Säbel „Grubenzahn / Pit Fang“ statt „Reißzahn“ (Kollision mit dem Bestandsitem „Leitwolf-Reißzahn / Alpha Fang“).
-5. **Farbe des geliehenen Feuers:** Ich schlage **bleich, fast weiß, rauchlos** vor, und als Signatur: **Schatten bewegen sich in seinem Licht nicht** (Echo auf Drazhans Schatten in der Schlackengrube, Bibel § 2). Das betrifft Kulisse 4 und 5 und alle Fel-Items. Alternative wäre ein klassisches Grün; das wäre erkennbar geliehen aus anderen Spielen.
+Der Chef hat am 24.10.2026 alle fünf Punkte an Claude delegiert („Entscheide du das Beste“); die Empfehlungen gelten damit als Entscheid (`design/1.4.0-goal.md`, Chef-Entscheide vom 24.10.2026, Gate L). Der ursprüngliche Wortlaut bleibt als Historie stehen.
+
+1. **ENTSCHIEDEN: Raum 4 auf Englisch „Shrine of the Borrowed Fire“, Deutsch „Heiligtum“.** Keine Kollision mit „Sanctum of the Last Idol“. In ES/FR/PT-BR/RU/ZH nutzt der Raum bewusst Kapellen-/Altar-Wörter (Altar · Chapelle · Capela · Часовня · 圣坛), weil „Santuario/Sanctuaire/Santuário/Святилище/圣所“ dort schon das Sanktum des Letzten Götzen sind (`raid-gobkharaz-i18n.md` § 0).
+   - *Ursprüngliche Frage:* „Shrine of the Borrowed Fire“ statt „Sanctum“, damit nichts mit „Sanctum of the Last Idol“ kollidiert. Deutsch bleibt „Heiligtum“. Einverstanden?
+2. **ENTSCHIEDEN: Rakkzuls vier Phasen wie in § 5.5** (75 % Vrikkas Ward, 50 % Kroggs „jeder 4. Angriff ×3“, 25 % Ushkas Doppelangriffe mit Blutung, 10 % Wut mit Zil'gaths Brand). combat-dev/balance dürfen die Reihenfolge tauschen; die Ansagen tragen jede Reihenfolge der vier Vorgänger.
+3. **ENTSCHIEDEN: Kein neues Chronik-Kapitel.** Die Einladung (§ 3) steht auf der Raid-Karte, nennt Drazhan offen, lässt den Wächter die Gläubigerhälfte des Kerbholzes finden und Mux den Namen bestätigen. Band 2 läuft weiter in der Götzenhalle.
+4. **ENTSCHIEDEN: „Kronwächter / Crownguard“** (statt „Königsgardist“) und **„Grubenzahn / Pit Fang“** (statt „Reißzahn“, Kollision mit „Leitwolf-Reißzahn / Alpha Fang“).
+5. **ENTSCHIEDEN: Das geliehene Feuer ist bleich, fast weiß, rauchlos, und bewegt keine Schatten.** Nicht grün. Gilt für Kulisse 4 und 5, Zil'gath, Felakolyth, Glutwächter und alle Fel-Items. Bild-Briefings in § 4.4/§ 4.5/§ 5.4 sind darauf schon geschrieben. Dazu aus dem Chef-Entscheid: Mark-Banner rotbraun, die Feste liegt unter dem Wall der Mark.
 
 ---
 

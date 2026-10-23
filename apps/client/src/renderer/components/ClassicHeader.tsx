@@ -4,6 +4,7 @@
  * App.tsx von 1.2.3 (Commit ec86af5), unverändert übernommen. Die Reforged-Oberfläche nutzt stattdessen die
  * kompakte Statusleiste (hs-strip) in App.tsx. Styles: styles/classic-chrome.css (.layout--classic).
  */
+import { SkillEventChip } from "./SkillEventChip"; // claude:2026-10-25T01:30:00+02:00
 import { EstatesNote, IdleOrEstates, useEstatesNote } from "./EstatesNote"; // claude:2026-10-23T19:10:00+02:00 — Ländereien (1.4.0)
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import { content } from "@hearthforge/content";
@@ -518,6 +519,7 @@ function GameStats({
         <span className="activity-name">{a ? tr(a.name) : ""}</span>
         {/* claude:2026-10-23T19:10:00+02:00 — 1.4.0 LA: Ländereien als Zusatz. */}
         <EstatesNote className="muted" />
+        <SkillEventChip /> {/* claude:2026-10-25T01:30:00+02:00 — Ereignis/Angebot (1.4.0 EV/AU) */}
       </span>
     );
   } else if (lastStopActionId) {
@@ -534,7 +536,8 @@ function GameStats({
     );
   } else {
     // claude:2026-10-23T19:10:00+02:00 — 1.4.0 LA: nie „Untätig“, solange Felder oder Fallen arbeiten.
-    activity = <IdleOrEstates idleText={t("header.idle")} className="activity muted" />;
+    // claude:2026-10-25T02:30:00+02:00 — Ereignis-Chip auch im Leerlauf (1.4.0 EV/AU)
+    activity = <span className="activity"><IdleOrEstates idleText={t("header.idle")} className="muted" /><SkillEventChip /></span>;
   }
 
   const invFull = used >= cap;

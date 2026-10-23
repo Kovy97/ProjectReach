@@ -1,3 +1,7 @@
+import { EVENT_ICON, getEventImage } from "../eventArt"; // claude:2026-10-25T01:30:00+02:00
+import { eventCardValues, fillEventText, orderCustomer } from "../ordersApi";
+import { requestQuestsTab } from "../navigation";
+import { jumpToPage } from "../util/monsterJump";
 import type { GameState } from "@hearthforge/shared";
 import { useEffect, useRef, useState } from "react";
 import { content } from "@hearthforge/content";
@@ -80,7 +84,7 @@ interface Toast {
   iconUrl?: string | null;
   title: string;
   detail: string;
-  kind: "level" | "total" | "drop" | "achievement" | "pet" | "rare" | "mastery" | "elite";
+  kind: "level" | "total" | "drop" | "achievement" | "pet" | "rare" | "mastery" | "elite" | "event"; // claude:2026-10-25T01:30:00+02:00 — + Ereigniskarte (1.4.0 EV)
   /** Chef 27.08.2026: kleine Zeile unten rechts im Popup, z. B. die Dropchance eines seltenen Funds. */
   note?: string;
   /** Nur bei kind "rare": Item-Rarity, damit legendary den Jackpot-Look eine Spur kräftiger bekommt. */
@@ -1404,6 +1408,55 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.totalTicks]);
+
+  // claude:2026-10-25T01:30:00+02:00 — Zufallsereignisse (1.4.0 EV/AU): jede neue Logbuch-Nummer meldet sich als Ereigniskarte. Kundschaft
+  // führt per Klick zum Reiter „Arbeitsaufträge“. Erster Render merkt sich nur den Stand (kein Alt-Toast nach dem Laden).
+  const eventSeqRef = useRef<number | null>(null);
+  useEffect(() => {
+    const ev = state.skillEvents;
+    if (!ev) return;
+    if (eventSeqRef.current === null) {
+      eventSeqRef.current = ev.seq;
+      return;
+    }
+    if (ev.seq <= eventSeqRef.current) return;
+    const fresh = ev.log.filter((e) => e.seq > eventSeqRef.current!).reverse();
+    eventSeqRef.current = ev.seq;
+    for (const e of fresh) {
+      const vals = eventCardValues(e.id);
+      const item = e.itemId ? content.items[e.itemId] : undefined;
+      const offer = state.workOrders?.offer;
+      const who = e.id === "customer" && offer ? orderCustomer(content, offer).name : null;
+      const detail = fillEventText(t(`events.${e.id}.card`), {
+        n: e.id === "storm_fell" ? formatNum(e.qty ?? 0) : vals.n,
+        min: vals.min,
+        pct: vals.pct,
+        qty: e.qty ?? 0,
+        item: item ? tr(item.name) : "",
+        name: who ? tr(who) : t("orders.guild.name"),
+        skill: content.skills[e.skill] ? tr(content.skills[e.skill]!.name) : "",
+      });
+      const isOffer = e.id === "customer";
+      push(
+        {
+          kind: "event",
+          priority: "high",
+          icon: EVENT_ICON[e.id],
+          iconUrl: getEventImage(e.id),
+          title: t(`events.${e.id}.name`),
+          detail: isOffer ? `${detail} ${t("orders.toast.click")}` : detail,
+          onClick: isOffer
+            ? () => {
+                requestQuestsTab("orders");
+                jumpToPage("quests");
+              }
+            : undefined,
+        },
+        8000,
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.skillEvents?.seq]);
 
   if (toasts.length === 0) return <></>;
   return (

@@ -1,3 +1,4 @@
+import { SkillEventChip } from "./components/SkillEventChip"; // claude:2026-10-25T01:30:00+02:00
 import { EstatesNote, IdleOrEstates } from "./components/EstatesNote"; // claude:2026-10-23T19:10:00+02:00 — Ländereien (1.4.0)
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import { content } from "@hearthforge/content";
@@ -635,6 +636,7 @@ function GameStats({
         <span className="hs-act-name">{a ? tr(a.name) : ""}</span>
         {/* claude:2026-10-23T19:10:00+02:00 — 1.4.0 LA: Ländereien als Zusatz („ · Nebenbei: 6 Felder“). */}
         <EstatesNote className="hs-muted" />
+        <SkillEventChip /> {/* claude:2026-10-25T01:30:00+02:00 — Ereignis/Angebot (1.4.0 EV/AU) */}
       </span>
     );
   } else if (lastStopActionId) {
@@ -651,7 +653,8 @@ function GameStats({
     );
   } else {
     // claude:2026-10-23T19:10:00+02:00 — 1.4.0 LA: nie „Untätig“, solange Felder oder Fallen arbeiten.
-    activity = <IdleOrEstates idleText={t("header.idle")} className="hs-line hs-act-text hs-muted" />;
+    // claude:2026-10-25T02:30:00+02:00 — Ereignis-Chip auch im Leerlauf (1.4.0 EV/AU)
+    activity = <span className="hs-line hs-act-text"><IdleOrEstates idleText={t("header.idle")} className="hs-muted" /><SkillEventChip /></span>;
   }
 
   const invFull = used >= cap;

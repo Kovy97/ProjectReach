@@ -23153,6 +23153,79 @@ export const content: ContentDB = {
   // kill/dungeon/champion nutzen `minutes` NICHT für Menge/XP (feste Tabellen, Spec §4), das Feld
   // ist aber Pflicht im Typ — hier auf die run-Skala gesetzt). `line` mit {count} (Pflicht außer
   // dungeon/champion), {target} (Item-/Aktionsname) und {zone} (nur kill).
+  // claude:2026-10-25T02:10:00+02:00 — Auftraggeber der Arbeitsaufträge für Berufe ohne Tavernen-Gast (1.4.0 AU; Texte design/lore/1.4.0-ereignisse-auftraege.md §3).
+  orderCustomers: [
+    {
+      id: "jorun",
+      name: { en: "Jorun Bannerstitch", de: "Jorun Bannernaht" },
+      race: "human",
+      sex: "f",
+      role: { en: "Tailor", de: "Schneiderin", es: "Sastra", fr: "Couturière", "pt-BR": "Alfaiate", ru: "Портниха", zh: "裁缝" },
+      skill: "tailoring",
+      greeting: {
+        en: "I stitched banners for the march before it was abandoned. These days I stitch for people who stay.",
+        de: "Ich hab Banner für die Mark genäht, bevor man sie aufgab. Heute näh ich für Leute, die bleiben.",
+        es: "Cosía estandartes para la marca antes de que la abandonaran. Ahora coso para gente que se queda.",
+        fr: "Je cousais des bannières pour la marche avant qu'on l'abandonne. Aujourd'hui, je couds pour des gens qui restent.",
+        "pt-BR": "Eu costurava estandartes para a marca antes de a abandonarem. Hoje costuro para gente que fica.",
+        ru: "Я шила знамёна для марки, пока её не оставили. Теперь шью для тех, кто остаётся.",
+        zh: "边境被放弃之前，我为它缝制旗帜。如今我为留下来的人缝衣。",
+      },
+      produceLine: {
+        en: "Sew {count} {target} for me. Double the seams; the Reach is hard on cloth.",
+        de: "Näh {count} {target} für mich. Doppelte Nähte, das Reach ist hart zu Stoff.",
+        es: "Cóseme {count} {target}. Costuras dobles; el Confín trata mal a la tela.",
+        fr: "Couds-moi {count} {target}. Double les coutures ; le Domaine est dur avec le tissu.",
+        "pt-BR": "Costure {count} {target} para mim. Costuras duplas; o Confim é duro com o tecido.",
+        ru: "Сшей мне {count} {target}. Двойные швы: Предел не щадит ткань.",
+        zh: "替我缝制{count}份{target}。缝双道线，边域对布料很不客气。",
+      },
+      deliverLine: {
+        en: "Bring me {count} {target}. I have more orders than bolts.",
+        de: "Bring mir {count} {target}. Ich hab mehr Aufträge als Ballen.",
+        es: "Tráeme {count} {target}. Tengo más encargos que rollos de tela.",
+        fr: "Apporte-moi {count} {target}. J'ai plus de commandes que de rouleaux.",
+        "pt-BR": "Traga-me {count} {target}. Tenho mais encomendas do que rolos de pano.",
+        ru: "Принеси мне {count} {target}. Заказов у меня больше, чем рулонов.",
+        zh: "给我带{count}份{target}。我的订单比布匹还多。",
+      },
+    },
+    {
+      id: "caedren",
+      name: { en: "Caedren Yewhand", de: "Caedren Eibenhand" },
+      race: "elf",
+      sex: "m",
+      role: { en: "Fletcher", de: "Bogner", es: "Flechero", fr: "Facteur d'arcs", "pt-BR": "Flecheiro", ru: "Лучный мастер", zh: "制弓匠" },
+      skill: "bowcraft",
+      greeting: {
+        en: "My shoulder gave out before my eye did. So now I build bows instead of drawing them.",
+        de: "Die Schulter hat vor dem Auge nachgegeben. Also bau ich jetzt Bögen, statt sie zu spannen.",
+        es: "El hombro me falló antes que el ojo. Así que ahora hago arcos en vez de tensarlos.",
+        fr: "L'épaule a lâché avant l'œil. Alors maintenant je fabrique les arcs au lieu de les bander.",
+        "pt-BR": "O ombro falhou antes do olho. Então agora eu faço arcos em vez de puxá-los.",
+        ru: "Плечо сдало раньше глаза. Так что теперь я делаю луки, а не натягиваю их.",
+        zh: "肩膀比眼睛先垮了。所以我现在做弓，不再拉弓。",
+      },
+      produceLine: {
+        en: "Build {count} {target}. I'll draw every one of them myself, shoulder or no shoulder.",
+        de: "Bau {count} {target}. Ich spann jeden selbst, Schulter hin oder her.",
+        es: "Haz {count} {target}. Los tensaré todos yo mismo, con hombro o sin él.",
+        fr: "Fabrique {count} {target}. Je les banderai tous moi-même, épaule ou pas.",
+        "pt-BR": "Faça {count} {target}. Vou puxar cada um eu mesmo, com ombro ou sem.",
+        ru: "Сделай {count} {target}. Каждый натяну сам, с плечом или без.",
+        zh: "做{count}份{target}。每一把我都要亲手拉一拉，不管这肩膀答不答应。",
+      },
+      deliverLine: {
+        en: "Bring me {count} {target}. The Wildwood hunters go through them faster than I can feather.",
+        de: "Bring mir {count} {target}. Die Jäger im Wildwald verschießen sie schneller, als ich befiedern kann.",
+        es: "Tráeme {count} {target}. Los cazadores del Bosque Salvaje las gastan más rápido de lo que yo emplumo.",
+        fr: "Apporte-moi {count} {target}. Les chasseurs de Bois-Sauvage les usent plus vite que je n'empenne.",
+        "pt-BR": "Traga-me {count} {target}. Os caçadores da Floresta Selvagem gastam mais rápido do que eu consigo empenar.",
+        ru: "Принеси мне {count} {target}. Охотники из Дикого леса расходуют их быстрее, чем я оперяю.",
+        zh: "给我带{count}份{target}。荒林的猎人用得比我粘羽毛还快。",
+      },
+    },
+  ],
   tavernTasks: [
     // ── Viktor (slayer) ──────────────────────────────────────────────────
     {

@@ -231,7 +231,8 @@ export function getSidebarPages(): NavPage[] {
  * (Sidebar/TopBar-Klick) ruft `consumeRequestedQuestsTab` nie auf — die bestehende Vorauswahl
  * (aktives Chronik-Kapitel → "chronicle", sonst "daily") bleibt für sie unverändert.
  */
-export type QuestNavTab = "chronicle" | "contracts" | "daily" | "shop";
+// claude:2026-10-25T01:30:00+02:00 — "orders": Arbeitsaufträge (1.4.0 AU).
+export type QuestNavTab = "chronicle" | "contracts" | "daily" | "shop" | "orders";
 let pendingQuestsTab: QuestNavTab | null = null;
 /** Von jeder Seite aus aufrufbar, direkt vor `onNavigate("quests")`. */
 export function requestQuestsTab(tab: QuestNavTab): void {

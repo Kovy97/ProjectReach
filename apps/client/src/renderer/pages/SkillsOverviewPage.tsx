@@ -1,3 +1,4 @@
+import { SkillEventLog } from "../components/SkillEventLog"; // claude:2026-10-25T01:30:00+02:00
 import { useState } from "react";
 import { content } from "@hearthforge/content";
 import { computeStats, levelFromXp, xpForLevel } from "@hearthforge/engine";
@@ -173,6 +174,9 @@ export function SkillsOverviewPage({
           </div>
         </header>
       </section>
+
+      {/* claude:2026-10-25T01:30:00+02:00 — Logbuch der letzten Ereignisse (1.4.0 EV) */}
+      <SkillEventLog />
 
       {/* General Skills */}
       <section className="panel">

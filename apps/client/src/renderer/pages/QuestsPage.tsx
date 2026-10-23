@@ -1,3 +1,4 @@
+import { WorkOrdersTab } from "../components/WorkOrdersTab"; // claude:2026-10-25T01:30:00+02:00
 import { useEffect, useRef, useState } from "react";
 import { content } from "@hearthforge/content";
 import {
@@ -1219,7 +1220,7 @@ const STATUS_ORDER: QuestStatus[] = ["completed", "active", "locked", "claimed"]
 // (die normale, nicht-tägliche Auftragsliste — z.B. "Goblin-Blut", "In den Wald") jetzt intern
 // "contracts" und zeigt sich als "quests.daily.tab.story" == "Contracts"/"Aufträge" (Wert
 // angepasst, Key unverändert, um den Diff klein zu halten).
-type QuestTab = "chronicle" | "contracts" | "daily" | "shop";
+type QuestTab = "chronicle" | "contracts" | "daily" | "shop" | "orders"; // claude:2026-10-25T01:30:00+02:00 — + Arbeitsaufträge (1.4.0 AU)
 
 export function QuestsPage(): JSX.Element {
   const state = useGameState();
@@ -1347,6 +1348,17 @@ export function QuestsPage(): JSX.Element {
           )}
         </button>
         <button
+          className={`quests-tab-btn${tab === "orders" ? " quests-tab-btn--active" : ""}`}
+          onClick={() => setTab("orders")}
+        >
+          {t("orders.tab")}
+          {(state.workOrders?.open.length ?? 0) + (state.workOrders?.offer ? 1 : 0) > 0 && (
+            <span className="quests-tab-count muted">
+              {" "}{state.workOrders?.open.length ?? 0}/3
+            </span>
+          )}
+        </button>
+        <button
           className={`quests-tab-btn${tab === "shop" ? " quests-tab-btn--active" : ""}`}
           onClick={() => setTab("shop")}
         >
@@ -1416,6 +1428,8 @@ export function QuestsPage(): JSX.Element {
 
         {/* Rewards Shop tab (Task #274/#284) — Offer-Karten, Kauf via buyTokenShopOffer. */}
         {tab === "shop" && <RewardsShopPanel t={t} tr={tr} />}
+        {/* claude:2026-10-25T01:30:00+02:00 — Arbeitsaufträge (1.4.0 AU) */}
+        {tab === "orders" && <WorkOrdersTab />}
       </div>
     </div>
   );

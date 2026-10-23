@@ -1,5 +1,7 @@
 # Weltlore-Bibel — Grim Reach
 
+<!-- claude:2026-10-24T22:15:00+02:00 — § 9: Glossar-Nachtrag 1.4.0 (Raid Gobkha'raz nach Gate L, Werkstatt-Kunden) eingepflegt; sonst unverändert -->
+
 **Status:** **v3 — KANON** (Lore-Dev, 2026-07-13) — die vier Weichen aus §10 sind vom Chef entschieden (2026-07-13): **1. Drazhan der Kronlose ist DER Widersacher** (§1.4), **2. die Heimstatt heißt Glutfeste (Emberhold)** (§3.2), **3. der Wächter ist der Zeuge** (§2 ist Kanon), **4. der Getilgte ist Kanon** (§1.1). Die nicht gewählten Antagonist-Entwürfe (Morvane, Ophar) sind NICHT gelöscht, sondern als Reserve für die Götterkriege nach §11 verschoben. — *v2-Historie (2026-07-13): Umbau nach Chef-Direktiven — Demi-Gott als Antagonist (ersetzte den Wächter-Schuld-Twist aus v1), Bastion-Konzept ersetzt Hearthforge als Heimstatt, High-Fantasy-Völker, benanntes Pantheon + Gesetze der Götter, Figuren-Roster mit Asset-Vorlagen.*
 **Struktur-Hinweis:** §10 ist jetzt die **Kanon-Historie** der entschiedenen Weichen; **§11 (neu)** hält die verworfenen Antagonist-Entwürfe als Götterkriege-Reserve; **§12** sammelt die verbliebenen offenen Fragen. Der Paragonturm steht in §5.8; §1.1–1.4 (Pantheon/Gesetze/Drazhan), §3 (Glutfeste, Völker, Figuren, Asset-Vorlagen), §5.7 (Endkampf). Die Hauptquest-Spec der Aschechronik liegt in `design/lore/aschechronik-spec.md` (v2 — implementiert; Dungeons öffnen quest-basiert, ohne Schlüssel).
 **Kanon-Quellen:** `packages/content/src/index.ts` (Zonen, Monster, Dungeons, Items, Skills), `design/dungeon-rework-spec.md`, `design/master-capes-konzept.md`. Das ausgelieferte Spiel ist Kanon; dieses Dokument erklärt, was existiert, und benennt nichts Geliefertes um.
@@ -464,6 +466,33 @@ Die Materialnamen des Contents tragen die Lore implizit — neue Texte sollen di
 | Mutter Eske | Mother Eske | Herdmutter/Köchin der Glutfeste |
 | Der Namenlose | The Nameless | Der Spieler in der Chronik |
 | Das Reach | The Reach | Der letzte benannte Landstrich der Welt |
+
+### Nachtrag 1.4.0 — Raid „Die Hallen von Gobkha'raz“ (Gate L entschieden 24.10.2026; Quelle `raid-gobkharaz.md` § 12, Übersetzungen `raid-gobkharaz-i18n.md`)
+
+| Deutsch | Englisch | Bedeutung |
+|---|---|---|
+| Gobkha'raz | Gobkha'raz | Verborgene Hauptstadt der Goblins in der Kernfeste der alten Mark; Raid `gobkharaz`. Mux übersetzt: „das, was man uns ließ“ |
+| Die Hallen von Gobkha'raz | Halls of Gobkha'raz | Raid-Name; Räume: Zolltor · Zeughallen · Bestiengruben · Heiligtum des geliehenen Feuers · Erbthron (Toll Gate · Armories · Beast Pits · Shrine of the Borrowed Fire · Heir's Throne) |
+| Der Gläubiger | The Creditor | Goblin-Name für den Fremden/Drazhan; die Goblins kennen keinen anderen und sagen nie „Drazhan“ |
+| Das Schuldbuch | The Debt Ledger | Vrikkas Buch; jede Sippe zahlt Zins auf das geliehene Feuer, in Trägern |
+| Eintreibung | Collection | Das Ausbrennen einer säumigen Sippe aus dem Buch; auch Vrikkas dritte Phase und Set-Stufe 5 des Ornats |
+| Das Leihfeuer | The Lent Flame | Die Ursprungsflamme im Becken aus Götzeneisen, an der alle Felmagier ihr Feuer entzünden; **bleich, fast weiß, rauchlos, rührt keinen Schatten** (Chef-Entscheid L5, nicht grün) |
+| Die Kernfeste | The Keep (of the march) | Die nicht gesprengte Festung unter dem Wall; ihr Reach-Name wird nicht mehr geführt |
+| Zahlmeisterin Vrikka · Zeugmeister Krogg · Grubenmutter Ushka · Oberfelmagierin Zil'gath · Kriegskönig Rakkzul der Erbe | Tallymistress Vrikka · Quartermaster Krogg · Pitmother Ushka · High Fel-Magus Zil'gath · War-King Rakkzul the Heir | Die fünf Bosse (`gk_tallymistress`, `gk_quartermaster`, `gk_pitmother`, `gk_felmagus`, `gk_warking`) |
+| Die Kronwache | The Crownguard | Garde des Kriegskönigs; Einheit `gk_crownguard` (Kronwächter / Crownguard), Set `gk_bleed` „Blutschwur der Kronwache“ |
+| Die Grubenmeute | The Pitpack | Ushkas Zucht (Grubenhunde und Belagerungsbestien); Set `gk_poison` „Pirschgewand der Grubenmeute“ |
+| Ornat des geliehenen Feuers | Regalia of the Borrowed Fire | Set `gk_fire` (Magie, Stoff) |
+| Das Kerbholz | The Tally Stick | Die Brücke nach Kapitel 20: Gläubigerhälfte unter Drazhans zurückgelassenen Schätzen, Schuldnerhälfte in Vrikkas Buch |
+| Grubenzahn | Pit Fang | Ushkas Krummsäbel `gk_pit_scimitar` (nicht „Reißzahn“, Kollision mit Leitwolf-Reißzahn / Alpha Fang) |
+| Reliktstaub | Relic Dust | Bergungsrest aus gedroppter Ausrüstung (`relic_dust`); nur für hohe Verzauberungsrunen |
+| Zahltag · Geliehenes Feuer · Kriegstrommeln · Bestienhunger · Offenes Zeughaus · Giftküche · Blutfest · Stille Hallen | Payday · Borrowed Fire · War Drums · Beast Hunger · Open Armory · Poison Kitchen · Blood Feast · Silent Halls | Die acht Wochen-Modifikatoren des Raids |
+
+### Nachtrag 1.4.0 — Werkstatt (Kunden der Arbeitsaufträge; Quelle `1.4.0-ereignisse-auftraege.md` § 3)
+
+| Deutsch | Englisch | Bedeutung |
+|---|---|---|
+| Jorun Bannernaht | Jorun Bannerstitch | Schneiderin der Glutfeste (Mensch); nähte Banner für die Mark vor deren Aufgabe; Kundin für Schneidern (`jorun`) |
+| Caedren Eibenhand | Caedren Yewhand | Bogner der Glutfeste (Elf); ehemaliger Schütze, dessen Schulter nachgab; Kunde für Bognerei (`caedren`) |
 
 ---
 

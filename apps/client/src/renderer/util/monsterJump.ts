@@ -39,6 +39,12 @@ export function jumpToMonster(monsterId: string): void {
 }
 
 /** `useSyncExternalStore`-Subscribe für MainLayout (App.tsx). */
+/** claude:2026-10-25T01:30:00+02:00 — Sprung auf eine beliebige Seite (z. B. Quests aus dem Kopf-Chip), gleiche Nav-Leitung wie jumpToMonster. */
+export function jumpToPage(pageId: string): void {
+  navRequest = { pageId, nonce: ++navNonce };
+  emit();
+}
+
 export function subscribeMonsterJump(listener: () => void): () => void {
   listeners.add(listener);
   return () => listeners.delete(listener);

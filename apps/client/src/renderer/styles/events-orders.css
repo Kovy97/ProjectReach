@@ -1,0 +1,166 @@
+/* claude:2026-10-25T01:40:00+02:00 — Zufallsereignisse und Arbeitsaufträge (1.4.0 „Feder und Stahl“ Welle 3).
+   Ereigniskarte als Toast mit Messing-Akzent, Chip im Kopf, Auftragskarten im Quest-Reiter, Logbuch in der
+   Fertigkeiten-Übersicht. Bestehende Bausteine (Eisenrahmen-Knöpfe, ItemCell, panel); nichts steril. */
+
+.toast-event {
+  box-shadow: inset 5px 0 0 #b9924a, 0 10px 30px rgba(0, 0, 0, 0.55);
+}
+.toast-event .toast-title {
+  color: #e2c27a;
+}
+.toast-event .toast-icon img {
+  object-fit: cover;
+}
+
+.skill-event-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.skill-event-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 8px;
+  border: 1px solid rgba(216, 192, 106, 0.45);
+  background: rgba(30, 24, 14, 0.75);
+  color: #e2c27a;
+  font-size: 0.85em;
+  text-transform: none;
+  white-space: nowrap;
+}
+.skill-event-chip--offer {
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85em;
+  border-color: rgba(224, 160, 90, 0.7);
+  color: #f0b46a;
+}
+.skill-event-chip--offer:hover {
+  background: rgba(60, 40, 18, 0.85);
+}
+
+.work-orders {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.work-orders-lead,
+.work-orders-empty {
+  margin: 0;
+}
+.work-order {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background:
+    linear-gradient(rgba(14, 11, 8, 0.8), rgba(14, 11, 8, 0.88)),
+    url("../assets/bg_tileable_wood.webp") repeat;
+  background-size: auto, 256px;
+  border: 1px solid rgba(120, 92, 54, 0.55);
+}
+.work-order--offer {
+  border-color: rgba(224, 160, 90, 0.7);
+}
+.work-order--ready {
+  border-color: rgba(140, 190, 110, 0.6);
+}
+.work-order-badge {
+  font-family: var(--font-head);
+  color: #f0b46a;
+  letter-spacing: 0.04em;
+}
+.work-order-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.work-order-head .item-cell {
+  width: 56px;
+  height: 56px;
+  flex: none;
+}
+.work-order-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+.work-order-customer {
+  font-family: var(--font-head);
+  color: var(--gold, #d8c06a);
+}
+.work-order-line {
+  font-style: italic;
+}
+.work-order-reward {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  white-space: nowrap;
+  color: #e2c27a;
+}
+.work-order-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.work-order-bar {
+  flex: 1;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(216, 192, 106, 0.25);
+}
+.work-order-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8a6a2c, #d8b45a);
+}
+.work-order-warn {
+  color: #e0a15a;
+}
+.work-order-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.work-order-abandon {
+  margin-right: auto;
+}
+.work-orders-msg {
+  margin: 0;
+  color: #b6d39a;
+}
+
+.skill-event-log-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.skill-event-log-row {
+  display: grid;
+  grid-template-columns: 48px minmax(120px, auto) 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+.skill-event-log-img {
+  width: 48px;
+  height: 32px;
+  object-fit: cover;
+  border: 1px solid rgba(216, 192, 106, 0.3);
+}
+.skill-event-log-icon {
+  text-align: center;
+  font-size: 20px;
+}
+.skill-event-log-name {
+  font-family: var(--font-head);
+  color: var(--gold, #d8c06a);
+}
