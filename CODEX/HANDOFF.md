@@ -25,10 +25,12 @@
   Implementierung neu aufgestellt. Raritätsfarben nie als Item-Farbgebung. Codex nicht weiter darauf ansetzen.
 - **Raid-Balance:** 30-Magier-Messung (`design/1.4.0-raid-magier-builds.md`, Harness `raid-mage-builds.test.ts`,
   `RAID_MAGE=1`). Stoff-Magier schafften nicht einmal Drazhan (0/10). Chef-Entscheide W1 (Ward lädt 4 % je Zauber) und
-  W2 (Status trifft den Ward) umgesetzt: Drazhan Stoff 10/10. Raid Heroisch/Mythisch für reine Ward-Builds weiter an
-  Ushka Phase 2 gescheitert. **Offen W4:** Ward-Dämpfung 30 % (gemessen, Empfehlung, nicht eingebaut).
+  W2 (Status trifft den Ward) umgesetzt: Drazhan Stoff 10/10. Danach Chef-Entscheide W4 (Ward dämpft Treffer um 30 %)
+  und F1 (Bosse halbe Frost-Verlangsamung) umgesetzt. Endstand: Normal 30/30, Heroisch 26/30, Mythisch 13/30 Builds
+  ≥ 9/10 (`design/1.4.0-raid-magier-builds.md`, Balance-Spec §14). <!-- claude:2026-10-25T22:45:00+02:00 -->
 - Ägis auf Raid-Rüstung jeder Klasse, Mythisch-Schaden 1,70, Ushka-Phasen gedämpft (Nachmessung §13).
-- Folgeprüfungen: Frost-Einfrieren gegen Bosse (F1), Schleiertrinker-Rune (F2).
+- F2 Schleiertrinker: mit Dämpfung stark (Voidweave ohne Raid-Teile Mythisch 9/10), bewusst so gelassen; bei Bedarf
+  in einer späteren Balance-Runde ansehen. Offen bleiben nur die Assets (zum Schluss) und der Upload (GO).
 - Bugreport Cinderwretch Hide: Bildverweis auf `raw_dragonhide` (in 1.4.0; Hotfix 1.3.2 nur mit Chef-GO).
 - Suiten nach W1/W2: Typecheck 5/5, engine 1924 (+19 opt-in übersprungen), content 340, persistence 474 inkl. Vault,
   client 263, Build grün. Die Balance-Hülle rechnet Magier mit Platten-BiS und deckt Stoff im Restspiel nicht ab.

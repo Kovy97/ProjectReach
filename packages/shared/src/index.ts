@@ -947,6 +947,12 @@ export function wisdomStatusResist(wis: number): number {
 // immer mit voller (eingebackener) Spanne; der „improvisierte Notschlag" existiert nicht mehr.
 /** Frost verlangsamt den Gegner-Angriffstimer um diesen Anteil. */
 export const FROST_SLOW = 0.4;
+/**
+ * claude:2026-10-25T21:55:00+02:00 — Chef-Entscheid F1 (1.4.0 Welle 5): Dungeon- und Raid-Bosse (letzte Begegnung eines Laufs) nehmen nur diesen
+ * Anteil der Frost-Verlangsamung (40 % → 20 %). Anlass: Eine Frost-Rune allein trug einen Magier ohne Raid-Teile durch
+ * Mythisch (0/10 → 9/10). Einfrieren und Spielerseite unverändert.
+ */
+export const BOSS_FROST_SLOW_MULT = 0.5;
 
 // ── Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md) ─────────────────
 // Eine Identität je Element; alle Regeln gelten symmetrisch (Waffe → Gegner UND Monster-inflict →
@@ -1545,6 +1551,12 @@ export const WARD_RECHARGE_PER_CAST = 1.2;
  * Platten-Magier 10/10, weil der feste Trickle (~0,5/s) gegen Endgame-Schaden (60–100/s) nichts trägt.
  */
 export const WARD_RECHARGE_PCT_PER_CAST = 0.04;
+/**
+ * claude:2026-10-25T21:55:00+02:00 — Chef-Entscheid W4 (1.4.0 Welle 5, „Ward dämpft“): Solange der Ward steht (> 0), nimmt jeder Treffer diesen
+ * Anteil weniger Schaden, bevor der Ward ihn schluckt. Gemessen 30/35/40/60 % (design/1.4.0-raid-magier-builds.md):
+ * 30 % hält die Raid-Progression, ab 35 % schafft Stoff ohne Raid-Teile Mythisch. DoTs (W2) werden nicht gedämpft.
+ */
+export const WARD_HIT_DAMPING = 0.3;
 /** Ward, den EIN Zauber lädt: max(fester Boden, Anteil des Ward-Maximums). */
 export function castWardRecharge(maxWard: number): number {
   return Number.isFinite(maxWard) && maxWard > 0 ? Math.max(WARD_RECHARGE_PER_CAST, maxWard * WARD_RECHARGE_PCT_PER_CAST) : WARD_RECHARGE_PER_CAST;

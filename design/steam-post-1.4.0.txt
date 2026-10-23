@@ -49,9 +49,15 @@ THE RANGED REWORK
 
 MAGES IN CLOTH
 
-- Ward now holds up. Every spell you cast recharges 4% of your maximum Ward, instead of a small fixed amount.
+- Ward now holds up. While it stands, hits deal 30% less damage.
+- Every spell you cast recharges 4% of your maximum Ward, instead of a small fixed amount.
 - Bleeding, burning and poison now hit your Ward first and only then your health.
 - Mages in cloth can now last through long boss fights without switching to plate.
+
+FROST AND BOSSES
+
+- Dungeon and raid bosses are now slowed by frost only half as much (20% instead of 40%). Freezing is unchanged.
+- One frost rune was enough to carry a mage without raid gear through Mythic. Frost stays strong, but no longer that strong.
 
 STORAGE AND SALVAGE
 

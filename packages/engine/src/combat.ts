@@ -59,6 +59,8 @@ import {
   consumableHeal,
   castWardRecharge,
   rechargeWard,
+  WARD_HIT_DAMPING,
+  BOSS_FROST_SLOW_MULT,
   PET_ABILITY_DEBUFF_MS,
   PET_ABILITY_DELAYED_DOT_MS,
   PET_ABILITY_MULTIHIT_COUNT,
@@ -2094,6 +2096,15 @@ function endDungeon(state: GameState): void {
  * (analog „ilvl = Monster-Level" im Kill-Drop-Pfad). Defekter Content (leere encounters/unbekannte
  * Id) fällt defensiv auf 1. Rein lesend, kein RNG.
  */
+/** claude:2026-10-25T21:55:00+02:00 — Kämpft der Spieler gerade gegen den Boss eines Dungeon- oder Raid-Laufs (Boss-Welle bzw. letzte Begegnung)? */
+function fightingRunBoss(state: GameState, content: ContentDB): boolean {
+  const cs = state.combat;
+  if (!cs.dungeonId) return false;
+  const d = content.dungeons.find((x) => x.id === cs.dungeonId);
+  if (!d) return false;
+  return d.waveMeta?.[cs.encounterIndex]?.kind === "boss" || cs.encounterIndex === d.encounters.length - 1;
+}
+
 function dungeonLootIlvl(content: ContentDB, dungeon: DungeonDef): number {
   const bossId = dungeon.encounters[dungeon.encounters.length - 1];
   return (bossId && content.monsters[bossId]?.level) || 1;
@@ -3282,8 +3293,10 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
     (cs.petAbility.enemySlowMs ?? 0) > 0 ? (cs.petAbility.enemySlowPct ?? 0) : 0,
     activePetKind === "cripplingPoison" && hasStatus(cs.enemyEffects, "poison") ? PET_POISON_SLOW_PCT : 0,
   );
+  // claude:2026-10-25T21:55:00+02:00 — F1: Bosse (letzte Begegnung eines Dungeon-/Raid-Laufs) nehmen nur die halbe Frost-Verlangsamung.
+  const frostSlow = FROST_SLOW * (fightingRunBoss(state, content) ? BOSS_FROST_SLOW_MULT : 1);
   cs.enemyTimerMs +=
-    TICK_MS * (enemyStunned ? 0 : status.frost ? 1 - FROST_SLOW : 1) * (petSlow > 0 ? 1 - petSlow : 1);
+    TICK_MS * (enemyStunned ? 0 : status.frost ? 1 - frostSlow : 1) * (petSlow > 0 ? 1 - petSlow : 1);
   if (!enemyStunned && cs.enemyTimerMs >= enemyInterval) {
     cs.enemyTimerMs -= enemyInterval;
     // Elementar-Effekte (Symmetrie zum Spieler-Zweig): Schock-Kette endet mit dem fälligen Angriff;
@@ -3393,6 +3406,8 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
           // STEP 6 — One-Shot-Cap (§1.6): kein Einzeltreffer entfernt mehr als ONE_SHOT_CAP der max. HP.
           dmg = Math.min(dmg, ONE_SHOT_CAP * stats.maxHp);
           // STEP 7 — Ward-Absorb (Stoff, §1.4): der Ward-Pool fängt zuerst ab, der Rest geht auf HP.
+          // claude:2026-10-25T21:55:00+02:00 — W4: solange Ward steht, dämpft er den Treffer um WARD_HIT_DAMPING (30 %).
+          if (state.character.ward > 0) dmg *= 1 - WARD_HIT_DAMPING;
           const wardRes = absorbWard(state.character.ward, dmg);
           state.character.ward = wardRes.ward;
           if (wardRes.absorbed >= 1) {

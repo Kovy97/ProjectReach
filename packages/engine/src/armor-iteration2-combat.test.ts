@@ -214,19 +214,24 @@ describe("Armor-Iteration 2 §9.3: absorbierter Ward trainiert den Warding-Skill
     // ganzzahlig (Pool riesig ⇒ absorbed = rolledDamage; keine Mitigation/Floor/Block) ⇒ shield.amount = absorbed.
     let lastSeq = s.combat.eventCount - 1;
     let absorbedSum = 0;
+    let hits = 0;
     for (let i = 0; i < 100; i++) {
       combatStep(s, c);
       for (const e of s.combat.log) {
         if (e.seq <= lastSeq) continue;
-        if (e.by === "player" && e.kind === "shield") absorbedSum += e.amount;
+        if (e.by === "player" && e.kind === "shield") {
+          absorbedSum += e.amount;
+          hits++;
+        }
       }
       lastSeq = s.combat.eventCount - 1;
     }
     const wardingXpGained = s.skills.warding.xp - wardingXpBefore;
     expect(absorbedSum).toBeGreaterThan(100); // Ward hat wirklich (viel) absorbiert
     expect(s.character.hp).toBe(hpStart); // Pool riesig → HP komplett verschont
-    // Exakter Vertrag (§9.3): 0.25 XP je absorbiertem Ward-Punkt (earlyXpMult=1, kein Pet).
-    expect(wardingXpGained).toBeCloseTo(absorbedSum * WARDING_XP_PER_ABSORB, 6);
+    // Vertrag (§9.3): 0.25 XP je absorbiertem Ward-Punkt (earlyXpMult=1, kein Pet). claude:2026-10-25T22:00:00+02:00 — seit der
+    // Ward-Dämpfung (W4, ×0,7) ist der absorbierte Betrag nicht mehr ganzzahlig; das Log rundet je Treffer (±0,5).
+    expect(Math.abs(wardingXpGained - absorbedSum * WARDING_XP_PER_ABSORB)).toBeLessThanOrEqual(hits * 0.5 * WARDING_XP_PER_ABSORB + 1e-6);
   });
 
   it("KEIN Warding-XP ohne Ward-Pool: Getroffen-werden ohne Stoff trainiert Warding NICHT (§9.3, absorb-basiert)", () => {
