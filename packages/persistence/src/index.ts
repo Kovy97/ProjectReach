@@ -16,6 +16,7 @@ import type {
   PetId,
   PrestigeRecord,
   PrestigeRunTally,
+  QuiverLoad,
   QueuedAction,
   SaveSummary,
 } from "@hearthforge/shared";
@@ -91,7 +92,7 @@ import {
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot, HuntCatch, HuntTrap } from "@hearthforge/shared";
 import type { HuntCatchTally } from "@hearthforge/engine";
-import { MAX_STACK, storagePredicate, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotOwned, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
+import { MAX_STACK, isQuiverItem, offhandFitsMain, storagePredicate, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotOwned, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
 
 /**
  * MAXIMAL MÖGLICHES Offline-Fenster (8 h Basis + 3 h Wachturm-Vollausbau) — die Korruptions-Klemme
@@ -586,7 +587,9 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   {
     let entwaffnet = false;
     const mainId = c.equipment.mainhand;
-    if (mainId && content.items[mainId]?.twoHanded === true) {
+    // claude:2026-10-24T19:00:00+02:00 — 1.4.0 FK: Bogen + Köcher ist gültig; ein Köcher neben einer anderen Haupthand fliegt (offhandFitsMain).
+    const offItem = c.equipment.offhand ? content.items[c.equipment.offhand] : undefined;
+    if (mainId && !offhandFitsMain(content.items[mainId], offItem)) {
       const offInst = c.equippedInstances.offhand;
       const offId = c.equipment.offhand;
       if (offInst) {
@@ -608,7 +611,25 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     // Patchnote fuer Verwirrung gesorgt hat). Ein Brief kostet nichts, geht nie verloren und
     // steht auch dann noch da, wenn der Spieler beim Laden nicht hinschaut. Feuert von selbst
     // nur einmal: danach ist die Offhand leer und die Bedingung nie wieder wahr.
-    if (entwaffnet) sendLetter(state, "warden", "mail.letter.warden.twoHandedRanged");
+    if (entwaffnet && !isQuiverItem(offItem)) sendLetter(state, "warden", "mail.letter.warden.twoHandedRanged");
+  }
+
+  // claude:2026-10-24T19:00:00+02:00 — Köcher-Ladung (SAVE 91, 1.4.0 FK): nur ein bekannter Pfeil mit ganzzahliger Menge ≥ 0, sonst null.
+  // Liegt kein Köcher in der Nebenhand, gehen die Pfeile verlustfrei ins Lager (= Bank, Lagerware ohne Fach).
+  {
+    const raw = (c as { quiver?: unknown }).quiver;
+    let load: QuiverLoad | null = null;
+    if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+      const id = (raw as { itemId?: unknown }).itemId;
+      if (typeof id === "string" && content.items[id]?.arrow) {
+        load = { itemId: id, qty: Math.floor(finiteNonNeg((raw as { qty?: unknown }).qty, 0)) };
+      }
+    }
+    if (load && !isQuiverItem(c.equipment.offhand ? content.items[c.equipment.offhand] : undefined)) {
+      if (load.qty > 0) state.bank[load.itemId] = finiteNonNeg(state.bank[load.itemId], 0) + load.qty;
+      load = null;
+    }
+    c.quiver = load;
   }
 
   // — Food: nur ein bekanntes Item —
@@ -682,7 +703,8 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
         if (modInst) kit.equippedInstances[slot] = modInst;
       }
       const mainId = kit.equipment.mainhand;
-      if (mainId && content.items[mainId]?.twoHanded === true) {
+      // claude:2026-10-24T19:00:00+02:00 — 1.4.0 FK: Bogen + Köcher bleibt auch im Kit zusammen (offhandFitsMain).
+      if (mainId && !offhandFitsMain(content.items[mainId], kit.equipment.offhand ? content.items[kit.equipment.offhand] : undefined)) {
         const offInst = kit.equippedInstances.offhand;
         const offId = kit.equipment.offhand;
         if (offInst) grantLootInstance(state, content, offInst);
@@ -2602,6 +2624,10 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   if (typeof state.settings.materialsToStorage !== "boolean") {
     state.settings.materialsToStorage = true; // Alt-Saves: Chef-Vorgabe „an“ (die Engine-Baseline aus gilt nur für Sim/Tests)
   }
+  // claude:2026-10-24T19:00:00+02:00 — Köcher nachfüllen (1.4.0 FK): strikt boolean, Standard an.
+  if (typeof state.settings.quiverAutoRefill !== "boolean") {
+    state.settings.quiverAutoRefill = defaultSettings().quiverAutoRefill;
+  }
   // Quest-State (SAVE_VERSION 25): leer defaulten. Quests werden beim nächsten advance via
   // evaluateQuests gegen die bestehenden Zähler (Kills etc.) neu ausgewertet.
   if (!state.quests || typeof state.quests !== "object") state.quests = defaultQuestState();
@@ -3711,6 +3737,13 @@ function migrateState(state: GameState, content: ContentDB): GameState {
     const isStore = storagePredicate(content);
     state.bankOrder = state.bankOrder.filter((id): id is ItemId => typeof id === "string" && !isStore(id));
   }
+
+  // ── Bognerei (SAVE_VERSION 90 → 91, 1.4.0 Welle 2 FK, Chef 23.10.2026) ──────────────────────────────────
+  // claude:2026-10-24T19:00:00+02:00 — Neuer Skill `bowcraft` startet für alle bei 0 XP (Chef: „alle starten bei Level 1, Handwerk bleibt
+  // unangetastet“, keine Umbuchung). Die Bogen-Aktionen wechseln nur den Skill, ihre Mastery hängt an der
+  // Aktions-ID und bleibt. Die Altlast `fletching` faltet SKILL_RENAME weiter in Handwerk (oben) und berührt
+  // `bowcraft` nicht. Ein fehlendes Skill-Konto liest die Engine als 0 XP (wie bei jedem frischen Spiel), daher
+  // braucht es keinen Eintrag. `character.quiver` startet leer, `quiverAutoRefill` an (beides Sanitize).
 
   // State auf die aktuelle Version heben (macht versions-abhängige Migrationen idempotent).
   state.version = SAVE_VERSION;

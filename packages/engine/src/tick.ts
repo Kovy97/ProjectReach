@@ -31,6 +31,8 @@ import {
   petBonusFind,
   petCraftSuffixBonus,
   petDoubleYieldBonus,
+  petBonusAmmoChance, // claude:2026-10-24T18:40:00+02:00 — 1.4.0 FK
+  isArrowFletchAction,
   petInstantActionChance,
   petPrepSpeed,
   petPreserveBonus,
@@ -197,7 +199,7 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
   // Mastery: Langzeit-Progression je Aktion. Chance auf doppelten Ertrag steigt mit dem Level.
   // Das Level VOR diesem Abschluss bestimmt den Bonus dieses Abschlusses.
   // Pet (Zwei-Effekt-Modell): die Skill-Effekt-Familien doubleDrop/gatherYield/
-  // flawlessGem/bonusRunes (über petDoubleYieldBonus aggregiert; bonusAmmo ist seit #286 No-op)
+  // flawlessGem/bonusRunes (über petDoubleYieldBonus aggregiert; bonusAmmo nur beim Pfeile-Befiedern, 1.4.0 FK)
   // UND instantAction erhöhen additiv die Doppelertrag-Chance (alle ≤5 %, additiv neben Mastery/Pool).
   // Skilling-Buffs (`gatherYieldMult`): aktive Ertrag-Tonika erhöhen die Doppelertrag-Chance
   // additiv (analog Mastery/Pool/Pet). Ohne solchen Buff ist der Beitrag 0 → die RNG-Sequenz
@@ -209,6 +211,7 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
     masteryDoubleChance(levelFromXp(state.mastery[action.id]?.xp ?? 0))
     + pb.double
     + petDoubleYieldBonus(state, content, action.skill)
+    + (isArrowFletchAction(action.id) ? petBonusAmmoChance(state, content, action.skill) : 0) // claude:2026-10-24T18:40:00+02:00 — 1.4.0 FK
     + petInstantActionChance(state, content, action.skill)
     + buffGatherYieldBonus(state, content)
     + masterDoubleYieldBonus(state, content, action.skill)

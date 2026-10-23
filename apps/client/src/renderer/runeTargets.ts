@@ -1,3 +1,4 @@
+import { QUIVER_AFFIX_IDS } from "@hearthforge/shared"; // claude:2026-10-24T19:40:00+02:00
 import type { AffixDef, ItemDef, ItemTypeTag, TrinityStats } from "@hearthforge/shared";
 
 /**
@@ -96,7 +97,7 @@ export function runeTargetLabel(def: AffixDef, tier: number, t: (k: string) => s
  */
 export function runeFitsHint(def: AffixDef, tier: number, t: (k: string) => string): string | null {
   const axis = trinityAxis(def, tier);
-  if (!axis) return null;
+  if (!axis) return QUIVER_AFFIX_IDS.has(def.id) ? t("rune.target.hint.quiver") : null; // claude:2026-10-24T19:40:00+02:00 — Köcher: nur Stat-Runen (1.4.0 FK)
   return t(`rune.target.hint.${axis}`);
 }
 

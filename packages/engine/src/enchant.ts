@@ -16,6 +16,7 @@ import type {
 import {
   ATTRIBUTE_IDS,
   affixAppliesToItem,
+  quiverAcceptsAffix,
   disenchantGoldCost,
   effectiveInstanceWeaponEffects,
   enchantGoldCost,
@@ -204,7 +205,8 @@ export function applyEnchant(
 
   // Affix-Anwendbarkeit (nur prüfen, wenn der Affix-Katalog die Def kennt — sonst defensiv erlauben).
   const def = content.affixes?.[ra.affixId];
-  if (def && !affixAppliesToItem(def.appliesTo, base)) {
+  // claude:2026-10-24T19:15:00+02:00 — Köcher: nur Stat-Runen (1.4.0 FK, quiverAcceptsAffix).
+  if (def && (!affixAppliesToItem(def.appliesTo, base) || !quiverAcceptsAffix(ra.affixId, base))) {
     return rollback(state, content, ref, instance, "affix_mismatch");
   }
 
@@ -606,7 +608,7 @@ export function enchantPreview(
   if (base.type !== "equipment" || !ra) {
     canApply = false;
     blockedReason = "wrong_item_type";
-  } else if (def && !affixAppliesToItem(def.appliesTo, base)) {
+  } else if (def && (!affixAppliesToItem(def.appliesTo, base) || !quiverAcceptsAffix(ra.affixId, base))) {
     canApply = false;
     blockedReason = "wrong_item_type";
   } else if (def && !trinityGatePasses(def, ra.tier, base)) {

@@ -27,6 +27,7 @@ const KNOWN_WEAPON_TYPES: ReadonlySet<WeaponType> = new Set([
   "wand",
   "focus",
   "scepter",
+  "quiver", // claude:2026-10-24T21:05:00+02:00 — Köcher (1.4.0 FK)
 ] satisfies WeaponType[]);
 
 describe("weaponType-Vollständigkeit", () => {

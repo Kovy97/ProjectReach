@@ -6,6 +6,12 @@ import {
   autoEatUpgradeCost,
   buyAutoEatUpgrade,
   eligibleMeals,
+  ammoSaverChance, // claude:2026-10-24T19:40:00+02:00 — Köcher (1.4.0 FK)
+  arrowChoices,
+  isBowItem,
+  loadQuiver,
+  quiverEquipped,
+  unloadQuiver,
   mealStock,
   selectMeal,
   setMealKeep,
@@ -3563,6 +3569,16 @@ function Battle({
           <strong>{formatStat(stats.maxMana)}</strong>
         </span>
       )}
+      {/* claude:2026-10-24T19:40:00+02:00 — Pfeile (1.4.0 FK): geladene Art und Rest, sonst „einfach“. */}
+      {stats.style === "ranged" && quiverEquipped(state, content) && (
+        <span
+          className="battle-hud-metric battle-hud-metric--arrows"
+          title={state.character.quiver && content.items[state.character.quiver.itemId] ? tr(content.items[state.character.quiver.itemId]!.name) : t("combat.quiver.basic")}
+        >
+          <span>{t("combat.hud.arrows")}</span>
+          <strong>{(state.character.quiver?.qty ?? 0) > 0 ? formatNum(state.character.quiver!.qty) : t("combat.hud.arrowsBasic")}</strong>
+        </span>
+      )}
     </>
   );
   // claude:2026-10-17T21:00:00+02:00 Eigene Kurzbeschriftungen (combat.hud.*) statt abgeschnittener Fertigtexte.
@@ -6070,6 +6086,82 @@ function CombatMealSlot(): JSX.Element {
 }
 
 /**
+ * claude:2026-10-24T19:40:00+02:00 — Köcher (1.4.0 „Feder und Stahl“ FK, Chef 23.10.2026). Zeigt die geladene Pfeilart samt Rest, legt
+ * per Klick ALLE Pfeile einer Art aus Lager und Inventar ein (engine loadQuiver), ✕ nimmt sie heraus. Ohne
+ * Ladung schießt der Bogen mit einfachen Pfeilen (unbegrenzt). Schalter „Automatisch nachfüllen“ = Option.
+ */
+function CombatQuiverSlot(): JSX.Element {
+  const state = useGameState();
+  const { t, tr } = useI18n();
+  const tooltip = useItemTooltip();
+  const c = state.character;
+  if (!quiverEquipped(state, content)) {
+    return <div className="cl-food-body"><span className="cl-food-hint muted">{t("combat.quiver.noQuiver")}</span></div>;
+  }
+  const load = c.quiver ?? null;
+  const loadedItem = load ? content.items[load.itemId] : undefined;
+  const img = load ? getItemImage(load.itemId) : null;
+  const active = !!load && load.qty > 0;
+  const choices = arrowChoices(state, content);
+  const save = Math.round(ammoSaverChance(state, content) * 100);
+  const refill = state.settings.quiverAutoRefill !== false;
+  return (
+    <div className="cl-food-body cl-quiver-body">
+      <div className="cl-food-current">
+        <div
+          className={`cl-food-slot${active ? " filled" : ""}`}
+          onMouseEnter={load ? (e) => tooltip.show(load.itemId, e.clientX, e.clientY, []) : undefined}
+          onMouseLeave={load ? () => tooltip.hide() : undefined}
+        >
+          {img ? <img loading="lazy" decoding="async" src={img} alt="" /> : <span className="cl-food-empty">{loadedItem?.icon ?? "➶"}</span>}
+          {load && <span className="cl-food-qty">{formatNum(load.qty)}</span>}
+        </div>
+        <div className="cl-food-meta">
+          <span className="cl-food-name">{active && loadedItem ? tr(loadedItem.name) : t("combat.quiver.basic")}</span>
+          <span className="cl-food-heal">
+            {active && loadedItem?.arrow
+              ? t("combat.quiver.loaded").replace("{min}", formatDamage(loadedItem.arrow.bonusMin)).replace("{max}", formatDamage(loadedItem.arrow.bonusMax))
+              : load && loadedItem ? t("combat.quiver.empty").replace("{name}", tr(loadedItem.name)) : t("combat.quiver.basicHint")}
+            {save > 0 && <>{" · "}{t("combat.quiver.save").replace("{pct}", String(save))}</>}
+          </span>
+        </div>
+      </div>
+
+      <div className="cl-food-choices">
+        <button className={`cl-food-btn${!load ? " active" : ""}`} onClick={() => unloadQuiver(state)} title={t("combat.quiver.unload")}>
+          ✕
+        </button>
+        {choices.map((ch) => {
+          const item = content.items[ch.itemId];
+          const chImg = getItemImage(ch.itemId);
+          return (
+            <button
+              key={ch.itemId}
+              className={`cl-food-btn${load?.itemId === ch.itemId ? " active" : ""}`}
+              disabled={!ch.usable}
+              onClick={() => loadQuiver(state, content, ch.itemId)}
+              onMouseEnter={(e) => tooltip.show(ch.itemId, e.clientX, e.clientY, [])}
+              onMouseLeave={() => tooltip.hide()}
+              title={ch.usable ? undefined : t("combat.quiver.needLevel").replace("{n}", String(ch.requiredLevel))}
+            >
+              {chImg ? <img loading="lazy" decoding="async" src={chImg} alt="" /> : <span>{item?.icon ?? "➶"}</span>}
+              {ch.stock > 0 && <span className="cl-food-btn-qty">{formatNum(ch.stock)}</span>}
+            </button>
+          );
+        })}
+        {choices.length === 0 && <span className="cl-food-hint muted">{t("combat.quiver.noArrows")}</span>}
+      </div>
+
+      <label className="cl-potion-rebuff-label" title={t("options.quiverAutoRefillHint")}>
+        <input type="checkbox" checked={refill} onChange={(e) => { state.settings.quiverAutoRefill = e.target.checked; }} />
+        <span>{t("options.quiverAutoRefill")}</span>
+      </label>
+      <span className="cl-potion-cooldown-hint muted">{t("options.quiverAutoRefillHint")}</span>
+    </div>
+  );
+}
+
+/**
  * Auto-Trank-Steuerung (Chef-Feature 2026-07-02): welchen Heiltrank automatisch trinken, bei
  * welcher HP-Schwelle, und ob ablaufende Buff-Tonika automatisch nachgetrunken werden. Das
  * Gegenstück zu Auto-Eat (natürliche HP-Regen ist weg — Vorbereitung ist überlebenswichtig),
@@ -6546,6 +6638,14 @@ function CombatLoadoutBar({
         <span className="cl-title">{t("combat.meal.title")}</span>
         <CombatMealSlot />
       </div>
+
+      {/* claude:2026-10-24T19:40:00+02:00 — Köcher (1.4.0 FK): nur sichtbar, wenn ein Bogen in der Haupthand liegt. */}
+      {isBowItem(content.items[state.character.equipment.mainhand ?? ""]) && (
+        <div className="cl-section cl-section-quiver">
+          <span className="cl-title">{t("combat.quiver.title")}</span>
+          <CombatQuiverSlot />
+        </div>
+      )}
 
       {/* Tränke: Auto-Trank-Wahl + HP-Schwelle + Auto-Rebuff (Chef-Feature 2026-07-02, das
          Gegenstück zu Auto-Eat — natürliche HP-Regen ist weg). */}

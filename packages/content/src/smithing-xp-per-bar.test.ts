@@ -132,8 +132,9 @@ for (const action of Object.values(content.actions)) {
 }
 
 describe("Smithing: Forge-Rezepte folgen der XP-Formel und der Leiter ab Barren-Level (Chef-Entscheid 25.08.2026)", () => {
-  it("findet die erwarteten reinen Barren-Forge-Rezepte (236 Haupt-Tiers + murkvein_longsword)", () => {
-    expect(recipes.length).toBe(237);
+  it("findet die erwarteten reinen Barren-Forge-Rezepte (236 Haupt-Tiers + murkvein_longsword + 12 Pfeilspitzen-Sprossen)", () => {
+    // claude:2026-10-23T23:50:00+02:00 — 1.4.0 FK §2: +12 forge_<metall>_arrowheads (je 1 Barren, Dolch-Spiegel) → 237 + 12 = 249.
+    expect(recipes.length).toBe(249);
   });
 
   for (const [tier, items] of byTier) {

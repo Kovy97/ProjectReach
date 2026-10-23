@@ -109,6 +109,9 @@ export const navigation: NavSection[] = [
       // scheidbar vom Faden-Spulen-Icon 🧵 des Handwerks) bis Miras `sidebaricon_tailoring.webp`
       // liegt (Auto-Discovery, s. sidebarIcons.ts — kein Code-Eintrag nötig, sobald sie da ist).
       { id: "tailoring", label: "nav.tailoring", icon: "🪡", view: "skill", skillId: "tailoring" },
+      // claude:2026-10-24T19:40:00+02:00 — Bognerei (1.4.0 FK, A1: interne ID bowcraft) direkt hinter Schneidern. Emoji-Fallback bis
+      // `sidebaricon_bowcraft.webp` liegt (Auto-Discovery).
+      { id: "bowcraft", label: "nav.bowcraft", icon: "🏹", view: "skill", skillId: "bowcraft" },
       { id: "jewelcrafting", label: "nav.jewelcrafting", icon: "💍", view: "skill", skillId: "jewelcrafting" },
       { id: "runecrafting", label: "nav.runecrafting", icon: "🔮", view: "skill", skillId: "runecrafting" },
       { id: "herblore", label: "nav.herblore", icon: "🧪", view: "skill", skillId: "herblore" },

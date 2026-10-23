@@ -143,6 +143,20 @@ export function OptionsPage(): JSX.Element {
               {state.settings.materialsToStorage !== false ? t("options.on") : t("options.off")}
             </button>
           </OptRow>
+          {/* claude:2026-10-24T19:40:00+02:00 — Köcher automatisch nachfüllen (1.4.0 FK, A2, Standard an). */}
+          <OptRow label={t("options.quiverAutoRefill")} hint={t("options.quiverAutoRefillHint")}>
+            <button
+              className={optBtnCls(state.settings.quiverAutoRefill !== false)}
+              onClick={() => { state.settings.quiverAutoRefill = state.settings.quiverAutoRefill === false; }}
+            >
+              <img
+                src={state.settings.quiverAutoRefill !== false ? iconCheckboxOn : iconCheckboxOff}
+                alt=""
+                className="ui-icon"
+              />{" "}
+              {state.settings.quiverAutoRefill !== false ? t("options.on") : t("options.off")}
+            </button>
+          </OptRow>
           {/* claude:2026-10-23T20:10:00+02:00 — Ländereien-Meldungen (1.4.0 LA, Chef 23.10.: in den Optionen schaltbar). */}
           <OptRow label={t("options.estateNotifications")} hint={t("options.estateNotificationsHint")}>
             <button

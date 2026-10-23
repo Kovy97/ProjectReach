@@ -323,7 +323,8 @@ export function EquipmentDoll({ interactive = false, dragItem = null, onDragItem
                     as="span"
                     focusable={false}
                     className="cs-slot-empty-hit cs-slot-2h-ghost"
-                    content={<span className="ct-tip-desc">{t("equip.offhandBlocked2h")}</span>}
+                    // claude:2026-10-24T19:40:00+02:00 — Bögen erlauben den Köcher (1.4.0 FK), alle anderen Zweihandwaffen sperren die Nebenhand.
+                    content={<span className="ct-tip-desc">{t(content.items[c.equipment.mainhand]?.weaponType === "shortbow" || content.items[c.equipment.mainhand]?.weaponType === "longbow" ? "equip.offhandQuiverOnly" : "equip.offhandBlocked2h")}</span>}
                   >
                     {getItemImage(c.equipment.mainhand) && (
                       <img src={getItemImage(c.equipment.mainhand)!} alt="" className="cs-slot-2h-ghost-img" draggable={false} loading="lazy" decoding="async" />

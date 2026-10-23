@@ -175,6 +175,7 @@ export const PRESTIGE_CHARACTER_FIELDS: Readonly<Record<keyof CharacterState, Pr
   equipment: "reset",
   food: "reset",
   meal: "reset", // claude:2026-10-23T16:30:00+02:00 — Mahlzeit-Wahl verweist auf Inventar/Bank (beide zurück)
+  quiver: "reset", // claude:2026-10-24T18:45:00+02:00 — geladene Pfeile sind Lagerware (Lager zurück, 1.4.0 FK)
   mealKeep: "keep", // Schalter (kostenlos, Einstellung)
   autoEatTier: "reset", // mit Gold gekauft
   autoEatThreshold: "keep", // Regler, wirkt nur auf Max-Stufe

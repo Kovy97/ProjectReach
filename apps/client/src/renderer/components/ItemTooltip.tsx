@@ -3,7 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { content } from "@hearthforge/content";
 import { computeStats, meetsRequirements, spellFocusMult, itemTier } from "@hearthforge/engine";
 import type { AffixDef, ContentDB, EquipBonus, EquipSlot, ItemDef, ItemInstance, LocalizedString } from "@hearthforge/shared";
-import { ATTRIBUTES, EQUIP_SLOT_LABELS, TOOL_SLOTS, WEAPON_TYPE_SPECIALTY, effectiveWeaponEffects, isStatusEffectType, enchantSlotsFor, getItemRarity, RARITY_LABEL, instanceDisplayName, instanceBonusDelta, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, consumableHeal, TEMPO_REDUCTION_CAP } from "@hearthforge/shared";
+import { ARROW_TIER_RANGED_LEVEL, ATTRIBUTES, EQUIP_SLOT_LABELS, TOOL_SLOTS, WEAPON_TYPE_SPECIALTY, effectiveWeaponEffects, isStatusEffectType, enchantSlotsFor, getItemRarity, RARITY_LABEL, instanceDisplayName, instanceBonusDelta, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, consumableHeal, TEMPO_REDUCTION_CAP } from "@hearthforge/shared";
 import { isEnchantable, runeFitsHint, runeTargetLabel } from "../runeTargets";
 import { useGameStateMaybe } from "../game/GameContext";
 import { useI18n } from "../i18n";
@@ -1324,7 +1324,34 @@ function RuneEffectGroup({ item }: { item: ItemDef }): JSX.Element | null {
  * `masterPerk`), gemeinsame Textquelle `masterPerkText` (auch MasteryCeremony nutzt sie).
  */
 // claude:2026-10-17T20:00:00+02:00 — K2: diese drei Kinds summieren sich über Quellen, daher kein Hinweis
-const NON_STACK_EXEMPT: ReadonlySet<string> = new Set(["healOnKill", "wardOnKill", "cooldownOnKill"]);
+// claude:2026-10-24T19:40:00+02:00 — ammoSaver summiert Haupthand + Köcher (1.4.0 FK, Deckel 50 %).
+const NON_STACK_EXEMPT: ReadonlySet<string> = new Set(["healOnKill", "wardOnKill", "cooldownOnKill", "ammoSaver"]);
+
+/** claude:2026-10-24T19:40:00+02:00 — Pfeil-Block der Itemkarte (1.4.0 FK): Bonus je Schuss, Effekt, Fernkampf-Level zum Einlegen. */
+function ArrowBlock({ item }: { item: ItemDef }): JSX.Element | null {
+  const { t } = useI18n();
+  const a = item.arrow;
+  if (!a) return null;
+  const level = ARROW_TIER_RANGED_LEVEL[Math.max(0, Math.min(ARROW_TIER_RANGED_LEVEL.length - 1, a.tier - 1))] ?? 1;
+  return (
+    <div className="itip-effect-block itip-special-effect">
+      <div className="itip-effect-line">
+        <span className="itip-effect-icon" aria-hidden="true">➶</span>
+        <span>{t("itip.arrow.bonus").replace("{min}", formatDamage(a.bonusMin)).replace("{max}", formatDamage(a.bonusMax))}</span>
+      </div>
+      {a.effect && isStatusEffectType(a.effect.type) && (
+        <div className="itip-effect-line">
+          <span className="itip-effect-icon" aria-hidden="true">{statIcon(STATUS_UI[a.effect.type] ?? "", statusEffectIcon(a.effect.type))}</span>
+          <span>{weaponEffectProse(a.effect, t)}</span>
+        </div>
+      )}
+      <div className="itip-effect-line">
+        <span className="itip-effect-icon" aria-hidden="true">✦</span>
+        <span>{t("itip.arrow.use").replace("{n}", String(level))}</span>
+      </div>
+    </div>
+  );
+}
 
 function EffectBlock({ item }: { item: ItemDef }): JSX.Element | null {
   const { t, tr } = useI18n();
@@ -1718,6 +1745,7 @@ function ItemTooltipCard({
               unter dem Faktenraster; reine Affix-Items erzeugen dadurch keinen leeren Statblock. */}
           {isEnchantable(item) && <EnchantGroup item={item} inst={inst} />}
           <EffectBlock item={item} />
+          <ArrowBlock item={item} />
           <SetBonusSection item={item} />
 
           {(hasRequirements || hasValue) && (

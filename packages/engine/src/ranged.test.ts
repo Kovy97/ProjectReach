@@ -12,7 +12,9 @@ import { computeStats } from "./character";
  * Fernkampf NACH dem Ammo-Removal (#286, SAVE_VERSION 57): Es gibt KEINE Munition mehr —
  * der Pfeilschaden ist seit dem Waffen-Kurven-Pass (#287) in die damageMin/Max-Spanne der
  * Bögen eingebacken. Diese Guards pinnen die neue Welt: Bögen feuern immer (voller Schaden,
- * kein Notschlag, kein outOfAmmo-Stopp), und nichts ist mehr in einen Köcher ausrüstbar.
+ * kein Notschlag, kein outOfAmmo-Stopp), und Pfeile selbst sind nicht ausrüstbar.
+ * claude:2026-10-24T20:15:00+02:00 — 1.4.0 FK: Echte Pfeile kommen über den Köcher zurück (quiver.test.ts). Die
+ * Bogenspanne bleibt der Schaden mit einfachen Pfeilen, ohne Ladung gilt hier alles weiter.
  */
 describe("ranged ohne Munitionssystem (#286)", () => {
   it("Bogen feuert ohne jegliche Pfeile: Kampf läuft dauerhaft, Kills fließen, kein Stopp", () => {
@@ -68,7 +70,9 @@ describe("ranged ohne Munitionssystem (#286)", () => {
   });
 
   it("Nahkampf unverändert: Kampf läuft durch", () => {
-    const s = createTestGame({ name: "X", baseAttributes: { str: 12, con: 10 } }, content, 5);
+    // claude:2026-10-24T20:15:00+02:00 — 1.4.0 FK: eine neue Beutezeile am Goblin (stolen_shortbow) verschiebt den
+    // RNG-Strom; mit con 10 starb der Testkämpfer bei Seed 5 knapp im Fenster. Die Aussage (Nahkampf läuft) bleibt.
+    const s = createTestGame({ name: "X", baseAttributes: { str: 12, con: 14 } }, content, 5);
     s.character.equipment.mainhand = "bronze_sword";
     startCombat(s, content, "goblin");
 

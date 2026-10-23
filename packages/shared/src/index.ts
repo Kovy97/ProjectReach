@@ -734,7 +734,10 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //     engine `storageShelfOf`) belegt keinen Bankplatz und kein `bankOrder`-Fach mehr; die Migration entfernt
 //     ihre alten Fächer einmal und schließt die Lücken. Neue Einstellung `settings.materialsToStorage`
 //     (Standard an). Bestand unverändert in `state.bank`.
-export const SAVE_VERSION = 90;
+// 91: Bognerei (1.4.0 Welle 2 FK, Chef 23.10.2026; claude:2026-10-24T17:45:00+02:00): neuer Skill `bowcraft` (Default 0 XP,
+//     kein Umbuchen aus Handwerk), `character.quiver` (geladener Pfeilstapel des Köchers, null = einfache Pfeile)
+//     und `settings.quiverAutoRefill` (Standard an). Bogen + Köcher ist die einzige gültige Zweihand-Nebenhand.
+export const SAVE_VERSION = 91;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -758,13 +761,15 @@ export const COMBAT_STYLES: CombatStyle[] = ["attack", "power", "defensive"];
 export const STYLE_ACCURACY_MULT = 1.12; // Attack: Trefferbonus
 export const STYLE_DAMAGE_MULT = 1.12; // Wucht: Schadensbonus
 export const STYLE_DEFENCE_MULT = 1.15; // Defensiv: Blockrate/Verteidigung
+/** claude:2026-10-24T18:00:00+02:00 — Fernkampf-Abwehrhaltung: Schadensfaktor (1.4.0 FK §8). */
+export const RANGED_DEFENSIVE_DMG_MULT = 0.9;
 
 /**
  * Kampf-Stance-Modifikatoren (OSRS-Stil) je Waffenstil + gewählter Stance.
  * `speedMult` multipliziert attackIntervalMs (>1 langsamer, <1 schneller).
  * `xpSkill` = Ziel-Skill der Kampf-XP (Offensiv-XP-Routing).
  *   Melee: Angriff(+Acc)/Wucht(+Schaden,−Acc)/Defensiv(+Block) → attack/power/defence
- *   Fernkampf: Präzise(+Acc, langsamer)/Schnell(schneller,−Acc)/Defensiv(langsamer,+Block) → ranged/ranged/defence
+ *   Fernkampf: Präzise(+Acc)/Schnell(schneller,−Acc)/Defensiv(−10 % Schaden,+Block, 1.4.0) → ranged/ranged/defence
  *   Magie: Offensiv/Defensiv(+Block) → magic/warding (Armor-Iteration 2 §9.1; Defensiv trainiert Warding)
  */
 export interface StanceMods {
@@ -780,7 +785,9 @@ export function activeStanceMods(style: WeaponStyle, c: CharacterState): StanceM
       case "fast":
         return { accMult: 0.9, dmgMult: 1, defMult: 1, speedMult: 0.85, xpSkill: "ranged" };
       case "defensive":
-        return { accMult: 1, dmgMult: 1, defMult: STYLE_DEFENCE_MULT, speedMult: 1.12, xpSkill: "defence" };
+        // claude:2026-10-24T18:00:00+02:00 — 1.4.0 FK §8: Abwehr tauscht wie bei der Magie Schaden statt Tempo
+        // (dmgMult 0,90, Tempo 1,00 statt 1,12); combat.ts liest dmgMult jetzt auch im Fernkampf (character.ts).
+        return { accMult: 1, dmgMult: RANGED_DEFENSIVE_DMG_MULT, defMult: STYLE_DEFENCE_MULT, speedMult: 1, xpSkill: "defence" };
       default: // precise
         // Balance-Pass 3 #7: precise war mit speedMult 1.12 (12 % langsamer) eine Default-DPS-Falle
         // — der Standard-Bogenschütze las nur 71–80 % vom Besten. Auf 1.0 gesetzt: der Default ist
@@ -1041,7 +1048,7 @@ export const MONSTER_FAMILIES: MonsterFamily[] = [
  * | frostbite      | +Anteil vs. verlangsamte Ziele (0.25)  | —                                     |
  * | catalyst       | —                                      | durationMs: +ms auf eigene Status     |
  * | surplus        | +Anteil Zauberschaden (0.2), solange der EIGENE Ward über threshold·maxWard liegt (Zauberreserve 28.08.2026: las vorher den Mana-Anteil, der jetzt immer 100 % wäre; ohne Stoff-Pool inaktiv) | threshold: Ward-Anteil (Default 0.8) |
- * | ammoSaver      | NO-OP seit Ammo-Removal #286 (es gibt keine Munition mehr; Stage B ersetzt/entfernt die Träger-Items) | — |
+ * | ammoSaver      | Chance (magnitude), keinen Pfeil zu verbrauchen; Haupthand + Köcher addiert, Deckel AMMO_SAVER_CAP (1.4.0 FK) | — |
  * | luckyStrike    | +Anteil Gold von Kills (0.15)          | —                                     |
  * | packLeader     | +Anteil Pet-Ability-Frequenz (0.25)    | —                                     |
  * | thorns         | FLAT Schaden an Angreifer (Rüstungs-Chase §5) | —                              |
@@ -2231,7 +2238,9 @@ export type WeaponType =
   | "staff"
   | "wand"
   | "focus"
-  | "scepter";
+  | "scepter"
+  // claude:2026-10-24T17:45:00+02:00 — Köcher (1.4.0 FK): einzige Nebenhand für Bögen, trägt den geladenen Pfeilstapel.
+  | "quiver";
 
 /**
  * Kurze, knackige Rollenbe­schreibung je Waffentyp (en + de), abgeleitet aus den echten
@@ -2256,8 +2265,33 @@ export const WEAPON_TYPE_SPECIALTY: Record<WeaponType, LocalizedString> = {
   staff:      { en: "Magic · Ward Break", de: "Magie · Ward-Bruch", es: "Magia · Ruptura de guarda", fr: "Magie · Brise-barrière", "pt-BR": "Magia · Quebra de guarda", ru: "Магия · Пробой оберега", zh: "魔法 · 破结界" },
   wand:       { en: "Fast · Ward Break · Frost/Shock", de: "Schnell · Ward-Bruch · Frost/Schock", es: "Rápida · Ruptura de guarda · Escarcha/Descarga", fr: "Rapide · Brise-barrière · Givre/Foudre", "pt-BR": "Rápida · Quebra de guarda · Gelo/Choque", ru: "Быстрый · Пробой оберега · Холод/Шок", zh: "迅捷 · 破结界 · 冰霜/电击" },
   focus:      { en: "Offhand · +Spell Reserve",       de: "Nebenhand · +Zauberreserve", es: "Mano secundaria · +Reserva de hechizos", fr: "Main secondaire · +Réserve de sorts", "pt-BR": "Mão secundária · +Reserva de feitiços", ru: "Вторая рука · +Запас заклинаний", zh: "副手 · +法术储备" },
+  quiver:     { en: "Offhand · Arrows · Dexterity", de: "Nebenhand · Pfeile · Geschick", es: "Mano secundaria · Flechas · Destreza", fr: "Main secondaire · Flèches · Dextérité", "pt-BR": "Mão secundária · Flechas · Destreza", ru: "Вторая рука · Стрелы · Ловкость", zh: "副手 · 箭矢 · 敏捷" },
   scepter:    { en: "Magic · Ward Break",  de: "Magie · Ward-Bruch", es: "Magia · Ruptura de guarda", fr: "Magie · Brise-barrière", "pt-BR": "Magia · Quebra de guarda", ru: "Магия · Пробой оберега", zh: "魔法 · 破结界" },
 };
+
+// claude:2026-10-24T17:45:00+02:00 — Pfeile und Köcher (1.4.0 „Feder und Stahl“ FK, Chef 23.10.2026; Zahlen design/1.4.0-balance-fernkampf.md §3).
+/**
+ * Ein echter Pfeil. Einfache Pfeile sind kein Item: Ohne geladenen Pfeil schießt der Bogen mit seiner Spanne.
+ * Mit Pfeil im Köcher addiert computeStats `bonusMin/bonusMax` auf die Angriffsspanne (nach dem Charakter-Anteil,
+ * vor Begleiter- und Narbenbuch-Faktor, Muster Zauberfokus). Jeder Schuss verbraucht einen Pfeil, auch ein Fehlschuss.
+ * `effect` (nur Stufe IX–XII): Status je Treffer wie ein Waffen-Proc, Zusammenführen per max.
+ */
+export interface ArrowDef {
+  /** Stufe I–XII (1..12); bestimmt das Fernkampf-Level zum Einlegen (`ARROW_TIER_RANGED_LEVEL`). */
+  tier: number;
+  bonusMin: number;
+  bonusMax: number;
+  effect?: WeaponEffect;
+}
+/** Fernkampf-Level zum Einlegen je Pfeilstufe I–XII (wie die Bögen derselben Stufe). */
+export const ARROW_TIER_RANGED_LEVEL: readonly number[] = [1, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 99];
+/** Deckel der Pfeil-Sparchance (`ammoSaver` aus Haupthand + Köcher, Summe). */
+export const AMMO_SAVER_CAP = 0.5;
+/** Geladener Stapel im Köcher (`character.quiver`). */
+export interface QuiverLoad {
+  itemId: ItemId;
+  qty: number;
+}
 
 /** Flache Boni eines Ausrüstungsstücks auf abgeleitete Werte. */
 export interface EquipBonus {
@@ -2412,7 +2446,7 @@ export type PetId = string;
  * | thievingSuccess | +Erfolgschance (additiv, Cap 0.95 bleibt)        | tick.ts `completeAction` (actionSuccessChance)  |
  * | refundMaterial  | +Chance, Crafting-Material zu erstatten          | tick.ts `completeAction` (preserveChance)       |
  * | perfectCook     | +Chance, nicht zu verbrennen (= preserve/Erfolg) | tick.ts `completeAction` (preserveChance)       |
- * | bonusAmmo       | NO-OP seit Ammo-Removal #286 (fletching-scoped; stirbt mit Fletching in Stage B — das Passiv des Träger-Pets wird dort ersetzt) | pets.ts filtert es aus `petDoubleYieldBonus` |
+ * | bonusAmmo       | +Chance auf doppelten Ertrag beim Pfeile-Befiedern (Skill `bowcraft`, 1.4.0 FK wiederbelebt) | tick.ts `completeAction` (bonusChance, nur `fletch_*_arrow*`) |
  * | flawlessGem     | +Chance auf doppelten Craft-Ertrag (Gem)         | tick.ts `completeAction` (bonusChance, additiv) |
  * | bonusRunes      | +Chance auf doppelten Craft-Ertrag (Runen)       | tick.ts `completeAction` (bonusChance, additiv) |
  * | potionPreserve  | +Chance, Trank-Zutaten zu erstatten              | tick.ts `completeAction` (preserveChance)       |
@@ -3264,6 +3298,8 @@ export interface ItemDef {
   tier?: number;
   /** claude:2026-10-23T21:45:00+02:00 — Regal im Materiallager (1.4.0 ML); null = bleibt in der Bank. Fehlt ⇒ abgeleitet. */
   shelf?: StorageShelfId | null;
+  /** claude:2026-10-24T17:45:00+02:00 — Echter Pfeil (1.4.0 FK): Material, das der Köcher lädt. Fehlt ⇒ kein Pfeil. */
+  arrow?: ArrowDef;
   // bagCapacity: GELÖSCHT (#278) — Taschenslot-System entfernt, small_pouch ist aus dem Katalog (#272).
   /** Nur für type === "tool": beschleunigt eine Fertigkeit (speedMult < 1 = schneller), wirkt aus dem Inventar. */
   tool?: { skill: SkillId; speedMult: number };
@@ -3696,6 +3732,16 @@ export function itemTypeTags(item: ItemDef): ItemTypeTag[] {
     else if (item.wardCapacity) tags.push("armor_cloth");
   }
   return tags;
+}
+
+/**
+ * claude:2026-10-24T19:15:00+02:00 — Köcher-Runen (1.4.0 FK §5): nur Stat-Runen. Der Kampf liest Procs nur von der Haupthand, Proc- und
+ * Tier-IV-Runen wären am Köcher tot. Suffixe rollt der Köcher weiter aus dem Bogen-Pool (`weapon_ranged`).
+ */
+export const QUIVER_AFFIX_IDS: ReadonlySet<string> = new Set(["affix_hunter", "affix_precise", "affix_swift"]);
+/** true, wenn die Rune (Affix-ID) auf dieses Item darf; nur Köcher schränken über `appliesTo` hinaus ein. */
+export function quiverAcceptsAffix(affixId: string, item: ItemDef): boolean {
+  return item.weaponType !== "quiver" || QUIVER_AFFIX_IDS.has(affixId);
 }
 
 /** true, wenn ein Affix/Suffix mit `appliesTo` auf das Item passt (leeres appliesTo = überall). */
@@ -5603,6 +5649,12 @@ export interface CharacterState {
   meal?: ItemId | null;
   /** „Mahlzeit halten“ (Standard an, kostenlos): Mahlzeit im Kampf, Dungeon und Raid nachessen. */
   mealKeep?: boolean;
+  /**
+   * claude:2026-10-24T17:45:00+02:00 — Köcher-Ladung (1.4.0 FK, SAVE 91): der geladene Pfeilstapel. null/fehlt = einfache Pfeile.
+   * Nicht `equipment.ammo`/`ammoCount` (v57-Altschlüssel, die Sanitize löscht). Ablegen des Köchers gibt die
+   * Pfeile ins Lager zurück (engine `unloadQuiver`).
+   */
+  quiver?: QuiverLoad | null;
   /** Gekaufte Auto-Eat-Upgrade-Stufe (0 = Basis). Hebt Schwelle & Heil-Effizienz. */
   autoEatTier: number;
   /**
@@ -7357,6 +7409,8 @@ export const HUNTING_SKILL_ID: SkillId = "hunting";
  */
 export const LEATHERWORKING_SKILL_ID: SkillId = "leatherworking";
 export const TAILORING_SKILL_ID: SkillId = "tailoring";
+/** claude:2026-10-24T17:45:00+02:00 — Bognerei (1.4.0 FK, A1): eigene ID, `fletching` faltet SKILL_RENAME weiter in Handwerk. */
+export const BOWCRAFT_SKILL_ID: SkillId = "bowcraft";
 
 export function huntTrapSlotsForLevel(level: number): number {
   let n = 0;
@@ -7644,13 +7698,18 @@ export interface GameSettings {
    * Bankplatz). Aus: wie früher erst Inventar, der Überlauf ins Lager. Standard: an.
    */
   materialsToStorage: boolean;
+  /**
+   * claude:2026-10-24T17:45:00+02:00 — Köcher nachfüllen (1.4.0 FK, A2): Ist der geladene Stapel leer, zieht der Kampf dieselbe Pfeilart aus
+   * dem Lager nach. Aus: der Bogen schießt mit einfachen Pfeilen weiter. Standard: an.
+   */
+  quiverAutoRefill: boolean;
 }
 
 /** Default-Einstellungen für frische Spielstände (und Migration alter Saves). */
 export function defaultSettings(): GameSettings {
   // claude:2026-10-23T23:25:00+02:00 — materialsToStorage: Engine-Baseline aus (Sim/Tests). Echte Spieler bekommen es an: neue Charaktere über
   // `starterKit` (engine/state.ts), Alt-Saves über migrateState (fehlendes Feld ⇒ an).
-  return { autoBank: true, autoParagonAscend: false, estateNotifications: true, materialsToStorage: false };
+  return { autoBank: true, autoParagonAscend: false, estateNotifications: true, materialsToStorage: false, quiverAutoRefill: true };
 }
 
 /** Mastery: gemeinsame Level-Kurve mit Fertigkeiten; höchstes Level. */

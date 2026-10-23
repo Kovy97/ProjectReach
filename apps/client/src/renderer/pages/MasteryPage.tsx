@@ -37,7 +37,7 @@ const GATHERING_SKILLS = new Set([
   "woodcutting", "mining", "fishing", "farming", "foraging", "thieving",
 ]);
 const CRAFTING_SKILLS = new Set([
-  "smithing", "cooking", "leatherworking", "tailoring",
+  "smithing", "cooking", "leatherworking", "tailoring", "bowcraft", // claude:2026-10-24T19:40:00+02:00 — Bognerei (1.4.0 FK)
   "jewelcrafting", "runecrafting", "herblore",
 ]);
 const COMBAT_SKILLS = new Set([

@@ -716,6 +716,7 @@ export function checkReferenceCompleteness(content: ContentDB, opts: Consistency
     if (!obtainable.has(item.id)) continue; // ohne Quelle greift Check (a)/anderes Muster
     if (used.has(item.id)) continue;
     if (item.rune) continue; // Runen werden am Verzauberungstisch verbraucht
+    if (item.arrow) continue; // claude:2026-10-24T21:05:00+02:00 — Pfeile verbraucht der Köcher im Kampf (1.4.0 FK, engine/quiver.ts)
     if (skip.has(item.id)) continue;
     out.push(
       finding(

@@ -7,6 +7,7 @@ import type {
   ItemId,
   ItemInstance,
 } from "@hearthforge/shared";
+import { syncQuiverLoad } from "./quiver";
 import { EQUIP_KIT_COUNT, KIT_SLOTS, TOOL_SLOTS, emptyEquipKit } from "@hearthforge/shared";
 import { computeStats } from "./character";
 
@@ -150,6 +151,7 @@ export function switchEquipKit(state: GameState, content: ContentDB, index: numb
   state.character.equipment = next.equipment;
   state.character.equippedInstances = next.equippedInstances;
   state.activeKit = index;
+  syncQuiverLoad(state, content); // claude:2026-10-24T18:35:00+02:00 — Kit ohne Köcher ⇒ geladene Pfeile ins Lager (1.4.0 FK)
 
   // Vitals an die neuen Maxima klemmen (Muster sanitize-HP-/Ward-Deckel): ein Tank-Kit → Glaskanone
   // Chef 28.08.2026: Der Wechsel ist nur ausserhalb des Kampfes moeglich; danach sollen Leben, Mana und Ward

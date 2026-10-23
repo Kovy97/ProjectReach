@@ -125,6 +125,9 @@ describe("Migration v83 → v84 (Taverne)", () => {
     // claude:2026-10-23T22:05:00+02:00 — SAVE 90 (Materiallager): Option an, Lagerware ohne Bankfach, Lücken einmal geschlossen.
     erwartet.state.settings.materialsToStorage = true;
     erwartet.state.lockedItems = {}; // claude:2026-10-24T17:05:00+02:00 — SAVE 90 (Bergung): Schloss-Liste
+    // claude:2026-10-24T20:25:00+02:00 — SAVE 91 (Bognerei): Köcher leer, Nachfüllen an.
+    erwartet.state.settings.quiverAutoRefill = true;
+    erwartet.state.character.quiver = null;
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(withoutDiscovered(JSON.parse(serialize(s, raw.savedAt)) as SaveShape)).toEqual(withoutDiscovered(erwartet));
     const again = deserialize(serialize(s, raw.savedAt), content, raw.savedAt)!;
@@ -369,6 +372,9 @@ describe("v84-Fixture: Round-Trip mit befüllter Taverne", () => {
     // claude:2026-10-23T22:05:00+02:00 — SAVE 90 (Materiallager): Option an, Lagerware ohne Bankfach, Lücken einmal geschlossen.
     erwartet.state.settings.materialsToStorage = true;
     erwartet.state.lockedItems = {}; // claude:2026-10-24T17:05:00+02:00 — SAVE 90 (Bergung): Schloss-Liste
+    // claude:2026-10-24T20:25:00+02:00 — SAVE 91 (Bognerei): Köcher leer, Nachfüllen an.
+    erwartet.state.settings.quiverAutoRefill = true;
+    erwartet.state.character.quiver = null;
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });

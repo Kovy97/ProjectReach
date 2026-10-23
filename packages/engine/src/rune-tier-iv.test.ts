@@ -501,13 +501,14 @@ describe("Runen Tier IV: Schmuck-Linie (§4.3, appliesTo jewelry)", () => {
     expect(affixAppliesToItem(["jewelry"], c.items["t4_shield"]!)).toBe(false);
   });
 
-  it("alle 23 Meister-Ringe sind legendär ⇒ 4 Slots (enchantSlotsFor legendary/godly = 4)", () => {
+  it("alle 24 Meister-Ringe sind legendär ⇒ 4 Slots (enchantSlotsFor legendary/godly = 4)", () => {
     expect(enchantSlotsFor("legendary")).toBe(4);
     expect(enchantSlotsFor("godly")).toBe(4);
     // 22 Skill-Ringe (1.2.0 „Fasern und Fallen": +ring_master_hunting; Skill-Split Schneidern SAVE 86:
-    // +ring_master_tailoring) + ring_master_completion.
+    // +ring_master_tailoring; 1.4.0 FK +ring_master_bowcraft) + ring_master_completion.
+    // claude:2026-10-23T23:55:00+02:00 — 1.4.0 FK: 23 Skill-Ringe + Vollendung = 24.
     const masterRings = Object.values(content.items).filter((i) => i.id.startsWith("ring_master_"));
-    expect(masterRings).toHaveLength(23);
+    expect(masterRings).toHaveLength(24);
     for (const r of masterRings) {
       expect(getItemRarity(r)).toBe("legendary");
       expect(enchantSlotsFor(getItemRarity(r))).toBe(4);

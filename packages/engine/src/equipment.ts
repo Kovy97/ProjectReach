@@ -2,6 +2,7 @@ import type { ContentDB, EquipSlot, GameState, ItemDef, ItemId } from "@hearthfo
 import { TOOL_SLOTS } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
 import { addInstance, addItem, freeSlots, getInstance, isFull, removeInstance, removeItem, hasInstanceRoom, usedCapacityUnits, effectiveCapacity } from "./inventory";
+import { isBowItem, isQuiverItem, syncQuiverLoad } from "./quiver"; // claude:2026-10-24T18:30:00+02:00 — Köcher-Regel (1.4.0 FK)
 
 /**
  * Legt das aktuell in `slot` getragene Item zurück ins Inventar und leert den Slot — egal ob es
@@ -47,6 +48,16 @@ function plainOccupied(state: GameState, slot: EquipSlot): boolean {
   return !!state.character.equipment[slot] && !state.character.equippedInstances[slot];
 }
 
+/**
+ * claude:2026-10-24T18:30:00+02:00 — Darf `off` neben der Haupthand `main` liegen? Köcher (1.4.0 FK, Chef 23.10.: „einzige Nebenhand für
+ * Bögen“) nur neben einem Bogen; jede andere Nebenhand nur neben einer Einhandwaffe (bisherige Zweihand-Regel).
+ */
+export function offhandFitsMain(main: ItemDef | null | undefined, off: ItemDef | null | undefined): boolean {
+  if (!off) return true;
+  if (isQuiverItem(off)) return !main || isBowItem(main); // leere Haupthand (Bogen abgelegt) lässt den Köcher liegen
+  return !main?.twoHanded;
+}
+
 export interface EquipResult {
   ok: boolean;
   reason?: string;
@@ -89,10 +100,17 @@ export function equipItem(state: GameState, content: ContentDB, itemId: ItemId):
     target = "ring2";
   }
   // Zweihandwaffe ↔ Schild: schließen sich gegenseitig aus → zusätzliche Verdrängung bestimmen.
-  const displacesOffhand = slot === "mainhand" && !!item.twoHanded && slotOccupied(state, "offhand");
+  // claude:2026-10-24T18:30:00+02:00 — Köcher (1.4.0 FK): ein Bogen behält den Köcher, jede andere Haupthand verdrängt ihn; ein Köcher
+  // braucht einen Bogen und verdrängt ihn nie.
+  const offId = state.character.equipment.offhand;
+  const displacesOffhand =
+    slot === "mainhand" && slotOccupied(state, "offhand") && !offhandFitsMain(item, offId ? content.items[offId] : undefined);
   const main = state.character.equipment.mainhand;
+  if (slot === "offhand" && isQuiverItem(item) && !isBowItem(main ? content.items[main] : undefined)) {
+    return { ok: false, reason: "Köcher nur mit Bogen" };
+  }
   const displacesMain =
-    slot === "offhand" && !!main && !!content.items[main]?.twoHanded && slotOccupied(state, "mainhand");
+    slot === "offhand" && !isQuiverItem(item) && !!main && !!content.items[main]?.twoHanded && slotOccupied(state, "mainhand");
   // DATENVERLUST-SCHUTZ: so viele getragene PLAIN Items müssen zurück in einen freien Inventar-Slot
   // (Stows) — eine verdrängte Instanz braucht KEINEN (geht in die unbegrenzte Tasche, `plainOccupied`).
   // Das Entnehmen der neuen Ausrüstung gibt nur dann einen Slot frei, wenn ihr Quell-Stack genau 1
@@ -126,6 +144,7 @@ export function equipItem(state: GameState, content: ContentDB, itemId: ItemId):
     const stowed = stowEquipped(state, content, "mainhand");
     if (mainPlain && !stowed) return { ok: false, reason: "Inventar voll" };
   }
+  syncQuiverLoad(state, content); // claude:2026-10-24T18:30:00+02:00 — ohne Köcher gehen geladene Pfeile ins Lager
   return { ok: true };
 }
 
@@ -216,10 +235,17 @@ export function equipInstance(
   if (slot === "ring1" && state.character.equipment.ring1 && !state.character.equipment.ring2) {
     target = "ring2";
   }
-  const displacesOffhand = slot === "mainhand" && !!item.twoHanded && slotOccupied(state, "offhand");
+  // claude:2026-10-24T18:30:00+02:00 — Köcher (1.4.0 FK): ein Bogen behält den Köcher, jede andere Haupthand verdrängt ihn; ein Köcher
+  // braucht einen Bogen und verdrängt ihn nie.
+  const offId = state.character.equipment.offhand;
+  const displacesOffhand =
+    slot === "mainhand" && slotOccupied(state, "offhand") && !offhandFitsMain(item, offId ? content.items[offId] : undefined);
   const main = state.character.equipment.mainhand;
+  if (slot === "offhand" && isQuiverItem(item) && !isBowItem(main ? content.items[main] : undefined)) {
+    return { ok: false, reason: "Köcher nur mit Bogen" };
+  }
   const displacesMain =
-    slot === "offhand" && !!main && !!content.items[main]?.twoHanded && slotOccupied(state, "mainhand");
+    slot === "offhand" && !isQuiverItem(item) && !!main && !!content.items[main]?.twoHanded && slotOccupied(state, "mainhand");
   // DATENVERLUST-SCHUTZ: NUR verdrängte PLAIN Items brauchen je einen freien Inventar-Slot; verdrängte
   // Instanzen wandern in die unbegrenzte Tasche. Die Quell-Instanz kommt selbst aus der Tasche (belegt
   // keinen Slot), daher — anders als bei `equipItem` — KEIN „+1" für einen frei werdenden Quell-Slot.
@@ -248,6 +274,7 @@ export function equipInstance(
     const stowed = stowEquipped(state, content, "mainhand");
     if (mainPlain && !stowed) return { ok: false, reason: "Inventar voll" };
   }
+  syncQuiverLoad(state, content); // claude:2026-10-24T18:30:00+02:00 — ohne Köcher gehen geladene Pfeile ins Lager
   return { ok: true };
 }
 
@@ -276,5 +303,7 @@ export function unequipItem(state: GameState, content: ContentDB, slot: EquipSlo
   const itemId = state.character.equipment[slot];
   if (!itemId) return false;
   if (!canUnequip(state, content, slot)) return false;
-  return stowEquipped(state, content, slot);
+  const ok = stowEquipped(state, content, slot);
+  if (ok) syncQuiverLoad(state, content); // claude:2026-10-24T18:30:00+02:00 — Köcher abgelegt ⇒ Pfeile zurück ins Lager
+  return ok;
 }

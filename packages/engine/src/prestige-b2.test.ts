@@ -115,13 +115,14 @@ describe("Siegel-Formel (Balance § 4)", () => {
     return s;
   }
 
-  it("Beispieltabelle: Minimum 47, typisch 51, neun 99er 65, Band 2 komplett 64, alles 99 134", () => {
+  it("Beispieltabelle: Minimum 47, typisch 51, neun 99er 65, Band 2 komplett 64, alles 99 139 (23 Fertigkeiten)", () => {
     const rows: Array<[number, number, number, number, number]> = [
       [4, 1250, 0, 0, 47],
       [5, 1320, 0, 0, 51],
       [9, 1400, 0, 0, 65],
       [5, 1350, 6, 0, 64],
-      [22, 2178, 6, 30, 134],
+      // claude:2026-10-24T21:15:00+02:00 — 1.4.0 FK: Bognerei ist die 23. Fertigkeit; „alles 99“ = 23 × 99 (war 22 × 99 → 134).
+      [23, 2277, 6, 30, 139],
     ];
     for (const [n99, tl, late, best, want] of rows) {
       const p = prestigePointsPreview(profile(n99, tl, late, best), content);

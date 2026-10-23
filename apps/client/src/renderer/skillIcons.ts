@@ -41,6 +41,7 @@ export const SKILL_EMOJI_FALLBACK: Record<string, string> = {
   thieving: "🗝️",
   leatherworking: "🧵",
   tailoring: "🪡",
+  bowcraft: "🏹", // claude:2026-10-24T19:40:00+02:00 — Bognerei (1.4.0 FK)
   jewelcrafting: "💍",
   runecrafting: "🔮",
   herblore: "🧪",

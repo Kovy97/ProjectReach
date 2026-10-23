@@ -19,6 +19,7 @@ import {
   ATTRIBUTE_IDS,
   EQUIP_SLOTS,
   affixAppliesToItem,
+  quiverAcceptsAffix,
   enchantSlotsFor,
   getItemRarity,
   instanceBonusDelta,
@@ -28,6 +29,8 @@ import { grantAllZones } from "./test-helpers";
 import { xpForLevel } from "./leveling";
 import { affixHasActiveEffect, trinityGatePasses } from "./enchant";
 import { grantPet, equipPet, equipSecondPet } from "./pets";
+import { offhandFitsMain } from "./equipment";
+import { arrowRequiredLevel, isBowItem, isQuiverItem } from "./quiver"; // claude:2026-10-24T21:25:00+02:00
 
 /**
  * Balance-Envelope-Helfer (BiS-Red-Team-Suite, Chef-GO 2026-07-09).
@@ -404,9 +407,10 @@ export function buildBisCharacter(
     });
   if (rings[0]) kit.ring1 = rings[0].id;
   if (rings[1]) kit.ring2 = rings[1].id;
-  // Offhand nur ohne 2H-Waffe (Spiegel der Verdrängungsregel in equipItem).
-  if (!weapon.twoHanded) {
-    const offhands = legalEquipment.filter((it) => it.slot === "offhand");
+  // Offhand nur, wo die Engine sie zulässt (Spiegel von equipItem). claude:2026-10-24T21:25:00+02:00 — 1.4.0 FK §11.1: Bögen bekommen
+  // den besten legalen Köcher, alle anderen Haupthände nie einen Köcher (offhandFitsMain).
+  if (!weapon.twoHanded || isBowItem(weapon)) {
+    const offhands = legalEquipment.filter((it) => it.slot === "offhand" && offhandFitsMain(weapon, it));
     const best = argmax(
       offhands,
       (it) => scoreContribution(target, itemContribution(it, "offhand"), style),
@@ -455,7 +459,8 @@ export function buildBisCharacter(
     // wiederholt sich, ein Proc-Affix scheidet nach seiner ersten Verwendung aus.
     const legalAffixes = affixDefs.filter((d) => {
       const tier = runeTierByAffix.get(d.id) ?? 0;
-      return tier > 0 && affixAppliesToItem(d.appliesTo, base) && trinityGatePasses(d, tier, base);
+      // claude:2026-10-24T21:25:00+02:00 — Köcher: nur Stat-Runen (1.4.0 FK, quiverAcceptsAffix wie applyEnchant).
+      return tier > 0 && affixAppliesToItem(d.appliesTo, base) && quiverAcceptsAffix(d.id, base) && trinityGatePasses(d, tier, base);
     });
     const bestenliste = legalAffixes
       .map((d) => ({
@@ -489,6 +494,17 @@ export function buildBisCharacter(
     if (affixOk) affixBySlot[slot] = rankedAffixes[0]!.d.id;
   }
   state.character.equippedInstances = eqi;
+
+  // claude:2026-10-24T21:25:00+02:00 — 1.4.0 FK §11.2: Bogen + Köcher laden den besten legalen GRUNDpfeil (Effektpfeile haben weniger
+  // Rohbonus und fallen hier heraus), Menge praktisch unbegrenzt.
+  if (isBowItem(weapon) && kit.offhand && isQuiverItem(content.items[kit.offhand])) {
+    const arrow = argmax(
+      allItems.filter((it) => it.arrow && !it.arrow.effect && arrowRequiredLevel(it.arrow) <= targetLevel),
+      (it) => it.arrow!.bonusMin + it.arrow!.bonusMax,
+      (it) => it.id,
+    );
+    if (arrow) state.character.quiver = { itemId: arrow.id, qty: 1_000_000 };
+  }
 
   // ── 4) Buffs: stärkster Einzel-Buff bzw. bester Buff JE KATEGORIE (Exklusivitäts-Worst-Case) ─
   // red-team #303 L3: `applyConsumableBuff` verdrängt pro `buff.category` — der maximal legale

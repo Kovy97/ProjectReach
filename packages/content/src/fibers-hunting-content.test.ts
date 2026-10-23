@@ -127,7 +127,8 @@ describe("Fasern, Stoff und Jagen (1.2.0): Item-/Aktions-/Crop-/Skill-Wächter",
     }
     const cord = content.actions["twist_nettle_cord"];
     expect(cord).toBeDefined();
-    expect(cord!.skill).toBe("leatherworking"); // Bogen-Zubehör bleibt Handwerk (Chef-Entscheid 28.08.2026)
+    // claude:2026-10-23T23:50:00+02:00 — 1.4.0 FK: Sehnen (twist_*/fletch_bowstring) gehören jetzt zur Bognerei (bowcraft), vorher Handwerk (Chef-Entscheid 28.08.2026).
+    expect(cord!.skill).toBe("bowcraft");
     expect(cord!.levelRequired).toBe(1);
     expect(cord!.inputs).toEqual([{ itemId: "fiber_nettle", qty: 2 }]);
     expect(cord!.loot).toEqual([{ itemId: "bowstring", chance: 1, min: 1, max: 1 }]);

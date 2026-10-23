@@ -75,7 +75,8 @@ function isArmorOrJewelry(item: ItemDef): boolean {
 
 /** Waffen im Sinne des §1.1-Guards: Mainhand-Ausrüstung mit weaponStyle (Schaden über die Spanne). */
 function isWeapon(item: ItemDef): boolean {
-  return item.type === "equipment" && !!item.weaponStyle;
+  // claude:2026-10-23T23:55:00+02:00 — 1.4.0 FK: Köcher (weaponType "quiver", Nebenhand) sind Stat-Stick-Nebenhände und tragen laut Balance-Spec §5 bonus.critChance; keine Schadenswaffe, daher vom §1.1-Guard ausgenommen.
+  return item.type === "equipment" && !!item.weaponStyle && item.weaponType !== "quiver";
 }
 
 /** Signatur laut Spec (§4.4/§5.4): Präfix idol_ bzw. slayer_ oder rarity legendary/godly. */

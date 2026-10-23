@@ -16,6 +16,7 @@ import type {
   SkillBoostMap,
   WeaponStyle,
 } from "@hearthforge/shared";
+import { activeArrow } from "./quiver"; // claude:2026-10-24T18:20:00+02:00 — Pfeilbonus (1.4.0 FK)
 import {
   ARMOR_PEN_CAP,
   ATTACK_INTERVAL_CEIL_MS,
@@ -147,6 +148,7 @@ export function createCharacter(input: CharacterCreation, now?: number): Charact
     food: null,
     meal: null, // claude:2026-10-23T16:50:00+02:00 — Mahlzeit-Platz (SAVE 89)
     mealKeep: true,
+    quiver: null, // claude:2026-10-24T19:05:00+02:00 — Köcher-Ladung (SAVE 91, 1.4.0 FK)
     autoEatTier: 0,
     // Auto-Trank-System (SAVE_VERSION 49): Default AUS — der Spieler konfiguriert es im Kampf-UI.
     autoPotion: defaultAutoPotion(),
@@ -310,6 +312,8 @@ function walkStatsKey(state: GameState, content: ContentDB, key: StatsCacheKey, 
   // Talent-Rängen UND an der Baum-Freischaltung (prestige.count), beides sonst nicht im Fingerprint.
   if (!visit(talentMaxHpMult(state, content))) return false;
   if (!visit(talentDamageMult(state, content))) return false;
+  // claude:2026-10-24T20:10:00+02:00 — geladener Pfeil (1.4.0 FK): sein Bonus liegt auf der Spanne, solange Menge > 0.
+  if (!visit(activeArrow(state, content)?.itemId ?? null)) return false;
   // match-Modus: der gespeicherte Key muss exakt aufgebraucht sein (Längen-Gleichheit).
   return !match || i === key.length;
 }
@@ -636,12 +640,13 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
   // def/eva-Terme (con·0.3/wis·0.1/defence·0.1 bzw. dex·0.3/defence·0.05): die Gear-def/eva-Flats
   // entfallen im §6-Content-Umbau, CON/DEX tragen die Panzer-/Ausweich-Kurve.
   const meleeDamage = (0.1 + attr.str * 0.3 + sPower * 0.08 + eq.meleeDamage) * dmgMult;
-  const rangedDamage = attr.dex * 0.24 + sRanged * 0.1 + eq.rangedDamage;
+  // claude:2026-10-24T18:20:00+02:00 — 1.4.0 FK §8: Fernkampf-Haltungen tragen jetzt einen Schadensfaktor (Abwehr 0,90) wie Nahkampf
+  // und Magie; Gezielt/Schnell bleiben bei 1.
+  const rangedDamage = (attr.dex * 0.24 + sRanged * 0.1 + eq.rangedDamage) * dmgMult;
   // Armor-Iteration 2.1 #4: die Magie-Defensiv-Stance hat jetzt dmgMult 0.85 (−15 % Cast-Schaden,
   // Tradeoff für ×1.5 Ward-Regen). Damit dieser Malus tatsächlich in den Cast-Schaden fließt (charDamage
   // → attackDamageMin/Max, die combat.ts liest), muss magicDamage — wie meleeDamage — mit dmgMult
-  // multipliziert werden. Fernkampf-Stances lassen dmgMult stets 1 (Tempo/Acc-Tradeoffs), daher bleibt
-  // rangedDamage bewusst ohne dmgMult.
+  // multipliziert werden.
   const magicDamage = (attr.int * 0.34 + sMagic * 0.12 + eq.magicDamage) * dmgMult;
   // Zwei-Effekt-Modell: Pets verändern den Roh-Schaden NICHT mehr in computeStats.
   // Combat-Pet-Boni (armorRend/critDamage/bonusCritChance/…) wendet combat-dev über
@@ -651,9 +656,8 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
   const charDamage =
     style === "ranged" ? rangedDamage : style === "magic" ? magicDamage : meleeDamage;
 
-  // Munitions-Zuschlag: ENTFERNT (#286 Ammo-Removal). Der Pfeilschaden ist seit dem
-  // Waffen-Kurven-Pass (#287) direkt in die damageMin/Max-Spanne der Bögen eingebacken —
-  // hier zählt nur noch Charakter-Anteil + Waffenspanne (kein Double-Dip mehr).
+  // claude:2026-10-24T18:20:00+02:00 — Pfeile (1.4.0 FK §3.1): Die Bogenspanne ist der Schaden mit einfachen Pfeilen. Ein echter Pfeil im
+  // Köcher addiert seinen Bonus unten nach Charakter-Anteil + Waffenspanne, vor Begleiter- und Narbenbuch-Faktor.
 
   // Schadensspanne des aktiven Stils (Waffen 2.0 §1.2):
   //  - Range-Form: min/max = C + Waffenspanne — die WAFFE definiert die Breite.
@@ -672,6 +676,11 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
   } else {
     attackDamageMax = Math.max(0, charDamage * DMG_MAX_HIT_MULT);
     attackDamageMin = attackDamageMax * DMG_ROLL_FLOOR;
+  }
+  const arrow = style === "ranged" ? activeArrow(state, content) : undefined;
+  if (arrow) {
+    attackDamageMin += arrow.def.bonusMin;
+    attackDamageMax += arrow.def.bonusMax;
   }
   // Fokus-Haltung (Zauberreserve, Chef-GO 28.08.2026, Spec §2): in der OFFENSIVEN Magie-Haltung
   // wächst der gesamte Zauberschaden (Charakter-Anteil + Waffenspanne) um +1 % je 30 Reserve,

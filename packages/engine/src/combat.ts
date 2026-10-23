@@ -21,6 +21,7 @@ import type {
   StatusType,
   WeaponEffect,
 } from "@hearthforge/shared";
+import { activeArrow, consumeArrow } from "./quiver"; // claude:2026-10-24T18:20:00+02:00 — Köcher/Pfeile (1.4.0 FK)
 import {
   AUTO_EAT_COOLDOWN_MS,
   AUTO_POTION_COOLDOWN_MS,
@@ -1810,7 +1811,8 @@ function applyWeaponEffects(
   fx: SpecialEffects,
 ): void {
   const catalystMs = fx.catalyst ? Math.max(0, fx.catalyst.durationMs) : 0;
-  for (const effect of mainhandStatusEffects(state, content)) {
+  const mainEffects = mainhandStatusEffects(state, content);
+  for (const effect of mainEffects) {
     const type = effect.type;
     if (!isStatusEffectType(type)) continue; // defensive (mainhandStatusEffects filtert bereits)
     if (nextFloat(state.rng) > statusApplyChance(effect)) continue;
@@ -1819,6 +1821,18 @@ function applyWeaponEffects(
       magnitude: effect.magnitude,
       durationMs: effect.durationMs + catalystMs,
     });
+  }
+  // claude:2026-10-24T18:20:00+02:00 — Effektpfeil (1.4.0 FK §3.3): eigener Proc-Wurf je Treffer, NACH den Waffen-Procs. Trägt der Bogen
+  // denselben Status schon, bringt der Pfeil davon nichts (gewollte Wahl, Spec); kein Wurf ⇒ keine Sequenzänderung.
+  const arrowFx = activeArrow(state, content)?.def.effect;
+  if (arrowFx && isStatusEffectType(arrowFx.type) && !mainEffects.some((e) => e.type === arrowFx.type)) {
+    if (nextFloat(state.rng) <= statusApplyChance(arrowFx)) {
+      applyEnemyStatus(state, monster, {
+        type: arrowFx.type,
+        magnitude: arrowFx.magnitude,
+        durationMs: arrowFx.durationMs + catalystMs,
+      });
+    }
   }
 }
 
@@ -2022,10 +2036,10 @@ function performPlayerAttack(
     // gedeckelt auf maxWard (früher `cost · WARD_PER_MANA`; jetzt fester Wert je Zauber).
     state.character.ward = rechargeWard(state.character.ward, stats.maxWard);
   }
-  // Fernkampf: KEINE Munitions-Phase mehr (#286 Ammo-Removal) — der Pfeilschaden steckt seit #287
-  // in der Bogen-Spanne, jeder Schuss ist „scharf". Der frühere ammoSaver-Waffeneffekt ist damit
-  // ein NO-OP (fx.ammoSaver wird nirgends mehr gelesen, kein RNG-Draw); Stage B ersetzt/entfernt
-  // die Träger-Items.
+  // claude:2026-10-24T18:20:00+02:00 — Fernkampf (1.4.0 FK): Die Bogenspanne ist der Schaden mit einfachen Pfeilen. Ein echter Pfeil im
+  // Köcher addiert seinen Bonus über computeStats und seinen Status über applyWeaponEffects; verbraucht wird er
+  // NACH dem Schlag (auch beim Fehlschuss), damit dieser Schuss noch vom geladenen Pfeil kommt. Ohne Ladung kein
+  // RNG-Zug (Alt-Sequenzen bleiben bit-gleich). Der doubleStrike-Zweitschlag ist kostenlos.
 
   strikeEnemy(
     state,
@@ -2037,6 +2051,7 @@ function performPlayerAttack(
     { casts, wardBeforeCast, allowDoubleStrike: true },
     nowMs,
   );
+  if (stats.style === "ranged") consumeArrow(state, content, state.rng);
 }
 
 /** Kontext eines Einzelschlags (Ressourcen-Phase von performPlayerAttack). */

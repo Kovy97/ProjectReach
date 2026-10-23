@@ -243,7 +243,7 @@ export function petInstantActionChance(state: GameState, content: ContentDB, ski
 /**
  * Additiver Doppelertrag-Chancen-Bonus für einen Skill. Aggregiert alle Skill-Kinds, die funktional
  * die Doppelertrag-Chance erhöhen (doubleDrop, gatherYield, flawlessGem, bonusRunes).
- * `bonusAmmo` ist seit dem Ammo-Removal (#286) ein NO-OP und hier BEWUSST AUSGEFILTERT.
+ * `bonusAmmo` zählt NICHT hier: es wirkt nur beim Pfeile-Befiedern (petBonusAmmoChance, 1.4.0 FK).
  */
 export function petDoubleYieldBonus(state: GameState, content: ContentDB, skill: SkillId): number {
   return skillScopedValue(
@@ -252,6 +252,19 @@ export function petDoubleYieldBonus(state: GameState, content: ContentDB, skill:
     ["doubleDrop", "gatherYield", "flawlessGem", "bonusRunes"],
     skill,
   );
+}
+
+/**
+ * claude:2026-10-24T18:40:00+02:00 — `bonusAmmo` (1.4.0 FK, tote Haken wiederbelebt): Chance auf doppelten Ertrag beim Befiedern von
+ * Pfeilen (`fletch_*_arrow`, `fletch_*_arrow_*`, Skill `bowcraft`). Heute trägt kein Begleiter dieses Kind ⇒ 0.
+ */
+export function petBonusAmmoChance(state: GameState, content: ContentDB, skill: SkillId): number {
+  return skillScopedValue(state, content, ["bonusAmmo"], skill);
+}
+
+/** Befiedert diese Aktion Pfeile (Grund- oder Effektpfeil)? */
+export function isArrowFletchAction(actionId: string): boolean {
+  return /^fletch_[a-z]+_arrow(_[a-z]+)?$/.test(actionId);
 }
 
 /**

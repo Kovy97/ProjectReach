@@ -19,7 +19,8 @@ import { content } from "@hearthforge/content";
 describe("Haendigkeit der Waffen", () => {
   it("jede Fernkampfwaffe ist zweihaendig", () => {
     const einhaendig = Object.values(content.items)
-      .filter((i) => i.weaponStyle === "ranged" && !i.twoHanded)
+      // claude:2026-10-24T21:05:00+02:00 — Köcher (1.4.0 FK) sind die Nebenhand der Bögen, keine Fernkampfwaffe für die Haupthand.
+      .filter((i) => i.weaponStyle === "ranged" && !i.twoHanded && i.weaponType !== "quiver")
       .map((i) => i.id);
     expect(
       einhaendig,
@@ -29,7 +30,7 @@ describe("Haendigkeit der Waffen", () => {
 
   it("keine Fernkampfwaffe sitzt im Schildslot", () => {
     const imOffhand = Object.values(content.items)
-      .filter((i) => i.weaponStyle === "ranged" && i.slot === "offhand")
+      .filter((i) => i.weaponStyle === "ranged" && i.slot === "offhand" && i.weaponType !== "quiver")
       .map((i) => i.id);
     expect(imOffhand).toEqual([]);
   });

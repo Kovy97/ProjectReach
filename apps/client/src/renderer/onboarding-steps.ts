@@ -97,6 +97,8 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
   // Schneidern (Chef-Entscheid 28.08., Handwerk-Aufteilung) — direkt nach Handwerk, s.
   // navigation.ts.
   { id: "sidebar.tailoring", guideId: "sidebar.tailoring", textKey: "onboarding.guide.sidebarSkill.tailoring", requireAction: true },
+  // claude:2026-10-24T19:40:00+02:00 — Bognerei (1.4.0 FK) direkt nach Schneidern, s. navigation.ts.
+  { id: "sidebar.bowcraft", guideId: "sidebar.bowcraft", textKey: "onboarding.guide.sidebarSkill.bowcraft", requireAction: true },
   { id: "sidebar.jewelcrafting", guideId: "sidebar.jewelcrafting", textKey: "onboarding.guide.sidebarSkill.jewelcrafting", requireAction: true },
   { id: "sidebar.runecrafting", guideId: "sidebar.runecrafting", textKey: "onboarding.guide.sidebarSkill.runecrafting", requireAction: true },
   { id: "sidebar.herblore", guideId: "sidebar.herblore", textKey: "onboarding.guide.sidebarSkill.herblore", requireAction: true },

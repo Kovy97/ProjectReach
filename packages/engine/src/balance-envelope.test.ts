@@ -245,9 +245,12 @@ describe("Balance-Envelope §3: Cap-Bindungs-Detektoren (heutige Realität)", ()
     // den 2,50-critDamage-Deckel (1,5 + lck·0,01) — critChance (dex·0,4 + lck·0,6) bleibt am
     // 0,5-Deckel, weil der dex-Anteil den Verlust auffängt. Ab CL 60 sind genug zusätzliche Slots
     // legal, der Deckel bindet dort weiterhin exakt.
+    // claude:2026-10-24T21:30:00+02:00 — 1.4.0 FK (Chef 24.10.: „Entscheide das Beste“, Gate B F1–F5 wie
+    // empfohlen): Der Köcher bringt Glück in die Fernkampf-Nebenhand. Der CL-30-Crit-Stack erreicht damit auch im
+    // Fernkampf den 2,50-Deckel (war 2,39). Clamp hält; Nahkampf und Magie unverändert.
     const CL30_CRIT_DAMAGE: Record<WeaponStyle, number> = {
       melee: 2.47,
-      ranged: 2.39,
+      ranged: CRIT_DAMAGE_CAP,
       magic: 2.43,
     };
     for (const lvl of TIERS) {
@@ -542,7 +545,10 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // evasionRating) sind die ersten craftbaren Schmuckstücke, die für einen Ranged-Build
     // überhaupt konkurrieren — sie schlagen an mehreren Slots die bisherige BiS-Wahl dieses
     // Dodge-Builds und heben den dex-Anteil: evasion 17.3194 → 17.9528.
-    expect(st.evasion).toBeCloseTo(17.9528, 3);
+    // claude:2026-10-24T21:35:00+02:00 — Re-Messung 1.4.0 FK (Chef 24.10.: „Entscheide das Beste“): Der Bogen trägt
+    // jetzt einen Köcher (aetherium_quiver, Geschick + Präzision, Stat-Runen) in der vorher leeren Nebenhand.
+    // Mehr dex hebt den flachen Kontest-Stat: evasion 17.9528 → 19.4896. Dodge bleibt am 0,40-Deckel (Clamp).
+    expect(st.evasion).toBeCloseTo(19.4896, 3);
 
     const onLevel = monsterClosestTo(content, 90);
     const plus150 = monsterClosestTo(content, 240);
@@ -579,11 +585,13 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // Re-Messung 2026-08-29 (content-dev, Schmuck-Rework Welle 2, s.o.): evasion 17.3194 → 17.9528
     // laesst den Gegner spuerbar seltener landen: 0.3884 → 0.3799 / 0.2334 → 0.2280 /
     // 0.7643 → 0.7579 / 0.4586 → 0.4547.
-    expect(hcOn).toBeCloseTo(0.3799, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.228, 3);
+    // claude:2026-10-24T21:35:00+02:00 — Re-Messung 1.4.0 FK (Köcher, s.o.): evasion 17.9528 → 19.4896 lässt den
+    // Gegner etwas seltener landen: 0.3799 → 0.3608 / 0.2280 → 0.2165 / 0.7579 → 0.7425 / 0.4547 → 0.4455.
+    expect(hcOn).toBeCloseTo(0.3608, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2165, 3);
     const hc150 = hitChance(enemyEffectiveAccuracy(plus150), st.evasion); // acc 24 → eff. ~65
-    expect(hc150).toBeCloseTo(0.7579, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4547, 3);
+    expect(hc150).toBeCloseTo(0.7425, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4455, 3);
     // Harte Untergrenze (L5-Kombiboden): kombinierte Land-Chance nie unter MIN_HIT_CHANCE.
     expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeGreaterThanOrEqual(MIN_HIT_CHANCE);
   });
@@ -867,8 +875,11 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
       // melee 20.76→21.02, magic 30.00→30.72.
       ["melee", "idol_warden", 56.145, 21.02],
       ["melee", "last_idol", 188.275, 14.89],
-      ["ranged", "idol_warden", 73.03, 19.83],
-      ["ranged", "last_idol", 241.29, 13.68],
+      // claude:2026-10-24T21:40:00+02:00 — 1.4.0 FK (Chef 24.10.: „Entscheide das Beste“, Gate B F1–F5): Bogenleiter,
+      // Jägerisch 3/6/10, Köcher in der Nebenhand und Grundpfeil der Stufe (design/1.4.0-balance-fernkampf.md §10.3,
+      // Erwartung 55,13/20,22 und 181,59/13,89). Bauer-Waffenwahl bleibt (vergleichbar), Melee/Magie unverändert.
+      ["ranged", "idol_warden", 55.13, 20.22],
+      ["ranged", "last_idol", 181.59, 13.89],
       ["magic", "idol_warden", 52.69, 30.72],
       ["magic", "last_idol", 176.98, 33.09],
     ];
@@ -893,7 +904,8 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     const pins: Array<[WeaponStyle, number, number]> = [
       // claude:2026-10-18T02:00:00+02:00 — 1.3.0: Eisenkiefer +3 % Nahkampfschaden (statt +2 Power) ⇒ 254.69→247.57 / 151.09→146.86 s.
       ["melee", 247.57, 146.86],
-      ["ranged", 343.58, 204.19],
+      // claude:2026-10-24T21:40:00+02:00 — 1.4.0 FK (s. TTK-Matrix oben): 343,58 → 242,14 / 204,19 → 144,55 s (Spec §10.3).
+      ["ranged", 242.14, 144.55],
       ["magic", 236.29, 137.07],
     ];
     for (const [style, drazhanS, lastIdolS] of pins) {
@@ -902,7 +914,8 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     }
     const melee = expectedTtk("melee", "drazhan", 99).player;
     // claude:2026-10-18T02:00:00+02:00 — 1.3.0: der stärkere Nahkampf-Begleiter verschiebt die Verhältnisse 0,74→0,72 / 1,08→1,05.
-    expect(melee / expectedTtk("ranged", "drazhan", 99).player, "Parität Fernkampf/Nahkampf").toBeCloseTo(0.72, 2);
+    // claude:2026-10-24T21:40:00+02:00 — 1.4.0 FK: Fernkampf schließt auf, 0,72 → 1,02 (Spec §10.3, Chef-Ziel ±5 %).
+    expect(melee / expectedTtk("ranged", "drazhan", 99).player, "Parität Fernkampf/Nahkampf").toBeCloseTo(1.02, 2);
     expect(melee / expectedTtk("magic", "drazhan", 99).player, "Parität Magie/Nahkampf").toBeCloseTo(1.05, 2);
   });
 
@@ -1016,7 +1029,7 @@ describe("Balance-Envelope §6: Runen-Stapelung (Chef-Entscheid 25.08.2026)", ()
 //    Suite (idol-sanctum-clear.test.ts) kann sie tragen, dort rein verhaltensbasiert geprüft.
 // ───────────────────────────────────────────────────────────────────────────
 describe("Balance-Envelope §8: Meister-Perk-Inventur (masterPerk-Quellen)", () => {
-  it("Ring-Umbau SAVE 69: alle 21 Meisterringe existieren, GENAU 19 tragen einen masterPerk", () => {
+  it("Ring-Umbau SAVE 69: alle Meisterringe existieren, GENAU 20 Teile tragen einen masterPerk (seit 1.4.0 inkl. Bognerei)", () => {
     // Detektor: reißt dieser Pin, hat sich die Perk-Verteilung der Meisterringe verschoben —
     // bewusst neu messen & pinnen (Anzahl Träger, Kampf-Envelopes §2-§5 gegenprüfen).
     // Schmuck-Rework Welle 5 (content-dev, 29.08.2026, §3.9): 4 neue craftbare Skilling-Ringe/
@@ -1038,6 +1051,7 @@ describe("Balance-Envelope §8: Meister-Perk-Inventur (masterPerk-Quellen)", () 
         "ring_master_leatherworking",
         "ring_master_mining",
         "ring_master_tailoring", // Skill-Split Schneidern (SAVE 86, 28.08.2026): inputSaver wie leatherworking
+        "ring_master_bowcraft", // claude:2026-10-24T21:10:00+02:00 — Bognerei (1.4.0 FK): inputSaver wie Schneidern
         "ring_master_runecrafting",
         "ring_master_slayer",
         "ring_master_smithing",

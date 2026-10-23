@@ -42,5 +42,6 @@ export * from "./tiers";
 export * from "./drop-sources";
 export * from "./storage";
 export * from "./salvage"; // claude:2026-10-23T22:50:00+02:00 — Bergung (1.4.0) // claude:2026-10-23T21:50:00+02:00 — Materiallager (1.4.0) // claude:2026-10-23T20:30:00+02:00 — Drop-Quellen-Index (1.4.0)
+export * from "./quiver"; // claude:2026-10-24T18:35:00+02:00 — Köcher/Pfeile (1.4.0 FK)
 export * from "./estates"; // claude:2026-10-23T18:45:00+02:00 — Ländereien (1.4.0) // claude:2026-10-23T18:00:00+02:00 — Stufen-Anzeige (1.4.0)
 export * from "./features";

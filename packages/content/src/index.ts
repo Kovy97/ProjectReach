@@ -36,6 +36,8 @@ export const content: ContentDB = {
     // jetzt hier; Handwerk behält Leder, Bögen, Holzschilde, Angelruten und die Nessel-Sehne. Kein `trains`
     // (Muster leatherworking/jewelcrafting). Reihenfolge in Skill-Listen: direkt NACH leatherworking.
     tailoring: { id: "tailoring", name: { en: "Tailoring", de: "Schneidern" } },
+    // claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK: 23. Skill "bowcraft" (Anzeige EN Fletching / DE Bognerei; interne ID bewusst nicht "fletching", A1). Bögen, Sehnen, Schäfte, Pfeile, Köcher. Kein `trains` (Muster leatherworking). Reihenfolge direkt nach tailoring.
+    bowcraft: { id: "bowcraft", name: { en: "Fletching", de: "Bognerei" } },
     jewelcrafting: { id: "jewelcrafting", name: { en: "Jewelcrafting", de: "Juwelierskunst" } },
     runecrafting: { id: "runecrafting", name: { en: "Runecrafting", de: "Runenkunst" }, trains: "int" }, // Runenkunst = arkanes Wissen → INT
     herblore: { id: "herblore", name: { en: "Herblore", de: "Kräuterkunde" }, trains: "wis" }, // Kräuterkunde = Weisheit/Naturwissen → WIS
@@ -677,6 +679,141 @@ export const content: ContentDB = {
     // Tiers) ist GELÖSCHT — Bögen tragen den Pfeilschaden seit #287 eingebacken, es gibt keine
     // Munition mehr im Spiel. bowstring + feather bleiben (Bogen-Craft/Loot).
     bowstring: { id: "bowstring", name: { en: "Sinew Bowstring", de: "Sehnenfaden" }, type: "material", stackable: true, icon: "🧵", value: 8 },
+    // ── claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK „Feder und Stahl“: Pfeilkette (Spec design/1.4.0-balance-fernkampf.md §1/§3/§5). Material, stapelbar, Regal „arrows“; Pfeile tragen `arrow`. Einfache Pfeile sind KEIN Item. Alt-IDs (copper_arrow …) wiederverwendet, in persistence in keiner Tombstone-Liste (Spec §1).
+    arrow_shaft: { id: "arrow_shaft", name: { en: "Arrow Shaft", de: "Pfeilschaft" }, type: "material", stackable: true, icon: "📏", value: 1, shelf: "arrows", description: { en: "A straight, smoothed length of wood, waiting for a head and feathers.", de: "Ein gerader, geglätteter Holzschaft, der auf Spitze und Federn wartet." } },
+    copper_arrowheads: { id: "copper_arrowheads", name: { en: "Copper Arrowheads", de: "Kupfer-Pfeilspitzen" }, type: "material", stackable: true, icon: "🔺", value: 1, shelf: "arrows" },
+    bronze_arrowheads: { id: "bronze_arrowheads", name: { en: "Bronze Arrowheads", de: "Bronze-Pfeilspitzen" }, type: "material", stackable: true, icon: "🔺", value: 1, shelf: "arrows" },
+    iron_arrowheads: { id: "iron_arrowheads", name: { en: "Iron Arrowheads", de: "Eisen-Pfeilspitzen" }, type: "material", stackable: true, icon: "🔺", value: 1, shelf: "arrows" },
+    steel_arrowheads: { id: "steel_arrowheads", name: { en: "Steel Arrowheads", de: "Stahl-Pfeilspitzen" }, type: "material", stackable: true, icon: "🔺", value: 1, shelf: "arrows" },
+    blacksteel_arrowheads: { id: "blacksteel_arrowheads", name: { en: "Blacksteel Arrowheads", de: "Schwarzstahl-Pfeilspitzen" }, type: "material", stackable: true, icon: "🔺", value: 2, shelf: "arrows" },
+    mithril_arrowheads: { id: "mithril_arrowheads", name: { en: "Mithril Arrowheads", de: "Mithril-Pfeilspitzen" }, type: "material", stackable: true, icon: "🔺", value: 2, shelf: "arrows" },
+    adamantium_arrowheads: { id: "adamantium_arrowheads", name: { en: "Adamantium Arrowheads", de: "Adamantium-Pfeilspitzen" }, type: "material", stackable: true, icon: "🔺", value: 3, shelf: "arrows" },
+    runite_arrowheads: { id: "runite_arrowheads", name: { en: "Runite Arrowheads", de: "Runit-Pfeilspitzen" }, type: "material", stackable: true, icon: "🔺", value: 4, shelf: "arrows" },
+    bloodiron_arrowheads: { id: "bloodiron_arrowheads", name: { en: "Bloodiron Arrowheads", de: "Bluteisen-Pfeilspitzen" }, type: "material", stackable: true, icon: "🔺", value: 5, shelf: "arrows" },
+    titanium_arrowheads: { id: "titanium_arrowheads", name: { en: "Titanium Arrowheads", de: "Titan-Pfeilspitzen" }, type: "material", stackable: true, icon: "🔺", value: 6, shelf: "arrows" },
+    aetherium_arrowheads: { id: "aetherium_arrowheads", name: { en: "Aetherium Arrowheads", de: "Aetherium-Pfeilspitzen" }, type: "material", stackable: true, icon: "🔺", value: 8, shelf: "arrows" },
+    godiron_arrowheads: { id: "godiron_arrowheads", name: { en: "Godiron Arrowheads", de: "Götzeneisen-Pfeilspitzen" }, type: "material", stackable: true, icon: "🔺", value: 11, shelf: "arrows" },
+    copper_arrow: { id: "copper_arrow", name: { en: "Copper Arrow", de: "Kupfer-Pfeil" }, type: "material", stackable: true, icon: "🏹", value: 2, shelf: "arrows", arrow: { tier: 1, bonusMin: 0.2, bonusMax: 0.3 } },
+    bronze_arrow: { id: "bronze_arrow", name: { en: "Bronze Arrow", de: "Bronze-Pfeil" }, type: "material", stackable: true, icon: "🏹", value: 2, shelf: "arrows", arrow: { tier: 2, bonusMin: 0.3, bonusMax: 0.4 } },
+    iron_arrow: { id: "iron_arrow", name: { en: "Iron Arrow", de: "Eisen-Pfeil" }, type: "material", stackable: true, icon: "🏹", value: 2, shelf: "arrows", arrow: { tier: 3, bonusMin: 0.4, bonusMax: 0.6 } },
+    steel_arrow: { id: "steel_arrow", name: { en: "Steel Arrow", de: "Stahl-Pfeil" }, type: "material", stackable: true, icon: "🏹", value: 3, shelf: "arrows", arrow: { tier: 4, bonusMin: 0.5, bonusMax: 0.8 } },
+    blacksteel_arrow: { id: "blacksteel_arrow", name: { en: "Blacksteel Arrow", de: "Schwarzstahl-Pfeil" }, type: "material", stackable: true, icon: "🏹", value: 3, shelf: "arrows", arrow: { tier: 5, bonusMin: 0.6, bonusMax: 1 } },
+    mithril_arrow: { id: "mithril_arrow", name: { en: "Mithril Arrow", de: "Mithril-Pfeil" }, type: "material", stackable: true, icon: "🏹", value: 4, shelf: "arrows", arrow: { tier: 6, bonusMin: 0.8, bonusMax: 1.1 } },
+    adamantium_arrow: { id: "adamantium_arrow", name: { en: "Adamantium Arrow", de: "Adamantium-Pfeil" }, type: "material", stackable: true, icon: "🏹", value: 5, shelf: "arrows", arrow: { tier: 7, bonusMin: 1, bonusMax: 1.4 } },
+    runite_arrow: { id: "runite_arrow", name: { en: "Runite Arrow", de: "Runit-Pfeil" }, type: "material", stackable: true, icon: "🏹", value: 6, shelf: "arrows", arrow: { tier: 8, bonusMin: 1.3, bonusMax: 1.7 } },
+    bloodiron_arrow: { id: "bloodiron_arrow", name: { en: "Bloodiron Arrow", de: "Bluteisen-Pfeil" }, type: "material", stackable: true, icon: "🏹", value: 6, shelf: "arrows", arrow: { tier: 9, bonusMin: 1.6, bonusMax: 2.1 } },
+    titanium_arrow: { id: "titanium_arrow", name: { en: "Titanium Arrow", de: "Titan-Pfeil" }, type: "material", stackable: true, icon: "🏹", value: 8, shelf: "arrows", arrow: { tier: 10, bonusMin: 1.9, bonusMax: 2.6 } },
+    aetherium_arrow: { id: "aetherium_arrow", name: { en: "Aetherium Arrow", de: "Aetherium-Pfeil" }, type: "material", stackable: true, icon: "🏹", value: 10, shelf: "arrows", arrow: { tier: 11, bonusMin: 3.4, bonusMax: 4.6 } },
+    godiron_arrow: { id: "godiron_arrow", name: { en: "Godiron Arrow", de: "Götzeneisen-Pfeil" }, type: "material", stackable: true, icon: "🏹", value: 13, shelf: "arrows", arrow: { tier: 12, bonusMin: 5.8, bonusMax: 7.8 } },
+    bloodiron_arrow_bleed: { id: "bloodiron_arrow_bleed", name: { en: "Barbed Bloodiron Arrow", de: "Bluteisen-Widerhakenpfeil" }, type: "material", stackable: true, icon: "🏹", value: 7, shelf: "arrows", arrow: { tier: 9, bonusMin: 1.2, bonusMax: 1.6, effect: { type: "bleed", chance: 0.25, magnitude: 3, durationMs: 6000 } }, description: { en: "Barbed, so it never comes out clean. Hits can cause bleeding.", de: "Mit Widerhaken, damit sie nie sauber herauskommt. Treffer können Blutung auslösen." } },
+    titanium_arrow_bleed: { id: "titanium_arrow_bleed", name: { en: "Barbed Titanium Arrow", de: "Titan-Widerhakenpfeil" }, type: "material", stackable: true, icon: "🏹", value: 8, shelf: "arrows", arrow: { tier: 10, bonusMin: 1.4, bonusMax: 2, effect: { type: "bleed", chance: 0.25, magnitude: 3.5, durationMs: 6000 } }, description: { en: "Barbed, so it never comes out clean. Hits can cause bleeding.", de: "Mit Widerhaken, damit sie nie sauber herauskommt. Treffer können Blutung auslösen." } },
+    aetherium_arrow_bleed: { id: "aetherium_arrow_bleed", name: { en: "Barbed Aetherium Arrow", de: "Aetherium-Widerhakenpfeil" }, type: "material", stackable: true, icon: "🏹", value: 10, shelf: "arrows", arrow: { tier: 11, bonusMin: 2.6, bonusMax: 3.5, effect: { type: "bleed", chance: 0.25, magnitude: 4, durationMs: 6000 } }, description: { en: "Barbed, so it never comes out clean. Hits can cause bleeding.", de: "Mit Widerhaken, damit sie nie sauber herauskommt. Treffer können Blutung auslösen." } },
+    godiron_arrow_bleed: { id: "godiron_arrow_bleed", name: { en: "Barbed Godiron Arrow", de: "Götzeneisen-Widerhakenpfeil" }, type: "material", stackable: true, icon: "🏹", value: 13, shelf: "arrows", arrow: { tier: 12, bonusMin: 4.4, bonusMax: 5.9, effect: { type: "bleed", chance: 0.25, magnitude: 5, durationMs: 6000 } }, description: { en: "Barbed, so it never comes out clean. Hits can cause bleeding.", de: "Mit Widerhaken, damit sie nie sauber herauskommt. Treffer können Blutung auslösen." } },
+    bloodiron_arrow_poison: { id: "bloodiron_arrow_poison", name: { en: "Venom Bloodiron Arrow", de: "Bluteisen-Giftpfeil" }, type: "material", stackable: true, icon: "🏹", value: 11, shelf: "arrows", arrow: { tier: 9, bonusMin: 1.2, bonusMax: 1.6, effect: { type: "poison", chance: 0.25, magnitude: 1.8, durationMs: 5000 } }, description: { en: "The tip is dipped in gloomspore paste. Hits can poison the target.", de: "Die Spitze ist in Düstersporen-Paste getaucht. Treffer können das Ziel vergiften." } },
+    titanium_arrow_poison: { id: "titanium_arrow_poison", name: { en: "Venom Titanium Arrow", de: "Titan-Giftpfeil" }, type: "material", stackable: true, icon: "🏹", value: 12, shelf: "arrows", arrow: { tier: 10, bonusMin: 1.4, bonusMax: 2, effect: { type: "poison", chance: 0.25, magnitude: 2, durationMs: 5000 } }, description: { en: "The tip is dipped in gloomspore paste. Hits can poison the target.", de: "Die Spitze ist in Düstersporen-Paste getaucht. Treffer können das Ziel vergiften." } },
+    aetherium_arrow_poison: { id: "aetherium_arrow_poison", name: { en: "Venom Aetherium Arrow", de: "Aetherium-Giftpfeil" }, type: "material", stackable: true, icon: "🏹", value: 14, shelf: "arrows", arrow: { tier: 11, bonusMin: 2.6, bonusMax: 3.5, effect: { type: "poison", chance: 0.25, magnitude: 2.4, durationMs: 5000 } }, description: { en: "The tip is dipped in gloomspore paste. Hits can poison the target.", de: "Die Spitze ist in Düstersporen-Paste getaucht. Treffer können das Ziel vergiften." } },
+    godiron_arrow_poison: { id: "godiron_arrow_poison", name: { en: "Venom Godiron Arrow", de: "Götzeneisen-Giftpfeil" }, type: "material", stackable: true, icon: "🏹", value: 17, shelf: "arrows", arrow: { tier: 12, bonusMin: 4.4, bonusMax: 5.9, effect: { type: "poison", chance: 0.25, magnitude: 2.8, durationMs: 5000 } }, description: { en: "The tip is dipped in gloomspore paste. Hits can poison the target.", de: "Die Spitze ist in Düstersporen-Paste getaucht. Treffer können das Ziel vergiften." } },
+    bloodiron_arrow_fire: { id: "bloodiron_arrow_fire", name: { en: "Fire Bloodiron Arrow", de: "Bluteisen-Brandpfeil" }, type: "material", stackable: true, icon: "🏹", value: 8, shelf: "arrows", arrow: { tier: 9, bonusMin: 1.2, bonusMax: 1.6, effect: { type: "burn", chance: 0.2, magnitude: 1.5, durationMs: 4000 } }, description: { en: "The head is packed with emberleaf and lit before the shot. Hits can set the target alight.", de: "Der Kopf ist mit Glutblatt gefüllt und wird vor dem Schuss entzündet. Treffer können das Ziel in Brand setzen." } },
+    titanium_arrow_fire: { id: "titanium_arrow_fire", name: { en: "Fire Titanium Arrow", de: "Titan-Brandpfeil" }, type: "material", stackable: true, icon: "🏹", value: 9, shelf: "arrows", arrow: { tier: 10, bonusMin: 1.4, bonusMax: 2, effect: { type: "burn", chance: 0.2, magnitude: 2, durationMs: 4000 } }, description: { en: "The head is packed with emberleaf and lit before the shot. Hits can set the target alight.", de: "Der Kopf ist mit Glutblatt gefüllt und wird vor dem Schuss entzündet. Treffer können das Ziel in Brand setzen." } },
+    aetherium_arrow_fire: { id: "aetherium_arrow_fire", name: { en: "Fire Aetherium Arrow", de: "Aetherium-Brandpfeil" }, type: "material", stackable: true, icon: "🏹", value: 11, shelf: "arrows", arrow: { tier: 11, bonusMin: 2.6, bonusMax: 3.5, effect: { type: "burn", chance: 0.2, magnitude: 2.5, durationMs: 4000 } }, description: { en: "The head is packed with emberleaf and lit before the shot. Hits can set the target alight.", de: "Der Kopf ist mit Glutblatt gefüllt und wird vor dem Schuss entzündet. Treffer können das Ziel in Brand setzen." } },
+    godiron_arrow_fire: { id: "godiron_arrow_fire", name: { en: "Fire Godiron Arrow", de: "Götzeneisen-Brandpfeil" }, type: "material", stackable: true, icon: "🏹", value: 14, shelf: "arrows", arrow: { tier: 12, bonusMin: 4.4, bonusMax: 5.9, effect: { type: "burn", chance: 0.2, magnitude: 3, durationMs: 4000 } }, description: { en: "The head is packed with emberleaf and lit before the shot. Hits can set the target alight.", de: "Der Kopf ist mit Glutblatt gefüllt und wird vor dem Schuss entzündet. Treffer können das Ziel in Brand setzen." } },
+    // claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK: Köcher (Spec §5). Nebenhand, nur mit Bogen (Equip-Regel: Engine). weaponEffect ammoSaver = Pfeil-Sparchance (Haupthand + Köcher, Deckel 0,5). Runenplätze via Rarität (I–X common = 1, XI rare = 2, XII epic = 3).
+    copper_quiver: {
+      id: "copper_quiver", name: { en: "Copper Quiver", de: "Kupfer-Köcher" },
+      type: "equipment", stackable: false, icon: "🎒", slot: "offhand", weaponStyle: "ranged", weaponType: "quiver",
+      modifiers: { dex: 1 }, bonus: { critChance: 0.01 }, precision: 0.01,
+      weaponEffect: { type: "ammoSaver", chance: 1, magnitude: 0.04, durationMs: 0 },
+      requirements: { ranged: 1 }, value: 48, rarity: "common",
+      description: { en: "Keeps the arrows at hand and spares a few of them. Worn with a bow.", de: "Hält die Pfeile griffbereit und schont einige davon. Wird mit einem Bogen getragen." },
+    },
+    bronze_quiver: {
+      id: "bronze_quiver", name: { en: "Bronze Quiver", de: "Bronze-Köcher" },
+      type: "equipment", stackable: false, icon: "🎒", slot: "offhand", weaponStyle: "ranged", weaponType: "quiver",
+      modifiers: { dex: 2 }, bonus: { critChance: 0.01 }, precision: 0.02,
+      weaponEffect: { type: "ammoSaver", chance: 1, magnitude: 0.05, durationMs: 0 },
+      requirements: { ranged: 5 }, value: 76, rarity: "common",
+      description: { en: "Keeps the arrows at hand and spares a few of them. Worn with a bow.", de: "Hält die Pfeile griffbereit und schont einige davon. Wird mit einem Bogen getragen." },
+    },
+    iron_quiver: {
+      id: "iron_quiver", name: { en: "Iron Quiver", de: "Eisen-Köcher" },
+      type: "equipment", stackable: false, icon: "🎒", slot: "offhand", weaponStyle: "ranged", weaponType: "quiver",
+      modifiers: { dex: 3 }, bonus: { critChance: 0.015 }, precision: 0.02,
+      weaponEffect: { type: "ammoSaver", chance: 1, magnitude: 0.06, durationMs: 0 },
+      requirements: { ranged: 10 }, value: 112, rarity: "common",
+      description: { en: "Keeps the arrows at hand and spares a few of them. Worn with a bow.", de: "Hält die Pfeile griffbereit und schont einige davon. Wird mit einem Bogen getragen." },
+    },
+    steel_quiver: {
+      id: "steel_quiver", name: { en: "Steel Quiver", de: "Stahl-Köcher" },
+      type: "equipment", stackable: false, icon: "🎒", slot: "offhand", weaponStyle: "ranged", weaponType: "quiver",
+      modifiers: { dex: 4 }, bonus: { critChance: 0.025 }, precision: 0.03,
+      weaponEffect: { type: "ammoSaver", chance: 1, magnitude: 0.07, durationMs: 0 },
+      requirements: { ranged: 20 }, value: 182, rarity: "common",
+      description: { en: "Keeps the arrows at hand and spares a few of them. Worn with a bow.", de: "Hält die Pfeile griffbereit und schont einige davon. Wird mit einem Bogen getragen." },
+    },
+    blacksteel_quiver: {
+      id: "blacksteel_quiver", name: { en: "Blacksteel Quiver", de: "Schwarzstahl-Köcher" },
+      type: "equipment", stackable: false, icon: "🎒", slot: "offhand", weaponStyle: "ranged", weaponType: "quiver",
+      modifiers: { dex: 4, lck: 1 }, bonus: { critChance: 0.02 }, precision: 0.04,
+      weaponEffect: { type: "ammoSaver", chance: 1, magnitude: 0.08, durationMs: 0 },
+      requirements: { ranged: 30 }, value: 285, rarity: "common",
+      description: { en: "Keeps the arrows at hand and spares a few of them. Worn with a bow.", de: "Hält die Pfeile griffbereit und schont einige davon. Wird mit einem Bogen getragen." },
+    },
+    mithril_quiver: {
+      id: "mithril_quiver", name: { en: "Mithril Quiver", de: "Mithril-Köcher" },
+      type: "equipment", stackable: false, icon: "🎒", slot: "offhand", weaponStyle: "ranged", weaponType: "quiver",
+      modifiers: { dex: 5, lck: 1 }, bonus: { critChance: 0.025 }, precision: 0.04,
+      weaponEffect: { type: "ammoSaver", chance: 1, magnitude: 0.09, durationMs: 0 },
+      requirements: { ranged: 40 }, value: 356, rarity: "common",
+      description: { en: "Keeps the arrows at hand and spares a few of them. Worn with a bow.", de: "Hält die Pfeile griffbereit und schont einige davon. Wird mit einem Bogen getragen." },
+    },
+    adamantium_quiver: {
+      id: "adamantium_quiver", name: { en: "Adamantium Quiver", de: "Adamantium-Köcher" },
+      type: "equipment", stackable: false, icon: "🎒", slot: "offhand", weaponStyle: "ranged", weaponType: "quiver",
+      modifiers: { dex: 5, lck: 2 }, bonus: { critChance: 0.025 }, precision: 0.05,
+      weaponEffect: { type: "ammoSaver", chance: 1, magnitude: 0.1, durationMs: 0 },
+      requirements: { ranged: 50 }, value: 550, rarity: "common",
+      description: { en: "Keeps the arrows at hand and spares a few of them. Worn with a bow.", de: "Hält die Pfeile griffbereit und schont einige davon. Wird mit einem Bogen getragen." },
+    },
+    runite_quiver: {
+      id: "runite_quiver", name: { en: "Runite Quiver", de: "Runit-Köcher" },
+      type: "equipment", stackable: false, icon: "🎒", slot: "offhand", weaponStyle: "ranged", weaponType: "quiver",
+      modifiers: { dex: 6, lck: 2 }, bonus: { critChance: 0.03 }, precision: 0.06,
+      weaponEffect: { type: "ammoSaver", chance: 1, magnitude: 0.11, durationMs: 0 },
+      requirements: { ranged: 60 }, value: 941, rarity: "common",
+      description: { en: "Keeps the arrows at hand and spares a few of them. Worn with a bow.", de: "Hält die Pfeile griffbereit und schont einige davon. Wird mit einem Bogen getragen." },
+    },
+    bloodiron_quiver: {
+      id: "bloodiron_quiver", name: { en: "Bloodiron Quiver", de: "Bluteisen-Köcher" },
+      type: "equipment", stackable: false, icon: "🎒", slot: "offhand", weaponStyle: "ranged", weaponType: "quiver",
+      modifiers: { dex: 6, lck: 3 }, bonus: { critChance: 0.03 }, precision: 0.06,
+      weaponEffect: { type: "ammoSaver", chance: 1, magnitude: 0.12, durationMs: 0 },
+      requirements: { ranged: 70 }, value: 1592, rarity: "common",
+      description: { en: "Keeps the arrows at hand and spares a few of them. Worn with a bow.", de: "Hält die Pfeile griffbereit und schont einige davon. Wird mit einem Bogen getragen." },
+    },
+    titanium_quiver: {
+      id: "titanium_quiver", name: { en: "Titanium Quiver", de: "Titan-Köcher" },
+      type: "equipment", stackable: false, icon: "🎒", slot: "offhand", weaponStyle: "ranged", weaponType: "quiver",
+      modifiers: { dex: 7, lck: 3 }, bonus: { critChance: 0.03 }, precision: 0.07,
+      weaponEffect: { type: "ammoSaver", chance: 1, magnitude: 0.13, durationMs: 0 },
+      requirements: { ranged: 80 }, value: 2288, rarity: "common",
+      description: { en: "Keeps the arrows at hand and spares a few of them. Worn with a bow.", de: "Hält die Pfeile griffbereit und schont einige davon. Wird mit einem Bogen getragen." },
+    },
+    aetherium_quiver: {
+      id: "aetherium_quiver", name: { en: "Aetherium Quiver", de: "Aetherium-Köcher" },
+      type: "equipment", stackable: false, icon: "🎒", slot: "offhand", weaponStyle: "ranged", weaponType: "quiver",
+      modifiers: { dex: 8, lck: 3 }, bonus: { critChance: 0.035 }, precision: 0.08,
+      weaponEffect: { type: "ammoSaver", chance: 1, magnitude: 0.14, durationMs: 0 },
+      requirements: { ranged: 90 }, value: 3704, rarity: "rare",
+      description: { en: "Keeps the arrows at hand and spares a few of them. Worn with a bow.", de: "Hält die Pfeile griffbereit und schont einige davon. Wird mit einem Bogen getragen." },
+    },
+    godiron_quiver: {
+      id: "godiron_quiver", name: { en: "Godiron Quiver", de: "Götzeneisen-Köcher" },
+      type: "equipment", stackable: false, icon: "🎒", slot: "offhand", weaponStyle: "ranged", weaponType: "quiver",
+      modifiers: { dex: 9, lck: 3 }, bonus: { critChance: 0.04 }, precision: 0.08,
+      weaponEffect: { type: "ammoSaver", chance: 1, magnitude: 0.15, durationMs: 0 },
+      requirements: { ranged: 99 }, value: 6320, rarity: "epic",
+      description: { en: "Keeps the arrows at hand and spares a few of them. Worn with a bow.", de: "Hält die Pfeile griffbereit und schont einige davon. Wird mit einem Bogen getragen." },
+    },
 
     // ── Essenzen & Runen (Runecrafting) ──────────────────────────────
     dim_essence: { id: "dim_essence", name: { en: "Dim Essence", de: "Trübessenz" }, type: "material", stackable: true, icon: "🔹", value: 6, description: { en: "A faint residue of magic, barely enough to feel between the fingers.", de: "Ein schwacher Rest von Magie, kaum zwischen den Fingern zu spüren." } },
@@ -3431,7 +3568,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand",
       weaponStyle: "ranged", twoHanded: true, weaponType: "longbow",
       // codex:2026-10-17T15:35:00+02:00 — 1.3.0 E5-Nachzug (Chef-GO 17.10.2026, design/1.3.0-balance-e5-e6.md): 5,27 → 5,70 Basis-DPS.
-      damageMin: 13.7, damageMax: 20.5, attackIntervalMs: 3000, // P1-fix: rDmg 80→88, critDmg 0.30→0.33 (clear epic→legendary step); balance-pass3: 88→108 (must stay > godiron_longbow 102)
+      damageMin: 17.2, damageMax: 25.7, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 13.7–20.5 */ attackIntervalMs: 3000, // P1-fix: rDmg 80→88, critDmg 0.30→0.33 (clear epic→legendary step); balance-pass3: 88→108 (must stay > godiron_longbow 102)
       weaponEffect: { type: "bleed", chance: 0.35, magnitude: 8, durationMs: 7000 }, // balance-pass3 2026-07-01: ranged-endgame DoT (Armor+Regen-bypass), weaker than last_judgement/last_condemnation [balance-fix 2026-07-05: 2.2→8, Ganzzahl-Retune]
       modifiers: { lck: 4 },
       weaponEffects: [ { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 } ],
@@ -3502,7 +3639,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand",
       weaponStyle: "ranged", twoHanded: true, weaponType: "longbow",
       // codex:2026-10-17T15:35:00+02:00 — 1.3.0 E5-Nachzug (Chef-GO 17.10.2026, design/1.3.0-balance-e5-e6.md): 5,28 → 6,08 Basis-DPS (Langbogen-Leiter voidwing < spectral < last < nameless).
-      damageMin: 14.6, damageMax: 21.9, attackIntervalMs: 3000, // P1-fix: rDmg 90→130 (+44%), critDmg 0.38→0.46 — clear godly leap over spectral_longbow (rDmg 88, now 108)
+      damageMin: 18.3, damageMax: 27.4, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 14.6–21.9 */ attackIntervalMs: 3000, // P1-fix: rDmg 90→130 (+44%), critDmg 0.38→0.46 — clear godly leap over spectral_longbow (rDmg 88, now 108)
       weaponEffect: { type: "bleed", chance: 0.40, magnitude: 10, durationMs: 7000 }, // balance-pass3 2026-07-01: ranged-endgame DoT (Armor+Regen-bypass) [balance-fix 2026-07-05: 3→10, Ganzzahl-Retune]
       modifiers: { lck: 5 },
       weaponEffects: [ { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 }, { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 2000 } ],
@@ -3602,7 +3739,7 @@ export const content: ContentDB = {
       id: "censerwood_shortbow", name: { en: "Censerwood Shortbow", de: "Weihrauchholz-Kurzbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 11.4, damageMax: 15.7, attackIntervalMs: 2650, precision: 0.15,
+      damageMin: 14.5, damageMax: 19.9, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 11.4–15.7 */ attackIntervalMs: 2650, precision: 0.15,
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 8 },
       modifiers: { dex: 1, lck: 2 },
       requirements: { ranged: 95 }, value: 2500, rarity: "epic",
@@ -3611,7 +3748,7 @@ export const content: ContentDB = {
       id: "censerwood_longbow", name: { en: "Censerwood Longbow", de: "Weihrauchholz-Langbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 11.3, damageMax: 17.3, attackIntervalMs: 3000, precision: 0.25,
+      damageMin: 14.5, damageMax: 21.7, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 11.3–17.3 */ attackIntervalMs: 3000, precision: 0.25,
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       modifiers: { dex: 1, lck: 2 },
       requirements: { ranged: 95 }, value: 2500, rarity: "epic",
@@ -3620,7 +3757,7 @@ export const content: ContentDB = {
       id: "hollowed_recurve", name: { en: "Hollowed Recurve", de: "Ausgehöhlter Recurvebogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 12.7, damageMax: 17.5, attackIntervalMs: 2650, precision: 0.15,
+      damageMin: 15.9, damageMax: 22, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 12.7–17.5 */ attackIntervalMs: 2650, precision: 0.15,
       weaponEffect: { type: "firstStrike", chance: 1, magnitude: 1, durationMs: 0 },
       modifiers: { lck: 2 },
       requirements: { ranged: 95 }, value: 4500, rarity: "epic",
@@ -3629,7 +3766,7 @@ export const content: ContentDB = {
       id: "broodtalon_bow", name: { en: "Broodtalon Bow", de: "Brutklauen-Bogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 12.7, damageMax: 17.5, attackIntervalMs: 2650, precision: 0.15,
+      damageMin: 15.9, damageMax: 22, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 12.7–17.5 */ attackIntervalMs: 2650, precision: 0.15,
       weaponEffect: { type: "bleed", chance: 0.35, magnitude: 6, durationMs: 6000 },
       modifiers: { lck: 2 },
       requirements: { ranged: 95 }, value: 5000, rarity: "epic",
@@ -3638,7 +3775,7 @@ export const content: ContentDB = {
       id: "chainbound_longbow", name: { en: "Chainbound Longbow", de: "Kettenbogen des Dieners" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 12.7, damageMax: 19.0, attackIntervalMs: 3000, precision: 0.25,
+      damageMin: 16, damageMax: 23.8, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 12.7–19.0 */ attackIntervalMs: 3000, precision: 0.25,
       weaponEffect: { type: "burn", chance: 0.35, magnitude: 6, durationMs: 6000 },
       weaponEffects: [ { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 } ],
       modifiers: { lck: 2 },
@@ -3648,7 +3785,7 @@ export const content: ContentDB = {
       id: "spearthrower_longbow", name: { en: "Spearthrower Longbow", de: "Speerwerfer-Langbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 12.7, damageMax: 19.0, attackIntervalMs: 3000, precision: 0.25,
+      damageMin: 16, damageMax: 23.8, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 12.7–19.0 */ attackIntervalMs: 3000, precision: 0.25,
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       weaponEffects: [ { type: "everyNth", chance: 1, magnitude: 1, durationMs: 0, stacks: 4 } ],
       modifiers: { lck: 2 },
@@ -3658,7 +3795,7 @@ export const content: ContentDB = {
       id: "chiselled_recurve", name: { en: "Chiselled Recurve", de: "Gemeißelter Recurvebogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 12.7, damageMax: 17.5, attackIntervalMs: 2650, precision: 0.15,
+      damageMin: 15.9, damageMax: 22, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 12.7–17.5 */ attackIntervalMs: 2650, precision: 0.15,
       weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 2000 },
       modifiers: { dex: 1, lck: 2 },
       requirements: { ranged: 95 }, value: 6000, rarity: "epic",
@@ -3667,7 +3804,7 @@ export const content: ContentDB = {
       id: "nameless_longbow", name: { en: "Bow of the Nameless", de: "Bogen der Namenlosen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 15.2, damageMax: 22.8, attackIntervalMs: 3000, precision: 0.25,
+      damageMin: 19, damageMax: 28.5, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 15.2–22.8 */ attackIntervalMs: 3000, precision: 0.25,
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       weaponEffects: [ { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 } ],
       modifiers: { lck: 4 },
@@ -3681,7 +3818,7 @@ export const content: ContentDB = {
       id: "crownless_warbow", name: { en: "Crownless Warbow", de: "Kriegsbogen des Kronenlosen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 16.5, damageMax: 22.8, attackIntervalMs: 2650, precision: 0.15,
+      damageMin: 20.7, damageMax: 28.5, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 16.5–22.8 */ attackIntervalMs: 2650, precision: 0.15,
       weaponEffect: { type: "bleed", chance: 0.45, magnitude: 10, durationMs: 8000 },
       weaponEffects: [ { type: "giantSlayer", chance: 1, magnitude: 0.20, durationMs: 0 } ],
       modifiers: { lck: 6 },
@@ -3853,28 +3990,28 @@ export const content: ContentDB = {
       id: "copper_shortbow", name: { en: "Normal Shortbow", de: "Normaler Kurzbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 0.6, damageMax: 0.8, attackIntervalMs: 2650, precision: 0.15, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst); ammo-removal-Vorlauf 2026-07 (#287): +0.2 copper_arrow ammoDamage eingebacken (war 0.4/0.6)
+      damageMin: 1.1, damageMax: 1.4, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 0.6–0.8 */ attackIntervalMs: 2650, precision: 0.15, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst); ammo-removal-Vorlauf 2026-07 (#287): +0.2 copper_arrow ammoDamage eingebacken (war 0.4/0.6)
       requirements: { ranged: 1 }, value: 38, // balance-pass3: value 24→38 (1.25x sword-peer cap)
     },
     bronze_shortbow: {
       id: "bronze_shortbow", name: { en: "Birchwood Shortbow", de: "Birkenholz-Kurzbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 1.1, damageMax: 1.4, attackIntervalMs: 2650, precision: 0.15, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst); ammo-removal-Vorlauf 2026-07 (#287): +0.25 bronze_arrow ammoDamage eingebacken (war 0.8/1.1)
+      damageMin: 1.6, damageMax: 2.2, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 1.1–1.4 */ attackIntervalMs: 2650, precision: 0.15, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst); ammo-removal-Vorlauf 2026-07 (#287): +0.25 bronze_arrow ammoDamage eingebacken (war 0.8/1.1)
       requirements: { ranged: 5 }, value: 75, // balance-pass3: value 55→75
     },
     iron_shortbow: {
       id: "iron_shortbow", name: { en: "Oak Shortbow", de: "Eichen-Kurzbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 1.6, damageMax: 2.2, attackIntervalMs: 2650, precision: 0.15, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst); ammo-removal-Vorlauf 2026-07 (#287): +0.3 iron_arrow ammoDamage eingebacken (war 1.3/1.9)
+      damageMin: 2.1, damageMax: 2.9, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 1.6–2.2 */ attackIntervalMs: 2650, precision: 0.15, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst); ammo-removal-Vorlauf 2026-07 (#287): +0.3 iron_arrow ammoDamage eingebacken (war 1.3/1.9)
       requirements: { ranged: 10 }, value: 100, rarity: "rare",
     },
     steel_shortbow: {
       id: "steel_shortbow", name: { en: "Ashbark Shortbow", de: "Aschenrinden-Kurzbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 2.1, damageMax: 2.9, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + steel_arrow ammoDamage(0.5) eingebacken (Ammo-Removal-Vorlauf; war 2/3)
+      damageMin: 2.6, damageMax: 3.6, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 2.1–2.9 */ attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + steel_arrow ammoDamage(0.5) eingebacken (Ammo-Removal-Vorlauf; war 2/3)
       modifiers: { lck: 1 },
       requirements: { ranged: 20 }, value: 190, rarity: "rare", // balance-pass3: value 260→190
     },
@@ -3882,7 +4019,7 @@ export const content: ContentDB = {
       id: "blacksteel_shortbow", name: { en: "Blackwood Shortbow", de: "Schwarzholz-Kurzbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 2.6, damageMax: 3.6, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + blacksteel_arrow ammoDamage(0.6) eingebacken (war 2.4/3.6)
+      damageMin: 3.2, damageMax: 4.4, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 2.6–3.6 */ attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + blacksteel_arrow ammoDamage(0.6) eingebacken (war 2.4/3.6)
       modifiers: { lck: 1 },
       requirements: { ranged: 30 }, value: 325, rarity: "rare", // balance-pass3: value 380→325
     },
@@ -3890,7 +4027,7 @@ export const content: ContentDB = {
       id: "mithril_shortbow", name: { en: "Blightwood Shortbow", de: "Pestholz-Kurzbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 3.2, damageMax: 4.4, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + mithril_arrow ammoDamage(0.7) eingebacken (war 3/4.4)
+      damageMin: 4, damageMax: 5.6, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 3.2–4.4 */ attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + mithril_arrow ammoDamage(0.7) eingebacken (war 3/4.4)
       modifiers: { lck: 1 },
       requirements: { ranged: 40 }, value: 440, rarity: "superRare", // balance-pass3: value 600→440
     },
@@ -3898,7 +4035,7 @@ export const content: ContentDB = {
       id: "adamantium_shortbow", name: { en: "Ironbark Shortbow", de: "Eisenrinden-Kurzbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 4.0, damageMax: 5.6, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + adamantium_arrow ammoDamage(0.9) eingebacken (war 3.6/5.4)
+      damageMin: 5, damageMax: 6.9, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 4.0–5.6 */ attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + adamantium_arrow ammoDamage(0.9) eingebacken (war 3.6/5.4)
       modifiers: { lck: 1 },
       requirements: { ranged: 50 }, value: 750, rarity: "superRare", // balance-pass3: value 980→750
     },
@@ -3906,7 +4043,7 @@ export const content: ContentDB = {
       id: "runite_shortbow", name: { en: "Bloodoak Shortbow", de: "Bluteichen-Kurzbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 5.0, damageMax: 6.9, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + runite_arrow ammoDamage(1.1) eingebacken (war 4.5/6.7)
+      damageMin: 6.3, damageMax: 8.8, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 5.0–6.9 */ attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + runite_arrow ammoDamage(1.1) eingebacken (war 4.5/6.7)
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 8 }, // Combat-Feel v2 #5: Shortbow-Identität ab Mid-Tier (Sustain/Tanky-Ziele)
       modifiers: { lck: 2 },
       requirements: { ranged: 60 }, value: 1000, rarity: "superRare", // balance-pass3: value 1700→1000 (1.25x sword-peer cap)
@@ -3915,7 +4052,7 @@ export const content: ContentDB = {
       id: "bloodiron_shortbow", name: { en: "Shadowpine Shortbow", de: "Schattenkiefer-Kurzbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 6.3, damageMax: 8.8, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + bloodiron_arrow ammoDamage(1.4) eingebacken (war 5.2/7.8)
+      damageMin: 7.8, damageMax: 10.8, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 6.3–8.8 */ attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + bloodiron_arrow ammoDamage(1.4) eingebacken (war 5.2/7.8)
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 8 }, // Combat-Feel v2 #5: Shortbow-Identität ab Mid-Tier (Sustain/Tanky-Ziele)
       modifiers: { lck: 2 },
       requirements: { ranged: 70 }, value: 1250, rarity: "superRare", // balance-pass3: value 2700→1250
@@ -3924,7 +4061,7 @@ export const content: ContentDB = {
       id: "titanium_shortbow", name: { en: "Wraithwood Shortbow", de: "Geisterholz-Kurzbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 7.8, damageMax: 10.8, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + titanium_arrow ammoDamage(1.7) eingebacken (war 6/9)
+      damageMin: 9.7, damageMax: 13.5, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 7.8–10.8 */ attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + titanium_arrow ammoDamage(1.7) eingebacken (war 6/9)
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 8 }, // Combat-Feel v2 #5: Shortbow-Identität ab Mid-Tier (Sustain/Tanky-Ziele)
       modifiers: { lck: 2 },
       requirements: { ranged: 80 }, value: 1600, rarity: "epic", // balance-pass3: value 4200→1600
@@ -3933,7 +4070,7 @@ export const content: ContentDB = {
       id: "aetherium_shortbow", name: { en: "Bonewood Shortbow", de: "Knochenholz-Kurzbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 9.7, damageMax: 13.5, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + aetherium_arrow ammoDamage(2.0) eingebacken (war 6.5/9.7)
+      damageMin: 12.7, damageMax: 17.5, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 9.7–13.5 */ attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + aetherium_arrow ammoDamage(2.0) eingebacken (war 6.5/9.7)
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 8 }, // Combat-Feel v2 #5: Shortbow-Identität ab Mid-Tier (Sustain/Tanky-Ziele)
       modifiers: { dex: 1, lck: 1 },
       requirements: { ranged: 90 }, value: 2100, rarity: "epic", // balance-pass3: value 5800→2100
@@ -3942,7 +4079,7 @@ export const content: ContentDB = {
       id: "godiron_shortbow", name: { en: "Godwood Shortbow", de: "Götzenholz-Kurzbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 12.7, damageMax: 17.5, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + godiron_arrow ammoDamage(3.2) eingebacken (war 6.7/10.1; korrigiert kaputte Kurve)
+      damageMin: 15.9, damageMax: 21.9, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 12.7–17.5 */ attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + godiron_arrow ammoDamage(3.2) eingebacken (war 6.7/10.1; korrigiert kaputte Kurve)
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 8 }, // Combat-Feel v2 #5: Shortbow-Identität ab Mid-Tier (Sustain/Tanky-Ziele)
       modifiers: { dex: 1, lck: 2 },
       requirements: { ranged: 99 }, value: 3000, rarity: "epic", // balance-pass3: value 9000→3000
@@ -3952,7 +4089,7 @@ export const content: ContentDB = {
       id: "copper_longbow", name: { en: "Normal Longbow", de: "Normaler Langbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 0.6, damageMax: 0.9, attackIntervalMs: 3000, precision: 0.25, // ammo-removal-Vorlauf 2026-07 (#287): +0.2 copper_arrow ammoDamage eingebacken (war 0.4/0.7)
+      damageMin: 1, damageMax: 1.5, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 0.6–0.9 */ attackIntervalMs: 3000, precision: 0.25, // ammo-removal-Vorlauf 2026-07 (#287): +0.2 copper_arrow ammoDamage eingebacken (war 0.4/0.7)
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { ranged: 1 }, value: 38, // balance-pass3: value 30→38
     },
@@ -3960,7 +4097,7 @@ export const content: ContentDB = {
       id: "bronze_longbow", name: { en: "Birchwood Longbow", de: "Birkenholz-Langbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 1.0, damageMax: 1.5, attackIntervalMs: 3000, precision: 0.25, // ammo-removal-Vorlauf 2026-07 (#287): +0.25 bronze_arrow ammoDamage eingebacken (war 0.7/1.2)
+      damageMin: 1.6, damageMax: 2.4, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 1.0–1.5 */ attackIntervalMs: 3000, precision: 0.25, // ammo-removal-Vorlauf 2026-07 (#287): +0.25 bronze_arrow ammoDamage eingebacken (war 0.7/1.2)
       modifiers: { lck: 1 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { ranged: 5 }, value: 75, // balance-pass3: value 60→75
@@ -3969,7 +4106,7 @@ export const content: ContentDB = {
       id: "iron_longbow", name: { en: "Oak Longbow", de: "Eichen-Langbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 1.6, damageMax: 2.4, attackIntervalMs: 3000, precision: 0.25, // ammo-removal-Vorlauf 2026-07 (#287): +0.3 iron_arrow ammoDamage eingebacken (war 1.3/2.1)
+      damageMin: 2.1, damageMax: 3.1, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 1.6–2.4 */ attackIntervalMs: 3000, precision: 0.25, // ammo-removal-Vorlauf 2026-07 (#287): +0.3 iron_arrow ammoDamage eingebacken (war 1.3/2.1)
       modifiers: { lck: 1 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { ranged: 10 }, value: 100, rarity: "rare", // balance-pass3: value 120→100
@@ -3978,7 +4115,7 @@ export const content: ContentDB = {
       id: "steel_longbow", name: { en: "Ashbark Longbow", de: "Aschenrinden-Langbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 2.1, damageMax: 3.1, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + steel_arrow ammoDamage(0.5) eingebacken (war 1.9/3.1)
+      damageMin: 2.6, damageMax: 4, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 2.1–3.1 */ attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + steel_arrow ammoDamage(0.5) eingebacken (war 1.9/3.1)
       modifiers: { lck: 1 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { ranged: 20 }, value: 190, rarity: "rare", // balance-pass3: value 380→190
@@ -3987,7 +4124,7 @@ export const content: ContentDB = {
       id: "blacksteel_longbow", name: { en: "Blackwood Longbow", de: "Schwarzholz-Langbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 2.6, damageMax: 4.0, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + blacksteel_arrow ammoDamage(0.6) eingebacken (war 2.5/4.2)
+      damageMin: 3.2, damageMax: 4.8, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 2.6–4.0 */ attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + blacksteel_arrow ammoDamage(0.6) eingebacken (war 2.5/4.2)
       modifiers: { lck: 1 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { ranged: 30 }, value: 325, rarity: "rare", // balance-pass3: value 560→325
@@ -3996,7 +4133,7 @@ export const content: ContentDB = {
       id: "mithril_longbow", name: { en: "Blightwood Longbow", de: "Pestholz-Langbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 3.2, damageMax: 4.8, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + mithril_arrow ammoDamage(0.7) eingebacken (war 3.1/5.1)
+      damageMin: 4, damageMax: 6.2, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 3.2–4.8 */ attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + mithril_arrow ammoDamage(0.7) eingebacken (war 3.1/5.1)
       modifiers: { lck: 1 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { ranged: 40 }, value: 440, rarity: "superRare", // balance-pass3: value 900→440
@@ -4005,7 +4142,7 @@ export const content: ContentDB = {
       id: "adamantium_longbow", name: { en: "Ironbark Longbow", de: "Eisenrinden-Langbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 4.0, damageMax: 6.2, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + adamantium_arrow ammoDamage(0.9) eingebacken (war 3.6/6.1)
+      damageMin: 5, damageMax: 7.6, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 4.0–6.2 */ attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + adamantium_arrow ammoDamage(0.9) eingebacken (war 3.6/6.1)
       modifiers: { lck: 2 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { ranged: 50 }, value: 750, rarity: "superRare", // balance-pass3: value 1500→750
@@ -4014,7 +4151,7 @@ export const content: ContentDB = {
       id: "runite_longbow", name: { en: "Bloodoak Longbow", de: "Bluteichen-Langbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 5.0, damageMax: 7.6, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + runite_arrow ammoDamage(1.1) eingebacken (war 4.7/7.8)
+      damageMin: 6.3, damageMax: 9.6, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 5.0–7.6 */ attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + runite_arrow ammoDamage(1.1) eingebacken (war 4.7/7.8)
       modifiers: { lck: 2 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { ranged: 60 }, value: 1000, rarity: "superRare", // balance-pass3: value 2600→1000
@@ -4023,7 +4160,7 @@ export const content: ContentDB = {
       id: "bloodiron_longbow", name: { en: "Shadowpine Longbow", de: "Schattenkiefer-Langbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 6.3, damageMax: 9.6, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + bloodiron_arrow ammoDamage(1.4) eingebacken (war 5.4/9)
+      damageMin: 7.8, damageMax: 11.8, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 6.3–9.6 */ attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + bloodiron_arrow ammoDamage(1.4) eingebacken (war 5.4/9)
       modifiers: { lck: 2 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { ranged: 70 }, value: 1250, rarity: "superRare", // balance-pass3: value 4200→1250
@@ -4032,7 +4169,7 @@ export const content: ContentDB = {
       id: "titanium_longbow", name: { en: "Wraithwood Longbow", de: "Geisterholz-Langbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 7.8, damageMax: 11.8, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + titanium_arrow ammoDamage(1.7) eingebacken (war 6.2/10.3)
+      damageMin: 9.6, damageMax: 14.7, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 7.8–11.8 */ attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + titanium_arrow ammoDamage(1.7) eingebacken (war 6.2/10.3)
       modifiers: { dex: 1, lck: 1 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { ranged: 80 }, value: 1600, rarity: "epic", // balance-pass3: value 6400→1600
@@ -4041,7 +4178,7 @@ export const content: ContentDB = {
       id: "aetherium_longbow", name: { en: "Bonewood Longbow", de: "Knochenholz-Langbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 9.6, damageMax: 14.7, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + aetherium_arrow ammoDamage(2.0) eingebacken (war 6.9/11.5)
+      damageMin: 12.7, damageMax: 19, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 9.6–14.7 */ attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + aetherium_arrow ammoDamage(2.0) eingebacken (war 6.9/11.5)
       modifiers: { dex: 1, lck: 1 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { ranged: 90 }, value: 2100, rarity: "epic", // balance-pass3: value 9000→2100
@@ -4050,7 +4187,7 @@ export const content: ContentDB = {
       id: "godiron_longbow", name: { en: "Godwood Longbow", de: "Götzenholz-Langbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 12.7, damageMax: 19.0, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + godiron_arrow ammoDamage(3.2) eingebacken (war 7.5/12.5)
+      damageMin: 15.9, damageMax: 23.8, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 12.7–19.0 */ attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + godiron_arrow ammoDamage(3.2) eingebacken (war 7.5/12.5)
       modifiers: { dex: 1, lck: 3 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { ranged: 99 }, value: 3000, rarity: "epic", // balance-pass3: value 14000→3000
@@ -6078,7 +6215,7 @@ export const content: ContentDB = {
     farmhand_sling: {
       id: "farmhand_sling", name: { en: "Farmhand Sling", de: "Knechts-Schleuder" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 1.5, damageMax: 2.4, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
+      damageMin: 2, damageMax: 3.2, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 1.5–2.4 */ attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       modifiers: { lck: 2 },
       weaponEffect: { type: "lootChance", chance: 1, magnitude: 0.1, durationMs: 0 } /* Chef-Test 25.08.: luckyStrike (+Gold von Kills) ist tot, Monster droppen kein Gold; Beutechance ist der lebendige Nachbar */,
       requirements: { ranged: 5 }, value: 45, rarity: "common", // fix 2026-07 sweep2: was iron_arrow (Lv1 chicken drops copper_arrow, not iron) — level-passendes, nutzbares Bogen/Pfeil-Paar
@@ -6195,7 +6332,7 @@ export const content: ContentDB = {
     stolen_shortbow: {
       id: "stolen_shortbow", name: { en: "Stolen Shortbow", de: "Gestohlener Kurzbogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 2.5, damageMax: 3.8, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
+      damageMin: 3.1, damageMax: 4.7, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 2.5–3.8 */ attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       modifiers: { lck: 2 },
       weaponEffect: { type: "lootChance", chance: 1, magnitude: 0.1, durationMs: 0 } /* Chef-Test 25.08.: luckyStrike (+Gold von Kills) ist tot, Monster droppen kein Gold; Beutechance ist der lebendige Nachbar */,
       requirements: { ranged: 20 }, value: 90, rarity: "common",
@@ -6345,7 +6482,7 @@ export const content: ContentDB = {
     ashwood_longbow: {
       id: "ashwood_longbow", name: { en: "Ashwood Longbow", de: "Aschholz-Langbogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 3.9, damageMax: 6.4, attackIntervalMs: 3000,
+      damageMin: 4.9, damageMax: 8, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 3.9–6.4 */ attackIntervalMs: 3000,
       modifiers: { lck: 1 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { ranged: 40 }, value: 280, rarity: "rare",
@@ -6416,7 +6553,7 @@ export const content: ContentDB = {
     ashfall_recurve: {
       id: "ashfall_recurve", name: { en: "Ashfall Recurve", de: "Aschfall-Recurvebogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 3.8, damageMax: 5.9, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
+      damageMin: 4.8, damageMax: 7.4, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 3.8–5.9 */ attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       weaponEffect: { type: "burn", chance: 0.25, magnitude: 2, durationMs: 4000 }, // balance-fix 2026-07-05: magnitude 0.5→2 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 3 },
       requirements: { ranged: 40 }, value: 420, rarity: "superRare",
@@ -6449,7 +6586,7 @@ export const content: ContentDB = {
     spectral_hunter_bow: {
       id: "spectral_hunter_bow", name: { en: "Spectral Hunter's Bow", de: "Geisterjäger-Bogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 4.7, damageMax: 8, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. steel_arrow-ammoDamage(0.5) dominierte Blacksteel-Craft-Tier deutlich; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Blacksteel-Next-Tier-Niveau liegt (war 3.6/6)
+      damageMin: 6, damageMax: 10.1, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 4.7–8 */ attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. steel_arrow-ammoDamage(0.5) dominierte Blacksteel-Craft-Tier deutlich; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Blacksteel-Next-Tier-Niveau liegt (war 3.6/6)
       modifiers: { dex: 1, lck: 1 },
       weaponEffect: { type: "bounty", chance: 1, magnitude: 0.2, durationMs: 0 },
       requirements: { ranged: 50 }, value: 640, rarity: "superRare", // balance-pass3 2026-07-01: mithril_arrow(req40) was unfireable at req28 — fixed to steel_arrow(req20)
@@ -6536,7 +6673,7 @@ export const content: ContentDB = {
     skeletal_longbow: {
       id: "skeletal_longbow", name: { en: "Skeletal Longbow", de: "Skelett-Langbogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 3, damageMax: 5.1, attackIntervalMs: 3000,
+      damageMin: 3.9, damageMax: 6.6, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 3–5.1 */ attackIntervalMs: 3000,
       modifiers: { lck: 1 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { ranged: 30 }, value: 300, rarity: "rare",
@@ -6682,7 +6819,7 @@ export const content: ContentDB = {
     driftwood_bow: {
       id: "driftwood_bow", name: { en: "Driftwood Bow", de: "Treibholz-Bogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 9.3, damageMax: 14, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
+      damageMin: 12.2, damageMax: 18.3, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 9.3–14 */ attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       modifiers: { lck: 2 },
       // Task #286 Stage B: ammoSaver war seit Ammo-Removal ein No-op — ersetzt durch bleed in
       // tier-üblicher Stärke (Referenz goblin_cleaver R9: chance 0.20, magnitude 1, 4000ms;
@@ -6788,7 +6925,7 @@ export const content: ContentDB = {
     abyssal_tide_bow: {
       id: "abyssal_tide_bow", name: { en: "Abyssal Tide Bow", de: "Abyssaler Gezeitenbogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 9.1, damageMax: 15.2, attackIntervalMs: 3000, // balance-pass3 2026-07-01: 64→96 (was < aetherium_longbow 94; must be ≥)
+      damageMin: 11.6, damageMax: 19.3, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 9.1–15.2 */ attackIntervalMs: 3000, // balance-pass3 2026-07-01: 64→96 (was < aetherium_longbow 94; must be ≥)
       weaponEffect: { type: "frost", chance: 0.30, magnitude: 1, durationMs: 4000 },
       modifiers: { dex: 1, lck: 2 },
       weaponEffects: [ { type: "frostbite", chance: 1, magnitude: 0.25, durationMs: 0 } ],
@@ -6833,7 +6970,7 @@ export const content: ContentDB = {
     antler_warbow: {
       id: "antler_warbow", name: { en: "Antler Warbow", de: "Geweih-Kriegsbogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 9.2, damageMax: 15.2, attackIntervalMs: 3000,
+      damageMin: 12.1, damageMax: 19.9, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 9.2–15.2 */ attackIntervalMs: 3000,
       modifiers: { lck: 1 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { ranged: 80 }, value: 300, rarity: "rare",
@@ -6897,7 +7034,7 @@ export const content: ContentDB = {
     stagstride_longbow: {
       id: "stagstride_longbow", name: { en: "Stagstride Longbow", de: "Hirschlauf-Langbogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 8.7, damageMax: 14.8, attackIntervalMs: 2900, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. steel_arrow-ammoDamage(0.5) dominierte Blacksteel-Craft-Tier deutlich; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Blacksteel-Next-Tier-Niveau liegt (war 3.6/6)
+      damageMin: 11.4, damageMax: 19.4, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 8.7–14.8 */ attackIntervalMs: 2900, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. steel_arrow-ammoDamage(0.5) dominierte Blacksteel-Craft-Tier deutlich; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Blacksteel-Next-Tier-Niveau liegt (war 3.6/6)
       modifiers: { lck: 1 },
       weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 2000 },
       requirements: { ranged: 80 }, value: 600, rarity: "superRare", // #354 Paket 4.3: toten ammoType-Kommentar entfernt (Mechanik seit Task #286 Stage B komplett aus dem Spiel)
@@ -7037,7 +7174,7 @@ export const content: ContentDB = {
     skytalon_recurve: {
       id: "skytalon_recurve", name: { en: "Skytalon Recurve", de: "Himmelsklaue-Recurvebogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 12, damageMax: 18.3, attackIntervalMs: 2650, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. adamantium_arrow-ammoDamage(0.9) dominierte Runite-Craft-Tier um 9%; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Runite-Next-Tier-Niveau liegt (war 5.2/7.8)
+      damageMin: 15.3, damageMax: 23.3, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 12–18.3 */ attackIntervalMs: 2650, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. adamantium_arrow-ammoDamage(0.9) dominierte Runite-Craft-Tier um 9%; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Runite-Next-Tier-Niveau liegt (war 5.2/7.8)
       weaponEffect: { type: "shock", chance: 0.20, magnitude: 0.20, durationMs: 3500 },
       modifiers: { dex: 1, lck: 1 },
       requirements: { ranged: 90 }, value: 1400, rarity: "superRare", // balance-pass3 2026-07-01: runite_arrow(req60) was unfireable at req50 — fixed to adamantium_arrow(req50)
@@ -7063,7 +7200,7 @@ export const content: ContentDB = {
       id: "voidwing_greatbow", name: { en: "Voidwing Greatbow", de: "Leerenschwingen-Großbogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
       // codex:2026-10-17T15:35:00+02:00 — 1.3.0 E5-Nachzug (Chef-GO 17.10.2026, design/1.3.0-balance-e5-e6.md): 5,28 → 5,55 Basis-DPS.
-      damageMin: 13.3, damageMax: 20.0, attackIntervalMs: 3000, // balance-pass3: 92→112 (must stay > spectral_longbow 108)
+      damageMin: 16.7, damageMax: 25, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 13.3–20.0 */ attackIntervalMs: 3000, // balance-pass3: 92→112 (must stay > spectral_longbow 108)
       weaponEffect: { type: "burn", chance: 0.40, magnitude: 8, durationMs: 6500 }, // balance-fix 2026-07-05: magnitude 3→8 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 4 },
       weaponEffects: [ { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 } ],
@@ -7096,7 +7233,7 @@ export const content: ContentDB = {
       id: "frostcaverns_bow", name: { en: "Frostcaverns Bow", de: "Frostkavernen-Bogen" },
       icon: "🏹",
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 6.1, damageMax: 10.3, attackIntervalMs: 3000, // balance-pass2 2026-07-01: mid-unique check vs runite_longbow(57) — 40→74
+      damageMin: 7.6, damageMax: 12.7, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 6.1–10.3 */ attackIntervalMs: 3000, // balance-pass2 2026-07-01: mid-unique check vs runite_longbow(57) — 40→74
       weaponEffect: { type: "frost", chance: 0.30, magnitude: 1, durationMs: 4000 },
       modifiers: { lck: 1 },
       weaponEffects: [ { type: "frostbite", chance: 1, magnitude: 0.25, durationMs: 0 } ],
@@ -7300,7 +7437,7 @@ export const content: ContentDB = {
     mirrorglass_bow: {
       id: "mirrorglass_bow", name: { en: "Mirrorglass Bow", de: "Spiegelglas-Bogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 3, damageMax: 5, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. steel_arrow-ammoDamage(0.5) dominierte Blacksteel-Craft-Tier; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Blacksteel-Next-Tier-Niveau liegt (war 3.2/5.4)
+      damageMin: 3.9, damageMax: 6.4, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 3–5 */ attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. steel_arrow-ammoDamage(0.5) dominierte Blacksteel-Craft-Tier; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Blacksteel-Next-Tier-Niveau liegt (war 3.2/5.4)
       weaponEffect: { type: "frost", chance: 0.20, magnitude: 1, durationMs: 3500 },
       modifiers: { lck: 1 },
       requirements: { ranged: 30 }, value: 520, rarity: "rare",
@@ -7487,12 +7624,14 @@ export const content: ContentDB = {
         hunting: 99,
         // Skill-Split Schneidern (SAVE 86, 28.08.2026): 22. Skill.
         tailoring: 99,
+        // claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK: 23. Skill.
+        bowcraft: 99,
       },
       value: 100000,
       modifiers: { str: 3, dex: 3, con: 3, int: 3, wis: 2, lck: 2 },
       description: {
-        en: "Worn only by those who have mastered all twenty-two disciplines. A quiet band of gold, granted, never bought.",
-        de: "Getragen nur von jenen, die alle zweiundzwanzig Fertigkeiten gemeistert haben. Ein stiller Reif aus Gold, verliehen, niemals gekauft.",
+        en: "Worn only by those who have mastered all twenty-three disciplines. A quiet band of gold, granted, never bought.",
+        de: "Getragen nur von jenen, die alle dreiundzwanzig Fertigkeiten gemeistert haben. Ein stiller Reif aus Gold, verliehen, niemals gekauft.",
       },
     },
     ring_master_cooking: {
@@ -7683,6 +7822,18 @@ export const content: ContentDB = {
       description: {
         en: "Threaded by a hand that never wasted a stitch. 5% chance the craft spares its materials.",
         de: "Gefädelt von einer Hand, die nie einen Stich verschwendete. 5 % Chance, dass das Schneidern seine Materialien verschont.",
+      },
+    },
+    // claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK: Meisterring der Bognerei, exakt das Muster ring_master_tailoring (inputSaver 5 % auf den eigenen Skill, keine evasionRating). Kein Rezept: Verleihung per Level-99-Hook (engine/capes.ts). Bild folgt (Codex).
+    ring_master_bowcraft: {
+      id: "ring_master_bowcraft", name: { en: "Fletchmaster's Ring", de: "Ring des Bogenmeisters" },
+      type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
+      requirements: { bowcraft: 99 }, value: 50000,
+      // claude:2026-10-24T21:00:00+02:00 — Chef-Entscheid N1 (24.10.): Geschick statt Intelligenz, passt zum Bogenbau.
+      modifiers: { dex: 4, wis: 3, lck: 2 }, masterPerk: { kind: "inputSaver", skill: "bowcraft", value: 0.05 },
+      description: {
+        en: "Strung by a hand that never wasted a feather. 5% chance the craft spares its materials.",
+        de: "Gespannt von einer Hand, die nie eine Feder verschwendete. 5 % Chance, dass die Bognerei ihre Materialien verschont.",
       },
     },
     ring_master_thieving: {
@@ -7892,7 +8043,7 @@ export const content: ContentDB = {
       id: "blackantler_warbow", name: { en: "Blackantler Warbow", de: "Schwarzgeweih-Kriegsbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 9.6, damageMax: 14.7, attackIntervalMs: 3000,
+      damageMin: 12.6, damageMax: 19.2, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 9.6–14.7 */ attackIntervalMs: 3000,
       weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 2000 },
       requirements: { ranged: 82 }, value: 6500, rarity: "epic",
     },
@@ -7958,7 +8109,7 @@ export const content: ContentDB = {
       id: "skyfather_recurve", name: { en: "Skyfather Recurve", de: "Himmelsvater-Recurvebogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow", precision: 0.15,
-      damageMin: 13.5, damageMax: 18.5, attackIntervalMs: 2650,
+      damageMin: 17.2, damageMax: 23.5, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 13.5–18.5 */ attackIntervalMs: 2650,
       weaponEffect: { type: "shock", chance: 0.3, magnitude: 0.3, durationMs: 4000 },
       requirements: { ranged: 92 }, value: 16000, rarity: "legendary",
     },
@@ -8194,7 +8345,7 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 9.8, damageMax: 14.6, attackIntervalMs: 3000, precision: 0.25,
+      damageMin: 12.8, damageMax: 19.1, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 9.8–14.6 */ attackIntervalMs: 3000, precision: 0.25,
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       modifiers: { lck: 1 },
       requirements: { ranged: 80 }, value: 950, rarity: "superRare",
@@ -8208,7 +8359,7 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 9.8, damageMax: 13.4, attackIntervalMs: 2650, precision: 0.15,
+      damageMin: 12.8, damageMax: 17.5, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 9.8–13.4 */ attackIntervalMs: 2650, precision: 0.15,
       modifiers: { lck: 1 },
       requirements: { ranged: 80 }, value: 1450, rarity: "epic",
     },
@@ -8221,7 +8372,7 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 12.8, damageMax: 19, attackIntervalMs: 3000, precision: 0.25,
+      damageMin: 16.3, damageMax: 24.1, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 12.8–19 */ attackIntervalMs: 3000, precision: 0.25,
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       modifiers: { lck: 1 },
       requirements: { ranged: 90 }, value: 2600, rarity: "epic",
@@ -8345,7 +8496,7 @@ export const content: ContentDB = {
     drovers_shortbow: {
       id: "drovers_shortbow", name: { en: "Drover's Shortbow", de: "Treiber-Kurzbogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 1.6, damageMax: 2.2, attackIntervalMs: 2650,
+      damageMin: 2.2, damageMax: 2.9, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 1.6–2.2 */ attackIntervalMs: 2650,
       modifiers: { lck: 1 },
       weaponEffect: { type: "firstStrike", chance: 1, magnitude: 1, durationMs: 0 },
       requirements: { ranged: 5 }, value: 120, rarity: "common",
@@ -8357,7 +8508,7 @@ export const content: ContentDB = {
     bullhorn_longbow: {
       id: "bullhorn_longbow", name: { en: "Bullhorn Longbow", de: "Stierhorn-Langbogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "longbow",
-      damageMin: 2.1, damageMax: 3.1, attackIntervalMs: 3000,
+      damageMin: 2.7, damageMax: 4, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 2.1–3.1 */ attackIntervalMs: 3000,
       modifiers: { lck: 1 },
       weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 },
       requirements: { ranged: 10 }, value: 230, rarity: "rare",
@@ -8369,7 +8520,7 @@ export const content: ContentDB = {
     marrow_shortbow: {
       id: "marrow_shortbow", name: { en: "Marrow Shortbow", de: "Knochenmark-Kurzbogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 2.1, damageMax: 2.9, attackIntervalMs: 2650,
+      damageMin: 2.7, damageMax: 3.6, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 2.1–2.9 */ attackIntervalMs: 2650,
       modifiers: { lck: 1 },
       weaponEffect: { type: "healOnKill", chance: 1, magnitude: 2, durationMs: 0 },
       requirements: { ranged: 15 }, value: 230, rarity: "rare",
@@ -8381,7 +8532,7 @@ export const content: ContentDB = {
     crossbower_warbow: {
       id: "crossbower_warbow", name: { en: "Crossbower's Warbow", de: "Kriegsbogen des Armbrustschützen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "longbow",
-      damageMin: 2.6, damageMax: 4.0, attackIntervalMs: 3000,
+      damageMin: 3.2, damageMax: 4.9, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 2.6–4.0 */ attackIntervalMs: 3000,
       modifiers: { lck: 1 },
       weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 },
       requirements: { ranged: 24 }, value: 390, rarity: "rare",
@@ -8393,7 +8544,7 @@ export const content: ContentDB = {
     chitin_recurve: {
       id: "chitin_recurve", name: { en: "Chitin Recurve", de: "Chitin-Recurvebogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 4.0, damageMax: 5.6, attackIntervalMs: 2650,
+      damageMin: 5, damageMax: 7, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 4.0–5.6 */ attackIntervalMs: 2650,
       modifiers: { lck: 1 },
       weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 },
       requirements: { ranged: 40 }, value: 900, rarity: "superRare",
@@ -8405,7 +8556,7 @@ export const content: ContentDB = {
     mossbound_longbow: {
       id: "mossbound_longbow", name: { en: "Mossbound Longbow", de: "Moosgebundener Langbogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "longbow",
-      damageMin: 5.0, damageMax: 7.6, attackIntervalMs: 3000,
+      damageMin: 6.4, damageMax: 9.6, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 5.0–7.6 */ attackIntervalMs: 3000,
       modifiers: { lck: 2 },
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
       requirements: { ranged: 50 }, value: 1200, rarity: "superRare",
@@ -8417,7 +8568,7 @@ export const content: ContentDB = {
     emberglass_shortbow: {
       id: "emberglass_shortbow", name: { en: "Emberglass Shortbow", de: "Glutglas-Kurzbogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 5.0, damageMax: 6.9, attackIntervalMs: 2650,
+      damageMin: 6.4, damageMax: 8.8, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 5.0–6.9 */ attackIntervalMs: 2650,
       modifiers: { lck: 2 },
       weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 },
       requirements: { ranged: 50 }, value: 1200, rarity: "superRare",
@@ -8429,7 +8580,7 @@ export const content: ContentDB = {
     colossus_ribbow: {
       id: "colossus_ribbow", name: { en: "Colossus Ribbow", de: "Kolossrippen-Bogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 6.3, damageMax: 8.8, attackIntervalMs: 2650,
+      damageMin: 7.8, damageMax: 10.9, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 6.3–8.8 */ attackIntervalMs: 2650,
       modifiers: { lck: 2 },
       weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 },
       requirements: { ranged: 68 }, value: 1500, rarity: "superRare",
@@ -8441,7 +8592,7 @@ export const content: ContentDB = {
     bonewrought_longbow: {
       id: "bonewrought_longbow", name: { en: "Bonewrought Longbow", de: "Knochengeschmiedeter Langbogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "longbow",
-      damageMin: 7.8, damageMax: 11.8, attackIntervalMs: 3000,
+      damageMin: 9.7, damageMax: 14.7, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 7.8–11.8 */ attackIntervalMs: 3000,
       modifiers: { dex: 1, lck: 1 },
       weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.25, durationMs: 0 },
       requirements: { ranged: 70 }, value: 1900, rarity: "superRare",
@@ -8453,7 +8604,7 @@ export const content: ContentDB = {
     butchers_hookbow: {
       id: "butchers_hookbow", name: { en: "Butcher's Hookbow", de: "Hakenbogen des Fleischhauers" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 7.8, damageMax: 10.8, attackIntervalMs: 2650,
+      damageMin: 9.8, damageMax: 13.5, /* claude:2026-10-23T23:40:00+02:00 — 1.4.0 FK §6 Bogenleiter, war 7.8–10.8 */ attackIntervalMs: 2650,
       modifiers: { lck: 2 },
       weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 },
       requirements: { ranged: 70 }, value: 1900, rarity: "superRare",
@@ -11721,13 +11872,14 @@ export const content: ContentDB = {
     },
 
     // ── Fletching (logs/components → bows & arrows) ──────────────────
+    // claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK: fletch_bowstring, twist_rawhide_cord, twist_nettle_cord und alle 26 fletch_*_shortbow/longbow wechseln skill leatherworking → bowcraft (IDs/Zahlen unverändert; Sehnen jetzt in Kategorie bow_strings). Holzschilde (fletch_*_shield/buckler/pavise) bleiben bei leatherworking.
     fletch_bowstring: {
       id: "fletch_bowstring",
       name: { en: "Twist Bowstring", de: "Sehnenfaden drehen" },
-      skill: "leatherworking",
+      skill: "bowcraft",
       // #354 Paket 4.4: category "copper" war falsch (Leatherworking-Aktion in einer Smithing-
       // Metallkategorie) — auf "leather_raw" (Listenanfang, req-frei, thematisch passend) umgezogen.
-      category: "leather_raw",
+      category: "bow_strings",
       durationMs: 2500,
       xp: 4,
       inputs: [{ itemId: "scarred_hide", qty: 1 }],
@@ -11740,10 +11892,10 @@ export const content: ContentDB = {
     twist_rawhide_cord: {
       id: "twist_rawhide_cord",
       name: { en: "Twist Rawhide Cord", de: "Rohlederschnur drehen" },
-      skill: "leatherworking",
+      skill: "bowcraft",
       // #354 Paket 4.4: category "copper" war falsch (Leatherworking-Aktion in einer Smithing-
       // Metallkategorie) — auf "leather_raw" (Listenanfang, req-frei, thematisch passend) umgezogen.
-      category: "leather_raw",
+      category: "bow_strings",
       durationMs: 3000,
       xp: 5,
       levelRequired: 1,
@@ -11756,8 +11908,8 @@ export const content: ContentDB = {
     twist_nettle_cord: {
       id: "twist_nettle_cord",
       name: { en: "Twist Nettle Cord", de: "Nesselschnur drehen" },
-      skill: "leatherworking",
-      category: "leather_raw",
+      skill: "bowcraft",
+      category: "bow_strings",
       durationMs: 3000,
       xp: 5,
       levelRequired: 1,
@@ -11769,36 +11921,36 @@ export const content: ContentDB = {
     // unten) laufen jetzt unter skill: "leatherworking" (Fletching-Skill stirbt, SAVE_VERSION 57).
     // ── Tier-Bögen (Shortbow + Longbow je 12 Tiers) ──────────────────
     // Shortbow-Rezepte: ID unverändert, Name = Holzsorte, Input = passender Log.
-    fletch_copper_shortbow: { id: "fletch_copper_shortbow", name: { en: "Carve Normal Shortbow", de: "Normaler Kurzbogen schnitzen" }, skill: "leatherworking", category: "bow_normal", durationMs: 3000, xp: 5, levelRequired: 1, inputs: [{ itemId: "normal_log", qty: 2 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "copper_shortbow", chance: 1, min: 1, max: 1 }] },
+    fletch_copper_shortbow: { id: "fletch_copper_shortbow", name: { en: "Carve Normal Shortbow", de: "Normaler Kurzbogen schnitzen" }, skill: "bowcraft", category: "bow_normal", durationMs: 3000, xp: 5, levelRequired: 1, inputs: [{ itemId: "normal_log", qty: 2 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "copper_shortbow", chance: 1, min: 1, max: 1 }] },
     // balance-fix 2026-07: bronze/iron/steel shortbow xp bumped (4→6→9) to fix the dead iron tier (was 2400 xph, below bronze) and keep the line monotone
-    fletch_bronze_shortbow: { id: "fletch_bronze_shortbow", name: { en: "Carve Birchwood Shortbow", de: "Birkenholz-Kurzbogen schnitzen" }, skill: "leatherworking", category: "bow_birchwood", durationMs: 4000, xp: 7, levelRequired: 5, inputs: [{ itemId: "birchwood_log", qty: 3 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "bronze_shortbow", chance: 1, min: 1, max: 1 }] },
-    fletch_iron_shortbow: { id: "fletch_iron_shortbow", name: { en: "Carve Oak Shortbow", de: "Eichen-Kurzbogen schnitzen" }, skill: "leatherworking", category: "bow_oak", durationMs: 4500, xp: 11, levelRequired: 10, inputs: [{ itemId: "oak_log", qty: 3 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "iron_shortbow", chance: 1, min: 1, max: 1 }] },
-    fletch_steel_shortbow: { id: "fletch_steel_shortbow", name: { en: "Carve Ashbark Shortbow", de: "Aschenrinden-Kurzbogen schnitzen" }, skill: "leatherworking", category: "bow_ashbark", durationMs: 6000, xp: 23, levelRequired: 20, inputs: [{ itemId: "ashbark_log", qty: 4 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "steel_shortbow", chance: 1, min: 1, max: 1 }] },
-    fletch_blacksteel_shortbow: { id: "fletch_blacksteel_shortbow", name: { en: "Carve Blackwood Shortbow", de: "Schwarzholz-Kurzbogen schnitzen" }, skill: "leatherworking", category: "bow_blackwood", durationMs: 8000, xp: 51, levelRequired: 30, inputs: [{ itemId: "blackwood_log", qty: 4 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "blacksteel_shortbow", chance: 1, min: 1, max: 1 }] },
-    fletch_mithril_shortbow: { id: "fletch_mithril_shortbow", name: { en: "Carve Blightwood Shortbow", de: "Pestholz-Kurzbogen schnitzen" }, skill: "leatherworking", category: "bow_blightwood", durationMs: 8000, xp: 84, levelRequired: 40, inputs: [{ itemId: "blightwood_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "mithril_shortbow", chance: 1, min: 1, max: 1 }] },
-    fletch_adamantium_shortbow: { id: "fletch_adamantium_shortbow", name: { en: "Carve Ironbark Shortbow", de: "Eisenrinden-Kurzbogen schnitzen" }, skill: "leatherworking", category: "bow_ironbark", durationMs: 9000, xp: 155, levelRequired: 50, inputs: [{ itemId: "ironbark_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "adamantium_shortbow", chance: 1, min: 1, max: 1 }] },
-    fletch_runite_shortbow: { id: "fletch_runite_shortbow", name: { en: "Carve Bloodoak Shortbow", de: "Bluteichen-Kurzbogen schnitzen" }, skill: "leatherworking", category: "bow_bloodoak", durationMs: 10000, xp: 282, levelRequired: 60, inputs: [{ itemId: "bloodoak_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "runite_shortbow", chance: 1, min: 1, max: 1 }] },
-    fletch_bloodiron_shortbow: { id: "fletch_bloodiron_shortbow", name: { en: "Carve Shadowpine Shortbow", de: "Schattenkiefer-Kurzbogen schnitzen" }, skill: "leatherworking", category: "bow_shadowpine", durationMs: 11000, xp: 508, levelRequired: 70, inputs: [{ itemId: "shadowpine_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "bloodiron_shortbow", chance: 1, min: 1, max: 1 }] },
-    fletch_titanium_shortbow: { id: "fletch_titanium_shortbow", name: { en: "Carve Wraithwood Shortbow", de: "Geisterholz-Kurzbogen schnitzen" }, skill: "leatherworking", category: "bow_wraithwood", durationMs: 12000, xp: 909, levelRequired: 80, inputs: [{ itemId: "wraithwood_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "titanium_shortbow", chance: 1, min: 1, max: 1 }] },
-    fletch_aetherium_shortbow: { id: "fletch_aetherium_shortbow", name: { en: "Carve Bonewood Shortbow", de: "Knochenholz-Kurzbogen schnitzen" }, skill: "leatherworking", category: "bow_bonewood", durationMs: 13000, xp: 1616, levelRequired: 90, inputs: [{ itemId: "bonewood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "aetherium_shortbow", chance: 1, min: 1, max: 1 }] },
-    fletch_godiron_shortbow: { id: "fletch_godiron_shortbow", name: { en: "Carve Godwood Shortbow", de: "Götzenholz-Kurzbogen schnitzen" }, skill: "leatherworking", category: "bow_godwood", durationMs: 15000, xp: 2912, levelRequired: 99, inputs: [{ itemId: "godwood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "godiron_shortbow", chance: 1, min: 1, max: 1 }] },
+    fletch_bronze_shortbow: { id: "fletch_bronze_shortbow", name: { en: "Carve Birchwood Shortbow", de: "Birkenholz-Kurzbogen schnitzen" }, skill: "bowcraft", category: "bow_birchwood", durationMs: 4000, xp: 7, levelRequired: 5, inputs: [{ itemId: "birchwood_log", qty: 3 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "bronze_shortbow", chance: 1, min: 1, max: 1 }] },
+    fletch_iron_shortbow: { id: "fletch_iron_shortbow", name: { en: "Carve Oak Shortbow", de: "Eichen-Kurzbogen schnitzen" }, skill: "bowcraft", category: "bow_oak", durationMs: 4500, xp: 11, levelRequired: 10, inputs: [{ itemId: "oak_log", qty: 3 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "iron_shortbow", chance: 1, min: 1, max: 1 }] },
+    fletch_steel_shortbow: { id: "fletch_steel_shortbow", name: { en: "Carve Ashbark Shortbow", de: "Aschenrinden-Kurzbogen schnitzen" }, skill: "bowcraft", category: "bow_ashbark", durationMs: 6000, xp: 23, levelRequired: 20, inputs: [{ itemId: "ashbark_log", qty: 4 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "steel_shortbow", chance: 1, min: 1, max: 1 }] },
+    fletch_blacksteel_shortbow: { id: "fletch_blacksteel_shortbow", name: { en: "Carve Blackwood Shortbow", de: "Schwarzholz-Kurzbogen schnitzen" }, skill: "bowcraft", category: "bow_blackwood", durationMs: 8000, xp: 51, levelRequired: 30, inputs: [{ itemId: "blackwood_log", qty: 4 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "blacksteel_shortbow", chance: 1, min: 1, max: 1 }] },
+    fletch_mithril_shortbow: { id: "fletch_mithril_shortbow", name: { en: "Carve Blightwood Shortbow", de: "Pestholz-Kurzbogen schnitzen" }, skill: "bowcraft", category: "bow_blightwood", durationMs: 8000, xp: 84, levelRequired: 40, inputs: [{ itemId: "blightwood_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "mithril_shortbow", chance: 1, min: 1, max: 1 }] },
+    fletch_adamantium_shortbow: { id: "fletch_adamantium_shortbow", name: { en: "Carve Ironbark Shortbow", de: "Eisenrinden-Kurzbogen schnitzen" }, skill: "bowcraft", category: "bow_ironbark", durationMs: 9000, xp: 155, levelRequired: 50, inputs: [{ itemId: "ironbark_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "adamantium_shortbow", chance: 1, min: 1, max: 1 }] },
+    fletch_runite_shortbow: { id: "fletch_runite_shortbow", name: { en: "Carve Bloodoak Shortbow", de: "Bluteichen-Kurzbogen schnitzen" }, skill: "bowcraft", category: "bow_bloodoak", durationMs: 10000, xp: 282, levelRequired: 60, inputs: [{ itemId: "bloodoak_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "runite_shortbow", chance: 1, min: 1, max: 1 }] },
+    fletch_bloodiron_shortbow: { id: "fletch_bloodiron_shortbow", name: { en: "Carve Shadowpine Shortbow", de: "Schattenkiefer-Kurzbogen schnitzen" }, skill: "bowcraft", category: "bow_shadowpine", durationMs: 11000, xp: 508, levelRequired: 70, inputs: [{ itemId: "shadowpine_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "bloodiron_shortbow", chance: 1, min: 1, max: 1 }] },
+    fletch_titanium_shortbow: { id: "fletch_titanium_shortbow", name: { en: "Carve Wraithwood Shortbow", de: "Geisterholz-Kurzbogen schnitzen" }, skill: "bowcraft", category: "bow_wraithwood", durationMs: 12000, xp: 909, levelRequired: 80, inputs: [{ itemId: "wraithwood_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "titanium_shortbow", chance: 1, min: 1, max: 1 }] },
+    fletch_aetherium_shortbow: { id: "fletch_aetherium_shortbow", name: { en: "Carve Bonewood Shortbow", de: "Knochenholz-Kurzbogen schnitzen" }, skill: "bowcraft", category: "bow_bonewood", durationMs: 13000, xp: 1616, levelRequired: 90, inputs: [{ itemId: "bonewood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "aetherium_shortbow", chance: 1, min: 1, max: 1 }] },
+    fletch_godiron_shortbow: { id: "fletch_godiron_shortbow", name: { en: "Carve Godwood Shortbow", de: "Götzenholz-Kurzbogen schnitzen" }, skill: "bowcraft", category: "bow_godwood", durationMs: 15000, xp: 2912, levelRequired: 99, inputs: [{ itemId: "godwood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "godiron_shortbow", chance: 1, min: 1, max: 1 }] },
     // Longbow-Rezepte: gleiche Holz-Logik wie Shortbow.
-    fletch_copper_longbow: { id: "fletch_copper_longbow", name: { en: "Carve Normal Longbow", de: "Normaler Langbogen schnitzen" }, skill: "leatherworking", category: "bow_normal", durationMs: 4000, xp: 6, levelRequired: 1, inputs: [{ itemId: "normal_log", qty: 2 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "copper_longbow", chance: 1, min: 1, max: 1 }] },
+    fletch_copper_longbow: { id: "fletch_copper_longbow", name: { en: "Carve Normal Longbow", de: "Normaler Langbogen schnitzen" }, skill: "bowcraft", category: "bow_normal", durationMs: 4000, xp: 6, levelRequired: 1, inputs: [{ itemId: "normal_log", qty: 2 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "copper_longbow", chance: 1, min: 1, max: 1 }] },
     // balance-fix 2026-07: bronze/iron longbow xp bumped (6→9) to fix the dead iron tier; steel_longbow duration cliff removed (11000→8000ms) + xp 15→14 (was the L20 wall)
-    fletch_bronze_longbow: { id: "fletch_bronze_longbow", name: { en: "Carve Birchwood Longbow", de: "Birkenholz-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_birchwood", durationMs: 5500, xp: 10, levelRequired: 5, inputs: [{ itemId: "birchwood_log", qty: 3 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "bronze_longbow", chance: 1, min: 1, max: 1 }] },
-    fletch_iron_longbow: { id: "fletch_iron_longbow", name: { en: "Carve Oak Longbow", de: "Eichen-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_oak", durationMs: 6500, xp: 15, levelRequired: 10, inputs: [{ itemId: "oak_log", qty: 3 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "iron_longbow", chance: 1, min: 1, max: 1 }] },
-    fletch_steel_longbow: { id: "fletch_steel_longbow", name: { en: "Carve Ashbark Longbow", de: "Aschenrinden-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_ashbark", durationMs: 8000, xp: 31, levelRequired: 20, inputs: [{ itemId: "ashbark_log", qty: 4 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "steel_longbow", chance: 1, min: 1, max: 1 }] },
-    fletch_blacksteel_longbow: { id: "fletch_blacksteel_longbow", name: { en: "Carve Blackwood Longbow", de: "Schwarzholz-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_blackwood", durationMs: 13000, xp: 83, levelRequired: 30, inputs: [{ itemId: "blackwood_log", qty: 4 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "blacksteel_longbow", chance: 1, min: 1, max: 1 }] },
-    fletch_mithril_longbow: { id: "fletch_mithril_longbow", name: { en: "Carve Blightwood Longbow", de: "Pestholz-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_blightwood", durationMs: 12500, xp: 131, levelRequired: 40, inputs: [{ itemId: "blightwood_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "mithril_longbow", chance: 1, min: 1, max: 1 }] },
-    fletch_adamantium_longbow: { id: "fletch_adamantium_longbow", name: { en: "Carve Ironbark Longbow", de: "Eisenrinden-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_ironbark", durationMs: 14500, xp: 249, levelRequired: 50, inputs: [{ itemId: "ironbark_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "adamantium_longbow", chance: 1, min: 1, max: 1 }] },
-    fletch_runite_longbow: { id: "fletch_runite_longbow", name: { en: "Carve Bloodoak Longbow", de: "Bluteichen-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_bloodoak", durationMs: 16500, xp: 465, levelRequired: 60, inputs: [{ itemId: "bloodoak_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "runite_longbow", chance: 1, min: 1, max: 1 }] },
-    fletch_bloodiron_longbow: { id: "fletch_bloodiron_longbow", name: { en: "Carve Shadowpine Longbow", de: "Schattenkiefer-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_shadowpine", durationMs: 18500, xp: 855, levelRequired: 70, inputs: [{ itemId: "shadowpine_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "bloodiron_longbow", chance: 1, min: 1, max: 1 }] },
-    fletch_titanium_longbow: { id: "fletch_titanium_longbow", name: { en: "Carve Wraithwood Longbow", de: "Geisterholz-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_wraithwood", durationMs: 20500, xp: 1554, levelRequired: 80, inputs: [{ itemId: "wraithwood_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "titanium_longbow", chance: 1, min: 1, max: 1 }] },
-    fletch_aetherium_longbow: { id: "fletch_aetherium_longbow", name: { en: "Carve Bonewood Longbow", de: "Knochenholz-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_bonewood", durationMs: 22500, xp: 2797, levelRequired: 90, inputs: [{ itemId: "bonewood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "aetherium_longbow", chance: 1, min: 1, max: 1 }] },
-    fletch_godiron_longbow: { id: "fletch_godiron_longbow", name: { en: "Carve Godwood Longbow", de: "Götzenholz-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_godwood", durationMs: 26500, xp: 5144, levelRequired: 99, inputs: [{ itemId: "godwood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "godiron_longbow", chance: 1, min: 1, max: 1 }] },
+    fletch_bronze_longbow: { id: "fletch_bronze_longbow", name: { en: "Carve Birchwood Longbow", de: "Birkenholz-Langbogen schnitzen" }, skill: "bowcraft", category: "bow_birchwood", durationMs: 5500, xp: 10, levelRequired: 5, inputs: [{ itemId: "birchwood_log", qty: 3 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "bronze_longbow", chance: 1, min: 1, max: 1 }] },
+    fletch_iron_longbow: { id: "fletch_iron_longbow", name: { en: "Carve Oak Longbow", de: "Eichen-Langbogen schnitzen" }, skill: "bowcraft", category: "bow_oak", durationMs: 6500, xp: 15, levelRequired: 10, inputs: [{ itemId: "oak_log", qty: 3 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "iron_longbow", chance: 1, min: 1, max: 1 }] },
+    fletch_steel_longbow: { id: "fletch_steel_longbow", name: { en: "Carve Ashbark Longbow", de: "Aschenrinden-Langbogen schnitzen" }, skill: "bowcraft", category: "bow_ashbark", durationMs: 8000, xp: 31, levelRequired: 20, inputs: [{ itemId: "ashbark_log", qty: 4 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "steel_longbow", chance: 1, min: 1, max: 1 }] },
+    fletch_blacksteel_longbow: { id: "fletch_blacksteel_longbow", name: { en: "Carve Blackwood Longbow", de: "Schwarzholz-Langbogen schnitzen" }, skill: "bowcraft", category: "bow_blackwood", durationMs: 13000, xp: 83, levelRequired: 30, inputs: [{ itemId: "blackwood_log", qty: 4 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "blacksteel_longbow", chance: 1, min: 1, max: 1 }] },
+    fletch_mithril_longbow: { id: "fletch_mithril_longbow", name: { en: "Carve Blightwood Longbow", de: "Pestholz-Langbogen schnitzen" }, skill: "bowcraft", category: "bow_blightwood", durationMs: 12500, xp: 131, levelRequired: 40, inputs: [{ itemId: "blightwood_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "mithril_longbow", chance: 1, min: 1, max: 1 }] },
+    fletch_adamantium_longbow: { id: "fletch_adamantium_longbow", name: { en: "Carve Ironbark Longbow", de: "Eisenrinden-Langbogen schnitzen" }, skill: "bowcraft", category: "bow_ironbark", durationMs: 14500, xp: 249, levelRequired: 50, inputs: [{ itemId: "ironbark_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "adamantium_longbow", chance: 1, min: 1, max: 1 }] },
+    fletch_runite_longbow: { id: "fletch_runite_longbow", name: { en: "Carve Bloodoak Longbow", de: "Bluteichen-Langbogen schnitzen" }, skill: "bowcraft", category: "bow_bloodoak", durationMs: 16500, xp: 465, levelRequired: 60, inputs: [{ itemId: "bloodoak_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "runite_longbow", chance: 1, min: 1, max: 1 }] },
+    fletch_bloodiron_longbow: { id: "fletch_bloodiron_longbow", name: { en: "Carve Shadowpine Longbow", de: "Schattenkiefer-Langbogen schnitzen" }, skill: "bowcraft", category: "bow_shadowpine", durationMs: 18500, xp: 855, levelRequired: 70, inputs: [{ itemId: "shadowpine_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "bloodiron_longbow", chance: 1, min: 1, max: 1 }] },
+    fletch_titanium_longbow: { id: "fletch_titanium_longbow", name: { en: "Carve Wraithwood Longbow", de: "Geisterholz-Langbogen schnitzen" }, skill: "bowcraft", category: "bow_wraithwood", durationMs: 20500, xp: 1554, levelRequired: 80, inputs: [{ itemId: "wraithwood_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "titanium_longbow", chance: 1, min: 1, max: 1 }] },
+    fletch_aetherium_longbow: { id: "fletch_aetherium_longbow", name: { en: "Carve Bonewood Longbow", de: "Knochenholz-Langbogen schnitzen" }, skill: "bowcraft", category: "bow_bonewood", durationMs: 22500, xp: 2797, levelRequired: 90, inputs: [{ itemId: "bonewood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "aetherium_longbow", chance: 1, min: 1, max: 1 }] },
+    fletch_godiron_longbow: { id: "fletch_godiron_longbow", name: { en: "Carve Godwood Longbow", de: "Götzenholz-Langbogen schnitzen" }, skill: "bowcraft", category: "bow_godwood", durationMs: 26500, xp: 5144, levelRequired: 99, inputs: [{ itemId: "godwood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "godiron_longbow", chance: 1, min: 1, max: 1 }] },
     // codex:2026-10-17T15:40:00+02:00 — 1.3.0 E5: Weihrauchholz-Sprosse auf 95 (R1/R2), Handwerk L96.
-    fletch_censerwood_shortbow: { id: "fletch_censerwood_shortbow", name: { en: "Carve Censerwood Shortbow", de: "Weihrauchholz-Kurzbogen schnitzen" }, skill: "leatherworking", category: "bow_censerwood", durationMs: 14000, xp: 2343, levelRequired: 96, inputs: [{ itemId: "censerwood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "censerwood_shortbow", chance: 1, min: 1, max: 1 }] },
-    fletch_censerwood_longbow: { id: "fletch_censerwood_longbow", name: { en: "Carve Censerwood Longbow", de: "Weihrauchholz-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_censerwood", durationMs: 24500, xp: 4100, levelRequired: 96, inputs: [{ itemId: "censerwood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "censerwood_longbow", chance: 1, min: 1, max: 1 }] },
+    fletch_censerwood_shortbow: { id: "fletch_censerwood_shortbow", name: { en: "Carve Censerwood Shortbow", de: "Weihrauchholz-Kurzbogen schnitzen" }, skill: "bowcraft", category: "bow_censerwood", durationMs: 14000, xp: 2343, levelRequired: 96, inputs: [{ itemId: "censerwood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "censerwood_shortbow", chance: 1, min: 1, max: 1 }] },
+    fletch_censerwood_longbow: { id: "fletch_censerwood_longbow", name: { en: "Carve Censerwood Longbow", de: "Weihrauchholz-Langbogen schnitzen" }, skill: "bowcraft", category: "bow_censerwood", durationMs: 24500, xp: 4100, levelRequired: 96, inputs: [{ itemId: "censerwood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "censerwood_longbow", chance: 1, min: 1, max: 1 }] },
 
     // ── Fletching: Holzschilde (QA-Run3 Fix C) — tote Holztiers als Offhand-Schilde ────
     // XP via Formel: target_xph(L)=90·√(xpForLevel(L+1)−xpForLevel(L)); min 1
@@ -11826,6 +11978,58 @@ export const content: ContentDB = {
       inputs: [{ itemId: "voidwood_log", qty: 5 }, { itemId: "bowstring", qty: 1 }],
       loot: [{ itemId: "voidwood_pavise", chance: 1, min: 1, max: 1 }],
     },
+
+    // ── claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK: Bognerei-Pfeilkette + Köcher (Spec §1/§2). Zahlen laut design/1.4.0-balance-fernkampf.md (vorläufig), XP auf der C-600-Kurve.
+    fletch_arrow_shaft: { id: "fletch_arrow_shaft", name: { en: "Carve Arrow Shafts", de: "Pfeilschäfte schnitzen" }, skill: "bowcraft", category: "arrow_shafts", durationMs: 2400, xp: 4, levelRequired: 1, inputs: [{ itemId: "normal_log", qty: 1 }], loot: [{ itemId: "arrow_shaft", chance: 1, min: 15, max: 15 }] },
+    fletch_copper_arrow: { id: "fletch_copper_arrow", name: { en: "Fletch Copper Arrows", de: "Kupfer-Pfeile befiedern" }, skill: "bowcraft", category: "arrows", durationMs: 2400, xp: 4, levelRequired: 1, inputs: [{ itemId: "arrow_shaft", qty: 15 }, { itemId: "copper_arrowheads", qty: 15 }, { itemId: "feather", qty: 5 }], loot: [{ itemId: "copper_arrow", chance: 1, min: 15, max: 15 }] },
+    fletch_bronze_arrow: { id: "fletch_bronze_arrow", name: { en: "Fletch Bronze Arrows", de: "Bronze-Pfeile befiedern" }, skill: "bowcraft", category: "arrows", durationMs: 2600, xp: 5, levelRequired: 7, inputs: [{ itemId: "arrow_shaft", qty: 15 }, { itemId: "bronze_arrowheads", qty: 15 }, { itemId: "feather", qty: 5 }], loot: [{ itemId: "bronze_arrow", chance: 1, min: 15, max: 15 }] },
+    fletch_iron_arrow: { id: "fletch_iron_arrow", name: { en: "Fletch Iron Arrows", de: "Eisen-Pfeile befiedern" }, skill: "bowcraft", category: "arrows", durationMs: 2800, xp: 7, levelRequired: 12, inputs: [{ itemId: "arrow_shaft", qty: 15 }, { itemId: "iron_arrowheads", qty: 15 }, { itemId: "feather", qty: 5 }], loot: [{ itemId: "iron_arrow", chance: 1, min: 15, max: 15 }] },
+    fletch_steel_arrow: { id: "fletch_steel_arrow", name: { en: "Fletch Steel Arrows", de: "Stahl-Pfeile befiedern" }, skill: "bowcraft", category: "arrows", durationMs: 3000, xp: 13, levelRequired: 22, inputs: [{ itemId: "arrow_shaft", qty: 15 }, { itemId: "steel_arrowheads", qty: 15 }, { itemId: "feather", qty: 5 }], loot: [{ itemId: "steel_arrow", chance: 1, min: 15, max: 15 }] },
+    fletch_blacksteel_arrow: { id: "fletch_blacksteel_arrow", name: { en: "Fletch Blacksteel Arrows", de: "Schwarzstahl-Pfeile befiedern" }, skill: "bowcraft", category: "arrows", durationMs: 3200, xp: 23, levelRequired: 32, inputs: [{ itemId: "arrow_shaft", qty: 15 }, { itemId: "blacksteel_arrowheads", qty: 15 }, { itemId: "feather", qty: 5 }], loot: [{ itemId: "blacksteel_arrow", chance: 1, min: 15, max: 15 }] },
+    fletch_mithril_arrow: { id: "fletch_mithril_arrow", name: { en: "Fletch Mithril Arrows", de: "Mithril-Pfeile befiedern" }, skill: "bowcraft", category: "arrows", durationMs: 3400, xp: 39, levelRequired: 42, inputs: [{ itemId: "arrow_shaft", qty: 15 }, { itemId: "mithril_arrowheads", qty: 15 }, { itemId: "feather", qty: 5 }], loot: [{ itemId: "mithril_arrow", chance: 1, min: 15, max: 15 }] },
+    fletch_adamantium_arrow: { id: "fletch_adamantium_arrow", name: { en: "Fletch Adamantium Arrows", de: "Adamantium-Pfeile befiedern" }, skill: "bowcraft", category: "arrows", durationMs: 3600, xp: 68, levelRequired: 52, inputs: [{ itemId: "arrow_shaft", qty: 15 }, { itemId: "adamantium_arrowheads", qty: 15 }, { itemId: "feather", qty: 5 }], loot: [{ itemId: "adamantium_arrow", chance: 1, min: 15, max: 15 }] },
+    fletch_runite_arrow: { id: "fletch_runite_arrow", name: { en: "Fletch Runite Arrows", de: "Runit-Pfeile befiedern" }, skill: "bowcraft", category: "arrows", durationMs: 3800, xp: 118, levelRequired: 62, inputs: [{ itemId: "arrow_shaft", qty: 15 }, { itemId: "runite_arrowheads", qty: 15 }, { itemId: "feather", qty: 5 }], loot: [{ itemId: "runite_arrow", chance: 1, min: 15, max: 15 }] },
+    fletch_bloodiron_arrow: { id: "fletch_bloodiron_arrow", name: { en: "Fletch Bloodiron Arrows", de: "Bluteisen-Pfeile befiedern" }, skill: "bowcraft", category: "arrows", durationMs: 4000, xp: 204, levelRequired: 72, inputs: [{ itemId: "arrow_shaft", qty: 15 }, { itemId: "bloodiron_arrowheads", qty: 15 }, { itemId: "feather", qty: 5 }], loot: [{ itemId: "bloodiron_arrow", chance: 1, min: 15, max: 15 }] },
+    fletch_titanium_arrow: { id: "fletch_titanium_arrow", name: { en: "Fletch Titanium Arrows", de: "Titan-Pfeile befiedern" }, skill: "bowcraft", category: "arrows", durationMs: 4200, xp: 351, levelRequired: 82, inputs: [{ itemId: "arrow_shaft", qty: 15 }, { itemId: "titanium_arrowheads", qty: 15 }, { itemId: "feather", qty: 5 }], loot: [{ itemId: "titanium_arrow", chance: 1, min: 15, max: 15 }] },
+    fletch_aetherium_arrow: { id: "fletch_aetherium_arrow", name: { en: "Fletch Aetherium Arrows", de: "Aetherium-Pfeile befiedern" }, skill: "bowcraft", category: "arrows", durationMs: 4400, xp: 575, levelRequired: 91, inputs: [{ itemId: "arrow_shaft", qty: 15 }, { itemId: "aetherium_arrowheads", qty: 15 }, { itemId: "feather", qty: 5 }], loot: [{ itemId: "aetherium_arrow", chance: 1, min: 15, max: 15 }] },
+    fletch_godiron_arrow: { id: "fletch_godiron_arrow", name: { en: "Fletch Godiron Arrows", de: "Götzeneisen-Pfeile befiedern" }, skill: "bowcraft", category: "arrows", durationMs: 4600, xp: 809, levelRequired: 97, inputs: [{ itemId: "arrow_shaft", qty: 15 }, { itemId: "godiron_arrowheads", qty: 15 }, { itemId: "feather", qty: 5 }], loot: [{ itemId: "godiron_arrow", chance: 1, min: 15, max: 15 }] },
+    fletch_bloodiron_arrow_bleed: { id: "fletch_bloodiron_arrow_bleed", name: { en: "Barb Bloodiron Arrows", de: "Bluteisen-Widerhakenpfeile fertigen" }, skill: "bowcraft", category: "arrows_effect", durationMs: 4000, xp: 225, levelRequired: 74, inputs: [{ itemId: "bloodiron_arrow", qty: 15 }, { itemId: "fang", qty: 1 }], loot: [{ itemId: "bloodiron_arrow_bleed", chance: 1, min: 15, max: 15 }] },
+    fletch_titanium_arrow_bleed: { id: "fletch_titanium_arrow_bleed", name: { en: "Barb Titanium Arrows", de: "Titan-Widerhakenpfeile fertigen" }, skill: "bowcraft", category: "arrows_effect", durationMs: 4200, xp: 388, levelRequired: 84, inputs: [{ itemId: "titanium_arrow", qty: 15 }, { itemId: "fang", qty: 1 }], loot: [{ itemId: "titanium_arrow_bleed", chance: 1, min: 15, max: 15 }] },
+    fletch_aetherium_arrow_bleed: { id: "fletch_aetherium_arrow_bleed", name: { en: "Barb Aetherium Arrows", de: "Aetherium-Widerhakenpfeile fertigen" }, skill: "bowcraft", category: "arrows_effect", durationMs: 4400, xp: 604, levelRequired: 92, inputs: [{ itemId: "aetherium_arrow", qty: 15 }, { itemId: "fang", qty: 1 }], loot: [{ itemId: "aetherium_arrow_bleed", chance: 1, min: 15, max: 15 }] },
+    fletch_godiron_arrow_bleed: { id: "fletch_godiron_arrow_bleed", name: { en: "Barb Godiron Arrows", de: "Götzeneisen-Widerhakenpfeile fertigen" }, skill: "bowcraft", category: "arrows_effect", durationMs: 4600, xp: 850, levelRequired: 98, inputs: [{ itemId: "godiron_arrow", qty: 15 }, { itemId: "fang", qty: 1 }], loot: [{ itemId: "godiron_arrow_bleed", chance: 1, min: 15, max: 15 }] },
+    fletch_bloodiron_arrow_poison: { id: "fletch_bloodiron_arrow_poison", name: { en: "Envenom Bloodiron Arrows", de: "Bluteisen-Giftpfeile fertigen" }, skill: "bowcraft", category: "arrows_effect", durationMs: 4000, xp: 225, levelRequired: 74, inputs: [{ itemId: "bloodiron_arrow", qty: 15 }, { itemId: "gloomspore", qty: 1 }], loot: [{ itemId: "bloodiron_arrow_poison", chance: 1, min: 15, max: 15 }] },
+    fletch_titanium_arrow_poison: { id: "fletch_titanium_arrow_poison", name: { en: "Envenom Titanium Arrows", de: "Titan-Giftpfeile fertigen" }, skill: "bowcraft", category: "arrows_effect", durationMs: 4200, xp: 388, levelRequired: 84, inputs: [{ itemId: "titanium_arrow", qty: 15 }, { itemId: "gloomspore", qty: 1 }], loot: [{ itemId: "titanium_arrow_poison", chance: 1, min: 15, max: 15 }] },
+    fletch_aetherium_arrow_poison: { id: "fletch_aetherium_arrow_poison", name: { en: "Envenom Aetherium Arrows", de: "Aetherium-Giftpfeile fertigen" }, skill: "bowcraft", category: "arrows_effect", durationMs: 4400, xp: 604, levelRequired: 92, inputs: [{ itemId: "aetherium_arrow", qty: 15 }, { itemId: "gloomspore", qty: 1 }], loot: [{ itemId: "aetherium_arrow_poison", chance: 1, min: 15, max: 15 }] },
+    fletch_godiron_arrow_poison: { id: "fletch_godiron_arrow_poison", name: { en: "Envenom Godiron Arrows", de: "Götzeneisen-Giftpfeile fertigen" }, skill: "bowcraft", category: "arrows_effect", durationMs: 4600, xp: 850, levelRequired: 98, inputs: [{ itemId: "godiron_arrow", qty: 15 }, { itemId: "gloomspore", qty: 1 }], loot: [{ itemId: "godiron_arrow_poison", chance: 1, min: 15, max: 15 }] },
+    fletch_bloodiron_arrow_fire: { id: "fletch_bloodiron_arrow_fire", name: { en: "Fire-tip Bloodiron Arrows", de: "Bluteisen-Brandpfeile fertigen" }, skill: "bowcraft", category: "arrows_effect", durationMs: 4000, xp: 225, levelRequired: 74, inputs: [{ itemId: "bloodiron_arrow", qty: 15 }, { itemId: "emberleaf", qty: 1 }], loot: [{ itemId: "bloodiron_arrow_fire", chance: 1, min: 15, max: 15 }] },
+    fletch_titanium_arrow_fire: { id: "fletch_titanium_arrow_fire", name: { en: "Fire-tip Titanium Arrows", de: "Titan-Brandpfeile fertigen" }, skill: "bowcraft", category: "arrows_effect", durationMs: 4200, xp: 388, levelRequired: 84, inputs: [{ itemId: "titanium_arrow", qty: 15 }, { itemId: "emberleaf", qty: 1 }], loot: [{ itemId: "titanium_arrow_fire", chance: 1, min: 15, max: 15 }] },
+    fletch_aetherium_arrow_fire: { id: "fletch_aetherium_arrow_fire", name: { en: "Fire-tip Aetherium Arrows", de: "Aetherium-Brandpfeile fertigen" }, skill: "bowcraft", category: "arrows_effect", durationMs: 4400, xp: 604, levelRequired: 92, inputs: [{ itemId: "aetherium_arrow", qty: 15 }, { itemId: "emberleaf", qty: 1 }], loot: [{ itemId: "aetherium_arrow_fire", chance: 1, min: 15, max: 15 }] },
+    fletch_godiron_arrow_fire: { id: "fletch_godiron_arrow_fire", name: { en: "Fire-tip Godiron Arrows", de: "Götzeneisen-Brandpfeile fertigen" }, skill: "bowcraft", category: "arrows_effect", durationMs: 4600, xp: 850, levelRequired: 98, inputs: [{ itemId: "godiron_arrow", qty: 15 }, { itemId: "emberleaf", qty: 1 }], loot: [{ itemId: "godiron_arrow_fire", chance: 1, min: 15, max: 15 }] },
+    fletch_copper_quiver: { id: "fletch_copper_quiver", name: { en: "Sew Copper Quiver", de: "Kupfer-Köcher nähen" }, skill: "bowcraft", category: "quivers", durationMs: 3500, xp: 6, levelRequired: 3, inputs: [{ itemId: "cured_leather", qty: 2 }, { itemId: "normal_log", qty: 2 }, { itemId: "feather", qty: 5 }], loot: [{ itemId: "copper_quiver", chance: 1, min: 1, max: 1 }] },
+    fletch_bronze_quiver: { id: "fletch_bronze_quiver", name: { en: "Sew Bronze Quiver", de: "Bronze-Köcher nähen" }, skill: "bowcraft", category: "quivers", durationMs: 4500, xp: 10, levelRequired: 8, inputs: [{ itemId: "cured_leather", qty: 3 }, { itemId: "birchwood_log", qty: 2 }, { itemId: "feather", qty: 8 }], loot: [{ itemId: "bronze_quiver", chance: 1, min: 1, max: 1 }] },
+    fletch_iron_quiver: { id: "fletch_iron_quiver", name: { en: "Sew Iron Quiver", de: "Eisen-Köcher nähen" }, skill: "bowcraft", category: "quivers", durationMs: 5000, xp: 15, levelRequired: 15, inputs: [{ itemId: "cured_leather", qty: 4 }, { itemId: "oak_log", qty: 3 }, { itemId: "feather", qty: 10 }], loot: [{ itemId: "iron_quiver", chance: 1, min: 1, max: 1 }] },
+    fletch_steel_quiver: { id: "fletch_steel_quiver", name: { en: "Sew Steel Quiver", de: "Stahl-Köcher nähen" }, skill: "bowcraft", category: "quivers", durationMs: 6500, xp: 32, levelRequired: 25, inputs: [{ itemId: "hardened_leather", qty: 2 }, { itemId: "ashbark_log", qty: 3 }, { itemId: "feather", qty: 12 }], loot: [{ itemId: "steel_quiver", chance: 1, min: 1, max: 1 }] },
+    fletch_blacksteel_quiver: { id: "fletch_blacksteel_quiver", name: { en: "Sew Blacksteel Quiver", de: "Schwarzstahl-Köcher nähen" }, skill: "bowcraft", category: "quivers", durationMs: 8500, xp: 70, levelRequired: 35, inputs: [{ itemId: "hardened_leather", qty: 3 }, { itemId: "blackwood_log", qty: 3 }, { itemId: "feather", qty: 15 }], loot: [{ itemId: "blacksteel_quiver", chance: 1, min: 1, max: 1 }] },
+    fletch_mithril_quiver: { id: "fletch_mithril_quiver", name: { en: "Sew Mithril Quiver", de: "Mithril-Köcher nähen" }, skill: "bowcraft", category: "quivers", durationMs: 8500, xp: 114, levelRequired: 45, inputs: [{ itemId: "scaled_leather", qty: 3 }, { itemId: "blightwood_log", qty: 4 }, { itemId: "feather", qty: 18 }], loot: [{ itemId: "mithril_quiver", chance: 1, min: 1, max: 1 }] },
+    fletch_adamantium_quiver: { id: "fletch_adamantium_quiver", name: { en: "Sew Adamantium Quiver", de: "Adamantium-Köcher nähen" }, skill: "bowcraft", category: "quivers", durationMs: 9500, xp: 209, levelRequired: 55, inputs: [{ itemId: "studded_leather", qty: 2 }, { itemId: "ironbark_log", qty: 4 }, { itemId: "feather", qty: 20 }], loot: [{ itemId: "adamantium_quiver", chance: 1, min: 1, max: 1 }] },
+    fletch_runite_quiver: { id: "fletch_runite_quiver", name: { en: "Sew Runite Quiver", de: "Runit-Köcher nähen" }, skill: "bowcraft", category: "quivers", durationMs: 10500, xp: 379, levelRequired: 65, inputs: [{ itemId: "studded_leather", qty: 3 }, { itemId: "bloodoak_log", qty: 4 }, { itemId: "feather", qty: 24 }], loot: [{ itemId: "runite_quiver", chance: 1, min: 1, max: 1 }] },
+    fletch_bloodiron_quiver: { id: "fletch_bloodiron_quiver", name: { en: "Sew Bloodiron Quiver", de: "Bluteisen-Köcher nähen" }, skill: "bowcraft", category: "quivers", durationMs: 11500, xp: 715, levelRequired: 76, inputs: [{ itemId: "warhide", qty: 2 }, { itemId: "shadowpine_log", qty: 4 }, { itemId: "feather", qty: 28 }], loot: [{ itemId: "bloodiron_quiver", chance: 1, min: 1, max: 1 }] },
+    fletch_titanium_quiver: { id: "fletch_titanium_quiver", name: { en: "Sew Titanium Quiver", de: "Titan-Köcher nähen" }, skill: "bowcraft", category: "quivers", durationMs: 12500, xp: 1275, levelRequired: 86, inputs: [{ itemId: "dragonhide", qty: 2 }, { itemId: "wraithwood_log", qty: 4 }, { itemId: "feather", qty: 32 }], loot: [{ itemId: "titanium_quiver", chance: 1, min: 1, max: 1 }] },
+    fletch_aetherium_quiver: { id: "fletch_aetherium_quiver", name: { en: "Sew Aetherium Quiver", de: "Aetherium-Köcher nähen" }, skill: "bowcraft", category: "quivers", durationMs: 13500, xp: 2046, levelRequired: 94, inputs: [{ itemId: "dragonhide", qty: 3 }, { itemId: "bonewood_log", qty: 5 }, { itemId: "feather", qty: 36 }], loot: [{ itemId: "aetherium_quiver", chance: 1, min: 1, max: 1 }] },
+    fletch_godiron_quiver: { id: "fletch_godiron_quiver", name: { en: "Sew Godiron Quiver", de: "Götzeneisen-Köcher nähen" }, skill: "bowcraft", category: "quivers", durationMs: 15500, xp: 3009, levelRequired: 99, inputs: [{ itemId: "shadowhide", qty: 2 }, { itemId: "godwood_log", qty: 5 }, { itemId: "feather", qty: 40 }], loot: [{ itemId: "godiron_quiver", chance: 1, min: 1, max: 1 }] },
+    // claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK §2: Pfeilspitzen schmieden (Spiegel der Dolch-Sprosse je Metall: 1 Barren, gleiche Dauer/XP/Level; Ertrag 45 statt 15, Abweichung von A3).
+    forge_copper_arrowheads: { id: "forge_copper_arrowheads", name: { en: "Forge Copper Arrowheads", de: "Kupfer-Pfeilspitzen schmieden" }, skill: "smithing", category: "copper", durationMs: 2500, xp: 4, levelRequired: 1, inputs: [{ itemId: "copper_bar", qty: 1 }], loot: [{ itemId: "copper_arrowheads", chance: 1, min: 45, max: 45 }] },
+    forge_bronze_arrowheads: { id: "forge_bronze_arrowheads", name: { en: "Forge Bronze Arrowheads", de: "Bronze-Pfeilspitzen schmieden" }, skill: "smithing", category: "bronze", durationMs: 3000, xp: 6, levelRequired: 5, inputs: [{ itemId: "bronze_bar", qty: 1 }], loot: [{ itemId: "bronze_arrowheads", chance: 1, min: 45, max: 45 }] },
+    forge_iron_arrowheads: { id: "forge_iron_arrowheads", name: { en: "Forge Iron Arrowheads", de: "Eisen-Pfeilspitzen schmieden" }, skill: "smithing", category: "iron", durationMs: 3000, xp: 7, levelRequired: 10, inputs: [{ itemId: "iron_bar", qty: 1 }], loot: [{ itemId: "iron_arrowheads", chance: 1, min: 45, max: 45 }] },
+    forge_steel_arrowheads: { id: "forge_steel_arrowheads", name: { en: "Forge Steel Arrowheads", de: "Stahl-Pfeilspitzen schmieden" }, skill: "smithing", category: "steel", durationMs: 4500, xp: 18, levelRequired: 20, inputs: [{ itemId: "steel_bar", qty: 1 }], loot: [{ itemId: "steel_arrowheads", chance: 1, min: 45, max: 45 }] },
+    forge_blacksteel_arrowheads: { id: "forge_blacksteel_arrowheads", name: { en: "Forge Blacksteel Arrowheads", de: "Schwarzstahl-Pfeilspitzen schmieden" }, skill: "smithing", category: "blacksteel", durationMs: 5000, xp: 32, levelRequired: 30, inputs: [{ itemId: "blacksteel_bar", qty: 1 }], loot: [{ itemId: "blacksteel_arrowheads", chance: 1, min: 45, max: 45 }] },
+    forge_mithril_arrowheads: { id: "forge_mithril_arrowheads", name: { en: "Forge Mithril Arrowheads", de: "Mithril-Pfeilspitzen schmieden" }, skill: "smithing", category: "mithril", durationMs: 5000, xp: 41, levelRequired: 35, inputs: [{ itemId: "mithril_bar", qty: 1 }], loot: [{ itemId: "mithril_arrowheads", chance: 1, min: 45, max: 45 }] },
+    forge_adamantium_arrowheads: { id: "forge_adamantium_arrowheads", name: { en: "Forge Adamantium Arrowheads", de: "Adamantium-Pfeilspitzen schmieden" }, skill: "smithing", category: "adamantium", durationMs: 6000, xp: 80, levelRequired: 45, inputs: [{ itemId: "adamantium_bar", qty: 1 }], loot: [{ itemId: "adamantium_arrowheads", chance: 1, min: 45, max: 45 }] },
+    forge_runite_arrowheads: { id: "forge_runite_arrowheads", name: { en: "Forge Runite Arrowheads", de: "Runit-Pfeilspitzen schmieden" }, skill: "smithing", category: "runite", durationMs: 6500, xp: 143, levelRequired: 55, inputs: [{ itemId: "runite_bar", qty: 1 }], loot: [{ itemId: "runite_arrowheads", chance: 1, min: 45, max: 45 }] },
+    forge_bloodiron_arrowheads: { id: "forge_bloodiron_arrowheads", name: { en: "Forge Bloodiron Arrowheads", de: "Bluteisen-Pfeilspitzen schmieden" }, skill: "smithing", category: "bloodiron", durationMs: 7500, xp: 270, levelRequired: 65, inputs: [{ itemId: "bloodiron_bar", qty: 1 }], loot: [{ itemId: "bloodiron_arrowheads", chance: 1, min: 45, max: 45 }] },
+    forge_titanium_arrowheads: { id: "forge_titanium_arrowheads", name: { en: "Forge Titanium Arrowheads", de: "Titan-Pfeilspitzen schmieden" }, skill: "smithing", category: "titanium", durationMs: 8000, xp: 473, levelRequired: 75, inputs: [{ itemId: "titanium_bar", qty: 1 }], loot: [{ itemId: "titanium_arrowheads", chance: 1, min: 45, max: 45 }] },
+    forge_aetherium_arrowheads: { id: "forge_aetherium_arrowheads", name: { en: "Forge Aetherium Arrowheads", de: "Aetherium-Pfeilspitzen schmieden" }, skill: "smithing", category: "aetherium", durationMs: 8500, xp: 825, levelRequired: 85, inputs: [{ itemId: "aetherium_bar", qty: 1 }], loot: [{ itemId: "aetherium_arrowheads", chance: 1, min: 45, max: 45 }] },
+    forge_godiron_arrowheads: { id: "forge_godiron_arrowheads", name: { en: "Forge Godiron Arrowheads", de: "Götzeneisen-Pfeilspitzen schmieden" }, skill: "smithing", category: "godiron", durationMs: 10000, xp: 1593, levelRequired: 95, inputs: [{ itemId: "godiron_bar", qty: 1 }], loot: [{ itemId: "godiron_arrowheads", chance: 1, min: 45, max: 45 }] },
 
     // ── Fishing-Ruten (Shop-Purge CEO 2026-07-11): ash/grimwood/bonesteel/void_rod raus dem Shop —
     // Chef-Vorgabe „Angelruten eher in Crafting". Holz/Sehnen-Rezepte (gleiche Form wie die
@@ -14405,6 +14609,7 @@ export const content: ContentDB = {
         // Blackthorn, s.u.) — Zeile bleibt @0 statt gelöscht (RNG-Zugzahl-Parität, Muster
         // Sim-Impact-Schranke §6: nur Chance-WERTE ändern, keine Zeile ziehen; pinnt
         // lifesteal-respawn.test.ts, das mit fixem Seed gegen "goblin" kämpft).
+              { itemId: "stolen_shortbow", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 }, /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK */
       ],
     },
     goblin_shaman: {
@@ -14467,6 +14672,7 @@ export const content: ContentDB = {
       loot: [{ itemId: "goblin_ear", chance: 0.6, min: 1, max: 2 }, { itemId: "iron_ore", chance: 0.2, min: 1, max: 1 },
         { itemId: "warband_hauberk", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "crossbower_warbow", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+              { itemId: "feather", chance: 0.4, min: 1, max: 3 }, /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK */
       ],
     },
     goblin_butcher: {
@@ -14780,6 +14986,7 @@ export const content: ContentDB = {
         // Schmuck-Rework W4 (§3.8): Fundort-Entscheid content-dev — Rudeljäger, die Verwundete
         // fertigmachen, passen zum execute-Effekt.
         { itemId: "cutthroat_loop", chance: 0.08, min: 1, max: 1 },
+              { itemId: "ratpelt_cap", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 }, /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK */
       ],
     },
     dust_vulture: {
@@ -14825,6 +15032,7 @@ export const content: ContentDB = {
         { itemId: "mire_fang_dagger", chance: 0.0155, min: 1, max: 1 },
         { itemId: "mire_hexstaff", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "smokeweave_cape", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+              { itemId: "chitinweave_leggings", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK */
       ],
     },
     // Combat-Feel v2 #8: erster freier (Nicht-Slayer) Ward-Mob für Magier — L18-85-Ward-Lücke.
@@ -15127,6 +15335,7 @@ export const content: ContentDB = {
         { itemId: "mithril_ore", chance: 0.45, min: 1, max: 2 },
         { itemId: "stolen_coinpurse", chance: 0.3, min: 1, max: 2 },
         { itemId: "slagforged_sword", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
+              { itemId: "skygrip_gauntlets", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 }, /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK */
       ],
     },
     ember_elemental: {
@@ -15210,6 +15419,7 @@ export const content: ContentDB = {
         // item-drop-audit P3 Nachzug (Task #344, Chef-GO 25.07.2026): s. ember_elemental-Kommentar oben —
         // gezielte Loot-Ausnahme, tower_frost_hound bleibt unverändert.
         { itemId: "aetherium_bar", chance: 0.0025, min: 1, max: 1 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_sabatons", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+              { itemId: "direhide_jerkin", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 }, /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK */
       ],
     },
     frost_hexer: {
@@ -15266,7 +15476,7 @@ export const content: ContentDB = {
       id: "skeleton_archer", family: "undead", zone: "crypt", name: { en: "Skeleton Archer", de: "Skelett-Bogenschütze" },
       level: 68, maxHp: 78, damage: 31, accuracy: 12, evasion: 17, defense: 34, defenseType: "evasion", attackIntervalMs: 2800, // Combat-Feel-v2 #0: 27→31 (naked Zufluss 4.32%→4.96%/s)
       resist: ["poison"], xp: 250, gold: 0,
-      loot: [{ itemId: "crude_bone", chance: 0.9, min: 1, max: 2 }, { itemId: "feather", chance: 0.3, min: 1, max: 2 }, { itemId: "oak_log", chance: 0.03, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "iron_shortbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+      loot: [{ itemId: "crude_bone", chance: 0.9, min: 1, max: 2 }, { itemId: "feather", chance: 0.5, min: 2, max: 4 /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK §4: war 0.3 × 1–2 */ }, { itemId: "oak_log", chance: 0.03, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "iron_shortbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
         { itemId: "skeletal_longbow", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
         // item-drop-audit P3 Nachzug (Task #344, Chef-GO 25.07.2026): s. skeleton_warrior-Kommentar oben —
         // gezielte Loot-Ausnahme im tower-monsters.test.ts-Guard, tower_skeleton_archer bleibt unverändert.
@@ -15378,7 +15588,7 @@ export const content: ContentDB = {
 
       level: 68, maxHp: 78, damage: 31, accuracy: 12, evasion: 17, defense: 34, defenseType: "evasion", attackIntervalMs: 2800,
       resist: ["poison"], xp: 250, gold: 0,
-      loot: [{ itemId: "crude_bone", chance: 0.9, min: 1, max: 2 }, { itemId: "feather", chance: 0.3, min: 1, max: 2 }, { itemId: "oak_log", chance: 0.03, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "iron_shortbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+      loot: [{ itemId: "crude_bone", chance: 0.9, min: 1, max: 2 }, { itemId: "feather", chance: 0.5, min: 2, max: 4 /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK §4: war 0.3 × 1–2 */ }, { itemId: "oak_log", chance: 0.03, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "iron_shortbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
         { itemId: "skeletal_longbow", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "bloodoak_log", chance: 0.01, min: 5, max: 5 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "runite_shortbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): dg_-Twin spiegelt die Zonen-Version
       ],
@@ -15593,6 +15803,7 @@ export const content: ContentDB = {
         { itemId: "titanium_bar", chance: 0.004, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "titanium_kiteshield", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Coast = Titanium-Fenster
         { itemId: "drowned_choirstaff", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
         { itemId: "drowned_choir_mitre", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+              { itemId: "driftwood_bow", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 }, /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK */
       ],
     },
     tide_siren: {
@@ -15609,6 +15820,7 @@ export const content: ContentDB = {
         // Schmuck-Rework W4 (§3.8): Fundort-Entscheid content-dev — eine Sirene, die mit ihrer
         // Stimme ertränkt, passt zum wardSiphon-Effekt (Schaden wird zum eigenen Ward).
         { itemId: "tidewrack_collar", chance: 0.06, min: 1, max: 1 },
+              { itemId: "feather", chance: 0.6, min: 3, max: 6 }, /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK */
       ],
     },
     deep_kraken: {
@@ -15654,6 +15866,8 @@ export const content: ContentDB = {
         { itemId: "beastcaller_totem", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "wolfpelt_hood", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "warhide", chance: 0.005, min: 1, max: 1 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "warhide_vambraces", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Jäger-Zone droppt endlich Leder ihrer Ära (schließt Loch C2)
+              { itemId: "direhide_jerkin", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 }, /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK */
+              { itemId: "thornwolf_pelt_hood", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK */
       ],
     },
     wild_stag: {
@@ -15915,6 +16129,7 @@ export const content: ContentDB = {
         { itemId: "wyvern_scale", chance: 0.15, min: 1, max: 1 },
         { itemId: "aetherweave_leggings", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "broodtalon_bow", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (R4)
+              { itemId: "wyvernscale_aegis", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 }, /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK */
       ],
     },
     forsaken_servant: {
@@ -15958,6 +16173,7 @@ export const content: ContentDB = {
         { itemId: "raw_shadowhide", chance: 0.15, min: 1, max: 1 },
         { itemId: "idol_shroud", chance: 0.0003, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "litany_wand", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (M5)
+              { itemId: "cloudwalker_boots", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 }, /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK */
       ],
     },
     wreath_bearer: {
@@ -16479,6 +16695,7 @@ export const content: ContentDB = {
         { itemId: "goblin_ragged_robe", chance: 0.0016, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026) — 1:1-Loot-Parität mit "goblin" gewahrt.
         // tower-monsters.test.ts verlangt 1:1-Loot-Parität mit der Basis "goblin" — beide
         // Listen sind seit dem Key-Purge (Welle K, 2026-07-13) ohne Schlüssel-Zeile, Parität hält.
+              { itemId: "stolen_shortbow", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 }, /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK */
       ],
     },
     tower_goblin_rogue: {
@@ -16521,7 +16738,7 @@ export const content: ContentDB = {
       resist: ["poison"], xp: 78, gold: 0,
       loot: [
         { itemId: "crude_bone", chance: 0.9, min: 1, max: 2 },
-        { itemId: "feather", chance: 0.3, min: 1, max: 2 },
+        { itemId: "feather", chance: 0.5, min: 2, max: 4 /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK §4: war 0.3 × 1–2 */ },
         { itemId: "oak_log", chance: 0.03, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "iron_shortbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
         { itemId: "skeletal_longbow", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
       ],
@@ -16572,6 +16789,7 @@ export const content: ContentDB = {
         { itemId: "scarred_hide", chance: 0.4, min: 1, max: 2 },
         { itemId: "frostcaverns_bow", chance: 0.00036, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "frostward_treads", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 },
+              { itemId: "direhide_jerkin", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 }, /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK */
       ],
     },
     tower_roc_void: {
@@ -16729,6 +16947,7 @@ export const content: ContentDB = {
         { itemId: "siren_shockstaff", chance: 0.0008, min: 1, max: 1, suffixChance: 0.3 },
         { itemId: "void_rune", chance: 0.004, min: 2, max: 2 },
         { itemId: "tidewrack_collar", chance: 0.06, min: 1, max: 1 },
+              { itemId: "feather", chance: 0.6, min: 3, max: 6 }, /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK */
       ],
     },
     tower_abyssal_tide_serpent: {
@@ -16998,6 +17217,12 @@ export const content: ContentDB = {
     { id: "ach_skill_tailoring_75", name: { en: "Tailoring Master", de: "Schneidern-Meister" }, description: { en: "Reach Tailoring level 75.", de: "Erreiche Schneidern Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "tailoring", count: 75 } },
     { id: "ach_skill_tailoring_90", name: { en: "Tailoring Legend", de: "Schneidern-Legende" }, description: { en: "Reach Tailoring level 90.", de: "Erreiche Schneidern Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "tailoring", count: 90 } },
     { id: "ach_skill_tailoring_99", name: { en: "Tailoring Maxed", de: "Schneidern-Maximiert" }, description: { en: "Reach Tailoring level 99.", de: "Erreiche Schneidern Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "tailoring", count: 99 } },
+    // claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK: interne Bognerei-Leiter (Muster ach_skill_tailoring_*). Steam-Set eingefroren: NICHT in die Steam-Liste aufnehmen.
+    { id: "ach_skill_bowcraft_25", name: { en: "Fletching Journeyman", de: "Bognerei-Geselle" }, description: { en: "Reach Fletching level 25.", de: "Erreiche Bognerei Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "bowcraft", count: 25 } },
+    { id: "ach_skill_bowcraft_50", name: { en: "Fletching Veteran", de: "Bognerei-Veteran" }, description: { en: "Reach Fletching level 50.", de: "Erreiche Bognerei Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "bowcraft", count: 50 } },
+    { id: "ach_skill_bowcraft_75", name: { en: "Fletching Master", de: "Bognerei-Meister" }, description: { en: "Reach Fletching level 75.", de: "Erreiche Bognerei Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "bowcraft", count: 75 } },
+    { id: "ach_skill_bowcraft_90", name: { en: "Fletching Legend", de: "Bognerei-Legende" }, description: { en: "Reach Fletching level 90.", de: "Erreiche Bognerei Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "bowcraft", count: 90 } },
+    { id: "ach_skill_bowcraft_99", name: { en: "Fletching Maxed", de: "Bognerei-Maximiert" }, description: { en: "Reach Fletching level 99.", de: "Erreiche Bognerei Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "bowcraft", count: 99 } },
     { id: "ach_skill_jewelcrafting_25", name: { en: "Jewelcrafting Journeyman", de: "Juwelierskunst-Geselle" }, description: { en: "Reach Jewelcrafting level 25.", de: "Erreiche Juwelierskunst Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "jewelcrafting", count: 25 } },
     { id: "ach_skill_jewelcrafting_50", name: { en: "Jewelcrafting Veteran", de: "Juwelierskunst-Veteran" }, description: { en: "Reach Jewelcrafting level 50.", de: "Erreiche Juwelierskunst Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "jewelcrafting", count: 50 } },
     { id: "ach_skill_jewelcrafting_75", name: { en: "Jewelcrafting Master", de: "Juwelierskunst-Meister" }, description: { en: "Reach Jewelcrafting level 75.", de: "Erreiche Juwelierskunst Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "jewelcrafting", count: 75 } },
@@ -17804,6 +18029,8 @@ export const content: ContentDB = {
     // Metall-Kategorien, obwohl die Bögen Holz-Namen/Rezepte haben; reine Umgruppierung, IDs unverändert).
     // #354 Paket 4.4: Labels auf "<Holz> Bows"-Muster umbenannt — standen bisher nackt als reine
     // Holzsorte (unklar, wofür die Kategorie steht) am Ende der Leatherworking-Liste.
+    // claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK: Bognerei-Kategorien (Sehnen vor den Bögen, Schäfte/Pfeile/Effektpfeile/Köcher danach).
+    { id: "bow_strings", name: { en: "Bowstrings", de: "Sehnen" } },
     { id: "bow_normal", name: { en: "Normal Bows", de: "Einfache Bögen" } },
     { id: "bow_birchwood", name: { en: "Birchwood Bows", de: "Birkenholz-Bögen" } },
     { id: "bow_oak", name: { en: "Oak Bows", de: "Eichen-Bögen" } },
@@ -17818,6 +18045,10 @@ export const content: ContentDB = {
     // codex:2026-10-17T15:40:00+02:00 — 1.3.0 E5: Weihrauchholz-Bögen (Req 95, Handwerk L96).
     { id: "bow_censerwood", name: { en: "Censerwood Bows", de: "Weihrauchholz-Bögen" } },
     { id: "bow_godwood", name: { en: "Godwood Bows", de: "Götzenholz-Bögen" } },
+    { id: "arrow_shafts", name: { en: "Arrow Shafts", de: "Pfeilschäfte" } },
+    { id: "arrows", name: { en: "Arrows", de: "Pfeile" } },
+    { id: "arrows_effect", name: { en: "Effect Arrows", de: "Effektpfeile" } },
+    { id: "quivers", name: { en: "Quivers", de: "Köcher" } },
     // Runecrafting-Typen
     { id: "rune_runes", name: { en: "Shards", de: "Splitter" } },
     // #227 Focus-Rework: 2-Stufen-Split der Foci-Linie (kampf-freie Grundlage → Essenz-Gear)
@@ -21402,10 +21633,11 @@ export const content: ContentDB = {
       // 0,9 / 1,8 / 3,0 und Arkan 1,0 / 2,0 / 3,4 — innerhalb der ±15%-Toleranz aus G7(ii). Ein reiner
       // dex-Spiegel (3/6/10) wäre mit 8,5 Roh-Äquivalent 2,8× zu stark (der o.g. Doppel-Rider), darum
       // der Mix aus geringerem dex + etwas lck.
+      // claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK §7: Jägerisch auf vollen Wert wie Scharf/Arkan: Geschick 3/6/10 (war dex 1+lck 1 / 2+1 / 3+2). Die Stil-Parität-Begründung oben (dex-Mix) ist damit überholt.
       modifiersByTier: [
-        { dex: 1, lck: 1 },
-        { dex: 2, lck: 1 },
-        { dex: 3, lck: 2 },
+        { dex: 3 },
+        { dex: 6 },
+        { dex: 10 },
       ],
       appliesTo: ["weapon_ranged"],
     },

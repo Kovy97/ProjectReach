@@ -25,5 +25,6 @@ export function buildItemTypeLine(
   if (item.slot) {
     return tr(EQUIP_SLOT_LABELS[item.slot]);
   }
+  if (item.arrow) return t("item.type.arrow"); // claude:2026-10-24T19:40:00+02:00 — echter Pfeil (1.4.0 FK)
   return t(`item.type.${item.type}`);
 }
