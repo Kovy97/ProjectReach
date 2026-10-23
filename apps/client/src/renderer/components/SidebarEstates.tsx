@@ -10,6 +10,8 @@ import { useI18n } from "../i18n";
 import type { NavPage } from "../navigation";
 import { getSidebarIcon } from "../sidebarIcons";
 
+const ESTATES_ICON = getSidebarIcon("estates"); // claude:2026-10-26T08:00:00+02:00
+
 function minutes(ms: number | null): number {
   return ms === null ? -1 : Math.max(1, Math.ceil(ms / 60_000));
 }
@@ -62,6 +64,8 @@ export function SidebarEstates({
   return (
     <div className="sb-estates" role="group" aria-label={t("nav.section.estates")}>
       <div className="sb-estates-head" title={t("estates.hint")}>
+        {/* claude:2026-10-26T08:00:00+02:00 — Gruppen-Symbol „Ländereien“ (sidebaricon_estates), erscheint, sobald die Datei im Spiel liegt. */}
+        {ESTATES_ICON && <img loading="lazy" decoding="async" src={ESTATES_ICON} alt="" className="sb-estates-head-icon" />}
         {t("nav.section.estates")}
       </div>
       {pages.map((page) => {

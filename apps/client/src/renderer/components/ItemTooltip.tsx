@@ -105,6 +105,11 @@ import { weaponEffectProse } from "../util/weaponEffectProse";
 import { formatSetModifiers } from "./EquipmentOverview";
 
 const GOLD_ICON_URL = getUiIcon("icon_goldcoin");
+// claude:2026-10-26T08:00:00+02:00 — Raritäts-Symbole Heroisch/Mythisch (1.4.0 Raid) vor dem Raritätsnamen; null, bis die Datei im Spiel liegt.
+const RAID_RARITY_ICON: Partial<Record<string, string | null>> = {
+  heroic: getUiIcon("icon_rarity_heroic"),
+  mythic: getUiIcon("icon_rarity_mythic"),
+};
 
 /** attr-id → neues UI-Icon (PNG) für Attribut-Modifier-Zeilen. */
 const ATTR_UI: Record<string, string> = {
@@ -1788,7 +1793,7 @@ function ItemTooltipCard({
         </div>
         <div className="itip-header-band-2">
           <div className="itip-type-line">
-            {typeLine} · {tr(RARITY_LABEL[rarity])}
+            {typeLine} · {RAID_RARITY_ICON[rarity] && <img loading="lazy" decoding="async" src={RAID_RARITY_ICON[rarity]!} alt="" className="ui-icon itip-rarity-icon" />}{tr(RARITY_LABEL[rarity])}
           </div>
           {/* claude:2026-10-23T18:20:00+02:00 — 1.4.0 ST: Stufe als Sterne plus „Stufe VII“ (Chef 23.10.). */}
           {tierOfItem !== null && (

@@ -943,6 +943,13 @@ body .item-cell.rarity-mythic {
   text-transform: uppercase;
   color: rgba(216, 192, 106, 0.75);
 }
+/* claude:2026-10-26T08:00:00+02:00 — Raritäts-Symbol (Heroisch/Mythisch) vor dem Raritätsnamen, Texthöhe. */
+.itip-type-line .itip-rarity-icon {
+  width: 1.15em;
+  height: 1.15em;
+  vertical-align: -0.2em;
+  margin-right: 0.25em;
+}
 
 /* Weapon specialty — role blurb below the header bands */
 .itip-specialty {
