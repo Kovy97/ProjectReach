@@ -1,5 +1,51 @@
 # Übergabe — Codex-Projektleitung
 
+### 23.10.2026 — Codex: königliche Raid-Muster, Runde 3 zur Chef-Abnahme
+
+<!-- codex:2026-10-23T21:48:34.843Z -->
+
+- Chefkorrektur: Runde 2 ist goblinisch, aber zu schlicht für göttliche Stufe-XIII-Beute. Neue drei Normal-Brustteile aus dem vollständig erneuerten königlichen Set-Abschnitt von `design/1.4.0-assets-final.md`, aktuelle Farben erhalten. Große Fächer-/Hand-, Schädel-/Kiefer- und Kronen-Blickfänge, Relief/Gravur/Filigran/geschnitzter Knochen; kein Flickwerk.
+- Drei Fachagenten parallel, drei frische Textgenerierungen ohne Bildinputs und ohne alte Promptvorlagen, keine Edits nötig. Raw-Revisionen jeweils 1. Native Originale und tatsächliche Prompts bytegleich dokumentiert. Alte C/D-Bilder sowie Runden 1/2 nicht als Vorlage verwendet.
+- Alle drei Finals unabhängig PASS: Stoff durch raid_uniques_14, Leder durch raid_sets_14, Platte durch bowcraft_14. Root prüfte ebenfalls alle neuen Bilder. Prunk direkt gegen voidweave_vestment/voidhide_body/godiron_platebody, vier aktuelle Nachbarn je Motiv, 46/96 px und Hell/Dunkel/Signal. Große Blickfänge bleiben klein erkennbar; feine Heraldik/Gravuren werden in der großen Ansicht beurteilt. Nur leere Kleidung/Rüstung und ausdrücklich verlangte Trophäenornamente; keine Trägeranatomie/Emission/Raritätsfärbung.
+- Technisch 27 Exportchecks PASS: 640×640 RGBA, natives Alpha, WebP q92/Alpha100, bytegenauer Ganzleinwand-Resize/Padding-Export und Quell-/Prompt-/Referenzhashes. Schwache native Alpha-Randspuren erhalten; alle Finalränder Alpha 0. Drei ZIP-Einträge bytegleich; 18 Galerieziele und drei Hintergrundaktionen geprüft. Keine Browser-/Spielabnahme behauptet.
+- Runde 2 vollständig vor Kennzeichnung als abgelehnt gesichert: 44 bytegleiche Dateien unter `CODEX/assets/1.4.0-final-2026-10-23/archive/chef-rejected-round2-2026-10-23/`. Keine Originale gelöscht oder Bildbytes überschrieben.
+- Neue Lieferung ausschließlich `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-royal-samples/`, Arbeit unter `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-royal-samples/`. [Galerie](assets/1.4.0-final-2026-10-23/gobkharaz-royal-samples/REVIEW.html) · [ZIP](assets/1.4.0-final-2026-10-23/gobkharaz-royal-samples/1.4.0-gobkharaz-royal-samples.zip) · [Prüfbericht](assets/1.4.0-final-2026-10-23/gobkharaz-royal-samples/INDEPENDENT-REVIEW.md)
+- Produktionsbrief SHA256 `a1447e50a9e660d071c268b93d0434985ac6ab6fd5b58699e856c800d7709e0d`; spätere Unikat-Erweiterung SHA256 `69bac599ddf707699af9e001edd8f77c6a0f0d11ac6921c37b859b5aac79147d`. Der komplette königliche Set-Abschnitt und alle zwölf verwendeten Textbausteine bleiben exakt gleich. Beide Briefstände im Workordner gesichert; keine eigene Änderung am Brief oder an Abnahme-Checkboxen. Die neuen 16 Unikate sind in dieser Runde nicht produziert.
+- Übergabecheck 2026-10-23T21:49:42.979Z: erneuter externer Briefstand `2c9a9f0dcd09d75df977602d8541ec7846433e2e72ae37e40de989820b60f46b`, kompletter königlicher Set-Abschnitt weiterhin exakt unverändert; zusätzlich `brief-delivery-snapshot.md` gesichert. Dokument-Diffcheck bestanden.
+- **Chef-Abnahme offen.** Keine weitere Produktion oder Varianten vor Freigabe. Kein Runtime-/Content-/Loader-/Saveeingriff; elf gezielt erfasste Runtimepfade unverändert. Keine Builds, Spieltests, Live-Starts, Commits oder Pushes durch diesen Auftrag. Branch `update-1.4.0`; vorhandene und parallel entstandene fremde Arbeit erhalten.
+- JSON-Marker in den Staging-/Work-READMEs und kommentierten Helfern; alter Runde-2-Statusmarker in deren CHEF-REJECTED.md. Exakte JSON-Pfade:
+
+<details><summary>JSON-Nachweise und Exportstände dieser Runde</summary>
+
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-royal-samples/ARCHIVE-AUDIT.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-royal-samples/AUDIT.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-royal-samples/MANIFEST.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-royal-samples/ROUND2-ARCHIVE.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-royal-samples/evidence/gk_bleed_chest-independent-review.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-royal-samples/evidence/gk_bleed_chest-producer.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-royal-samples/evidence/gk_fire_chest-independent-review.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-royal-samples/evidence/gk_fire_chest-producer.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-royal-samples/evidence/gk_poison_chest-independent-review.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-royal-samples/evidence/gk_poison_chest-producer.json`
+- `CODEX/assets/1.4.0-final-2026-10-23/gobkharaz-samples/MANIFEST.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-royal-samples/bleed/gk_bleed_chest-producer.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-royal-samples/bleed/independent-fire-review.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-royal-samples/fire/gk_fire_chest-royal-r1-producer.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-royal-samples/fire/independent-poison-review.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-royal-samples/gk_bleed_chest-export-r1.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-royal-samples/gk_bleed_chest-export.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-royal-samples/gk_fire_chest-export-r1.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-royal-samples/gk_fire_chest-export.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-royal-samples/gk_poison_chest-export-r1.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-royal-samples/gk_poison_chest-export.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-royal-samples/poison/gk_poison_chest-evidence.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-royal-samples/poison/independent-bleed-review.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-royal-samples/runtime-baseline.json`
+- `CODEX/work/1.4.0-final-2026-10-23/gobkharaz-royal-samples/sample-spec.json`
+
+</details>
+
+
 ### 26.10.2026 — Claude: 1.4.0 QA-Runde, Goblin-Machart für die Raid-Sets
 
 <!-- claude:2026-10-26T05:55:00+02:00 -->
@@ -13,6 +59,9 @@
   Nachricht „Runde 3“ oben im Dokument. <!-- claude:2026-10-26T06:30:00+02:00 -->
 - **Chef-Quiz 26.10.:** Mythisch bleibt streng (W5), Heroisch-Tod wartet offline (R3), Zerlegen auch in der Bank (BG1, gebaut),
   16 Raid-Einzelstücke ebenfalls prunkvoll-goblinisch neu beschrieben (AS1). Commit `9f743a4`. <!-- claude:2026-10-26T07:15:00+02:00 -->
+- **Raid-Muster Runde 3 vom Chef abgenommen** (`gobkharaz-royal-samples`, 26.10.); Serienreferenz für die übrigen Set-Teile.
+  Nächster Codex-Schritt: 12 Set-Teile + 16 Einzelstücke, dann Chef-Abnahme der 31 Normal-Bilder vor den Varianten.
+  Einbau später mit `tools/asset-intake-1.4.0.py` (Anleitung in der Asset-Liste). <!-- claude:2026-10-26T08:20:00+02:00 -->
 - **QA-Runde:** 7 Prüf-Agenten, alle Befunde P1–P3 zentral behoben (Liste im Changelog `design/1.4.0-changelog.md`, Abschnitt
   „QA-Runde“). Neue Regressionstests `packages/*/src/qa-*.test.ts` (Befund-Tests auf Soll umgestellt).
 - **Ward-Fix mit Balance-Folge:** Dämpfung nur auf den Teil, den der Ward trägt (`combat.ts` STEP 7). Mythisch für reine
