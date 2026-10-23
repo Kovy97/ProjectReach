@@ -319,6 +319,14 @@ interface RaidMonsterRow {
   xp: number;
 }
 
+/**
+ * claude:2026-10-25T23:30:00+02:00 — Chef-Entscheid (1.4.0 Test, „Kämpfe dauern viel zu lang“): Raid-Gegner haben die halben Lebenspunkte, Ward-Pools
+ * und Regeneration der Spec-Tabelle §2.2; XP halbiert mit (XP pro Stunde bleibt). Die Zeilen unten bleiben die Spec-Werte.
+ */
+export const RAID_HP_SCALE = 0.5;
+/** claude:2026-10-26T00:05:00+02:00 — Ausgleich zu RAID_HP_SCALE: kürzere Kämpfe brauchen mehr Gegnerschaden, damit Mythisch eine Prüfung bleibt (gemessen). */
+export const RAID_DAMAGE_SCALE = 1.3;
+
 const RAID_MONSTER_ROWS: RaidMonsterRow[] = [
   { id: "gk_toll_thug", family: "humanoid", level: 305, hp: 2050, damage: 205, interval: 3400, accuracy: 28, evasion: 5, defense: 150, xp: 9250 },
   { id: "gk_gate_pikeman", family: "humanoid", level: 308, hp: 1800, damage: 160, interval: 2800, accuracy: 29, evasion: 4, defense: 180, inflict: infl("bleed", 0.25, 1.4, 5000), xp: 8100 },
@@ -391,20 +399,20 @@ export const RAID_MONSTERS: Record<string, MonsterDef> = (() => {
       name: RAID_NAME_ENDE[r.id]!,
       dungeonOnly: true,
       level: r.level,
-      maxHp: r.hp,
-      damage: r.damage,
+      maxHp: Math.round(r.hp * RAID_HP_SCALE),
+      damage: Math.round(r.damage * RAID_DAMAGE_SCALE),
       accuracy: r.accuracy,
       evasion: r.evasion,
       defense: r.defense,
       attackIntervalMs: r.interval,
-      xp: r.xp,
+      xp: Math.round(r.xp * RAID_HP_SCALE),
       gold: 0,
       loot: [], // die Raid-Beute (Boss-Tabellen, Trash, Nebenbeute) kommt aus `content.raids`, nicht aus Monster-Loot
     };
     // defenseType ist Pflicht (content-integrity); nur Tag, die Engine liest es nicht: Caster ward, Grubenhund evasion, Rest armor.
     m.defenseType = r.ward ? "ward" : r.id === "gk_pit_hound" ? "evasion" : "armor";
-    if (r.ward) m.wardCapacity = r.ward;
-    if (r.regen) m.regen = r.regen;
+    if (r.ward) m.wardCapacity = Math.round(r.ward * RAID_HP_SCALE);
+    if (r.regen) m.regen = r.regen * RAID_HP_SCALE;
     if (r.inflict) m.inflict = r.inflict;
     if (r.resist) m.resist = r.resist;
     const phases = RAID_PHASES[r.id];
@@ -512,12 +520,13 @@ export const RAID_SETS: SetDef[] = [
 // ───────────────────────────────────────────────────────────────────────────
 
 /** Boss-Tabellen §4.1: Set-Teil-Slot je Raum für alle drei Stile (Gewicht 3), Unikate (Gewicht 2). */
-const BOSS_TABLES: Array<{ slot: string; uniques: string[]; draws: number }> = [
-  { slot: "hands", uniques: ["gk_tally_dagger", "gk_tally_focus", "gk_tally_ring"], draws: 1 },
-  { slot: "feet", uniques: ["gk_quarter_maul", "gk_quarter_shield", "gk_quarter_quiver"], draws: 1 },
-  { slot: "legs", uniques: ["gk_pit_longbow", "gk_pit_scimitar", "gk_pit_amulet"], draws: 1 },
-  { slot: "head", uniques: ["gk_fel_staff", "gk_fel_wand", "gk_fel_ring"], draws: 1 },
-  { slot: "chest", uniques: ["gk_king_greatsword", "gk_king_shortbow", "gk_king_scepter", "gk_king_cape"], draws: 2 },
+// claude:2026-10-25T23:30:00+02:00 — Chef-Entscheid: Bosse lassen nur mit pieceChance Raid-Teile fallen (35 %, Endboss 50 %), sonst nur Nebenbeute.
+const BOSS_TABLES: Array<{ slot: string; uniques: string[]; draws: number; pieceChance: number }> = [
+  { slot: "hands", uniques: ["gk_tally_dagger", "gk_tally_focus", "gk_tally_ring"], draws: 1, pieceChance: 0.35 },
+  { slot: "feet", uniques: ["gk_quarter_maul", "gk_quarter_shield", "gk_quarter_quiver"], draws: 1, pieceChance: 0.35 },
+  { slot: "legs", uniques: ["gk_pit_longbow", "gk_pit_scimitar", "gk_pit_amulet"], draws: 1, pieceChance: 0.35 },
+  { slot: "head", uniques: ["gk_fel_staff", "gk_fel_wand", "gk_fel_ring"], draws: 1, pieceChance: 0.35 },
+  { slot: "chest", uniques: ["gk_king_greatsword", "gk_king_shortbow", "gk_king_scepter", "gk_king_cape"], draws: 2, pieceChance: 0.5 },
 ];
 
 const row = (
@@ -543,6 +552,7 @@ export const RAID_GOBKHARAZ: RaidDef = {
       table: {
         draws: t.draws,
         extraChance: 0.15,
+        pieceChance: t.pieceChance,
         entries: [
           ...["fire", "poison", "bleed"].map((s) => ({ itemId: `gk_${s}_${t.slot}`, weight: 3 })),
           ...t.uniques.map((itemId) => ({ itemId, weight: 2 })),

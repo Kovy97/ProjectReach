@@ -39,8 +39,9 @@ describe("Raid Normal Ende zu Ende", () => {
     expect(rs.clears.normal).toBe(1);
     expect(Object.keys(rs.bossKills).length).toBe(5);
     expect(rs.fastestMs.normal).toBeGreaterThan(0);
-    // Zielband Normal mit BiS 45–75 min (§2.5); grobe Leitplanke gegen Skalierungsfehler, keine Balance-Abnahme.
-    expect(rs.lastResult!.durationMs).toBeGreaterThan(25 * 60_000);
-    expect(rs.lastResult!.durationMs).toBeLessThan(90 * 60_000);
+    // claude:2026-10-25T23:40:00+02:00 — Chef: Raid-Dauer halbiert (RAID_HP_SCALE 0,5) ⇒ Leitplanke 12–45 min (vorher 25–90).
+    // Grobe Leitplanke gegen Skalierungsfehler, keine Balance-Abnahme.
+    expect(rs.lastResult!.durationMs).toBeGreaterThan(12 * 60_000);
+    expect(rs.lastResult!.durationMs).toBeLessThan(45 * 60_000);
   }, 180_000);
 });

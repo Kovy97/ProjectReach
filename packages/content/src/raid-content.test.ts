@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { content } from "./index";
-import { RAID_BASE_IDS } from "./raid";
+import { RAID_BASE_IDS, RAID_DAMAGE_SCALE, RAID_HP_SCALE } from "./raid";
 import type { ItemDef, LocalizedString, RaidDifficulty } from "@hearthforge/shared";
 import { RAID_DIFFICULTIES, RAID_VARIANT_SUFFIX } from "@hearthforge/shared";
 
@@ -442,10 +442,13 @@ describe("Raid Gobkha'raz — RaidDef, Räume, Monster, Phasen, Sets", () => {
     };
     for (const [id, [lvl, hp, dmg, iv, def]] of Object.entries(pins)) {
       const m = content.monsters[id]!;
-      expect([m.level, m.maxHp, m.damage, m.attackIntervalMs, m.defense], id).toEqual([lvl, hp, dmg, iv, def]);
+      // claude:2026-10-25T23:35:00+02:00 — HP der Spec-Tabelle × RAID_HP_SCALE (Chef: Raid-Dauer halbiert).
+      expect([m.level, m.maxHp, m.damage, m.attackIntervalMs, m.defense], id).toEqual([lvl, Math.round(hp * RAID_HP_SCALE), Math.round(dmg * RAID_DAMAGE_SCALE), iv, def]);
     }
-    expect(content.monsters.gk_fel_acolyte!.wardCapacity).toBe(1300);
-    expect(content.monsters.gk_felmagus!.wardCapacity).toBe(3050);
+    expect(RAID_HP_SCALE).toBe(0.5);
+    expect(RAID_DAMAGE_SCALE).toBe(1.3); // claude:2026-10-26T00:30:00+02:00 — Ausgleich zur halben Dauer (Messreihe ×1,3/×1,5)
+    expect(content.monsters.gk_fel_acolyte!.wardCapacity).toBe(Math.round(1300 * RAID_HP_SCALE));
+    expect(content.monsters.gk_felmagus!.wardCapacity).toBe(Math.round(3050 * RAID_HP_SCALE));
     expect(content.monsters.gk_fel_acolyte!.defenseType).toBe("ward");
     expect(content.monsters.gk_felmagus!.defenseType).toBe("ward");
   });
@@ -579,5 +582,12 @@ describe("Raid Gobkha'raz — Erfolge und Texte", () => {
       expect(/^\d+$/.test(de) || bossShort.has(de), `${id} DE „${de}“`).toBe(false);
       expect(en === de, `${id}: EN == DE „${en}“`).toBe(false);
     }
+  });
+});
+
+// claude:2026-10-25T23:35:00+02:00 — Chef-Entscheid: Bosse lassen nur mit Chance Raid-Teile fallen (35 %, Endboss 50 %).
+describe("Raid Gobkha'raz — Boss-Beute als Chance", () => {
+  it("Räume 1–4: 35 %, Endboss: 50 %", () => {
+    expect(raid.rooms.map((r) => r.table.pieceChance)).toEqual([0.35, 0.35, 0.35, 0.35, 0.5]);
   });
 });

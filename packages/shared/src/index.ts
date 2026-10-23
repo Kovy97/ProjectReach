@@ -2343,6 +2343,11 @@ export interface RaidBossTable {
   /** Garantierte Ziehungen und Chance auf eine weitere (ohne Doppel innerhalb eines Kills). */
   draws: number;
   extraChance: number;
+  /**
+   * claude:2026-10-25T23:30:00+02:00 — Chef-Entscheid (1.4.0 Test): Chance, dass der Boss überhaupt Raid-Teile fallen lässt (sonst nur Nebenbeute).
+   * Fehlt oder ≥ 1 ⇒ immer (kein RNG-Zug, bisheriges Verhalten). Die Wochentruhe bleibt davon unberührt.
+   */
+  pieceChance?: number;
   /** Basis-IDs (Normal); die Variante der Stufe hängt RAID_VARIANT_SUFFIX an. */
   entries: readonly { itemId: ItemId; weight: number }[];
 }

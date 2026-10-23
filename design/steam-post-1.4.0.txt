@@ -15,9 +15,11 @@ THE RAID: HALLS OF GOBKHA'RAZ
 - If you die on Normal, the room restarts for free. On Heroic a restart costs 100,000 gold. On Mythic the run
   is over and you get a quarter of the fee back. Leaving the fight inside the raid counts as falling.
 - Bosses change phase at 75, 50 and 25% health, and they tell you when.
-- After every boss a chest opens. Then you rest: full health, time to sort gear and supplies, and on to the
-  next room by button or automatically after three seconds.
-- Each week brings a different modifier, and every boss has a weekly chest on each difficulty.
+- After every boss a chest opens: a 35% chance for a raid piece (50% from the final boss), otherwise
+  materials. Then you rest: full health, time to sort gear and supplies, and on to the next room by button
+  or automatically after three seconds.
+- A Normal run takes about 15 to 35 minutes, depending on your gear.
+- Each week brings a different modifier, and every boss has a guaranteed weekly chest on each difficulty.
 - The queue and offline play work. Every run pays its own fee, and offline a Normal run restarts a room up to
   three times.
 - Bring supplies. A full run eats a few hundred meals and some potions.

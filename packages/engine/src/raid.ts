@@ -372,7 +372,10 @@ export function onRaidRoomCleared(state: GameState, content: ContentDB, nowMs?: 
   rs.bossKills[key] = (rs.bossKills[key] ?? 0) + 1;
   const ilvl = content.monsters[room.bossId]?.level ?? 100;
   const got: { itemId: ItemId; qty: number }[] = [];
-  const draws = room.table.draws + (nextFloat(state.rng) < room.table.extraChance ? 1 : 0);
+  // claude:2026-10-25T23:30:00+02:00 — Teil-Chance je Boss (pieceChance); ohne Feld kein Zug, bisherige Sequenz bleibt gleich.
+  const pc = room.table.pieceChance;
+  const drops = pc === undefined || pc >= 1 || nextFloat(state.rng) < pc;
+  const draws = drops ? room.table.draws + (nextFloat(state.rng) < room.table.extraChance ? 1 : 0) : 0;
   const picked = new Set<ItemId>();
   for (let i = 0; i < draws; i++) {
     const base = pickTableEntry(state.rng, room.table.entries.filter((e) => !picked.has(e.itemId)));
