@@ -79,3 +79,12 @@ Hinweise:
 - Kurzbeschreibung: 23 项技能、1300 多件物品、团队副本「戈布卡拉兹大厅」。在边域从一无所有开始，打造属于你的传奇。支持简体中文。
 
 „Feder und Stahl“ ist als 「羽与钢」 übersetzt; falls 1.4 im Spiel einen anderen chinesischen Namen trägt, diesen nehmen.
+
+## 4 Fertige Fassung (24.10.)
+
+<!-- claude:2026-10-24T22:02:00+02:00 -->
+
+`marketing/trailer-v4/GrimReach-Trailer-v4-Inventar-ZH.mp4` (1920×1080, 60 fps, 81,4 s): Szene `v4zh` der Trailer-Bühne,
+Chef-Aufnahme `Videos/2026-10-24 20-06-57.mkv` in 44 Stücke geschnitten (Zeitleiste `vo-timing-zh.json`), Musik unter der
+Stimme −5 dB. Jede Zeile setzt mit ihrem Bild ein; wo die Aufnahme länger ist als die englische, rückt die Folgezeile bis
+etwa 1,5 s nach hinten (Abschnitt 22–30 s). Schnitt per Spracherkennung geprüft (Whisper small, zh).
