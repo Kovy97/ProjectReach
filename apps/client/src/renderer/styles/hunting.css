@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:45:00+02:00 — UI 1.4 W2 Gruppe A: feste px-Schriftgrößen auf die fließende Skala (--fs-2xs … --fs-xl) umgestellt; Wörter min. --fs-xs, Fließtext min. --fs-sm, Zahlen-Badges --fs-2xs. */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* ═══════════════════════════════════════════════════════════
    HUNTING PAGE (Jagen, 1.2.0 „Fasern und Fallen" — Redesign 28.08.2026, Runde 2:
@@ -84,7 +85,7 @@
 }
 
 .hunt-head-lvl {
-  font-size: 15px;
+  font-size: var(--fs-sm);
   color: var(--accent-2);
   white-space: nowrap;
 }
@@ -94,7 +95,7 @@
 }
 
 .hunt-head-xp {
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 
 /* Rechte Kachel-Reihe: Köder(+Knopf) · Fallen x/y · Nächster Platz · Fänge gesamt. */
@@ -123,7 +124,7 @@
 }
 
 .hunt-head-stat-label {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   white-space: nowrap;
@@ -133,7 +134,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 16px;
+  font-size: var(--fs-md);
   font-weight: 700;
   color: var(--gold);
   white-space: nowrap;
@@ -276,7 +277,7 @@
   flex: 1 1 11em;
   min-width: 0;
   font-family: var(--font-head);
-  font-size: 15px;
+  font-size: var(--fs-sm);
   letter-spacing: 0.4px;
   color: var(--gold);
   text-transform: uppercase;
@@ -295,7 +296,7 @@
 
 .hunt-trap-badge {
   flex: 0 0 auto;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.4px;
@@ -326,7 +327,7 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   color: var(--muted);
   text-shadow: 0 1px 2px #000;
@@ -360,7 +361,7 @@
 }
 
 .hunt-trap-state-text {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   max-width: 200px;
   line-height: 1.4;
 }
@@ -389,7 +390,7 @@
 }
 
 .hunt-trap-art-hint {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   color: var(--gold);
   text-shadow: 0 1px 3px #000;
@@ -419,14 +420,14 @@
 }
 
 .hunt-trap-remaining {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   text-align: right;
   text-shadow: 0 1px 2px #000;
 }
 
 .hunt-trap-chance {
   flex: 0 0 auto;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   color: var(--accent-2);
   white-space: nowrap;
@@ -444,14 +445,14 @@
 
 .trap-lastcatch--empty,
 .trap-lastcatch--missed {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   padding-top: 4px;
   text-shadow: 0 1px 2px #000;
 }
 
 .trap-lastcatch-label {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   text-shadow: 0 1px 2px #000;
@@ -467,7 +468,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   text-shadow: 0 1px 2px #000;
 }
 
@@ -490,7 +491,7 @@
 .trap-lastcatch-loot .item-chip-emoji {
   width: 20px;
   height: 20px;
-  font-size: 15px;
+  font-size: var(--fs-sm);
 }
 
 .trap-lastcatch-chip {
@@ -502,7 +503,7 @@
   position: absolute;
   bottom: -4px;
   right: -5px;
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   line-height: 13px;
   padding: 0 3px;
@@ -514,7 +515,7 @@
 }
 
 .trap-lastcatch-more {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   text-shadow: 0 1px 2px #000;
 }
 
@@ -522,7 +523,7 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: var(--gold);
   text-shadow: 0 1px 2px #000;
 }
@@ -620,7 +621,7 @@
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.5);
   color: #d8c9a2;
-  font-size: 17px;
+  font-size: var(--fs-md);
   line-height: 1;
   cursor: pointer;
 }
@@ -702,13 +703,13 @@
 }
 
 .hzp-zone-tile-meta {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: #d9cba6;
   text-shadow: 0 1px 3px #000;
 }
 
 .hzp-zone-tile-reason {
-  font-size: 11.5px;
+  font-size: var(--fs-xs);
   color: #e8a08a;
   text-shadow: 0 1px 3px #000;
 }
@@ -750,7 +751,7 @@
   width: 100%;
   padding: 10px 16px;
   font-family: var(--font-head);
-  font-size: 22px;
+  font-size: var(--fs-xl);
   letter-spacing: 0.4px;
   color: var(--gold);
   text-transform: uppercase;
@@ -782,13 +783,13 @@
 }
 
 .hzp-stat-label {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 
 .hzp-stat-value {
-  font-size: 15px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   color: var(--gold);
 }
@@ -852,19 +853,19 @@
 
 .hzp-section-name {
   font-family: var(--font-head);
-  font-size: 15px;
+  font-size: var(--fs-sm);
   letter-spacing: 0.3px;
   color: var(--gold);
   flex: 1;
 }
 
 .hzp-section-count {
-  font-size: 12px;
+  font-size: var(--fs-2xs);
   white-space: nowrap;
 }
 
 .hzp-empty {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   padding: 2px 2px 6px;
 }
 
@@ -935,7 +936,7 @@
 }
 
 .hzp-mon-card-name {
-  font-size: 14px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--text);
 }
@@ -945,11 +946,11 @@
 }
 
 .hzp-mon-card-lvl {
-  font-size: 12px;
+  font-size: var(--fs-2xs);
 }
 
 .hzp-mon-card-status {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
 }
 .hzp-mon-card-status.defeated {
@@ -957,7 +958,7 @@
 }
 
 .hzp-mon-card-reason {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: #e8a08a;
 }
 
@@ -1031,20 +1032,20 @@ button.hzp-loot-chip-icon:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--muted);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
 }
 
 .hzp-loot-chip-pct {
-  font-size: 9px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   white-space: nowrap;
 }
 
 .hzp-nt-reason {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: #e8a08a;
 }
 
@@ -1056,7 +1057,7 @@ button.hzp-loot-chip-icon:hover {
   padding: 0 8px;
   border: 1px solid var(--border);
   background: rgba(0, 0, 0, 0.35);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   color: var(--gold);
 }
@@ -1080,7 +1081,7 @@ button.hzp-loot-chip-icon:hover {
 }
 
 .hzp-footer-hint {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   max-width: 480px;
 }
 
@@ -1124,12 +1125,12 @@ button.hzp-loot-chip-icon:hover {
    sitzt in derselben Flex-Zeile wie Name/Zähler (`.category-name` nimmt den Mittelraum per
    `flex:1`, diese Spanne landet also rechtsbündig direkt danach). */
 .hunt-book-summary {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   white-space: nowrap;
 }
 
 .hunt-book-empty {
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 
 .hunt-book-check {
@@ -1138,7 +1139,7 @@ button.hzp-loot-chip-icon:hover {
   justify-content: center;
   width: 16px;
   height: 16px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   border-radius: 50%;
   border: 1px solid var(--border);
   color: var(--muted);
@@ -1179,7 +1180,7 @@ button.hzp-loot-chip-icon:hover {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  font-size: 14px;
+  font-size: var(--fs-xs);
   color: var(--gold);
   font-family: var(--font-head);
   letter-spacing: 0.2px;
@@ -1238,7 +1239,7 @@ button.hzp-loot-chip-icon:hover {
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
   background-size:auto, 500px 500px;
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   padding: 6px 10px;
   outline: none;
 }
@@ -1302,7 +1303,7 @@ button.hzp-loot-chip-icon:hover {
 
 .hbk-zone-name {
   font-family: var(--font-head);
-  font-size: 19px;
+  font-size: var(--fs-lg);
   letter-spacing: 0.3px;
   color: var(--gold);
   text-transform: uppercase;
@@ -1314,7 +1315,7 @@ button.hzp-loot-chip-icon:hover {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: #e8dcc0;
   text-shadow: 0 1px 3px #000;
   flex: 1 1 auto;
@@ -1332,7 +1333,7 @@ button.hzp-loot-chip-icon:hover {
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-style: italic;
   color: #e8dcc0;
   background: rgba(10, 8, 6, 0.4);
@@ -1449,17 +1450,17 @@ button.hzp-loot-chip-icon:hover {
 }
 
 .hbk-mon-name {
-  font-size: 14px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--text);
 }
 
 .hbk-mon-lvl {
-  font-size: 12px;
+  font-size: var(--fs-2xs);
 }
 
 .hbk-mon-status--locked {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: #e8a08a;
 }
 
@@ -1471,13 +1472,13 @@ button.hzp-loot-chip-icon:hover {
 }
 
 .hbk-mon-catchcount {
-  font-size: 14px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--gold);
 }
 
 .hbk-mon-firstbadge {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: 600;
   color: var(--gold);
   padding: 2px 8px;
@@ -1488,7 +1489,7 @@ button.hzp-loot-chip-icon:hover {
 }
 
 .hbk-mon-xp {
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
 
 .hbk-mon-loot {
@@ -1555,7 +1556,7 @@ button.hzp-loot-chip-icon:hover {
   padding: 7px 12px;
   border-left: 3px solid rgba(216, 192, 106, 0.6);
   background: rgba(14, 12, 10, 0.55);
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .estate-banner-lead {
   color: var(--gold, #d8c06a);

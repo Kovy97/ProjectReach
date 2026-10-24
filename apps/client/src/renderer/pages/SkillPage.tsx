@@ -1495,7 +1495,8 @@ function LootChip({
         <span className="skillcard-drop-qty">×{roll.min === roll.max ? roll.max : `${roll.min}–${roll.max}`}</span>
       )}
       {" "}{Math.round(roll.chance * 100)}%
-      {item && <span className="item-chip-name" style={{ fontSize: "0.85em", marginLeft: 3 }}>{tr(item.name)}</span>}
+      {/* claude:2026-10-24T19:05:00+02:00 — W2 Gruppe A: 0,85em wich unter die Schriftskala; Größe jetzt 1em (Kapitälchen wirken ohnehin kleiner). */}
+      {item && <span className="item-chip-name" style={{ fontSize: "1em", marginLeft: 3 }}>{tr(item.name)}</span>}
     </span>
   );
 }

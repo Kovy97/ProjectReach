@@ -1,3 +1,65 @@
 /* claude:2026-10-24T18:34:00+02:00 — UI-Überarbeitung 1.4, Welle 2, Gruppe A Skills, Anbau, Jagen, Slayer, Prestige, Meisterschaft, Warteschlange.
    Einziger Schreiber: der Agent dieser Gruppe. Hier stehen Überschreibungen für geteilte Dateien (v. a. pages.css),
    die die Gruppe nicht selbst bearbeiten darf. Geladen nach classic-skin/classic-chrome, vor typography.css. */
+
+/* claude:2026-10-24T19:05:00+02:00 — Fließtext-Schrift (Alegreya) für Klassen dieser Gruppe, die typography.css nicht kennt. */
+.farm-picker-plan, .ms2-action-next, .slayer-req-warning, .queue-panel-empty, .queue-panel-active-empty, .queue-panel-stopped,
+.hunt-book-empty, .hzp-empty, .farm-hint-plots, .qam-subject, .trap-lastcatch--missed {
+  font-family: var(--font-body);
+}
+
+/* claude:2026-10-24T19:05:00+02:00 — Anbau: Hinweis- und Infozeile nutzen die Breite (Chef 24.10.: Infoleiste 1566×70 px mit 21 % Füllung, Hinweis 12 px). */
+.farm-hint-plots {
+  font-size: var(--fs-sm);
+  margin: 4px 0 10px;
+}
+.farm-info-bar {
+  font-size: var(--fs-lg);
+  padding: 16px 22px;
+  gap: 10px 22px;
+}
+.farm-info-bar .farm-plant-all-btn {
+  font-size: var(--fs-md);
+  padding: 9px 22px;
+}
+.plot-label { font-size: var(--fs-lg); }
+.plot-state-icon { font-size: 76px; opacity: 0.6; }
+.plot-state-text { font-size: var(--fs-lg); max-width: 320px; }
+.plot-state-center { gap: 14px; min-height: 200px; }
+.plot-body .skillcard-cta { font-size: var(--fs-lg); padding: 11px 16px; }
+
+/* claude:2026-10-24T19:05:00+02:00 — Jagen: Kopf größer (Icon 40 px in 1566-px-Feld), Fallenkarten füllen ihre Fläche
+   (gesperrte Karte 511×305 px mit 10 % Füllung, Badge 11 px). */
+.hunt-head { padding: 16px 26px; }
+.hunt-head-icon img { width: 72px; height: 72px; }
+.hunt-head-name { font-size: var(--fs-2xl); }
+.hunt-head-lvl { font-size: var(--fs-md); }
+.hunt-head-xp { font-size: var(--fs-sm); }
+.hunt-head-skill-info { max-width: 460px; }
+.hunt-head-stat { min-width: 150px; padding: 10px 16px; gap: 6px; }
+.hunt-head-stat-label { font-size: var(--fs-sm); }
+.hunt-head-stat-value { font-size: var(--fs-xl); }
+.hunt-head-stat-value img { width: 26px; height: 26px; }
+.hunt-head-bait-entry img { width: 22px; height: 22px; }
+.hunt-trap-badge { font-size: var(--fs-xs); padding: 3px 9px; }
+.hunt-trap-topband-name { font-size: var(--fs-lg); }
+.hunt-trap-state-icon { font-size: 84px; opacity: 0.6; }
+.hunt-trap-state-text { font-size: var(--fs-xl); max-width: 340px; line-height: 1.35; }
+.hunt-trap-state-center { gap: 16px; }
+.hunt-trap-art-hint { font-size: var(--fs-sm); }
+.hunt-trap-remaining, .hunt-trap-chance { font-size: var(--fs-sm); }
+
+/* claude:2026-10-24T19:05:00+02:00 — Fertigkeiten-Übersicht: Karten mit großem Symbol statt 64-px-Plakette in 477×173-Feld. */
+.skilloverview-icon-wrap { width: 92px; height: 92px; }
+.skilloverview-icon-img { width: 76px; height: 76px; }
+.skilloverview-icon { font-size: 48px; }
+.skilloverview-card { gap: 20px; align-items: center; }
+
+/* claude:2026-10-24T19:07:00+02:00 — Warteschlange: Zeilenname eine Stufe größer (Zeilen sind 300 px breit, Name nutzte nur ein Drittel). */
+.queue-row-name, #root .layout--reforged .queue-row-name { font-size: var(--fs-sm); }
+.queue-row-meta, .queue-row-target, .queue-row-duration { font-size: var(--fs-xs); }
+
+/* claude:2026-10-24T19:13:00+02:00 — Stehlen: Risikoschalter ohne Schriftgröße (Browser-Vorgabe 13,3 px) -> Skala; Meisterschaft: Seltenheitswort ist ein Wort, also --fs-xs. */
+.thieving-risk-label { font-size: var(--fs-md); }
+.thieving-risk-toggle .risk-option { font-family: var(--font-head); font-size: var(--fs-md); padding: 9px 22px; }
+.ms2-skill-badge { font-size: var(--fs-xs); }

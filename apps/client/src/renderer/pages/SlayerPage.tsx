@@ -49,7 +49,7 @@ const SLAYER_FALLBACK_ICON_URL = getSidebarIcon("slayer");
 function SlayerPtIcon(): JSX.Element {
   return SLAYER_POINTS_ICON_URL
     ? <img loading="lazy" decoding="async" src={SLAYER_POINTS_ICON_URL} alt="" className="shop-price-icon" style={{ width: 16, height: 16, verticalAlign: "middle" }} />
-    : <span style={{ fontSize: 13 }}>★</span>;
+    : <span style={{ fontSize: "var(--fs-2xs)" }}>★</span>;
 }
 
 /** Sections-Kopfzeile im Shop-Stil (Ornament + Titel + Linie). Exportiert (Jagd-Paket, Chef-GO):

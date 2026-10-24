@@ -35,14 +35,14 @@
 }
 
 #root .skillcard-tile small {
-  font-size: clamp(13px, 3.4cqw, 17px) !important;
+  font-size: clamp(var(--fs-xs), calc(3.4cqw * var(--text-scale)), max(calc(17px * var(--text-scale)), var(--fs-xs))) !important;
   line-height: 1.05;
   color: #c7a76e !important;
   letter-spacing: 0.8px;
 }
 
 #root .skillcard-tile b {
-  font-size: clamp(20px, 5.2cqw, 28px) !important;
+  font-size: clamp(calc(20px * var(--text-scale)), calc(5.2cqw * var(--text-scale)), calc(28px * var(--text-scale))) !important;
   line-height: 1;
   color: #ead7ae !important;
   text-shadow: 0 2px 3px rgba(0, 0, 0, 0.78);
@@ -61,7 +61,7 @@
   background:
     linear-gradient(rgba(10, 10, 12, 0.28), rgba(10, 10, 12, 0.4)),
     var(--gw-action-canvas) center / 640px 640px repeat !important;
-  font-size: clamp(15px, 3.6cqw, 19px);
+  font-size: clamp(calc(15px * var(--text-scale)), calc(3.6cqw * var(--text-scale)), calc(19px * var(--text-scale)));
 }
 
 /* Chef-Regel "Standard-Knopf = Eisenrahmen" (25.08.2026): die Warteschlangen-Knöpfe 1/25/X/∞
@@ -86,7 +86,7 @@
     var(--gw-action-canvas) !important;
   background-size: auto, 192px 192px !important;
   background-repeat: no-repeat, repeat !important;
-  font-size: clamp(18px, 4.8cqw, 25px) !important;
+  font-size: clamp(calc(18px * var(--text-scale)), calc(4.8cqw * var(--text-scale)), calc(25px * var(--text-scale))) !important;
   line-height: 1;
   color: #ead8a0 !important;
   text-shadow: 0 1px 2px #000;
@@ -165,11 +165,11 @@
 }
 
 #root .skillcard-tile small {
-  font-size: clamp(11px, 2.9cqw, 15px) !important;
+  font-size: clamp(var(--fs-xs), calc(2.9cqw * var(--text-scale)), max(calc(15px * var(--text-scale)), var(--fs-xs))) !important;
 }
 
 #root .skillcard-tile b {
-  font-size: clamp(17px, 4.5cqw, 24px) !important;
+  font-size: clamp(calc(17px * var(--text-scale)), calc(4.5cqw * var(--text-scale)), calc(24px * var(--text-scale))) !important;
 }
 
 /* codex:2026-07-31T20:21:01+02:00 — Loot/Produces besitzen einen vollständigen, zur Stat-Zone
@@ -242,13 +242,13 @@
 }
 
 #root .skillcard-resource-rack .mat-emoji {
-  font-size: clamp(22px, 6cqw, 32px);
+  font-size: clamp(calc(22px * var(--text-scale)), calc(6cqw * var(--text-scale)), calc(32px * var(--text-scale)));
 }
 
 #root .skillcard-resource-rack .mat-count,
 #root .skillcard-resource-rack .mat-count b {
   min-width: 0;
-  font-size: clamp(11px, 3cqw, 16px);
+  font-size: clamp(var(--fs-xs), calc(3cqw * var(--text-scale)), max(calc(16px * var(--text-scale)), var(--fs-xs)));
 }
 
 /* codex:2026-07-31T19:32:00+02:00 — Eine dauerhaft reservierte State-Platte: STOP,
@@ -293,7 +293,7 @@
   border: 0;
   background: transparent;
   text-align: center;
-  font-size: clamp(12px, 3.2cqw, 17px);
+  font-size: clamp(var(--fs-xs), calc(3.2cqw * var(--text-scale)), max(calc(17px * var(--text-scale)), var(--fs-xs)));
 }
 
 /* codex:2026-07-31T19:32:00+02:00 — Das Preset-Grid bleibt in jedem Zustand sichtbar;
@@ -313,7 +313,7 @@
   padding: 4px 3px !important;
   border-width: var(--frame-w);
   border-image-width: var(--frame-w);
-  font-size: clamp(16px, 4.1cqw, 22px) !important;
+  font-size: clamp(calc(16px * var(--text-scale)), calc(4.1cqw * var(--text-scale)), calc(22px * var(--text-scale))) !important;
 }
 
 #root .skillcard-mastery {
@@ -331,7 +331,7 @@
 }
 
 #root .skillcard-mastery :is(.mastery-label, .mastery-bonus) {
-  font-size: clamp(9px, 2.3cqw, 12px);
+  font-size: clamp(var(--fs-xs), calc(2.3cqw * var(--text-scale)), max(calc(12px * var(--text-scale)), var(--fs-xs)));
   white-space: nowrap;
 }
 
@@ -377,7 +377,7 @@
   font-family: var(--font-info);
   font-variant-numeric: lining-nums tabular-nums;
   font-feature-settings: "lnum" 1, "tnum" 1;
-  font-size: clamp(12px, 2.9cqw, 16px);
+  font-size: clamp(var(--fs-xs), calc(2.9cqw * var(--text-scale)), max(calc(16px * var(--text-scale)), var(--fs-xs)));
   line-height: 1;
   color: #f0dfaa;
   text-shadow: 0 1px 3px #000, 0 0 6px #000;
@@ -409,7 +409,7 @@
   background-clip: border-box;
   color: #e3d7b5;
   font-family: var(--font-head);
-  font-size: clamp(14px, 1.1vw, 18px);
+  font-size: clamp(calc(14px * var(--text-scale)), calc(1.1vw * var(--text-scale)), calc(18px * var(--text-scale)));
 }
 
 /* codex:2026-08-01T12:18:00+02:00 — Lesbarkeits-Pass für alle festen Card-Zonen. Produces ist
@@ -427,7 +427,7 @@
   display: block;
   align-self: start;
   font-family: var(--font-head);
-  font-size: clamp(12px, 3cqw, 17px);
+  font-size: clamp(var(--fs-xs), calc(3cqw * var(--text-scale)), max(calc(17px * var(--text-scale)), var(--fs-xs)));
   line-height: 1;
   color: #9fb0bc;
   letter-spacing: 0.04em;
@@ -440,7 +440,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--font-head);
-  font-size: clamp(15px, 3.8cqw, 21px);
+  font-size: clamp(calc(15px * var(--text-scale)), calc(3.8cqw * var(--text-scale)), calc(21px * var(--text-scale)));
   line-height: 1.05;
 }
 
@@ -469,14 +469,14 @@
 
 #root .skillcard-resource-rack .mat-count,
 #root .skillcard-resource-rack .mat-count b {
-  font-size: clamp(13px, 3.7cqw, 19px);
+  font-size: clamp(var(--fs-xs), calc(3.7cqw * var(--text-scale)), max(calc(19px * var(--text-scale)), var(--fs-xs)));
   line-height: 1;
 }
 
 #root .skillcard-state-slot .craftable,
 #root .skillcard-state-slot .skillcard-state-label,
 #root .skillcard-state-slot .skillcard-cta.stop {
-  font-size: clamp(14px, 3.8cqw, 20px);
+  font-size: clamp(calc(14px * var(--text-scale)), calc(3.8cqw * var(--text-scale)), calc(20px * var(--text-scale)));
   line-height: 1.05;
 }
 
@@ -509,11 +509,11 @@
 }
 
 #root .skillcard-produces-label {
-  font-size: clamp(10px, 2.5cqw, 14px);
+  font-size: clamp(var(--fs-xs), calc(2.5cqw * var(--text-scale)), max(calc(14px * var(--text-scale)), var(--fs-xs)));
 }
 
 #root .skillcard-produces-item {
-  font-size: clamp(14px, 3.4cqw, 19px);
+  font-size: clamp(calc(14px * var(--text-scale)), calc(3.4cqw * var(--text-scale)), calc(19px * var(--text-scale)));
 }
 
 #root .skillcard-produces-item .item-chip-img {
@@ -532,19 +532,19 @@
 
 #root .skillcard-resource-rack .mat-count,
 #root .skillcard-resource-rack .mat-count b {
-  font-size: clamp(16px, 4.6cqw, 23px);
+  font-size: clamp(calc(16px * var(--text-scale)), calc(4.6cqw * var(--text-scale)), calc(23px * var(--text-scale)));
 }
 
 #root .skillcard-state-slot .craftable,
 #root .skillcard-state-slot .skillcard-state-label,
 #root .skillcard-state-slot .skillcard-cta.stop {
   padding: 2px 6px;
-  font-size: clamp(12px, 3.2cqw, 17px);
+  font-size: clamp(var(--fs-xs), calc(3.2cqw * var(--text-scale)), max(calc(17px * var(--text-scale)), var(--fs-xs)));
 }
 
 #root .skillcard-craft-cta .skillcard-cta.qty {
   padding: 2px !important;
-  font-size: clamp(15px, 3.8cqw, 20px) !important;
+  font-size: clamp(calc(15px * var(--text-scale)), calc(3.8cqw * var(--text-scale)), calc(20px * var(--text-scale))) !important;
 }
 
 /* codex:2026-08-01T13:28:00+02:00 — Das 2×2-Materialrack besitzt jetzt echtes visuelles Gewicht:
@@ -568,7 +568,7 @@
 
 #root .skillcard-resource-rack .mat-count,
 #root .skillcard-resource-rack .mat-count b {
-  font-size: clamp(20px, 5.7cqw, 29px) !important;
+  font-size: clamp(calc(20px * var(--text-scale)), calc(5.7cqw * var(--text-scale)), calc(29px * var(--text-scale))) !important;
   line-height: 1 !important;
   white-space: nowrap;
 }
@@ -602,7 +602,7 @@
 
   #root .skillcard-resource-rack .mat-count,
   #root .skillcard-resource-rack .mat-count b {
-    font-size: clamp(13px, 4.2cqw, 18px) !important;
+    font-size: clamp(var(--fs-xs), calc(4.2cqw * var(--text-scale)), max(calc(18px * var(--text-scale)), var(--fs-xs))) !important;
   }
 }
 
@@ -701,20 +701,20 @@
 }
 
 #root .skillcard-tile small {
-  font-size: clamp(13px, 3.6cqw, 17px) !important;
+  font-size: clamp(var(--fs-xs), calc(3.6cqw * var(--text-scale)), max(calc(17px * var(--text-scale)), var(--fs-xs))) !important;
 }
 
 #root .skillcard-tile b {
-  font-size: clamp(18px, 5.4cqw, 26px) !important;
+  font-size: clamp(calc(18px * var(--text-scale)), calc(5.4cqw * var(--text-scale)), calc(26px * var(--text-scale))) !important;
 }
 
 #root .skillcard-produces-label {
-  font-size: clamp(12px, 3.5cqw, 16px);
+  font-size: clamp(var(--fs-xs), calc(3.5cqw * var(--text-scale)), max(calc(16px * var(--text-scale)), var(--fs-xs)));
 }
 
 #root .skillcard-produces-item {
   gap: 6px;
-  font-size: clamp(16px, 4.8cqw, 22px);
+  font-size: clamp(calc(16px * var(--text-scale)), calc(4.8cqw * var(--text-scale)), calc(22px * var(--text-scale)));
 }
 
 #root .skillcard-produces-item .item-chip-img {
@@ -725,7 +725,7 @@
 #root .skillcard-body--no-inputs .skillcard-produces-item {
   flex-direction: column;
   gap: 4px;
-  font-size: clamp(18px, 6cqw, 26px);
+  font-size: clamp(calc(18px * var(--text-scale)), calc(6cqw * var(--text-scale)), calc(26px * var(--text-scale)));
 }
 
 #root .skillcard-body--no-inputs .skillcard-produces-item .item-chip {
@@ -740,9 +740,118 @@
 }
 
 #root .skillcard-body--no-inputs .skillcard-produces-item .skillcard-drop-qty {
-  font-size: clamp(16px, 4.8cqw, 22px);
+  font-size: clamp(calc(16px * var(--text-scale)), calc(4.8cqw * var(--text-scale)), calc(22px * var(--text-scale)));
 }
 
 #root .skillcard-mastery :is(.mastery-label, .mastery-bonus) {
-  font-size: clamp(14px, 4.2cqw, 19px);
+  font-size: clamp(calc(14px * var(--text-scale)), calc(4.2cqw * var(--text-scale)), calc(19px * var(--text-scale)));
+}
+
+/* claude:2026-10-24T18:54:00+02:00 — UI 1.4 W2 Gruppe A, Aktionskarte zweiter Teil (Chef 24.10.: „Texte zu klein, obwohl Platz da ist“).
+   Ursache wie im Block darüber: Die Karten-Inhaltsbreite beträgt bei 1366 nur ~297 px, 1 cqw also ~3 px; die alten
+   Faktoren (3 bis 4 cqw) lagen damit überall auf ihrem Mindestwert (11 bis 14 px). Hier greifen die Faktoren im Mittelbereich:
+   Ertragsname/Zutaten ~17 px, Herstellbar ~17 px, Mengenknöpfe ~21 px, Kachel-Label ~15 px, Zutaten-Icons ~40 px.
+   Alles mit --text-scale mitskaliert. Höhenbudget der 720-px-Karte: 122 Kacheln, Ertrag 68, Rack 160, Status 36, Mengen 44,
+   Meisterschaft 40 = 470 px; Karten ohne Zutaten (5 Kinder: Kacheln, Ertrag, Status 0, Mengen, Meisterschaft) geben die ganze Restfläche an den Ertrag/die Beute (vorher ~80 px Leerraum). */
+/* Die Karte hat feste 720 px: Kartentext wächst mit der Textgröße-Option nur bis +12 %, darüber würden die festen Zeilen überlaufen. */
+#root .skillcard {
+  --ac-s: min(var(--text-scale), 1.12);
+}
+
+#root .skillcard-body {
+  grid-template-rows: 122px 76px 148px 42px 44px minmax(36px, 1fr);
+}
+
+/* Lange Übersetzungen (ru): Ertrag und Status dürfen auf zwei enge Zeilen umbrechen statt abgeschnitten zu werden. */
+#root .skillcard-produces-item,
+#root .skillcard-state-slot :is(.craftable, .skillcard-state-label, .skillcard-cta.stop) {
+  line-height: 1;
+  text-wrap: balance;
+}
+
+#root .skillcard-state-slot :is(.craftable, .skillcard-state-label, .skillcard-cta.stop) {
+  padding: 2px 6px;
+}
+
+#root .skillcard-body--no-inputs {
+  grid-template-rows: 122px minmax(214px, 1fr) 0 44px 40px;
+}
+
+#root .skillcard-tile small {
+  font-size: clamp(var(--fs-xs), calc(5.2cqw * var(--ac-s)), max(calc(19px * var(--ac-s)), var(--fs-xs))) !important;
+}
+
+#root .skillcard-tile b {
+  font-size: clamp(calc(21px * var(--ac-s)), calc(8cqw * var(--ac-s)), calc(32px * var(--ac-s))) !important;
+}
+
+#root .skillcard-produces-label {
+  font-size: clamp(var(--fs-xs), calc(4.8cqw * var(--ac-s)), max(calc(18px * var(--ac-s)), var(--fs-xs)));
+}
+
+#root .skillcard-produces-item {
+  font-size: clamp(calc(18px * var(--ac-s)), calc(6.8cqw * var(--ac-s)), calc(26px * var(--ac-s)));
+}
+
+/* Kapitälchen setzen Kleinbuchstaben auf ~80 %: Namen im Ertrag und in der Beute daher 1em statt 0,95em. */
+#root .skillcard-output-zone .item-chip-name {
+  font-size: 1em;
+}
+
+#root .skillcard-produces-item .item-chip-img {
+  width: clamp(30px, 10.5cqw, 44px);
+  height: clamp(30px, 10.5cqw, 44px);
+}
+
+#root .skillcard-body--no-inputs .skillcard-produces-item {
+  font-size: clamp(calc(22px * var(--ac-s)), calc(8.6cqw * var(--ac-s)), calc(32px * var(--ac-s)));
+}
+
+#root .skillcard-body--no-inputs .skillcard-produces-item .item-chip-img {
+  width: clamp(64px, 28cqw, 112px);
+  height: clamp(64px, 28cqw, 112px);
+}
+
+/* Zutaten-Rack: Icons und Mengen auf Kartenmaß (vorher 30 px Icon in 135×80-Feld). */
+#root .skillcard-resource-rack .mat-img {
+  width: clamp(38px, 14cqw, 60px) !important;
+  height: clamp(38px, 14cqw, 60px) !important;
+}
+
+#root .skillcard-resource-rack .mat-emoji {
+  font-size: clamp(calc(34px * var(--ac-s)), calc(12cqw * var(--ac-s)), calc(52px * var(--ac-s))) !important;
+}
+
+#root .skillcard-resource-rack .mat-count,
+#root .skillcard-resource-rack .mat-count b {
+  font-size: clamp(var(--fs-sm), calc(6cqw * var(--ac-s)), max(calc(24px * var(--ac-s)), var(--fs-sm))) !important;
+}
+
+/* Status-Platte (Herstellbar: N×, Gesperrt, STOP) und Mengenknöpfe 1/25/X/∞. */
+#root .skillcard-state-slot :is(.craftable, .skillcard-state-label, .skillcard-cta.stop) {
+  font-size: clamp(calc(18px * var(--ac-s)), calc(6.8cqw * var(--ac-s)), calc(25px * var(--ac-s)));
+}
+
+#root .skillcard-craft-cta .skillcard-cta.qty {
+  min-height: 0;
+  font-size: clamp(calc(20px * var(--ac-s)), calc(7.4cqw * var(--ac-s)), calc(30px * var(--ac-s))) !important;
+}
+
+#root .skillcard-mastery :is(.mastery-label, .mastery-bonus) {
+  font-size: clamp(var(--fs-xs), calc(5cqw * var(--ac-s)), max(calc(19px * var(--ac-s)), var(--fs-xs)));
+}
+
+/* Beute-Chips (Stehlen, Sammeln): ein Chip je Zeile, Name und Icon in Kartengröße; Kopfzeile "Beute (bei Erfolg)" größer. */
+#root .skillcard-output-zone .skillcard-loot {
+  flex-direction: column;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  justify-content: space-evenly;
+  gap: 6px;
+  font-size: clamp(calc(16px * var(--ac-s)), calc(5.6cqw * var(--ac-s)), calc(22px * var(--ac-s)));
+}
+
+#root .skillcard-output-zone .skillcard-loot .item-chip-img {
+  width: clamp(30px, 10cqw, 44px);
+  height: clamp(30px, 10cqw, 44px);
 }

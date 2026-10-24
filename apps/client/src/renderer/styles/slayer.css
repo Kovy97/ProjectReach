@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:45:00+02:00 — UI 1.4 W2 Gruppe A: feste px-Schriftgrößen auf die fließende Skala (--fs-2xs … --fs-xl) umgestellt; Wörter min. --fs-xs, Fließtext min. --fs-sm, Zahlen-Badges --fs-2xs. */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
@@ -34,7 +35,7 @@
     url("../assets/bg_black.webp") repeat;
   color: var(--ds-parch-ink, #e8d8b0);
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0.8px;
   text-transform: uppercase;
@@ -162,7 +163,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   padding: 2px 0;
   text-align: left;
   text-decoration: underline;
@@ -220,7 +221,7 @@
 
 .slayer-task-reward-label {
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -232,7 +233,7 @@
   padding: 3px 8px;
   border: 1.5px solid var(--border);
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-weight: 600;
 }
 
@@ -273,7 +274,7 @@
 .slayer-task-progress-label {
   display: flex;
   justify-content: space-between;
-  font-size: 14px;
+  font-size: var(--fs-xs);
 }
 
 /* ─── Requirement warning ────────────────────────────────── */
@@ -281,7 +282,7 @@
   background: rgba(216, 192, 106, 0.12);
   border: 1px solid var(--gold);
   padding: 7px 10px;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: var(--gold);
   font-weight: 600;
 }
@@ -302,13 +303,13 @@
 }
 
 .slayer-cancel-confirm-text {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   margin: 0;
 }
 
 /* Streak-Bruch-Hinweis (Fun-Sweep Programm Welle II §2) — dezent, unter dem Kosten-Text. */
 .slayer-cancel-streak-warning {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-style: italic;
   margin: 0;
 }
@@ -318,7 +319,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   padding: 4px 0;
   text-align: left;
   text-decoration: underline;

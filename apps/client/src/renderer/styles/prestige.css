@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:45:00+02:00 — UI 1.4 W2 Gruppe A: feste px-Schriftgrößen auf die fließende Skala (--fs-2xs … --fs-xl) umgestellt; Wörter min. --fs-xs, Fließtext min. --fs-sm, Zahlen-Badges --fs-2xs. */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* ─── Scherbenaltar (Prestige "Der Aschesturz", 1.3 Welle D) ──────────────────────────────────────
@@ -649,7 +650,7 @@
 }
 .alg-skill-icon { width: 18px; height: 18px; object-fit: contain; image-rendering: pixelated; grid-area: icon; }
 .alg-tile-icon .alg-skill-icon { width: 20px; height: 20px; }
-.alg-skill-emoji { font-size: 14px; line-height: 18px; text-align: center; }
+.alg-skill-emoji { font-size: var(--fs-xs); line-height: 18px; text-align: center; }
 .alg-skill-name { grid-area: name; font-size: var(--fs-sm); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .alg-skill-level { grid-area: level; font-family: var(--font-head); font-size: var(--fs-sm); color: var(--text); font-variant-numeric: tabular-nums; }
 .alg-skill.is-99 .alg-skill-level { color: var(--gold, #d8c06a); font-weight: 700; }

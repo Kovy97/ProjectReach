@@ -624,7 +624,8 @@ export function FarmPage(): JSX.Element {
                 </div>
               </div>
               {/* Light onboarding hint for new farmers */}
-              <p className="muted" style={{ fontSize: 12, margin: "2px 0 6px" }}>
+              {/* claude:2026-10-24T19:05:00+02:00 — W2 Gruppe A: feste 12 px -> Klasse farm-hint-plots (Schriftskala, ui14-skills.css). */}
+              <p className="muted farm-hint-plots" style={{ margin: "2px 0 6px" }}>
                 {t("farm.hint.plots")}
               </p>
 

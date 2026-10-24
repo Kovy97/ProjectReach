@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:45:00+02:00 — UI 1.4 W2 Gruppe A: feste px-Schriftgrößen auf die fließende Skala (--fs-2xs … --fs-xl) umgestellt; Wörter min. --fs-xs, Fließtext min. --fs-sm, Zahlen-Badges --fs-2xs. */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
@@ -74,13 +75,13 @@
 }
 
 .queue-panel-toggle-caret {
-  font-size: 16px;
+  font-size: var(--fs-md);
   line-height: 1;
 }
 
 .queue-panel-toggle-count {
   font-family: var(--font-head);
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   color: var(--bg-deep);
   background: var(--gold);
@@ -138,12 +139,12 @@
 }
 
 .queue-panel-header-emoji {
-  font-size: 18px;
+  font-size: var(--fs-lg);
 }
 
 .queue-panel-title {
   font-family: var(--font-head);
-  font-size: 17px;
+  font-size: var(--fs-md);
   color: var(--accent);
   letter-spacing: 0.3px;
 }
@@ -154,7 +155,7 @@
 .queue-panel-section-label {
   font-family: var(--font-head);
   font-variant: small-caps;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.6px;
 }
@@ -174,12 +175,12 @@
 }
 
 .queue-panel-total-label {
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 
 .queue-panel-total-value {
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--gold);
 }
@@ -191,7 +192,7 @@
 }
 
 .queue-panel-total-eta {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   white-space: normal;
 }
@@ -204,7 +205,7 @@
 }
 
 .queue-panel-active-empty {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-style: italic;
 }
 
@@ -212,7 +213,7 @@
    `.activity-stopped`-Zeile (components.css/topbar.css) — EIN Warn-Signal, zwei Stellen. Nicht
    kursiv/muted wie der neutrale Leerlauf-Zustand: ein echter, sichtbarer Hinweis. */
 .queue-panel-stopped {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   line-height: 1.4;
   color: #d9a86b;
 }
@@ -238,7 +239,7 @@
 }
 
 .queue-panel-paused-badge {
-  font-size: 12px;
+  font-size: var(--fs-2xs);
   line-height: 1.3;
   color: #e08a72;
 }
@@ -246,7 +247,7 @@
 .queue-panel-resume-btn {
   flex-shrink: 0;
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--gold);
   background: url("../assets/bg_black.webp") repeat;
@@ -272,7 +273,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 6px;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   line-height: 1.4;
   color: #d9a86b;
   flex-shrink: 0;
@@ -285,7 +286,7 @@
   color: inherit;
   opacity: 0.6;
   cursor: pointer;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   line-height: 1;
   padding: 0 2px;
 }
@@ -312,7 +313,7 @@
 
 .queue-panel-clear {
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--danger);
   background: url("../assets/bg_black.webp") repeat;
   border-style: solid;
@@ -353,7 +354,7 @@
 }
 
 .queue-panel-blocked-text {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   line-height: 1.4;
   color: #d9a86b;
 }
@@ -361,7 +362,7 @@
 .queue-panel-blocked-btn {
   align-self: flex-start;
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--gold);
   background: url("../assets/bg_black.webp") repeat;
@@ -384,7 +385,7 @@
    (der Shift+Klick-Hinweis flog raus) — die schwere gestrichelte Box wirkte dafür wie ein
    Textblock. Gleiche dezente Behandlung wie .queue-panel-active-empty statt eigener Rahmenbox. */
 .queue-panel-empty {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-style: italic;
   line-height: 1.4;
 }
@@ -479,7 +480,7 @@
 
 .queue-row-index {
   font-family: var(--font-head);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   min-width: 14px;
   text-align: center;
@@ -511,7 +512,7 @@
 }
 
 .queue-row-icon-emoji {
-  font-size: 18px;
+  font-size: var(--fs-lg);
   flex-shrink: 0;
 }
 
@@ -539,7 +540,7 @@
    Höhe (`.queue-row` ist eine Flex-Zeile mit `align-items: center`), eine zweite Zeile kostet
    also nichts. Trennung nach Silben, damit ein langes Einzelwort nicht mitten durchbricht. */
 .queue-row-name {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   white-space: normal;
   /* Chef 25.08.2026: kein "Kupfera-der". Umbruch nur an Leerzeichen und echten Bindestrichen;
      wird ein Wort zu lang, rutschen die Knoepfe der Zeile darunter (.queue-row flex-wrap). */
@@ -548,7 +549,7 @@
 }
 
 .queue-row-duration {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   line-height: 1.3;
   /* Bewusst KEIN nowrap/ellipsis — der Material-Hinweis ("Reicht für 120 von 500 · …") darf auf
@@ -581,7 +582,7 @@
 }
 
 .queue-row-level-icon-emoji {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   line-height: 1;
   flex-shrink: 0;
 }
@@ -599,7 +600,7 @@
 
 .queue-row-target {
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--accent-2);
   white-space: nowrap;
   flex-shrink: 0;
@@ -616,7 +617,7 @@
 }
 
 .queue-row-meta .queue-row-target {
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
 
 .queue-row-actions {
@@ -652,7 +653,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: var(--fs-xs);
   background: url("../assets/bg_black.webp") repeat;
   /* Dünner Holz-9-Slice-Rahmen statt schlichtem 1px-Strich — wie .tb-bar-frame-seg (topbar.css)
      bei ähnlich winziger Box-Größe. */
@@ -753,7 +754,7 @@
 }
 
 .queue-rail-icon-box .queue-row-icon-emoji {
-  font-size: 14px;
+  font-size: var(--fs-xs);
 }
 
 .queue-rail-item--active .queue-rail-icon-box {
@@ -763,7 +764,7 @@
 
 .queue-rail-badge {
   font-family: var(--font-head);
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   color: var(--accent-2);
   white-space: nowrap;
@@ -825,7 +826,7 @@
 
 .queue-panel-title {
   color: #e7d397;
-  font-size: clamp(16px, 1vw, 20px);
+  font-size: clamp(calc(16px * var(--text-scale)), calc(1vw * var(--text-scale)), calc(20px * var(--text-scale)));
 }
 
 .queue-panel-active {
@@ -892,7 +893,7 @@
   background: #101315;
   color: #ead79c;
   box-shadow: 0 0 0 2px #24292a, 0 0 8px rgba(184, 123, 53, 0.25);
-  font-size: 10px;
+  font-size: var(--fs-xs);
 }
 
 .queue-row-icon-img {
@@ -901,12 +902,12 @@
 }
 
 .queue-row-name {
-  font-size: 14px;
+  font-size: var(--fs-xs);
   color: #ddd2b4;
 }
 
 .queue-row-target {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: #e2c477;
 }
 
@@ -954,16 +955,16 @@
 }
 
 .queue-panel-section-label {
-  font-size: clamp(14px, 0.82vw, 17px);
+  font-size: clamp(calc(14px * var(--text-scale)), calc(0.82vw * var(--text-scale)), calc(17px * var(--text-scale)));
   letter-spacing: 0.045em;
 }
 
 .queue-row-name {
-  font-size: clamp(15px, 0.88vw, 17px);
+  font-size: clamp(calc(15px * var(--text-scale)), calc(0.88vw * var(--text-scale)), calc(17px * var(--text-scale)));
 }
 
 .queue-row-target {
-  font-size: clamp(13px, 0.76vw, 15px);
+  font-size: clamp(var(--fs-xs), calc(0.76vw * var(--text-scale)), max(calc(15px * var(--text-scale)), var(--fs-xs)));
   font-weight: 700;
 }
 
@@ -974,32 +975,32 @@
   .queue-panel-blocked-text,
   .queue-panel-empty
 ) {
-  font-size: clamp(13px, 0.74vw, 15px);
+  font-size: clamp(var(--fs-xs), calc(0.74vw * var(--text-scale)), max(calc(15px * var(--text-scale)), var(--fs-xs)));
   line-height: 1.45;
 }
 
 .queue-panel-skip {
-  font-size: clamp(12px, 0.7vw, 14px);
+  font-size: clamp(var(--fs-xs), calc(0.7vw * var(--text-scale)), max(calc(14px * var(--text-scale)), var(--fs-xs)));
 }
 
 /* Warteschlangen-Timer (1.0.1) — dieselbe clamp-Mindestgröße-Konvention wie der Rest dieses
    Reworks (Chef-Regel: Mindestgröße statt Abschneiden). */
 .queue-panel-total-label,
 .queue-panel-total-eta {
-  font-size: clamp(12px, 0.68vw, 14px);
+  font-size: clamp(var(--fs-xs), calc(0.68vw * var(--text-scale)), max(calc(14px * var(--text-scale)), var(--fs-xs)));
 }
 
 .queue-panel-total-value {
-  font-size: clamp(15px, 0.86vw, 18px);
+  font-size: clamp(calc(15px * var(--text-scale)), calc(0.86vw * var(--text-scale)), calc(18px * var(--text-scale)));
 }
 
 .queue-row-duration {
-  font-size: clamp(12px, 0.68vw, 14px);
+  font-size: clamp(var(--fs-xs), calc(0.68vw * var(--text-scale)), max(calc(14px * var(--text-scale)), var(--fs-xs)));
 }
 
 /* Level-Projektion (Chef 25.08.2026) — dieselbe Mindestgröße wie `.queue-row-duration` direkt
    darüber; Von/Pfeil/Bis erben die Größe (nur `.queue-row-level-to` legt oben zusätzlich Gold +
    Fettung drauf). */
 .queue-row-level {
-  font-size: clamp(12px, 0.68vw, 14px);
+  font-size: clamp(var(--fs-xs), calc(0.68vw * var(--text-scale)), max(calc(14px * var(--text-scale)), var(--fs-xs)));
 }
