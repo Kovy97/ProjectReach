@@ -141,19 +141,21 @@ function s31(): Shot {
   let atmo!: Atmosphere;
   const N = 1400;
   const pts: { from: THREE.Vector3; to: THREE.Vector3; ts: number; d: number; s: number; ph: number }[] = [];
-  const H = 1.7;
+  const H = 1.9;
+  const LOGO = "ui/mainmenu_logo_painterly.webp";
   const LOGO_Y = 1.45;
   return {
     id: "31-32", t0: 74.5, t1: 81.41, group,
     async setup(stage) {
-      logo = await card(stage, "ui/logo.webp", H);
+      // claude:2026-10-24T11:23:00+02:00 — Chef 24.10.: aktuelles Logo ist das gemalte Reforged-Logo (wie Hauptmenü), nicht ui/logo.webp
+      logo = await card(stage, LOGO, H);
       logo.group.position.set(0, LOGO_Y, 0);
       under = new Glow(new THREE.Color(1.4, 0.6, 0.22));
       embers = new PointCloud(N, true, 0.0);
       group.add(under.sprite, logo.group, embers.points);
       atmo = atmosphere(group, 311, [0.5, 0.46, 0.44], [2.4, 1.0, 0.3], 350, 140);
       // Zielpunkte aus den deckenden Pixeln des Logos
-      const { img } = await load(stage, "ui/logo.webp");
+      const { img } = await load(stage, LOGO);
       const c = document.createElement("canvas");
       const w = 420;
       const h = Math.round((w * img.height) / img.width);

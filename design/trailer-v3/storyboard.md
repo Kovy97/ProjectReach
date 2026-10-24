@@ -233,7 +233,7 @@ Rendern in Abschnitten unter 10 Minuten (`--range a-b`), dann Videoströme zusam
 | 12–18 | `shots/breadth.ts` | fertig mit Bestand |
 | 19–29 | `shots/raid.ts` | echte Raid-Räume `gk_room_1–4`, Truhe und Raid-Beute; **Gegner noch Platzhalter** |
 | 24 | `scenes/frostMoment.ts` | Testszene B (abgenommen), jetzt in den Gruben (`gk_room_3`) |
-| 30–32 | `shots/finale.ts` | fertig mit Bestand, Logo `ui/logo.webp` formt sich aus Glut |
+| 30–32 | `shots/finale.ts` | fertig mit Bestand, aktuelles gemaltes Logo `ui/mainmenu_logo_painterly.webp` formt sich aus Glut (Chef 24.10.) |
 
 **Platzhalter bis zur Codex-Lieferung (Gruppe B):** Getauscht wird in `RAID_CAST` (`shots/raid.ts`), die Grubenhunde in Shot 24 direkt in `scenes/frostMoment.ts`.
 
