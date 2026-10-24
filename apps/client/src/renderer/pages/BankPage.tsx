@@ -1,3 +1,4 @@
+import { SHOW_ITEM_TIERS } from "../featureFlags";
 import { useEffect, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { content } from "@hearthforge/content";
@@ -138,7 +139,11 @@ export function BankPage(): JSX.Element {
   // Ein Sortiermodus für beide Spalten (wie im Charakter-Inventar: Neueste/Name/Wert/Seltenheit/
   // Menge). Persistiert (Chef-Auftrag Suche/Filter/Sortierung 2026-07-09) — Suchtext bleibt
   // bewusst transient, nur Sortiermodus + Typ-Filter überleben einen Neustart.
-  const [sortMode, setSortModeState] = useState<ItemSortMode>(getBankSort);
+  // claude:2026-10-24T17:47:00+02:00 — gespeicherte Sortierung „Stufe“ fällt auf Seltenheit zurück, solange Stufen aus sind (Chef 24.10.)
+  const [sortMode, setSortModeState] = useState<ItemSortMode>(() => {
+    const m = getBankSort();
+    return !SHOW_ITEM_TIERS && m === "tier" ? "rarity" : m;
+  });
   const [category, setCategoryState] = useState<FilterCategory>(getBankFilterCat);
   const [search, setSearch] = useState("");
   const setSortMode = (mode: ItemSortMode): void => { setSortModeState(mode); setBankSort(mode); };

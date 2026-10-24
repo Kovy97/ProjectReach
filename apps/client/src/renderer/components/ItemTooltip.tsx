@@ -232,6 +232,7 @@ const ATTR_NAME: Record<string, LocalizedString> = Object.fromEntries(
 // claude:2026-10-23T17:40:00+02:00 — buildItemTypeLine wohnt jetzt in util/itemTypeLine.ts (testbar ohne DOM).
 import { buildItemTypeLine } from "../util/itemTypeLine";
 import { TierStars, tierRoman } from "./TierStars";
+import { SHOW_ITEM_TIERS } from "../featureFlags";
 export { buildItemTypeLine };
 
 /** Icon per status-effect type. */
@@ -1796,7 +1797,8 @@ function ItemTooltipCard({
             {typeLine} · {RAID_RARITY_ICON[rarity] && <img loading="lazy" decoding="async" src={RAID_RARITY_ICON[rarity]!} alt="" className="ui-icon itip-rarity-icon" />}{tr(RARITY_LABEL[rarity])}
           </div>
           {/* claude:2026-10-23T18:20:00+02:00 — 1.4.0 ST: Stufe als Sterne plus „Stufe VII“ (Chef 23.10.). */}
-          {tierOfItem !== null && (
+          {/* claude:2026-10-24T17:47:00+02:00 — Stufen-Zeile vorläufig aus (Chef 24.10.), Schalter in featureFlags.ts */}
+          {SHOW_ITEM_TIERS && tierOfItem !== null && (
             <div className="itip-tier-line">
               <TierStars tier={tierOfItem} color={tierOfItem >= 13 ? rarityCol : undefined} />
               <span className="itip-tier-label">{t("item.tier").replace("{n}", tierRoman(tierOfItem))}</span>

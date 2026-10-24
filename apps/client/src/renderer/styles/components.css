@@ -3172,7 +3172,8 @@ body .item-cell.rarity-mythic {
   padding: 6px;
   gap: 6px;
   background: linear-gradient(rgba(10, 12, 15, 0.94), rgba(10, 12, 15, 0.94)), url("../assets/bg_black.webp") repeat;
-  box-shadow: 0 0 0 1px var(--border, #3a3a3a), 0 -6px 12px rgba(0, 0, 0, 0.55);
+  /* claude:2026-10-24T17:47:00+02:00 — keine 1-px-Linie mehr um die Leiste (wirkte blau neben den Eisenrahmen, Chef 24.10.) */
+  box-shadow: 0 -6px 12px rgba(0, 0, 0, 0.55);
 }
 #root .item-tooltip.itip-panel .it-actions .it-action-btn {
   flex: 1 1 auto;

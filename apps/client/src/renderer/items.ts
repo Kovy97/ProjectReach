@@ -1,3 +1,4 @@
+import { SHOW_ITEM_TIERS } from "./featureFlags";
 import { content } from "@hearthforge/content";
 import { itemTier } from "@hearthforge/engine"; // claude:2026-10-23T18:30:00+02:00 — Stufen-Sortierung (1.4.0)
 import {
@@ -71,7 +72,8 @@ export function rarityClass(rarity: ItemRarity | undefined): string {
 // claude:2026-10-23T18:30:00+02:00 — 1.4.0 ST: neuer Modus "tier" (Stufe absteigend, dann Seltenheit, dann Name).
 export type ItemSortMode = "newest" | "name" | "value" | "rarity" | "qty" | "type" | "tier";
 
-export const ITEM_SORT_MODES: ItemSortMode[] = ["newest", "type", "name", "value", "rarity", "tier", "qty"];
+// claude:2026-10-24T17:47:00+02:00 — Sortierung nach Stufe nur, solange Stufen sichtbar sind (Chef 24.10.: vorläufig aus).
+export const ITEM_SORT_MODES: ItemSortMode[] = (["newest", "type", "name", "value", "rarity", "tier", "qty"] as ItemSortMode[]).filter((m) => SHOW_ITEM_TIERS || m !== "tier");
 
 // Abgeleitet aus dem vollständigen 8-Tier-Enum (shared: ITEM_RARITIES, aufsteigend niedrig→hoch),
 // statt einer eigenen Teil-Liste zu pflegen — sonst fallen neue/seltene Tiers (poor/superRare/godly)

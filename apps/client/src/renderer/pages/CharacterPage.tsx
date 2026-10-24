@@ -1,3 +1,4 @@
+import { SHOW_ITEM_TIERS } from "../featureFlags";
 import { ITEM_RARITIES } from "@hearthforge/shared"; // claude:2026-10-23T23:10:00+02:00 — Bergung: Rarität-Rang
 import { SalvageBatchModal, SalvageConfirmModal } from "../components/SalvageModals"; // claude:2026-10-23T23:10:00+02:00 — Bergung (1.4.0)
 import { Fragment, useRef, useState, type CSSProperties, type ReactElement, type KeyboardEvent, useEffect } from "react";
@@ -673,7 +674,7 @@ export function CharacterPage(): JSX.Element {
               <option value="name">{t("char.sortName")}</option>
               <option value="value">{t("char.sortValue")}</option>
               <option value="rarity">{t("char.sortRarity")}</option>
-              <option value="tier">{t("char.sortTier")}</option>
+              {SHOW_ITEM_TIERS && <option value="tier">{t("char.sortTier")}</option>}
             </select>
             {/* Chef 31.08.2026: Das Dropdown WAEHLT nur noch die Art, dieser Knopf FUEHRT AUS —
                 sonst wuerde jede Auswahl sofort die Faecher umwerfen. */}
