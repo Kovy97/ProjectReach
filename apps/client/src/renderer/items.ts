@@ -45,9 +45,17 @@ const ITEM_IMAGE_ALIASES: Readonly<Record<string, string>> = {
   cinderwretch_hide: "raw_dragonhide",
 };
 
+/** claude:2026-10-24T12:30:00+02:00 — Raid-Varianten (…_heroic/_mythic) zeigen bis zum eigenen Bild das Normal-Bild statt eines Emojis. */
+const RAID_VARIANT_RE = /_(heroic|mythic)$/;
+
 /** Bild-URL zu einer Item-ID (oder null, wenn (noch) kein Bild hinterlegt ist). */
 export function getItemImage(itemId: string): string | null {
-  return BY_ID[itemId] ?? BY_ID[ITEM_IMAGE_ALIASES[itemId] ?? ""] ?? null;
+  return (
+    BY_ID[itemId] ??
+    BY_ID[ITEM_IMAGE_ALIASES[itemId] ?? ""] ??
+    (RAID_VARIANT_RE.test(itemId) ? BY_ID[itemId.replace(RAID_VARIANT_RE, "")] : undefined) ??
+    null
+  );
 }
 
 /** CSS-Klasse für die Seltenheits-Färbung (Name/Rahmen). */

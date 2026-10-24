@@ -1,0 +1,10 @@
+
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'G:\GameDev\apps\client\src\renderer\assets\items\dps.ts' imported from G:\GameDev\apps\client\src\renderer\assets\items\
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///G:/GameDev/apps/client/src/renderer/assets/items/dps.ts'
+}
+
+Node.js v22.20.0
