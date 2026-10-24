@@ -1,0 +1,3 @@
+# claude:2026-10-24T13:25:06+02:00 — Zwischenspeicher des Asset-Katalogs (Index, Vorschaubilder, Messwerte)
+.cache/
+*.tmp

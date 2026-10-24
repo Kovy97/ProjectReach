@@ -1,0 +1,46 @@
+<!doctype html>
+<!-- claude:2026-10-24T13:19:04+02:00 — Asset-Katalog Grim Reach: Oberfläche (lokal, ohne externe Abhängigkeiten) -->
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asset-Katalog · Grim Reach</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="brand-mark" aria-hidden="true"></span><div><div class="brand-title">Asset-Katalog</div><div class="brand-sub">Grim Reach</div></div></div>
+  <nav class="tabs" role="tablist">
+    <button class="tab" data-view="raster" role="tab">Raster <span class="tab-count" id="count-raster"></span></button>
+    <button class="tab" data-view="luecken" role="tab">Lücken <span class="tab-count" id="count-luecken"></span></button>
+    <button class="tab" data-view="anfragen" role="tab">Anfragen <span class="tab-count" id="count-anfragen"></span></button>
+  </nav>
+  <div class="search"><input id="q" type="search" placeholder="Suchen: ID, Name EN/DE, Ordner …  ( / )" autocomplete="off" spellcheck="false"></div>
+  <div class="top-actions">
+    <span class="build-state" id="build-state"></span>
+    <button class="btn btn-quiet" id="btn-reindex" title="Index inkrementell aktualisieren (neue/geänderte Dateien)">Index aktualisieren</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main" id="main">
+    <div class="empty-state" id="boot">Index wird geladen …</div>
+  </main>
+</div>
+
+<section class="detail" id="detail" hidden aria-modal="true" role="dialog"></section>
+
+<dialog id="dlg" class="dlg"></dialog>
+<div class="toast" id="toast" hidden></div>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="overlay-box">
+    <div class="overlay-title">Index wird erstellt …</div>
+    <div class="overlay-hint">Beim ersten Mal werden alle Bilder vermessen (etwa ein bis zwei Minuten). Danach geht es inkrementell in Sekunden.</div>
+    <pre class="overlay-log" id="overlay-log"></pre>
+  </div>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>
