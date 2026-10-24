@@ -7,8 +7,11 @@ import { firstStrike } from "./scenes/firstStrike";
 import { frostMoment } from "./scenes/frostMoment";
 import { trailer } from "./trailer";
 import { trailerV4 } from "./v4";
+import { setV4Lang } from "./v4/lang";
 
-const SCENES: Record<string, () => TrailerScene> = { calib, firstStrike, frostMoment: () => frostMoment(), trailer: () => trailer(), v4: () => trailerV4() };
+const SCENES: Record<string, () => TrailerScene> = { calib, firstStrike, frostMoment: () => frostMoment(), trailer: () => trailer(), v4: () => trailerV4(),
+  // claude:2026-10-24T20:16:00+02:00 — chinesische Fassung von v4 (Chef 24.10.): gleiche Szene, Wörter und Schrift auf Chinesisch
+  v4zh: () => { setV4Lang("zh"); return trailerV4(); } };
 
 declare global {
   interface Window {

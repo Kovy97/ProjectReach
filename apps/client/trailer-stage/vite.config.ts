@@ -9,6 +9,8 @@ export default defineConfig({
   publicDir: resolve(client, "src/renderer/assets"),
   define: {
     __CINZEL_URL__: JSON.stringify(`/@fs/${resolve(client, "src/renderer/fonts/Cinzel-Regular.ttf").split(sep).join("/")}`),
+    // claude:2026-10-24T20:16:00+02:00 — chinesische Fassung v4 (Teilmenge von Noto Serif SC, OFL)
+    __NOTO_SC_URL__: JSON.stringify(`/@fs/${resolve(__dirname, "fonts/NotoSerifSC-trailer.woff2").split(sep).join("/")}`),
   },
   server: { port: 5420, strictPort: true, fs: { allow: [client] } },
   logLevel: "warn",

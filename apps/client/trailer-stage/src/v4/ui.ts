@@ -1,5 +1,6 @@
 // claude:2026-10-24T12:05:00+02:00 — Trailer v4 „Inventar“: Bausteine für flache Tableaus (Steinhintergrund, Bild-Atlas,
 // Kachel-Stapel, Textschilder) und die Zahlen-Einblendungen im Stil des Logos (knochenweißes Cinzel, rote Eisenlinie).
+import { fontCss, spacingPx, tr } from "./lang";
 import * as THREE from "three";
 import { easeOutCubic, ramp } from "../anim";
 import { asset, loadImage } from "../assets";
@@ -137,18 +138,20 @@ export class Batch {
 }
 
 // ── Textschild (Cinzel) als Fläche im Raum ──────────────────────────────────────────────────────────
-export function label(text: string, opts: { px?: number; color?: string; height?: number; spacing?: number } = {}): THREE.Mesh {
+export function label(text0: string, opts: { px?: number; color?: string; height?: number; spacing?: number } = {}): THREE.Mesh {
+  // claude:2026-10-24T20:16:00+02:00 — chinesische Fassung: Wörter/Schrift über lang.ts
+  const text = tr(text0);
   const px = opts.px ?? 64;
   const c = document.createElement("canvas");
   const g0 = c.getContext("2d")!;
-  g0.font = `${px}px Cinzel, Georgia, serif`;
-  g0.letterSpacing = `${opts.spacing ?? px * 0.08}px`;
+  g0.font = fontCss(px);
+  g0.letterSpacing = `${spacingPx(opts.spacing ?? px * 0.08)}px`;
   const w = Math.ceil(g0.measureText(text).width + px);
   c.width = w;
   c.height = Math.ceil(px * 1.6);
   const g = c.getContext("2d")!;
-  g.font = `${px}px Cinzel, Georgia, serif`;
-  g.letterSpacing = `${opts.spacing ?? px * 0.08}px`;
+  g.font = fontCss(px);
+  g.letterSpacing = `${spacingPx(opts.spacing ?? px * 0.08)}px`;
   g.textAlign = "center";
   g.textBaseline = "middle";
   g.shadowColor = "rgba(0,0,0,0.9)";
@@ -226,7 +229,9 @@ export class CaptionTrack {
     this.key = key;
     this.draw(s, num, inK * outK, subK * outK);
   }
-  private draw(s: CaptionSpec, num: string, a: number, subA: number): void {
+  private draw(s0: CaptionSpec, num: string, a: number, subA: number): void {
+    // claude:2026-10-24T20:16:00+02:00 — chinesische Fassung: Wörter/Schrift über lang.ts
+    const s = { ...s0, word: tr(s0.word), sub: s0.sub ? tr(s0.sub) : s0.sub };
     const g = this.g;
     g.clearRect(0, 0, 1920, 1080);
     const y = s.pos === "center" ? 520 : s.pos === "low" ? 900 : 150;
@@ -247,11 +252,11 @@ export class CaptionTrack {
     g.textBaseline = "alphabetic";
     g.textAlign = "left";
     // Zahl groß, Wort kleiner und gesperrt, zusammen mittig
-    g.font = "128px Cinzel, Georgia, serif";
+    g.font = fontCss(128);
     g.letterSpacing = "2px";
     const wNum = num ? g.measureText(num + " ").width : 0;
-    g.font = "84px Cinzel, Georgia, serif";
-    g.letterSpacing = "10px";
+    g.font = fontCss(84);
+    g.letterSpacing = `${spacingPx(10)}px`;
     const wWord = g.measureText(s.word).width;
     const x0 = 960 - (wNum + wWord) / 2;
     const fill = g.createLinearGradient(0, y - 110, 0, y + 10);
@@ -263,13 +268,13 @@ export class CaptionTrack {
     g.strokeStyle = "rgba(12,9,7,0.85)";
     g.fillStyle = fill;
     if (num) {
-      g.font = "128px Cinzel, Georgia, serif";
+      g.font = fontCss(128);
       g.letterSpacing = "2px";
       g.strokeText(num, x0, y);
       g.fillText(num, x0, y);
     }
-    g.font = "84px Cinzel, Georgia, serif";
-    g.letterSpacing = "10px";
+    g.font = fontCss(84);
+    g.letterSpacing = `${spacingPx(10)}px`;
     g.strokeText(s.word, x0 + wNum, y);
     g.fillText(s.word, x0 + wNum, y);
     // rote Eisenlinie wie im Logo
@@ -281,8 +286,8 @@ export class CaptionTrack {
     g.fillRect(960 - lw / 2, y + 26, lw, 1);
     if (s.sub && subA > 0) {
       g.globalAlpha = subA;
-      g.font = "40px Cinzel, Georgia, serif";
-      g.letterSpacing = "6px";
+      g.font = fontCss(40);
+      g.letterSpacing = `${spacingPx(6)}px`;
       g.textAlign = "center";
       g.shadowColor = "rgba(0,0,0,0.9)";
       g.shadowBlur = 14;

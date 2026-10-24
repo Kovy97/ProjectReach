@@ -1,5 +1,6 @@
 // claude:2026-10-24T12:14:00+02:00 — Trailer v4 „Inventar“: Tableaus. Flache Komposition auf Stein, Kamera frontal (z 10, 30°),
 // Wechsel im Takt; Zahlen kommen aus data.json (gen-v4-data.ts), nie von Hand.
+import { nm } from "./lang";
 import * as THREE from "three";
 import { easeInOutCubic, easeOutCubic, ramp, smooth } from "../anim";
 import { load, setCam, type Shot } from "../kit";
@@ -68,7 +69,7 @@ export function s02(): Shot {
       for (const s of skills) {
         const { tex } = await load(stage, s.icon);
         const icon = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false }));
-        const name = label(s.name, { px: 64, height: 0.19 });
+        const name = label(nm(s), { px: 64, height: 0.19 });
         const grp = ORDER.indexOf(s.group);
         tiles.push({ icon, name, grp, j: count[grp]!++ });
         group.add(icon, name);
@@ -225,7 +226,7 @@ export function s07(): Shot {
         const { tex, img } = await load(stage, e.img);
         const h = 2.6;
         const m = new THREE.Mesh(new THREE.PlaneGeometry((h * img.width) / img.height, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false }));
-        const name = label(e.name, { px: 56, height: 0.17 });
+        const name = label(nm(e), { px: 56, height: 0.17 });
         champs.push({ m, name });
         group.add(m, name);
       }

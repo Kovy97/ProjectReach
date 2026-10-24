@@ -1,6 +1,7 @@
 // claude:2026-10-24T12:14:00+02:00 — Trailer v4 „Inventar“: übrige Tableaus (Intro, Berufe, Rezepte, göttlicher Fund, Welt,
 // Kampfstile/Rüstung, Verzauberungen, Raid, Schwierigkeiten, Erfolge, Begleiter/Talente, Offline, Völker). Wechsel im Takt,
 // Gemälde aus der Malerposition (wie v3 abgenommen), Tableaus frontal auf Stein.
+import { V4_LANG, fontCss, nm, upper } from "./lang";
 import * as THREE from "three";
 import { easeInOutCubic, easeOutCubic, pulse, ramp, smooth } from "../anim";
 import type { Atmosphere } from "../env";
@@ -19,8 +20,8 @@ const BAR = 4 * BEAT;
 const g = () => new THREE.Group();
 const C = (r: number, gg: number, b: number) => new THREE.Color(r, gg, b);
 const V = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
-const skillName = (id: string): string => data.skills.find((s) => s.id === id)?.name ?? id;
-const itemName = (id: string): string => data.items.find((i) => i.id === id)?.name ?? id;
+const skillName = (id: string): string => { const x = data.skills.find((s) => s.id === id); return x ? nm(x) : id; };
+const itemName = (id: string): string => { const x = data.items.find((i) => i.id === id); return x ? nm(x) : id; };
 
 /** Bild als flache Fläche (Höhe h), Ursprung Mitte */
 async function flat(stage: Stage, path: string, h: number, extra: Partial<THREE.MeshBasicMaterialParameters> = {}): Promise<THREE.Mesh> {
@@ -81,7 +82,7 @@ export function v4s03(): Shot {
         const who = await figure(stage, por, { height: id.startsWith("goblin") || por.includes("goblin") ? 1.85 : 2.2, chest: 0.7, hip: 0.46 });
         who.group.position.set(-0.7, 0, 0.4);
         const item = await flat(stage, it, 0.75);
-        const name = label(skillName(id).toUpperCase(), { px: 72, height: 0.2, spacing: 8 });
+        const name = label(upper(skillName(id)), { px: 72, height: 0.2, spacing: 8 });
         grp.add(who.group, item, name);
         grp.visible = false;
         group.add(grp);
@@ -247,13 +248,13 @@ export function v4s08(): Shot {
       group.add(await stone(stage), zoneGrp, dunGrp);
       for (const z of data.zones.filter((z) => z.img).slice(0, 8)) {
         const m = await flat(stage, z.img!, 3.05);
-        const n = label(z.name.toUpperCase(), { px: 72, height: 0.22, spacing: 8 });
+        const n = label(upper(nm(z)), { px: 72, height: 0.22, spacing: 8 });
         zones.push({ m, n });
         zoneGrp.add(m, n);
       }
       for (const d of data.dungeons.filter((d) => d.img && !d.id.startsWith("gk_"))) {
         const m = await flat(stage, d.img!, 1.17);
-        const n = label(d.name, { px: 56, height: 0.14 });
+        const n = label(nm(d), { px: 56, height: 0.14 });
         dungeons.push({ m, n });
         dunGrp.add(m, n);
       }
@@ -408,12 +409,12 @@ export function v4s10(): Shot {
       group.add(await stone(stage));
       blade = await flat(stage, `items/${ID}.webp`, 3.0);
       group.add(blade);
-      for (const n of data.affixes.slice(0, 8)) {
+      for (const n of (V4_LANG === "zh" ? data.affixesZh : data.affixes).slice(0, 8)) {
         const m = label(n, { px: 72, height: 0.29, spacing: 6, color: "#efe6d2" });
         pre.push(m);
         group.add(m);
       }
-      for (const n of data.suffixes.slice(0, 8)) {
+      for (const n of (V4_LANG === "zh" ? data.suffixesZh : data.suffixes).slice(0, 8)) {
         const m = label(n, { px: 72, height: 0.29, spacing: 6, color: "#efe6d2" });
         suf.push(m);
         group.add(m);
@@ -532,7 +533,7 @@ export function v4s13(): Shot {
       }
       const ptex = plateTexture(RARITY.godly!.color);
       for (const s of data.sets.filter((s) => s.pieces.some((p) => p.includes("gk_")))) {
-        const name = label(s.name, { px: 60, height: 0.2, spacing: 4, color: "#e6dcc6" });
+        const name = label(nm(s), { px: 60, height: 0.2, spacing: 4, color: "#e6dcc6" });
         const plates: THREE.Mesh[] = [];
         const items: THREE.Mesh[] = [];
         for (const p of s.pieces) {
@@ -604,10 +605,10 @@ export function v4s14(): Shot {
       c.width = COLS * CW;
       c.height = rows * RH;
       const gg = c.getContext("2d")!;
-      gg.font = "26px Cinzel, Georgia, serif";
+      gg.font = fontCss(26);
       gg.textAlign = "center";
       gg.textBaseline = "middle";
-      data.achievements.forEach((n, i) => {
+      (V4_LANG === "zh" ? data.achievementsZh : data.achievements).forEach((n, i) => {
         const x = (i % COLS) * CW;
         const y = Math.floor(i / COLS) * RH;
         gg.fillStyle = "rgba(20,18,16,0.88)";
