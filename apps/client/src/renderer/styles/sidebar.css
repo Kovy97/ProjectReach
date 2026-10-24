@@ -1764,7 +1764,9 @@
   right: calc(48px * var(--sb-scale-eff, 1));
   bottom: calc(4px * var(--sb-scale-eff, 1));
   z-index: 1;
-  font-size: calc(var(--fs-xs) * var(--sb-scale-eff, 1)); /* claude:2026-10-24T21:47:00+02:00 — Wörter mindestens --fs-xs (Statuszeile „Nichts gepflanzt“, W2-Übergabe) */
+  /* claude:2026-10-24T22:00:00+02:00 — Wörter ab --fs-xs, aber gedeckelt: Der Knopf ist fest hoch, bei Textgröße „Sehr groß“ schob sich der Status
+     sonst über den Namen und wurde größer als er (gemessen ui-audit/_sidebar-estates.mjs). */
+  font-size: min(calc(var(--fs-xs) * var(--sb-scale-eff, 1)), calc(14px * var(--sb-scale-eff, 1)));
   line-height: 1.1;
   text-align: center;
   white-space: nowrap;
