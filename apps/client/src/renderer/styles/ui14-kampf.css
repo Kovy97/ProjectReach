@@ -1,3 +1,87 @@
 /* claude:2026-10-24T18:34:00+02:00 — UI-Überarbeitung 1.4, Welle 2, Gruppe C Kampf, Bestiarium, Begleiter, Raid.
    Einziger Schreiber: der Agent dieser Gruppe. Hier stehen Überschreibungen für geteilte Dateien (v. a. pages.css),
    die die Gruppe nicht selbst bearbeiten darf. Geladen nach classic-skin/classic-chrome, vor typography.css. */
+
+/* ═══ Begleiter-Seite (Überschreibungen für pages.css Z. ~3187–3860) ═══════════════════════════════════
+   claude:2026-10-24T18:35:00+02:00 — Alle Schriften auf die Skala, Fließtext in Alegreya, Detail nutzt den
+   Platz unter der Effekttabelle (größere Beschreibung und Effektzeilen). Geladen nach pages.css, gleiche
+   Spezifität genügt. */
+#root .pet-field-kicker,
+#root .pet-field-active-effect,
+#root .pet-field-count,
+#root .pet-equipped-badge { font-size: var(--fs-xs); }
+#root .pet-field-active .pet-slot-name,
+#root .pet-field-active .pet-slot-none,
+#root .pet-field-header .pet-gallery-counter { font-size: var(--fs-sm); }
+#root .pet-field-index-head { font-size: var(--fs-md); }
+#root .pet-field-count { font-size: var(--fs-sm); }
+#root .pet-field-active-effect { font-family: var(--font-body); font-size: var(--fs-sm); }
+#root .pet-field-header .pet-gallery-head h2 { font-size: var(--fs-2xl); }
+
+/* Liste links: Name groß, Herkunft („Skill: …“, „Drop-Chance“) in lesbarer Größe */
+#root .pet-field-entry { min-height: clamp(84px, 6vw, 104px); }
+#root .pet-field-entry-copy strong { font-size: var(--fs-md); }
+#root .pet-field-entry-copy small { font-size: var(--fs-sm); line-height: 1.25; }
+#root .pet-field-entry-mark { font-size: var(--fs-xs); }
+#root .pet-effect-tag { font-size: var(--fs-xs); }
+#root .pet-effect-value { font-size: var(--fs-sm); }
+#root .pet-card-source,
+#root .pet-card-drop { font-size: var(--fs-sm); }
+
+/* Detail rechts */
+#root .pet-field-dossier-head h3 { font-size: var(--fs-3xl); }
+#root .pet-field-drop { font-size: var(--fs-sm); padding: 8px 12px; }
+#root .pet-field-description {
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  line-height: 1.55;
+  margin: clamp(10px, 0.9vw, 20px) 0;
+}
+#root .pet-field-effects .pet-effect-tag { font-size: var(--fs-sm); padding: 10px 14px; }
+#root .pet-field-effects .pet-effect-value {
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  line-height: 1.4;
+  padding: clamp(9px, 0.8vw, 16px) 16px;
+  gap: 6px;
+}
+#root .pet-field-effects-hint { font-family: var(--font-body); font-size: var(--fs-sm); line-height: 1.35; }
+#root .pet-field-effects-unknown-text { font-family: var(--font-body); font-size: var(--fs-md); }
+#root .pet-field-journal .pet-card-btn { font-size: var(--fs-md); }
+@media (max-height: 820px) {
+  #root .pet-field-description { margin: 6px 0; line-height: 1.45; }
+  #root .pet-field-effects .pet-effect-value { padding: 6px 14px; }
+  #root .pet-field-effects .pet-effect-tag { padding: 6px 10px; }
+}
+
+/* claude:2026-10-24T18:42:00+02:00 — Echo-Zeile (Quelle talent-tree.css): größer, Fließtext in Alegreya. */
+#root .pet-field-echo-state { font-family: var(--font-body); font-size: var(--fs-sm); letter-spacing: 0.02em; }
+#root .pet-field-echo-locked { font-family: var(--font-body); font-size: var(--fs-sm); }
+#root .pet-field-echo-summary { font-size: var(--fs-sm); padding: 5px 12px; }
+
+/* claude:2026-10-24T18:50:00+02:00 — Kampfvorbereitung (Dock, Quelle frontline-harness-dock.css Z. 111/366): auf die Skala. */
+#root .combat-frontline-dock .cl-title { font-size: var(--fs-xs); }
+#root .combat-frontline-dock .cl-autoeat-upgrade { font-size: var(--fs-sm); }
+
+/* claude:2026-10-24T18:55:00+02:00 — Dock-Reiter: bei „Sehr groß“ und schmalem Dock (RU: „Снаряжение“) passt das längste Wort
+   sonst nicht in eine Spalte; Obergrenze auf --fs-sm, Laufweite 0, schmaleres Polster. Wörter bleiben ungetrennt. */
+#root .combat-frontline-dock .cl-dock-tab {
+  font-size: clamp(var(--fs-2xs), 3.4cqw, var(--fs-sm));
+  letter-spacing: 0;
+  padding-inline: 2px;
+}
+
+/* claude:2026-10-24T19:02:00+02:00 — Kampf-HUD-Bänder: bei größerer Textgröße greift der Umbruch-Zustand der Arena
+   (sonst „ЗАПАС ЧАР“ unter „Подробности“ und „Убийства“ über der Beute, RU 1366). Spiegelt @container battle-arena (max-width: 620px). */
+@container battle-arena (max-width: 760px) {
+  :root[data-text-scale="large"] .battle-hud-ribbon-summary,
+  :root[data-text-scale="xlarge"] .battle-hud-ribbon-summary { flex-wrap: wrap; }
+  :root[data-text-scale="large"] .battle-hud-metric,
+  :root[data-text-scale="xlarge"] .battle-hud-metric { min-width: 68px; padding-inline: 5px; }
+  :root[data-text-scale="large"] .battle-hud-ribbon--enemy .battle-hud-drop-summary,
+  :root[data-text-scale="xlarge"] .battle-hud-ribbon--enemy .battle-hud-drop-summary {
+    flex: 1 0 100%; justify-content: center; min-height: 25px; border-top: 1px solid rgba(154, 123, 72, 0.22);
+  }
+  :root[data-text-scale="large"] .battle-hud-drop-summary .fighter-sub-drops,
+  :root[data-text-scale="xlarge"] .battle-hud-drop-summary .fighter-sub-drops { width: 100%; justify-content: center; }
+}

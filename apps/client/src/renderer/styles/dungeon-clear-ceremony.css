@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:48:00+02:00 — UI 1.4 W2 Gruppe C: alle festen font-size-Werte (px/rem/em) auf die Skala var(--fs-…) umgestellt, cqw-Koeffizienten der Karten-Clamps um 1,4 angehoben. */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
@@ -122,7 +123,7 @@
   position: relative;
   z-index: 1;
   letter-spacing: 0.22em;
-  font-size: 0.7rem;
+  font-size: var(--fs-xs);
   font-weight: 900;
   color: var(--ds-gold-bright, #f0dca0);
   background: rgba(216, 192, 106, 0.12);
@@ -151,7 +152,7 @@
   padding: 5px 16px;
   font-family: var(--font-head);
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   color: var(--rar-legendary, #e0902a);
   background: rgba(224, 144, 42, 0.14);
   border: 1px solid var(--rar-legendary, #e0902a);
@@ -167,7 +168,7 @@
 
 .dcc-rewards-title,
 .dcc-loot-title {
-  font-size: 0.78rem;
+  font-size: var(--fs-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -184,7 +185,7 @@
 .dcc-reward-chip {
   padding: 6px 14px;
   font-family: var(--font-head);
-  font-size: 1rem;
+  font-size: var(--fs-sm);
   font-weight: 700;
   color: var(--text);
   background: rgba(0, 0, 0, 0.28);
@@ -294,7 +295,7 @@
 }
 
 .dcc-loot-skiphint {
-  font-size: 0.72rem;
+  font-size: var(--fs-xs);
   text-align: center;
   margin-top: 6px;
   opacity: 0.75;
@@ -358,6 +359,6 @@
 /* ─── Short viewports (1280×720 minimum supported resolution) ──────────────────────────────── */
 @media (max-height: 760px) {
   .dcc-card { padding: 22px 30px 20px; gap: 8px; max-height: 90vh; }
-  .dcc-title { font-size: 1.4rem; }
+  .dcc-title { font-size: var(--fs-2xl); }
   .dcc-footer { padding: 10px 0 2px; }
 }

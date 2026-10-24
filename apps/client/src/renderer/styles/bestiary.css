@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:48:00+02:00 — UI 1.4 W2 Gruppe C: alle festen font-size-Werte (px/rem/em) auf die Skala var(--fs-…) umgestellt, cqw-Koeffizienten der Karten-Clamps um 1,4 angehoben. */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* ═══════════════════════════════════════════════════════════
@@ -67,7 +68,7 @@
 }
 
 .bjw-head-subtitle {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   font-style: italic;
   margin-top: 2px;
@@ -83,7 +84,7 @@
   padding: 7px 16px;
   background: rgba(255, 255, 255, 0.05);
   text-align: center;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   font-family: var(--font-head);
   text-transform: uppercase;
@@ -92,7 +93,7 @@
 
 .bjw-seal strong {
   display: block;
-  font-size: 19px;
+  font-size: var(--fs-lg);
   color: var(--gold);
   font-family: var(--font-head);
 }
@@ -118,7 +119,7 @@
 .bjw-controls .shop-citadel-btn {
   min-height: 40px;
   padding: 8px 20px;
-  font-size: 14px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
@@ -134,7 +135,7 @@
 .bjw-filter-btn {
   min-height: 34px;
   padding: 6px 16px;
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
 }
 
 /* Status-Legende (Bestand, `.status-legend*` in pages.css unverändert, bereits ≥15px lesbar):
@@ -193,7 +194,7 @@
 .bjw-zone-head h2 {
   margin: 0;
   font-family: var(--font-head);
-  font-size: clamp(20px, 1.5vw, 26px);
+  font-size: clamp(var(--fs-lg), 1.5vw, var(--fs-2xl));
   color: var(--gold);
   letter-spacing: 0.03em;
   text-shadow: 0 1px 3px #000;
@@ -203,7 +204,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  font-size: 14px;
+  font-size: var(--fs-xs);
   color: var(--muted);
 }
 
@@ -220,7 +221,7 @@
   padding: 10px 16px;
   background: rgba(10, 8, 6, 0.5);
   border: 1px solid rgba(216, 192, 106, 0.32);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-style: italic;
   color: #e8dcc0;
   max-width: 640px;
@@ -354,7 +355,7 @@
 .bjw-name {
   font-family: var(--font-head);
   font-weight: 700;
-  font-size: clamp(18px, 1.3vw, 21px);
+  font-size: clamp(var(--fs-md), 1.3vw, var(--fs-xl));
   line-height: 1.2;
   color: #fff;
   text-shadow: 0 1px 3px #000;
@@ -372,7 +373,7 @@
 
 .bjw-kills {
   align-self: center;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   letter-spacing: 0.02em;
   color: var(--accent-2);
@@ -392,7 +393,7 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 2px 8px;
-  font-size: 10px;
+  font-size: var(--fs-xs);
   margin-bottom: 1px;
 }
 
@@ -441,7 +442,7 @@
   gap: 6px;
   min-width: 0;
   font-family: var(--font-head);
-  font-size: 15px;
+  font-size: var(--fs-sm);
   line-height: 1.2;
   color: #cdbfa0;
 }
@@ -454,7 +455,7 @@
 
 .bjw-stat-val {
   flex-shrink: 0;
-  font-size: 15px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   color: #f0e4c4;
   text-align: right;
@@ -463,7 +464,7 @@
 
 .bjw-regen-note {
   align-self: center;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: var(--accent-2);
   cursor: help;
 }
@@ -473,11 +474,11 @@
 .bjw-resist.stat-line-immune {
   justify-content: center;
   gap: 6px;
-  font-size: 15px;
+  font-size: var(--fs-sm);
 }
 
 .bjw-resist .stat-line-immune-icons {
-  font-size: 18px;
+  font-size: var(--fs-md);
   gap: 4px;
 }
 
@@ -492,7 +493,7 @@
 }
 
 .bjw-slayer-req {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   text-align: center;
   color: var(--muted);
   margin-top: 1px;
@@ -524,7 +525,7 @@
 
 .bjw-loot-group-title {
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -586,7 +587,7 @@
 .bjw-loot-icon .item-chip-emoji {
   width: 30px;
   height: 30px;
-  font-size: 22px;
+  font-size: var(--fs-xl);
   object-fit: contain;
 }
 
@@ -599,7 +600,7 @@
   position: absolute;
   bottom: -2px;
   right: -2px;
-  font-size: 8px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   line-height: 1;
   color: #fff;
@@ -619,7 +620,7 @@
   justify-content: center;
   width: 30px;
   height: 30px;
-  font-size: 14px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--muted);
 }
@@ -639,7 +640,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--muted);
   text-shadow: 0 1px 2px #000;
@@ -656,7 +657,7 @@
 
 /* Name max. 2 Zeilen, NIE Clip (Umbruch statt Abschneiden — Chef-Gesetz). */
 .bjw-loot-name {
-  font-size: 13.5px;
+  font-size: var(--fs-xs);
   line-height: 1.25;
   color: #e8dcc0;
   display: -webkit-box;
@@ -672,7 +673,7 @@
 
 .bjw-loot-pct {
   flex: 0 0 auto;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--gold, #d8b870);
   white-space: nowrap;
@@ -684,11 +685,11 @@
   margin-top: auto;
   width: 100%;
   min-height: 40px;
-  font-size: 14px;
+  font-size: var(--fs-xs);
 }
 
 .bjw-unknown-hint {
-  font-size: 14px;
+  font-size: var(--fs-xs);
   font-style: italic;
   text-align: center;
   color: var(--muted);

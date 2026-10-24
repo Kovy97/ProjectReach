@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:48:00+02:00 — UI 1.4 W2 Gruppe C: alle festen font-size-Werte (px/rem/em) auf die Skala var(--fs-…) umgestellt, cqw-Koeffizienten der Karten-Clamps um 1,4 angehoben. */
 /* claude:2026-10-25T11:00:00+02:00 — Raid-Oberfläche (1.4.0 „Feder und Stahl“ Welle 4). Nutzt die Ashen-Iron-Variablen
    (--panel, --border, --gold, --accent, --text) und die vorhandenen Rahmen (.dungeon-progress, .btn-iron, .shop-citadel-btn).
    Strahlen und Funken sind reine UI-Ebenen; das Item-Bild selbst glüht nicht. */
@@ -10,7 +11,7 @@
   box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6);
 }
 .raid-top-text { flex: 1 1 320px; min-width: 0; }
-.raid-name { font-family: var(--font-head); font-size: 24px; font-weight: 900; color: var(--gold); text-shadow: 0 1px 3px #000; letter-spacing: 0.02em; }
+.raid-name { font-family: var(--font-head); font-size: var(--fs-2xl); font-weight: 900; color: var(--gold); text-shadow: 0 1px 3px #000; letter-spacing: 0.02em; }
 .raid-intro { margin: 6px 0 0; line-height: 1.45; }
 .raid-invite { margin: 8px 0 0; font-style: italic; line-height: 1.45; }
 .raid-diff-row { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -24,20 +25,20 @@
 .raid-diff-mythic.active { border-color: var(--rar-mythic); box-shadow: inset 0 0 0 1px var(--rar-mythic); color: var(--rar-mythic); }
 .raid-diff-btn.locked { opacity: 0.55; cursor: not-allowed; }
 .raid-diff-clears { font-weight: 400; opacity: 0.8; }
-.raid-lock-hint { margin: 0; font-size: 0.9em; }
+.raid-lock-hint { margin: 0; font-size: var(--fs-sm); }
 .raid-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
 .raid-col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .raid-line { display: flex; flex-direction: column; gap: 2px; }
-.raid-label { font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); opacity: 0.9; }
-.raid-fee { font-family: var(--font-head); font-size: 1.35em; font-weight: 800; color: var(--gold); display: inline-flex; gap: 6px; align-items: center; }
-.raid-fee-old { font-size: 0.7em; opacity: 0.6; font-weight: 400; margin-right: 4px; }
-.raid-note { margin: 0; font-size: 0.92em; line-height: 1.4; }
-.raid-stats { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.95em; }
+.raid-label { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); opacity: 0.9; }
+.raid-fee { font-family: var(--font-head); font-size: var(--fs-lg); font-weight: 800; color: var(--gold); display: inline-flex; gap: 6px; align-items: center; }
+.raid-fee-old { font-size: var(--fs-xs); opacity: 0.6; font-weight: 400; margin-right: 4px; }
+.raid-note { margin: 0; font-size: var(--fs-sm); line-height: 1.4; }
+.raid-stats { display: flex; gap: 14px; flex-wrap: wrap; font-size: var(--fs-sm); }
 .raid-mod { border: 1px solid var(--border); padding: 8px 10px; background: rgba(0, 0, 0, 0.25); }
-.raid-mod-name { font-family: var(--font-head); font-weight: 800; font-size: 1.1em; }
+.raid-mod-name { font-family: var(--font-head); font-weight: 800; font-size: var(--fs-md); }
 .raid-mod-desc { line-height: 1.4; margin-top: 2px; }
 .raid-chests { display: flex; flex-direction: column; gap: 3px; }
-.raid-chest-row { display: flex; justify-content: space-between; gap: 8px; font-size: 0.92em; padding: 2px 6px; border-left: 3px solid var(--border); }
+.raid-chest-row { display: flex; justify-content: space-between; gap: 8px; font-size: var(--fs-sm); padding: 2px 6px; border-left: 3px solid var(--border); }
 .raid-chest-row.ready { border-left-color: var(--gold); }
 .raid-chest-row.claimed { opacity: 0.6; }
 .raid-chest-state { white-space: nowrap; }
@@ -54,8 +55,8 @@
 }
 .raid-bossbar-head { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
 .raid-bossbar-name { font-family: var(--font-head); font-weight: 800; color: var(--gold); flex: 1 1 auto; }
-.raid-bossbar-phase { font-size: 0.85em; opacity: 0.85; }
-.raid-bossbar-hp { font-variant-numeric: tabular-nums; font-size: 0.85em; }
+.raid-bossbar-phase { font-size: var(--fs-sm); opacity: 0.85; }
+.raid-bossbar-hp { font-variant-numeric: tabular-nums; font-size: var(--fs-sm); }
 .raid-bossbar-track { position: relative; height: 14px; background: #1a1210; border: 1px solid #000; margin-top: 4px; }
 .raid-bossbar-fill { position: absolute; inset: 0 auto 0 0; background: linear-gradient(180deg, #c0392b, #7d1e14); transition: width 0.25s linear; }
 .raid-bossbar-ward { position: absolute; left: 0; bottom: 0; height: 4px; background: #5b8fd6; }
@@ -82,7 +83,7 @@
   background: linear-gradient(rgba(8, 6, 4, 0.55), rgba(8, 6, 4, 0.55)), url("../assets/bg_black.webp") repeat;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
 }
-.rlc-eyebrow { font-size: 0.8em; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+.rlc-eyebrow { font-size: var(--fs-xs); letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
 .rlc-title { margin: 4px 0 8px; font-family: var(--font-head); color: var(--gold); text-shadow: 0 2px 6px #000; }
 .rlc-stage { position: relative; min-height: 300px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .rlc-chest { width: 96px; height: 96px; animation: rlc-shake 1.3s ease-in-out 0.2s both; }
@@ -97,8 +98,8 @@
   opacity: 0; animation: rlc-rise 0.7s cubic-bezier(0.2, 0.8, 0.3, 1) calc(1.9s + var(--i) * 0.8s) forwards; }
 .rlc-skip .rlc-item { opacity: 1; animation: none; }
 .rlc-item .item-cell { transform: scale(1.5); margin: 14px; }
-.rlc-item-name { font-weight: 700; font-size: 0.9em; line-height: 1.2; }
-.rlc-item-rar { font-size: 0.75em; }
+.rlc-item-name { font-weight: 700; font-size: var(--fs-sm); line-height: 1.2; }
+.rlc-item-rar { font-size: var(--fs-xs); }
 .rlc-beam {
   position: absolute; left: 50%; bottom: 40px; width: 70px; height: 260px; margin-left: -35px; pointer-events: none; z-index: -1;
   background: linear-gradient(to top, var(--beam, #fff), transparent); opacity: 0;
@@ -158,10 +159,10 @@
 .raid-rest-doll { transform-origin: top left; }
 .raid-rest-next { padding: 10px 12px; border: 1px solid var(--border); background: rgba(0, 0, 0, 0.35) center / cover no-repeat; }
 .raid-rest-next.has-bg { box-shadow: inset 0 0 0 100vmax rgba(8, 8, 10, 0.72); }
-.raid-rest-desc { margin: 4px 0 0; font-size: 0.92em; line-height: 1.4; }
+.raid-rest-desc { margin: 4px 0 0; font-size: var(--fs-sm); line-height: 1.4; }
 .raid-rest-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
 .raid-loot-grid { display: flex; flex-wrap: wrap; gap: 6px; }
-.raid-check { display: inline-flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; justify-content: center; cursor: pointer; text-align: left; font-size: 0.92em; }
+.raid-check { display: inline-flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; justify-content: center; cursor: pointer; text-align: left; font-size: var(--fs-sm); }
 .raid-check span { font-size: inherit; }
 .raid-dialog-overlay { z-index: 8900; }
 .raid-confirm-overlay { z-index: 9000; } /* claude:2026-10-24T15:30:00+02:00 — Rückfrage liegt über dem Raid-Dialog (QA2 Raid B3) */
@@ -175,7 +176,7 @@
 .raid-dialog-title { margin: 0; font-family: var(--font-head); color: var(--gold); }
 .raid-dialog-heroic { border-color: var(--rar-heroic); }
 .raid-dialog-mythic { border-color: var(--rar-mythic); }
-.raid-dialog-room { margin: 0; font-size: 0.9em; opacity: 0.85; }
+.raid-dialog-room { margin: 0; font-size: var(--fs-sm); opacity: 0.85; }
 .raid-dialog-body { margin: 0; line-height: 1.45; }
 .raid-dialog-footer { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 4px; }
 .raid-complete-stats { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
@@ -188,4 +189,4 @@
 .itip-set-tier.on { opacity: 1; border-left-color: var(--gold); }
 .itip-set-tier-head { font-weight: 700; }
 .itip-set-tier.on .itip-set-tier-head { color: var(--gold); }
-.itip-set-tier-fx { font-size: 0.92em; line-height: 1.35; }
+.itip-set-tier-fx { font-size: var(--fs-sm); line-height: 1.35; }

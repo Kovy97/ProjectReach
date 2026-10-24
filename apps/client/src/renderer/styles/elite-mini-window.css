@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:48:00+02:00 — UI 1.4 W2 Gruppe C: alle festen font-size-Werte (px/rem/em) auf die Skala var(--fs-…) umgestellt, cqw-Koeffizienten der Karten-Clamps um 1,4 angehoben. */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -52,7 +53,7 @@
 }
 
 .emw-header-icon {
-  font-size: 15px;
+  font-size: var(--fs-sm);
   color: #e0604b;
   flex-shrink: 0;
 }
@@ -61,7 +62,7 @@
   flex: 1;
   min-width: 0;
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.4px;
   text-transform: uppercase;
   color: var(--accent);
@@ -78,7 +79,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-xs);
   line-height: 1;
   color: var(--muted);
   background: url("../assets/bg_black.webp") repeat;
@@ -125,7 +126,7 @@
 }
 
 .emw-art-ph {
-  font-size: 22px;
+  font-size: var(--fs-xl);
   opacity: 0.6;
 }
 
@@ -139,7 +140,7 @@
 
 .emw-name {
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-xs);
   color: var(--gold);
   white-space: nowrap;
   overflow: hidden;
@@ -147,7 +148,7 @@
 }
 
 .emw-zone {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -155,7 +156,7 @@
 
 .emw-countdown {
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: #e0604b;
   margin-bottom: 2px;
 }
@@ -177,13 +178,13 @@
 }
 
 .emw-badge-icon {
-  font-size: 15px;
+  font-size: var(--fs-sm);
   color: #e0604b;
 }
 
 .emw-badge-countdown {
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   white-space: nowrap;
 }

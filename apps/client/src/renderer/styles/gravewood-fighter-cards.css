@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:48:00+02:00 — UI 1.4 W2 Gruppe C: alle festen font-size-Werte (px/rem/em) auf die Skala var(--fs-…) umgestellt, cqw-Koeffizienten der Karten-Clamps um 1,4 angehoben. */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* claude:2026-10-18T23:30:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /*
@@ -154,7 +155,7 @@
   border-bottom: 1px solid transparent;
   border-image: linear-gradient(90deg, transparent, var(--fc-rule), transparent) 1;
   font-family: var(--font-head);
-  font-size: clamp(20px, 7.2cqw, 30px);
+  font-size: clamp(var(--fs-lg), 10.08cqw, 30px);
   line-height: 1.08;
   letter-spacing: 0.025em;
   text-align: center;
@@ -173,7 +174,7 @@
   border-radius: 0;
   background: rgba(5, 7, 8, 0.64);
   font-family: var(--font-info);
-  font-size: clamp(9px, 2.8cqw, 12px);
+  font-size: clamp(var(--fs-xs), 3.92cqw, var(--fs-xs));
   line-height: 1.1;
   letter-spacing: 0.075em;
 }
@@ -224,7 +225,7 @@
   width: auto;
   color: #c7b889;
   font-family: var(--font-info);
-  font-size: clamp(8px, 2.55cqw, 12px);
+  font-size: clamp(var(--fs-xs), 3.57cqw, var(--fs-xs));
   font-weight: 600;
   line-height: 1.08;
   letter-spacing: 0.025em;
@@ -242,7 +243,7 @@
   overflow: visible;
   color: #f0e4bd;
   font-family: var(--font-info);
-  font-size: clamp(13px, 4.4cqw, 19px);
+  font-size: clamp(var(--fs-xs), 6.16cqw, var(--fs-lg));
   font-weight: 700;
   line-height: 1;
   text-align: right;
@@ -266,7 +267,7 @@
     var(--fc-surface) 0 0 / 320px 320px repeat;
   color: var(--text);
   font-family: var(--font-info);
-  font-size: clamp(11px, 3.55cqw, 15px);
+  font-size: clamp(var(--fs-xs), 4.97cqw, var(--fs-sm));
   font-variant-numeric: lining-nums tabular-nums;
 }
 
@@ -290,7 +291,7 @@
   border-left-width: 3px;
   background: rgba(17, 14, 11, 0.76);
   font-family: var(--font-info);
-  font-size: clamp(10px, 3.05cqw, 13px);
+  font-size: clamp(var(--fs-xs), 4.27cqw, var(--fs-xs));
   line-height: 1.2;
 }
 
@@ -315,7 +316,7 @@
 }
 
 #root .monster-card-drops .drop-icon {
-  font-size: clamp(22px, 7.2cqw, 30px);
+  font-size: clamp(var(--fs-xl), 10.08cqw, 30px);
 }
 
 #root .monster-card-drops .drop-icon-img {
@@ -343,7 +344,7 @@
   margin: 0;
   padding: clamp(8px, 2.5cqw, 12px) 16px;
   font-family: var(--font-head);
-  font-size: clamp(15px, 5.2cqw, 21px);
+  font-size: clamp(var(--fs-sm), 7.28cqw, var(--fs-xl));
   line-height: 1;
   letter-spacing: 0.045em;
 }
@@ -365,7 +366,7 @@
   min-height: clamp(32px, 9.6cqw, 43px);
   padding: clamp(4px, 1.5cqw, 7px) 2px;
   font-family: var(--font-info);
-  font-size: clamp(10px, 3.2cqw, 14px);
+  font-size: clamp(var(--fs-xs), 4.48cqw, var(--fs-xs));
   font-variant-numeric: lining-nums tabular-nums;
 }
 
@@ -408,11 +409,11 @@
   }
 
   #root .monster-card-stats.stat-line .stat-line-item-label {
-    font-size: 8px;
+    font-size: var(--fs-xs);
   }
 
   #root .monster-card-stats.stat-line .stat-line-item-value {
-    font-size: 13px;
+    font-size: var(--fs-xs);
   }
 }
 

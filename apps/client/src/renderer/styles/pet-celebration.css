@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:48:00+02:00 — UI 1.4 W2 Gruppe C: alle festen font-size-Werte (px/rem/em) auf die Skala var(--fs-…) umgestellt, cqw-Koeffizienten der Karten-Clamps um 1,4 angehoben. */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
@@ -119,7 +120,7 @@
 
 .pet-celebration-tag {
   letter-spacing: 0.22em;
-  font-size: 0.72rem;
+  font-size: var(--fs-xs);
   font-weight: 900;
   color: var(--ds-gold-bright, #f0dca0);
   background: rgba(216, 192, 106, 0.14);
@@ -224,7 +225,7 @@
 }
 
 .pet-celebration-label {
-  font-size: 0.86rem;
+  font-size: var(--fs-xs);
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.14em;
@@ -240,14 +241,14 @@
 }
 
 .pet-celebration-desc {
-  font-size: 0.86rem;
+  font-size: var(--fs-xs);
   line-height: 1.45;
   color: var(--ds-parch-ink, #e8d8b0);
   max-width: 340px;
 }
 
 .pet-celebration-sub {
-  font-size: 0.82rem;
+  font-size: var(--fs-xs);
   color: var(--muted);
   max-width: 300px;
 }
@@ -296,6 +297,6 @@
   .pet-celebration-icon-wrap { width: 116px; height: 116px; margin: 2px 0; }
   .pet-celebration-art { width: 96px; height: 96px; }
   .pet-celebration-icon { font-size: 4.2rem; }
-  .pet-celebration-name { font-size: 1.4rem; }
-  .pet-celebration-desc { font-size: 0.8rem; max-width: 300px; }
+  .pet-celebration-name { font-size: var(--fs-2xl); }
+  .pet-celebration-desc { font-size: var(--fs-xs); max-width: 300px; }
 }

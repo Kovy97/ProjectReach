@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:48:00+02:00 — UI 1.4 W2 Gruppe C: alle festen font-size-Werte (px/rem/em) auf die Skala var(--fs-…) umgestellt, cqw-Koeffizienten der Karten-Clamps um 1,4 angehoben. */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ─── Champion-Sieg-Zeremonie (Task #325, Chef-Feedback „Nach Elite-Fight komme ich instant zurück
@@ -98,7 +99,7 @@
 }
 
 .chdef-eyebrow {
-  font-size: 0.76rem;
+  font-size: var(--fs-xs);
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--ds-gold-bright, #f0dca0);
@@ -107,7 +108,7 @@
 
 .chdef-name {
   font-family: var(--font-head);
-  font-size: 1.55rem;
+  font-size: var(--fs-2xl);
   font-weight: 900;
   letter-spacing: 0.02em;
   color: var(--gold);
@@ -141,7 +142,7 @@
 
 .chdef-section-label {
   display: block;
-  font-size: 0.72rem;
+  font-size: var(--fs-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -160,7 +161,7 @@
 }
 
 .chdef-unique-tag {
-  font-size: 0.68rem;
+  font-size: var(--fs-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--rar-legendary, #e0902a);
@@ -195,7 +196,7 @@
 
 .chdef-unique-name {
   font-family: var(--font-head);
-  font-size: 0.94rem;
+  font-size: var(--fs-sm);
   font-weight: 700;
   color: var(--rar-legendary, #e0902a);
 }
@@ -237,7 +238,7 @@
 }
 
 .chdef-bounty-label {
-  font-size: 0.76rem;
+  font-size: var(--fs-xs);
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -259,7 +260,7 @@
 
 .chdef-hint {
   margin-top: 8px;
-  font-size: 0.68rem;
+  font-size: var(--fs-xs);
   color: var(--muted);
   opacity: 0.8;
   font-style: italic;
@@ -278,5 +279,5 @@
   .chdef-overlay { padding-top: 60px; }
   .chdef-card { padding: 18px 22px 16px; max-height: 86vh; }
   .chdef-portrait-frame { width: 84px; height: 84px; }
-  .chdef-name { font-size: 1.3rem; }
+  .chdef-name { font-size: var(--fs-xl); }
 }
