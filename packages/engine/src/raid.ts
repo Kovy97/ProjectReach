@@ -298,11 +298,29 @@ function finishRun(state: GameState, content: ContentDB, outcome: "complete" | "
   }
 }
 
-/** Lauf aufgeben (aus Rast, Tod-Dialog oder laufendem Kampf). Keine Rückgabe. */
+/**
+ * Lauf aufgeben (aus Rast, Tod-Dialog oder laufendem Kampf). Keine Rückgabe, außer auf Mythisch: im laufenden Kampf zählt es
+ * nach A15 wie Fliehen (Tod der Stufe), in der Rast gilt dieselbe Rückgabe (je 25 % der Gebühr).
+ */
 export function abandonRaid(state: GameState, content: ContentDB): void {
   const run = state.raid?.run;
   if (!run) return;
-  if (run.phase === "fight") stopCombat(state); // claude:2026-10-26T00:50:00+02:00 — Bossphase, XP-Sammler, Effekte mit räumen (QA-Raid #6)
+  if (run.phase === "fight") {
+    stopCombat(state); // claude:2026-10-26T00:50:00+02:00 — Bossphase, XP-Sammler, Effekte mit räumen (QA-Raid #6)
+    // claude:2026-10-24T15:18:33+02:00 — QA2-Raid B1 (A15): Aufgeben im Mythisch-Kampf verlässt denselben Kampf wie der Stopp-Knopf
+    // und nimmt denselben Pfad (Warteschlange endet, Lauf vorbei, 25 % zurück, Ergebnis „defeated“ mit Rückgabe). Normal/Heroisch
+    // enden wie bisher ohne Rückgabe; Tod plus „Aufgeben“ im Dialog ergäbe dort dasselbe Gold.
+    if (run.difficulty === "mythic" && resolveLeftRaidFight(state, content)) return;
+  }
+  if (run.phase === "rest" && run.difficulty === "mythic") {
+    // claude:2026-10-24T15:53:41+02:00 — CEO-Entscheid (QA2-Raid N2): Aufgeben in der Mythisch-Rast erstattet wie Tod und Fliehen 25 % der Gebühr.
+    // Sonst wäre absichtliches Sterben im nächsten Raum der billigere Weg zum selben Gold.
+    const def = raidDef(content, run.raidId);
+    const refund = def ? Math.round(run.feePaid * def.mythicRefundPct) : 0;
+    state.character.gold += refund;
+    finishRun(state, content, "abandoned", refund);
+    return;
+  }
   if (run.phase === "complete") {
     // claude:2026-10-26T00:50:00+02:00 — Abschluss sauber verbuchen und eine laufende Warteschlange beenden (QA-Raid #5).
     raidStateOf(state).queue = null;
@@ -464,9 +482,26 @@ export function resolveLeftRaidFight(state: GameState, content: ContentDB): bool
 }
 
 /**
+ * claude:2026-10-24T15:18:33+02:00 — QA2-Saves B2 (CEO: offline wie online): Hat der Spieler außerhalb des Raid-Kampfs selbst
+ * etwas gestartet (Aktion über die Seitenleiste oder einen eigenen Kampf), ist der Held beschäftigt. Ein automatischer Raum-Eintritt
+ * (Rast-Countdown, Neustart nach dem Tod, nächste Warteschlangen-Runde) liefe über beginDungeonRun und würfe eine endlose Aktion bzw.
+ * den eigenen Kampf weg. Ein Kampf in einem Raid-Raum (`raidOnly`) gehört nie dem Spieler (startbar nur über den Raid), alles
+ * andere schon.
+ */
+export function playerBusyOutsideRaid(state: GameState, content: ContentDB): boolean {
+  if (state.activeActionId !== null) return true;
+  if (state.combat.monsterId === null) return false;
+  const dId = state.combat.dungeonId;
+  const d = dId ? content.dungeons.find((x) => x.id === dId) : undefined;
+  return d?.raidOnly !== true;
+}
+
+/**
  * Raid-Uhr je Tick: Rast-Countdown (nur Auto-Weiter, Warteschlange oder offline), Tod-Entscheidung in Warteschlange/
  * offline (A6: Normal bis maxAutoRestarts gratis, Heroisch nur mit „Neustart automatisch kaufen“), Abschluss-
  * Bildschirm schließt in Warteschlange/offline/Auto-Weiter selbst. Kein RNG.
+ * Läuft eine eigene Aktion oder ein eigener Kampf des Spielers, betritt die Automatik keinen Raum: der Lauf wartet mit ruhendem
+ * Countdown wie online im Dialog, bis der Spieler fertig ist oder selbst weitermacht.
  */
 export function tickRaid(state: GameState, content: ContentDB, dtMs: number, offline: boolean, nowMs?: number): void {
   const rs = state.raid;
@@ -482,7 +517,12 @@ export function tickRaid(state: GameState, content: ContentDB, dtMs: number, off
     if (!auto) return;
     // claude:2026-10-26T00:50:00+02:00 — der Abschluss-Dialog (Laufzeit, Gebühr, Bestzeit) schließt nur in Warteschlange/offline selbst (QA-Raid #10).
     if (run.phase === "complete" && !(offline || fromQueue)) return;
-    run.restMs -= dtMs;
+    // claude:2026-10-24T15:18:33+02:00 — QA2-Saves B2: Rast → nächster Raum bzw. Abschluss → nächste Warteschlangen-Runde betreten einen
+    // Raum. Ist der Held mit Eigenem beschäftigt, ruht der Countdown (online wie offline). Ein Abschluss ohne Folgerunde schließt weiter.
+    const q = rs.queue;
+    const entersRoom = run.phase === "rest" || (q !== null && (q.remaining === null || q.remaining > 1));
+    if (entersRoom && playerBusyOutsideRaid(state, content)) return;
+    run.restMs = Math.max(0, run.restMs - dtMs); // claude:2026-10-24T15:18:33+02:00 — nicht unbegrenzt ins Minus (Laden klemmt ohnehin auf 0)
     if (run.restMs > 0) return;
     if (run.phase === "rest") continueRaid(state, content);
     else finishRun(state, content, "complete", 0, nowMs);
@@ -490,14 +530,19 @@ export function tickRaid(state: GameState, content: ContentDB, dtMs: number, off
   }
   if (run.phase === "defeated") {
     if (!(offline || fromQueue)) return;
-    run.restMs -= dtMs;
-    if (run.restMs > 0) return;
     const def = raidDef(content, run.raidId);
     const underLimit = !!def && run.restarts < def.maxAutoRestarts;
-    if (underLimit && run.difficulty === "normal" && restartRaidRoom(state, content) === "ok") return;
-    if (underLimit && run.difficulty === "heroic" && state.settings.raidAutoBuyRestart === true && restartRaidRoom(state, content) === "ok") return;
+    // claude:2026-10-24T15:18:33+02:00 — QA2-Saves B2: ein automatischer Neustart betritt den Raum; mit eigener Aktion/eigenem Kampf
+    // wartet der Tod-Dialog wie online (Countdown ruht).
+    const autoRestart = underLimit && (run.difficulty === "normal" || (run.difficulty === "heroic" && state.settings.raidAutoBuyRestart === true));
+    if (autoRestart && playerBusyOutsideRaid(state, content)) return;
+    run.restMs = Math.max(0, run.restMs - dtMs); // claude:2026-10-24T15:18:33+02:00 — nicht unbegrenzt ins Minus
+    if (run.restMs > 0) return;
+    if (autoRestart && restartRaidRoom(state, content) === "ok") return;
     // claude:2026-10-26T00:50:00+02:00 — Heroisch ohne Auto-Kauf und ohne Warteschlange: offline nicht selbst entscheiden, der Spieler wählt (QA-Raid #8).
-    if (!fromQueue && run.difficulty === "heroic" && state.settings.raidAutoBuyRestart !== true) return;
+    // claude:2026-10-24T15:18:33+02:00 — QA2-Raid B2 (CEO, analog R3): auch MIT Auto-Kauf, wenn der Kauf scheitert (Gold fehlt) oder
+    // maxAutoRestarts erreicht ist. Ohne Warteschlange entscheidet im Heroisch nie die Engine; die Gebühr verfällt nicht ohne Wahl.
+    if (!fromQueue && run.difficulty === "heroic") return;
     finishRun(state, content, "defeated", 0, nowMs);
   }
 }

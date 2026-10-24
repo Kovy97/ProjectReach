@@ -105,7 +105,9 @@ describe("Rüstungs-Trinität A2: Leder-Dodge (Voll-Vermeidung, §1.3)", () => {
     // Evasion-Tempo-Zähmung #301: 40 % Voll-Vermeidung ⇒ erwartetes Schadens-Verhältnis ~0.6
     // (vorher 0.75-Cap ⇒ ~0.25). Beide Läufe tragen Leder (LEATHER_HIT_FLOOR wirkt identisch).
     expect(high).toBeLessThan(low * 0.75); // Dodge wirkt klar messbar …
-    expect(high).toBeGreaterThan(low * 0.45); // … ist aber keine Quasi-Unsichtbarkeit mehr (#301-Kern)
+    // claude:2026-10-24T17:21:35+02:00 — Leder stärken (design/1.4.0-balance-leder.md): am Deckel trägt Leder zusätzlich LEATHER_CAP_HIT_BONUS (Boden 0,18 → 0,58),
+    // Verhältnis damit ~0,6·0,42/0,82 ≈ 0,31 statt ~0,6. Untergrenze 0,45 → 0,20 (Quasi-Unsichtbarkeit bleibt ausgeschlossen).
+    expect(high).toBeGreaterThan(low * 0.2); // … ist aber keine Quasi-Unsichtbarkeit mehr (#301-Kern)
   });
 });
 

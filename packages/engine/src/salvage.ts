@@ -163,6 +163,7 @@ function payOut(state: GameState, content: ContentDB, y: SalvageYield, times: nu
  * Items: 0. Gibt die zerlegte Stückzahl zurück.
  */
 export function salvageItem(state: GameState, content: ContentDB, itemId: ItemId, qty = 1): number {
+  if (typeof qty !== "number" || !Number.isFinite(qty) || qty <= 0) return 0; // claude:2026-10-24T15:21:04+02:00 — derselbe Finite-Guard wie salvageBankItem (QA-Runde 2 Werkstatt B3)
   if (isSalvageLocked(state, itemId)) return 0;
   const y = salvageYield(content, itemId);
   if (!y) return 0;
@@ -192,6 +193,9 @@ export function salvageInstance(state: GameState, content: ContentDB, instanceId
  * (OSRS-Verhalten wie beim Abheben). Gibt die zerlegte Stückzahl zurück.
  */
 export function salvageBankItem(state: GameState, content: ContentDB, itemId: ItemId, qty = 1): number {
+  // claude:2026-10-24T15:21:04+02:00 — Finite-Guard wie depositItem (QA-Runde 2 Werkstatt B3): NaN fiel durch beide Vergleiche und schrieb
+  // `bank[item] = have − NaN`. Nicht-endlich oder ≤ 0 ⇒ nichts zerlegen.
+  if (typeof qty !== "number" || !Number.isFinite(qty) || qty <= 0) return 0;
   if (isSalvageLocked(state, itemId)) return 0;
   const y = salvageYield(content, itemId);
   if (!y) return 0;

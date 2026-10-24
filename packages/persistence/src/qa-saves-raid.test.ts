@@ -118,13 +118,15 @@ describe("Raid: Offline-Aufholen mit Toden und Neustarts", () => {
     expect(res.state.character.gold).toBe(goldAfterFee);
   });
 
-  it("Heroisch mit „Neustart kaufen“, aber zu wenig Gold: kein Neustart, kein Minus", () => {
+  // claude:2026-10-24T15:18:33+02:00 — QA2-Raid B2 (CEO, analog R3): IST auf SOLL umgestellt; scheitert der Auto-Kauf, wartet der Tod-Dialog.
+  it("Heroisch mit „Neustart kaufen“, aber zu wenig Gold: kein Neustart, kein Minus, der Lauf wartet im Tod-Dialog", () => {
     const s = raider(950_000); // 900k Gebühr, danach 50k < 100k Neustart
     s.settings.raidAutoBuyRestart = true;
     expect(startRaid(s, content, "gobkharaz", "heroic")).toBe("ok");
     const goldAfterFee = s.character.gold;
     const res = deserialize(serialize(s, AT), content, AT + H8)!;
-    expect(res.state.raid!.run).toBeNull();
+    expect(res.state.raid!.run?.phase).toBe("defeated");
+    expect(res.state.raid!.lastResult).toBeNull();
     expect(res.state.character.gold).toBe(goldAfterFee);
     expect(res.state.character.gold).toBeGreaterThanOrEqual(0);
   });

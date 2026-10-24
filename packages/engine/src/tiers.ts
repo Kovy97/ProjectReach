@@ -8,6 +8,7 @@
 // Reine Funktion der ContentDB, je ContentDB einmal berechnet. Kein Spielstand, kein RNG.
 import type { ContentDB, ItemDef, ItemId } from "@hearthforge/shared";
 import { lowestDropSourceLevel, sourceLevelToWearLevel } from "./drop-sources";
+import { storageShelfOf } from "./storage";
 
 /** Höchste reguläre Stufe (Götteisen). Raid-Beute steht darüber (13). */
 export const MAX_ITEM_TIER = 12;
@@ -24,6 +25,16 @@ export function tierForLevel(level: number): number {
   return tier;
 }
 
+/**
+ * claude:2026-10-24T16:33:21+02:00 — Stammt die Stufe dieses Teils nur aus der Herstellungs-Anforderung (Umhang-Regel B4: Ausrüstung ohne Trage-Anforderung
+ * und ohne Gebiet)? Solche Teile stimmen bei den Material-Stufen mit Stufe I, also wie vor B4 (CEO-Entscheid QA-Runde 2).
+ */
+function craftDerivedTier(content: ContentDB, item: ItemDef): boolean {
+  if (typeof item.tier === "number" || typeof item.arrow?.tier === "number" || item.type !== "equipment") return false;
+  if (Object.values(item.requirements ?? {}).some((v) => typeof v === "number" && v > 0)) return false;
+  return lowestDropSourceLevel(content, item.id) === null;
+}
+
 function gearTier(content: ContentDB, item: ItemDef): number | null {
   if (typeof item.tier === "number") return item.tier;
   if (typeof item.arrow?.tier === "number") return item.arrow.tier; // claude:2026-10-26T03:05:00+02:00 — Pfeile tragen ihre Stufe selbst (QA-Klarheit P2)
@@ -33,7 +44,23 @@ function gearTier(content: ContentDB, item: ItemDef): number | null {
   // Ohne Trage-Anforderung (vor allem Schmuck und Umhänge aus Drops): Stufe aus der niedrigsten Drop-Quelle
   // (design/1.4.0-balance-werkstatt.md §1.2), damit Sterne und Bergungs-Ertrag dieselbe Stufe meinen.
   const src = lowestDropSourceLevel(content, item.id);
-  return tierForLevel(src === null ? 1 : sourceLevelToWearLevel(src));
+  if (src !== null) return tierForLevel(sourceLevelToWearLevel(src));
+  // claude:2026-10-24T15:21:04+02:00 — ohne Trage-Anforderung UND ohne Gebiet: die Herstellungs-Anforderung (niedrigstes Rezept-Level),
+  // auf die Stufen-Skala abgebildet wie ein Ausrüstungs-Level (QA-Runde 2 Klarheit B4, CEO-Entscheid; z. B. hardened_warcape,
+  // Schneidern 45 ⇒ VI statt I). Ohne Rezept bleibt Stufe I (Markenladen-Schmuck u. a.).
+  const craft = lowestCraftLevel(content, item.id);
+  return tierForLevel(craft ?? 1);
+}
+
+/** Niedrigstes Skill-Level eines Rezepts (Aktion mit Zutaten), das dieses Item herstellt; null = keins. */
+function lowestCraftLevel(content: ContentDB, itemId: ItemId): number | null {
+  let min: number | null = null;
+  for (const a of Object.values(content.actions)) {
+    if ((a.inputs?.length ?? 0) === 0 || !a.loot.some((l) => l.itemId === itemId)) continue;
+    const lvl = typeof a.levelRequired === "number" && a.levelRequired > 0 ? a.levelRequired : 1;
+    if (min === null || lvl < min) min = lvl;
+  }
+  return min;
 }
 
 const cache = new WeakMap<ContentDB, Map<ItemId, number>>();
@@ -47,15 +74,37 @@ function buildTierMap(content: ContentDB): Map<ItemId, number> {
   // Materialien: rückwärts durch die Rezeptketten (Erz → Barren → Schwert). Ein Material bekommt die Stufe, in
   // die es am häufigsten eingeht (Gleichstand → niedriger). So bleibt der Götteisen-Barren XII, obwohl ein
   // einzelnes Schmuckrezept der Stufe X ihn auch braucht. Nur Rezepte mit Stufen-Ausgabe zählen.
+  // claude:2026-10-24T16:03:31+02:00 — CEO-Korrektur QA-Runde 2 Klarheit B3: wieder die HÄUFIGSTE Stufe (die „niedrigste“ hatte Götteisen X, Sehne I,
+  // Aether-Essenz VI, Leere-Rune V), dazu die KETTENKAPPE: ein Material steht nie über einem Material, zu dem es direkt
+  // verarbeitet wird (Eisenerz ≤ Eisenbarren, Kohle ≤ Stahlbarren). Transitiv über die Kette, weil jede Runde die Stufen der
+  // Folge-Materialien aus der Vorrunde liest, bis nichts mehr wechselt. Die Kräuter-/Essenzen-Ausnahme gilt auch hier: Kräuter,
+  // Essenzen und Zauberrunen (Regale „herbs“/„essences“) erben ihre Stufe nicht über ein einzelnes Folgerezept, sonst zöge die
+  // Aether-Rune (VI) die Aether-Essenz von XII auf VI und mit ihr Reliquienscherbe und Götzenmünze.
   const recipes = Object.values(content.actions).filter((a) => (a.inputs?.length ?? 0) > 0);
   const isMat = (id: ItemId): boolean => content.items[id]?.type === "material" && typeof content.items[id]?.tier !== "number";
-  for (let pass = 0; pass < 20; pass++) {
+  // claude:2026-10-24T16:33:21+02:00 — CEO-Entscheid QA-Runde 2: Umhänge (alle Teile mit Stufe aus der Umhang-Regel B4, heute nur die sechs hergestellten
+  // Umhänge ohne Anforderung) tragen ihre B4-Stufe nur selbst; bei den Material-Stimmen zählen sie mit Stufe I wie vor B4. Sonst
+  // kippt die knappe Mehrheit von Nessel-Stoff (7:5) und Dämmer-Essenz (10:8) auf III. Wörtlich „gar nicht mitzählen“ hätte die
+  // Dämmer-Essenz (8:9) trotzdem auf III gehoben und sechs weitere Stoff-Materialien verschoben (Spinnenseide/Leerenfaden ohne
+  // Stufe, Flachs/Leinen IV, Geisterseide/-gewebe IX); das widerspräche dem Ziel „alle übrigen Werte unverändert“.
+  const craftDerived = new Set(Object.values(content.items).filter((i) => craftDerivedTier(content, i)).map((i) => i.id));
+  const voteTierOf = (id: ItemId): number | undefined => (craftDerived.has(id) ? 1 : map.get(id));
+  const isMaterialItem = (id: ItemId): boolean => content.items[id]?.type === "material";
+  const capExempt = (id: ItemId): boolean => {
+    const shelf = storageShelfOf(content, id);
+    return shelf === "herbs" || shelf === "essences";
+  };
+  for (let pass = 0; pass < 40; pass++) {
     const votes = new Map<ItemId, Map<number, number>>();
+    const caps = new Map<ItemId, number>();
     for (const a of recipes) {
       let outTier: number | null = null;
+      let matCap: number | null = null;
       for (const l of a.loot) {
         const t = map.get(l.itemId);
-        if (t !== undefined && (outTier === null || t < outTier)) outTier = t;
+        const tv = voteTierOf(l.itemId); // claude:2026-10-24T16:33:21+02:00 — B4-Teile stimmen mit I (s. o.)
+        if (tv !== undefined && (outTier === null || tv < outTier)) outTier = tv;
+        if (t !== undefined && isMaterialItem(l.itemId) && (matCap === null || t < matCap)) matCap = t;
       }
       // claude:2026-10-26T03:05:00+02:00 — Rezepte ohne Stufen-Ausgabe (Tränke, Essen, Brennen) stimmen für „keine Stufe“ (0). So bleiben
       // Trank-Kräuter ohne Sterne, auch wenn ein einzelnes Ausrüstungsrezept sie braucht (Pestmaske, QA-Klarheit P3).
@@ -65,6 +114,7 @@ function buildTierMap(content: ContentDB): Map<ItemId, number> {
         const v = votes.get(inp.itemId) ?? new Map<number, number>();
         v.set(vote, (v.get(vote) ?? 0) + 1);
         votes.set(inp.itemId, v);
+        if (matCap !== null && !capExempt(inp.itemId)) caps.set(inp.itemId, Math.min(caps.get(inp.itemId) ?? matCap, matCap));
       }
     }
     let changed = false;
@@ -79,6 +129,9 @@ function buildTierMap(content: ContentDB): Map<ItemId, number> {
         if (n > bestN || (n === bestN && t < best)) { best = t; bestN = n; }
       }
       if ((v.get(0) ?? 0) > tiered) best = 0;
+      // claude:2026-10-24T16:03:31+02:00 — Kettenkappe (s. o.): nie über dem niedrigsten Material, zu dem es direkt verarbeitet wird.
+      const cap = caps.get(id);
+      if (best !== 0 && cap !== undefined && cap < best) best = cap;
       if (best === 0) {
         if (map.delete(id)) changed = true;
       } else if (map.get(id) !== best) {

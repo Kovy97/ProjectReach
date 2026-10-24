@@ -129,6 +129,18 @@ function ohneWerkzeuge<T extends object>(equipment: T): T {
  * weiter (A6), der schwache Fixture-Charakter stürbe, und der Tod hinterlässt transiente Kampffelder (`stopReason`
  * u. a.), die absichtlich nicht gespeichert werden; das wäre kein Migrationsfehler, ließe aber den Round-Trip-Vergleich
  * reißen. Laufender Raid über Save/Load steht in raid-persistence.test.ts. Generator war ein Einmal-Test, danach gelöscht.
+ *
+ * claude:2026-10-24T15:21:04+02:00 — SAVE 94 (QA-Runde 2, 1.4.0; nie live): `v94-synthetic-1.4.0.json` ist SYNTHETISCH über die
+ * REALE KETTE: v93-Fixture → Laden (Migration auf 94, `stats.harvestedById` = {}) → 3 Saat der schnellsten Feldfrucht, Beet 0
+ * bepflanzt, `advance` um Reifezeit + 1 s (Bergbau läuft weiter, Beet erntet und pflanzt nach) → serialize, Fixpunkt geprüft.
+ * Trägt damit `harvestedById` > 0, ein wachsendes Beet, Köcher 250 (unter `QUIVER_CAPACITY`) und den Raid-Eintrag der v93-Kette.
+ * Detailprüfungen in save94-qa2-fixes.test.ts. Generator war ein Einmal-Test, danach gelöscht; das v93-Fixture bleibt.
+ *
+ * claude:2026-10-24T16:03:31+02:00 — SAVE 95 (Chef-Entscheid QA-Runde 2 Werkstatt B2; nie live): `v95-synthetic-1.4.0.json` ist
+ * SYNTHETISCH über die REALE KETTE: v94-Fixture → Laden (Migration auf 95, `stats.producedBySkill` = {}, der offene Saphir-Auftrag
+ * hat keinen Fortschritt, also keine Vorbelegung) → `advance` 10 min (Bergbau Kupfer samt Nebenfund, Beet erntet) → serialize,
+ * Fixpunkt geprüft. Trägt `producedBySkill.mining` > 0 neben dem offenen Lieferauftrag. Detailprüfungen in
+ * save95-orders-source.test.ts. Generator war ein Einmal-Test, danach gelöscht; v93 und v94 bleiben.
  */
 const VAULT_DIR = join(__dirname, "..", "fixtures", "save-compat");
 
@@ -428,6 +440,8 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     // claude:2026-10-25T04:50:00+02:00 — SAVE 93 (Raid): leerer Raid-Zustand, Schalter aus.
     erwartet.state.raid = defaultRaidState();
     Object.assign(erwartet.state.settings, { raidAutoContinue: false, raidAutoBuyRestart: false });
+    erwartet.state.stats.harvestedById = {}; // claude:2026-10-24T15:21:04+02:00 — SAVE 94 (Beet-Ernte-Zähler, alte Saves starten bei 0)
+    erwartet.state.stats.producedBySkill = {}; // claude:2026-10-24T16:03:31+02:00 — SAVE 95 (Erzeugt je Skill, ohne offene Aufträge leer)
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(result!.state, raw.savedAt))).toEqual(erwartet);
   });

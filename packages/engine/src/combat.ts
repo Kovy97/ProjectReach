@@ -52,6 +52,7 @@ import {
   FROST_SLOW,
   BLOCK_DAMAGE_REDUCTION,
   LEATHER_HIT_FLOOR,
+  DODGE_CAP,
   MONSTER_ACC_LEVEL_START,
   MONSTER_ACC_PER_LEVEL,
   ONE_SHOT_CAP,
@@ -672,6 +673,10 @@ type SpecialEffects = Partial<Record<SpecialEffectType, WeaponEffect>>;
  * (magnitude dort 0) — der Kill-Pfad liest je Kind genau dieses Feld (Revision 29.08.2026: die Summe
  * addierte nur magnitude, Waffe + Handschuhe kürzten den Cooldown daher nicht gemeinsam).
  */
+// claude:2026-10-24T17:06:09+02:00 — Leder stärken: Zusatz-Boden für Leder am Ausweich-Deckel (siehe Aufruf unten im Gegnerangriff).
+const LEATHER_CAP_HIT_BONUS = 0.40;
+const LEATHER_CAP_RAMP_FROM = 0.75;
+
 const ADDITIVE_KILL_FLATS: ReadonlySet<SpecialEffectType> = new Set<SpecialEffectType>(["healOnKill", "wardOnKill", "cooldownOnKill"]);
 
 /** Sammelt die Spezial-Effekte der aktuellen Ausrüstung. Rein lesend, kein RNG. */
@@ -1946,8 +1951,9 @@ function onEnemyDefeated(
         cs.enemyEffects = [];
         resetEnemyElemental(cs); // neue Welle = frische Frost-/Schock-/Gift-Zähler (vor applyCarryToNewEnemy)
         // Armor-Iteration 2 §6.1: Ward ist FARM-SESSION-scoped, kein Gratis-Voll-Reset je Kill mehr.
-        // Die neue Welle refillt nur WARD_KILL_REFILL_PCT (20 %) des Pools — verbraucht ein Dauerkampf
-        // mehr als 20 %+Cast-Recharge/Warding-Regen zurückgeben, erodiert der Pool → Food kehrt zurück.
+        // Die neue Welle refillt nur WARD_KILL_REFILL_PCT (10 %) des Pools — verbraucht ein Dauerkampf
+        // mehr als 10 %+Cast-Recharge/Warding-Regen zurückgeben, erodiert der Pool → Food kehrt zurück.
+        // claude:2026-10-24T15:18:33+02:00 — Kommentar an die Konstante (0,10) angeglichen (QA2-Ward H2), Logik unverändert.
         // Start/Death-Heal bleiben VOLL (startCombat / onPlayerDefeated).
         state.character.ward = Math.min(
           stats.maxWard,
@@ -1995,10 +2001,11 @@ function onEnemyDefeated(
   cs.enemyTimerMs = 0;
   cs.enemyEffects = [];
   resetEnemyElemental(cs); // Respawn = frische Frost-/Schock-/Gift-Zähler (vor applyCarryToNewEnemy)
-  // Armor-Iteration 2 §6.1: Ward beim Respawn nur TEIL-Refill (WARD_KILL_REFILL_PCT = 20 %) statt
+  // Armor-Iteration 2 §6.1: Ward beim Respawn nur TEIL-Refill (WARD_KILL_REFILL_PCT = 10 %) statt
   // Gratis-Voll-Reset — der Pool ist farm-session-scoped und erodiert über eine Farm-Serie, sobald
-  // pro Kill mehr Ward verbraucht wird als 20 %+Recharge+Warding-Regen zurückgeben (→ Food-Druck für
+  // pro Kill mehr Ward verbraucht wird als 10 %+Recharge+Warding-Regen zurückgeben (→ Food-Druck für
   // den Magier). Voller Start bleibt startCombat, volles Nachfüllen nur beim Death-Heal.
+  // claude:2026-10-24T15:18:33+02:00 — Kommentar an die Konstante (0,10) angeglichen (QA2-Ward H2), Logik unverändert.
   state.character.ward = Math.min(
     stats.maxWard,
     state.character.ward + WARD_KILL_REFILL_PCT * stats.maxWard,
@@ -3377,7 +3384,16 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
           // Dodge-Varianz („ein Unglückstreffer = halbe Leiste") am Low/Mid-Band, ohne Leders
           // Vermeidungs-Identität zu Mitigation umzubauen. Deterministisch (kein RNG-Draw). Läuft VOR
           // Block/Cap/Ward — ein Leder-Träger ohne Schild hat blockChance=0 (der Block-Step ist no-op).
-          if (stats.dodgeChance > 0) dmg *= 1 - LEATHER_HIT_FLOOR;
+          // claude:2026-10-24T17:06:09+02:00 — Leder stärken (Chef-Entscheid, design/1.4.0-balance-leder.md): wer den Ausweich-Deckel fast erreicht
+          // (Hochstufen-Leder + Runen), dem fängt der Boden zusätzlich LEATHER_CAP_HIT_BONUS ab, linear von
+          // LEATHER_CAP_RAMP_FROM·Deckel bis zum Deckel. Reine Funktion der Ausweichchance, kein RNG, nur Leder (dodgeChance > 0).
+          if (stats.dodgeChance > 0) {
+            const capRamp = Math.max(
+              0,
+              Math.min(1, (stats.dodgeChance / DODGE_CAP - LEATHER_CAP_RAMP_FROM) / (1 - LEATHER_CAP_RAMP_FROM)),
+            );
+            dmg *= 1 - LEATHER_HIT_FLOOR - LEATHER_CAP_HIT_BONUS * capRamp;
+          }
           // STEP 5 — Schild-Block (§1.2): ein geblockter Treffer verliert BLOCK_DAMAGE_REDUCTION
           // (−85 %). RNG nur bei blockChance > 0 (Melee-1H-Schild) → Alt-Content sequenz-identisch.
           let blockedThisHit = false;

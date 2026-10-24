@@ -191,6 +191,8 @@ describe("v88-Vault-Fixture (nach einem echten Aufstieg gepinnt)", () => {
     // claude:2026-10-25T04:50:00+02:00 — SAVE 93 (Raid): leerer Raid-Zustand, Schalter aus.
     erwartet.state.raid = defaultRaidState();
     Object.assign(erwartet.state.settings, { raidAutoContinue: false, raidAutoBuyRestart: false });
+    erwartet.state.stats.harvestedById = {}; // claude:2026-10-24T15:21:04+02:00 — SAVE 94 (Beet-Ernte-Zähler, alte Saves starten bei 0)
+    erwartet.state.stats.producedBySkill = {}; // claude:2026-10-24T16:03:31+02:00 — SAVE 95 (Erzeugt je Skill, ohne offene Aufträge leer)
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });

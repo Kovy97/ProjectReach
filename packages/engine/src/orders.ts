@@ -35,7 +35,8 @@ import { tavernBandMaterials, tavernExpectedQty, tavernHashFloat, tavernMainOutp
  * Hash-Kisten) ohne die Taverne selbst (`TAVERN_ENABLED` bleibt aus). Abweichungen laut Spec:
  * - Menge und XP rechnen mit der EFFEKTIVEN Dauer (Werkzeug, Lager, Tempo), sonst wären Aufträge mit
  *   Spitzenwerkzeug nur halb so lang (§4.2/§4.5).
- * - Fortschritt immer mit Startanker `stats.producedById − baseline`, auch beim Liefern. Nie der Bestand,
+ * - Fortschritt immer mit Startanker `stats.producedBySkill[skill][item] − baseline` (seit SAVE 95 nur Ware aus Aktionen des
+ *   Auftrags-Skills, claude:2026-10-24T16:03:31+02:00, Chef-Entscheid QA-Runde 2 Werkstatt B2), auch beim Liefern. Nie der Bestand,
  *   sonst erfüllte eine volle Bank jeden Lieferauftrag ohne Arbeit (§4.3).
  * - Kein Vorgriff: nur Aktionen mit `levelRequired ≤ Level`; Herstellaufträge nur, wenn die Zutaten erreichbar sind.
  * - Lohn: Gold über dem Verkaufswert, XP-Batzen, 10 % Werkstattkiste (ohne Ausrüstung). Würfe aus `eventRng`.
@@ -81,6 +82,9 @@ export function workOrderKindFor(skill: SkillId): WorkOrderKind | null {
 function deliverableInstances(state: GameState, itemId: ItemId): Array<{ inst: ItemInstance; inBank: boolean }> {
   const locked = state.lockedItems ?? {};
   const out: Array<{ inst: ItemInstance; inBank: boolean }> = [];
+  // claude:2026-10-24T16:03:31+02:00 — Chef-Entscheid QA-Runde 2 Werkstatt B1 „das Schloss schützt immer“: auch das Basis-Schloss (Item-ID) sperrt alle
+  // Einzelstücke dieses Items (wie bei der Bergung, salvage.ts).
+  if (locked[itemId]) return out;
   for (const inst of state.inventory.instances ?? []) if (inst.baseItemId === itemId && !locked[inst.instanceId]) out.push({ inst, inBank: false });
   for (const inst of state.bankInstances ?? []) if (inst.baseItemId === itemId && !locked[inst.instanceId]) out.push({ inst, inBank: true });
   // Die schwächsten zuerst: ohne Runen/Suffix, dann nach Suffix-Wurf.
@@ -88,8 +92,22 @@ function deliverableInstances(state: GameState, itemId: ItemId): Array<{ inst: I
   return out.sort((a, b) => score(a.inst) - score(b.inst));
 }
 
+// claude:2026-10-24T15:21:04+02:00 — Bestand = Inventar + Lager/Bank + freie Einzelstücke. Angelegtes zählt nicht, auch nicht der Köcher
+// (CEO-Entscheid QA-Runde 2 Fernkampf B2: ausgerüstete Munition wie angelegte Ausrüstung; der Köcher-Deckel lässt den Rest im Lager).
 function stockOf(state: GameState, itemId: ItemId): number {
-  return itemCount(state.inventory, itemId) + (state.bank[itemId] ?? 0) + deliverableInstances(state, itemId).length;
+  // claude:2026-10-24T16:03:31+02:00 — gesperrter Stapel zählt nie als Bestand (Chef-Entscheid QA-Runde 2 Werkstatt B1); gesperrte Einzelstücke fallen in
+  // deliverableInstances heraus.
+  const stack = state.lockedItems?.[itemId] ? 0 : itemCount(state.inventory, itemId) + (state.bank[itemId] ?? 0);
+  return stack + deliverableInstances(state, itemId).length;
+}
+
+/**
+ * claude:2026-10-24T16:03:31+02:00 — Fortschritts-Zähler eines Auftrags (SAVE 95, Chef-Entscheid QA-Runde 2 Werkstatt B2 „nur die passende Quelle zählt“):
+ * erzeugte Stücke aus Aktionen des Auftrags-Skills (`stats.producedBySkill`, tick.ts). Beet-Ernte, Diebstahl und Nebenfunde
+ * anderer Skills zählen nicht, also auch kein XP-Batzen über Umwege.
+ */
+function producedFor(state: GameState, skill: SkillId, itemId: ItemId): number {
+  return state.stats.producedBySkill?.[skill]?.[itemId] ?? 0;
 }
 
 /** Herstellbar über eine erreichbare Aktion (Tiefe ≤ ORDER_INPUT_REACH_DEPTH), Bestand > 0 oder Gold-Shop. */
@@ -267,9 +285,9 @@ export function acceptWorkOrder(state: GameState): boolean {
   if (!o.offer || o.open.length >= ORDER_MAX_OPEN) return false;
   // claude:2026-10-26T01:25:00+02:00 — Startanker hinter dem Restbedarf schon offener Aufträge auf dasselbe Item (Alt-Stände, QA-Aufträge P2-2).
   const offer = o.offer;
-  const produced = state.stats.producedById?.[offer.itemId] ?? 0;
+  const produced = producedFor(state, offer.skill, offer.itemId); // claude:2026-10-24T16:03:31+02:00 — Zähler je Skill (SAVE 95)
   const pending = o.open
-    .filter((x) => x.itemId === offer.itemId)
+    .filter((x) => x.itemId === offer.itemId && x.skill === offer.skill)
     .reduce((sum, x) => sum + Math.max(0, x.count - Math.max(0, Math.min(x.count, produced - x.baseline))), 0);
   const order = { ...offer, baseline: produced + pending };
   o.open.push(order);
@@ -303,7 +321,7 @@ export interface WorkOrderProgress {
 }
 
 export function workOrderProgress(state: GameState, order: WorkOrder): WorkOrderProgress {
-  const produced = state.stats.producedById?.[order.itemId] ?? 0;
+  const produced = producedFor(state, order.skill, order.itemId); // claude:2026-10-24T16:03:31+02:00 — nur der Auftrags-Skill (SAVE 95)
   const done = Math.max(0, Math.min(order.count, produced - order.baseline));
   return { done, count: order.count, ready: done >= order.count, stock: stockOf(state, order.itemId) };
 }
@@ -317,9 +335,11 @@ export interface WorkOrderDeliverResult {
 }
 
 function takeFromStock(state: GameState, itemId: ItemId, qty: number): number {
-  let taken = removeItem(state.inventory, itemId, Math.min(qty, itemCount(state.inventory, itemId)));
+  // claude:2026-10-24T16:03:31+02:00 — gesperrter Stapel wird nie abgegeben (Chef-Entscheid QA-Runde 2 Werkstatt B1); dann nur freie Einzelstücke.
+  const stackLocked = state.lockedItems?.[itemId] === true;
+  let taken = stackLocked ? 0 : removeItem(state.inventory, itemId, Math.min(qty, itemCount(state.inventory, itemId)));
   const rest = qty - taken;
-  if (rest > 0) {
+  if (rest > 0 && !stackLocked) {
     const inBank = state.bank[itemId] ?? 0;
     const take = Math.min(rest, inBank);
     if (take > 0) {

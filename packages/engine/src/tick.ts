@@ -10,7 +10,7 @@ import {
 const OUT_OF_COMBAT_WARD_REGEN_PCT = 0.05;
 import type { ActionDef } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
-import { advanceActionQueue, setQueueSkip, onQueuedDungeonCleared, requeueDungeonFront, requeueFightFront } from "./actions";
+import { actionLevelMet, advanceActionQueue, setQueueSkip, onQueuedDungeonCleared, requeueDungeonFront, requeueFightFront } from "./actions";
 import { nextFloat, nextInt } from "./rng";
 import { blessingMult, setShrineChanceBonus, shrineAmplifiedMult } from "./blessing";
 import { computeStats, syncProgression } from "./character";
@@ -95,6 +95,17 @@ function consumeInput(state: GameState, itemId: ItemId, qty: number): void {
 // auf. Damit ist der Ertrag beim Crafting auch bei vollem Inventar/Lager sicher untergebracht
 // (kein stiller Material-Verlust mehr) und die Aktion muss nicht stoppen — der `inventory_full`-Stopp
 // entfällt komplett (nur `no_materials` bleibt Abbruchgrund fürs Skilling).
+
+/**
+ * claude:2026-10-24T16:03:31+02:00 — Arbeitsaufträge (SAVE 95, Chef-Entscheid QA-Runde 2 Werkstatt B2 „nur die passende Quelle zählt“): erzeugte Stücke je
+ * Skill der AKTION, die sie hervorgebracht hat. Beet-Ernte (farming.ts), Diebstahl und Nebenfunde anderer Skills zählen so nie für
+ * einen Auftrag eines anderen Skills. Kein RNG, online == offline.
+ */
+function countProducedBySkill(state: GameState, skill: string, itemId: ItemId, n: number): void {
+  const bySkill = (state.stats.producedBySkill ??= {});
+  const rec = (bySkill[skill] ??= {});
+  rec[itemId] = (rec[itemId] ?? 0) + n;
+}
 
 function completeAction(state: GameState, content: ContentDB, action: ActionDef, nowMs?: number, live = false): void {
   // claude:2026-10-24T23:20:00+02:00 — Zufallsereignis (1.4.0 EV): wirkt nur im Live-Loop (`live`) und nur auf Aktionen des auslösenden
@@ -341,6 +352,7 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
       // Aufgaben (neben itemsGathered, das auch Loot/Belohnungen zählt). Kein RNG, online == offline.
       if (gained > 0) {
         (state.stats.producedById ??= {})[itemId] = (state.stats.producedById[itemId] ?? 0) + gained;
+        countProducedBySkill(state, action.skill, itemId, gained); // claude:2026-10-24T16:03:31+02:00 — Arbeitsaufträge (SAVE 95)
       }
       if (isCraft && gained > 0) {
         state.stats.itemsCrafted += gained;
@@ -366,6 +378,7 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
       grantLoot(state, content, found, 1);
       state.stats.itemsGathered += 1;
       (state.stats.producedById ??= {})[found] = (state.stats.producedById[found] ?? 0) + 1;
+      countProducedBySkill(state, action.skill, found, 1); // claude:2026-10-24T16:03:31+02:00 — Fund während einer Aktion dieses Skills
     }
   }
 
@@ -660,7 +673,7 @@ function endActionOrAdvanceQueue(
   state: GameState,
   content: ContentDB,
   finishedActionId: ActionId,
-  stopReason: "no_materials" | null,
+  stopReason: "no_materials" | "level_too_low" | null, // claude:2026-10-24T15:21:04+02:00 — level_too_low (QA-Runde 2 Spielstände B1)
 ): boolean {
   state.actionProgressMs = 0;
   // advanceActionQueue setzt bei Erfolg über setActiveAction bereits progress=0 UND lastStop=null.
@@ -706,6 +719,16 @@ function skillingStep(state: GameState, content: ContentDB, nowMs?: number, offl
 
   const action = content.actions[actionId];
   if (!action) return;
+
+  // claude:2026-10-24T15:21:04+02:00 — Skill-Level wie beim Start (QA-Runde 2 Spielstände B1): `setActiveAction` lehnt eine Aktion
+  // über dem eigenen Level ab, der Tick prüfte es nie nach. Ein Alt-Save mitten im Bogenbau (v91: Bögen ziehen vom Handwerk in die
+  // Bognerei, alle starten bei Stufe 1) lief so offline stundenlang weiter. Jetzt endet die Aktion VOR jedem Abschluss mit Grund
+  // `level_too_low` (oder die Warteschlange schaltet weiter); nichts wird produziert, vorhandene Items und XP bleiben. Online ==
+  // offline, kein RNG. Ein neu erreichtes Level ändert nichts (XP sinkt nie), der Pfad greift also nur bei solchen Alt-Ständen.
+  if (!actionLevelMet(state, content, actionId)) {
+    endActionOrAdvanceQueue(state, content, actionId, "level_too_low");
+    return;
+  }
 
   // Verarbeitung ohne Materialien → Aktion endet. Die Action-Queue darf hier weiterschalten: ein
   // no_materials-Stop zählt als natürlicher Abschluss (s. QueuedAction). Startet ein Queue-Eintrag,

@@ -28,6 +28,7 @@ import type {
   SaveSummary,
 } from "@hearthforge/shared";
 import { defaultRaidState, makeRaidQueueEntry, RAID_WEEKLY_MODIFIERS } from "@hearthforge/shared"; // claude:2026-10-25T04:40:00+02:00 — Raid (SAVE 93)
+import { QUIVER_CAPACITY } from "@hearthforge/shared"; // claude:2026-10-24T15:21:04+02:00 — Köcher-Deckel (QA-Runde 2 Fernkampf B2)
 import { defaultSkillEventState, defaultWorkOrderState, EVENT_COOLDOWN_MS, EVENT_EXPIRE_MS, EVENT_LOG_MAX, ORDER_MAX_OPEN, ORDER_OFFER_TTL_MS, SKILL_EVENT_IDS } from "@hearthforge/shared"; // claude:2026-10-24T23:55:00+02:00 — 1.4.0 Welle 3
 import {
   consumableHeal,
@@ -101,7 +102,7 @@ import {
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot, HuntCatch, HuntTrap } from "@hearthforge/shared";
 import type { HuntCatchTally } from "@hearthforge/engine";
-import { MAX_STACK, deriveEventRngSeed, isQuiverItem, offhandFitsMain, storagePredicate, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isHealPotion, resolveLeftRaidFight, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotOwned, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
+import { actionLevelMet, MAX_STACK, deriveEventRngSeed, isQuiverItem, offhandFitsMain, storagePredicate, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isHealPotion, resolveLeftRaidFight, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotOwned, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
 
 /**
  * MAXIMAL MÖGLICHES Offline-Fenster (8 h Basis + 3 h Wachturm-Vollausbau) — die Korruptions-Klemme
@@ -335,6 +336,8 @@ const QTY_HARD_CAP = 1_000_000_000; // 1e9 pro Stack/Bank-Eintrag
 const GOLD_HARD_CAP = Number.MAX_SAFE_INTEGER;
 const XP_HARD_CAP = Number.MAX_SAFE_INTEGER; // Skill-/Mastery-XP: reiner Korruptionsschutz, KEIN Spiel-Deckel (s. XP-Pass)
 const ARRAY_HARD_CAP = 100_000; // generische Obergrenze gegen Millionen-Element-Arrays
+/** claude:2026-10-24T15:21:04+02:00 — Deckel der Bergungs-Schlösser je Spielstand (SAVE 90); beim Laden bleiben die neuesten. */
+const SALVAGE_LOCK_CAP = 5000;
 
 /**
  * EINGEFRORENE Kampf-Zonen-Liste zum v62-Zeitpunkt (Story-Zonen-Gating, SAVE_VERSION 62→63,
@@ -649,6 +652,12 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     if (load && !isQuiverItem(c.equipment.offhand ? content.items[c.equipment.offhand] : undefined)) {
       if (load.qty > 0) state.bank[load.itemId] = finiteNonNeg(state.bank[load.itemId], 0) + load.qty;
       load = { itemId: load.itemId, qty: 0 }; // claude:2026-10-26T03:50:00+02:00 — Art gemerkt wie syncQuiverLoad (QA-Fernkampf P3)
+    }
+    // claude:2026-10-24T15:21:04+02:00 — Köcher-Deckel (QA-Runde 2 Fernkampf B2): was über `QUIVER_CAPACITY` geladen ist, geht verlustfrei ins Lager
+    // (wie Einlegen/Nachfüllen, die nur bis zum Deckel ziehen). Idempotent, jede Version.
+    if (load && load.qty > QUIVER_CAPACITY) {
+      state.bank[load.itemId] = finiteNonNeg(state.bank[load.itemId], 0) + (load.qty - QUIVER_CAPACITY);
+      load = { itemId: load.itemId, qty: QUIVER_CAPACITY };
     }
     c.quiver = load;
   }
@@ -1005,14 +1014,16 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   }
 
   // claude:2026-10-23T22:50:00+02:00 — Bergungs-Schloss (1.4.0 BG, SAVE 90): nur Strings mit exakt `true`, gedeckelt; fehlt ⇒ {}.
+  // claude:2026-10-24T15:21:04+02:00 — der Deckel behält die NEUESTEN Einträge (QA-Runde 2 Spielstände B4): `toggleSalvageLock` hängt ein frisches Schloss
+  // hinten an (Einfügereihenfolge, Schlüssel sind nie ganzzahlig), vorher fiel genau dieses weg und die ältesten blieben.
   {
     const raw = (state as { lockedItems?: unknown }).lockedItems;
     const clean: Record<string, true> = {};
     if (raw && typeof raw === "object" && !Array.isArray(raw)) {
-      let n = 0;
-      for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
-        if (v === true && typeof k === "string" && k.length <= 200 && n++ < 5000) clean[k] = true;
-      }
+      const valid = Object.entries(raw as Record<string, unknown>).filter(
+        ([k, v]) => v === true && typeof k === "string" && k.length <= 200,
+      );
+      for (const [k] of valid.slice(-SALVAGE_LOCK_CAP)) clean[k] = true;
     }
     state.lockedItems = clean;
   }
@@ -1206,6 +1217,15 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   // später entfernte Aktion lief, eine leere „Aktiv"-Header-Zeile (kein Crash, da überall null-geprüft).
   if (state.activeActionId && !content.actions[state.activeActionId]) {
     state.activeActionId = null;
+  }
+  // claude:2026-10-24T15:21:04+02:00 — Skill-Level der laufenden Aktion wie `setActiveAction` (QA-Runde 2 Spielstände B1): ein Alt-Save mitten im Bogenbau
+  // (v91, Bögen ziehen vom Handwerk in die Bognerei, alle starten bei Stufe 1) lief sonst offline ohne Bognerei-Stufe weiter. Die
+  // Aktion endet mit Grund `level_too_low`, nichts wird produziert; Items und XP bleiben. Versionsfrei (jede Version), idempotent; die
+  // Engine prüft dasselbe in jedem Tick (tick.ts skillingStep). Skills sind oben schon geklemmt und umbenannt.
+  if (state.activeActionId && !actionLevelMet(state, content, state.activeActionId)) {
+    state.lastStop = { actionId: state.activeActionId, reason: "level_too_low" };
+    state.activeActionId = null;
+    state.actionProgressMs = 0;
   }
 
   // — Mengen-Craft-Ziel: null = unbegrenzt; sonst endliche positive Ganzzahl. Manipulierte/kaputte
@@ -1650,6 +1670,37 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     const rec = st[key];
     if (!rec || typeof rec !== "object") { st[key] = {}; continue; }
     for (const id of Object.keys(rec)) rec[id] = finiteNonNeg(rec[id], 0);
+  }
+  // claude:2026-10-24T15:21:04+02:00 — Beet-Ernte (SAVE 94, QA-Runde 2 Klarheit B1): nur bekannte Items, endliche positive Mengen; fehlt/kaputt ⇒ {}.
+  {
+    const rec = (st as { harvestedById?: unknown }).harvestedById;
+    const clean: Record<string, number> = {};
+    if (rec && typeof rec === "object" && !Array.isArray(rec)) {
+      for (const [id, n] of Object.entries(rec as Record<string, unknown>)) {
+        if (!content.items[id]) continue;
+        const v = finiteNonNeg(n, 0);
+        if (v > 0) clean[id] = v;
+      }
+    }
+    st.harvestedById = clean;
+  }
+  // claude:2026-10-24T16:03:31+02:00 — Erzeugt je Skill (SAVE 95, QA-Runde 2 Werkstatt B2): nur bekannte Skills und Items, endliche positive Mengen; sonst {}.
+  {
+    const raw = (st as { producedBySkill?: unknown }).producedBySkill;
+    const clean: Partial<Record<string, Record<string, number>>> = {};
+    if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+      for (const [skill, rec] of Object.entries(raw as Record<string, unknown>)) {
+        if (!content.skills[skill] || !rec || typeof rec !== "object" || Array.isArray(rec)) continue;
+        const inner: Record<string, number> = {};
+        for (const [id, n] of Object.entries(rec as Record<string, unknown>)) {
+          if (!content.items[id]) continue;
+          const v = finiteNonNeg(n, 0);
+          if (v > 0) inner[id] = v;
+        }
+        if (Object.keys(inner).length > 0) clean[skill] = inner;
+      }
+    }
+    st.producedBySkill = clean;
   }
 
   // — Slayer: Punkte/Completed clampen; Task gegen aktuellen Content validieren —
@@ -2180,6 +2231,9 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
         const action = content.actions[skipActionId];
         if (reason === "no_materials" && action && !actionInputsOnHand(state, action)) {
           state.lastQueueSkip = { monsterId: "", actionId: skipActionId, reason };
+        } else if (reason === "level_too_low" && action && !actionLevelMet(state, content, skipActionId)) {
+          // claude:2026-10-24T15:21:04+02:00 — Level-Skip (QA-Runde 2 Spielstände B3): bleibt, solange das Level HEUTE noch fehlt.
+          state.lastQueueSkip = { monsterId: "", actionId: skipActionId, reason };
         }
       } else if (typeof skipDungeonId === "string" && skipDungeonId.length > 0) {
         // Dungeon-Skip (SAVE 83): dieselbe „gilt der Grund HEUTE noch?"-Regel wie beim Monster —
@@ -2581,6 +2635,8 @@ function migrateState(state: GameState, content: ContentDB): GameState {
       lastDailyDay: 0,
       actionRunsById: {},
       producedById: {},
+      harvestedById: {}, // claude:2026-10-24T15:21:04+02:00 — SAVE 94
+      producedBySkill: {}, // claude:2026-10-24T16:03:31+02:00 — SAVE 95
       huntCatches: 0,
       huntCatchesById: {},
     };
@@ -3826,6 +3882,30 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   // Version macht sanitizeState.
   if ((state.version ?? 0) < 93 && !state.raid) state.raid = defaultRaidState();
 
+  // ── Beet-Ernte-Zähler (SAVE_VERSION 93 → 94, QA-Runde 2 Klarheit B1) ─────────────────────────────────────────────────
+  // claude:2026-10-24T15:21:04+02:00 — neues Feld `stats.harvestedById`: alte Saves starten bei 0 (leer). `producedById` mischt Beet-Ernte und
+  // Sammel-Funde derselben Item-ID und lässt sich nicht aufteilen; nichts wird rückwirkend geschätzt. Härtung macht sanitizeState.
+  // Nur wenn das Feld fehlt: so bleibt der Block idempotent, auch wenn ein schon migrierter Stand erneut als Alt-Version geladen wird.
+  if ((state.version ?? 0) < 94 && state.stats && typeof state.stats === "object" && !state.stats.harvestedById) state.stats.harvestedById = {};
+
+  // ── Erzeugt je Skill (SAVE_VERSION 94 → 95, Chef-Entscheid QA-Runde 2 Werkstatt B2 „nur die passende Quelle zählt“) ──────────
+  // claude:2026-10-24T16:03:31+02:00 — neues Feld `stats.producedBySkill`. Arbeitsaufträge messen ihren Fortschritt jetzt daran statt an `producedById`.
+  // Damit kein offener Auftrag Fortschritt verliert, wird der Zähler für Skill und Item jedes offenen Auftrags mit dem bisherigen
+  // `producedById`-Stand vorbelegt (sein `baseline` stammt aus genau diesem Zähler); ab jetzt zählen nur Aktionen des Skills. Alles
+  // andere startet bei 0. Nur wenn das Feld fehlt (idempotent bei erneutem Laden als Alt-Version). Härtung: sanitizeState.
+  if ((state.version ?? 0) < 95 && state.stats && typeof state.stats === "object" && !state.stats.producedBySkill) {
+    const seeded: Partial<Record<string, Record<string, number>>> = {};
+    const open = Array.isArray(state.workOrders?.open) ? state.workOrders!.open : [];
+    for (const o of open) {
+      if (!o || typeof o.skill !== "string" || typeof o.itemId !== "string") continue;
+      const n = finiteNonNeg(state.stats.producedById?.[o.itemId], 0);
+      if (n <= 0) continue;
+      const rec = (seeded[o.skill] ??= {});
+      rec[o.itemId] = Math.max(rec[o.itemId] ?? 0, n);
+    }
+    state.stats.producedBySkill = seeded;
+  }
+
   // State auf die aktuelle Version heben (macht versions-abhängige Migrationen idempotent).
   state.version = SAVE_VERSION;
 
@@ -4207,11 +4287,12 @@ export function deserialize(
   for (const [id, slot] of Object.entries(state.camp.refine ?? {})) {
     campRefinedBefore[id] = slot?.produced ?? 0;
   }
-  // claude:2026-10-23T20:00:00+02:00 — Ländereien im Offline-Bericht (1.4.0 LA): Ernte-Stücke je Feldfrucht im Fenster
-  // aus dem Lebenszeit-Zähler `producedById` (farming.ts schreibt ihn), ohne neues Save-Feld.
+  // claude:2026-10-23T20:00:00+02:00 — Ländereien im Offline-Bericht (1.4.0 LA): Ernte-Stücke je Feldfrucht im Fenster.
+  // claude:2026-10-24T15:21:04+02:00 — Quelle ist jetzt `stats.harvestedById` (SAVE 94, nur Beet-Ernte), nicht mehr `producedById`, das auch Sammel-Funde
+  // derselben Item-ID zählt (QA-Runde 2 Klarheit B1: Sammeln in den Aschfeldern erschien als „Ländereien: Ernte“).
   const cropYieldIds = [...new Set(Object.values(content.crops ?? {}).map((c) => c.yieldItem))];
   const harvestBefore: Record<string, number> = {};
-  for (const id of cropYieldIds) harvestBefore[id] = state.stats.producedById?.[id] ?? 0;
+  for (const id of cropYieldIds) harvestBefore[id] = state.stats.harvestedById?.[id] ?? 0;
 
   // Offline-Catch-up: `offline: true` → die versäumten Ticks laufen wie sonst, aber `activePlayMs`
   // (angezeigte Spielzeit) zählt NICHT mit. `elapsedMs` (Sim-/Farming-Uhr) läuft weiter.
@@ -4328,7 +4409,7 @@ export function deserialize(
     .map(([monsterId, count]) => ({ monsterId, count }));
   if (huntCatches.length > 0) offline.huntCatches = huntCatches;
   const farmHarvests = cropYieldIds
-    .map((itemId) => ({ itemId, qty: (state.stats.producedById?.[itemId] ?? 0) - (harvestBefore[itemId] ?? 0) }))
+    .map((itemId) => ({ itemId, qty: (state.stats.harvestedById?.[itemId] ?? 0) - (harvestBefore[itemId] ?? 0) })) // claude:2026-10-24T15:21:04+02:00
     .filter((h) => h.qty > 0);
   if (farmHarvests.length > 0) offline.farmHarvests = farmHarvests;
   // claude:2026-10-17T20:00:00+02:00 — K4: Anzahl übersprungener Queue-Einträge (fehlt bei 0)

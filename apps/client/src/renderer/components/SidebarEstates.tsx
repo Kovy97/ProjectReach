@@ -52,6 +52,8 @@ export function SidebarEstates({
       if (grow === 0) return { text: t("estates.farm.idle"), warn: empty > 0 && plots > 0 };
       let text = t("estates.farm.status").replace("{n}", String(grow)).replace("{m}", String(plots));
       if (nextH > 0) text += ` · ${t("estates.farm.next").replace("{min}", String(nextH))}`;
+      // claude:2026-10-24T15:30:00+02:00 — leere Beete neben wachsenden warnen ebenfalls (QA2 Klarheit B2)
+      if (empty > 0) return { text: `${text} · ${t("estates.farm.empty").replace("{n}", String(empty))}`, warn: true };
       return { text, warn: false };
     }
     if (run === 0 && waitTraps === 0) return { text: t("estates.hunt.idle"), warn: false };

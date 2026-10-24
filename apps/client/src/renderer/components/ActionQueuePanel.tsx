@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { stopReasonKey } from "../util/stopReason";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { content } from "@hearthforge/content";
 import { actionInputsOnHand, actionLevelMet, clearActionQueue, dequeueAction, dungeonRunProgress, moveQueueItem, prioritizeQueueEntry, projectQueue, queueBlockReason, resumeActionQueue, setActiveAction, stopCombat } from "@hearthforge/engine";
@@ -931,7 +932,7 @@ export function ActionQueuePanel(): JSX.Element {
                 {(() => {
                   const stoppedAction = content.actions[state.lastStop.actionId];
                   const reasonKey =
-                    state.lastStop.reason === "inventory_full" ? "skill.stoppedInventoryFull" : "skill.stoppedNoMaterials";
+                    stopReasonKey(state.lastStop.reason); // claude:2026-10-24T16:10:00+02:00 — level_too_low
                   return `${stoppedAction ? `${tr(stoppedAction.name)}: ` : ""}${t(reasonKey)}`;
                 })()}
               </div>

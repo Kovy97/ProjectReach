@@ -131,6 +131,9 @@ function grantHarvest(state: GameState, content: ContentDB, c: CropDef, plot: Fa
     // Aufgaben) — zum ERNTE-Zeitpunkt in voller Menge, auch wenn ein Rest als readyYield parkt
     // (der wird beim Einlagern nicht ein zweites Mal gezählt). Kein RNG, online == offline.
     (state.stats.producedById ??= {})[c.yieldItem] = (state.stats.producedById[c.yieldItem] ?? 0) + qty;
+    // claude:2026-10-24T15:21:04+02:00 — Beet-Ernte getrennt zählen (SAVE 94, QA-Runde 2 Klarheit B1): `producedById` zählt auch Sammel-Funde
+    // derselben Item-ID (tick.ts), der Offline-Block „Ländereien: Ernte“ und die Ländereien-Meldung lesen nur diesen Zähler. Kein RNG.
+    (state.stats.harvestedById ??= {})[c.yieldItem] = (state.stats.harvestedById[c.yieldItem] ?? 0) + qty;
     const { toInventory, toBank } = addItemOrBank(state, content, c.yieldItem, qty);
     const placed = toInventory + toBank;
     state.stats.itemsGathered += placed;

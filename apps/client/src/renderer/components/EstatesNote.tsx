@@ -8,16 +8,26 @@ import { useI18n } from "../i18n";
 
 /** Kurztext „Nebenbei: 6 Felder, 4 Fallen“ oder null, wenn keine Ländereien arbeiten. */
 export function useEstatesNote(): string | null {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const key = useGameSelector((s) => {
     const e = estateStatus(s, content);
     return `${e.plotsGrowing}|${e.trapsRunning}`;
   });
   const [plots = 0, traps = 0] = key.split("|").map(Number);
   if (plots === 0 && traps === 0) return null;
+  // claude:2026-10-24T15:30:00+02:00 — Einzahl/Mehrzahl nach Sprachregel (ru: 1 / 2-4 / 5+), sonst 1 gegen den Rest (QA2 UI N5)
+  const form = (n: number, base: "plot" | "trap"): string => {
+    if (locale === "ru") {
+      const cat = new Intl.PluralRules("ru").select(n);
+      if (cat === "one") return `estates.note.${base}`;
+      if (cat === "few") return `estates.note.${base}s.few`;
+      return `estates.note.${base}s`;
+    }
+    return n === 1 ? `estates.note.${base}` : `estates.note.${base}s`;
+  };
   const parts: string[] = [];
-  if (plots > 0) parts.push(t(plots === 1 ? "estates.note.plot" : "estates.note.plots").replace("{n}", String(plots)));
-  if (traps > 0) parts.push(t(traps === 1 ? "estates.note.trap" : "estates.note.traps").replace("{n}", String(traps)));
+  if (plots > 0) parts.push(t(form(plots, "plot")).replace("{n}", String(plots)));
+  if (traps > 0) parts.push(t(form(traps, "trap")).replace("{n}", String(traps)));
   return t("estates.note").replace("{list}", parts.join(", "));
 }
 

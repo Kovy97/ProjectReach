@@ -37,6 +37,7 @@ import { DungeonClearCeremony } from "./components/DungeonClearCeremony";
 import { ChampionDefeatCeremony } from "./components/ChampionDefeatCeremony";
 import { ApMilestoneCeremony } from "./components/ApMilestoneCeremony";
 import { DeathPopup } from "./components/DeathPopup";
+import { stopReasonKey } from "./util/stopReason";
 import { RaidOverlays } from "./components/RaidScreens"; // claude:2026-10-25T11:15:00+02:00 — Raid (1.4.0 Welle 4)
 import { StalematePopup } from "./components/StalematePopup";
 import { OnboardingGuide } from "./components/OnboardingGuide";
@@ -643,9 +644,7 @@ function GameStats({
   } else if (lastStopActionId) {
     const a = content.actions[lastStopActionId];
     const hint =
-      lastStopReason === "inventory_full"
-        ? t("skill.stoppedInventoryFull")
-        : t("skill.stoppedNoMaterials");
+      t(stopReasonKey(lastStopReason)); // claude:2026-10-24T16:10:00+02:00 — level_too_low (QA2 Folge)
     activity = (
       <span className="hs-line hs-act-text hs-act-text--stopped" title={hint}>
         ⚠ <span className="hs-muted">{t("header.stopped")}</span>{" "}

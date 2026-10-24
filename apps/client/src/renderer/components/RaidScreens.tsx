@@ -9,6 +9,7 @@ import {
   abandonRaid,
   closeRaidResult,
   continueRaid,
+  playerBusyOutsideRaid,
   raidDefs,
   raidStateOf,
   restartRaidRoom,
@@ -24,6 +25,7 @@ import { raidChestArt, raidRoomCard } from "../raidArt";
 import { registerEscCloser } from "../util/escStack";
 import { effectiveFxLevel } from "../util/fxLevel";
 import { pushUiToast } from "../util/toastBus";
+import { ConfirmModal, type ConfirmRequest } from "./ConfirmModal"; // claude:2026-10-24T15:30:00+02:00 — „Aufgeben“ nur nach Rückfrage (QA2 Raid B3)
 import { formatMmSs, formatNum } from "../util/format";
 import "../styles/raid.css";
 
@@ -163,6 +165,11 @@ export function RaidOverlays(): JSX.Element {
   const seenResult = useRef<number>(rs.resultSeq);
   const [result, setResult] = useState<NonNullable<typeof rs.lastResult> | null>(null);
   const [restartMsg, setRestartMsg] = useState<string | null>(null);
+  // claude:2026-10-24T15:30:00+02:00 — Rückfrage vor „Aufgeben“ im Tod-Dialog (QA2 Raid B3)
+  const [confirm, setConfirm] = useState<ConfirmRequest | null>(null);
+  // claude:2026-10-24T15:30:00+02:00 — Laufzeit/Bestzeit beim ersten Abschluss-Render festschreiben, die Spieluhr läuft im Dialog weiter (QA2 Raid B4)
+  const frozenComplete = useRef<{ dur: number; isBest: boolean } | null>(null);
+  if (run?.phase !== "complete") frozenComplete.current = null;
 
   useEffect(() => {
     const r = state.raid?.run ?? null;
@@ -226,7 +233,19 @@ export function RaidOverlays(): JSX.Element {
             >
               {cost > 0 ? t("raid.defeat.restartPaid").replace("{gold}", formatNum(cost)) : t("raid.defeat.restartFree")}
             </button>
-            <button type="button" className="shop-citadel-btn" onClick={() => abandonRaid(state, content)}>
+            <button
+              type="button"
+              className="shop-citadel-btn"
+              onClick={() =>
+                setConfirm({
+                  title: t("raid.abandon.confirmTitle"),
+                  body: run.difficulty === "mythic" && def ? t("raid.abandon.confirmBodyMythic").replace("{pct}", String(Math.round(def.mythicRefundPct * 100))) : t("raid.abandon.confirmBody"), // claude:2026-10-24T16:10:00+02:00
+                  confirmLabel: t("raid.defeat.giveUp"),
+                  danger: true,
+                  onConfirm: () => abandonRaid(state, content),
+                })
+              }
+            >
               {t("raid.defeat.giveUp")}
             </button>
           </>
@@ -248,14 +267,20 @@ export function RaidOverlays(): JSX.Element {
           </label>
         )}
         {restartMsg && <p className="raid-msg">{restartMsg}</p>}
+        <ConfirmModal request={confirm} onClose={() => setConfirm(null)} overlayClass="raid-confirm-overlay" />
       </DialogShell>
     );
   }
 
   if (run.phase === "complete") {
-    const dur = state.elapsedMs - run.startedAtMs;
-    const best = rs.fastestMs[run.difficulty];
-    const isBest = best !== undefined && Math.abs(best - dur) < 1;
+    if (!frozenComplete.current) {
+      const now = state.elapsedMs - run.startedAtMs;
+      const best = rs.fastestMs[run.difficulty];
+      // Die Bestzeit wurde beim Abschluss gesetzt; bis zum ersten Render liegt höchstens ein Tick dazwischen.
+      const isBest = best !== undefined && best <= now && now - best < 1000;
+      frozenComplete.current = { dur: isBest ? best : now, isBest };
+    }
+    const { dur, isBest } = frozenComplete.current;
     return (
       <DialogShell
         title={`${tr(def.name)} · ${t(`raid.diff.${run.difficulty}`)}`}
@@ -286,6 +311,7 @@ export function RaidRestScreen({ loadout }: { loadout: ReactNode }): JSX.Element
   const next = def?.rooms[run.room + 1];
   const nextBg = raidRoomCard(next?.dungeonId);
   const auto = state.settings.raidAutoContinue === true || !!rs.queue;
+  const [confirm, setConfirm] = useState<ConfirmRequest | null>(null); // claude:2026-10-24T15:30:00+02:00 — Rückfrage vor „Aufgeben“ (QA2 Raid B3)
   return (
     <div className="combat-layout">
       <div className="combat-sidebar">{loadout}</div>
@@ -307,13 +333,29 @@ export function RaidRestScreen({ loadout }: { loadout: ReactNode }): JSX.Element
               />
               <span>{t("raid.rest.auto")}</span>
             </label>
+            {/* claude:2026-10-24T16:10:00+02:00 — eigene Aktion/eigener Kampf pausiert den Countdown: Hinweis statt stehender Zahl */}
             {auto && run.restMs > 0 && (
-              <span className="raid-note muted">{t("raid.rest.autoIn").replace("{s}", String(Math.ceil(run.restMs / 1000)))}</span>
+              <span className="raid-note muted">
+                {playerBusyOutsideRaid(state, content) ? t("raid.rest.paused") : t("raid.rest.autoIn").replace("{s}", String(Math.ceil(run.restMs / 1000)))}
+              </span>
             )}
-            <button type="button" className="shop-citadel-btn" onClick={() => abandonRaid(state, content)}>
+            <button
+              type="button"
+              className="shop-citadel-btn"
+              onClick={() =>
+                setConfirm({
+                  title: t("raid.abandon.confirmTitle"),
+                  body: run.difficulty === "mythic" && def ? t("raid.abandon.confirmBodyMythic").replace("{pct}", String(Math.round(def.mythicRefundPct * 100))) : t("raid.abandon.confirmBody"), // claude:2026-10-24T16:10:00+02:00
+                  confirmLabel: t("raid.abandon"),
+                  danger: true,
+                  onConfirm: () => abandonRaid(state, content),
+                })
+              }
+            >
               {t("raid.abandon")}
             </button>
           </div>
+          <ConfirmModal request={confirm} onClose={() => setConfirm(null)} />
 
           <div className="raid-rest-grid">
             <div className="raid-rest-col">

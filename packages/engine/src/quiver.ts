@@ -1,5 +1,5 @@
 import type { ArrowDef, ContentDB, GameState, ItemDef, ItemId, RngState } from "@hearthforge/shared";
-import { AMMO_SAVER_CAP, ARROW_TIER_RANGED_LEVEL, effectiveWeaponEffects } from "@hearthforge/shared";
+import { AMMO_SAVER_CAP, ARROW_TIER_RANGED_LEVEL, QUIVER_CAPACITY, effectiveWeaponEffects } from "@hearthforge/shared";
 import { itemCount, removeItem } from "./inventory";
 import { levelFromXp } from "./leveling";
 import { nextFloat } from "./rng";
@@ -16,6 +16,9 @@ import { nextFloat } from "./rng";
  * - Leer + „Automatisch nachfüllen“ (Standard an): dieselbe Pfeilart kommt aus dem Lager nach. Die Ladung
  *   behält dafür ihre Art mit Menge 0.
  * - Pfeile sind Lagerware (Regal „Pfeile“): Bestand in `state.bank` ohne Bankfach.
+ * - claude:2026-10-24T15:21:04+02:00 — Köcher-Deckel `QUIVER_CAPACITY` (QA-Runde 2 Fernkampf B2, CEO-Entscheid): der Köcher ist
+ *   ausgerüstete Munition wie angelegte Ausrüstung und zählt nicht als Auftragsbestand (orders.ts liest ihn nicht). Einlegen und
+ *   Nachfüllen ziehen darum höchstens bis zum Deckel, der Rest bleibt im Lager (sichtbar für Aufträge, Verkauf, Herstellung).
  */
 
 const BOW_TYPES: ReadonlySet<string> = new Set(["shortbow", "longbow"]);
@@ -68,8 +71,8 @@ export function arrowStock(state: GameState, itemId: ItemId): number {
 export type LoadQuiverResult = { ok: true; qty: number } | { ok: false; reason: "noQuiver" | "notArrow" | "level" | "none" };
 
 /**
- * „Pfeile einlegen“: legt `qty` (Standard: alles) einer Pfeilart aus Lager und Inventar in den Köcher. Eine
- * andere geladene Art geht vorher zurück ins Lager. Prüft das Fernkampf-Level der Pfeilstufe.
+ * „Pfeile einlegen“: legt `qty` (Standard: alles bis zum Köcher-Deckel `QUIVER_CAPACITY`) einer Pfeilart aus Lager und Inventar in
+ * den Köcher. Eine andere geladene Art geht vorher zurück ins Lager. Prüft das Fernkampf-Level der Pfeilstufe.
  */
 export function loadQuiver(state: GameState, content: ContentDB, itemId: ItemId, qty?: number): LoadQuiverResult {
   if (!quiverEquipped(state, content)) return { ok: false, reason: "noQuiver" };
@@ -81,7 +84,10 @@ export function loadQuiver(state: GameState, content: ContentDB, itemId: ItemId,
   if (arrowStock(state, itemId) <= 0 && !(cur?.itemId === itemId && cur.qty > 0)) return { ok: false, reason: "none" };
   if (cur && cur.itemId !== itemId) unloadQuiver(state);
   // claude:2026-10-26T03:45:00+02:00 — NaN/Unendlich = „alles“ (Math.floor(NaN) fiel durch alle Vergleiche: unendliche Pfeile), QA-Fernkampf P3.
-  const want = qty === undefined || !Number.isFinite(qty) ? Number.POSITIVE_INFINITY : Math.max(0, Math.floor(qty));
+  const asked = qty === undefined || !Number.isFinite(qty) ? Number.POSITIVE_INFINITY : Math.max(0, Math.floor(qty));
+  // claude:2026-10-24T15:21:04+02:00 — höchstens bis zum Köcher-Deckel auffüllen, der Rest bleibt im Lager (QA-Runde 2 Fernkampf B2).
+  const loaded = state.character.quiver?.itemId === itemId ? state.character.quiver.qty : 0;
+  const want = Math.min(asked, Math.max(0, QUIVER_CAPACITY - loaded));
   const fromBank = Math.min(state.bank[itemId] ?? 0, want);
   if (fromBank > 0) {
     const rest = (state.bank[itemId] ?? 0) - fromBank;
@@ -150,6 +156,8 @@ export function consumeArrow(state: GameState, content: ContentDB, rng: RngState
 /**
  * Leeren Köcher aus Lager und Inventar nachfüllen (nur mit Option an); bleibt sonst als „leer, Art gemerkt“ stehen. Das Inventar
  * zählt mit, weil Pfeile bei „Direkt ins Lager“ aus dort landen (QA-Fernkampf P3). claude:2026-10-26T03:45:00+02:00
+ * claude:2026-10-24T15:21:04+02:00 — höchstens `QUIVER_CAPACITY` Stück, Lager zuerst, dann Inventar; der Rest bleibt liegen (QA-Runde 2
+ * Fernkampf B2, CEO: „Nachfüllen ist auf den Köcher-Deckel begrenzt, der Rest bleibt im Lager“). Kein RNG.
  */
 export function refillQuiver(state: GameState, content: ContentDB): boolean {
   const load = state.character.quiver;
@@ -157,10 +165,15 @@ export function refillQuiver(state: GameState, content: ContentDB): boolean {
   if (state.settings.quiverAutoRefill === false) return false;
   if (!quiverEquipped(state, content)) return false;
   const inBank = state.bank[load.itemId] ?? 0;
-  if (inBank > 0) delete state.bank[load.itemId];
-  const fromInv = removeItem(state.inventory, load.itemId, itemCount(state.inventory, load.itemId));
-  if (inBank + fromInv <= 0) return false;
-  load.qty = inBank + fromInv;
+  const fromBank = Math.max(0, Math.min(inBank, QUIVER_CAPACITY));
+  if (fromBank > 0) {
+    if (inBank - fromBank > 0) state.bank[load.itemId] = inBank - fromBank;
+    else delete state.bank[load.itemId];
+  }
+  const invWant = Math.min(QUIVER_CAPACITY - fromBank, itemCount(state.inventory, load.itemId));
+  const fromInv = invWant > 0 ? removeItem(state.inventory, load.itemId, invWant) : 0;
+  if (fromBank + fromInv <= 0) return false;
+  load.qty = fromBank + fromInv;
   return true;
 }
 

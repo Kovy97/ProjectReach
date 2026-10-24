@@ -201,7 +201,7 @@ export function RaidSection(): JSX.Element | null {
                 onClick={() =>
                   setConfirm({
                     title: t("raid.abandon.confirmTitle"),
-                    body: t("raid.abandon.confirmBody"),
+                    body: run.difficulty === "mythic" ? t("raid.abandon.confirmBodyMythic").replace("{pct}", String(Math.round(def.mythicRefundPct * 100))) : t("raid.abandon.confirmBody"), // claude:2026-10-24T16:10:00+02:00 — Mythisch erstattet teilweise
                     confirmLabel: t("raid.abandon"),
                     danger: true,
                     onConfirm: () => abandonRaid(state, content),

@@ -1,4 +1,5 @@
 import { EVENT_ICON, getEventImage } from "../eventArt"; // claude:2026-10-25T01:30:00+02:00
+import { stopReasonKey } from "../util/stopReason";
 import { eventCardValues, fillEventText, orderCustomer } from "../ordersApi";
 import { requestQuestsTab } from "../navigation";
 import { jumpToPage } from "../util/monsterJump";
@@ -144,9 +145,10 @@ function rareFindTitleKey(rarity: string | undefined): string {
 }
 /** Jackpot-Toast-Dauer: superRare/godly bekommen deutlich mehr Bühnenzeit als der Standard-Rare-
  *  Toast (bzw. mehr als die jeweilige Basis-Dauer des Aufrufers, z.B. der 7s-Suffix-Reveal). */
+// claude:2026-10-24T15:30:00+02:00 — Dauer 8 s (göttlich/heroisch) bzw. 10 s (mythisch) statt 12/16 s (QA2 UI N2)
 function jackpotDurationMs(rarity: string | undefined, base = TOAST_MS): number {
-  if (rarity === "mythic") return Math.max(base, 16_000);
-  return GODLY_TIER.has(rarity ?? "") || RAID_TIER.has(rarity ?? "") ? Math.max(base, 12_000) : base;
+  if (rarity === "mythic") return Math.max(base, 10_000);
+  return GODLY_TIER.has(rarity ?? "") || RAID_TIER.has(rarity ?? "") ? Math.max(base, 8_000) : base;
 }
 
 /**
@@ -1132,9 +1134,7 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
             kind: "drop",
             icon: "⚠",
             title: t("toast.actionStopped.title"),
-            detail: `${tr(stoppedAction.name)}: ${t(
-              lastStopReason === "inventory_full" ? "skill.stoppedInventoryFull" : "skill.stoppedNoMaterials",
-            )}`,
+            detail: `${tr(stoppedAction.name)}: ${t(stopReasonKey(lastStopReason))}`,
           });
         }
       }
@@ -1389,7 +1389,7 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
   }, [state.totalTicks]);
 
   // claude:2026-10-23T20:10:00+02:00 — Ländereien-Meldung (1.4.0 LA, Chef 23.10.: „Gebündelt, höchstens alle 15 Minuten,
-  // aber aktivier- und deaktivierbar in den Optionen“). Zählt Fänge (`stats.huntCatches`) und Ernte-Stücke (`producedById`
+  // aber aktivier- und deaktivierbar in den Optionen“). Zählt Fänge (`stats.huntCatches`) und Ernte-Stücke (`harvestedById`
   // der Feldfrüchte) seit der letzten Meldung und meldet frühestens 15 Minuten danach gesammelt. Nur der Renderer (keine
   // Engine-Zeit), Prüfung höchstens einmal pro Sekunde. Offline-Fänge zeigt der Offline-Bericht, nicht diese Meldung.
   const estateRef = useRef<{ catches: number; harvest: number; pendC: number; pendH: number; lastAt: number; checkedAt: number } | null>(null);
@@ -1399,7 +1399,7 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
     if (cur && now - cur.checkedAt < 1000) return;
     const catches = state.stats.huntCatches ?? 0;
     let harvest = 0;
-    for (const c of Object.values(content.crops ?? {})) harvest += state.stats.producedById?.[c.yieldItem] ?? 0;
+    for (const n of Object.values(state.stats.harvestedById ?? {})) harvest += n; // claude:2026-10-24T16:10:00+02:00 — nur echte Beet-Ernten (QA2 Folge)
     if (!cur) {
       estateRef.current = { catches, harvest, pendC: 0, pendH: 0, lastAt: now, checkedAt: now };
       return;

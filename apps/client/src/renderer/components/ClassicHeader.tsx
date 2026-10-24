@@ -4,6 +4,7 @@
  * App.tsx von 1.2.3 (Commit ec86af5), unverändert übernommen. Die Reforged-Oberfläche nutzt stattdessen die
  * kompakte Statusleiste (hs-strip) in App.tsx. Styles: styles/classic-chrome.css (.layout--classic).
  */
+import { stopReasonKey } from "../util/stopReason";
 import { SkillEventChip } from "./SkillEventChip"; // claude:2026-10-25T01:30:00+02:00
 import { EstatesNote, IdleOrEstates, useEstatesNote } from "./EstatesNote"; // claude:2026-10-23T19:10:00+02:00 — Ländereien (1.4.0)
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
@@ -527,9 +528,7 @@ function GameStats({
   } else if (lastStopActionId) {
     const a = content.actions[lastStopActionId];
     const hint =
-      lastStopReason === "inventory_full"
-        ? t("skill.stoppedInventoryFull")
-        : t("skill.stoppedNoMaterials");
+      t(stopReasonKey(lastStopReason)); // claude:2026-10-24T16:10:00+02:00 — level_too_low (QA2 Folge)
     activity = (
       <span className="activity activity-stopped" title={hint}>
         ⚠ <span className="muted">{t("header.stopped")}</span>{" "}

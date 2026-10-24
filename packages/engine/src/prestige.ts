@@ -451,6 +451,12 @@ function buildLedger(state: GameState, content: ContentDB): Ledger {
   for (const inst of state.inventory?.instances ?? []) addInstance(inst, "inventory");
   for (const [id, qty] of Object.entries(state.bank ?? {})) addPlain(id, positiveInt(qty), "bank");
   // claude:2026-10-26T03:45:00+02:00 — geladene Pfeile sind Lagerware: als Truhen-Kandidat wie ein Lagerstapel (QA-Fernkampf P3).
+  // claude:2026-10-24T15:21:04+02:00 — geprüft gegen den CEO-Entscheid zur QA-Runde 2 (Fernkampf B2: „Köcher = ausgerüstete Munition
+  // wie angelegte Ausrüstung, kein Auftragsbestand“): konsistent. Getragene Ausrüstung ist beim Aufstieg Kandidat (Erbstück, Ort
+  // „equipped“); Pfeile können keine Erbstücke sein, ihr Mitnahme-Weg ist die Truhe. Der Köcher wird also auch hier wie Getragenes
+  // behandelt (darf mit), nicht wie Auftragsbestand (orders.ts liest ihn nicht). Ohne diese Zeile gingen geladene Pfeile ersatzlos
+  // verloren (`quiver: "reset"`). Der Ort bleibt "bank", weil nur Inventar/Lager in `stackable` zählen; `plainLocation` wirkt nur
+  // auf Erbstück-Kandidaten.
   const q = state.character.quiver;
   if (q) addPlain(q.itemId, positiveInt(q.qty), "bank");
   for (const inst of state.bankInstances ?? []) addInstance(inst, "bank");

@@ -428,6 +428,18 @@ body.bank-dragging-noselect {
   .toast-icon img { width: 36px; height: 36px; }
 }
 
+/* claude:2026-10-24T15:30:00+02:00 — Fund-Meldungen bei kleiner Höhe kompakter und gedeckelt, damit sie keine Hauptknöpfe verdecken (QA2 UI N2) */
+@media (max-height: 820px) {
+  .toast-stack { gap: 6px; right: 12px; bottom: 12px; justify-content: flex-end; }
+  .toast { min-width: 260px; max-width: 360px; padding: 6px 12px; gap: 10px; border-width: 6px; }
+  /* Basisregeln (.toast-title/-detail/-icon) stehen weiter unten in der Datei; deshalb der Stack-Präfix für die Spezifität. */
+  .toast-stack .toast-body { gap: 1px; }
+  .toast-stack .toast-title { font-size: 15px; line-height: 1.2; letter-spacing: 0.3px; }
+  .toast-stack .toast-detail { font-size: 13px; line-height: 1.25; }
+  .toast-stack .toast-icon { font-size: 22px; }
+  .toast-stack .toast-icon img, .toast-stack .toast-icon .ui-icon { width: 30px; height: 30px; }
+}
+
 /* Typ-Akzent als linker Inset-Balken (border-image überschreibt border-left) */
 .toast-drop        { box-shadow: inset 5px 0 0 var(--accent, #6fae6f), 0 10px 30px rgba(0, 0, 0, 0.55); }
 .toast-total       { box-shadow: inset 5px 0 0 #c87f3a, 0 10px 30px rgba(0, 0, 0, 0.55); }

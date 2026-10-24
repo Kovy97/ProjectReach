@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { ContentDB, GameState, ItemDef } from "@hearthforge/shared";
-import { AMMO_SAVER_CAP } from "@hearthforge/shared";
+import { AMMO_SAVER_CAP, QUIVER_CAPACITY } from "@hearthforge/shared";
 import { createTestGame } from "./test-helpers";
 import { combatStep, startCombat } from "./combat";
 import { computeStats } from "./character";
@@ -115,6 +115,30 @@ describe("Verbrauch", () => {
     expect(refillQuiver(s, content)).toBe(true);
     expect(s.character.quiver).toEqual({ itemId: "copper_arrow", qty: 18 });
     expect(s.bank.copper_arrow).toBeUndefined();
+  });
+
+  // claude:2026-10-24T15:21:04+02:00 — Köcher-Deckel (QA-Runde 2 Fernkampf B2, CEO-Entscheid): Einlegen und Nachfüllen ziehen höchstens QUIVER_CAPACITY,
+  // Lager zuerst, dann Inventar; der Rest bleibt liegen. Nachlegen derselben Art füllt nur bis zum Deckel auf.
+  it("Köcher-Deckel: Einlegen und Nachfüllen nehmen höchstens QUIVER_CAPACITY, der Rest bleibt im Lager", () => {
+    const s = archer();
+    s.bank.copper_arrow = QUIVER_CAPACITY + 250;
+    addItem(s.inventory, content, "copper_arrow", 40);
+    expect(loadQuiver(s, content, "copper_arrow")).toEqual({ ok: true, qty: QUIVER_CAPACITY });
+    expect(s.bank.copper_arrow).toBe(250);
+    expect(itemCount(s.inventory, "copper_arrow")).toBe(40);
+    // Voller Köcher: Nachlegen bewegt nichts, die Ladung bleibt.
+    expect(loadQuiver(s, content, "copper_arrow")).toEqual({ ok: true, qty: 0 });
+    // Teilweise leer: Nachlegen füllt genau bis zum Deckel auf.
+    s.character.quiver!.qty = QUIVER_CAPACITY - 30;
+    expect(loadQuiver(s, content, "copper_arrow")).toEqual({ ok: true, qty: 30 });
+    expect(s.bank.copper_arrow).toBe(220);
+    // Nachfüllen (leer, Option an): Lager zuerst, dann Inventar, zusammen höchstens der Deckel.
+    s.character.quiver!.qty = 0;
+    s.bank.copper_arrow = QUIVER_CAPACITY - 10;
+    expect(refillQuiver(s, content)).toBe(true);
+    expect(s.character.quiver).toEqual({ itemId: "copper_arrow", qty: QUIVER_CAPACITY });
+    expect(s.bank.copper_arrow).toBeUndefined();
+    expect(itemCount(s.inventory, "copper_arrow")).toBe(30);
   });
 
   it("Sparchance: Köcher-Wert, Summe mit der Haupthand, Deckel 50 %; ohne Ladung kein RNG-Zug", () => {

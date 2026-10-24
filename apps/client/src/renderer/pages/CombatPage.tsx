@@ -66,7 +66,7 @@ import {
 } from "@hearthforge/engine";
 import type { ParagonFloorPreview, ParagonStatus } from "@hearthforge/engine";
 import type { ActiveBuff, BossPhase, CombatEvent, CombatStyle, RangedStance, DerivedStats, DungeonDef, ElementalSideCounters, EliteVariantDef, LootRoll, MagicStance, GameState, ItemDef, LastKillSummary, LocalizedString, MonsterDef, PetAbilityKind, SlayerTowerFloor, StatusEffect, StatusType } from "@hearthforge/shared";
-import { autoEatHealMult, effectiveAutoEatThreshold, effectiveWeaponEffects, isStatusEffectType, EQUIP_SLOT_LABELS, AUTO_EAT_MAX_TIER, AUTO_POTION_COOLDOWN_MS, AUTO_REBUFF_UNLOCK_COST, COMBAT_SKILL_IDS, CRAFT_TARGET_PRESETS, CRIT_CHANCE_CAP, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, ELITE_UNIQUE_DROP_CHANCE_DEFAULT, combatXpLevelMult, consumableHeal, FROST_FREEZE_STACKS, KILL_COOLDOWN_MS, PARAGON_BOSS_INTERVAL, PARAGON_DUNGEON_ID, POISON_MAX_STACKS, PRE_BOSS_BREATHER_MS, SHOCK_DELAY_CAP_MS } from "@hearthforge/shared";
+import { autoEatHealMult, effectiveAutoEatThreshold, effectiveWeaponEffects, isStatusEffectType, EQUIP_SLOT_LABELS, AUTO_EAT_MAX_TIER, AUTO_POTION_COOLDOWN_MS, AUTO_REBUFF_UNLOCK_COST, COMBAT_SKILL_IDS, CRAFT_TARGET_PRESETS, CRIT_CHANCE_CAP, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, ELITE_UNIQUE_DROP_CHANCE_DEFAULT, combatXpLevelMult, consumableHeal, FROST_FREEZE_STACKS, KILL_COOLDOWN_MS, PARAGON_BOSS_INTERVAL, PARAGON_DUNGEON_ID, POISON_MAX_STACKS, PRE_BOSS_BREATHER_MS, QUIVER_CAPACITY, SHOCK_DELAY_CAP_MS } from "@hearthforge/shared";
 import { getEliteMonsterSrc, getMonsterSrc } from "../monsters";
 import { AreaTourGuide } from "../components/AreaTourGuide";
 import { ActiveBuffsBar } from "../components/ActiveBuffs";
@@ -1937,7 +1937,12 @@ function Battle({
     const meta = dungeon.waveMeta?.[cs.encounterIndex];
     const encMonster = content.monsters[dungeon.encounters[cs.encounterIndex] ?? ""];
     const label = meta?.name ? tr(meta.name) : encMonster ? tr(encMonster.name) : "";
-    setWaveAnnounce({ cur: cs.encounterIndex + 1, total: dungeon.encounters.length, name: label });
+    // claude:2026-10-24T15:30:00+02:00 — Raid: Zählung wie die Raumzeile (Boss = keine Welle, kein Banner; das Boss-Intro übernimmt) (QA2 Raid B5)
+    if (dungeon.raidOnly && cs.encounterIndex >= dungeon.encounters.length - 1) {
+      setWaveAnnounce(null);
+      return;
+    }
+    setWaveAnnounce({ cur: cs.encounterIndex + 1, total: dungeon.raidOnly ? dungeon.encounters.length - 1 : dungeon.encounters.length, name: label });
     if (waveAnnounceTimerRef.current !== null) window.clearTimeout(waveAnnounceTimerRef.current);
     waveAnnounceTimerRef.current = window.setTimeout(() => setWaveAnnounce(null), 3400);
     return () => {
@@ -1958,7 +1963,8 @@ function Battle({
       // Nur bei einem ECHTEN Wellen-Übergang flashen (dungeon.chest gesetzt) — die synthetische
       // 1-Wellen-Intro unten (`singleWaveBossIntro`) hat NIE eine Truhe (chest "braucht ≥2 Wellen",
       // s. shared/index.ts DungeonDef.chest-JSDoc), ein Flash dort wäre eine Lüge.
-      if (dungeon?.chest) {
+      // claude:2026-10-24T15:30:00+02:00 — nur bei Truhe MIT Inhalt (Raid-Räume tragen eine bewusst leere Truhe) (QA2 UI N3)
+      if (dungeon?.chest && dungeon.chest.loot.length > 0) {
         setChestFlash(true);
         const timer = window.setTimeout(() => setChestFlash(false), 1600);
         return () => window.clearTimeout(timer);
@@ -6038,7 +6044,7 @@ function CombatFoodAutoEat(): JSX.Element {
         <div className="cl-autoeat-info">
           <span className="cl-autoeat-tier">{t("combat.autoEatTier").replace("{n}", String(tier))}</span>
           <span className="cl-autoeat-detail muted">
-            {t("combat.autoEatEatsAt").replace("{p}", String(eatPct))} · ×{healMult}
+            {t("combat.autoEatEatsAt").replace("{p}", String(eatPct))}{/* claude:2026-10-24T15:30:00+02:00 — Faktor nur zeigen, wenn er etwas bedeutet (QA2 Klarheit B6) */}{healMult !== 1 ? ` · ×${healMult}` : ""}
           </span>
         </div>
         {/* Max-Tier (Chef): konfigurierbare Ess-Schwelle per Slider — wie beim Auto-Potion. Darunter
@@ -6166,7 +6172,7 @@ function CombatMealSlot(): JSX.Element {
 
 /**
  * claude:2026-10-24T19:40:00+02:00 — Köcher (1.4.0 „Feder und Stahl“ FK, Chef 23.10.2026). Zeigt die geladene Pfeilart samt Rest, legt
- * per Klick ALLE Pfeile einer Art aus Lager und Inventar ein (engine loadQuiver), ✕ nimmt sie heraus. Ohne
+ * per Klick Pfeile einer Art aus Lager und Inventar ein, höchstens bis zum Deckel QUIVER_CAPACITY (1000; engine loadQuiver), ✕ nimmt sie heraus. Ohne
  * Ladung schießt der Bogen mit einfachen Pfeilen (unbegrenzt). Schalter „Automatisch nachfüllen“ = Option.
  */
 function CombatQuiverSlot(): JSX.Element {
@@ -6196,7 +6202,7 @@ function CombatQuiverSlot(): JSX.Element {
           {load && <span className="cl-food-qty">{formatNum(load.qty)}</span>}
         </div>
         <div className="cl-food-meta">
-          <span className="cl-food-name">{active && loadedItem ? tr(loadedItem.name) : t("combat.quiver.basic")}</span>
+          <span className="cl-food-name">{active && loadedItem ? tr(loadedItem.name) : t("combat.quiver.basic")}{/* claude:2026-10-24T16:10:00+02:00 — Füllstand x / Deckel */}{load && loadedItem ? ` · ${formatNum(load.qty)} / ${formatNum(QUIVER_CAPACITY)}` : ""}</span>
           <span className="cl-food-heal">
             {active && loadedItem?.arrow
               ? t("combat.quiver.loaded").replace("{min}", formatDamage(loadedItem.arrow.bonusMin)).replace("{max}", formatDamage(loadedItem.arrow.bonusMax))

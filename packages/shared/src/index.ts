@@ -743,7 +743,14 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 // 93: Raid „Die Hallen von Gobkha'raz“ (1.4.0 Welle 4, Chef 23.10.2026; claude:2026-10-25T02:50:00+02:00): `raid` (laufender Lauf,
 //     Abschlüsse je Schwierigkeit, Boss-Kills, Wochentruhen, Zähler), neue Raritäten heroic/mythic,
 //     Warteschlangen-Art `raid`, Einstellungen `raidAutoContinue`/`raidAutoBuyRestart`.
-export const SAVE_VERSION = 93;
+// 94: QA-Runde 2 (1.4.0, claude:2026-10-24T15:21:04+02:00): `stats.harvestedById` (Beet-Ernte je Feldfrucht, Sammel-Funde zählen
+//     nicht; Offline-Block „Ländereien: Ernte“ und Ländereien-Meldung). Migration: {} für < 94. Ohne Bump, nur Sanitize (jede
+//     Version): laufende Aktion ohne Skill-Level endet beim Laden (`lastStop.reason = "level_too_low"`), Köcher-Ladung über
+//     `QUIVER_CAPACITY` geht verlustfrei ins Lager, Bergungs-Schlösser behalten beim Deckel die NEUESTEN Einträge.
+// 95: QA-Runde 2, Chef-Entscheid Werkstatt B2 (claude:2026-10-24T16:03:31+02:00): `stats.producedBySkill` (erzeugte Stücke je Skill und Item); Arbeits-
+//     aufträge zählen nur Ware aus Aktionen ihres Skills. Migration < 95: {} und je offenem Auftrag mit `producedById[item]` vorbelegt
+//     (Fortschritt bleibt). 1.4.0-Zwischenversionen 89–95 sind nie live.
+export const SAVE_VERSION = 95;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -2529,7 +2536,11 @@ export const ESTATE_EVENT_CHANCE = 0.08;
 export const FRESH_TRAIL_EXTRA_ROLLS = 5;
 
 export type WorkOrderKind = "produce" | "deliver";
-/** Ein Arbeitsauftrag. Alles Feste wird beim Angebot bestimmt (Spec §4). Fortschritt = producedById − baseline. */
+/**
+ * Ein Arbeitsauftrag. Alles Feste wird beim Angebot bestimmt (Spec §4). Fortschritt = Zähler − baseline.
+ * claude:2026-10-24T16:03:31+02:00 — Zähler ist seit SAVE 95 `stats.producedBySkill[skill][itemId]` (nur Ware aus Aktionen des Auftrags-Skills,
+ * Chef-Entscheid QA-Runde 2 Werkstatt B2), vorher `stats.producedById[itemId]` (jede Quelle).
+ */
 export interface WorkOrder {
   id: number;
   kind: WorkOrderKind;
@@ -2542,7 +2553,7 @@ export interface WorkOrder {
   gold: number;
   xp: number;
   customerId: string;
-  /** stats.producedById[itemId] bei Annahme (beim Angebot 0, gesetzt in acceptWorkOrder). */
+  /** Zählerstand `stats.producedBySkill[skill][itemId]` bei Annahme (beim Angebot 0, gesetzt in acceptWorkOrder). */
   baseline: number;
 }
 export interface WorkOrderState {
@@ -2588,6 +2599,14 @@ export interface ArrowDef {
 export const ARROW_TIER_RANGED_LEVEL: readonly number[] = [1, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 99];
 /** Deckel der Pfeil-Sparchance (`ammoSaver` aus Haupthand + Köcher, Summe). */
 export const AMMO_SAVER_CAP = 0.5;
+/**
+ * claude:2026-10-24T15:21:04+02:00 — Köcher-Deckel (QA-Runde 2 Fernkampf B2, CEO-Entscheid 24.10.): so viele Pfeile fasst der Köcher.
+ * Der Köcher ist ausgerüstete Munition (wie angelegte Ausrüstung, kein Auftragsbestand); Einlegen und Nachfüllen ziehen höchstens
+ * bis zu diesem Deckel aus Lager und Inventar, der Rest bleibt im Lager. Etwa 35–40 min Dauerkampf (Planungswert 1 600 Schuss/h,
+ * design/1.4.0-balance-fernkampf.md §4); mit „Automatisch nachfüllen“ (Standard an) merkt der Spieler den Deckel nicht.
+ * Stellschraube für Balance, keine Spielstand-Form (Persistenz klemmt beim Laden verlustfrei, Überschuss ins Lager).
+ */
+export const QUIVER_CAPACITY = 1000;
 /** Geladener Stapel im Köcher (`character.quiver`). */
 export interface QuiverLoad {
   itemId: ItemId;
@@ -6900,6 +6919,21 @@ export interface PlayerStats {
    * Feld-Ernten (farming.ts). Baseline-Zähler für "produce"-Aufgaben. Migration: {}.
    */
   producedById: Record<ItemId, number>;
+  /**
+   * claude:2026-10-24T15:21:04+02:00 — Ländereien (SAVE 94, QA-Runde 2 Klarheit B1): je Feldfrucht-Item die Zahl frisch GEERNTETER
+   * Stücke aus Beeten (farming.ts `grantHarvest`, volle Menge zum Erntezeitpunkt wie `producedById`). Anders als `producedById`
+   * zählen Sammel-Funde mit derselben Item-ID NICHT mit. Quelle für den Offline-Block „Ländereien: Ernte“ und die gebündelte
+   * Ländereien-Meldung. Migration: {} (alte Saves starten bei 0, rückwirkend nicht rekonstruierbar).
+   */
+  harvestedById: Record<ItemId, number>;
+  /**
+   * claude:2026-10-24T16:03:31+02:00 — Arbeitsaufträge (SAVE 95, Chef-Entscheid QA-Runde 2 Werkstatt B2 „nur die passende Quelle zählt“): je Skill und
+   * Item die Zahl frisch erzeugter Stücke aus AKTIONEN dieses Skills (tick.ts, wie `producedById`, aber nach Skill getrennt; Beet-
+   * Ernte, Diebstahl oder Nebenfunde anderer Skills landen nicht im Skill des Auftrags). Fortschritt eines Auftrags =
+   * `producedBySkill[order.skill][order.itemId] − order.baseline`. Migration: {} und für offene Aufträge mit dem bisherigen
+   * `producedById`-Stand vorbelegt, damit ihr Fortschritt erhalten bleibt.
+   */
+  producedBySkill: Partial<Record<SkillId, Record<ItemId, number>>>;
   /** Jagen (SAVE 85): erfolgreiche Fänge gesamt (kein Kill-Zähler, s. Chef-Entscheid J2). Migration: 0. */
   huntCatches: number;
   /** Jagen (28.08.2026): Fänge je Monster-Art; 0/fehlend = Erstfang (HUNT_FIRST_CATCH_MULT). Migration: {}. */
@@ -7064,7 +7098,13 @@ export type QueueSkipReason =
   /** claude:2026-10-25T03:40:00+02:00 — "raid"-Eintrag (SAVE 93): Stufe gesperrt, Gold reicht nicht, unbekannter Raid. */
   | "raid_locked"
   | "raid_gold"
-  | "unknown_raid";
+  | "unknown_raid"
+  /**
+   * claude:2026-10-24T15:21:04+02:00 — "action"-Eintrag (QA-Runde 2 Spielstände B3): beim START reichte das Skill-Level nicht
+   * (`actionLevelMet`, dieselbe Prüfung wie `setActiveAction`), z. B. ein alter Bogen-Eintrag nach dem Umzug in die Bognerei
+   * (v91). Trägt `actionId`; die Persistenz behält den Grund nur, solange das Level HEUTE noch fehlt.
+   */
+  | "level_too_low";
 
 /**
  * Breadcrumb des letzten übersprungenen Kampf-/Dungeon-/Aktions-Queue-Eintrags (Muster `lastStop`).
@@ -7466,8 +7506,12 @@ export interface GameState {
    *    darf leer sein, wenn alle Chance-Rows verfehlten — die Truhe selbst wird trotzdem gefeiert.
    */
   lastParagonChest: { floor: number; chestTier: number; items: { id: ItemId; qty: number }[]; seq: number } | null;
-  /** Warum die zuletzt aktive Aktion automatisch endete. null = regulär gestoppt. */
-  lastStop: { actionId: ActionId; reason: "no_materials" | "inventory_full" } | null;
+  /**
+   * Warum die zuletzt aktive Aktion automatisch endete. null = regulär gestoppt.
+   * claude:2026-10-24T15:21:04+02:00 — `level_too_low` (QA-Runde 2 Spielstände B1): die laufende Aktion verlangt mehr Skill-Level,
+   * als der Spielstand hat (Laden und jeder Tick prüfen wie `setActiveAction`; typisch Alt-Save mitten im Bogenbau nach v91).
+   */
+  lastStop: { actionId: ActionId; reason: "no_materials" | "inventory_full" | "level_too_low" } | null;
   /** Verbleibende Betäubung in ms (z.B. nach einem Thieving-Fehlschlag). Pausiert die Aktion. */
   stunMs: number;
   /**

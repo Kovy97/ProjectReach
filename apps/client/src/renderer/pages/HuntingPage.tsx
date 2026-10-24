@@ -360,7 +360,7 @@ function HuntHeader({ onNavigate }: { onNavigate: (id: string) => void }): JSX.E
         </div>
 
         <div className="hunt-head-stat">
-          <span className="hunt-head-stat-label muted">{t("hunting.section.traps")}</span>
+          <span className="hunt-head-stat-label muted">{t("hunting.head.slotsLabel")}</span>{/* claude:2026-10-24T15:30:00+02:00 — „Plätze“ statt „Fallen“, damit die Zahl nicht der laufenden Zahl im Banner widerspricht (QA2 Klarheit B5) */}
           <span className="hunt-head-stat-value">
             {unlockedSlots}/{HUNT_TRAP_SLOTS}
           </span>

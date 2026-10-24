@@ -1781,7 +1781,9 @@ export const content: ContentDB = {
     tidewrack_collar: {
       id: "tidewrack_collar", name: { en: "Tidewrack Chain", de: "Flutbruch-Kette" }, type: "equipment", stackable: false,
       icon: "📿", slot: "amulet", modifiers: { int: 6, wis: 3 }, skillBoost: { magic: 2 },
-      weaponEffect: { type: "wardSiphon", chance: 1, magnitude: 0.12, durationMs: 0 },
+      // claude:2026-10-24T16:03:31+02:00 — Chef-Entscheid QA-Runde 2 Ward H1: 0,08 statt 0,12, damit die Stufe-IV-Rune Schleiertrinker (0,10) die beste
+      // Quelle bleibt (Spezialeffekte gleicher Art stapeln nicht, die stärkste zählt; Affix-Kommentar „MAX über Quellen 0,10“).
+      weaponEffect: { type: "wardSiphon", chance: 1, magnitude: 0.08, durationMs: 0 },
       value: 1800, rarity: "rare",
       description: {
         en: "Salt-crusted and cold, taken from a singer who drowned sailors with her own voice. Turns stolen strength into a shield.",
@@ -21857,6 +21859,7 @@ export const content: ContentDB = {
       bonusByTier: [{}, {}, {}, {}],
       // wardSiphon: 10 % des verursachten Schadens füllen den eigenen Ward-Pool (Hohlschleier-
       // Medaillon trägt 0,08 nativ, MAX über Quellen bleibt bei 0,10).
+      // claude:2026-10-24T16:03:31+02:00 — Flutbruch-Kette ebenfalls 0,08 nativ (Chef-Entscheid QA-Runde 2 Ward H1).
       weaponEffectByTier: [undefined, undefined, undefined, { type: "wardSiphon", chance: 1, magnitude: 0.10, durationMs: 0 }],
       appliesTo: ["armor"],
       requiresTrinity: "wardCapacity",

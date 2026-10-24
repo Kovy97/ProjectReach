@@ -266,7 +266,8 @@ function canHoldRewards(
     ? Math.max(0, effectiveBankCapacity(state, content) - usedBankSlots(state, storagePredicate(content)))
     : 0;
   const plannedBankKinds = new Set<string>();
-  const toStorage = state.settings.materialsToStorage !== false ? storagePredicate(content) : null;
+  const isStore = storagePredicate(content);
+  const toStorage = state.settings.materialsToStorage !== false ? isStore : null;
   for (const { id } of items) {
     // claude:2026-10-26T02:20:00+02:00 — „Direkt ins Lager“: Lagerware braucht weder Inventar- noch Bankplatz (wie addItemOrBank), QA-Lager P3.
     if (toStorage?.(id)) continue;
@@ -276,6 +277,9 @@ function canHoldRewards(
     if (freeInv > 0) { freeInv--; continue; }
     // 3) Auto-Bank: vorhandene/schon eingeplante Art kostet keinen Slot; sonst neue Art nur bei Kapazität
     if (state.settings.autoBank) {
+      // claude:2026-10-24T15:21:04+02:00 — Lagerware läuft auch bei „Direkt ins Lager“ AUS ohne Bankplatz ins Lager über (addItemOrBank),
+      // also braucht sie hier keine freie Bank-Art (QA-Runde 2 Werkstatt B4; vorher nur bei Option AN berücksichtigt).
+      if (isStore(id)) continue;
       if (state.bank[id] !== undefined || plannedBankKinds.has(id)) continue;
       if (bankFreeKinds > 0) { bankFreeKinds--; plannedBankKinds.add(id); continue; }
     }

@@ -620,9 +620,9 @@ export function moveQueueItem(state: GameState, from: number, to: number): void 
  * Gibt true zurück, sobald etwas angelaufen ist, sonst false (Queue leer/erschöpft — der Aufrufer
  * beendet dann die aktive Aktion regulär).
  *
- *  • kind "action": unbekannte actionId ODER Skill-Level nicht erreicht → still überspringen
- *    (bisheriges Verhalten); Material fehlt (Inventar + Lager, `actionInputsOnHand`) → MIT Grund
- *    `no_materials` + `actionId` überspringen (27.08.2026); Start via `setActiveAction`.
+ *  • kind "action": unbekannte actionId → still überspringen; Skill-Level nicht erreicht → MIT Grund
+ *    `level_too_low` + `actionId` (claude:2026-10-24T15:21:04+02:00, QA-Runde 2); Material fehlt (Inventar + Lager,
+ *    `actionInputsOnHand`) → MIT Grund `no_materials` + `actionId` überspringen (27.08.2026); Start via `setActiveAction`.
  *  • kind "fight": GATE-CHECK BEIM START (Chef-GO #312) — Monster unbekannt/nicht mehr queue-fähig/
  *    Gate gesperrt (canFightMonster: Story-Zone, Slayer-Anforderung, Turm-Etage) → Eintrag MIT
  *    maschinenlesbarem Grund überspringen (`state.lastQueueSkip`, für die spätere UI), Queue läuft
@@ -705,7 +705,12 @@ export function advanceActionQueue(state: GameState, content: ContentDB, nowMs?:
     }
     const nextAction = content.actions[next.actionId];
     if (!nextAction) continue; // unbekannte Aktion → überspringen
-    if (!actionLevelMet(state, content, next.actionId)) continue; // Level/gesperrt → überspringen
+    // claude:2026-10-24T15:21:04+02:00 — Level fehlt → MIT Grund überspringen (QA-Runde 2 Spielstände B3; vorher still verschluckt, z. B.
+    // ein alter Bogen-Eintrag nach dem Umzug in die Bognerei). Muster `no_materials`; zieht kein RNG.
+    if (!actionLevelMet(state, content, next.actionId)) {
+      setQueueSkip(state, { monsterId: FIGHT_QUEUE_ACTION_ID, actionId: next.actionId, reason: "level_too_low" });
+      continue;
+    }
     // MATERIAL-CHECK BEIM START (Chef-Auftrag 27.08.2026, Warteschlangen-Projektion): ein Eintrag
     // darf vorgeplant werden, obwohl sein Material erst ein früheres Ketten-Glied liefert
     // („Kupferader ×650, dann Kupfer schmelzen ×650"). Fehlt es beim tatsächlichen Anlauf trotzdem

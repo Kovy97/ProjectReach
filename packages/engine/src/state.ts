@@ -63,6 +63,8 @@ export function createGame(
       // Taverne (SAVE 84): Baseline-Zähler der run/produce-Aufgaben (taverne-spec-technik.md §2).
       actionRunsById: {},
       producedById: {},
+      harvestedById: {}, // claude:2026-10-24T15:21:04+02:00 — Beet-Ernte je Feldfrucht (SAVE 94, QA-Runde 2 Klarheit B1)
+      producedBySkill: {}, // claude:2026-10-24T16:03:31+02:00 — erzeugte Stücke je Skill (SAVE 95, Arbeitsaufträge, QA-Runde 2 Werkstatt B2)
       huntCatches: 0,
       huntCatchesById: {},
     },

@@ -1,4 +1,5 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { stopReasonKey } from "../util/stopReason";
 import { content } from "@hearthforge/content";
 import {
   actionLevelMet,
@@ -445,9 +446,7 @@ export function SkillPage({ skillId }: { skillId: SkillId }): JSX.Element {
   const stoppedHere =
     !activeAction && !!state.lastStop && actions.some((a) => a.id === state.lastStop?.actionId);
   const stopKey =
-    state.lastStop?.reason === "inventory_full"
-      ? "skill.stoppedInventoryFull"
-      : "skill.stoppedNoMaterials";
+    stopReasonKey(state.lastStop?.reason); // claude:2026-10-24T16:10:00+02:00 — level_too_low
 
   return (
     <div className="skill-page">

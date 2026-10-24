@@ -265,6 +265,31 @@
 @container (max-width: 400px) {
   #root .layout--reforged .hs-act-rate { display: none; }
 }
+/* claude:2026-10-24T15:30:00+02:00 — Ereignis-/Angebots-Chip in der Aktivitätszeile: kein Umbruch, kein Springen der Kopfhöhe (QA2 Werkstatt B5).
+   Die Zeile bleibt einzeilig (Name kürzt notfalls mit …), die Raten weichen in schmalen Zellen zuerst. */
+#root .layout--reforged .hs-act-text:has(.skill-event-chip) {
+  flex: 1 1 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.3em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+#root .layout--reforged .hs-act-text:has(.skill-event-chip) > * { flex: 0 0 auto; }
+/* Name und „Nebenbei“-Zusatz kürzen mit …, der Chip bleibt immer ganz sichtbar. */
+#root .layout--reforged .hs-act-text:has(.skill-event-chip) > :is(.hs-act-name, .estates-note) {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#root .layout--reforged .hs-act-text:has(.skill-event-chip) > .estates-note { flex-shrink: 8; }
+@container (max-width: 760px) {
+  #root .layout--reforged .hs-act:has(.skill-event-chip) .hs-act-rate { display: none; }
+}
+@container (max-width: 560px) {
+  #root .layout--reforged .hs-act:has(.skill-event-chip) .estates-note { display: none; }
+}
 
 /* Fortschrittsleiste (StatusBar, App.tsx): Gravewood-Track mit Bronzekante, 10 Fächer. */
 #root .layout--reforged .hs-bar-wrap { position: relative; }

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { stopReasonKey } from "../util/stopReason";
 import { content } from "@hearthforge/content";
 import { campBoost } from "@hearthforge/engine";
 import { ITEM_RARITIES, MAX_OFFLINE_MS } from "@hearthforge/shared";
@@ -365,7 +366,7 @@ export function OfflinePopup({
                   <span className="ofs-incident-art">{WARNING_ICON_URL && <img src={WARNING_ICON_URL} alt="" />}</span>
                   <small>
                     {lastStopAction ? `${tr(lastStopAction.name)}: ` : ""}
-                    {t(lastStop.reason === "inventory_full" ? "skill.stoppedInventoryFull" : "skill.stoppedNoMaterials")}
+                    {t(stopReasonKey(lastStop.reason))}
                   </small>
                 </div>
               )}

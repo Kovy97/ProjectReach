@@ -281,6 +281,22 @@ export const PORTRAIT_ANCHORS: Record<string, PortraitAnchor> = {
   "npc_the_expunger": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste, keine Hand sichtbar
   "npc_urga": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste, keine Hand sichtbar
   "npc_voss": { staff: false, facing: "right", magic: { x: 0.31, y: 0.76 }, hand: { x: 0.31, y: 0.76 } }, // NPC-Bueste
+  // claude:2026-10-24T17:30:00+02:00 — 15 Kunden-Büsten der Aufträge (Codex-Lieferung 1.4.0, Gruppe P): Brust-Mitte als Platzhalter (kämpfen nie)
+  "npc_brakka": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste (Kunde)
+  "npc_caedren": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste (Kunde)
+  "npc_dashk": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste (Kunde)
+  "npc_grumm": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste (Kunde)
+  "npc_ilvara": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste (Kunde)
+  "npc_jorun": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste (Kunde)
+  "npc_kell": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste (Kunde)
+  "npc_merrit": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste (Kunde)
+  "npc_nessa": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste (Kunde)
+  "npc_odo": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste (Kunde)
+  "npc_orin": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste (Kunde)
+  "npc_sefra": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste (Kunde)
+  "npc_tamsin": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste (Kunde)
+  "npc_torvald": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste (Kunde)
+  "npc_wenna": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste (Kunde)
   "npc_warden": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste, keine Hand sichtbar
   "orc_berserker_f": { staff: false, facing: "right", magic: { x: 0.18, y: 0.11 }, hand: { x: 0.33, y: 0.27 } },
   "orc_berserker_m": { staff: false, facing: "right", magic: { x: 0.79, y: 0.23 }, hand: { x: 0.55, y: 0.41 } },

@@ -37,14 +37,17 @@ export interface ConfirmRequest {
 export function ConfirmModal({
   request,
   onClose,
+  overlayClass,
 }: {
   request: ConfirmRequest | null;
   onClose: () => void;
+  /** claude:2026-10-24T15:30:00+02:00 — Zusatzklasse fürs Overlay (z. B. höhere Ebene über dem Raid-Dialog). */
+  overlayClass?: string;
 }): JSX.Element | null {
   const { t } = useI18n();
   if (!request) return null;
   return createPortal(
-    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
+    <div className={`modal-overlay${overlayClass ? ` ${overlayClass}` : ""}`} onClick={onClose} role="dialog" aria-modal="true">
       <div className="modal quit-confirm-modal" onClick={(e) => e.stopPropagation()}>
         <div className="quit-confirm-icon">
           <img loading="lazy" decoding="async" src={emblSkull} alt="" className="pixelart" />
