@@ -217,17 +217,19 @@ export class CaptionTrack {
     const outK = 1 - ramp(tau, s.t1 - 0.12, s.t1);
     const count = s.value !== undefined ? ramp(lt, 0, 0.45, easeOutCubic) : 1;
     const subK = s.sub ? ramp(tau, s.subAt ?? s.t0 + 0.25, (s.subAt ?? s.t0 + 0.25) + 0.25, easeOutCubic) : 0;
-    const key = [s.word, Math.round(count * 400), Math.round(inK * 40), Math.round(outK * 40), Math.round(subK * 40)].join("|");
+    let num = "";
+    if (s.value !== undefined) num = count >= 1 ? (s.exact ? s.value.toLocaleString("en-US") : plus(s.value)) : Math.round(s.value * count).toLocaleString("en-US");
+    // claude:2026-10-24T13:21:00+02:00 — Schlüssel enthält den angezeigten Text: vorher rundete der letzte Zählschritt auf denselben Schlüssel
+    // wie der Endwert, beim fortlaufenden Rendern blieb dann z. B. „1,376“ statt „1,300+“ stehen
+    const key = [s.word, num, Math.round(inK * 40), Math.round(outK * 40), Math.round(subK * 40)].join("|");
     if (key === this.key) return;
     this.key = key;
-    this.draw(s, count, inK * outK, subK * outK);
+    this.draw(s, num, inK * outK, subK * outK);
   }
-  private draw(s: CaptionSpec, count: number, a: number, subA: number): void {
+  private draw(s: CaptionSpec, num: string, a: number, subA: number): void {
     const g = this.g;
     g.clearRect(0, 0, 1920, 1080);
     const y = s.pos === "center" ? 520 : s.pos === "low" ? 900 : 150;
-    let num = "";
-    if (s.value !== undefined) num = count >= 1 ? (s.exact ? s.value.toLocaleString("en-US") : plus(s.value)) : Math.round(s.value * count).toLocaleString("en-US");
     g.save();
     g.globalAlpha = a;
     // dunkler, weicher Halt hinter dem Text (lesbar auch über dichten Rastern)
