@@ -685,3 +685,64 @@
   background-origin: border-box;
   background-clip: border-box;
 }
+
+/* claude:2026-10-24T17:54:00+02:00 — Chef 24.10. (Bild Holzfällen): „Warum ist das Icon für das Holz und der Text dafür so klein?“
+   Ursache: Die cqw-Faktoren der Karte waren so niedrig, dass bei echten Kartenbreiten (330–380 px) jede Größe auf ihrem
+   Mindestwert klebte (gemessen: Produziert-Label 10 px, Ertrag 13 px mit 23-px-Icon in einer 330×160-Fläche = 5 % Füllung,
+   Kachel-Label 11 px, Meisterschaft 12 px). Die Faktoren steigen so, dass ab ~330 px Kartenbreite die Mitte des
+   Bereichs greift. Ohne Zutaten (Sammeln, Bergbau, Stehlen) bekommt der Ertrag die freie Kartenhöhe und steht groß
+   untereinander: Bild über Name. Mit Zutaten wächst die Ertragszeile von 52 auf 62 px. */
+#root .skillcard-body {
+  grid-template-rows: 122px 62px 175px 34px 44px minmax(34px, 1fr);
+}
+
+#root .skillcard-body--no-inputs {
+  grid-template-rows: 122px 214px 0 34px 44px minmax(34px, 1fr);
+}
+
+#root .skillcard-tile small {
+  font-size: clamp(13px, 3.6cqw, 17px) !important;
+}
+
+#root .skillcard-tile b {
+  font-size: clamp(18px, 5.4cqw, 26px) !important;
+}
+
+#root .skillcard-produces-label {
+  font-size: clamp(12px, 3.5cqw, 16px);
+}
+
+#root .skillcard-produces-item {
+  gap: 6px;
+  font-size: clamp(16px, 4.8cqw, 22px);
+}
+
+#root .skillcard-produces-item .item-chip-img {
+  width: clamp(28px, 8.4cqw, 38px);
+  height: clamp(28px, 8.4cqw, 38px);
+}
+
+#root .skillcard-body--no-inputs .skillcard-produces-item {
+  flex-direction: column;
+  gap: 4px;
+  font-size: clamp(18px, 6cqw, 26px);
+}
+
+#root .skillcard-body--no-inputs .skillcard-produces-item .item-chip {
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+}
+
+#root .skillcard-body--no-inputs .skillcard-produces-item .item-chip-img {
+  width: clamp(56px, 22cqw, 96px);
+  height: clamp(56px, 22cqw, 96px);
+}
+
+#root .skillcard-body--no-inputs .skillcard-produces-item .skillcard-drop-qty {
+  font-size: clamp(16px, 4.8cqw, 22px);
+}
+
+#root .skillcard-mastery :is(.mastery-label, .mastery-bonus) {
+  font-size: clamp(14px, 4.2cqw, 19px);
+}
