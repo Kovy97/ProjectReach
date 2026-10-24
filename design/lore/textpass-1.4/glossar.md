@@ -21,6 +21,9 @@
 | Schrift Fließtext | Alegreya (eingebaut, Welle 1). |
 | Lager | Die neue Materialseite bleibt **„Lager“**. Bank heißt nur „Bank“, New Haven nur „New Haven“; „Lager“ steht nirgends sonst für diese beiden. |
 | Gamer-Wörter | **Gängige dulden:** HP, XP, Buff, Slot, Drop, Kit, Level, Raid, Ward bleiben. Entwicklerwörter werden deutsch: Mitigation → Schadensminderung, Armor Pen → Rüstungsbruch, Boost/int → ausgeschrieben (z. B. Intelligenz). |
+| Item (Nachtrag) | **„Item“ bleibt** im Deutschen (gängiges Gamer-Wort wie Drop/Slot/Kit); „Gegenstand“ nur, wo es im Satz natürlicher klingt. |
+| Verzauberung „Präzise“ (Nachtrag) | Name bleibt; die Effektzeile nennt die echte Wirkung (Glück → Krit-Chance und Krit-Schaden), nie „Präzision/Genauigkeit“. |
+| Ton der Proben | **Abgenommen** (Chef 24.10.). Probe 1.1 „Balken“ ist sachlich falsch und wird nicht übernommen. |
 | Items ohne Beschreibung (974) | **Neu schreiben** (Paket P4b), kurz, nach Stilregeln, mit Faktencheck gegen die Daten, 7 Sprachen. |
 
 Übernommene Empfehlungen (Chef kann widersprechen): RU/FR durchgehend ты/tu; DE-Aufgaben-Familie Aufgabe / Tagesaufgabe /
