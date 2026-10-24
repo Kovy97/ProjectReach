@@ -460,8 +460,8 @@ export function v4s11(): Shot {
 const HALLS: [string, string][] = [
   ["battlescreens/gk_room_1.webp", RAID_CAST.tally],
   ["battlescreens/gk_room_2.webp", RAID_CAST.quarter],
-  ["battlescreens/gk_room_3.webp", RAID_CAST.wave[3]!],
-  ["battlescreens/gk_room_4.webp", RAID_CAST.fel],
+  ["battlescreens/gk_room_3.webp", RAID_CAST.pit],
+  ["battlescreens/gk_room_5.webp", RAID_CAST.king],
 ];
 export function v4s12(): Shot {
   const group = g();

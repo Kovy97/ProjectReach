@@ -1,5 +1,5 @@
 // claude:2026-10-24T10:24:00+02:00 — Trailer v3, Shots 19–29 (Raid Gobkha'raz, Musik 45,47–71,41 s). Die Raid-Gegner (monsters/gk_*)
-// liefert Codex noch; bis dahin stehen Bestandsgoblins in den echten Raid-Räumen gk_room_1–4. Tausch = nur RAID_CAST ändern.
+// stammen aus der Codex-Lieferung vom 24.10. (RAID_CAST); der König steht in seinem Thronsaal gk_room_5.
 // claude:2026-10-24T10:24:00+02:00 — Kameras an die Malerposition, kein Orbit, keine Fahrt dicht am Pfeil (Chef 24.10.: zu nah, zu unscharf).
 import * as THREE from "three";
 import { easeInOutCubic, easeOutCubic, pulse, ramp, rng, smooth, timeRemap, track, type Vec3 } from "../anim";
@@ -16,14 +16,15 @@ const g = () => new THREE.Group();
 const C = (r: number, gg: number, b: number) => new THREE.Color(r, gg, b);
 const V = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
 
-/** Besetzung: Platzhalter → spätere Raid-ID (Kommentar). Sobald monsters/gk_*.webp da sind, hier umstellen. */
+/** Besetzung des Raids. claude:2026-10-24T16:28:00+02:00 — Codex-Lieferung 24.10. eingebaut: echte Raid-Gegner statt Platzhalter-Goblins. */
 export const RAID_CAST = {
-  tally: "monsters/goblin_warlock.webp", // gk_tallymistress (Vrikka, die Zählerin)
-  quarter: "monsters/goblin_siegebrute.webp", // gk_quartermaster (Krogg)
-  fel: "monsters/goblin_felmagician.webp", // gk_felmagus (Zil'gath)
-  king: "monsters/goblin_warchief.webp", // gk_warking (Rakkzul)
-  wave: ["monsters/goblin_reaver.webp", "monsters/goblin_spearman.webp", "monsters/goblin_pikeman.webp", "monsters/goblin_butcher.webp", "monsters/goblin_rogue.webp"], // gk_gate_pikeman, gk_toll_thug, gk_bannerman …
-  sentry: "monsters/goblin_spearman.webp", // gk_gate_pikeman
+  tally: "monsters/gk_tallymistress.webp", // Vrikka, die Zählerin (Saal 1)
+  quarter: "monsters/gk_quartermaster.webp", // Krogg (Saal 2)
+  pit: "monsters/gk_pitmother.webp", // Ushka (Saal 3)
+  fel: "monsters/gk_felmagus.webp", // Zil'gath (Saal 4)
+  king: "monsters/gk_warking.webp", // Rakkzul (Saal 5, Thron)
+  wave: ["monsters/gk_gate_pikeman.webp", "monsters/gk_toll_thug.webp", "monsters/gk_armory_breaker.webp", "monsters/gk_crownguard.webp", "monsters/gk_bannerman.webp"],
+  sentry: "monsters/gk_gate_pikeman.webp",
 };
 const HERO = "portraits/human_warrior_m.webp";
 const heroOpts = { height: 2.25, capeC: [0.62, 0.38] as [number, number], capeR: [0.2, 0.3] as [number, number], chest: 0.7, hip: 0.46 };
@@ -117,7 +118,7 @@ function s20(): Shot {
     id: "20", t0: 47.4, t1: 48.07, group,
     async setup(stage) {
       // claude:2026-10-24T10:24:00+02:00 — abgedunkelte Halle als Gegenlicht, sonst blieben nur Randlinien im Schwarz
-      const bd = await backdrop(stage, "battlescreens/gk_room_4.webp", { horizon: 0.42 });
+      const bd = await backdrop(stage, "battlescreens/gk_room_5.webp", { horizon: 0.42 });
       tintBackdrop(bd, 0.3, 0.27, 0.24);
       group.add(bd);
       king = await figure(stage, RAID_CAST.king, mobOpts(3.0));
@@ -562,7 +563,7 @@ const PHASE_TINT: [number, number, number][] = [
   [1.12, 0.9, 0.88], // Gruben (Blut)
   [1.12, 0.95, 0.82], // Erbe des Krieges (Glut)
 ];
-const PHASE_BG = ["gk_room_1", "gk_room_2", "gk_room_3", "gk_room_4"];
+const PHASE_BG = ["gk_room_1", "gk_room_2", "gk_room_3", "gk_room_5"];
 function s27(): Shot {
   const group = g();
   const rooms: THREE.Mesh[] = [];
@@ -629,7 +630,7 @@ function s28(): Shot {
   return {
     id: "28", t0: 66.23, t1: 68.82, group,
     async setup(stage) {
-      group.add(await backdrop(stage, "battlescreens/gk_room_4.webp", { horizon: 0.42 }));
+      group.add(await backdrop(stage, "battlescreens/gk_room_5.webp", { horizon: 0.42 }));
       hero = await figure(stage, HERO, heroOpts);
       king = await figure(stage, RAID_CAST.king, mobOpts(3.3));
       king.group.position.set(1.35, 0, -0.1);
@@ -696,7 +697,7 @@ function s29(): Shot {
   return {
     id: "29", t0: 68.82, t1: 71.41, group,
     async setup(stage) {
-      group.add(await backdrop(stage, "battlescreens/gk_room_4.webp", { horizon: 0.42 }));
+      group.add(await backdrop(stage, "battlescreens/gk_room_5.webp", { horizon: 0.42 }));
       hero = await figure(stage, HERO, heroOpts);
       hero.group.position.set(-1.1, 0, 0.3);
       king = await figure(stage, RAID_CAST.king, mobOpts(3.3));

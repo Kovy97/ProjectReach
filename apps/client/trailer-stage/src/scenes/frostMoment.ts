@@ -53,8 +53,9 @@ export function frostMoment(bg = "battlescreens/blackthorn.webp"): TrailerScene 
       parent.add(bd, world);
       const mImg = await loadImage(asset("portraits/human_frost_mage_f.webp"));
       mage = new Puppet({ url: "", height: 2.2, mirror: false, capeC: [0.45, 0.3], capeR: [0.25, 0.3], chest: 0.7, hip: 0.47 }, await stage.texture(asset("portraits/human_frost_mage_f.webp")), mImg);
-      const wImg = await loadImage(asset("monsters/thorn_wolf.webp"));
-      const wTex = await stage.texture(asset("monsters/thorn_wolf.webp"));
+      // claude:2026-10-24T16:28:00+02:00 — Ushkas Grubenhunde aus der Codex-Lieferung statt Dornwölfen
+      const wImg = await loadImage(asset("monsters/gk_pit_hound.webp"));
+      const wTex = await stage.texture(asset("monsters/gk_pit_hound.webp"));
       wolf1 = new Puppet({ url: "", height: 2.4, chest: 0.45, hip: 0.3 }, wTex, wImg);
       wolf2 = new Puppet({ url: "", height: 2.2, chest: 0.45, hip: 0.3 }, wTex, wImg);
       world.add(mage.group, wolf1.group, wolf2.group);
