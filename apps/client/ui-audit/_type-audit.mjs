@@ -14,6 +14,13 @@ const { page } = h;
 const result = { viewport: vp, pages: {} };
 try {
   await page.waitForTimeout(1500);
+  // claude:2026-10-24T23:02:00+02:00 — AUDIT_STYLE=classic|reforged: Oberflächen-Stil setzen und neu laden (Stil wird beim Start gelesen)
+  if (process.env.AUDIT_STYLE) {
+    await page.evaluate((st) => localStorage.setItem("hearthforge:uiStyle", st), process.env.AUDIT_STYLE);
+    await page.reload({ waitUntil: "load" });
+    await page.waitForFunction(() => !!window.__hfDebug, null, { timeout: 15000 }).catch(() => {});
+    await page.waitForTimeout(2000);
+  }
   await page.keyboard.press("Escape");
   await page.evaluate(([sc, ft]) => { if (sc) document.documentElement.dataset.textScale = sc; if (ft) document.documentElement.dataset.font = ft; }, [process.env.AUDIT_SCALE ?? "", process.env.AUDIT_FONT ?? ""]);
   for (const id of PAGES) {

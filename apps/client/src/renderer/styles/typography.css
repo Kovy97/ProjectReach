@@ -226,9 +226,14 @@
    classic-chrome.css (Seitenleiste/Kopfzeile von 1.2.3) ist GENERIERT und wird nicht von Hand angefasst. Die alten
    Schriftgrößen (9–12 px) bleiben dort stehen; diese Regeln heben nur die Untergrenzen auf die fließende Skala
    (nur Größe, keine Rahmen oder Materialien). Spezifität: :root[…] #root … übertrifft die generierten Regeln. */
+/* claude:2026-10-24T23:06:00+02:00 — Abschluss-Check: Bei niedrigen Fenstern schrumpft die Classic-Leiste (--sb-vscale 0,6), die Faktoren
+   unten fielen dann auf 9–11 px. Untergrenzen ohne Leistenfaktor: Level ab --fs-2xs, Skill-Namen ab --fs-xs. */
 :root[data-ui-style="classic"] #root .sb-skill-btn .sb-skill-level,
 :root[data-ui-style="classic"] #root .sb-skill-level {
-  font-size: calc(var(--fs-sm) * var(--sb-scale-eff, 1)) !important;
+  font-size: max(var(--fs-2xs), calc(var(--fs-sm) * var(--sb-scale-eff, 1))) !important;
+}
+:root[data-ui-style="classic"] #root .sb-skill-name {
+  --sb-name-size: max(var(--fs-xs), clamp(9px, calc(11px * var(--sb-scale-eff, 1)), 19px));
 }
 :root[data-ui-style="classic"] #root :is(.sb-combat-name, .sb-combat-level, .sb-blessing-effect) {
   font-size: calc(var(--fs-sm) * var(--sb-scale-eff, 1));
