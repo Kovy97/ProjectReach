@@ -1,0 +1,1692 @@
+{
+ "death.body": {
+  "en": "{monster} brought you down.",
+  "enAlt": "Oh no, you died against: {monster}",
+  "de": "{monster} hat dich besiegt."
+ },
+ "stalemate.reassurance": {
+  "en": "No loss: gear, gold and progress are all safe. Regroup and try again whenever you like.",
+  "enAlt": "No loss — gear, gold, and progress are all safe. Regroup and try again whenever you like.",
+  "de": "Kein Verlust: Ausrüstung, Gold und Fortschritt sind sicher. Sammle dich neu und versuch es wieder, wann du willst."
+ },
+ "offline.lvlShort": {
+  "en": "Lv",
+  "enAlt": "Lvl",
+  "de": "Lv"
+ },
+ "offline.died.body": {
+  "en": "{monster} got you while you were away. The fight ended there.",
+  "enAlt": "You were slain by {monster} while you were away! Your fight was interrupted.",
+  "de": "{monster} hat dich in deiner Abwesenheit besiegt. Der Kampf endete damit."
+ },
+ "offline.duration.cappedNote": {
+  "en": "Progress is capped at {cap}. You were actually away {time}.",
+  "enAlt": "Progress is capped at {cap} — you were actually away {time}.",
+  "de": "Der Fortschritt ist bei {cap} gedeckelt. Du warst tatsächlich {time} fort."
+ },
+ "offline.empty.body": {
+  "en": "Nothing earned: no activity was running.",
+  "enAlt": "Nothing earned — no activity was running.",
+  "de": "Nichts verdient: Es lief keine Tätigkeit."
+ },
+ "quests.comingSoon": {
+  "en": "The board stands empty. Contracts and daily tasks arrive soon.",
+  "enAlt": "The board stands empty — contracts and daily charges arrive soon.",
+  "de": "Die Tafel ist leer. Aufträge und Tagesaufgaben kommen bald."
+ },
+ "quests.shop.comingSoon": {
+  "en": "Coming soon: new wares will appear here.",
+  "enAlt": "Coming soon — new wares will appear here.",
+  "de": "Bald verfügbar: neue Waren."
+ },
+ "quests.shop.noSpace": {
+  "en": "Not enough room in your inventory. Make some space and try again.",
+  "enAlt": "Not enough room in your inventory — make some space and try again.",
+  "de": "Nicht genug Platz im Inventar. Schaffe Platz und versuche es erneut."
+ },
+ "quests.shop.shelfLocked": {
+  "en": "This shelf is locked. Finish the chapter above to unlock it.",
+  "enAlt": "This shelf is locked — finish the chapter above to unlock it.",
+  "de": "Dieses Regal ist gesperrt. Schließe das Kapitel darüber ab, um es freizuschalten."
+ },
+ "quests.contracts.allClaimed": {
+  "en": "Every contract has been fulfilled. The board is bare, for now.",
+  "enAlt": "Every contract has been fulfilled. The board is bare — for now.",
+  "de": "Jeder Auftrag ist erfüllt. Die Tafel ist leer, vorerst."
+ },
+ "bestiary.itemsProgress": {
+  "en": "Discovered: {n}/{total} items",
+  "enAlt": "Discovered: {n}/{total} Items",
+  "de": "Entdeckt: {n}/{total} Items"
+ },
+ "bestiary.monstersProgress": {
+  "en": "Defeated: {n}/{total} monsters",
+  "enAlt": "Defeated: {n}/{total} Monsters",
+  "de": "Bezwungen: {n}/{total} Monster"
+ },
+ "weaponEffect.burn": {
+  "en": "On hit, {chance}% chance to set the target ablaze: {flat} damage per second for {duration} s. Burning targets take 10% more damage from all sources.",
+  "enAlt": "On hit, you have a {chance}% chance to set your target ablaze, dealing {flat} damage/s for {duration}s; burning targets take 10% more damage from all sources.",
+  "de": "Bei Treffern {chance} % Chance, das Ziel in Brand zu setzen: {flat} Schaden pro Sekunde für {duration} s. Brennende Ziele nehmen 10 % mehr Schaden aus allen Quellen."
+ },
+ "weaponEffect.bleed": {
+  "en": "On hit, {chance}% chance to make the target bleed: {flat} damage per second for {duration} s.",
+  "enAlt": "On hit, you have a {chance}% chance to make your target bleed, dealing {flat} damage/s for {duration}s.",
+  "de": "Bei Treffern {chance} % Chance, das Ziel bluten zu lassen: {flat} Schaden pro Sekunde für {duration} s."
+ },
+ "weaponEffect.poison": {
+  "en": "On hit, {chance}% chance to poison the target: {flat} damage per second for {duration} s. Poison stacks up to 5 times and halves the target's regeneration and lifesteal.",
+  "enAlt": "On hit, you have a {chance}% chance to poison your target, dealing {flat} damage/s for {duration}s; poison stacks up to 5 times and halves the target's regeneration and lifesteal.",
+  "de": "Bei Treffern {chance} % Chance, das Ziel zu vergiften: {flat} Schaden pro Sekunde für {duration} s. Gift stapelt bis 5-mal und halbiert Regeneration und Lebensraub des Ziels."
+ },
+ "weaponEffect.frost": {
+  "en": "On hit, {chance}% chance to chill the target and slow its attacks for {duration} s (bosses: half as strong). The third chill in a row freezes it for one attack.",
+  "enAlt": "On hit, you have a {chance}% chance to chill your target, slowing its attacks for {duration}s (bosses only half as much); the third chill in a row freezes it for one attack.",
+  "de": "Bei Treffern {chance} % Chance, das Ziel zu unterkühlen und seine Angriffe {duration} s lang zu verlangsamen (Bosse nur halb so stark). Die dritte Unterkühlung in Folge friert es für einen Angriff ein."
+ },
+ "weaponEffect.shock": {
+  "en": "On hit, {chance}% chance to shock the target and delay its next attack by 0.4 s (up to 1.2 s). Your critical hits also arc for a second strike worth 30% of the hit, past the enemy's ward.",
+  "enAlt": "On hit, you have a {chance}% chance to shock your target, delaying its next attack by 0.4 s (up to 1.2 s); your critical hits arc and strike a second time for 30%.",
+  "de": "Bei Treffern {chance} % Chance, das Ziel zu schocken und seinen nächsten Angriff um 0,4 s zu verzögern (bis 1,2 s). Deine kritischen Treffer springen außerdem über und treffen ein zweites Mal für 30 % des Treffers, am Ward des Gegners vorbei."
+ },
+ "weaponEffect.bounty": {
+  "en": "+{magnitude}% damage against the monster of your active Slayer task.",
+  "enAlt": "+{magnitude}% damage against your active bounty target.",
+  "de": "+{magnitude} % Schaden gegen das Monster deines aktiven Slayer-Auftrags."
+ },
+ "weaponEffect.momentum": {
+  "en": "Each hit raises your damage by {magnitude}%, up to {stacks} times. Resets with each new enemy.",
+  "enAlt": "Each hit raises your damage by {magnitude}%, stacking up to {stacks} times (resets at the end of combat).",
+  "de": "Jeder Treffer steigert deinen Schaden um {magnitude} %, bis zu {stacks}-mal. Setzt sich bei jedem neuen Gegner zurück."
+ },
+ "weaponEffect.firstStrike": {
+  "en": "Your first hit against each enemy deals +{magnitude}% damage.",
+  "enAlt": "Your first hit in a fight deals +{magnitude}% damage.",
+  "de": "Dein erster Treffer gegen jeden Gegner verursacht +{magnitude} % Schaden."
+ },
+ "weaponEffect.eagleEye": {
+  "en": "Your first shot against each enemy is a guaranteed critical hit when it lands.",
+  "enAlt": "Your first shot in a fight is always a critical hit.",
+  "de": "Dein erster Schuss gegen jeden Gegner ist ein sicherer kritischer Treffer, sofern er trifft."
+ },
+ "weaponEffect.everyNth": {
+  "en": "Every {stacks}th hit against an enemy deals +{magnitude}% damage.",
+  "enAlt": "Every {stacks}th hit deals an extra +{magnitude}% damage.",
+  "de": "Jeder {stacks}. Treffer gegen einen Gegner verursacht +{magnitude} % Schaden."
+ },
+ "weaponEffect.critBurst": {
+  "en": "Critical hits deal {flat} extra damage.",
+  "enAlt": "Critical hits deal an extra {flat} damage.",
+  "de": "Kritische Treffer verursachen {flat} zusätzlichen Schaden."
+ },
+ "weaponEffect.cooldownOnKill": {
+  "en": "The pause after each kill is {duration} s shorter.",
+  "enAlt": "Kills reduce your recovery pause by {duration}s.",
+  "de": "Die Pause nach jedem besiegten Gegner ist {duration} s kürzer."
+ },
+ "weaponEffect.wardOnKill": {
+  "en": "Each kill refills {flat} ward.",
+  "enAlt": "Kills refund {flat} ward.",
+  "de": "Jeder besiegte Gegner füllt {flat} Ward auf."
+ },
+ "weaponEffect.healOnKill": {
+  "en": "Each kill heals you for {flat} HP.",
+  "enAlt": "Kills heal you for {flat} health.",
+  "de": "Jeder besiegte Gegner heilt dich um {flat} HP."
+ },
+ "weaponEffect.antiRegen": {
+  "en": "Targets suffering burn, bleed or poison can't regenerate health.",
+  "enAlt": "Targets suffering damage over time can't regenerate health.",
+  "de": "Ziele, die brennen, bluten oder vergiftet sind, regenerieren keine HP."
+ },
+ "weaponEffect.plaguebearer": {
+  "en": "A defeated enemy poisons your next foe automatically.",
+  "enAlt": "A defeated enemy automatically poisons your next foe.",
+  "de": "Ein besiegter Gegner vergiftet automatisch deinen nächsten Gegner."
+ },
+ "weaponEffect.gutter": {
+  "en": "Your damage from burn, bleed and poison is increased by {magnitude}%.",
+  "enAlt": "Your bleed and poison ticks deal +{magnitude}% damage.",
+  "de": "Dein Schaden durch Brand, Blutung und Gift steigt um {magnitude} %."
+ },
+ "weaponEffect.frostbite": {
+  "en": "+{magnitude}% damage against chilled targets.",
+  "enAlt": "+{magnitude}% damage against chilled targets (frost).",
+  "de": "+{magnitude} % Schaden gegen unterkühlte Ziele."
+ },
+ "weaponEffect.catalyst": {
+  "en": "The status effects of your weapon last {duration} s longer.",
+  "enAlt": "Your status effects last {duration}s longer.",
+  "de": "Die Statuseffekte deiner Waffe halten {duration} s länger an."
+ },
+ "weaponEffect.surplus": {
+  "en": "+{magnitude}% spell damage while your ward is above {threshold}% of its maximum.",
+  "enAlt": "+{magnitude}% spell damage while your ward is above {threshold}%.",
+  "de": "+{magnitude} % Zauberschaden, solange dein Ward über {threshold} % seines Maximums liegt."
+ },
+ "weaponEffect.packLeader": {
+  "en": "Your companion's ability recharges {magnitude}% faster.",
+  "enAlt": "Your companion's ability triggers {magnitude}% more often.",
+  "de": "Die Fähigkeit deines Begleiters lädt {magnitude} % schneller auf."
+ },
+ "weaponEffect.bane": {
+  "en": "+{magnitude}% damage against {family}.",
+  "enAlt": "Deals {magnitude}% increased damage against {family}.",
+  "de": "+{magnitude} % Schaden gegen {family}."
+ },
+ "weaponEffect.blockRestore": {
+  "en": "Each successful block heals you for {magnitude}% of your max health (capped).",
+  "enAlt": "Each successful block heals you for {magnitude}% of your max health.",
+  "de": "Jeder erfolgreiche Block heilt dich um {magnitude} % deiner maximalen HP (gedeckelt)."
+ },
+ "weaponEffect.void": {
+  "en": "On hit, {chance}% chance to drain the target for {duration} s: it deals {magnitude}% less damage.",
+  "enAlt": "On hit, you have a {chance}% chance to drain your target for {duration}s: it deals {magnitude}% less damage.",
+  "de": "Bei Treffern {chance} % Chance, dem Ziel {duration} s lang Kraft zu entziehen: Es verursacht {magnitude} % weniger Schaden."
+ },
+ "weaponEffect.lightblessing": {
+  "en": "Lightblessing: every spell restores {magnitude}% of your maximum ward and ignores half of the enemy's ward.",
+  "enAlt": "Lightblessing: every spell restores {magnitude}% of your maximum ward and pierces half of the enemy's ward.",
+  "de": "Lichtsegen: Jeder Zauber füllt {magnitude} % deines maximalen Wards auf und ignoriert die Hälfte des gegnerischen Wards."
+ },
+ "bank.intro": {
+  "en": "Store items here. Each slot holds an unlimited stack and frees up inventory space.",
+  "enAlt": "Store items here — each slot is an unlimited stack and frees up inventory space.",
+  "de": "Lagere hier Items ein. Jeder Platz fasst einen unbegrenzten Stapel und entlastet dein Inventar."
+ },
+ "bank.full": {
+  "en": "The bank is full. Free a slot before you store new item types.",
+  "enAlt": "Bank full — free a slot before you can store new item types.",
+  "de": "Die Bank ist voll. Gib einen Platz frei, bevor du neue Item-Arten einlagerst."
+ },
+ "bank.expandTitle": {
+  "en": "Expand Bank",
+  "enAlt": "Expand Bank Storage",
+  "de": "Bank erweitern"
+ },
+ "inv.newBadge.title": {
+  "en": "New: first time you've owned this",
+  "enAlt": "New — first time you've owned this",
+  "de": "Neu: zum ersten Mal in deinem Besitz"
+ },
+ "mail.transfer.targetOption": {
+  "en": "{name} · Total level {level}",
+  "enAlt": "{name} · Total Level {level}",
+  "de": "{name} · Gesamtlevel {level}"
+ },
+ "mail.transfer.search": {
+  "en": "Search inventory…",
+  "enAlt": "Search inventory...",
+  "de": "Inventar durchsuchen…"
+ },
+ "mail.transfer.uniqueItem": {
+  "en": "Individual piece · enchantments kept",
+  "enAlt": "Unique item · enchantments retained",
+  "de": "Einzelstück · Verzauberungen bleiben erhalten"
+ },
+ "mail.transfer.sending": {
+  "en": "Sending…",
+  "enAlt": "Sending...",
+  "de": "Wird versandt…"
+ },
+ "mail.transfer.error.invalid_source": {
+  "en": "The source inventory changed. Review the parcel.",
+  "enAlt": "The source inventory changed. Please review the parcel.",
+  "de": "Das Quellinventar hat sich geändert. Prüfe das Paket noch einmal."
+ },
+ "mail.partialNotice": {
+  "en": "Inventory full. The rest stays in your mailbox until you make space.",
+  "enAlt": "Bags full — the rest stays in your mailbox.",
+  "de": "Inventar voll. Der Rest bleibt im Postfach, bis du Platz schaffst."
+ },
+ "options.windowModeHint": {
+  "en": "Applies on your next game start. Fullscreen and Windowed switch immediately, Borderless Window needs a restart.",
+  "enAlt": "Applies on your next game start. Fullscreen and Windowed switch immediately; Borderless Window needs a restart.",
+  "de": "Gilt ab dem nächsten Spielstart. Vollbild und Fenster wechseln sofort, Randloses Fenster braucht einen Neustart."
+ },
+ "options.hotkeys.hint": {
+  "en": "Keyboard shortcuts for power users, always available and never required.",
+  "enAlt": "Keyboard shortcuts for power users — always available, never required.",
+  "de": "Tastenkürzel für Profis: immer verfügbar, nie erforderlich."
+ },
+ "options.ambient.reducedMotionHint": {
+  "en": "Your system prefers reduced motion, so this defaults to off. You can still turn it on, and it stays gentle.",
+  "enAlt": "Your system prefers reduced motion, so this defaults to off. You can still turn it on — it stays gentle.",
+  "de": "Dein System bevorzugt reduzierte Bewegung, daher ist dies standardmäßig aus. Du kannst es trotzdem einschalten, es bleibt sanft."
+ },
+ "options.ambient.vignetteHint": {
+  "en": "Darkens the screen edges to draw focus to the center.",
+  "enAlt": "Darkens the screen edges to draw focus to the centre.",
+  "de": "Verdunkelt die Bildschirmränder, um den Blick auf die Mitte zu lenken."
+ },
+ "onboarding.welcome.body": {
+  "en": "A gritty dark-fantasy idle RPG. Train skills, forge gear, and battle your way through a dying world, even while you're away. Here's the core loop in a few steps.",
+  "enAlt": "A gritty dark-fantasy idle RPG. Train skills, forge gear, and battle your way through a dying world — even while you're away. Here's the core loop in a few steps.",
+  "de": "Ein grimmiges Dark-Fantasy-Idle-RPG. Trainiere Fertigkeiten, schmiede Ausrüstung und kämpfe dich durch eine sterbende Welt, auch wenn du weg bist. Hier sind die Grundschritte."
+ },
+ "onboarding.gather.body": {
+  "en": "Pick a gathering skill (Mining, Woodcutting, Fishing, Foraging…) and start an action. It runs on its own and yields ore, logs, fish and more. That is the foundation of everything.",
+  "enAlt": "Pick a gathering skill (Mining, Woodcutting, Fishing, Foraging…) and start an action. It runs on its own and yields ore, logs, fish and more — the foundation of everything.",
+  "de": "Wähle eine Sammelfertigkeit (Bergbau, Holzfällen, Angeln, Sammeln…) und starte eine Aktion. Sie läuft von allein und liefert Erz, Holz, Fisch und mehr. Das ist die Basis von allem."
+ },
+ "onboarding.process.body": {
+  "en": "Use Smithing to smelt bars and forge weapons and armour, or Cooking to turn raw food into healing meals. Processing actions consume inputs from your inventory.",
+  "enAlt": "Use Smithing to smelt bars and forge weapons & armour, or Cooking to turn raw food into healing meals. Processing actions consume inputs from your inventory.",
+  "de": "Mit Schmieden schmilzt du Barren und fertigst Waffen und Rüstung, mit Kochen machst du aus rohem Essen heilende Mahlzeiten. Jede Verarbeitung verbraucht Material aus deinem Inventar."
+ },
+ "onboarding.equip.body": {
+  "en": "Open the Character sheet and drag items onto the paperdoll. Your weapon decides your combat style (melee, ranged or magic), and armour boosts defence and health.",
+  "enAlt": "Open the Character sheet and drag items onto the paperdoll. Your weapon decides your combat style — melee, ranged or magic — and armour boosts defence and health.",
+  "de": "Öffne das Charakterblatt und zieh Items auf die Puppe. Deine Waffe bestimmt den Kampfstil: Nahkampf, Fernkampf oder Magie. Rüstung erhöht Verteidigung und HP."
+ },
+ "onboarding.fight.body": {
+  "en": "Head to Combat, pick a foe and let the auto-battle run. Choose a combat stance (Attack, Power, Defensive) to steer which skill earns XP. Win loot, gold and combat XP.",
+  "enAlt": "Head to Combat, pick a foe and let the auto-battle run. Choose a combat style (Attack, Power, Defensive) to steer which skill earns XP. Win loot, gold and kill XP.",
+  "de": "Geh zum Kampf, wähle einen Gegner und lass den automatischen Kampf laufen. Wähle eine Kampfhaltung (Angriff, Wucht, Defensiv), um zu steuern, welche Fertigkeit XP bekommt. Es winken Beute, Gold und XP."
+ },
+ "onboarding.idle.body": {
+  "en": "Your character keeps working while the game is closed. You collect the offline gains when you return. You can reopen this guide any time from Options. Good luck!",
+  "enAlt": "Your character keeps working while the game is closed — you'll collect offline gains when you return. You can reopen this guide any time from Options. Good luck!",
+  "de": "Dein Charakter arbeitet weiter, während das Spiel geschlossen ist. Bei deiner Rückkehr kassierst du den Offline-Ertrag. Diese Anleitung kannst du jederzeit in den Optionen erneut öffnen. Viel Erfolg!"
+ },
+ "toast.saveRecovered.body": {
+  "en": "Your save file was damaged. A backup from {date} was restored.",
+  "enAlt": "Your save file was damaged — a backup from {date} was restored.",
+  "de": "Dein Spielstand war beschädigt. Eine Sicherung vom {date} wurde wiederhergestellt."
+ },
+ "achievements.milestoneStrip.next": {
+  "en": "Next milestone: {pct}% · +{tokens} Quest Tokens",
+  "enAlt": "Next milestone: {pct}% — +{tokens} Quest Tokens",
+  "de": "Nächster Meilenstein: {pct} % · +{tokens} Aufgabenmarken"
+ },
+ "creation.style.hint": {
+  "en": "This sets your starting weapon only. Equip any weapon later to change your combat style.",
+  "enAlt": "This sets your starting weapon only — equip any weapon later to change your combat style.",
+  "de": "Dies bestimmt nur deine Startwaffe. Mit jeder anderen Waffe wechselst du später den Kampfstil."
+ },
+ "bank.sortFiltered": {
+  "en": "Clear the filter first. Sorting rearranges every slot, not just the ones you see.",
+  "enAlt": "Clear the filter first — sorting rearranges every slot, not just the ones you see.",
+  "de": "Leere zuerst den Filter. Sortiert werden alle Plätze, nicht nur die sichtbaren."
+ },
+ "stat.defense": {
+  "en": "Defence",
+  "enAlt": "Defense",
+  "de": "Verteidigung"
+ },
+ "stat.armorRating": {
+  "en": "Armor rating",
+  "enAlt": "Armor Rating",
+  "de": "Rüstungswert"
+ },
+ "stat.evasionRating": {
+  "en": "Evasion rating",
+  "enAlt": "Evasion Rating",
+  "de": "Ausweichwert"
+ },
+ "stat.wardCapacity": {
+  "en": "Ward capacity",
+  "enAlt": "Ward Capacity",
+  "de": "Ward-Kapazität"
+ },
+ "stat.blockChance": {
+  "en": "Block chance",
+  "enAlt": "Block Chance",
+  "de": "Blockchance"
+ },
+ "stat.armorPen": {
+  "en": "Armor pen",
+  "enAlt": "Armor Pen",
+  "de": "Rüstungsbruch"
+ },
+ "stat.wardBreak": {
+  "en": "Ward break",
+  "enAlt": "Ward Break",
+  "de": "Ward-Bruch"
+ },
+ "stat.hpRegen": {
+  "en": "HP regen",
+  "enAlt": "HP Regen",
+  "de": "HP-Regeneration"
+ },
+ "statdesc.style": {
+  "en": "Your active combat style, set by your equipped weapon. Decides which damage type and skills are used.",
+  "enAlt": "Your active combat style — set by your equipped weapon. Decides which damage type & skills are used.",
+  "de": "Dein aktiver Kampfstil, bestimmt durch deine Waffe. Legt Schadensart und genutzte Fertigkeiten fest."
+ },
+ "statdesc.attackDamage": {
+  "en": "Your damage range with the equipped weapon: the min–max spread of a hit in combat.",
+  "enAlt": "Your effective damage range with the equipped weapon — the min–max hit spread used in combat.",
+  "de": "Deine Schadensspanne mit der ausgerüsteten Waffe: kleinster bis größter Treffer im Kampf."
+ },
+ "statdesc.block": {
+  "en": "Chance to block a hit for −85% damage (Shield, one-handed melee only). Capped at 50%.",
+  "enAlt": "Chance to block a hit for -85% damage (Shield, one-handed melee only). Capped at 50%.",
+  "de": "Chance, einen Treffer um −85 % Schaden zu blocken (Schild, nur Einhand-Nahkampf). Gedeckelt bei 50 %."
+ },
+ "statdesc.wardBreak": {
+  "en": "A portion of your damage bypasses an enemy's ward and hits HP directly.",
+  "enAlt": "A portion of your damage bypasses an enemy's ward shield, hitting HP directly.",
+  "de": "Ein Teil deines Schadens umgeht den Ward eines Gegners und trifft direkt die HP."
+ },
+ "statdesc.speed": {
+  "en": "Time between your attacks: lower is faster (Dexterity and light weapons).",
+  "enAlt": "Time between your attacks — lower is faster (Dexterity & light weapons).",
+  "de": "Zeit zwischen deinen Angriffen: kleiner ist schneller (Geschick und leichte Waffen)."
+ },
+ "skilldesc.attack": {
+  "en": "Melee accuracy: how reliably your melee attacks land. Passively trains Dexterity.",
+  "enAlt": "Melee accuracy — how reliably your melee attacks land. Passively trains Dexterity.",
+  "de": "Nahkampf-Treffgenauigkeit: wie zuverlässig deine Nahkampfangriffe landen. Trainiert passiv Geschick."
+ },
+ "skilldesc.power": {
+  "en": "Melee damage: how hard your melee blows hit. Passively trains Strength.",
+  "enAlt": "Melee damage — how hard your melee blows hit. Passively trains Strength.",
+  "de": "Nahkampfschaden: wie hart deine Nahkampfschläge treffen. Trainiert passiv Stärke."
+ },
+ "skilldesc.defence": {
+  "en": "Defence: lowers damage taken and improves blocking. Passively trains Constitution.",
+  "enAlt": "Defence — lowers damage taken and improves blocking. Passively trains Constitution.",
+  "de": "Verteidigung: senkt erlittenen Schaden und verbessert das Blocken. Trainiert passiv Konstitution."
+ },
+ "skilldesc.magic": {
+  "en": "Offensive magic: spell power and status effects. Passively trains Intelligence.",
+  "enAlt": "Offensive magic — spell power & status effects. Passively trains Intelligence.",
+  "de": "Offensive Magie: Zauberkraft und Statuseffekte. Trainiert passiv Intelligenz."
+ },
+ "skilldesc.warding": {
+  "en": "Ward regeneration: recharges your Ward over time and grows whenever the Ward absorbs hits. Passively trains Wisdom.",
+  "enAlt": "Ward regeneration — recharges your Ward pool over time and grows by absorbing hits with Ward. Passively trains Wisdom.",
+  "de": "Ward-Regeneration: lädt deinen Ward mit der Zeit auf und wächst, wenn der Ward Treffer abfängt. Trainiert passiv Weisheit."
+ },
+ "skilldesc.vitality": {
+  "en": "Vitality: your maximum HP. It grows as you deal and take damage. Passively trains Constitution.",
+  "enAlt": "Vitality — your maximum HP, grows as you deal and take damage. Passively trains Constitution.",
+  "de": "Lebenskraft: deine maximalen HP. Sie wachsen, wenn du Schaden austeilst und einsteckst. Trainiert passiv Konstitution."
+ },
+ "item.toolHint": {
+  "en": "Equippable in a tool slot, also works from your inventory.",
+  "enAlt": "Equippable in a tool slot — also works from your inventory.",
+  "de": "Im Werkzeug-Slot ausrüstbar, wirkt auch aus dem Inventar."
+ },
+ "itip.attackSpeed": {
+  "en": "Attack speed",
+  "enAlt": "Attack Speed",
+  "de": "Angriffstempo"
+ },
+ "itip.buff": {
+  "en": "Timed buff",
+  "enAlt": "Timed Buff",
+  "de": "Zeitlicher Buff"
+ },
+ "itip.usedFor": {
+  "en": "Used for",
+  "enAlt": "Used For",
+  "de": "Verwendet für"
+ },
+ "itip.buffReplace.defense": {
+  "en": "Replaces your active defence buff.",
+  "enAlt": "Replaces your active defense buff.",
+  "de": "Ersetzt deinen aktiven Verteidigungs-Buff."
+ },
+ "itip.group.defense": {
+  "en": "Defence",
+  "enAlt": "Defense",
+  "de": "Verteidigung"
+ },
+ "itip.group.runeEffect": {
+  "en": "Rune effect",
+  "enAlt": "Rune Effect",
+  "de": "Runeneffekt"
+ },
+ "rune.target.armor": {
+  "en": "Armor",
+  "enAlt": "Armour",
+  "de": "Rüstung"
+ },
+ "rune.target.jewelry": {
+  "en": "Jewelry",
+  "enAlt": "Jewellery",
+  "de": "Schmuck"
+ },
+ "rune.target.plate": {
+  "en": "Plate armor",
+  "enAlt": "Plate armour",
+  "de": "Plattenrüstung"
+ },
+ "rune.target.leather": {
+  "en": "Leather armor",
+  "enAlt": "Leather armour",
+  "de": "Lederrüstung"
+ },
+ "rune.target.cloth": {
+  "en": "Cloth armor",
+  "enAlt": "Cloth armour",
+  "de": "Stoffrüstung"
+ },
+ "rune.target.hint.armorRating": {
+  "en": "Only on pieces that already carry an armor rating.",
+  "enAlt": "Only on pieces that already carry an armour rating.",
+  "de": "Nur auf Teilen, die selbst einen Rüstungswert tragen."
+ },
+ "itip.delta.slotFree": {
+  "en": "Free slot available, no need to swap",
+  "enAlt": "Free slot available — no need to swap",
+  "de": "Freier Slot verfügbar, kein Tausch nötig"
+ },
+ "itip.spellFocus": {
+  "en": "Spell focus",
+  "enAlt": "Spell Focus",
+  "de": "Zauberfokus"
+ },
+ "dungeon.waveAnnounce": {
+  "en": "Wave {cur}/{total}: {name}",
+  "enAlt": "Wave {cur}/{total} — {name}",
+  "de": "Welle {cur}/{total}: {name}"
+ },
+ "dungeon.lootPreview.undiscovered": {
+  "en": "Undiscovered. Clear this dungeon to reveal it.",
+  "enAlt": "Undiscovered — clear this dungeon to reveal it.",
+  "de": "Unentdeckt. Bezwinge diesen Dungeon, um es aufzudecken."
+ },
+ "paragon.deathRuleHint": {
+  "en": "Dying in the tower sends you back to floor 1. Your record stays.",
+  "enAlt": "Dying in the tower resets you to floor 1 — your record stays.",
+  "de": "Stirbst du im Turm, geht es zurück auf Etage 1. Dein Rekord bleibt."
+ },
+ "paragon.preview.chest": {
+  "en": "Milestone chest on this floor.",
+  "enAlt": "Milestone chest on this floor!",
+  "de": "Meilenstein-Truhe auf dieser Etage."
+ },
+ "paragon.toast.cleared.detail": {
+  "en": "Floor {n} cleared. Ascend when ready.",
+  "enAlt": "Floor {n} cleared — ascend when ready",
+  "de": "Etage {n} bezwungen. Du kannst aufsteigen."
+ },
+ "paragon.death.reassurance": {
+  "en": "No loss to gear or gold. Your record stays safe at floor {best}.",
+  "enAlt": "No loss to gear or gold — your record stays safe at floor {best}.",
+  "de": "Kein Verlust bei Ausrüstung und Gold. Dein Rekord bei Etage {best} bleibt sicher."
+ },
+ "paragon.stalemate.reset": {
+  "en": "Your checkpoint holds. No floor lost.",
+  "enAlt": "Your checkpoint holds — no floor lost.",
+  "de": "Dein Fortschritt bleibt. Keine Etage verloren."
+ },
+ "zone.progress.completeTitle": {
+  "en": "Zone complete: every enemy defeated and every drop discovered.",
+  "enAlt": "Zone complete — every enemy defeated and every drop discovered.",
+  "de": "Zone abgeschlossen: alle Gegner bezwungen, alle Drops entdeckt."
+ },
+ "combat.hud.level": {
+  "en": "Lv",
+  "enAlt": "Lvl",
+  "de": "Level"
+ },
+ "combat.fightNowHint": {
+  "en": "Starts fighting immediately. Anything in progress returns to the front of the queue afterward.",
+  "enAlt": "Starts fighting immediately — anything in progress returns to the front of the queue afterward.",
+  "de": "Startet sofort. Was gerade läuft, kehrt danach an die Spitze der Warteschlange zurück."
+ },
+ "combat.undiscovered": {
+  "en": "Undiscovered. Defeat this enemy to reveal its drop.",
+  "enAlt": "Undiscovered — defeat this enemy to reveal its drop.",
+  "de": "Unentdeckt. Besiege diesen Gegner, um den Drop aufzudecken."
+ },
+ "combat.noFood": {
+  "en": "No food in your inventory. Cook or buy some. Food in the bank isn't used.",
+  "enAlt": "No food in your inventory — cook or buy some (food in the bank isn't used).",
+  "de": "Keine Nahrung im Inventar. Koche oder kaufe welche. Nahrung in der Bank wird nicht genutzt."
+ },
+ "combat.autoPotion.noPotions": {
+  "en": "No heal potions in your inventory. Brew some at the Herblore bench.",
+  "enAlt": "No heal potions in your inventory — brew some at the Herblore bench.",
+  "de": "Keine Heiltränke im Inventar. Braue welche an der Kräuterkunde-Werkbank."
+ },
+ "combat.inflictsHint.bleed": {
+  "en": "This enemy can make you bleed: damage over time that ignores armor.",
+  "enAlt": "This enemy can make you bleed — damage over time that ignores armor.",
+  "de": "Dieser Gegner kann dich bluten lassen: Schaden über Zeit, ignoriert Rüstung."
+ },
+ "combat.inflictsHint.frost": {
+  "en": "This enemy can chill you and slow your attacks. A third chill in a row freezes you for one attack.",
+  "enAlt": "This enemy can chill you, slowing your attacks; a third chill in a row freezes you for one attack.",
+  "de": "Dieser Gegner kann dich unterkühlen und deine Angriffe verlangsamen. Der dritte Frost in Folge friert dich für einen Angriff ein."
+ },
+ "combat.enrageActive": {
+  "en": "Enraged: deals increased damage.",
+  "enAlt": "Enraged — dealing increased damage!",
+  "de": "Wütend: erhöhter Schaden."
+ },
+ "combat.shield": {
+  "en": "Absorbs {amount}",
+  "enAlt": "Shield absorbs {amount}",
+  "de": "Absorbiert {amount}"
+ },
+ "combat.wardEmptyHint": {
+  "en": "Ward depleted: cast to recharge",
+  "enAlt": "Ward depleted — cast to recharge",
+  "de": "Ward erschöpft: Zaubern lädt ihn auf"
+ },
+ "combat.defenseType.armor.desc": {
+  "en": "Mitigates damage with armor. Countered by Armor pen.",
+  "enAlt": "Mitigates damage with armor. Countered by Armor Pen.",
+  "de": "Mindert Schaden durch Rüstung. Gekontert durch Rüstungsbruch."
+ },
+ "combat.defenseType.ward.desc": {
+  "en": "Shields HP with a ward pool before it breaks through. Countered by Ward break.",
+  "enAlt": "Shields HP with a ward pool before it breaks through. Countered by Ward Break.",
+  "de": "Schützt die HP mit einem Ward-Pool, bevor er durchbricht. Gekontert durch Ward-Bruch."
+ },
+ "combat.logXpZero": {
+  "en": "🚫 {mob} is too weak: no combat XP (loot unchanged)",
+  "enAlt": "🚫 {mob} is too weak — no combat XP (loot unchanged)",
+  "de": "🚫 {mob} ist zu schwach: kein Kampf-XP (Beute unverändert)"
+ },
+ "combat.tooltip.frostFrozen": {
+  "en": "Frozen: the next attack is skipped.",
+  "enAlt": "Frozen — next attack skipped!",
+  "de": "Eingefroren: Der nächste Angriff fällt aus."
+ },
+ "combat.diffLegend.zero": {
+  "en": "Grey: no XP",
+  "enAlt": "Grey — no XP",
+  "de": "Grau: keine XP"
+ },
+ "combat.diffLegend.easy": {
+  "en": "Green: no challenge",
+  "enAlt": "Green — no challenge",
+  "de": "Grün: keine Herausforderung"
+ },
+ "combat.diffLegend.close": {
+  "en": "Gold: balanced",
+  "enAlt": "Gold — balanced",
+  "de": "Gold: ausgeglichen"
+ },
+ "combat.diffLegend.caution": {
+  "en": "Orange: caution",
+  "enAlt": "Orange — caution",
+  "de": "Orange: Vorsicht"
+ },
+ "combat.diffLegend.danger": {
+  "en": "Red: deadly",
+  "enAlt": "Red — suicide",
+  "de": "Rot: tödlich"
+ },
+ "shop.counter.inventoryFull": {
+  "en": "Inventory full. Free a slot or buy an inventory upgrade.",
+  "enAlt": "Inventory full — free a slot or buy an inventory upgrade.",
+  "de": "Inventar voll. Schaffe Platz oder erweitere dein Inventar."
+ },
+ "shop.autoEatUpgrade": {
+  "en": "Auto-Eat {tier}: eats at {pct}% HP",
+  "enAlt": "Auto-Eat {tier} — eat at {pct}% HP",
+  "de": "Auto-Essen {tier}: isst bei {pct} % HP"
+ },
+ "skill.idle": {
+  "en": "Idle: pick an action below",
+  "enAlt": "Idle — pick an action below",
+  "de": "Nichts aktiv: wähle unten eine Aktion"
+ },
+ "skill.stoppedNoMaterials": {
+  "en": "Out of materials. Gather or buy more, then restart.",
+  "enAlt": "Stopped — out of materials. Gather or buy more, then restart.",
+  "de": "Kein Material mehr. Sammle oder kaufe Nachschub und starte neu."
+ },
+ "skill.stoppedInventoryFull": {
+  "en": "Inventory full. Make space (sell items or buy more slots in the Shop), then restart.",
+  "enAlt": "Stopped — inventory full. Make space (sell items or buy more slots in the Shop), then restart.",
+  "de": "Inventar voll. Schaffe Platz (verkaufe Items oder kaufe im Laden mehr Slots) und starte neu."
+ },
+ "skill.stunned": {
+  "en": "Stunned: caught in the act! ({s}s)",
+  "enAlt": "Stunned — caught in the act! ({s}s)",
+  "de": "Betäubt: auf frischer Tat ertappt! ({s} s)"
+ },
+ "skill.undiscovered": {
+  "en": "Undiscovered. Forage this to reveal its drop.",
+  "enAlt": "Undiscovered — forage this to reveal its drop.",
+  "de": "Unentdeckt. Sammle hier, um den Drop aufzudecken."
+ },
+ "header.bagsFull": {
+  "en": "Inventory full. Make space to keep gathering.",
+  "enAlt": "Inventory full — make space to keep gathering",
+  "de": "Inventar voll. Schaffe Platz, um weiter zu sammeln."
+ },
+ "inv.overCapacity.hint": {
+  "en": "Overfull: new loot goes to your bank or mail. Clear space to equip.",
+  "enAlt": "Overfull: new loot goes to your bank/mail — clear space to equip.",
+  "de": "Überfüllt: Neue Beute geht in Bank oder Post. Schaffe Platz zum Ausrüsten."
+ },
+ "toast.slayerTaskDoneDetail": {
+  "en": "+{xp} XP · +{points} points",
+  "enAlt": "+{xp} XP · +{points} pts",
+  "de": "+{xp} XP · +{points} Punkte"
+ },
+ "toast.slayerStreak.points": {
+  "en": "+{n} points",
+  "enAlt": "+{n} pts",
+  "de": "+{n} Punkte"
+ },
+ "skillguide.mining": {
+  "en": "Mines ore for Smithing, the backbone of all metal gear.",
+  "enAlt": "Mines ore for Smithing — the backbone of all metal gear.",
+  "de": "Schürft Erz für Schmieden, die Basis aller Metallausrüstung."
+ },
+ "skillguide.fishing": {
+  "en": "Catches fish. Cook them for healing food in combat.",
+  "enAlt": "Catches fish; cook them for healing food in combat.",
+  "de": "Fängt Fische. Kochen macht daraus Heilnahrung für den Kampf."
+ },
+ "skillguide.smithing": {
+  "en": "Smelts bars and forges weapons and armour.",
+  "enAlt": "Smelts bars and forges weapons & armour.",
+  "de": "Schmilzt Barren und fertigt Waffen und Rüstung."
+ },
+ "skillguide.farming": {
+  "en": "Grows herbs, crops and fibres for Herblore and Crafting.",
+  "enAlt": "Grows herbs, crops & fibres for Herblore & Crafting.",
+  "de": "Baut Kräuter, Früchte und Fasern für Kräuterkunde und Handwerk an."
+ },
+ "skillguide.foraging": {
+  "en": "Gathers wild plants, bark and seeds from the land.",
+  "enAlt": "Gathers wild plants, bark & seeds from the land.",
+  "de": "Sammelt Wildpflanzen, Rinde und Samen aus der Natur."
+ },
+ "skillguide.thieving": {
+  "en": "Pickpockets targets and burgles locations for gold and loot.",
+  "enAlt": "Pickpockets targets & burgles locations for gold & loot.",
+  "de": "Taschendiebstahl und Einbrüche liefern Gold und Beute."
+ },
+ "skillguide.jewelcrafting": {
+  "en": "Sets gems into rings and amulets that boost your stats.",
+  "enAlt": "Sets gems into rings and amulets that boost stats.",
+  "de": "Fasst Edelsteine in Ringe und Amulette, die deine Werte stärken."
+ },
+ "skillguide.herblore": {
+  "en": "Brews potions and tonics from herbs and crops.",
+  "enAlt": "Brews potions and tonics from herbs & crops.",
+  "de": "Braut Tränke und Tonika aus Kräutern und Feldfrüchten."
+ },
+ "skillguide.attack": {
+  "en": "Melee accuracy. Trains via the Attack combat style.",
+  "enAlt": "Melee accuracy — trains via the Attack combat style.",
+  "de": "Nahkampf-Treffgenauigkeit. Trainiert über die Haltung Angriff."
+ },
+ "skillguide.power": {
+  "en": "Melee damage. Trains via the Power combat style.",
+  "enAlt": "Melee damage — trains via the Power combat style.",
+  "de": "Nahkampfschaden. Trainiert über die Haltung Wucht."
+ },
+ "skillguide.defence": {
+  "en": "Damage reduction and block. Trains via the Defensive style.",
+  "enAlt": "Damage reduction & block — trains via Defensive style.",
+  "de": "Schadensminderung und Block. Trainiert über die Haltung Defensiv."
+ },
+ "skillguide.ranged": {
+  "en": "Ranged accuracy and damage. Trains with bows.",
+  "enAlt": "Ranged accuracy & damage — trains with bows.",
+  "de": "Fernkampf-Genauigkeit und -Schaden. Trainiert mit dem Bogen."
+ },
+ "skillguide.magic": {
+  "en": "Offensive spells and status effects. Trains with a staff.",
+  "enAlt": "Offensive spells & status effects — trains with a staff.",
+  "de": "Offensive Zauber und Statuseffekte. Trainiert mit einem Stab."
+ },
+ "skillguide.warding": {
+  "en": "Ward regeneration: recharges your Ward over time. Trains when the Ward absorbs damage, or when you cast in the Warding stance.",
+  "enAlt": "Ward regeneration — recharges your Ward pool over time; trains by absorbing damage with Ward, or by casting in the Warding stance.",
+  "de": "Ward-Regeneration: lädt deinen Ward mit der Zeit auf. Trainiert, wenn der Ward Schaden abfängt oder du in der Abwehr-Haltung zauberst."
+ },
+ "skillguide.vitality": {
+  "en": "Maximum HP. Grows by dealing and taking damage.",
+  "enAlt": "Maximum HP — grows by dealing and taking damage.",
+  "de": "Maximale HP. Wächst durch ausgeteilten und erlittenen Schaden."
+ },
+ "skillguide.slayer": {
+  "en": "Take Slayer tasks from Slayer Masters. Completed tasks earn Slayer Points for powerful unlocks.",
+  "enAlt": "Receive kill-assignments from Slayer Masters; completed tasks earn Slayer Points for powerful unlocks.",
+  "de": "Nimmt Slayer-Aufträge von Slayer-Meistern an. Erledigte Aufträge bringen Slayer-Punkte für mächtige Freischaltungen."
+ },
+ "companions.interval": {
+  "en": "every {sec} s",
+  "enAlt": "every {sec}s",
+  "de": "alle {sec} s"
+ },
+ "pet.effect.skill.bonusAmmo": {
+  "en": "Arrow yield",
+  "enAlt": "No effect",
+  "de": "Pfeilertrag"
+ },
+ "pet.effect.combat.delayedDot": {
+  "en": "Lingering status",
+  "enAlt": "Delayed DoT",
+  "de": "Lang wirkender Status"
+ },
+ "pet.ability.autoHint": {
+  "en": "Triggers automatically in combat. Nothing to click.",
+  "enAlt": "Fires automatically in combat — nothing to click.",
+  "de": "Löst im Kampf automatisch aus. Du musst nichts tun."
+ },
+ "pet.passive.bonusAmmo": {
+  "en": "Better odds of a doubled yield when fletching arrows.",
+  "enAlt": "No effect (ammunition was removed from the game).",
+  "de": "Erhöht die Chance auf doppelten Ertrag beim Befiedern von Pfeilen."
+ },
+ "pet.passive.spellReserve": {
+  "en": "+{pct}% maximum spell reserve.",
+  "enAlt": "+{pct}% spell reserve.",
+  "de": "+{pct} % maximale Zauberreserve."
+ },
+ "pet.passive.skillBoost": {
+  "en": "In combat, counts as {value} more levels in {skill}. Earns no XP and unlocks nothing.",
+  "enAlt": "+{value} effective {skill} levels for combat formulas (no XP, unlocks nothing).",
+  "de": "Zählt im Kampf wie {value} Level mehr in {skill}. Bringt keine XP und schaltet nichts frei."
+ },
+ "pet.passive.tierUp": {
+  "en": "{pct}% chance that a {skill} result comes out one grade higher, as long as your level allows it.",
+  "enAlt": "{pct}% chance that a {skill} result comes out one grade higher, up to your own level.",
+  "de": "{pct} % Chance, dass ein Ergebnis bei {skill} eine Klasse besser ausfällt, sofern dein Level es zulässt."
+ },
+ "pet.passive.tierUp.fish": {
+  "en": "{pct}% chance that a catch is the next higher fish, as long as your level allows it.",
+  "enAlt": "{pct}% chance that a catch is the next higher fish, up to your own level.",
+  "de": "{pct} % Chance, dass ein Fang der nächsthöhere Fisch ist, sofern dein Level es zulässt."
+ },
+ "pet.passive.tierUp.forage": {
+  "en": "{pct}% chance that a gathered herb, mushroom, essence or pigment comes out one grade higher, as long as your level allows it.",
+  "enAlt": "{pct}% chance that a gathered herb, mushroom, essence or pigment comes out one grade higher, up to your own level.",
+  "de": "{pct} % Chance, dass ein gesammeltes Kraut, ein Pilz, eine Essenz oder ein Pigment eine Klasse besser ausfällt, sofern dein Level es zulässt."
+ },
+ "pet.passive.tierUp.gemCut": {
+  "en": "{pct}% chance that a cut gem comes out one grade higher, as long as your level allows it.",
+  "enAlt": "{pct}% chance that a cut gem comes out one grade higher, up to your own level.",
+  "de": "{pct} % Chance, dass ein geschliffener Stein eine Klasse besser ausfällt, sofern dein Level es zulässt."
+ },
+ "pet.passive.tierUp.runes": {
+  "en": "{pct}% chance that a bound rune comes out one grade higher, as long as your level allows it.",
+  "enAlt": "{pct}% chance that a bound rune comes out one grade higher, up to your own level.",
+  "de": "{pct} % Chance, dass eine gebundene Rune eine Klasse besser ausfällt, sofern dein Level es zulässt."
+ },
+ "pet.passive.craftSuffixChance": {
+  "en": "Gear you make with {skill} is {pct} percentage points more likely to get a random suffix.",
+  "enAlt": "+{pct} percentage points chance that gear you make with {skill} gets a random suffix.",
+  "de": "Bei {skill} hergestellte Ausrüstung erhält mit {pct} Prozentpunkten höherer Chance einen zufälligen Suffix."
+ },
+ "pet.passive.wardCapacityPct": {
+  "en": "+{pct}% ward capacity. Only has an effect while you wear cloth armor with ward.",
+  "enAlt": "+{pct}% ward capacity. Without a cloth ward it has no effect.",
+  "de": "+{pct} % Ward-Kapazität. Wirkt nur, solange du Stoffrüstung mit Ward trägst."
+ },
+ "pet.ability.stun": {
+  "en": "Stuns the enemy for {sec} s: it cannot attack meanwhile.",
+  "enAlt": "Stuns the enemy for {sec}s — it skips its next attack.",
+  "de": "Betäubt den Gegner für {sec} s: Er kann in dieser Zeit nicht angreifen."
+ },
+ "pet.ability.burstDamage": {
+  "en": "Hits the enemy at once for {pct}% of its max HP.",
+  "enAlt": "Deals instant damage equal to {pct}% of the enemy's max HP.",
+  "de": "Trifft den Gegner sofort für {pct} % seiner maximalen HP."
+ },
+ "pet.ability.onHitStatus": {
+  "en": "Sets {status} on the enemy at once: {pct}% of its max HP per second for {sec} s.",
+  "enAlt": "Instantly applies {status} to the enemy: {pct}%/s damage for {sec}s.",
+  "de": "Legt sofort {status} auf den Gegner: {pct} % seiner maximalen HP pro Sekunde für {sec} s."
+ },
+ "pet.ability.onHitStatus.frost": {
+  "en": "Chills the enemy at once and slows its attacks for {sec} s.",
+  "enAlt": "Instantly applies frost to the enemy: slows its attack speed for {sec}s.",
+  "de": "Unterkühlt den Gegner sofort und verlangsamt seine Angriffe für {sec} s."
+ },
+ "pet.ability.delayedDot": {
+  "en": "Sets a longer-lasting {status} effect: {pct}% of the enemy's max HP per second for {sec} s.",
+  "enAlt": "Applies a longer-running {status} effect: {pct}%/s damage for {sec}s.",
+  "de": "Legt einen länger wirkenden {status}-Effekt: {pct} % der maximalen HP des Gegners pro Sekunde für {sec} s."
+ },
+ "pet.ability.delayedDot.frost": {
+  "en": "Applies a longer-lasting frost effect that slows the enemy's attacks for {sec} s.",
+  "enAlt": "Applies a longer-running frost effect: slows the enemy's attack speed for {sec}s.",
+  "de": "Legt einen länger wirkenden Frost-Effekt, der die Angriffe des Gegners für {sec} s verlangsamt."
+ },
+ "pet.ability.accuracyDownEnemy": {
+  "en": "Lowers the enemy's hit chance by {pct}% for {sec} s.",
+  "enAlt": "Lowers the enemy's hit chance by {pct}% for {sec}s.",
+  "de": "Senkt die Trefferchance des Gegners für {sec} s um {pct} %."
+ },
+ "pet.ability.stealDrop": {
+  "en": "{pct}% chance to steal an item from the enemy's loot. Only common drops (at least {min}% chance), in their minimum quantity.",
+  "enAlt": "{pct}% chance to steal an item from the enemy's loot. Only drops with at least {min}% chance, quantity 1.",
+  "de": "{pct} % Chance, ein Item aus der Beute des Gegners zu stehlen. Nur häufige Drops (mindestens {min} % Chance), in der Mindestmenge."
+ },
+ "pet.ability.shield": {
+  "en": "Gives you a shield that absorbs damage equal to {pct}% of your max HP until it is used up.",
+  "enAlt": "Grants a shield that absorbs damage equal to {pct}% of your max HP, until it's spent.",
+  "de": "Gibt dir einen Schild, der Schaden in Höhe von {pct} % deiner maximalen HP absorbiert, bis er aufgebraucht ist."
+ },
+ "pet.ability.armorRend": {
+  "en": "The enemy takes {pct}% more damage from you for {sec} s.",
+  "enAlt": "The enemy takes {pct}% more damage from you for {sec}s.",
+  "de": "Der Gegner nimmt {sec} s lang {pct} % mehr Schaden von dir."
+ },
+ "pet.ability.wardRestore": {
+  "en": "Instantly restores ward equal to {pct}% of your max HP, up to your full ward. No effect without a ward.",
+  "enAlt": "Instantly restores {pct}% of your ward.",
+  "de": "Füllt deinen Ward sofort um {pct} % deiner maximalen HP auf, bis zum vollen Ward. Ohne Ward bleibt sie wirkungslos."
+ },
+ "pet.ability.lifestealBurst": {
+  "en": "Hits the enemy at once for {pct}% of its max HP and heals you for the same share of your max HP.",
+  "enAlt": "Deals instant damage equal to {pct}% of the enemy's max HP and heals you for the same share of your max HP.",
+  "de": "Trifft den Gegner sofort für {pct} % seiner maximalen HP und heilt dich um denselben Anteil deiner maximalen HP."
+ },
+ "pet.ability.armorPierceHit": {
+  "en": "Hits the enemy at once for {pct}% of its max HP, ignoring its armor.",
+  "enAlt": "Deals instant damage equal to {pct}% of the enemy's max HP, ignoring its armor.",
+  "de": "Trifft den Gegner sofort für {pct} % seiner maximalen HP und ignoriert dabei seine Rüstung."
+ },
+ "pet.ability.multiHit": {
+  "en": "Hits the enemy {count}× in a row for {pct}% of its max HP each ({total}% total).",
+  "enAlt": "Hits the enemy {count}x in a row for {pct}% of its max HP each ({total}% total).",
+  "de": "Trifft den Gegner {count}× hintereinander mit je {pct} % seiner maximalen HP ({total} % insgesamt)."
+ },
+ "pet.ability.stealDropOnce": {
+  "en": "{pct}% chance to steal an item from the enemy's loot, at most once per enemy. Only common drops (at least {min}% chance), in their minimum quantity.",
+  "enAlt": "{pct}% chance to steal an item from the enemy's loot, at most once per enemy. Only drops with at least {min}% chance, quantity 1.",
+  "de": "{pct} % Chance, ein Item aus der Beute des Gegners zu stehlen, höchstens einmal je Gegner. Nur häufige Drops (mindestens {min} % Chance), in der Mindestmenge."
+ },
+ "pet.ability.currentHpStrike": {
+  "en": "Hits the enemy for {pct}% of its current HP. Strongest against fresh foes.",
+  "enAlt": "Deals {pct}% of the enemy's current health as instant damage. Strongest against fresh foes.",
+  "de": "Trifft den Gegner für {pct} % seiner aktuellen HP. Am stärksten gegen frische Gegner."
+ },
+ "pet.ability.crippleStrike": {
+  "en": "Critical hit for {pct}% of the enemy's max HP. For {sec} s afterwards the enemy attacks {slow}% slower.",
+  "enAlt": "Critical hit for {pct}% of the enemy's max HP. For {sec}s afterwards the enemy attacks {slow}% slower.",
+  "de": "Kritischer Treffer für {pct} % der maximalen HP des Gegners. Danach greift der Gegner {sec} s lang {slow} % langsamer an."
+ },
+ "pet.ability.cripplingPoison": {
+  "en": "Applies poison: {pct}% of the enemy's max HP per second for {sec} s. While the enemy is poisoned, it attacks {slow}% slower.",
+  "enAlt": "Applies poison: {pct}%/s damage for {sec}s. While the enemy is poisoned, it attacks {slow}% slower.",
+  "de": "Legt Gift: {pct} % der maximalen HP des Gegners pro Sekunde für {sec} s. Solange der Gegner vergiftet ist, greift er {slow} % langsamer an."
+ },
+ "pet.ability.emberBrand": {
+  "en": "Applies burn: {pct}% of the enemy's max HP per second for {sec} s. Each ember stack beyond the first makes the burn {bonus}% stronger (up to {max} stacks).",
+  "enAlt": "Applies burn: {pct}%/s damage for {sec}s. Each ember stack beyond the first makes the burn {bonus}% stronger (up to {max} stacks).",
+  "de": "Legt Brand: {pct} % der maximalen HP des Gegners pro Sekunde für {sec} s. Jeder Glut-Stapel über den ersten hinaus macht den Brand {bonus} % stärker (bis {max} Stapel)."
+ },
+ "pet.ability.emberDetonate": {
+  "en": "Applies burn ({burn}% per second for {sec} s), then ignites every ember stack on the enemy for {pct}% of its max HP per stack.",
+  "enAlt": "Applies burn ({burn}%/s for {sec}s), then ignites every ember stack on the enemy for {pct}% of its max HP per stack.",
+  "de": "Legt Brand ({burn} % pro Sekunde für {sec} s) und zündet dann jeden Glut-Stapel am Gegner für {pct} % seiner maximalen HP je Stapel."
+ },
+ "pet.ability.executeBleed": {
+  "en": "Applies a bleed: {pct}% of the enemy's max HP per second for {sec} s. Below {below}% enemy health, the bleed deals double damage.",
+  "enAlt": "Applies a bleed: {pct}%/s damage for {sec}s. Below {below}% enemy health, the bleed deals double damage.",
+  "de": "Legt eine Blutung: {pct} % der maximalen HP des Gegners pro Sekunde für {sec} s. Unter {below} % HP des Gegners verursacht die Blutung doppelten Schaden."
+ },
+ "pet.ability.emergencyHeal": {
+  "en": "When your health drops below {below}%, you are healed for {pct}% of your max HP. Then the ability recharges for {sec} s.",
+  "enAlt": "When your health drops below {below}%, you are healed for {pct}% of your max HP. Then the ability recharges for {sec}s.",
+  "de": "Sinken deine HP unter {below} %, wirst du um {pct} % deiner maximalen HP geheilt. Danach lädt die Fähigkeit {sec} s nach."
+ },
+ "pet.ability.deathSave": {
+  "en": "Catches a blow that would kill you and leaves you at 1 HP. Then the ability recharges for {sec} s.",
+  "enAlt": "Catches a blow that would kill you and leaves you at 1 HP. Then the ability recharges for {sec}s.",
+  "de": "Fängt einen Schlag ab, der dich töten würde, und lässt dir 1 HP. Danach lädt die Fähigkeit {sec} s nach."
+ },
+ "combat.meleeFocusLabel": {
+  "en": "Melee focus:",
+  "enAlt": "Melee Focus:",
+  "de": "Nahkampf-Fokus:"
+ },
+ "combat.rangedFocusLabel": {
+  "en": "Ranged focus:",
+  "enAlt": "Range Focus:",
+  "de": "Fernkampf-Fokus:"
+ },
+ "combat.magicFocusLabel": {
+  "en": "Magic focus:",
+  "enAlt": "Magic Focus:",
+  "de": "Magie-Fokus:"
+ },
+ "toast.onboarding.rangedBody": {
+  "en": "Your bow sets the combat style: ranged attacks strike from a distance.",
+  "enAlt": "Your bow sets the combat style — ranged attacks strike from a distance.",
+  "de": "Dein Bogen bestimmt den Kampfstil: Fernkampfangriffe treffen aus der Distanz."
+ },
+ "blessing.flavor.greed": {
+  "en": "The Reach itself seems hungry for coin today, and generous with it too. Old caches turn up looser than usual.",
+  "enAlt": "The Reach itself seems hungry for coin today, and generous with it too — old caches turn up looser than usual.",
+  "de": "Das Reach scheint heute hungrig nach Münzen zu sein und gibt sie doch bereitwillig her. Alte Verstecke geben leichter nach."
+ },
+ "blessing.effect.gather": {
+  "en": "+{pct}% gathering speed",
+  "enAlt": "+{pct}% Gathering Speed",
+  "de": "+{pct} % Sammeltempo"
+ },
+ "blessing.effect.craftSpeed": {
+  "en": "+{pct}% crafting speed",
+  "enAlt": "+{pct}% Crafting Speed",
+  "de": "+{pct} % Herstellungstempo"
+ },
+ "blessing.effect.rareDrop": {
+  "en": "+{pct}% rare drops",
+  "enAlt": "+{pct}% Rare Drops",
+  "de": "+{pct} % seltene Drops"
+ },
+ "blessing.effect.gold": {
+  "en": "+{pct}% gold",
+  "enAlt": "+{pct}% Gold",
+  "de": "+{pct} % Gold"
+ },
+ "blessing.effect.attackSpeed": {
+  "en": "+{pct}% attack speed",
+  "enAlt": "+{pct}% Attack Speed",
+  "de": "+{pct} % Angriffstempo"
+ },
+ "thieving.risk.careful.hint": {
+  "en": "Safer: higher success, shorter stun, but less XP, gold and loot.",
+  "enAlt": "Safer: higher success, shorter stun — but less XP, gold and loot.",
+  "de": "Sicherer: höhere Erfolgschance, kürzere Betäubung, dafür weniger XP, Gold und Beute."
+ },
+ "thieving.risk.bold.hint": {
+  "en": "Greedy: more XP, gold and loot, but higher failure chance and longer stun.",
+  "enAlt": "Greedy: more XP, gold and loot — but higher failure chance and longer stun.",
+  "de": "Gierig: mehr XP, Gold und Beute, dafür höhere Fehlschlagchance und längere Betäubung."
+ },
+ "hunting.noZones": {
+  "en": "No hunting ground available yet. Fight in a zone first.",
+  "enAlt": "No hunting ground available yet — fight there first.",
+  "de": "Noch kein Jagdgebiet verfügbar. Kämpfe zuerst in einer Zone."
+ },
+ "hunting.reason.zone_locked": {
+  "en": "This ground is not open yet. Finish its quest first.",
+  "enAlt": "This ground is not open yet.",
+  "de": "Dieses Gebiet ist noch gesperrt. Schließe zuerst die zugehörige Aufgabe ab."
+ },
+ "hunting.reason.nothing_huntable": {
+  "en": "Nothing huntable here yet. Defeat something here first.",
+  "enAlt": "Nothing huntable here yet — defeat something here first.",
+  "de": "Hier gibt es noch nichts zu jagen. Besiege hier zuerst einen Gegner."
+ },
+ "hunting.reason.no_bait": {
+  "en": "No bait left. Craft or buy more.",
+  "enAlt": "No bait left.",
+  "de": "Kein Köder mehr. Stelle neuen her oder kaufe welchen."
+ },
+ "hunting.reason.busy": {
+  "en": "A trap is already set here.",
+  "enAlt": "Trap already set.",
+  "de": "Hier steht schon eine Falle."
+ },
+ "hunting.picker.undefeatedHint": {
+  "en": "Not defeated yet: trappable after your first kill here.",
+  "enAlt": "Not defeated yet — trappable after your first kill here.",
+  "de": "Noch nicht besiegt: erst nach dem ersten Sieg hier fangbar."
+ },
+ "hunting.picker.family.dragonkin": {
+  "en": "Dragonkin",
+  "enAlt": "Dragon",
+  "de": "Drachenwesen"
+ },
+ "hunting.picker.footerHint": {
+  "en": "Five loot rolls per catch. Catches don't count as kills.",
+  "enAlt": "Five loot rolls per catch — catches don't count as kills.",
+  "de": "Fünf Beute-Würfe je Fang. Fänge zählen nicht als besiegte Gegner."
+ },
+ "hunting.book.neverCaught": {
+  "en": "Never caught yet · First catch gives double XP",
+  "enAlt": "Never caught yet · First catch counts double",
+  "de": "Noch nie gefangen · Erstfang bringt doppelte XP"
+ },
+ "slayer.speech.noTask": {
+  "en": "Want work, {name}? Talk to me.",
+  "enAlt": "Speak with me to receive a task, {name}.",
+  "de": "Willst du Arbeit, {name}? Dann rede mit mir."
+ },
+ "slayer.speech.taskActive": {
+  "en": "Your mark is still out there, {name}. Get moving.",
+  "enAlt": "Your target awaits, {name}. Push on.",
+  "de": "Dein Ziel läuft noch herum, {name}. Beweg dich."
+ },
+ "slayer.speech.taskDone": {
+  "en": "Clean work, {name}. There is more where that came from.",
+  "enAlt": "Well done, {name}. Come back for more.",
+  "de": "Saubere Arbeit, {name}. Davon gibt es noch mehr."
+ },
+ "slayer.task.noneHint": {
+  "en": "Speak with the Slayer Master to receive your next task.",
+  "enAlt": "Speak with a Slayer Master to receive your next task.",
+  "de": "Sprich mit der Slayer-Meisterin für deinen nächsten Auftrag."
+ },
+ "slayer.task.rewardPoints": {
+  "en": "+{n} points",
+  "enAlt": "+{n} pts",
+  "de": "+{n} Punkte"
+ },
+ "slayer.task.skipCost": {
+  "en": "Skip Task ({n} points)",
+  "enAlt": "Skip Task ({n} pts)",
+  "de": "Auftrag überspringen ({n} Punkte)"
+ },
+ "slayer.task.cancelYes": {
+  "en": "Confirm ({n} points)",
+  "enAlt": "Confirm ({n} pts)",
+  "de": "Bestätigen ({n} Punkte)"
+ },
+ "slayer.streak.chip": {
+  "en": "Streak: {n} · bonus at {next}",
+  "enAlt": "Streak: {n} — bonus at {next}",
+  "de": "Serie: {n} · Bonus beim {next}."
+ },
+ "slayer.req.missing": {
+  "en": "Required: {item}. Not in inventory.",
+  "enAlt": "Required: {item} — not in inventory!",
+  "de": "Benötigt: {item}. Nicht im Inventar."
+ },
+ "slayer.master.locked": {
+  "en": "Requires Slayer level {n}",
+  "enAlt": "Requires Slayer Level {n}",
+  "de": "Benötigt Slayer-Level {n}"
+ },
+ "slayer.shop.cost": {
+  "en": "{n} points",
+  "enAlt": "{n} pts",
+  "de": "{n} Punkte"
+ },
+ "slayer.tower.intro": {
+  "en": "Five floors, each more dangerous than the last, and each opens only at a certain Slayer level. Tower tasks drop loot found nowhere else.",
+  "enAlt": "Five floors of escalating danger, each gated by Slayer level. Tower tasks grant unique drops.",
+  "de": "Fünf Etagen, jede gefährlicher als die davor, und jede öffnet sich erst ab einem bestimmten Slayer-Level. Aufträge im Turm bringen Beute, die es nirgends sonst gibt."
+ },
+ "slayer.tower.combatHint": {
+  "en": "Tower floors are entered from the Combat area.",
+  "enAlt": "Tower floors are accessible in the Combat area.",
+  "de": "Die Turmetagen betrittst du im Kampfbereich."
+ },
+ "slayer.shop.empty": {
+  "en": "No rewards available.",
+  "enAlt": "No reward items available.",
+  "de": "Keine Belohnungen verfügbar."
+ },
+ "slayer.shop.reason.level_locked": {
+  "en": "Requires Slayer level {n}.",
+  "enAlt": "Requires Slayer Level {n}",
+  "de": "Benötigt Slayer-Level {n}."
+ },
+ "slayer.shop.reason.not_enough_points": {
+  "en": "Not enough Slayer points.",
+  "enAlt": "Not enough points",
+  "de": "Nicht genug Slayer-Punkte."
+ },
+ "slayer.shop.reason.no_space": {
+  "en": "No space: inventory and bank are full.",
+  "enAlt": "No space — inventory and bank are full",
+  "de": "Kein Platz: Inventar und Bank sind voll."
+ },
+ "talent.reason.locked": {
+  "en": "Still locked. Learn the previous node first.",
+  "enAlt": "Still locked",
+  "de": "Noch gesperrt. Lerne zuerst den vorherigen Knoten."
+ },
+ "talent.reason.not_enough_currency": {
+  "en": "Not enough points.",
+  "enAlt": "Not enough points",
+  "de": "Nicht genug Punkte."
+ },
+ "prestige.greeting": {
+  "en": "Beneath this stone lie the shards of every image the Reach ever broke. The Reach outlived its fall because it kept nothing but what it had learned. Lay down here what you are, and I will record what you were. The ash gets the rest.",
+  "enAlt": "Beneath this stone lie the shards of every image the Reach ever broke. The Reach outlived its fall because it kept nothing but what it had learned. Lay down here what you are, and I will record what you were; the ash gets the rest.",
+  "de": "Unter diesem Stein liegen die Scherben aller Bildnisse, die das Reach je zerschlug. Das Reach hat seinen Sturz überstanden, weil es nichts behielt außer dem, was es gelernt hatte. Leg hier nieder, was du bist, und ich trage ein, was du warst. Den Rest bekommt die Asche."
+ },
+ "prestige.awakening.text": {
+  "en": "You went through the ash, and the ash did not keep you. What it left you, you wear as scars. I have started a new page. Your name I already know.",
+  "enAlt": "You went through the ash, and the ash did not keep you. What it left you, you wear as scars. The Chronicle opens a new page; the pen already knows you.",
+  "de": "Du bist durch die Asche gegangen, und die Asche hat dich nicht behalten. Was sie dir ließ, trägst du als Narben. Ich habe eine neue Seite angefangen. Deinen Namen kenne ich schon."
+ },
+ "prestige.goes.world": {
+  "en": "New Haven, plots, traps, Paragon progress and cleared dungeons",
+  "enAlt": "Camp, farm, traps, Paragon progress and cleared dungeons",
+  "de": "New Haven, Beete, Fallen, Paragon-Fortschritt und geräumte Dungeons"
+ },
+ "prestige.confirm.prompt": {
+  "en": "Type your character's name to confirm: {name}",
+  "enAlt": "Type your hero's name to confirm: {name}",
+  "de": "Tippe zur Bestätigung den Namen deines Charakters ein: {name}"
+ },
+ "prestige.reason.heirloom_invalid": {
+  "en": "A chosen heirloom is no longer available. Choose again.",
+  "enAlt": "A chosen heirloom is no longer available. Please choose again.",
+  "de": "Ein gewähltes Erbstück ist nicht mehr verfügbar. Wähle neu."
+ },
+ "prestige.reason.stash_invalid": {
+  "en": "A chosen stack is no longer available. Choose again.",
+  "enAlt": "A chosen stack is no longer available. Please choose again.",
+  "de": "Ein gewählter Stapel ist nicht mehr verfügbar. Wähle neu."
+ },
+ "companions.echo.active": {
+  "en": "Working now: {pct}% of its skill effect while it is not equipped.",
+  "enAlt": "Active now: works with {pct}% of its skill while it is not equipped.",
+  "de": "Wirkt gerade: {pct} % seiner Fertigkeitswirkung, solange er nicht ausgerüstet ist."
+ },
+ "companions.echo.locked": {
+  "en": "Once found, it works as an echo with {pct}% of its skill effect, even when it is not equipped.",
+  "enAlt": "Once found, it works as an echo with {pct}% of its skill, even when it is not equipped.",
+  "de": "Einmal gefunden, wirkt er als Echo mit {pct} % seiner Fertigkeitswirkung, auch wenn er nicht ausgerüstet ist."
+ },
+ "companions.echo.hint": {
+  "en": "Every companion you own but have not equipped gives {pct}% of its skill effect, without its combat ability. Effects of the same kind do not add up, only the stronger one counts.",
+  "enAlt": "Every companion you own but have not equipped gives {pct}% of its skill effect, without its combat ability. For effects of the same kind the stronger one counts, they do not add up.",
+  "de": "Jeder Begleiter, den du hast, aber nicht trägst, gibt {pct} % seiner Fertigkeitswirkung, ohne seine Kampffähigkeit. Gleiche Wirkungen addieren sich nicht, es zählt nur die stärkere."
+ },
+ "enchant.reason.not_enough_gold": {
+  "en": "Not enough gold for this enchantment.",
+  "enAlt": "Not enough gold.",
+  "de": "Nicht genug Gold für diese Verzauberung."
+ },
+ "enchant.reason.affix_mismatch": {
+  "en": "This rune doesn't fit this item. Pick another rune.",
+  "enAlt": "This rune doesn't fit this item.",
+  "de": "Diese Rune passt nicht auf dieses Item. Wähle eine andere."
+ },
+ "enchant.reason.class_mismatch": {
+  "en": "Doesn't fit this armor class. Pick another rune.",
+  "enAlt": "Doesn't fit this armor class.",
+  "de": "Passt nicht zu dieser Rüstungsklasse. Wähle eine andere Rune."
+ },
+ "enchant.reason.duplicate_effect": {
+  "en": "This effect does not stack: the rune is already on this item.",
+  "enAlt": "This effect does not stack — the rune is already on this item.",
+  "de": "Diese Wirkung stapelt nicht: Die Rune sitzt schon auf dem Item."
+ },
+ "enchant.preview.blocked.duplicate_effect": {
+  "en": "This effect does not stack: the rune is already on this item.",
+  "enAlt": "This effect does not stack — the rune is already on this item.",
+  "de": "Diese Wirkung stapelt nicht: Die Rune sitzt schon auf dem Item."
+ },
+ "enchant.reason.no_affix_slots": {
+  "en": "All enchant slots are in use. Remove an enchantment first.",
+  "enAlt": "No enchant slots free.",
+  "de": "Alle Verzauberungs-Slots sind belegt. Entferne zuerst eine Verzauberung."
+ },
+ "enchant.reason.no_affix": {
+  "en": "Select a rune first.",
+  "enAlt": "No rune selected.",
+  "de": "Wähle zuerst eine Rune."
+ },
+ "enchant.reason.not_found": {
+  "en": "Item or rune not found. Select both again.",
+  "enAlt": "Item or rune not found.",
+  "de": "Item oder Rune nicht gefunden. Wähle beides neu."
+ },
+ "enchant.preview.blocked.slot_full": {
+  "en": "All enchant slots are in use. Remove an enchantment first.",
+  "enAlt": "No enchant slots free.",
+  "de": "Alle Verzauberungs-Slots sind belegt. Entferne zuerst eine Verzauberung."
+ },
+ "enchant.preview.blocked.class_mismatch": {
+  "en": "Doesn't fit this armor class. Pick another rune.",
+  "enAlt": "Doesn't fit this armor class.",
+  "de": "Passt nicht zu dieser Rüstungsklasse. Wähle eine andere Rune."
+ },
+ "enchant.preview.blocked.wrong_item_type": {
+  "en": "This rune doesn't fit this item. Pick another rune.",
+  "enAlt": "This rune doesn't fit this item.",
+  "de": "Diese Rune passt nicht auf dieses Item. Wähle eine andere."
+ },
+ "farm.plantAll.none": {
+  "en": "No empty plots. Everything is already growing or waiting to be picked.",
+  "enAlt": "No empty plots — everything is already growing or waiting to be picked.",
+  "de": "Kein Beet frei. Alles wächst schon oder wartet auf die Ernte."
+ },
+ "farm.hint.plots": {
+  "en": "Crops grow passively, online and offline. Auto-replant keeps plots seeded when seeds are available.",
+  "enAlt": "Crops grow passively — online and offline. Auto-replant keeps plots seeded when seeds are available.",
+  "de": "Saat wächst passiv, online wie offline. Auto-Nachpflanzen hält Beete bestellt, solange Saat vorhanden ist."
+ },
+ "enchant.suffixHint": {
+  "en": "Crafted and dropped equipment can carry a random suffix such as “of the Bear”, which adds attribute bonuses. Suffixes appear automatically and show on the item tooltip.",
+  "enAlt": "Crafted and dropped equipment can carry a random Suffix — a stat bonus like '+8 Defense of the Bear'. Suffixes appear automatically and are shown on the item tooltip.",
+  "de": "Hergestellte und erbeutete Ausrüstung kann einen zufälligen Suffix tragen, zum Beispiel „des Bären“, der Attributboni gibt. Suffixe entstehen automatisch und stehen im Tooltip des Items."
+ },
+ "onboarding.guide.woodcutting": {
+  "en": "Chop trees to collect logs, the foundation of Crafting. Higher levels unlock rarer timber with better processing value.",
+  "enAlt": "Chop trees to collect logs — the foundation of Crafting. Higher levels unlock rarer timber with better processing value.",
+  "de": "Fälle Bäume, um Holz zu sammeln, die Grundlage für Handwerk. Höhere Level erschließen selteneres Holz mit besserem Verarbeitungswert."
+ },
+ "onboarding.guide.farming": {
+  "en": "Tend growing plots to harvest herbs, crops and fibres over time. Growth continues even while offline. Harvests supply Herblore, Cooking and Crafting.",
+  "enAlt": "Tend growing plots to harvest herbs, crops and fibres over time — growth continues even while offline. Harvests supply Herblore, Cooking and Crafting.",
+  "de": "Pflege Beete, um mit der Zeit Kräuter, Nutzpflanzen und Fasern zu ernten. Das Wachstum geht sogar offline weiter. Ernten versorgen Kräuterkunde, Kochen und Handwerk."
+ },
+ "onboarding.guide.thieving": {
+  "en": "Pickpocket targets and burgle locations to gain gold and rare items. Success chance scales with your Thieving level, and a failure causes a brief stun.",
+  "enAlt": "Pickpocket targets and burgle locations to gain gold and rare items. Success chance scales with your Thieving level; failure causes a brief stun.",
+  "de": "Bestehle Ziele und plündere Orte für Gold und seltene Items. Die Erfolgschance steigt mit deinem Level in Diebeskunst, ein Fehlschlag betäubt dich kurz."
+ },
+ "onboarding.guide.runecrafting": {
+  "en": "Craft elemental runes from raw materials in Runecrafting. They are used to build magic weapons and as enchanting material. In combat, your spells cost nothing. Your spell reserve powers your stances instead: Focus adds spell damage, Warding speeds up ward regeneration.",
+  "enAlt": "Craft elemental runes from raw materials in Runecrafting — they are used to build magic weapons and as enchanting material. In combat, your spells cost nothing; your spell reserve powers your stances instead: Focus adds spell damage, Warding speeds up ward regeneration.",
+  "de": "Fertige in Runenkunst Elementarrunen aus Rohmaterialien. Sie dienen dem Bau von Magiewaffen und als Verzauberungsmaterial. Im Kampf kosten deine Zauber nichts, stattdessen stärkt deine Zauberreserve deine Haltung: Fokus erhöht den Zauberschaden, Abwehr beschleunigt die Ward-Regeneration."
+ },
+ "onboarding.guide.herblore": {
+  "en": "Brew potions and tonics from harvested herbs. Combat potions boost your stats. Antivenom Tonics are essential against enemies that inflict poison.",
+  "enAlt": "Brew potions and tonics from harvested herbs. Combat potions boost your stats; Antivenom Tonics are essential when facing poison-inflicting enemies.",
+  "de": "Braue Tränke und Tonika aus gesammelten Kräutern. Kampftränke stärken deine Werte. Antigift-Tonika sind unverzichtbar gegen Gegner, die vergiften."
+ },
+ "onboarding.guide.slayer": {
+  "en": "Receive Slayer tasks from Slayer Masters to defeat specific monsters. Each completed task earns Slayer Points, redeemable for powerful unlocks and unique gear.",
+  "enAlt": "Receive kill assignments from Slayer Masters to hunt specific monsters. Each completed task earns Slayer Points redeemable for powerful unlocks and unique gear.",
+  "de": "Erhalte Slayer-Aufträge von Slayer-Meistern und besiege gezielt bestimmte Monster. Jeder erledigte Auftrag bringt Slayer-Punkte, die du gegen mächtige Freischaltungen und einzigartige Ausrüstung eintauschst."
+ },
+ "onboarding.guide.combat.intro": {
+  "en": "Your equipped weapon sets your combat style: melee, ranged or magic. Combat skills train as you fight. Your Offense skill follows your Focus: melee splits its training between Attack and Power, while Ranged or Magic Offense train alone. Vitality always trains, from dealing and taking damage. Defence or Magic Defence trains whenever you take a hit, no matter your Focus. That is up to four skills training at once for melee, three for ranged or magic.",
+  "enAlt": "Your equipped weapon sets your combat style — melee, ranged or magic. Combat skills train as you fight: your Offense skill (chosen by your Focus — melee splits its training between Attack and Power, while Ranged or Magic Offense train alone), Vitality (always, from dealing and taking damage), and Defence or Magic Defence (whenever you take a hit, no matter your Focus). That's up to four skills training at once for melee, three for ranged or magic.",
+  "de": "Deine Waffe bestimmt den Kampfstil: Nahkampf, Fernkampf oder Magie. Im Kampf trainieren deine Kampffertigkeiten fortlaufend. Die Offensivfertigkeit richtet sich nach dem Fokus: Im Nahkampf teilt sich die Erfahrung auf Angriff und Wucht auf, bei Fernkampf oder Magie fließt sie allein hinein. Vitalität wächst immer, durch ausgeteilten und erlittenen Schaden. Verteidigung oder Magie-Verteidigung wächst bei jedem erlittenen Treffer, unabhängig vom Fokus. Das sind bis zu vier Fertigkeiten gleichzeitig im Nahkampf, drei bei Fernkampf oder Magie."
+ },
+ "onboarding.guide.achievements.body": {
+  "en": "Complete in-game goals such as reaching skill levels, defeating monsters or amassing wealth to unlock Achievements. Each grants Achievement Points (AP) that track your overall progress.",
+  "enAlt": "Complete in-game goals — reaching skill levels, defeating monsters, amassing wealth — to unlock Achievements. Each grants Achievement Points (AP) that track your overall progress.",
+  "de": "Erfülle Spielziele wie Fertigkeitslevel erreichen, Monster besiegen oder Reichtum anhäufen, um Erfolge freizuschalten. Jeder Erfolg gibt Erfolgspunkte (AP), die deinen Gesamtfortschritt messen."
+ },
+ "onboarding.guide.shop.body": {
+  "en": "Buy consumables, tools and inventory upgrades here. It is the best early source of food. Gear you craft or loot is usually better than shop equipment.",
+  "enAlt": "Buy consumables, tools and inventory upgrades here. Best early source for food — crafted or dropped gear always outperforms shop equipment.",
+  "de": "Kaufe hier Verbrauchsgüter, Werkzeuge und Inventarausbauten. Der Laden ist die beste frühe Quelle für Nahrung. Selbst hergestellte oder erbeutete Ausrüstung ist meist besser als die aus dem Laden."
+ },
+ "onboarding.guide.bank.body": {
+  "en": "Store item types here. Each slot holds an unlimited stack, and you can buy more slots when you run short. Deposit inventory overflow to keep your skilling actions running without interruption.",
+  "enAlt": "Store up to 100 item types here; each slot holds an unlimited stack. Deposit inventory overflow to keep your skilling actions running without interruption.",
+  "de": "Lagere hier Item-Typen ein. Jeder Platz fasst einen unbegrenzten Stapel, und wenn es eng wird, kaufst du weitere Plätze. Deponiere Überschüsse aus dem Inventar, damit deine Aktionen ohne Unterbrechung weiterlaufen."
+ },
+ "onboarding.guide.done.body": {
+  "en": "That covers the basics of Grim Reach. Start a skill, gear up and head into combat. The world is grim, but every dark iron age has its champions. Good luck!",
+  "enAlt": "That covers the basics of Grim Reach. Start a skill, gear up and head into combat — the world is grim, but every dark iron age has its champions. Good luck!",
+  "de": "Das sind die Grundlagen von Grim Reach. Starte eine Fertigkeit, rüste dich aus und zieh in den Kampf. Die Welt ist finster, doch jede dunkle Eisenzeit hat ihre Helden. Viel Erfolg!"
+ },
+ "onboarding.guide.intro.body": {
+  "en": "I'm the Warden of the Reach. I'll walk you through your menu and show you every button. Follow where I point.",
+  "enAlt": "I'm the Warden of the Reach, here to walk you through your menu. I'll show you every button — follow where I point.",
+  "de": "Ich bin der Wächter des Reachs. Ich führe dich durch dein Menü und zeige dir jeden Knopf. Folge meinem Finger."
+ },
+ "onboarding.guide.topbar.mastery.body": {
+  "en": "This is Mastery. Every action you repeat fills its own mastery bar, and higher mastery grants a chance at double yield and a speed bonus. Open the page to see which actions you've already mastered.",
+  "enAlt": "This is Mastery. Every action you repeat fills its own mastery bar — higher mastery grants a chance at double yield and a speed bonus. Open the page to see which actions you've already mastered.",
+  "de": "Das ist die Meisterschaft. Jede Aktion, die du wiederholst, füllt ihre eigene Meisterschaft. Höhere Meisterschaft gibt eine Chance auf doppelten Ertrag und mehr Tempo. Öffne die Seite, um zu sehen, welche Aktionen du schon gut beherrschst."
+ },
+ "onboarding.guide.topbar.character.body": {
+  "en": "This is your Character Sheet. Here you equip weapons and armour and see your stats. Open it to change your gear: what you wear decides how strong you fight.",
+  "enAlt": "This is your Character Sheet. Here you equip weapons and armour and see your stats. Open it to change your gear — what you wear decides how strong you fight.",
+  "de": "Das ist dein Charakterblatt. Hier rüstest du Waffen und Rüstung aus und siehst deine Werte. Öffne es, um deine Ausrüstung zu ändern: Was du trägst, bestimmt, wie stark du kämpfst."
+ },
+ "onboarding.guide.topbar.companions.body": {
+  "en": "These are your Companions. Every companion you've found grants a passive skilling bonus and an active combat ability once equipped. Open this page to equip one. Only one companion is active at a time.",
+  "enAlt": "These are your Companions. Every pet you've found grants a passive skilling bonus and an active combat ability once equipped. Open this page to equip one — only one companion is active at a time.",
+  "de": "Das sind deine Begleiter. Jeder gefundene Begleiter gibt dir einen passiven Bonus für eine Fertigkeit und eine aktive Kampffähigkeit, sobald du ihn ausrüstest. Öffne die Seite, um einen auszurüsten. Es ist immer nur ein Begleiter aktiv."
+ },
+ "onboarding.guide.topbar.encyclopedia.body": {
+  "en": "Behind the question mark sits the encyclopedia. Every item in the game is listed there by category, with a search box at the top. Nothing is locked away, so look up a piece long before you own it. One click takes you to its full wiki entry with sources and recipes.",
+  "enAlt": "Behind the question mark sits the encyclopedia. Every item in the game is listed there by category, with a search box at the top. Nothing is locked away, so look up a piece long before you own it — one click takes you to its full wiki entry with sources and recipes.",
+  "de": "Hinter dem Fragezeichen liegt die Enzyklopädie. Dort steht jedes Item des Spiels nach Kategorien sortiert, oben eine Suche. Verschlossen ist nichts, du kannst also lange nachschlagen, bevor du ein Stück besitzt. Ein Klick führt zum vollen Wiki-Eintrag mit Quellen und Rezepten."
+ },
+ "onboarding.guide.topbar.achievements.body": {
+  "en": "These are your Achievements. They unlock when you hit goals: specific skill levels, monsters defeated, gold amassed. Each one grants Achievement Points (AP) that track your overall progress.",
+  "enAlt": "These are your Achievements. They unlock when you hit goals — specific skill levels, monsters defeated, gold amassed. Each one grants Achievement Points (AP) that track your overall progress.",
+  "de": "Das sind die Erfolge. Sie schalten sich frei, wenn du Ziele erreichst: bestimmte Fertigkeitslevel, besiegte Monster, angehäuftes Gold. Jeder Erfolg gibt Erfolgspunkte (AP), die deinen Gesamtfortschritt zeigen."
+ },
+ "onboarding.guide.topbar.stats.body": {
+  "en": "This is your Statistics page. It tallies everything you do: total level, playtime, monsters defeated, gold earned and more. Open it to see your progress in numbers.",
+  "enAlt": "This is your Statistics page. It tallies everything you do — total level, playtime, monsters killed, gold earned and more. Open it to see your progress in numbers.",
+  "de": "Das ist deine Statistik. Sie zählt alles mit, was du tust: Gesamtlevel, Spielzeit, besiegte Monster, verdientes Gold und mehr. Öffne sie, um deinen Fortschritt in Zahlen zu sehen."
+ },
+ "onboarding.guide.topbar.options.body": {
+  "en": "This is the Options page. Here you set language, sound volume and display mode. Open it too if you ever want to see this guide again. You can restart it from here at any time.",
+  "enAlt": "This is the Options page. Here you set language, sound volume and display mode. Open it too if you ever want to see this guide again — you can restart it from here at any time.",
+  "de": "Das sind die Optionen. Hier stellst du Sprache, Lautstärke und Anzeigemodus ein. Öffne sie auch, wenn du diese Anleitung noch einmal sehen willst. Von hier kannst du sie jederzeit neu starten."
+ },
+ "onboarding.guide.sidebarSkill.woodcutting.body": {
+  "en": "This is Woodcutting. It supplies logs, the raw material for Crafting. To train it, pick a tree and chop it down. Leveling up unlocks better trees and more yield.",
+  "enAlt": "This is Woodcutting. It supplies logs — the raw material for Crafting. To train it, pick a tree and chop it down; leveling up unlocks better trees and more yield.",
+  "de": "Das ist Holzfällen. Es liefert Holz, den Rohstoff für das Handwerk. Zum Trainieren wählst du einen Baum und fällst ihn. Mit steigendem Level schaltest du bessere Bäume und mehr Ertrag frei."
+ },
+ "onboarding.guide.sidebarSkill.mining.body": {
+  "en": "This is Mining. You strike rock veins to yield ore, the raw material for Smithing. To train it, pick a vein and mine it. Leveling up unlocks deeper, richer veins.",
+  "enAlt": "This is Mining. You strike rock veins to yield ore — the raw material for Smithing. To train it, pick a vein and mine it; leveling up unlocks deeper, richer veins.",
+  "de": "Das ist Bergbau. Du schlägst Gesteinsadern ab und gewinnst Erz, den Rohstoff für Schmieden. Zum Trainieren wählst du eine Ader und baust sie ab. Höhere Level schalten tiefere, reichere Adern frei."
+ },
+ "onboarding.guide.sidebarSkill.fishing.body": {
+  "en": "This is Fishing. You catch fish from rivers and the sea, the foundation for Cooking. To train it, pick a fishing spot and fish there. Leveling up unlocks more fish and better spots.",
+  "enAlt": "This is Fishing. You catch fish from rivers and the sea — the foundation for Cooking. To train it, pick a fishing spot and fish there; leveling up unlocks more fish and better spots.",
+  "de": "Das ist Angeln. Du fängst Fisch aus Fluss und Meer, die Grundlage für Kochen. Zum Trainieren wählst du eine Angelstelle und fischst dort. Höhere Level schalten mehr Fischarten und bessere Angelplätze frei."
+ },
+ "onboarding.guide.sidebarSkill.smithing.body": {
+  "en": "This is Smithing. You smelt ore into bars and forge those bars into weapons and armour. To train it, smelt bars first, then forge a piece of gear from them. Leveling up unlocks stronger bars and gear.",
+  "enAlt": "This is Smithing. You smelt ore into bars and forge those bars into weapons and armour. To train it, smelt bars first, then forge a piece of gear from them; leveling up unlocks stronger bars and gear.",
+  "de": "Das ist Schmieden. Du schmilzt Erz zu Barren und schmiedest daraus Waffen und Rüstung. Zum Trainieren schmilzt du zuerst Barren, dann schmiedest du damit ein Ausrüstungsstück. Mit steigendem Level schaltest du stärkere Barren und Ausrüstung frei."
+ },
+ "onboarding.guide.sidebarSkill.cooking.body": {
+  "en": "This is Cooking. You turn raw fish and meat into meals that Auto-Eat consumes automatically in combat to refill your HP. To train it, pick an ingredient and cook it. Leveling up unlocks better meals with more healing.",
+  "enAlt": "This is Cooking. You turn raw fish and meat into meals that Auto-Eat consumes automatically in combat to refill your HP. To train it, pick an ingredient and cook it; leveling up unlocks better meals with more healing.",
+  "de": "Das ist Kochen. Du verwandelst rohen Fisch und rohes Fleisch in Mahlzeiten, die Auto-Essen im Kampf automatisch isst, um deine HP zu füllen. Zum Trainieren wählst du eine Zutat und kochst sie. Mit steigendem Level schaltest du bessere Gerichte mit mehr Heilung frei."
+ },
+ "onboarding.guide.sidebarSkill.foraging.body": {
+  "en": "This is Foraging. You gather wild plants, bark and seeds from the land, an important early source of materials for Herblore and Crafting. To train it, pick a plant and gather it. Leveling up unlocks rarer finds.",
+  "enAlt": "This is Foraging. You gather wild plants, bark and seeds from the land — an important early source of materials for Herblore and Crafting. To train it, pick a plant and gather it; leveling up unlocks rarer finds.",
+  "de": "Das ist Sammeln. Du sammelst Wildpflanzen, Rinde und Samen aus der Natur, eine wichtige frühe Rohstoffquelle für Kräuterkunde und Handwerk. Zum Trainieren wählst du eine Pflanze und sammelst sie ein. Mit steigendem Level schaltest du seltenere Funde frei."
+ },
+ "onboarding.guide.sidebarSkill.thieving.body": {
+  "en": "This is Thieving. You pickpocket targets and burgle locations for gold and rare loot, and a failed attempt stuns you briefly. To train it, pick a target and a risk mode: careful for a higher success chance, bold for more loot at higher risk. Leveling up raises your success chance.",
+  "enAlt": "This is Thieving. You pickpocket targets and burgle locations for gold and rare loot; a failed attempt stuns you briefly. To train it, pick a target and a risk mode — careful for a higher success chance, bold for more loot at higher risk; leveling up raises your success chance.",
+  "de": "Das ist Diebeskunst. Du bestiehlst Ziele und plünderst Orte für Gold und seltene Beute. Scheitert der Diebstahl, wirst du kurz betäubt. Zum Trainieren wählst du ein Ziel und einen Risikomodus: vorsichtig für mehr Erfolgschance, dreist für mehr Beute bei höherem Risiko. Mit steigendem Level steigt deine Erfolgschance."
+ },
+ "onboarding.guide.sidebarSkill.leatherworking.body": {
+  "en": "This is Crafting. You tan hides into leather and craft it into armour and bows for the melee and ranged styles. To train it, tan leather first, then craft it into a piece of gear. Leveling up unlocks stronger gear.",
+  "enAlt": "This is Crafting. You tan hides into leather and craft it into armour and bows for the melee and ranged styles. To train it, tan leather first, then craft it into a piece of gear; leveling up unlocks stronger gear.",
+  "de": "Das ist Handwerk. Du gerbst Häute zu Leder und fertigst daraus Rüstung und Bögen für Nahkampf und Fernkampf. Zum Trainieren gerbst du zuerst Leder, dann verarbeitest du es zu einem Ausrüstungsstück. Mit steigendem Level schaltest du stärkere Ausrüstung frei."
+ },
+ "onboarding.guide.sidebarSkill.tailoring.body": {
+  "en": "This is Tailoring. You weave fibres into cloth and sew it into robes and capes for all three combat styles. To train it, weave cloth first, then sew it into a piece of gear. Leveling up unlocks stronger gear.",
+  "enAlt": "This is Tailoring. You weave fibres into cloth and sew it into robes and capes for all three combat styles. To train it, weave cloth first, then sew it into a piece of gear; leveling up unlocks stronger gear.",
+  "de": "Das ist Schneidern. Du webst Fasern zu Stoff und nähst daraus Roben und Umhänge für alle drei Kampfstile. Zum Trainieren webst du zuerst Stoff, dann verarbeitest du ihn zu einem Ausrüstungsstück. Mit steigendem Level schaltest du stärkere Ausrüstung frei."
+ },
+ "onboarding.guide.sidebarSkill.jewelcrafting.body": {
+  "en": "This is Jewelcrafting. You cut gems and set them together with bars into rings and amulets that grant passive bonuses. To train it, cut a gem first, then craft it into a piece of jewellery. Leveling up unlocks stronger jewellery.",
+  "enAlt": "This is Jewelcrafting. You cut gems and set them together with bars into rings and amulets that grant passive stat bonuses. To train it, cut a gem first, then craft it into a piece of jewellery; leveling up unlocks stronger jewellery.",
+  "de": "Das ist Juwelierskunst. Du schleifst Edelsteine und fasst sie zusammen mit Barren in Ringe und Amulette, die passive Boni geben. Zum Trainieren schleifst du zuerst einen Edelstein, dann fertigst du damit ein Schmuckstück. Mit steigendem Level schaltest du stärkeren Schmuck frei."
+ },
+ "onboarding.guide.sidebarSkill.runecrafting.body": {
+  "en": "This is Runecrafting. You bind elemental essence into runes and enchant them into staves, sceptres and foci, your magic weapons. To train it, pick a recipe and craft it from your essence. Leveling up unlocks stronger runes and magic weapons. In combat, your spells cost nothing. Your spell reserve powers your stances instead: Focus adds spell damage, Warding speeds up ward regeneration.",
+  "enAlt": "This is Runecrafting. You bind elemental essence into runes and enchant them into staves, sceptres and foci — your magic weapons. To train it, pick a recipe and craft it from your essence; leveling up unlocks stronger runes and magic weapons. In combat, your spells cost nothing; your spell reserve powers your stances instead: Focus adds spell damage, Warding speeds up ward regeneration.",
+  "de": "Das ist Runenkunst. Du bindest Elementar-Essenzen zu Runen und verzauberst damit Stäbe, Zepter und Foki, deine Magiewaffen. Zum Trainieren wählst du eine Rezeptur und fertigst sie aus deinen Essenzen. Mit steigendem Level schaltest du stärkere Runen und Magiewaffen frei. Im Kampf kosten deine Zauber nichts, stattdessen stärkt deine Zauberreserve deine Haltung: Fokus erhöht den Zauberschaden, Abwehr beschleunigt die Ward-Regeneration."
+ },
+ "onboarding.guide.sidebarSkill.herblore.body": {
+  "en": "This is Herblore. You brew potions and tonics from harvested herbs. Combat potions boost your stats, and Antivenom Tonics protect you from poison-inflicting enemies. To train it, pick a recipe and brew it from your herbs. Leveling up unlocks stronger potions.",
+  "enAlt": "This is Herblore. You brew potions and tonics from harvested herbs — combat potions boost your stats, and Antivenom Tonics protect you from poison-inflicting enemies. To train it, pick a recipe and brew it from your herbs; leveling up unlocks stronger potions.",
+  "de": "Das ist Kräuterkunde. Du braust Tränke und Tonika aus gesammelten Kräutern. Kampftränke stärken deine Werte, Antigift-Tonika schützen vor Gegnern, die vergiften. Zum Trainieren wählst du ein Rezept und braust es aus deinen Kräutern. Mit steigendem Level schaltest du stärkere Tränke frei."
+ },
+ "onboarding.guide.interlude.body": {
+  "en": "That covers the top bar and every skill. Combat, Slayer, the Shop and the Bank get their own tour later. From here, the Chronicle always tells you what's next. Read on, or start a skill first. If something ever breaks, Report Bug is waiting at the very top of Options.",
+  "enAlt": "That covers the top bar and every skill. Combat, Slayer, the Shop and the Bank get their own tour later. From here, the Chronicle always tells you what's next — read on, or start a skill first. If something ever breaks, Report Bug is waiting at the very top of Options.",
+  "de": "Das war die obere Leiste und jede Fertigkeit. Kampf, Slayer, Laden und Bank bekommen später ihren eigenen Rundgang. Von hier aus sagt dir die Chronik immer, was als Nächstes ansteht. Lies weiter oder starte zuerst eine Fertigkeit. Solltest du auf einen Fehler stoßen: Ganz oben in den Optionen wartet „Bug melden“."
+ },
+ "queue.paused": {
+  "en": "Paused: you fell in battle.",
+  "enAlt": "Paused — you fell in battle.",
+  "de": "Pausiert: Du bist im Kampf gefallen."
+ },
+ "queue.skip.gate_locked": {
+  "en": "Removed from queue: {monster}. Requirement not met.",
+  "enAlt": "Removed from queue: {monster} — requirement not met.",
+  "de": "Aus der Warteschlange entfernt: {monster}. Voraussetzung nicht erfüllt."
+ },
+ "queue.skip.dungeon_locked": {
+  "en": "Removed from queue: {dungeon}. Requirement not met.",
+  "enAlt": "Removed from queue: {dungeon} — requirement not met.",
+  "de": "Aus der Warteschlange entfernt: {dungeon}. Voraussetzung nicht erfüllt."
+ },
+ "queue.skip.no_materials": {
+  "en": "Removed from queue: {action}. Materials are missing.",
+  "enAlt": "Removed from queue: {action} — no materials.",
+  "de": "Aus der Warteschlange entfernt: {action}. Es fehlt Material."
+ },
+ "queue.skip.level_too_low": {
+  "en": "Removed from queue: {action}. Level too low.",
+  "enAlt": "Removed from queue: {action} — level too low.",
+  "de": "Aus der Warteschlange entfernt: {action}. Dein Level reicht nicht."
+ },
+ "queue.row.willSkip": {
+  "en": "No materials in sight. This entry will be skipped.",
+  "enAlt": "No materials in sight — this entry will be skipped.",
+  "de": "Kein Material in Sicht. Dieser Eintrag wird übersprungen."
+ },
+ "queue.duration.materialEstimateHint": {
+  "en": "Rough estimate: it assumes the average yield of an earlier collecting step in this queue, before mastery, companion, or tonic bonuses.",
+  "enAlt": "Rough estimate — assumes the average yield of an earlier collecting step in this queue, before mastery, companion, or tonic bonuses.",
+  "de": "Grobe Schätzung: Sie nimmt den durchschnittlichen Ertrag eines früheren Sammelschritts in dieser Warteschlange an, ohne Meisterschafts-, Begleiter- oder Tonika-Boni."
+ },
+ "onboarding.tour.combat.enemySelect.body": {
+  "en": "Pick a zone, then an enemy inside it. Tougher foes hit harder but drop better loot. Check the hit-chance numbers before you commit.",
+  "enAlt": "Pick a zone, then an enemy inside it. Tougher foes hit harder but drop better loot — check the hit-chance numbers before you commit.",
+  "de": "Wähle eine Zone, dann einen Gegner darin. Stärkere Gegner treffen härter, hinterlassen aber bessere Beute. Schau vor dem Kampf auf die Trefferchancen."
+ },
+ "onboarding.tour.shop.upgrades.body": {
+  "en": "Spend gold here on permanent upgrades: more inventory slots, a better Auto-Eat threshold. Worth every coin.",
+  "enAlt": "Spend gold here on permanent upgrades — more inventory slots, a better Auto-Eat threshold. Worth every coin.",
+  "de": "Gib hier Gold für dauerhafte Aufrüstungen aus: mehr Inventarplätze, eine bessere Auto-Essen-Schwelle. Jede Münze wert."
+ },
+ "onboarding.tour.bank.columns.body": {
+  "en": "Your inventory sits on the left, your bank on the right. Click an item to deposit or withdraw it, or drag it across.",
+  "enAlt": "Your inventory sits on the left, your bank on the right. Click an item to deposit or withdraw it — or drag it across.",
+  "de": "Links dein Inventar, rechts deine Bank. Klicke ein Item zum Einlagern oder Entnehmen, oder zieh es rüber."
+ },
+ "guide.itemCard.identity.body": {
+  "en": "Every item card starts with its name, rarity and type. Rarer items glow in a stronger colour.",
+  "enAlt": "Every item card starts with its name, rarity and type — rarer items glow in a stronger colour.",
+  "de": "Jede Item-Karte beginnt mit Name, Seltenheit und Typ. Seltenere Items leuchten in kräftigerer Farbe."
+ },
+ "guide.itemCard.outro.body": {
+  "en": "You'll find this wiki button on every item card in the game: inventory, shop, bank, anywhere.",
+  "enAlt": "You'll find this wiki button on every item card in the game — inventory, shop, bank, anywhere.",
+  "de": "Diesen Wiki-Knopf findest du auf jeder Item-Karte im Spiel: im Inventar, im Laden, in der Bank, überall."
+ },
+ "onboarding.feature.queueExpand.body": {
+  "en": "It lives here on the right. Queue up actions and they run one after another. Tap the toggle button up top to try it.",
+  "enAlt": "It lives here on the right — queue up actions and they run one after another. Tap the toggle button up top to try it.",
+  "de": "Sie sitzt hier rechts. Reihe Aktionen ein, dann laufen sie nacheinander ab. Tippe oben auf den Auf-/Zuklapp-Knopf, um es auszuprobieren."
+ },
+ "onboarding.feature.sidebarResize.body": {
+  "en": "Drag the sidebar's edge to make it wider or narrower. Set it how you like.",
+  "enAlt": "Drag the sidebar's edge to make it wider or narrower — set it how you like.",
+  "de": "Zieh am Rand der Seitenleiste, um sie breiter oder schmaler zu machen. Stell sie so ein, wie du sie magst."
+ },
+ "chronicle.empty": {
+  "en": "The Chronicle lies blank. The Warden has not yet begun this tale.",
+  "enAlt": "The Chronicle lies blank — the Warden has not yet begun this tale.",
+  "de": "Die Chronik liegt noch leer. Der Wächter hat diese Geschichte noch nicht begonnen."
+ },
+ "chronicle.allClaimed": {
+  "en": "Every written chapter has been claimed. The Chronicle rests, for now.",
+  "enAlt": "Every written chapter has been claimed. The Chronicle rests — for now.",
+  "de": "Jedes geschriebene Kapitel ist eingelöst. Die Chronik ruht vorerst."
+ },
+ "toast.achievementBatch.detail": {
+  "en": "{n} achievements unlocked · +{ap} AP",
+  "enAlt": "{n} achievements unlocked — +{ap} AP",
+  "de": "{n} Erfolge freigeschaltet · +{ap} AP"
+ },
+ "toast.apMilestone.detail": {
+  "en": "{pct}% reached · +{tokens} quest tokens",
+  "enAlt": "{pct}% reached — +{tokens} Quest Tokens",
+  "de": "{pct} % erreicht · +{tokens} Aufgabenmarken"
+ },
+ "bugReport.subtitle": {
+  "en": "A quick note helps us track it down. The more specific, the better.",
+  "enAlt": "A quick note helps us track it down — the more specific, the better.",
+  "de": "Eine kurze Notiz hilft uns beim Nachstellen. Je genauer, desto besser."
+ },
+ "bugReport.contactPlaceholder": {
+  "en": "If you want an answer or an update on your issue, put your Discord name here",
+  "enAlt": "If you want an answer or an update to your issue, put your discord name here",
+  "de": "Wenn du eine Antwort oder eine Rückmeldung zu deinem Anliegen willst, trag hier deinen Discord-Namen ein"
+ },
+ "bugReport.sendSuccess": {
+  "en": "Thank you, your report made it through.",
+  "enAlt": "Thank you — your report made it through.",
+  "de": "Danke, dein Bericht ist angekommen."
+ },
+ "bugReport.sendFailed": {
+  "en": "Sending failed. Use one of the options below instead.",
+  "enAlt": "Sending failed. Please use one of the options below instead.",
+  "de": "Senden hat nicht geklappt. Nutze stattdessen eine der Optionen unten."
+ },
+ "bugReport.truncatedNote": {
+  "en": "Shortened: the full text was too long for this format.",
+  "enAlt": "Shortened, the full text was too long for this format.",
+  "de": "Gekürzt: Der vollständige Text war für dieses Format zu lang."
+ },
+ "bugReport.mailtoAttachHint": {
+  "en": "Please attach your screenshots directly in the email. A mailto link can't carry them along.",
+  "enAlt": "Please attach your screenshots directly in the email — mailto links can't carry them automatically.",
+  "de": "Bitte hänge deine Screenshots direkt an die E-Mail an. Der E-Mail-Link kann sie nicht mitnehmen."
+ },
+ "newhaven.reason.unknown_building": {
+  "en": "This building does not exist.",
+  "enAlt": "This building is not in the catalogue.",
+  "de": "Dieses Gebäude gibt es nicht."
+ },
+ "newhaven.reason.no_slot": {
+  "en": "Capacity {used}/{total}. Expand {name} to make room.",
+  "enAlt": "Capacity {used}/{total} — expanding {name} makes room.",
+  "de": "Kapazität {used}/{total}. Baue {name} aus, um Platz zu schaffen."
+ },
+ "newhaven.refine.waitingForInput": {
+  "en": "Resting: an ingredient is missing.",
+  "enAlt": "Resting — missing an ingredient.",
+  "de": "Ruht: eine Zutat fehlt."
+ },
+ "newhaven.refine.noXp": {
+  "en": "No XP. The works consume the exact recipe quantities.",
+  "enAlt": "No XP gain. The facility consumes exact recipe quantities.",
+  "de": "Keine XP. Die Anlage verbraucht genau die Rezeptmengen."
+ },
+ "newhaven.refineReason.ineligible_recipe": {
+  "en": "This recipe needs more than one raw material. The works only handle a single ingredient, plus coal.",
+  "enAlt": "This recipe needs more than one raw material — the works only handle a single ingredient (plus coal).",
+  "de": "Dieses Rezept braucht mehr als einen Rohstoff. Die Anlage verarbeitet nur eine Zutat, dazu Kohle."
+ },
+ "newhaven.refineReason.recipe_not_known": {
+  "en": "Your level is not high enough for that recipe.",
+  "enAlt": "Your skill is not high enough for that recipe.",
+  "de": "Dein Level reicht für dieses Rezept noch nicht."
+ },
+ "newhaven.boost.farmingSpeed": {
+  "en": "{v} faster crop growth",
+  "enAlt": "{v} faster growing and foraging",
+  "de": "{v} schnelleres Wachstum auf den Beeten"
+ },
+ "newhaven.boost.slayerPoints": {
+  "en": "+{v} Slayer points",
+  "enAlt": "+{v} slayer points",
+  "de": "+{v} Slayer-Punkte"
+ },
+ "newhaven.move.hint": {
+  "en": "Move mode: select a building to adjust how it looks, or drag it to a new spot. Moving is free.",
+  "enAlt": "Move mode: select a building to calibrate it, or drag it to a new position. Moving is free.",
+  "de": "Verschiebemodus: Wähle ein Gebäude, um seine Darstellung anzupassen, oder ziehe es an einen neuen Platz. Verschieben ist kostenlos."
+ },
+ "newhaven.move.effectiveScale": {
+  "en": "Effective scale: {value}×",
+  "enAlt": "Effective sprite scale: {value}×",
+  "de": "Effektiver Maßstab: {value}×"
+ },
+ "newhaven.reason.out_of_bounds": {
+  "en": "Outside the buildable ground. Pick a spot inside it.",
+  "enAlt": "Outside the buildable ground.",
+  "de": "Außerhalb des Baugrunds. Wähle einen Platz innerhalb."
+ },
+ "newhaven.reason.not_placed": {
+  "en": "This building has no spot on the map yet. Place it first.",
+  "enAlt": "This building has no spot on the map yet.",
+  "de": "Dieses Gebäude hat noch keinen Platz auf der Karte. Setze es zuerst ein."
+ },
+ "newhaven.demolish.refundNone": {
+  "en": "Nothing comes back: this level cost nothing to build.",
+  "enAlt": "Nothing comes back — this level cost nothing to build.",
+  "de": "Nichts kommt zurück: Dieser Ausbau hat nichts gekostet."
+ },
+ "offline.camp.buildsTitle": {
+  "en": "New Haven has built",
+  "enAlt": "Your camp has built",
+  "de": "New Haven hat gebaut"
+ },
+ "tavern.card.queue": {
+  "en": "Add to Queue",
+  "enAlt": "Queue It Up",
+  "de": "In die Warteschlange"
+ },
+ "tavern.alert.accepted": {
+  "en": "You have already taken on this task, you cannot send this guest away now.",
+  "enAlt": "You've already taken on this task, you can't send them off now.",
+  "de": "Du hast die Aufgabe schon angenommen, diesen Gast kannst du jetzt nicht mehr wegschicken."
+ },
+ "estates.farm.blocked": {
+  "en": "{n} harvest waiting for space",
+  "enAlt": "{n} harvest stuck",
+  "de": "{n} Ernte wartet auf Platz"
+ },
+ "storage.shelf.fibers": {
+  "en": "Fibers & Cloth",
+  "enAlt": "Fibres & Cloth",
+  "de": "Fasern & Stoff"
+ },
+ "orders.lead": {
+  "en": "Customers turn up while you work. Only what you make or gather with the order's skill after accepting counts. No time limit, up to three at once.",
+  "enAlt": "Customers turn up while you work. Only what you make or gather after accepting counts. No time limit, up to three at once.",
+  "de": "Kunden kommen, während du arbeitest. Es zählt nur, was du nach der Annahme mit der Fertigkeit des Auftrags herstellst oder sammelst. Kein Zeitlimit, höchstens drei zugleich."
+ },
+ "raid.rec.normal": {
+  "en": "Combat level 99 · Sanctum gear with full runes and potions",
+  "enAlt": "Combat level 99 · Idol Sanctum gear with full runes and potions",
+  "de": "Kampflevel 99 · Sanktum-Ausrüstung mit vollen Runen und Tränken"
+ },
+ "raid.rest.paused": {
+  "en": "Paused while your own action or fight is running.",
+  "enAlt": "Paused while your own action is running.",
+  "de": "Pausiert, solange deine eigene Aktion oder dein eigener Kampf läuft."
+ },
+ "itip.setfx.burnDurationMs": {
+  "en": "Burn lasts {s} s longer",
+  "enAlt": "Burn lasts {s}s longer",
+  "de": "Brand hält {s} s länger"
+ },
+ "itip.setfx.outbreak": {
+  "en": "A hit on a target with full poison stacks makes the poison burst: {value}% of its remaining damage at once, and the stacks halve. Cooldown {s} s.",
+  "enAlt": "A hit on a target with full poison stacks makes the poison burst: {value}% of its remaining damage at once, and the stacks halve. Cooldown {s}s.",
+  "de": "Ein Treffer auf ein Ziel mit vollen Giftstapeln lässt das Gift platzen: sofort {value} % des verbleibenden Giftschadens, die Stapel halbieren sich. Abklingzeit {s} s."
+ },
+ "itip.setfx.bloodToll": {
+  "en": "At full stacks your next hit tears the wounds open: the remaining bleed damage lands at once (×{value}) and you heal {healPct}% of it. Cooldown {s} s.",
+  "enAlt": "At full stacks your next hit tears the wounds open: the remaining bleed damage lands at once (x{value}) and you heal {healPct}% of it. Cooldown {s}s.",
+  "de": "Bei vollen Stapeln reißt dein nächster Treffer alle Wunden auf: Der Restschaden der Blutung wird sofort fällig (×{value}), du heilst {healPct} % davon. Abklingzeit {s} s."
+ },
+ "raid.invite": {
+  "en": "Drazhan withdrew, and the fire in the march did not go out. It grew brighter. Among what he left behind lay the creditor's half of a tally stick, and on it a name Mux confirmed only the third time I asked: Gobkha'raz, the capital of the goblins, where the debt for the borrowed fire is kept. Its War-King holds the Creditor gone and himself the Creditor's heir, and out of the estate of the march he is building the army the Warchief only dreamed of. I once wrote that the march would not be abandoned a second time. It is time to prove it.",
+  "enAlt": "Drazhan withdrew, and the fire in the march did not go out; it grew brighter. Among what he left behind lay the creditor's half of a tally stick, and on it a name Mux confirmed only the third time I asked: Gobkha'raz, the capital of the goblins, where the debt for the borrowed fire is kept. Its War-King holds the Creditor gone and himself the Creditor's heir, and out of the estate of the march he is building the army the Warchief only dreamed of. I once wrote that the march would not be abandoned a second time. It is time to prove it.",
+  "de": "Drazhan wich, und das Feuer in der Mark erlosch nicht. Es wurde heller. Unter dem, was er zurückließ, lag die Gläubigerhälfte eines Kerbholzes, und darauf ein Name, den Mux mir erst beim dritten Fragen bestätigte: Gobkha'raz, die Hauptstadt der Goblins, in der die Schuld für das geliehene Feuer geführt wird. Ihr Kriegskönig hält den Gläubiger für fort und sich selbst für dessen Erben, und er baut aus dem Nachlass der Mark das Heer, von dem der Häuptling nur träumte. Ich habe einmal geschrieben, dass die Mark kein zweites Mal aufgegeben wird. Es ist Zeit, das zu belegen."
+ },
+ "raid.mod.borrowed_fire.desc": {
+  "en": "The shrine has lent widely this week. Every blade burns, yours included.",
+  "enAlt": "The shrine has lent widely this week; every blade burns, yours included.",
+  "de": "Das Heiligtum hat diese Woche weit ausgeliehen. Jede Klinge brennt, auch deine."
+ },
+ "raid.mod.beast_hunger.desc": {
+  "en": "The pits have not been fed. Whatever hits you feeds on it.",
+  "enAlt": "The pits have not been fed; whatever hits you feeds on it.",
+  "de": "Die Gruben wurden nicht gefüttert. Was dich trifft, frisst mit."
+ },
+ "raid.mod.open_armory.desc": {
+  "en": "Krogg issues march-plate to everyone: iron on all of them, and every gap in it counts double.",
+  "enAlt": "Krogg issues march-plate to everyone; iron on all of them, and every gap in it counts double.",
+  "de": "Krogg gibt die Mark-Platte an jeden aus: Eisen auf allen, und jeder Spalt darin zählt doppelt."
+ },
+ "raid.mod.blood_feast.desc": {
+  "en": "The Crownguard renews the oath. This week's wounds close slowly, on both sides.",
+  "enAlt": "The Crownguard renews the oath; this week's wounds close slowly, on both sides.",
+  "de": "Die Kronwache erneuert den Schwur. Die Wunden dieser Woche schließen sich langsam, auf beiden Seiten."
+ },
+ "raid.room.4.desc": {
+  "en": "The gate chapel of the march, once consecrated to Vhel the Gatekeeper. Where her image stood, the borrowed fire now burns in a basin of god-iron. It is pale, gives no smoke, and the shadows in the room do not move with it. On the black walls the names of the clans are burned in, line by line, like entries.",
+  "enAlt": "The gate chapel of the march, once consecrated to Vhel the Gatekeeper; where her image stood, the borrowed fire now burns in a basin of god-iron. It is pale, gives no smoke, and the shadows in the room do not move with it; on the black walls the names of the clans are burned in, line by line, like entries.",
+  "de": "Die Torkapelle der Mark, einst Vhel geweiht, der Torhüterin. Wo ihr Bildnis stand, brennt jetzt in einem Becken aus Götzeneisen das geliehene Feuer. Es ist bleich, wirft keinen Rauch, und die Schatten im Raum bewegen sich nicht mit ihm. An den schwarzen Wänden sind die Namen der Sippen eingebrannt, Zeile um Zeile, wie Posten."
+ },
+ "orders.deliverInstances.title": {
+  "en": "Hand over individual pieces?",
+  "enAlt": "Hand over unique pieces?",
+  "de": "Einzelstücke abgeben?"
+ },
+ "orders.deliverInstances.body": {
+  "en": "There are not enough plain pieces. {n} individual pieces (with suffix or runes) go with the order, weakest first. Locked pieces stay.",
+  "enAlt": "There are not enough plain pieces. {n} unique pieces (with suffix or runes) go with the order, weakest first. Locked pieces stay.",
+  "de": "Es gibt nicht genug einfache Stücke. {n} Einzelstücke (mit Suffix oder Runen) gehen mit, die schwächsten zuerst. Gesperrte Teile bleiben."
+ }
+}

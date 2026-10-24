@@ -1,5 +1,6 @@
 ﻿import type { ContentDB } from "@hearthforge/shared";
 import { applyContentLocales } from "./locales/apply";
+import { ITEM_DESCRIPTIONS_14 } from "./item-descriptions-1-4";
 import { TALENT_TREES } from "./talents";
 import { RAID_ACHIEVEMENTS, RAID_DUNGEONS, RAID_GOBKHARAZ, RAID_ITEMS, RAID_MONSTERS, RAID_SETS } from "./raid"; // claude:2026-10-25T10:00:00+02:00 — Raid Gobkha'raz (1.4.0 Welle 4)
 
@@ -23553,6 +23554,12 @@ content.dungeons.push(...RAID_DUNGEONS);
 content.sets.push(...RAID_SETS);
 content.achievements.push(...RAID_ACHIEVEMENTS);
 content.raids = [RAID_GOBKHARAZ];
+
+// claude:2026-10-24T21:16:00+02:00 — Textpass 1.4 P4b: neue Beschreibungen für Items, die bisher keine hatten (s. item-descriptions-1-4.ts).
+for (const [id, d] of Object.entries(ITEM_DESCRIPTIONS_14)) {
+  const it = content.items[id];
+  if (it && !it.description) it.description = { en: d.en, de: d.de };
+}
 
 // Lokalisierungs-Overlay (es/pt-BR/fr/ru/zh, Task „5-Sprachen-Fundament"): mutiert die obigen
 // Entities in-place, BEVOR irgendetwas anderes `content` liest (Module werden top-to-bottom
