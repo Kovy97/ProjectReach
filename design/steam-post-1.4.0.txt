@@ -2,10 +2,12 @@ Grim Reach 1.4.0 - Feather and Steel
 
 Hunters,
 
-1.4.0 is a big one. The goblins have a capital, the bow finally gets the care it deserved, and your workshop
-comes alive. Saves stay compatible as always.
+1.4.0 is a big one. The goblins have a capital, the bow finally gets the care it deserved, your workshop
+comes alive, and the whole interface got easier to read. Saves stay compatible as always.
 
 THE RAID: HALLS OF GOBKHA'RAZ
+
+[IMAGE: 1.4.0-raid-boss.png]
 
 - Defeat Drazhan and the goblin capital opens, built into the abandoned keep of the March. Five rooms, four
   waves and a boss each. At the end waits War-King Rakkzul the Heir.
@@ -27,6 +29,8 @@ THE RAID: HALLS OF GOBKHA'RAZ
 
 RAID LOOT
 
+[IMAGE: 1.4.0-raid-loot.png]
+
 - 31 raid pieces in three versions: Normal (godly), Heroic (a new teal rarity) and Mythic (a new pink rarity).
   Each version is a few percent stronger.
 - Three sets with bonuses at 2, 4 and 5 pieces: Regalia of the Borrowed Fire (magic), Pitpack Stalker's Garb
@@ -35,6 +39,8 @@ RAID LOOT
 - The popup for godly loot now says "Godly find!". Heroic and Mythic finds get their own.
 
 NEW SKILL: FLETCHING
+
+[IMAGE: 1.4.0-fletching.png]
 
 - Bows, bowstrings and cords move from Crafting into the new Fletching skill. Everyone starts Fletching at
   level 1. Crafting keeps all of its experience, and your mastery stays with each action.
@@ -69,6 +75,8 @@ FROST AND BOSSES
 
 STORAGE AND SALVAGE
 
+[IMAGE: 1.4.0-storage.png]
+
 - A new Storage page with 14 shelves. Every material has its own spot, with no limit, and it uses no bank
   space. New materials go straight there.
 - Heads up: on your first load, materials move from the bank into storage. Your bank closes the gaps once,
@@ -79,6 +87,9 @@ STORAGE AND SALVAGE
 - A locked piece is safe from everything: salvage never touches it, and work orders never take it.
 
 LIFE IN THE WORKSHOP
+
+[IMAGE: 1.4.0-work-orders.png]
+[IMAGE: 1.4.0-events.png]
 
 - Small events now happen while you work: a Rich Vein, a Fish Shoal, a Masterpiece and more, plus Bountiful
   Harvest and Fresh Trail on your estates.
@@ -97,7 +108,30 @@ CLARITY
 - Farming and Hunting sit in a new Estates group with live status. While fields or traps are working, the
   header no longer says "Idle", and the offline report has its own block for harvests and catches.
 
-[UI SECTION: added once the interface overhaul is finished]
+A CLEARER INTERFACE
+
+[IMAGE: 1.4.0-companions-readable.png]
+
+- Text now grows with your window. The smallest text is much larger than before, and on big screens every page
+  reads comfortably.
+- Descriptions, effects, hints and quests use a new, easier to read typeface with real lowercase letters.
+  Titles and buttons keep the familiar look.
+- New option: Text size (Normal, Large, Very large), right under the font choice. It only scales text and is
+  saved per device.
+- Every page now uses its space. Action cards show what they produce in large, and companions, the chronicle,
+  the enchanting altar, the shop, bank, storage and the offline report fill the room they have.
+- The shop's item cards sit on a warm painted background and stand out from the shelves.
+
+BETTER TEXTS
+
+- More than 1,100 texts were rewritten and checked against what the game actually does. Over 130 of them
+  were simply wrong, from talent and companion effects to achievement goals and quest targets. They now say
+  exactly what happens.
+- 974 items that had no description now have one.
+- Terms are the same across the game and across languages. Slayer is always Slayer, and the bank and the
+  new storage are never mixed up.
+- Every change is in all seven languages. Russian and French now address you the same way everywhere.
+
 
 FIXES
 
@@ -107,5 +141,11 @@ FIXES
 - The item card buttons are reachable and fully labeled at 1366x768, and the header no longer wraps when an
   event is running.
 - Many fixes in Russian and Chinese: grammar, plural forms and full-width punctuation.
+- Inventory drag and drop: items behind a gap could show up one cell off, and enchanted items without a plain
+  stack were no valid drop target. Every cell now sits at its real position, and you can drop anywhere.
+  Thanks for the report!
+- With Shift held, the comparison card no longer vanishes right away at 1366x768.
+- The bug report window opened from the main menu no longer gets stuck inside the options panel.
+- Skill levels no longer stick out of the sidebar buttons at large text sizes.
 
 As always: if something looks off, tell me here or through the bug report button in the options.
