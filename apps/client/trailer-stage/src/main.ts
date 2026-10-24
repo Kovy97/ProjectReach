@@ -6,8 +6,9 @@ import { calib } from "./scenes/calib";
 import { firstStrike } from "./scenes/firstStrike";
 import { frostMoment } from "./scenes/frostMoment";
 import { trailer } from "./trailer";
+import { trailerV4 } from "./v4";
 
-const SCENES: Record<string, () => TrailerScene> = { calib, firstStrike, frostMoment: () => frostMoment(), trailer: () => trailer() };
+const SCENES: Record<string, () => TrailerScene> = { calib, firstStrike, frostMoment: () => frostMoment(), trailer: () => trailer(), v4: () => trailerV4() };
 
 declare global {
   interface Window {

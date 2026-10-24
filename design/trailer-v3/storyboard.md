@@ -242,7 +242,7 @@ Rendern in Abschnitten unter 10 Minuten (`--range a-b`), dann Videoströme zusam
 | Vrikka, die Zählerin | `goblin_warlock` | `gk_tallymistress` |
 | Krogg | `goblin_siegebrute` | `gk_quartermaster` |
 | Zil'gath | `goblin_felmagician` | `gk_felmagus` |
-| Kriegskönig Rakkzul | `goblin_warchief` | `gk_warking` |
+| Kriegskönig Rakkzul | `goblin_warchief` | `gk_warking` (sein Saal ist `gk_room_5` „The Heir's Throne“; Bild fehlt noch, bis dahin steht er in `gk_room_4`) |
 | Goblin-Welle, Torwachen | `goblin_reaver/spearman/pikeman/butcher/rogue` | `gk_gate_pikeman`, `gk_toll_thug`, `gk_bannerman` … |
 | Ushkas Grubenhunde (24) | `thorn_wolf` | `gk_pit_hound` |
 
