@@ -17161,161 +17161,166 @@ export const content: ContentDB = {
     // packages/content/src/achievements-1-2-0.test.ts. Datei generiert (Overlays es/fr/pt-BR/ru/zh gepflegt).
     // ═══════════════════════════════════════════════════════════════════════════
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Gesamtlevel-Texte)
     // -- Skilling: Gesamtlevel (IDs unverändert; ach_total_level_2079 → ach_total_level_1980, Steam-Set) --
-    { id: "ach_total_level_25", name: { en: "Apprentice", de: "Lehrling" }, description: { en: "Reach a total level of 25.", de: "Erreiche Gesamtlevel 25." }, icon: "📘", category: "skilling", rarity: "common", condition: { type: "total_level", count: 25 } },
-    { id: "ach_total_level_100", name: { en: "Journeyman", de: "Geselle" }, description: { en: "Reach a total level of 100.", de: "Erreiche Gesamtlevel 100." }, icon: "📗", category: "skilling", rarity: "uncommon", condition: { type: "total_level", count: 100 } },
-    { id: "ach_total_level_250", name: { en: "Master of Trades", de: "Meister der Künste" }, description: { en: "Reach a total level of 250.", de: "Erreiche Gesamtlevel 250." }, icon: "📙", category: "skilling", rarity: "rare", condition: { type: "total_level", count: 250 } },
-    { id: "ach_total_level_500", name: { en: "Polymath", de: "Universalgelehrter" }, description: { en: "Reach a total level of 500.", de: "Erreiche Gesamtlevel 500." }, icon: "📕", category: "skilling", rarity: "rare", condition: { type: "total_level", count: 500 } },
-    { id: "ach_total_level_1000", name: { en: "Ascendant", de: "Aszendent" }, description: { en: "Reach a total level of 1000.", de: "Erreiche Gesamtlevel 1000." }, icon: "📚", category: "skilling", rarity: "epic", condition: { type: "total_level", count: 1000 } },
-    { id: "ach_total_level_1500", name: { en: "Eternal Scholar", de: "Ewiger Gelehrter" }, description: { en: "Reach a total level of 1500.", de: "Erreiche Gesamtlevel 1500." }, icon: "🏛", category: "skilling", rarity: "legendary", condition: { type: "total_level", count: 1500 } },
-    { id: "ach_total_level_1750", name: { en: "Transcendent", de: "Transzendent" }, description: { en: "Reach a total level of 1750.", de: "Erreiche Gesamtlevel 1750." }, icon: "🌟", category: "skilling", rarity: "legendary", condition: { type: "total_level", count: 1750 } },
-    { id: "ach_total_level_2000", name: { en: "Nigh Complete", de: "Beinahe Vollständig" }, description: { en: "Reach a total level of 1900. The pinnacle lies just ahead.", de: "Erreiche Gesamtlevel 1900. Der Gipfel liegt direkt vor dir." }, icon: "💫", category: "skilling", rarity: "legendary", condition: { type: "total_level", count: 1900 } },
-    { id: "ach_total_level_1980", name: { en: "True Completionist", de: "Vollender" }, description: { en: "Reach the absolute maximum total level of 2178. All 22 skills at level 99.", de: "Erreiche das absolute Maximum von 2178 Gesamtlevel. Alle 22 Fertigkeiten auf Stufe 99." }, icon: "🏆", category: "skilling", rarity: "legendary", condition: { type: "total_level", count: 2178 } }, // 1.2.0 (29.08.2026): 22 Skills (Schneidern, Jagen) ⇒ 2178; ID bleibt (nie recyceln)
+    { id: "ach_total_level_25", name: { en: "Apprentice", de: "Lehrling" }, description: { en: "Reach total level 25.", de: "Erreiche Gesamtlevel 25." }, icon: "📘", category: "skilling", rarity: "common", condition: { type: "total_level", count: 25 } },
+    { id: "ach_total_level_100", name: { en: "Journeyman", de: "Geselle" }, description: { en: "Reach total level 100.", de: "Erreiche Gesamtlevel 100." }, icon: "📗", category: "skilling", rarity: "uncommon", condition: { type: "total_level", count: 100 } },
+    { id: "ach_total_level_250", name: { en: "Master of Trades", de: "Meister der Künste" }, description: { en: "Reach total level 250.", de: "Erreiche Gesamtlevel 250." }, icon: "📙", category: "skilling", rarity: "rare", condition: { type: "total_level", count: 250 } },
+    { id: "ach_total_level_500", name: { en: "Polymath", de: "Universalgelehrter" }, description: { en: "Reach total level 500.", de: "Erreiche Gesamtlevel 500." }, icon: "📕", category: "skilling", rarity: "rare", condition: { type: "total_level", count: 500 } },
+    { id: "ach_total_level_1000", name: { en: "Ascendant", de: "Aszendent" }, description: { en: "Reach total level 1000.", de: "Erreiche Gesamtlevel 1000." }, icon: "📚", category: "skilling", rarity: "epic", condition: { type: "total_level", count: 1000 } },
+    { id: "ach_total_level_1500", name: { en: "Eternal Scholar", de: "Ewiger Gelehrter" }, description: { en: "Reach total level 1500.", de: "Erreiche Gesamtlevel 1500." }, icon: "🏛", category: "skilling", rarity: "legendary", condition: { type: "total_level", count: 1500 } },
+    { id: "ach_total_level_1750", name: { en: "Transcendent", de: "Transzendent" }, description: { en: "Reach total level 1750.", de: "Erreiche Gesamtlevel 1750." }, icon: "🌟", category: "skilling", rarity: "legendary", condition: { type: "total_level", count: 1750 } },
+    { id: "ach_total_level_2000", name: { en: "Nigh Complete", de: "Beinahe Vollständig" }, description: { en: "Reach total level 1900. The summit is close now.", de: "Erreiche Gesamtlevel 1900. Der Gipfel ist nah." }, icon: "💫", category: "skilling", rarity: "legendary", condition: { type: "total_level", count: 1900 } },
+    { id: "ach_total_level_1980", name: { en: "True Completionist", de: "Vollender" }, description: { en: "Reach total level 2178.", de: "Erreiche Gesamtlevel 2178." }, icon: "🏆", category: "skilling", rarity: "legendary", condition: { type: "total_level", count: 2178 } }, // 1.2.0 (29.08.2026): 22 Skills (Schneidern, Jagen) ⇒ 2178; ID bleibt (nie recyceln)
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (DE „X-Level n“)
     // -- Skilling: Skill-Leitern 25/50/75/90/99 (Audit § 2.3; _10/_20/_30/_40/_60/_70/_80 entfallen, Slayer neu) --
-    { id: "ach_skill_woodcutting_25", name: { en: "Woodcutting Journeyman", de: "Holzfällen-Geselle" }, description: { en: "Reach Woodcutting level 25.", de: "Erreiche Holzfällen Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "woodcutting", count: 25 } },
-    { id: "ach_skill_woodcutting_50", name: { en: "Woodcutting Veteran", de: "Holzfällen-Veteran" }, description: { en: "Reach Woodcutting level 50.", de: "Erreiche Holzfällen Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "woodcutting", count: 50 } },
-    { id: "ach_skill_woodcutting_75", name: { en: "Woodcutting Master", de: "Holzfällen-Meister" }, description: { en: "Reach Woodcutting level 75.", de: "Erreiche Holzfällen Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "woodcutting", count: 75 } },
-    { id: "ach_skill_woodcutting_90", name: { en: "Woodcutting Legend", de: "Holzfällen-Legende" }, description: { en: "Reach Woodcutting level 90.", de: "Erreiche Holzfällen Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "woodcutting", count: 90 } },
-    { id: "ach_skill_woodcutting_99", name: { en: "Woodcutting Maxed", de: "Holzfällen-Maximiert" }, description: { en: "Reach Woodcutting level 99.", de: "Erreiche Holzfällen Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "woodcutting", count: 99 } },
-    { id: "ach_skill_mining_25", name: { en: "Mining Journeyman", de: "Bergbau-Geselle" }, description: { en: "Reach Mining level 25.", de: "Erreiche Bergbau Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "mining", count: 25 } },
-    { id: "ach_skill_mining_50", name: { en: "Mining Veteran", de: "Bergbau-Veteran" }, description: { en: "Reach Mining level 50.", de: "Erreiche Bergbau Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "mining", count: 50 } },
-    { id: "ach_skill_mining_75", name: { en: "Mining Master", de: "Bergbau-Meister" }, description: { en: "Reach Mining level 75.", de: "Erreiche Bergbau Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "mining", count: 75 } },
-    { id: "ach_skill_mining_90", name: { en: "Mining Legend", de: "Bergbau-Legende" }, description: { en: "Reach Mining level 90.", de: "Erreiche Bergbau Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "mining", count: 90 } },
-    { id: "ach_skill_mining_99", name: { en: "Mining Maxed", de: "Bergbau-Maximiert" }, description: { en: "Reach Mining level 99.", de: "Erreiche Bergbau Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "mining", count: 99 } },
-    { id: "ach_skill_fishing_25", name: { en: "Fishing Journeyman", de: "Angeln-Geselle" }, description: { en: "Reach Fishing level 25.", de: "Erreiche Angeln Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "fishing", count: 25 } },
-    { id: "ach_skill_fishing_50", name: { en: "Fishing Veteran", de: "Angeln-Veteran" }, description: { en: "Reach Fishing level 50.", de: "Erreiche Angeln Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "fishing", count: 50 } },
-    { id: "ach_skill_fishing_75", name: { en: "Fishing Master", de: "Angeln-Meister" }, description: { en: "Reach Fishing level 75.", de: "Erreiche Angeln Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "fishing", count: 75 } },
-    { id: "ach_skill_fishing_90", name: { en: "Fishing Legend", de: "Angeln-Legende" }, description: { en: "Reach Fishing level 90.", de: "Erreiche Angeln Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "fishing", count: 90 } },
-    { id: "ach_skill_fishing_99", name: { en: "Fishing Maxed", de: "Angeln-Maximiert" }, description: { en: "Reach Fishing level 99.", de: "Erreiche Angeln Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "fishing", count: 99 } },
-    { id: "ach_skill_smithing_25", name: { en: "Smithing Journeyman", de: "Schmieden-Geselle" }, description: { en: "Reach Smithing level 25.", de: "Erreiche Schmieden Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "smithing", count: 25 } },
-    { id: "ach_skill_smithing_50", name: { en: "Smithing Veteran", de: "Schmieden-Veteran" }, description: { en: "Reach Smithing level 50.", de: "Erreiche Schmieden Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "smithing", count: 50 } },
-    { id: "ach_skill_smithing_75", name: { en: "Smithing Master", de: "Schmieden-Meister" }, description: { en: "Reach Smithing level 75.", de: "Erreiche Schmieden Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "smithing", count: 75 } },
-    { id: "ach_skill_smithing_90", name: { en: "Smithing Legend", de: "Schmieden-Legende" }, description: { en: "Reach Smithing level 90.", de: "Erreiche Schmieden Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "smithing", count: 90 } },
-    { id: "ach_skill_smithing_99", name: { en: "Smithing Maxed", de: "Schmieden-Maximiert" }, description: { en: "Reach Smithing level 99.", de: "Erreiche Schmieden Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "smithing", count: 99 } },
-    { id: "ach_skill_cooking_25", name: { en: "Cooking Journeyman", de: "Kochen-Geselle" }, description: { en: "Reach Cooking level 25.", de: "Erreiche Kochen Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "cooking", count: 25 } },
-    { id: "ach_skill_cooking_50", name: { en: "Cooking Veteran", de: "Kochen-Veteran" }, description: { en: "Reach Cooking level 50.", de: "Erreiche Kochen Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "cooking", count: 50 } },
-    { id: "ach_skill_cooking_75", name: { en: "Cooking Master", de: "Kochen-Meister" }, description: { en: "Reach Cooking level 75.", de: "Erreiche Kochen Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "cooking", count: 75 } },
-    { id: "ach_skill_cooking_90", name: { en: "Cooking Legend", de: "Kochen-Legende" }, description: { en: "Reach Cooking level 90.", de: "Erreiche Kochen Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "cooking", count: 90 } },
-    { id: "ach_skill_cooking_99", name: { en: "Cooking Maxed", de: "Kochen-Maximiert" }, description: { en: "Reach Cooking level 99.", de: "Erreiche Kochen Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "cooking", count: 99 } },
-    { id: "ach_skill_attack_25", name: { en: "Attack Journeyman", de: "Angriff-Geselle" }, description: { en: "Reach Attack level 25.", de: "Erreiche Angriff Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "attack", count: 25 } },
-    { id: "ach_skill_attack_50", name: { en: "Attack Veteran", de: "Angriff-Veteran" }, description: { en: "Reach Attack level 50.", de: "Erreiche Angriff Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "attack", count: 50 } },
-    { id: "ach_skill_attack_75", name: { en: "Attack Master", de: "Angriff-Meister" }, description: { en: "Reach Attack level 75.", de: "Erreiche Angriff Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "attack", count: 75 } },
-    { id: "ach_skill_attack_90", name: { en: "Attack Legend", de: "Angriff-Legende" }, description: { en: "Reach Attack level 90.", de: "Erreiche Angriff Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "attack", count: 90 } },
-    { id: "ach_skill_attack_99", name: { en: "Attack Maxed", de: "Angriff-Maximiert" }, description: { en: "Reach Attack level 99.", de: "Erreiche Angriff Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "attack", count: 99 } },
-    { id: "ach_skill_power_25", name: { en: "Power Journeyman", de: "Wucht-Geselle" }, description: { en: "Reach Power level 25.", de: "Erreiche Wucht Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "power", count: 25 } },
-    { id: "ach_skill_power_50", name: { en: "Power Veteran", de: "Wucht-Veteran" }, description: { en: "Reach Power level 50.", de: "Erreiche Wucht Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "power", count: 50 } },
-    { id: "ach_skill_power_75", name: { en: "Power Master", de: "Wucht-Meister" }, description: { en: "Reach Power level 75.", de: "Erreiche Wucht Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "power", count: 75 } },
-    { id: "ach_skill_power_90", name: { en: "Power Legend", de: "Wucht-Legende" }, description: { en: "Reach Power level 90.", de: "Erreiche Wucht Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "power", count: 90 } },
-    { id: "ach_skill_power_99", name: { en: "Power Maxed", de: "Wucht-Maximiert" }, description: { en: "Reach Power level 99.", de: "Erreiche Wucht Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "power", count: 99 } },
-    { id: "ach_skill_defence_25", name: { en: "Defence Journeyman", de: "Verteidigung-Geselle" }, description: { en: "Reach Defence level 25.", de: "Erreiche Verteidigung Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "defence", count: 25 } },
-    { id: "ach_skill_defence_50", name: { en: "Defence Veteran", de: "Verteidigung-Veteran" }, description: { en: "Reach Defence level 50.", de: "Erreiche Verteidigung Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "defence", count: 50 } },
-    { id: "ach_skill_defence_75", name: { en: "Defence Master", de: "Verteidigung-Meister" }, description: { en: "Reach Defence level 75.", de: "Erreiche Verteidigung Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "defence", count: 75 } },
-    { id: "ach_skill_defence_90", name: { en: "Defence Legend", de: "Verteidigung-Legende" }, description: { en: "Reach Defence level 90.", de: "Erreiche Verteidigung Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "defence", count: 90 } },
-    { id: "ach_skill_defence_99", name: { en: "Defence Maxed", de: "Verteidigung-Maximiert" }, description: { en: "Reach Defence level 99.", de: "Erreiche Verteidigung Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "defence", count: 99 } },
-    { id: "ach_skill_ranged_25", name: { en: "Ranged Journeyman", de: "Fernkampf-Geselle" }, description: { en: "Reach Ranged level 25.", de: "Erreiche Fernkampf Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "ranged", count: 25 } },
-    { id: "ach_skill_ranged_50", name: { en: "Ranged Veteran", de: "Fernkampf-Veteran" }, description: { en: "Reach Ranged level 50.", de: "Erreiche Fernkampf Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "ranged", count: 50 } },
-    { id: "ach_skill_ranged_75", name: { en: "Ranged Master", de: "Fernkampf-Meister" }, description: { en: "Reach Ranged level 75.", de: "Erreiche Fernkampf Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "ranged", count: 75 } },
-    { id: "ach_skill_ranged_90", name: { en: "Ranged Legend", de: "Fernkampf-Legende" }, description: { en: "Reach Ranged level 90.", de: "Erreiche Fernkampf Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "ranged", count: 90 } },
-    { id: "ach_skill_ranged_99", name: { en: "Ranged Maxed", de: "Fernkampf-Maximiert" }, description: { en: "Reach Ranged level 99.", de: "Erreiche Fernkampf Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "ranged", count: 99 } },
-    { id: "ach_skill_magic_25", name: { en: "Magic Journeyman", de: "Magie-Geselle" }, description: { en: "Reach Magic level 25.", de: "Erreiche Magie Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "magic", count: 25 } },
-    { id: "ach_skill_magic_50", name: { en: "Magic Veteran", de: "Magie-Veteran" }, description: { en: "Reach Magic level 50.", de: "Erreiche Magie Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "magic", count: 50 } },
-    { id: "ach_skill_magic_75", name: { en: "Magic Master", de: "Magie-Meister" }, description: { en: "Reach Magic level 75.", de: "Erreiche Magie Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "magic", count: 75 } },
-    { id: "ach_skill_magic_90", name: { en: "Magic Legend", de: "Magie-Legende" }, description: { en: "Reach Magic level 90.", de: "Erreiche Magie Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "magic", count: 90 } },
-    { id: "ach_skill_magic_99", name: { en: "Magic Maxed", de: "Magie-Maximiert" }, description: { en: "Reach Magic level 99.", de: "Erreiche Magie Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "magic", count: 99 } },
-    { id: "ach_skill_warding_25", name: { en: "Warding Journeyman", de: "Abwehr-Geselle" }, description: { en: "Reach Warding level 25.", de: "Erreiche Abwehr Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "warding", count: 25 } },
-    { id: "ach_skill_warding_50", name: { en: "Warding Veteran", de: "Abwehr-Veteran" }, description: { en: "Reach Warding level 50.", de: "Erreiche Abwehr Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "warding", count: 50 } },
-    { id: "ach_skill_warding_75", name: { en: "Warding Master", de: "Abwehr-Meister" }, description: { en: "Reach Warding level 75.", de: "Erreiche Abwehr Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "warding", count: 75 } },
-    { id: "ach_skill_warding_90", name: { en: "Warding Legend", de: "Abwehr-Legende" }, description: { en: "Reach Warding level 90.", de: "Erreiche Abwehr Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "warding", count: 90 } },
-    { id: "ach_skill_warding_99", name: { en: "Warding Maxed", de: "Abwehr-Maximiert" }, description: { en: "Reach Warding level 99.", de: "Erreiche Abwehr Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "warding", count: 99 } },
-    { id: "ach_skill_vitality_25", name: { en: "Vitality Journeyman", de: "Lebenskraft-Geselle" }, description: { en: "Reach Vitality level 25.", de: "Erreiche Lebenskraft Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "vitality", count: 25 } },
-    { id: "ach_skill_vitality_50", name: { en: "Vitality Veteran", de: "Lebenskraft-Veteran" }, description: { en: "Reach Vitality level 50.", de: "Erreiche Lebenskraft Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "vitality", count: 50 } },
-    { id: "ach_skill_vitality_75", name: { en: "Vitality Master", de: "Lebenskraft-Meister" }, description: { en: "Reach Vitality level 75.", de: "Erreiche Lebenskraft Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "vitality", count: 75 } },
-    { id: "ach_skill_vitality_90", name: { en: "Vitality Legend", de: "Lebenskraft-Legende" }, description: { en: "Reach Vitality level 90.", de: "Erreiche Lebenskraft Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "vitality", count: 90 } },
-    { id: "ach_skill_vitality_99", name: { en: "Vitality Maxed", de: "Lebenskraft-Maximiert" }, description: { en: "Reach Vitality level 99.", de: "Erreiche Lebenskraft Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "vitality", count: 99 } },
-    { id: "ach_skill_farming_25", name: { en: "Farming Journeyman", de: "Anbau-Geselle" }, description: { en: "Reach Farming level 25.", de: "Erreiche Anbau Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "farming", count: 25 } },
-    { id: "ach_skill_farming_50", name: { en: "Farming Veteran", de: "Anbau-Veteran" }, description: { en: "Reach Farming level 50.", de: "Erreiche Anbau Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "farming", count: 50 } },
-    { id: "ach_skill_farming_75", name: { en: "Farming Master", de: "Anbau-Meister" }, description: { en: "Reach Farming level 75.", de: "Erreiche Anbau Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "farming", count: 75 } },
-    { id: "ach_skill_farming_90", name: { en: "Farming Legend", de: "Anbau-Legende" }, description: { en: "Reach Farming level 90.", de: "Erreiche Anbau Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "farming", count: 90 } },
-    { id: "ach_skill_farming_99", name: { en: "Farming Maxed", de: "Anbau-Maximiert" }, description: { en: "Reach Farming level 99.", de: "Erreiche Anbau Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "farming", count: 99 } },
-    { id: "ach_skill_foraging_25", name: { en: "Foraging Journeyman", de: "Sammeln-Geselle" }, description: { en: "Reach Foraging level 25.", de: "Erreiche Sammeln Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "foraging", count: 25 } },
-    { id: "ach_skill_foraging_50", name: { en: "Foraging Veteran", de: "Sammeln-Veteran" }, description: { en: "Reach Foraging level 50.", de: "Erreiche Sammeln Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "foraging", count: 50 } },
-    { id: "ach_skill_foraging_75", name: { en: "Foraging Master", de: "Sammeln-Meister" }, description: { en: "Reach Foraging level 75.", de: "Erreiche Sammeln Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "foraging", count: 75 } },
-    { id: "ach_skill_foraging_90", name: { en: "Foraging Legend", de: "Sammeln-Legende" }, description: { en: "Reach Foraging level 90.", de: "Erreiche Sammeln Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "foraging", count: 90 } },
-    { id: "ach_skill_foraging_99", name: { en: "Foraging Maxed", de: "Sammeln-Maximiert" }, description: { en: "Reach Foraging level 99.", de: "Erreiche Sammeln Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "foraging", count: 99 } },
+    { id: "ach_skill_woodcutting_25", name: { en: "Woodcutting Journeyman", de: "Holzfällen-Geselle" }, description: { en: "Reach Woodcutting level 25.", de: "Erreiche Holzfällen-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "woodcutting", count: 25 } },
+    { id: "ach_skill_woodcutting_50", name: { en: "Woodcutting Veteran", de: "Holzfällen-Veteran" }, description: { en: "Reach Woodcutting level 50.", de: "Erreiche Holzfällen-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "woodcutting", count: 50 } },
+    { id: "ach_skill_woodcutting_75", name: { en: "Woodcutting Master", de: "Holzfällen-Meister" }, description: { en: "Reach Woodcutting level 75.", de: "Erreiche Holzfällen-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "woodcutting", count: 75 } },
+    { id: "ach_skill_woodcutting_90", name: { en: "Woodcutting Legend", de: "Holzfällen-Legende" }, description: { en: "Reach Woodcutting level 90.", de: "Erreiche Holzfällen-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "woodcutting", count: 90 } },
+    { id: "ach_skill_woodcutting_99", name: { en: "Woodcutting Maxed", de: "Holzfällen-Maximiert" }, description: { en: "Reach Woodcutting level 99.", de: "Erreiche Holzfällen-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "woodcutting", count: 99 } },
+    { id: "ach_skill_mining_25", name: { en: "Mining Journeyman", de: "Bergbau-Geselle" }, description: { en: "Reach Mining level 25.", de: "Erreiche Bergbau-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "mining", count: 25 } },
+    { id: "ach_skill_mining_50", name: { en: "Mining Veteran", de: "Bergbau-Veteran" }, description: { en: "Reach Mining level 50.", de: "Erreiche Bergbau-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "mining", count: 50 } },
+    { id: "ach_skill_mining_75", name: { en: "Mining Master", de: "Bergbau-Meister" }, description: { en: "Reach Mining level 75.", de: "Erreiche Bergbau-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "mining", count: 75 } },
+    { id: "ach_skill_mining_90", name: { en: "Mining Legend", de: "Bergbau-Legende" }, description: { en: "Reach Mining level 90.", de: "Erreiche Bergbau-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "mining", count: 90 } },
+    { id: "ach_skill_mining_99", name: { en: "Mining Maxed", de: "Bergbau-Maximiert" }, description: { en: "Reach Mining level 99.", de: "Erreiche Bergbau-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "mining", count: 99 } },
+    { id: "ach_skill_fishing_25", name: { en: "Fishing Journeyman", de: "Angeln-Geselle" }, description: { en: "Reach Fishing level 25.", de: "Erreiche Angeln-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "fishing", count: 25 } },
+    { id: "ach_skill_fishing_50", name: { en: "Fishing Veteran", de: "Angeln-Veteran" }, description: { en: "Reach Fishing level 50.", de: "Erreiche Angeln-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "fishing", count: 50 } },
+    { id: "ach_skill_fishing_75", name: { en: "Fishing Master", de: "Angeln-Meister" }, description: { en: "Reach Fishing level 75.", de: "Erreiche Angeln-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "fishing", count: 75 } },
+    { id: "ach_skill_fishing_90", name: { en: "Fishing Legend", de: "Angeln-Legende" }, description: { en: "Reach Fishing level 90.", de: "Erreiche Angeln-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "fishing", count: 90 } },
+    { id: "ach_skill_fishing_99", name: { en: "Fishing Maxed", de: "Angeln-Maximiert" }, description: { en: "Reach Fishing level 99.", de: "Erreiche Angeln-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "fishing", count: 99 } },
+    { id: "ach_skill_smithing_25", name: { en: "Smithing Journeyman", de: "Schmieden-Geselle" }, description: { en: "Reach Smithing level 25.", de: "Erreiche Schmieden-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "smithing", count: 25 } },
+    { id: "ach_skill_smithing_50", name: { en: "Smithing Veteran", de: "Schmieden-Veteran" }, description: { en: "Reach Smithing level 50.", de: "Erreiche Schmieden-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "smithing", count: 50 } },
+    { id: "ach_skill_smithing_75", name: { en: "Smithing Master", de: "Schmieden-Meister" }, description: { en: "Reach Smithing level 75.", de: "Erreiche Schmieden-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "smithing", count: 75 } },
+    { id: "ach_skill_smithing_90", name: { en: "Smithing Legend", de: "Schmieden-Legende" }, description: { en: "Reach Smithing level 90.", de: "Erreiche Schmieden-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "smithing", count: 90 } },
+    { id: "ach_skill_smithing_99", name: { en: "Smithing Maxed", de: "Schmieden-Maximiert" }, description: { en: "Reach Smithing level 99.", de: "Erreiche Schmieden-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "smithing", count: 99 } },
+    { id: "ach_skill_cooking_25", name: { en: "Cooking Journeyman", de: "Kochen-Geselle" }, description: { en: "Reach Cooking level 25.", de: "Erreiche Kochen-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "cooking", count: 25 } },
+    { id: "ach_skill_cooking_50", name: { en: "Cooking Veteran", de: "Kochen-Veteran" }, description: { en: "Reach Cooking level 50.", de: "Erreiche Kochen-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "cooking", count: 50 } },
+    { id: "ach_skill_cooking_75", name: { en: "Cooking Master", de: "Kochen-Meister" }, description: { en: "Reach Cooking level 75.", de: "Erreiche Kochen-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "cooking", count: 75 } },
+    { id: "ach_skill_cooking_90", name: { en: "Cooking Legend", de: "Kochen-Legende" }, description: { en: "Reach Cooking level 90.", de: "Erreiche Kochen-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "cooking", count: 90 } },
+    { id: "ach_skill_cooking_99", name: { en: "Cooking Maxed", de: "Kochen-Maximiert" }, description: { en: "Reach Cooking level 99.", de: "Erreiche Kochen-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "cooking", count: 99 } },
+    { id: "ach_skill_attack_25", name: { en: "Attack Journeyman", de: "Angriff-Geselle" }, description: { en: "Reach Attack level 25.", de: "Erreiche Angriff-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "attack", count: 25 } },
+    { id: "ach_skill_attack_50", name: { en: "Attack Veteran", de: "Angriff-Veteran" }, description: { en: "Reach Attack level 50.", de: "Erreiche Angriff-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "attack", count: 50 } },
+    { id: "ach_skill_attack_75", name: { en: "Attack Master", de: "Angriff-Meister" }, description: { en: "Reach Attack level 75.", de: "Erreiche Angriff-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "attack", count: 75 } },
+    { id: "ach_skill_attack_90", name: { en: "Attack Legend", de: "Angriff-Legende" }, description: { en: "Reach Attack level 90.", de: "Erreiche Angriff-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "attack", count: 90 } },
+    { id: "ach_skill_attack_99", name: { en: "Attack Maxed", de: "Angriff-Maximiert" }, description: { en: "Reach Attack level 99.", de: "Erreiche Angriff-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "attack", count: 99 } },
+    { id: "ach_skill_power_25", name: { en: "Power Journeyman", de: "Wucht-Geselle" }, description: { en: "Reach Power level 25.", de: "Erreiche Wucht-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "power", count: 25 } },
+    { id: "ach_skill_power_50", name: { en: "Power Veteran", de: "Wucht-Veteran" }, description: { en: "Reach Power level 50.", de: "Erreiche Wucht-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "power", count: 50 } },
+    { id: "ach_skill_power_75", name: { en: "Power Master", de: "Wucht-Meister" }, description: { en: "Reach Power level 75.", de: "Erreiche Wucht-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "power", count: 75 } },
+    { id: "ach_skill_power_90", name: { en: "Power Legend", de: "Wucht-Legende" }, description: { en: "Reach Power level 90.", de: "Erreiche Wucht-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "power", count: 90 } },
+    { id: "ach_skill_power_99", name: { en: "Power Maxed", de: "Wucht-Maximiert" }, description: { en: "Reach Power level 99.", de: "Erreiche Wucht-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "power", count: 99 } },
+    { id: "ach_skill_defence_25", name: { en: "Defence Journeyman", de: "Verteidigung-Geselle" }, description: { en: "Reach Defence level 25.", de: "Erreiche Verteidigung-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "defence", count: 25 } },
+    { id: "ach_skill_defence_50", name: { en: "Defence Veteran", de: "Verteidigung-Veteran" }, description: { en: "Reach Defence level 50.", de: "Erreiche Verteidigung-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "defence", count: 50 } },
+    { id: "ach_skill_defence_75", name: { en: "Defence Master", de: "Verteidigung-Meister" }, description: { en: "Reach Defence level 75.", de: "Erreiche Verteidigung-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "defence", count: 75 } },
+    { id: "ach_skill_defence_90", name: { en: "Defence Legend", de: "Verteidigung-Legende" }, description: { en: "Reach Defence level 90.", de: "Erreiche Verteidigung-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "defence", count: 90 } },
+    { id: "ach_skill_defence_99", name: { en: "Defence Maxed", de: "Verteidigung-Maximiert" }, description: { en: "Reach Defence level 99.", de: "Erreiche Verteidigung-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "defence", count: 99 } },
+    { id: "ach_skill_ranged_25", name: { en: "Ranged Journeyman", de: "Fernkampf-Geselle" }, description: { en: "Reach Ranged level 25.", de: "Erreiche Fernkampf-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "ranged", count: 25 } },
+    { id: "ach_skill_ranged_50", name: { en: "Ranged Veteran", de: "Fernkampf-Veteran" }, description: { en: "Reach Ranged level 50.", de: "Erreiche Fernkampf-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "ranged", count: 50 } },
+    { id: "ach_skill_ranged_75", name: { en: "Ranged Master", de: "Fernkampf-Meister" }, description: { en: "Reach Ranged level 75.", de: "Erreiche Fernkampf-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "ranged", count: 75 } },
+    { id: "ach_skill_ranged_90", name: { en: "Ranged Legend", de: "Fernkampf-Legende" }, description: { en: "Reach Ranged level 90.", de: "Erreiche Fernkampf-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "ranged", count: 90 } },
+    { id: "ach_skill_ranged_99", name: { en: "Ranged Maxed", de: "Fernkampf-Maximiert" }, description: { en: "Reach Ranged level 99.", de: "Erreiche Fernkampf-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "ranged", count: 99 } },
+    { id: "ach_skill_magic_25", name: { en: "Magic Journeyman", de: "Magie-Geselle" }, description: { en: "Reach Magic level 25.", de: "Erreiche Magie-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "magic", count: 25 } },
+    { id: "ach_skill_magic_50", name: { en: "Magic Veteran", de: "Magie-Veteran" }, description: { en: "Reach Magic level 50.", de: "Erreiche Magie-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "magic", count: 50 } },
+    { id: "ach_skill_magic_75", name: { en: "Magic Master", de: "Magie-Meister" }, description: { en: "Reach Magic level 75.", de: "Erreiche Magie-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "magic", count: 75 } },
+    { id: "ach_skill_magic_90", name: { en: "Magic Legend", de: "Magie-Legende" }, description: { en: "Reach Magic level 90.", de: "Erreiche Magie-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "magic", count: 90 } },
+    { id: "ach_skill_magic_99", name: { en: "Magic Maxed", de: "Magie-Maximiert" }, description: { en: "Reach Magic level 99.", de: "Erreiche Magie-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "magic", count: 99 } },
+    { id: "ach_skill_warding_25", name: { en: "Warding Journeyman", de: "Abwehr-Geselle" }, description: { en: "Reach Warding level 25.", de: "Erreiche Abwehr-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "warding", count: 25 } },
+    { id: "ach_skill_warding_50", name: { en: "Warding Veteran", de: "Abwehr-Veteran" }, description: { en: "Reach Warding level 50.", de: "Erreiche Abwehr-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "warding", count: 50 } },
+    { id: "ach_skill_warding_75", name: { en: "Warding Master", de: "Abwehr-Meister" }, description: { en: "Reach Warding level 75.", de: "Erreiche Abwehr-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "warding", count: 75 } },
+    { id: "ach_skill_warding_90", name: { en: "Warding Legend", de: "Abwehr-Legende" }, description: { en: "Reach Warding level 90.", de: "Erreiche Abwehr-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "warding", count: 90 } },
+    { id: "ach_skill_warding_99", name: { en: "Warding Maxed", de: "Abwehr-Maximiert" }, description: { en: "Reach Warding level 99.", de: "Erreiche Abwehr-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "warding", count: 99 } },
+    { id: "ach_skill_vitality_25", name: { en: "Vitality Journeyman", de: "Lebenskraft-Geselle" }, description: { en: "Reach Vitality level 25.", de: "Erreiche Lebenskraft-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "vitality", count: 25 } },
+    { id: "ach_skill_vitality_50", name: { en: "Vitality Veteran", de: "Lebenskraft-Veteran" }, description: { en: "Reach Vitality level 50.", de: "Erreiche Lebenskraft-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "vitality", count: 50 } },
+    { id: "ach_skill_vitality_75", name: { en: "Vitality Master", de: "Lebenskraft-Meister" }, description: { en: "Reach Vitality level 75.", de: "Erreiche Lebenskraft-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "vitality", count: 75 } },
+    { id: "ach_skill_vitality_90", name: { en: "Vitality Legend", de: "Lebenskraft-Legende" }, description: { en: "Reach Vitality level 90.", de: "Erreiche Lebenskraft-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "vitality", count: 90 } },
+    { id: "ach_skill_vitality_99", name: { en: "Vitality Maxed", de: "Lebenskraft-Maximiert" }, description: { en: "Reach Vitality level 99.", de: "Erreiche Lebenskraft-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "vitality", count: 99 } },
+    { id: "ach_skill_farming_25", name: { en: "Farming Journeyman", de: "Anbau-Geselle" }, description: { en: "Reach Farming level 25.", de: "Erreiche Anbau-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "farming", count: 25 } },
+    { id: "ach_skill_farming_50", name: { en: "Farming Veteran", de: "Anbau-Veteran" }, description: { en: "Reach Farming level 50.", de: "Erreiche Anbau-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "farming", count: 50 } },
+    { id: "ach_skill_farming_75", name: { en: "Farming Master", de: "Anbau-Meister" }, description: { en: "Reach Farming level 75.", de: "Erreiche Anbau-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "farming", count: 75 } },
+    { id: "ach_skill_farming_90", name: { en: "Farming Legend", de: "Anbau-Legende" }, description: { en: "Reach Farming level 90.", de: "Erreiche Anbau-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "farming", count: 90 } },
+    { id: "ach_skill_farming_99", name: { en: "Farming Maxed", de: "Anbau-Maximiert" }, description: { en: "Reach Farming level 99.", de: "Erreiche Anbau-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "farming", count: 99 } },
+    { id: "ach_skill_foraging_25", name: { en: "Foraging Journeyman", de: "Sammeln-Geselle" }, description: { en: "Reach Foraging level 25.", de: "Erreiche Sammeln-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "foraging", count: 25 } },
+    { id: "ach_skill_foraging_50", name: { en: "Foraging Veteran", de: "Sammeln-Veteran" }, description: { en: "Reach Foraging level 50.", de: "Erreiche Sammeln-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "foraging", count: 50 } },
+    { id: "ach_skill_foraging_75", name: { en: "Foraging Master", de: "Sammeln-Meister" }, description: { en: "Reach Foraging level 75.", de: "Erreiche Sammeln-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "foraging", count: 75 } },
+    { id: "ach_skill_foraging_90", name: { en: "Foraging Legend", de: "Sammeln-Legende" }, description: { en: "Reach Foraging level 90.", de: "Erreiche Sammeln-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "foraging", count: 90 } },
+    { id: "ach_skill_foraging_99", name: { en: "Foraging Maxed", de: "Sammeln-Maximiert" }, description: { en: "Reach Foraging level 99.", de: "Erreiche Sammeln-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "foraging", count: 99 } },
     // 1.2.0 „Fasern und Fallen": neuer Skill "hunting" — Leiter nach demselben Muster wie alle
     // anderen Skills oben (25/50/75/90/99, achievements-1-2-0.test.ts "Skill-Leitern").
-    { id: "ach_skill_hunting_25", name: { en: "Hunting Journeyman", de: "Jagen-Geselle" }, description: { en: "Reach Hunting level 25.", de: "Erreiche Jagen Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "hunting", count: 25 } },
-    { id: "ach_skill_hunting_50", name: { en: "Hunting Veteran", de: "Jagen-Veteran" }, description: { en: "Reach Hunting level 50.", de: "Erreiche Jagen Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "hunting", count: 50 } },
-    { id: "ach_skill_hunting_75", name: { en: "Hunting Master", de: "Jagen-Meister" }, description: { en: "Reach Hunting level 75.", de: "Erreiche Jagen Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "hunting", count: 75 } },
-    { id: "ach_skill_hunting_90", name: { en: "Hunting Legend", de: "Jagen-Legende" }, description: { en: "Reach Hunting level 90.", de: "Erreiche Jagen Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "hunting", count: 90 } },
-    { id: "ach_skill_hunting_99", name: { en: "Hunting Maxed", de: "Jagen-Maximiert" }, description: { en: "Reach Hunting level 99.", de: "Erreiche Jagen Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "hunting", count: 99 } },
-    { id: "ach_skill_thieving_25", name: { en: "Thieving Journeyman", de: "Diebeskunst-Geselle" }, description: { en: "Reach Thieving level 25.", de: "Erreiche Diebeskunst Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "thieving", count: 25 } },
-    { id: "ach_skill_thieving_50", name: { en: "Thieving Veteran", de: "Diebeskunst-Veteran" }, description: { en: "Reach Thieving level 50.", de: "Erreiche Diebeskunst Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "thieving", count: 50 } },
-    { id: "ach_skill_thieving_75", name: { en: "Thieving Master", de: "Diebeskunst-Meister" }, description: { en: "Reach Thieving level 75.", de: "Erreiche Diebeskunst Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "thieving", count: 75 } },
-    { id: "ach_skill_thieving_90", name: { en: "Thieving Legend", de: "Diebeskunst-Legende" }, description: { en: "Reach Thieving level 90.", de: "Erreiche Diebeskunst Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "thieving", count: 90 } },
-    { id: "ach_skill_thieving_99", name: { en: "Thieving Maxed", de: "Diebeskunst-Maximiert" }, description: { en: "Reach Thieving level 99.", de: "Erreiche Diebeskunst Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "thieving", count: 99 } },
-    { id: "ach_skill_leatherworking_25", name: { en: "Crafting Journeyman", de: "Handwerk-Geselle" }, description: { en: "Reach Crafting level 25.", de: "Erreiche Handwerk Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "leatherworking", count: 25 } },
-    { id: "ach_skill_leatherworking_50", name: { en: "Crafting Veteran", de: "Handwerk-Veteran" }, description: { en: "Reach Crafting level 50.", de: "Erreiche Handwerk Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "leatherworking", count: 50 } },
-    { id: "ach_skill_leatherworking_75", name: { en: "Crafting Master", de: "Handwerk-Meister" }, description: { en: "Reach Crafting level 75.", de: "Erreiche Handwerk Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "leatherworking", count: 75 } },
-    { id: "ach_skill_leatherworking_90", name: { en: "Crafting Legend", de: "Handwerk-Legende" }, description: { en: "Reach Crafting level 90.", de: "Erreiche Handwerk Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "leatherworking", count: 90 } },
-    { id: "ach_skill_leatherworking_99", name: { en: "Crafting Maxed", de: "Handwerk-Maximiert" }, description: { en: "Reach Crafting level 99.", de: "Erreiche Handwerk Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "leatherworking", count: 99 } },
+    { id: "ach_skill_hunting_25", name: { en: "Hunting Journeyman", de: "Jagen-Geselle" }, description: { en: "Reach Hunting level 25.", de: "Erreiche Jagen-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "hunting", count: 25 } },
+    { id: "ach_skill_hunting_50", name: { en: "Hunting Veteran", de: "Jagen-Veteran" }, description: { en: "Reach Hunting level 50.", de: "Erreiche Jagen-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "hunting", count: 50 } },
+    { id: "ach_skill_hunting_75", name: { en: "Hunting Master", de: "Jagen-Meister" }, description: { en: "Reach Hunting level 75.", de: "Erreiche Jagen-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "hunting", count: 75 } },
+    { id: "ach_skill_hunting_90", name: { en: "Hunting Legend", de: "Jagen-Legende" }, description: { en: "Reach Hunting level 90.", de: "Erreiche Jagen-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "hunting", count: 90 } },
+    { id: "ach_skill_hunting_99", name: { en: "Hunting Maxed", de: "Jagen-Maximiert" }, description: { en: "Reach Hunting level 99.", de: "Erreiche Jagen-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "hunting", count: 99 } },
+    { id: "ach_skill_thieving_25", name: { en: "Thieving Journeyman", de: "Diebeskunst-Geselle" }, description: { en: "Reach Thieving level 25.", de: "Erreiche Diebeskunst-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "thieving", count: 25 } },
+    { id: "ach_skill_thieving_50", name: { en: "Thieving Veteran", de: "Diebeskunst-Veteran" }, description: { en: "Reach Thieving level 50.", de: "Erreiche Diebeskunst-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "thieving", count: 50 } },
+    { id: "ach_skill_thieving_75", name: { en: "Thieving Master", de: "Diebeskunst-Meister" }, description: { en: "Reach Thieving level 75.", de: "Erreiche Diebeskunst-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "thieving", count: 75 } },
+    { id: "ach_skill_thieving_90", name: { en: "Thieving Legend", de: "Diebeskunst-Legende" }, description: { en: "Reach Thieving level 90.", de: "Erreiche Diebeskunst-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "thieving", count: 90 } },
+    { id: "ach_skill_thieving_99", name: { en: "Thieving Maxed", de: "Diebeskunst-Maximiert" }, description: { en: "Reach Thieving level 99.", de: "Erreiche Diebeskunst-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "thieving", count: 99 } },
+    { id: "ach_skill_leatherworking_25", name: { en: "Crafting Journeyman", de: "Handwerk-Geselle" }, description: { en: "Reach Crafting level 25.", de: "Erreiche Handwerk-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "leatherworking", count: 25 } },
+    { id: "ach_skill_leatherworking_50", name: { en: "Crafting Veteran", de: "Handwerk-Veteran" }, description: { en: "Reach Crafting level 50.", de: "Erreiche Handwerk-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "leatherworking", count: 50 } },
+    { id: "ach_skill_leatherworking_75", name: { en: "Crafting Master", de: "Handwerk-Meister" }, description: { en: "Reach Crafting level 75.", de: "Erreiche Handwerk-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "leatherworking", count: 75 } },
+    { id: "ach_skill_leatherworking_90", name: { en: "Crafting Legend", de: "Handwerk-Legende" }, description: { en: "Reach Crafting level 90.", de: "Erreiche Handwerk-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "leatherworking", count: 90 } },
+    { id: "ach_skill_leatherworking_99", name: { en: "Crafting Maxed", de: "Handwerk-Maximiert" }, description: { en: "Reach Crafting level 99.", de: "Erreiche Handwerk-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "leatherworking", count: 99 } },
     // Skill-Split Schneidern (SAVE 86, 28.08.2026): 22. Skill "tailoring" — Leiter nach demselben Muster.
     // Steam-Set: Icons bestellt Claude bei Mira; steam-set.csv bleibt bis zum Chef-Entscheid bei 67.
-    { id: "ach_skill_tailoring_25", name: { en: "Tailoring Journeyman", de: "Schneidern-Geselle" }, description: { en: "Reach Tailoring level 25.", de: "Erreiche Schneidern Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "tailoring", count: 25 } },
-    { id: "ach_skill_tailoring_50", name: { en: "Tailoring Veteran", de: "Schneidern-Veteran" }, description: { en: "Reach Tailoring level 50.", de: "Erreiche Schneidern Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "tailoring", count: 50 } },
-    { id: "ach_skill_tailoring_75", name: { en: "Tailoring Master", de: "Schneidern-Meister" }, description: { en: "Reach Tailoring level 75.", de: "Erreiche Schneidern Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "tailoring", count: 75 } },
-    { id: "ach_skill_tailoring_90", name: { en: "Tailoring Legend", de: "Schneidern-Legende" }, description: { en: "Reach Tailoring level 90.", de: "Erreiche Schneidern Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "tailoring", count: 90 } },
-    { id: "ach_skill_tailoring_99", name: { en: "Tailoring Maxed", de: "Schneidern-Maximiert" }, description: { en: "Reach Tailoring level 99.", de: "Erreiche Schneidern Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "tailoring", count: 99 } },
+    { id: "ach_skill_tailoring_25", name: { en: "Tailoring Journeyman", de: "Schneidern-Geselle" }, description: { en: "Reach Tailoring level 25.", de: "Erreiche Schneidern-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "tailoring", count: 25 } },
+    { id: "ach_skill_tailoring_50", name: { en: "Tailoring Veteran", de: "Schneidern-Veteran" }, description: { en: "Reach Tailoring level 50.", de: "Erreiche Schneidern-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "tailoring", count: 50 } },
+    { id: "ach_skill_tailoring_75", name: { en: "Tailoring Master", de: "Schneidern-Meister" }, description: { en: "Reach Tailoring level 75.", de: "Erreiche Schneidern-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "tailoring", count: 75 } },
+    { id: "ach_skill_tailoring_90", name: { en: "Tailoring Legend", de: "Schneidern-Legende" }, description: { en: "Reach Tailoring level 90.", de: "Erreiche Schneidern-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "tailoring", count: 90 } },
+    { id: "ach_skill_tailoring_99", name: { en: "Tailoring Maxed", de: "Schneidern-Maximiert" }, description: { en: "Reach Tailoring level 99.", de: "Erreiche Schneidern-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "tailoring", count: 99 } },
     // claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK: interne Bognerei-Leiter (Muster ach_skill_tailoring_*). Steam-Set eingefroren: NICHT in die Steam-Liste aufnehmen.
-    { id: "ach_skill_bowcraft_25", name: { en: "Fletching Journeyman", de: "Bognerei-Geselle" }, description: { en: "Reach Fletching level 25.", de: "Erreiche Bognerei Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "bowcraft", count: 25 } },
-    { id: "ach_skill_bowcraft_50", name: { en: "Fletching Veteran", de: "Bognerei-Veteran" }, description: { en: "Reach Fletching level 50.", de: "Erreiche Bognerei Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "bowcraft", count: 50 } },
-    { id: "ach_skill_bowcraft_75", name: { en: "Fletching Master", de: "Bognerei-Meister" }, description: { en: "Reach Fletching level 75.", de: "Erreiche Bognerei Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "bowcraft", count: 75 } },
-    { id: "ach_skill_bowcraft_90", name: { en: "Fletching Legend", de: "Bognerei-Legende" }, description: { en: "Reach Fletching level 90.", de: "Erreiche Bognerei Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "bowcraft", count: 90 } },
-    { id: "ach_skill_bowcraft_99", name: { en: "Fletching Maxed", de: "Bognerei-Maximiert" }, description: { en: "Reach Fletching level 99.", de: "Erreiche Bognerei Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "bowcraft", count: 99 } },
-    { id: "ach_skill_jewelcrafting_25", name: { en: "Jewelcrafting Journeyman", de: "Juwelierskunst-Geselle" }, description: { en: "Reach Jewelcrafting level 25.", de: "Erreiche Juwelierskunst Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "jewelcrafting", count: 25 } },
-    { id: "ach_skill_jewelcrafting_50", name: { en: "Jewelcrafting Veteran", de: "Juwelierskunst-Veteran" }, description: { en: "Reach Jewelcrafting level 50.", de: "Erreiche Juwelierskunst Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "jewelcrafting", count: 50 } },
-    { id: "ach_skill_jewelcrafting_75", name: { en: "Jewelcrafting Master", de: "Juwelierskunst-Meister" }, description: { en: "Reach Jewelcrafting level 75.", de: "Erreiche Juwelierskunst Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "jewelcrafting", count: 75 } },
-    { id: "ach_skill_jewelcrafting_90", name: { en: "Jewelcrafting Legend", de: "Juwelierskunst-Legende" }, description: { en: "Reach Jewelcrafting level 90.", de: "Erreiche Juwelierskunst Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "jewelcrafting", count: 90 } },
-    { id: "ach_skill_jewelcrafting_99", name: { en: "Jewelcrafting Maxed", de: "Juwelierskunst-Maximiert" }, description: { en: "Reach Jewelcrafting level 99.", de: "Erreiche Juwelierskunst Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "jewelcrafting", count: 99 } },
-    { id: "ach_skill_runecrafting_25", name: { en: "Runecrafting Journeyman", de: "Runenkunst-Geselle" }, description: { en: "Reach Runecrafting level 25.", de: "Erreiche Runenkunst Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "runecrafting", count: 25 } },
-    { id: "ach_skill_runecrafting_50", name: { en: "Runecrafting Veteran", de: "Runenkunst-Veteran" }, description: { en: "Reach Runecrafting level 50.", de: "Erreiche Runenkunst Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "runecrafting", count: 50 } },
-    { id: "ach_skill_runecrafting_75", name: { en: "Runecrafting Master", de: "Runenkunst-Meister" }, description: { en: "Reach Runecrafting level 75.", de: "Erreiche Runenkunst Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "runecrafting", count: 75 } },
-    { id: "ach_skill_runecrafting_90", name: { en: "Runecrafting Legend", de: "Runenkunst-Legende" }, description: { en: "Reach Runecrafting level 90.", de: "Erreiche Runenkunst Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "runecrafting", count: 90 } },
-    { id: "ach_skill_runecrafting_99", name: { en: "Runecrafting Maxed", de: "Runenkunst-Maximiert" }, description: { en: "Reach Runecrafting level 99.", de: "Erreiche Runenkunst Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "runecrafting", count: 99 } },
-    { id: "ach_skill_herblore_25", name: { en: "Herblore Journeyman", de: "Kräuterkunde-Geselle" }, description: { en: "Reach Herblore level 25.", de: "Erreiche Kräuterkunde Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "herblore", count: 25 } },
-    { id: "ach_skill_herblore_50", name: { en: "Herblore Veteran", de: "Kräuterkunde-Veteran" }, description: { en: "Reach Herblore level 50.", de: "Erreiche Kräuterkunde Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "herblore", count: 50 } },
-    { id: "ach_skill_herblore_75", name: { en: "Herblore Master", de: "Kräuterkunde-Meister" }, description: { en: "Reach Herblore level 75.", de: "Erreiche Kräuterkunde Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "herblore", count: 75 } },
-    { id: "ach_skill_herblore_90", name: { en: "Herblore Legend", de: "Kräuterkunde-Legende" }, description: { en: "Reach Herblore level 90.", de: "Erreiche Kräuterkunde Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "herblore", count: 90 } },
-    { id: "ach_skill_herblore_99", name: { en: "Herblore Maxed", de: "Kräuterkunde-Maximiert" }, description: { en: "Reach Herblore level 99.", de: "Erreiche Kräuterkunde Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "herblore", count: 99 } },
+    { id: "ach_skill_bowcraft_25", name: { en: "Fletching Journeyman", de: "Bognerei-Geselle" }, description: { en: "Reach Fletching level 25.", de: "Erreiche Bognerei-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "bowcraft", count: 25 } },
+    { id: "ach_skill_bowcraft_50", name: { en: "Fletching Veteran", de: "Bognerei-Veteran" }, description: { en: "Reach Fletching level 50.", de: "Erreiche Bognerei-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "bowcraft", count: 50 } },
+    { id: "ach_skill_bowcraft_75", name: { en: "Fletching Master", de: "Bognerei-Meister" }, description: { en: "Reach Fletching level 75.", de: "Erreiche Bognerei-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "bowcraft", count: 75 } },
+    { id: "ach_skill_bowcraft_90", name: { en: "Fletching Legend", de: "Bognerei-Legende" }, description: { en: "Reach Fletching level 90.", de: "Erreiche Bognerei-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "bowcraft", count: 90 } },
+    { id: "ach_skill_bowcraft_99", name: { en: "Fletching Maxed", de: "Bognerei-Maximiert" }, description: { en: "Reach Fletching level 99.", de: "Erreiche Bognerei-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "bowcraft", count: 99 } },
+    { id: "ach_skill_jewelcrafting_25", name: { en: "Jewelcrafting Journeyman", de: "Juwelierskunst-Geselle" }, description: { en: "Reach Jewelcrafting level 25.", de: "Erreiche Juwelierskunst-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "jewelcrafting", count: 25 } },
+    { id: "ach_skill_jewelcrafting_50", name: { en: "Jewelcrafting Veteran", de: "Juwelierskunst-Veteran" }, description: { en: "Reach Jewelcrafting level 50.", de: "Erreiche Juwelierskunst-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "jewelcrafting", count: 50 } },
+    { id: "ach_skill_jewelcrafting_75", name: { en: "Jewelcrafting Master", de: "Juwelierskunst-Meister" }, description: { en: "Reach Jewelcrafting level 75.", de: "Erreiche Juwelierskunst-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "jewelcrafting", count: 75 } },
+    { id: "ach_skill_jewelcrafting_90", name: { en: "Jewelcrafting Legend", de: "Juwelierskunst-Legende" }, description: { en: "Reach Jewelcrafting level 90.", de: "Erreiche Juwelierskunst-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "jewelcrafting", count: 90 } },
+    { id: "ach_skill_jewelcrafting_99", name: { en: "Jewelcrafting Maxed", de: "Juwelierskunst-Maximiert" }, description: { en: "Reach Jewelcrafting level 99.", de: "Erreiche Juwelierskunst-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "jewelcrafting", count: 99 } },
+    { id: "ach_skill_runecrafting_25", name: { en: "Runecrafting Journeyman", de: "Runenkunst-Geselle" }, description: { en: "Reach Runecrafting level 25.", de: "Erreiche Runenkunst-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "runecrafting", count: 25 } },
+    { id: "ach_skill_runecrafting_50", name: { en: "Runecrafting Veteran", de: "Runenkunst-Veteran" }, description: { en: "Reach Runecrafting level 50.", de: "Erreiche Runenkunst-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "runecrafting", count: 50 } },
+    { id: "ach_skill_runecrafting_75", name: { en: "Runecrafting Master", de: "Runenkunst-Meister" }, description: { en: "Reach Runecrafting level 75.", de: "Erreiche Runenkunst-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "runecrafting", count: 75 } },
+    { id: "ach_skill_runecrafting_90", name: { en: "Runecrafting Legend", de: "Runenkunst-Legende" }, description: { en: "Reach Runecrafting level 90.", de: "Erreiche Runenkunst-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "runecrafting", count: 90 } },
+    { id: "ach_skill_runecrafting_99", name: { en: "Runecrafting Maxed", de: "Runenkunst-Maximiert" }, description: { en: "Reach Runecrafting level 99.", de: "Erreiche Runenkunst-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "runecrafting", count: 99 } },
+    { id: "ach_skill_herblore_25", name: { en: "Herblore Journeyman", de: "Kräuterkunde-Geselle" }, description: { en: "Reach Herblore level 25.", de: "Erreiche Kräuterkunde-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "herblore", count: 25 } },
+    { id: "ach_skill_herblore_50", name: { en: "Herblore Veteran", de: "Kräuterkunde-Veteran" }, description: { en: "Reach Herblore level 50.", de: "Erreiche Kräuterkunde-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "herblore", count: 50 } },
+    { id: "ach_skill_herblore_75", name: { en: "Herblore Master", de: "Kräuterkunde-Meister" }, description: { en: "Reach Herblore level 75.", de: "Erreiche Kräuterkunde-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "herblore", count: 75 } },
+    { id: "ach_skill_herblore_90", name: { en: "Herblore Legend", de: "Kräuterkunde-Legende" }, description: { en: "Reach Herblore level 90.", de: "Erreiche Kräuterkunde-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "herblore", count: 90 } },
+    { id: "ach_skill_herblore_99", name: { en: "Herblore Maxed", de: "Kräuterkunde-Maximiert" }, description: { en: "Reach Herblore level 99.", de: "Erreiche Kräuterkunde-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "herblore", count: 99 } },
     // claude:2026-10-24T18:42:00+02:00 Textpass P3/P7 (Glossar 24.10.) (Monsterjäger -> Slayer)
-    { id: "ach_skill_slayer_25", name: { en: "Slayer Journeyman", de: "Slayer-Geselle" }, description: { en: "Reach Slayer level 25.", de: "Erreiche Slayer Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "slayer", count: 25 } },
-    { id: "ach_skill_slayer_50", name: { en: "Slayer Veteran", de: "Slayer-Veteran" }, description: { en: "Reach Slayer level 50.", de: "Erreiche Slayer Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "slayer", count: 50 } },
-    { id: "ach_skill_slayer_75", name: { en: "Slayer Master", de: "Slayer-Meister" }, description: { en: "Reach Slayer level 75.", de: "Erreiche Slayer Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "slayer", count: 75 } },
-    { id: "ach_skill_slayer_90", name: { en: "Slayer Legend", de: "Slayer-Legende" }, description: { en: "Reach Slayer level 90.", de: "Erreiche Slayer Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "slayer", count: 90 } },
-    { id: "ach_skill_slayer_99", name: { en: "Slayer Maxed", de: "Slayer-Maximiert" }, description: { en: "Reach Slayer level 99.", de: "Erreiche Slayer Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "slayer", count: 99 } },
+    { id: "ach_skill_slayer_25", name: { en: "Slayer Journeyman", de: "Slayer-Geselle" }, description: { en: "Reach Slayer level 25.", de: "Erreiche Slayer-Level 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "slayer", count: 25 } },
+    { id: "ach_skill_slayer_50", name: { en: "Slayer Veteran", de: "Slayer-Veteran" }, description: { en: "Reach Slayer level 50.", de: "Erreiche Slayer-Level 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "slayer", count: 50 } },
+    { id: "ach_skill_slayer_75", name: { en: "Slayer Master", de: "Slayer-Meister" }, description: { en: "Reach Slayer level 75.", de: "Erreiche Slayer-Level 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "slayer", count: 75 } },
+    { id: "ach_skill_slayer_90", name: { en: "Slayer Legend", de: "Slayer-Legende" }, description: { en: "Reach Slayer level 90.", de: "Erreiche Slayer-Level 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "slayer", count: 90 } },
+    { id: "ach_skill_slayer_99", name: { en: "Slayer Maxed", de: "Slayer-Maximiert" }, description: { en: "Reach Slayer level 99.", de: "Erreiche Slayer-Level 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "slayer", count: 99 } },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Level statt Stufe)
     // -- Skilling: Alleskönner + Meisterschaft (neu) --
-    { id: "ach_all_skills_50", name: { en: "Jack of All Trades", de: "Alleskönner" }, description: { en: "Reach level 50 in every skill.", de: "Erreiche Stufe 50 in jeder Fertigkeit." }, category: "skilling", rarity: "epic", condition: { type: "min_skill_level", count: 50 } },
-    { id: "ach_all_skills_75", name: { en: "Master of All", de: "Meister aller Künste" }, description: { en: "Reach level 75 in every skill.", de: "Erreiche Stufe 75 in jeder Fertigkeit." }, category: "skilling", rarity: "legendary", condition: { type: "min_skill_level", count: 75 } },
-    { id: "ach_mastery_1", name: { en: "First Mastery", de: "Erste Meisterschaft" }, description: { en: "Raise one action to mastery level 99.", de: "Bringe eine Aktion auf Meisterschaftsstufe 99." }, category: "skilling", rarity: "rare", condition: { type: "mastery_maxed", count: 1 } },
-    { id: "ach_mastery_10", name: { en: "Ten Perfected", de: "Zehn vollendet" }, description: { en: "Raise 10 actions to mastery level 99.", de: "Bringe 10 Aktionen auf Meisterschaftsstufe 99." }, category: "skilling", rarity: "epic", condition: { type: "mastery_maxed", count: 10 } },
-    { id: "ach_mastery_25", name: { en: "Hands of the Master", de: "Hände des Meisters" }, description: { en: "Raise 25 actions to mastery level 99.", de: "Bringe 25 Aktionen auf Meisterschaftsstufe 99." }, category: "skilling", rarity: "epic", condition: { type: "mastery_maxed", count: 25 } },
-    { id: "ach_mastery_50", name: { en: "Fifty Crafts, One Will", de: "Fünfzig Künste, ein Wille" }, description: { en: "Raise 50 actions to mastery level 99.", de: "Bringe 50 Aktionen auf Meisterschaftsstufe 99." }, category: "skilling", rarity: "legendary", condition: { type: "mastery_maxed", count: 50 } },
+    { id: "ach_all_skills_50", name: { en: "Jack of All Trades", de: "Alleskönner" }, description: { en: "Reach level 50 in every skill.", de: "Erreiche Level 50 in jeder Fertigkeit." }, category: "skilling", rarity: "epic", condition: { type: "min_skill_level", count: 50 } },
+    { id: "ach_all_skills_75", name: { en: "Master of All", de: "Meister aller Künste" }, description: { en: "Reach level 75 in every skill.", de: "Erreiche Level 75 in jeder Fertigkeit." }, category: "skilling", rarity: "legendary", condition: { type: "min_skill_level", count: 75 } },
+    { id: "ach_mastery_1", name: { en: "First Mastery", de: "Erste Meisterschaft" }, description: { en: "Raise one action to mastery level 99.", de: "Bringe eine Aktion in der Meisterschaft auf Level 99." }, category: "skilling", rarity: "rare", condition: { type: "mastery_maxed", count: 1 } },
+    { id: "ach_mastery_10", name: { en: "Ten Perfected", de: "Zehn vollendet" }, description: { en: "Raise 10 actions to mastery level 99.", de: "Bringe 10 Aktionen in der Meisterschaft auf Level 99." }, category: "skilling", rarity: "epic", condition: { type: "mastery_maxed", count: 10 } },
+    { id: "ach_mastery_25", name: { en: "Hands of the Master", de: "Hände des Meisters" }, description: { en: "Raise 25 actions to mastery level 99.", de: "Bringe 25 Aktionen in der Meisterschaft auf Level 99." }, category: "skilling", rarity: "epic", condition: { type: "mastery_maxed", count: 25 } },
+    { id: "ach_mastery_50", name: { en: "Fifty Crafts, One Will", de: "Fünfzig Künste, ein Wille" }, description: { en: "Raise 50 actions to mastery level 99.", de: "Bringe 50 Aktionen in der Meisterschaft auf Level 99." }, category: "skilling", rarity: "legendary", condition: { type: "mastery_maxed", count: 50 } },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Tausendertrenner, Name Killer)
     // -- Combat: Gesamt-Kills (IDs unverändert; Seltenheit nach Fokus-Stunden, Audit § 1.6; 25 000 neu) --
     { id: "ach_kills_10", name: { en: "First Blood", de: "Erstes Blut" }, description: { en: "Defeat 10 enemies.", de: "Besiege 10 Gegner." }, icon: "🗡", category: "combat", rarity: "common", condition: { type: "total_kills", count: 10 } },
-    { id: "ach_kills_100", name: { en: "Slayer", de: "Schlächter" }, description: { en: "Defeat 100 enemies.", de: "Besiege 100 Gegner." }, icon: "⚔", category: "combat", rarity: "common", condition: { type: "total_kills", count: 100 } },
-    { id: "ach_kills_1000", name: { en: "Harbinger of Ruin", de: "Vorbote des Untergangs" }, description: { en: "Defeat 1000 enemies.", de: "Besiege 1000 Gegner." }, icon: "💀", category: "combat", rarity: "uncommon", condition: { type: "total_kills", count: 1000 } },
-    { id: "ach_kills_5000", name: { en: "Warlord", de: "Kriegsherr" }, description: { en: "Defeat 5000 enemies.", de: "Besiege 5000 Gegner." }, icon: "🏹", category: "combat", rarity: "rare", condition: { type: "total_kills", count: 5000 } },
-    { id: "ach_kills_10000", name: { en: "Annihilator", de: "Vernichter" }, description: { en: "Defeat 10000 enemies.", de: "Besiege 10000 Gegner." }, icon: "💥", category: "combat", rarity: "rare", condition: { type: "total_kills", count: 10000 } },
+    { id: "ach_kills_100", name: { en: "Killer", de: "Schlächter" }, description: { en: "Defeat 100 enemies.", de: "Besiege 100 Gegner." }, icon: "⚔", category: "combat", rarity: "common", condition: { type: "total_kills", count: 100 } },
+    { id: "ach_kills_1000", name: { en: "Harbinger of Ruin", de: "Vorbote des Untergangs" }, description: { en: "Defeat 1,000 enemies.", de: "Besiege 1.000 Gegner." }, icon: "💀", category: "combat", rarity: "uncommon", condition: { type: "total_kills", count: 1000 } },
+    { id: "ach_kills_5000", name: { en: "Warlord", de: "Kriegsherr" }, description: { en: "Defeat 5,000 enemies.", de: "Besiege 5.000 Gegner." }, icon: "🏹", category: "combat", rarity: "rare", condition: { type: "total_kills", count: 5000 } },
+    { id: "ach_kills_10000", name: { en: "Annihilator", de: "Vernichter" }, description: { en: "Defeat 10,000 enemies.", de: "Besiege 10.000 Gegner." }, icon: "💥", category: "combat", rarity: "rare", condition: { type: "total_kills", count: 10000 } },
     { id: "ach_kills_25000", name: { en: "Reaper of the Reach", de: "Schnitter des Reach" }, description: { en: "Defeat 25,000 enemies.", de: "Besiege 25.000 Gegner." }, icon: "☠", category: "combat", rarity: "epic", condition: { type: "total_kills", count: 25000 } },
-    { id: "ach_kills_50000", name: { en: "God of Slaughter", de: "Gott des Gemetzels" }, description: { en: "Defeat 50000 enemies.", de: "Besiege 50000 Gegner." }, icon: "🔱", category: "combat", rarity: "legendary", condition: { type: "total_kills", count: 50000 } },
+    { id: "ach_kills_50000", name: { en: "God of Slaughter", de: "Gott des Gemetzels" }, description: { en: "Defeat 50,000 enemies.", de: "Besiege 50.000 Gegner." }, icon: "🔱", category: "combat", rarity: "legendary", condition: { type: "total_kills", count: 50000 } },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Bossnamen dekliniert)
     // -- Combat: Zonen-/Story-Bosse (15 IDs unverändert, Seltenheit nach Kapiteltiefe; 5 neu: Warchief, Doomknight, Void Titan, Drazhan, Abyssal Devourer) --
     { id: "ach_boss_bull_boss", name: { en: "Bull Slayer", de: "Bullentöter" }, description: { en: "Defeat the Maddened Bull.", de: "Besiege den Rasenden Bullen." }, category: "combat", rarity: "common", condition: { type: "monster_kills", target: "bull_boss", count: 1 } },
     { id: "ach_boss_goblin_warlock", name: { en: "Hexbane", de: "Hexenbezwinger" }, description: { en: "Defeat the Goblin Warlock.", de: "Besiege den Goblin-Hexenmeister." }, category: "combat", rarity: "uncommon", condition: { type: "monster_kills", target: "goblin_warlock", count: 1 } },
-    { id: "ach_boss_ash_tyrant", name: { en: "Tyrant Felled", de: "Tyrann bezwungen" }, description: { en: "Defeat the Ash Tyrant.", de: "Besiege den Aschtyrann." }, category: "combat", rarity: "uncommon", condition: { type: "monster_kills", target: "ash_tyrant", count: 1 } },
+    { id: "ach_boss_ash_tyrant", name: { en: "Tyrant Felled", de: "Tyrann bezwungen" }, description: { en: "Defeat the Ash Tyrant.", de: "Besiege den Aschtyrannen." }, category: "combat", rarity: "uncommon", condition: { type: "monster_kills", target: "ash_tyrant", count: 1 } },
     { id: "ach_boss_rootling_treemonster", name: { en: "The Old Grove", de: "Der alte Hain" }, description: { en: "Defeat the Elder Treant.", de: "Besiege den Alten Baumriesen." }, category: "combat", rarity: "rare", condition: { type: "monster_kills", target: "rootling_treemonster", count: 1 } },
     { id: "ach_boss_forest_warden", name: { en: "Forest Conquered", de: "Wald bezwungen" }, description: { en: "Defeat the Forest Warden.", de: "Besiege den Waldvogt." }, category: "combat", rarity: "rare", condition: { type: "monster_kills", target: "forest_warden", count: 1 } },
     { id: "ach_boss_skeleton_nekro", name: { en: "Death Denied", de: "Tod verweigert" }, description: { en: "Defeat the Necromancer Lord.", de: "Besiege den Nekromantenfürsten." }, category: "combat", rarity: "rare", condition: { type: "monster_kills", target: "skeleton_nekro", count: 1 } },
@@ -17328,52 +17333,54 @@ export const content: ContentDB = {
     { id: "ach_boss_roc_elder", name: { en: "Ancient Wings", de: "Uralte Schwingen" }, description: { en: "Defeat the Roc Elder.", de: "Besiege den Roc-Ältesten." }, category: "combat", rarity: "epic", condition: { type: "monster_kills", target: "roc_elder", count: 1 } },
     { id: "ach_boss_scale_skarn", name: { en: "Scale Breaker", de: "Schuppenbezwinger" }, description: { en: "Defeat the Dragonhide Skarn.", de: "Besiege den Drachenhaut-Skarn." }, category: "combat", rarity: "epic", condition: { type: "monster_kills", target: "scale_skarn", count: 1 } },
     { id: "ach_boss_last_idol", name: { en: "Idol Shattered", de: "Götze zerbrochen" }, description: { en: "Defeat the Last Idol.", de: "Besiege den Letzten Götzen." }, category: "combat", rarity: "legendary", condition: { type: "monster_kills", target: "last_idol", count: 1 } },
-    { id: "ach_boss_goblin_warchief", name: { en: "Banner Fallen", de: "Banner gefallen" }, description: { en: "Defeat the Goblin Warchief.", de: "Besiege: Goblin-Kriegshäuptling." }, category: "combat", rarity: "uncommon", condition: { type: "monster_kills", target: "goblin_warchief", count: 1 } },
-    { id: "ach_boss_charred_doomknight", name: { en: "Ashes to Embers", de: "Aus Asche wird Glut" }, description: { en: "Defeat the Charred Doomknight.", de: "Besiege: Verkohlter Schicksalsritter." }, category: "combat", rarity: "epic", condition: { type: "monster_kills", target: "charred_doomknight", count: 1 } },
-    { id: "ach_boss_void_titan", name: { en: "Titan Toppled", de: "Titan gestürzt" }, description: { en: "Defeat the Void Titan.", de: "Besiege: Leeren-Titan." }, category: "combat", rarity: "epic", condition: { type: "monster_kills", target: "void_titan", count: 1 } },
-    { id: "ach_boss_drazhan", name: { en: "The Crownless Falls", de: "Der Kronlose fällt" }, description: { en: "Defeat the Drazhan the Crownless.", de: "Besiege: Drazhan der Kronlose." }, category: "combat", rarity: "legendary", condition: { type: "monster_kills", target: "drazhan", count: 1 } },
+    { id: "ach_boss_goblin_warchief", name: { en: "Banner Fallen", de: "Banner gefallen" }, description: { en: "Defeat the Goblin Warchief.", de: "Besiege den Goblin-Kriegshäuptling." }, category: "combat", rarity: "uncommon", condition: { type: "monster_kills", target: "goblin_warchief", count: 1 } },
+    { id: "ach_boss_charred_doomknight", name: { en: "Ashes to Embers", de: "Aus Asche wird Glut" }, description: { en: "Defeat the Charred Doomknight.", de: "Besiege den Verkohlten Schicksalsritter." }, category: "combat", rarity: "epic", condition: { type: "monster_kills", target: "charred_doomknight", count: 1 } },
+    { id: "ach_boss_void_titan", name: { en: "Titan Toppled", de: "Titan gestürzt" }, description: { en: "Defeat the Void Titan.", de: "Besiege den Leeren-Titan." }, category: "combat", rarity: "epic", condition: { type: "monster_kills", target: "void_titan", count: 1 } },
+    { id: "ach_boss_drazhan", name: { en: "The Crownless Falls", de: "Der Kronlose fällt" }, description: { en: "Defeat Drazhan the Crownless.", de: "Besiege Drazhan den Kronlosen." }, category: "combat", rarity: "legendary", condition: { type: "monster_kills", target: "drazhan", count: 1 } },
     // codex:2026-10-17T14:50:00+02:00 — 1.3.0 E2: Kapitel-Boss der Getilgten Kapelle (Lore §5.8).
     { id: "ach_boss_the_expunger", name: { en: "The Cut Ends", de: "Der Schnitt endet" }, description: { en: "Defeat the Expunger.", de: "Besiege den Tilger." }, category: "combat", rarity: "legendary", condition: { type: "monster_kills", target: "the_expunger", count: 1 } },
-    { id: "ach_boss_abyssal_devourer", name: { en: "Throne of the Abyss", de: "Thron des Abgrunds" }, description: { en: "Defeat the Abyssal Devourer.", de: "Besiege: Abyssaler Verschlinger." }, category: "combat", rarity: "legendary", condition: { type: "monster_kills", target: "abyssal_devourer", count: 1 } },
-    { id: "ach_godly_drop", name: { en: "Fortune's Chosen", de: "Auserwählter des Schicksals" }, description: { en: "Defeat the Last Idol 5 times. Only those who face death repeatedly ever hold a divine relic.", de: "Besiege den Letzten Götzen 5 Mal. Nur wer dem Tod immer wieder gegenübersteht, hält ein göttliches Relikt in den Händen." }, icon: "⚡", category: "combat", rarity: "legendary", condition: { type: "monster_kills", target: "last_idol", count: 5 } },
+    { id: "ach_boss_abyssal_devourer", name: { en: "Throne of the Abyss", de: "Thron des Abgrunds" }, description: { en: "Defeat the Abyssal Devourer.", de: "Besiege den Abyssalen Verschlinger." }, category: "combat", rarity: "legendary", condition: { type: "monster_kills", target: "abyssal_devourer", count: 1 } },
+    { id: "ach_godly_drop", name: { en: "Fortune's Chosen", de: "Auserwählter des Schicksals" }, description: { en: "Defeat the Last Idol 5 times. Only those who face death repeatedly ever hold a divine relic.", de: "Besiege den Letzten Götzen 5-mal. Nur wer dem Tod immer wieder gegenübertritt, hält am Ende ein göttliches Relikt in den Händen." }, icon: "⚡", category: "combat", rarity: "legendary", condition: { type: "monster_kills", target: "last_idol", count: 5 } },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Rasender Bulle)
     // -- Combat: versteckte Kill-Scherze (Audit § 2.6; Huhn/Stier/Ratte behalten ihre alten Ketten-IDs) --
     { id: "ach_kills_chicken_1000", name: { en: "Feathers Everywhere", de: "Überall Federn" }, description: { en: "Defeat 1,000 chickens.", de: "Besiege 1.000 Hühner." }, category: "combat", rarity: "uncommon", hidden: true, condition: { type: "monster_kills", target: "chicken", count: 1000 } },
-    { id: "ach_kills_bull_boss_100", name: { en: "Bull-Headed", de: "Sturkopf" }, description: { en: "Defeat the Maddened Bull 100 times.", de: "Besiege den Rasenden Stier 100-mal." }, category: "combat", rarity: "rare", hidden: true, condition: { type: "monster_kills", target: "bull_boss", count: 100 } },
+    { id: "ach_kills_bull_boss_100", name: { en: "Bull-Headed", de: "Sturkopf" }, description: { en: "Defeat the Maddened Bull 100 times.", de: "Besiege den Rasenden Bullen 100-mal." }, category: "combat", rarity: "rare", hidden: true, condition: { type: "monster_kills", target: "bull_boss", count: 100 } },
     { id: "ach_kills_rot_rat_1000", name: { en: "Rat King", de: "Rattenkönig" }, description: { en: "Defeat 1,000 Rot Rats.", de: "Besiege 1.000 Seuchenkratten." }, category: "combat", rarity: "rare", hidden: true, condition: { type: "monster_kills", target: "rot_rat", count: 1000 } },
     { id: "ach_kills_goblin_warchief_100", name: { en: "Old Grudge", de: "Alte Rechnung" }, description: { en: "Defeat the Goblin Warchief 100 times.", de: "Besiege den Goblin-Kriegshäuptling 100-mal." }, category: "combat", rarity: "epic", hidden: true, condition: { type: "monster_kills", target: "goblin_warchief", count: 100 } },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Kanon-Dungeonnamen, Durchläufe, exakte Zählung)
     // -- Combat: Dungeons (6 Leitern unverändert; Hinter dem Thron neu; Gesamt 3; erster/alle Dungeons neu) --
-    { id: "ach_dungeon_goblin_warband_1", name: { en: "Warband Victor - First Clear", de: "Kriegsbanden-Sieger - Erster Durchgang" }, description: { en: "Clear the Goblin Warband 1 time.", de: "Schließe die Goblin-Kriegsbande 1 Mal ab." }, category: "combat", rarity: "uncommon", condition: { type: "dungeons_cleared", target: "goblin_warband", count: 1 } },
-    { id: "ach_dungeon_goblin_warband_10", name: { en: "Warband Victor - Veteran", de: "Kriegsbanden-Sieger - Veteran" }, description: { en: "Clear the Goblin Warband 10 times.", de: "Schließe die Goblin-Kriegsbande 10 Mal ab." }, category: "combat", rarity: "rare", condition: { type: "dungeons_cleared", target: "goblin_warband", count: 10 } },
-    { id: "ach_dungeon_goblin_warband_50", name: { en: "Warband Victor - Legend", de: "Kriegsbanden-Sieger - Legende" }, description: { en: "Clear the Goblin Warband 50 times.", de: "Schließe die Goblin-Kriegsbande 50 Mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "goblin_warband", count: 50 } },
-    { id: "ach_dungeon_crypt_depths_1", name: { en: "Crypt Delver - First Clear", de: "Krypta-Erforscher - Erster Durchgang" }, description: { en: "Clear the Crypt Depths 1 time.", de: "Schließe die Krypta-Tiefen 1 Mal ab." }, category: "combat", rarity: "uncommon", condition: { type: "dungeons_cleared", target: "crypt_depths", count: 1 } },
-    { id: "ach_dungeon_crypt_depths_10", name: { en: "Crypt Delver - Veteran", de: "Krypta-Erforscher - Veteran" }, description: { en: "Clear the Crypt Depths 10 times.", de: "Schließe die Krypta-Tiefen 10 Mal ab." }, category: "combat", rarity: "rare", condition: { type: "dungeons_cleared", target: "crypt_depths", count: 10 } },
-    { id: "ach_dungeon_crypt_depths_50", name: { en: "Crypt Delver - Legend", de: "Krypta-Erforscher - Legende" }, description: { en: "Clear the Crypt Depths 50 times.", de: "Schließe die Krypta-Tiefen 50 Mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "crypt_depths", count: 50 } },
-    { id: "ach_dungeon_wildwood_hunt_1", name: { en: "Master Hunter - First Clear", de: "Meisterjäger - Erster Durchgang" }, description: { en: "Clear the Wildwood Hunt 1 time.", de: "Schließe die Wildwald-Jagd 1 Mal ab." }, category: "combat", rarity: "uncommon", condition: { type: "dungeons_cleared", target: "wildwood_hunt", count: 1 } },
-    { id: "ach_dungeon_wildwood_hunt_10", name: { en: "Master Hunter - Veteran", de: "Meisterjäger - Veteran" }, description: { en: "Clear the Wildwood Hunt 10 times.", de: "Schließe die Wildwald-Jagd 10 Mal ab." }, category: "combat", rarity: "rare", condition: { type: "dungeons_cleared", target: "wildwood_hunt", count: 10 } },
-    { id: "ach_dungeon_wildwood_hunt_50", name: { en: "Master Hunter - Legend", de: "Meisterjäger - Legende" }, description: { en: "Clear the Wildwood Hunt 50 times.", de: "Schließe die Wildwald-Jagd 50 Mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "wildwood_hunt", count: 50 } },
-    { id: "ach_dungeon_highland_aerie_1", name: { en: "Aerie Conqueror - First Clear", de: "Horst-Bezwinger - Erster Durchgang" }, description: { en: "Clear the Highland Aerie 1 time.", de: "Schließe den Hochland-Horst 1 Mal ab." }, category: "combat", rarity: "uncommon", condition: { type: "dungeons_cleared", target: "highland_aerie", count: 1 } },
-    { id: "ach_dungeon_highland_aerie_10", name: { en: "Aerie Conqueror - Veteran", de: "Horst-Bezwinger - Veteran" }, description: { en: "Clear the Highland Aerie 10 times.", de: "Schließe den Hochland-Horst 10 Mal ab." }, category: "combat", rarity: "rare", condition: { type: "dungeons_cleared", target: "highland_aerie", count: 10 } },
-    { id: "ach_dungeon_highland_aerie_50", name: { en: "Aerie Conqueror - Legend", de: "Horst-Bezwinger - Legende" }, description: { en: "Clear the Highland Aerie 50 times.", de: "Schließe den Hochland-Horst 50 Mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "highland_aerie", count: 50 } },
-    { id: "ach_dungeon_wyvern_lair_1", name: { en: "Wyvern Slayer - First Clear", de: "Wyvernjäger - Erster Durchgang" }, description: { en: "Clear the Wyvern Lair 1 time.", de: "Schließe das Wyvernlager 1 Mal ab." }, category: "combat", rarity: "uncommon", condition: { type: "dungeons_cleared", target: "wyvern_lair", count: 1 } },
-    { id: "ach_dungeon_wyvern_lair_10", name: { en: "Wyvern Slayer - Veteran", de: "Wyvernjäger - Veteran" }, description: { en: "Clear the Wyvern Lair 10 times.", de: "Schließe das Wyvernlager 10 Mal ab." }, category: "combat", rarity: "rare", condition: { type: "dungeons_cleared", target: "wyvern_lair", count: 10 } },
-    { id: "ach_dungeon_wyvern_lair_50", name: { en: "Wyvern Slayer - Legend", de: "Wyvernjäger - Legende" }, description: { en: "Clear the Wyvern Lair 50 times.", de: "Schließe das Wyvernlager 50 Mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "wyvern_lair", count: 50 } },
-    { id: "ach_dungeon_idol_sanctum_1", name: { en: "Sanctum Cleared - First Clear", de: "Sanktum-Bezwinger - Erster Durchgang" }, description: { en: "Clear the Idol Sanctum 1 time.", de: "Schließe das Götzensanktum 1 Mal ab." }, category: "combat", rarity: "uncommon", condition: { type: "dungeons_cleared", target: "idol_sanctum", count: 1 } },
-    { id: "ach_dungeon_idol_sanctum_10", name: { en: "Sanctum Cleared - Veteran", de: "Sanktum-Bezwinger - Veteran" }, description: { en: "Clear the Idol Sanctum 10 times.", de: "Schließe das Götzensanktum 10 Mal ab." }, category: "combat", rarity: "rare", condition: { type: "dungeons_cleared", target: "idol_sanctum", count: 10 } },
-    { id: "ach_dungeon_idol_sanctum_50", name: { en: "Sanctum Cleared - Legend", de: "Sanktum-Bezwinger - Legende" }, description: { en: "Clear the Idol Sanctum 50 times.", de: "Schließe das Götzensanktum 50 Mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "idol_sanctum", count: 50 } },
-    { id: "ach_dungeon_behind_the_throne_1", name: { en: "Throne Breaker - First Clear", de: "Thronbrecher - Erster Durchgang" }, description: { en: "Clear Behind the Throne once.", de: "Schließe Hinter dem Thron einmal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "behind_the_throne", count: 1 } },
-    { id: "ach_dungeon_behind_the_throne_10", name: { en: "Throne Breaker - Veteran", de: "Thronbrecher - Veteran" }, description: { en: "Clear Behind the Throne 10 times.", de: "Schließe Hinter dem Thron 10-mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "behind_the_throne", count: 10 } },
-    { id: "ach_dungeon_behind_the_throne_50", name: { en: "Throne Breaker - Legend", de: "Thronbrecher - Legende" }, description: { en: "Clear Behind the Throne 50 times.", de: "Schließe Hinter dem Thron 50-mal ab." }, category: "combat", rarity: "legendary", condition: { type: "dungeons_cleared", target: "behind_the_throne", count: 50 } },
+    { id: "ach_dungeon_goblin_warband_1", name: { en: "Warband Victor: First Clear", de: "Kriegsbanden-Sieger: Erster Durchlauf" }, description: { en: "Clear the Goblin Warband once.", de: "Schließe die Goblin-Kriegsbande einmal ab." }, category: "combat", rarity: "uncommon", condition: { type: "dungeons_cleared", target: "goblin_warband", count: 1 } },
+    { id: "ach_dungeon_goblin_warband_10", name: { en: "Warband Victor: Veteran", de: "Kriegsbanden-Sieger: Veteran" }, description: { en: "Clear the Goblin Warband 10 times.", de: "Schließe die Goblin-Kriegsbande 10-mal ab." }, category: "combat", rarity: "rare", condition: { type: "dungeons_cleared", target: "goblin_warband", count: 10 } },
+    { id: "ach_dungeon_goblin_warband_50", name: { en: "Warband Victor: Legend", de: "Kriegsbanden-Sieger: Legende" }, description: { en: "Clear the Goblin Warband 50 times.", de: "Schließe die Goblin-Kriegsbande 50-mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "goblin_warband", count: 50 } },
+    { id: "ach_dungeon_crypt_depths_1", name: { en: "Crypt Delver: First Clear", de: "Krypta-Erforscher: Erster Durchlauf" }, description: { en: "Clear the Depths of the Crypt once.", de: "Schließe die Tiefen der Krypta einmal ab." }, category: "combat", rarity: "uncommon", condition: { type: "dungeons_cleared", target: "crypt_depths", count: 1 } },
+    { id: "ach_dungeon_crypt_depths_10", name: { en: "Crypt Delver: Veteran", de: "Krypta-Erforscher: Veteran" }, description: { en: "Clear the Depths of the Crypt 10 times.", de: "Schließe die Tiefen der Krypta 10-mal ab." }, category: "combat", rarity: "rare", condition: { type: "dungeons_cleared", target: "crypt_depths", count: 10 } },
+    { id: "ach_dungeon_crypt_depths_50", name: { en: "Crypt Delver: Legend", de: "Krypta-Erforscher: Legende" }, description: { en: "Clear the Depths of the Crypt 50 times.", de: "Schließe die Tiefen der Krypta 50-mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "crypt_depths", count: 50 } },
+    { id: "ach_dungeon_wildwood_hunt_1", name: { en: "Master Hunter: First Clear", de: "Meisterjäger: Erster Durchlauf" }, description: { en: "Clear the Wildwood Hunt once.", de: "Schließe die Wildwald-Jagd einmal ab." }, category: "combat", rarity: "uncommon", condition: { type: "dungeons_cleared", target: "wildwood_hunt", count: 1 } },
+    { id: "ach_dungeon_wildwood_hunt_10", name: { en: "Master Hunter: Veteran", de: "Meisterjäger: Veteran" }, description: { en: "Clear the Wildwood Hunt 10 times.", de: "Schließe die Wildwald-Jagd 10-mal ab." }, category: "combat", rarity: "rare", condition: { type: "dungeons_cleared", target: "wildwood_hunt", count: 10 } },
+    { id: "ach_dungeon_wildwood_hunt_50", name: { en: "Master Hunter: Legend", de: "Meisterjäger: Legende" }, description: { en: "Clear the Wildwood Hunt 50 times.", de: "Schließe die Wildwald-Jagd 50-mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "wildwood_hunt", count: 50 } },
+    { id: "ach_dungeon_highland_aerie_1", name: { en: "Aerie Conqueror: First Clear", de: "Horst-Bezwinger: Erster Durchlauf" }, description: { en: "Clear the Highland Aerie once.", de: "Schließe den Hochland-Horst einmal ab." }, category: "combat", rarity: "uncommon", condition: { type: "dungeons_cleared", target: "highland_aerie", count: 1 } },
+    { id: "ach_dungeon_highland_aerie_10", name: { en: "Aerie Conqueror: Veteran", de: "Horst-Bezwinger: Veteran" }, description: { en: "Clear the Highland Aerie 10 times.", de: "Schließe den Hochland-Horst 10-mal ab." }, category: "combat", rarity: "rare", condition: { type: "dungeons_cleared", target: "highland_aerie", count: 10 } },
+    { id: "ach_dungeon_highland_aerie_50", name: { en: "Aerie Conqueror: Legend", de: "Horst-Bezwinger: Legende" }, description: { en: "Clear the Highland Aerie 50 times.", de: "Schließe den Hochland-Horst 50-mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "highland_aerie", count: 50 } },
+    { id: "ach_dungeon_wyvern_lair_1", name: { en: "Wyvern Slayer: First Clear", de: "Wyvernjäger: Erster Durchlauf" }, description: { en: "Clear the Wyvern Lair once.", de: "Schließe das Wyvernlager einmal ab." }, category: "combat", rarity: "uncommon", condition: { type: "dungeons_cleared", target: "wyvern_lair", count: 1 } },
+    { id: "ach_dungeon_wyvern_lair_10", name: { en: "Wyvern Slayer: Veteran", de: "Wyvernjäger: Veteran" }, description: { en: "Clear the Wyvern Lair 10 times.", de: "Schließe das Wyvernlager 10-mal ab." }, category: "combat", rarity: "rare", condition: { type: "dungeons_cleared", target: "wyvern_lair", count: 10 } },
+    { id: "ach_dungeon_wyvern_lair_50", name: { en: "Wyvern Slayer: Legend", de: "Wyvernjäger: Legende" }, description: { en: "Clear the Wyvern Lair 50 times.", de: "Schließe das Wyvernlager 50-mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "wyvern_lair", count: 50 } },
+    { id: "ach_dungeon_idol_sanctum_1", name: { en: "Sanctum Cleared: First Clear", de: "Sanktum-Bezwinger: Erster Durchlauf" }, description: { en: "Clear the Sanctum of the Last Idol once.", de: "Schließe das Sanktum des Letzten Götzen einmal ab." }, category: "combat", rarity: "uncommon", condition: { type: "dungeons_cleared", target: "idol_sanctum", count: 1 } },
+    { id: "ach_dungeon_idol_sanctum_10", name: { en: "Sanctum Cleared: Veteran", de: "Sanktum-Bezwinger: Veteran" }, description: { en: "Clear the Sanctum of the Last Idol 10 times.", de: "Schließe das Sanktum des Letzten Götzen 10-mal ab." }, category: "combat", rarity: "rare", condition: { type: "dungeons_cleared", target: "idol_sanctum", count: 10 } },
+    { id: "ach_dungeon_idol_sanctum_50", name: { en: "Sanctum Cleared: Legend", de: "Sanktum-Bezwinger: Legende" }, description: { en: "Clear the Sanctum of the Last Idol 50 times.", de: "Schließe das Sanktum des Letzten Götzen 50-mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "idol_sanctum", count: 50 } },
+    { id: "ach_dungeon_behind_the_throne_1", name: { en: "Throne Breaker: First Clear", de: "Thronbrecher: Erster Durchlauf" }, description: { en: "Clear Behind the Throne once.", de: "Schließe Hinter dem Thron einmal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "behind_the_throne", count: 1 } },
+    { id: "ach_dungeon_behind_the_throne_10", name: { en: "Throne Breaker: Veteran", de: "Thronbrecher: Veteran" }, description: { en: "Clear Behind the Throne 10 times.", de: "Schließe Hinter dem Thron 10-mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "behind_the_throne", count: 10 } },
+    { id: "ach_dungeon_behind_the_throne_50", name: { en: "Throne Breaker: Legend", de: "Thronbrecher: Legende" }, description: { en: "Clear Behind the Throne 50 times.", de: "Schließe Hinter dem Thron 50-mal ab." }, category: "combat", rarity: "legendary", condition: { type: "dungeons_cleared", target: "behind_the_throne", count: 50 } },
     // codex:2026-10-17T14:50:00+02:00 — 1.3.0 E2: Leiter der Getilgten Kapelle (Pflicht je Dungeon, achievements-1-2-0.test.ts).
-    { id: "ach_dungeon_expunged_chapel_1", name: { en: "Expunger's End - First Clear", de: "Tilgers Ende - Erster Durchgang" }, description: { en: "Clear the Expunged Chapel once.", de: "Schließe die Getilgte Kapelle einmal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "expunged_chapel", count: 1 } },
-    { id: "ach_dungeon_expunged_chapel_10", name: { en: "Expunger's End - Veteran", de: "Tilgers Ende - Veteran" }, description: { en: "Clear the Expunged Chapel 10 times.", de: "Schließe die Getilgte Kapelle 10-mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "expunged_chapel", count: 10 } },
-    { id: "ach_dungeon_expunged_chapel_50", name: { en: "Expunger's End - Legend", de: "Tilgers Ende - Legende" }, description: { en: "Clear the Expunged Chapel 50 times.", de: "Schließe die Getilgte Kapelle 50-mal ab." }, category: "combat", rarity: "legendary", condition: { type: "dungeons_cleared", target: "expunged_chapel", count: 50 } },
-    { id: "ach_dungeons_total_5", name: { en: "Dungeon Runner", de: "Verlies-Läufer" }, description: { en: "Complete 5 dungeon runs.", de: "Schließe 5 Verliese ab." }, category: "combat", rarity: "uncommon", condition: { type: "dungeons_cleared", count: 5 } },
-    { id: "ach_dungeons_total_25", name: { en: "Dungeon Veteran", de: "Verlies-Veteran" }, description: { en: "Complete 25 dungeon runs.", de: "Schließe 25 Verliese ab." }, category: "combat", rarity: "rare", condition: { type: "dungeons_cleared", count: 25 } },
-    { id: "ach_dungeons_total_100", name: { en: "Dungeon Legend", de: "Verlies-Legende" }, description: { en: "Complete 100 dungeon runs.", de: "Schließe 100 Verliese ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", count: 100 } },
+    { id: "ach_dungeon_expunged_chapel_1", name: { en: "Expunger's End: First Clear", de: "Tilgers Ende: Erster Durchlauf" }, description: { en: "Clear the Expunged Chapel once.", de: "Schließe die Getilgte Kapelle einmal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "expunged_chapel", count: 1 } },
+    { id: "ach_dungeon_expunged_chapel_10", name: { en: "Expunger's End: Veteran", de: "Tilgers Ende: Veteran" }, description: { en: "Clear the Expunged Chapel 10 times.", de: "Schließe die Getilgte Kapelle 10-mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "expunged_chapel", count: 10 } },
+    { id: "ach_dungeon_expunged_chapel_50", name: { en: "Expunger's End: Legend", de: "Tilgers Ende: Legende" }, description: { en: "Clear the Expunged Chapel 50 times.", de: "Schließe die Getilgte Kapelle 50-mal ab." }, category: "combat", rarity: "legendary", condition: { type: "dungeons_cleared", target: "expunged_chapel", count: 50 } },
+    { id: "ach_dungeons_total_5", name: { en: "Dungeon Runner", de: "Dungeonläufer" }, description: { en: "Complete 5 dungeon runs.", de: "Schließe 5 Dungeon-Durchläufe ab." }, category: "combat", rarity: "uncommon", condition: { type: "dungeons_cleared", count: 5 } },
+    { id: "ach_dungeons_total_25", name: { en: "Dungeon Veteran", de: "Dungeon-Veteran" }, description: { en: "Complete 25 dungeon runs.", de: "Schließe 25 Dungeon-Durchläufe ab." }, category: "combat", rarity: "rare", condition: { type: "dungeons_cleared", count: 25 } },
+    { id: "ach_dungeons_total_100", name: { en: "Dungeon Legend", de: "Dungeon-Legende" }, description: { en: "Complete 100 dungeon runs.", de: "Schließe 100 Dungeon-Durchläufe ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", count: 100 } },
     { id: "ach_dungeons_distinct_1", name: { en: "First Clear", de: "Erster Durchlauf" }, description: { en: "Clear a dungeon for the first time.", de: "Schließe zum ersten Mal einen Dungeon ab." }, icon: "🚪", category: "combat", rarity: "uncommon", condition: { type: "dungeons_distinct", count: 1 } },
-    { id: "ach_dungeons_distinct_all", name: { en: "Delver of Every Depth", de: "Bezwinger aller Tiefen" }, description: { en: "Clear every dungeon in the Reach at least once.", de: "Schließe jeden Dungeon im Reach mindestens einmal ab." }, icon: "🗝", category: "combat", rarity: "epic", condition: { type: "dungeons_distinct", count: 7 } },
+    { id: "ach_dungeons_distinct_all", name: { en: "Delver of Every Depth", de: "Bezwinger aller Tiefen" }, description: { en: "Clear 7 different dungeons at least once.", de: "Schließe 7 verschiedene Dungeons mindestens einmal ab." }, icon: "🗝", category: "combat", rarity: "epic", condition: { type: "dungeons_distinct", count: 7 } },
 
     // -- Combat: Paragonturm (unverändert) --
     { id: "ach_paragon_floor_5", name: { en: "First Ascent", de: "Erster Aufstieg" }, description: { en: "Reach floor 5 of the Paragon Spire.", de: "Erreiche Etage 5 des Paragonturms." }, icon: "🗼", category: "combat", rarity: "uncommon", condition: { type: "paragon_floor", count: 5 } },
@@ -17390,29 +17397,30 @@ export const content: ContentDB = {
     { id: "ach_deaths_1", name: { en: "Ash to Ash", de: "Asche zu Asche" }, description: { en: "Fall in battle for the first time.", de: "Falle zum ersten Mal im Kampf." }, category: "combat", rarity: "common", hidden: true, condition: { type: "deaths", count: 1 } },
     { id: "ach_deaths_100", name: { en: "Not Today", de: "Heute nicht" }, description: { en: "Fall in battle 100 times and keep going.", de: "Falle 100-mal im Kampf und mach trotzdem weiter." }, category: "combat", rarity: "rare", hidden: true, condition: { type: "deaths", count: 100 } },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Zonen im Genitiv)
     // -- Exploration: Zonen-Bestiarium (je Zone: jedes Wesen ≥ 1 / ≥ 100; Fortschritt = kleinster Kill-Stand der Zone) --
-    { id: "ach_zone_pastures_1", name: { en: "The Pastures: Every Creature", de: "Die Weiden: Jedes Wesen" }, description: { en: "Defeat every creature of The Pastures at least once.", de: "Besiege jedes Wesen in Die Weiden mindestens einmal." }, category: "exploration", rarity: "common", condition: { type: "zone_bestiary", target: "pastures", count: 1 } },
-    { id: "ach_zone_pastures_100", name: { en: "The Pastures Mastered", de: "Die Weiden gemeistert" }, description: { en: "Defeat every creature of The Pastures 100 times.", de: "Besiege jedes Wesen in Die Weiden 100-mal." }, category: "exploration", rarity: "uncommon", condition: { type: "zone_bestiary", target: "pastures", count: 100 } },
-    { id: "ach_zone_borderlands_1", name: { en: "The Borderlands: Every Creature", de: "Die Grenzlande: Jedes Wesen" }, description: { en: "Defeat every creature of The Borderlands at least once.", de: "Besiege jedes Wesen in Die Grenzlande mindestens einmal." }, category: "exploration", rarity: "uncommon", condition: { type: "zone_bestiary", target: "borderlands", count: 1 } },
-    { id: "ach_zone_borderlands_100", name: { en: "The Borderlands Mastered", de: "Die Grenzlande gemeistert" }, description: { en: "Defeat every creature of The Borderlands 100 times.", de: "Besiege jedes Wesen in Die Grenzlande 100-mal." }, category: "exploration", rarity: "rare", condition: { type: "zone_bestiary", target: "borderlands", count: 100 } },
-    { id: "ach_zone_ashfields_1", name: { en: "The Ashfields: Every Creature", de: "Die Aschfelder: Jedes Wesen" }, description: { en: "Defeat every creature of The Ashfields at least once.", de: "Besiege jedes Wesen in Die Aschfelder mindestens einmal." }, category: "exploration", rarity: "uncommon", condition: { type: "zone_bestiary", target: "ashfields", count: 1 } },
-    { id: "ach_zone_ashfields_100", name: { en: "The Ashfields Mastered", de: "Die Aschfelder gemeistert" }, description: { en: "Defeat every creature of The Ashfields 100 times.", de: "Besiege jedes Wesen in Die Aschfelder 100-mal." }, category: "exploration", rarity: "rare", condition: { type: "zone_bestiary", target: "ashfields", count: 100 } },
-    { id: "ach_zone_blackthorn_1", name: { en: "The Blackthorn Wood: Every Creature", de: "Der Schwarzdornwald: Jedes Wesen" }, description: { en: "Defeat every creature of The Blackthorn Wood at least once.", de: "Besiege jedes Wesen in Der Schwarzdornwald mindestens einmal." }, category: "exploration", rarity: "rare", condition: { type: "zone_bestiary", target: "blackthorn", count: 1 } },
-    { id: "ach_zone_blackthorn_100", name: { en: "The Blackthorn Wood Mastered", de: "Der Schwarzdornwald gemeistert" }, description: { en: "Defeat every creature of The Blackthorn Wood 100 times.", de: "Besiege jedes Wesen in Der Schwarzdornwald 100-mal." }, category: "exploration", rarity: "rare", condition: { type: "zone_bestiary", target: "blackthorn", count: 100 } },
-    { id: "ach_zone_crypt_1", name: { en: "The Crypt: Every Creature", de: "Die Krypta: Jedes Wesen" }, description: { en: "Defeat every creature of The Crypt at least once.", de: "Besiege jedes Wesen in Die Krypta mindestens einmal." }, category: "exploration", rarity: "rare", condition: { type: "zone_bestiary", target: "crypt", count: 1 } },
-    { id: "ach_zone_crypt_100", name: { en: "The Crypt Mastered", de: "Die Krypta gemeistert" }, description: { en: "Defeat every creature of The Crypt 100 times.", de: "Besiege jedes Wesen in Die Krypta 100-mal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "crypt", count: 100 } },
-    { id: "ach_zone_wildwood_1", name: { en: "Wildwood Hunting Grounds: Every Creature", de: "Wildwald-Jagdgründe: Jedes Wesen" }, description: { en: "Defeat every creature of Wildwood Hunting Grounds at least once.", de: "Besiege jedes Wesen in Wildwald-Jagdgründe mindestens einmal." }, category: "exploration", rarity: "rare", condition: { type: "zone_bestiary", target: "wildwood", count: 1 } },
-    { id: "ach_zone_wildwood_100", name: { en: "Wildwood Hunting Grounds Mastered", de: "Wildwald-Jagdgründe gemeistert" }, description: { en: "Defeat every creature of Wildwood Hunting Grounds 100 times.", de: "Besiege jedes Wesen in Wildwald-Jagdgründe 100-mal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "wildwood", count: 100 } },
-    { id: "ach_zone_coast_1", name: { en: "Tidewater Shoals: Every Creature", de: "Gezeitenuntiefen: Jedes Wesen" }, description: { en: "Defeat every creature of Tidewater Shoals at least once.", de: "Besiege jedes Wesen in Gezeitenuntiefen mindestens einmal." }, category: "exploration", rarity: "rare", condition: { type: "zone_bestiary", target: "coast", count: 1 } },
-    { id: "ach_zone_coast_100", name: { en: "Tidewater Shoals Mastered", de: "Gezeitenuntiefen gemeistert" }, description: { en: "Defeat every creature of Tidewater Shoals 100 times.", de: "Besiege jedes Wesen in Gezeitenuntiefen 100-mal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "coast", count: 100 } },
-    { id: "ach_zone_slagpit_1", name: { en: "Slag Pit & Frost Caverns: Every Creature", de: "Schlackengrube & Frostkavernen: Jedes Wesen" }, description: { en: "Defeat every creature of Slag Pit & Frost Caverns at least once.", de: "Besiege jedes Wesen in Schlackengrube & Frostkavernen mindestens einmal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "slagpit", count: 1 } },
-    { id: "ach_zone_slagpit_100", name: { en: "Slag Pit & Frost Caverns Mastered", de: "Schlackengrube & Frostkavernen gemeistert" }, description: { en: "Defeat every creature of Slag Pit & Frost Caverns 100 times.", de: "Besiege jedes Wesen in Schlackengrube & Frostkavernen 100-mal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "slagpit", count: 100 } },
-    { id: "ach_zone_highlands_1", name: { en: "The Highlands: Every Creature", de: "Das Hochland: Jedes Wesen" }, description: { en: "Defeat every creature of The Highlands at least once.", de: "Besiege jedes Wesen in Das Hochland mindestens einmal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "highlands", count: 1 } },
-    { id: "ach_zone_highlands_100", name: { en: "The Highlands Mastered", de: "Das Hochland gemeistert" }, description: { en: "Defeat every creature of The Highlands 100 times.", de: "Besiege jedes Wesen in Das Hochland 100-mal." }, category: "exploration", rarity: "legendary", condition: { type: "zone_bestiary", target: "highlands", count: 100 } },
-    { id: "ach_zone_idolhall_1", name: { en: "The Idol Hall: Every Creature", de: "Die Götzenhalle: Jedes Wesen" }, description: { en: "Defeat every creature of The Idol Hall at least once.", de: "Besiege jedes Wesen in Die Götzenhalle mindestens einmal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "idolhall", count: 1 } },
-    { id: "ach_zone_idolhall_100", name: { en: "The Idol Hall Mastered", de: "Die Götzenhalle gemeistert" }, description: { en: "Defeat every creature of The Idol Hall 100 times.", de: "Besiege jedes Wesen in Die Götzenhalle 100-mal." }, category: "exploration", rarity: "legendary", condition: { type: "zone_bestiary", target: "idolhall", count: 100 } },
-    { id: "ach_zone_slayer_tower_1", name: { en: "The Slayer Tower: Every Creature", de: "Der Slayer-Turm: Jedes Wesen" }, description: { en: "Defeat every creature of The Slayer Tower at least once.", de: "Besiege jedes Wesen in Der Slayer-Turm mindestens einmal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "slayer_tower", count: 1 } },
-    { id: "ach_zone_slayer_tower_100", name: { en: "The Slayer Tower Mastered", de: "Der Slayer-Turm gemeistert" }, description: { en: "Defeat every creature of The Slayer Tower 100 times.", de: "Besiege jedes Wesen in Der Slayer-Turm 100-mal." }, category: "exploration", rarity: "legendary", condition: { type: "zone_bestiary", target: "slayer_tower", count: 100 } },
+    { id: "ach_zone_pastures_1", name: { en: "The Pastures: Every Creature", de: "Die Weiden: Jedes Wesen" }, description: { en: "Defeat every creature of the Pastures at least once.", de: "Besiege jedes Wesen der Weiden mindestens einmal." }, category: "exploration", rarity: "common", condition: { type: "zone_bestiary", target: "pastures", count: 1 } },
+    { id: "ach_zone_pastures_100", name: { en: "The Pastures Mastered", de: "Die Weiden gemeistert" }, description: { en: "Defeat every creature of the Pastures 100 times.", de: "Besiege jedes Wesen der Weiden 100-mal." }, category: "exploration", rarity: "uncommon", condition: { type: "zone_bestiary", target: "pastures", count: 100 } },
+    { id: "ach_zone_borderlands_1", name: { en: "The Borderlands: Every Creature", de: "Die Grenzlande: Jedes Wesen" }, description: { en: "Defeat every creature of the Borderlands at least once.", de: "Besiege jedes Wesen der Grenzlande mindestens einmal." }, category: "exploration", rarity: "uncommon", condition: { type: "zone_bestiary", target: "borderlands", count: 1 } },
+    { id: "ach_zone_borderlands_100", name: { en: "The Borderlands Mastered", de: "Die Grenzlande gemeistert" }, description: { en: "Defeat every creature of the Borderlands 100 times.", de: "Besiege jedes Wesen der Grenzlande 100-mal." }, category: "exploration", rarity: "rare", condition: { type: "zone_bestiary", target: "borderlands", count: 100 } },
+    { id: "ach_zone_ashfields_1", name: { en: "The Ashfields: Every Creature", de: "Die Aschfelder: Jedes Wesen" }, description: { en: "Defeat every creature of the Ashfields at least once.", de: "Besiege jedes Wesen der Aschfelder mindestens einmal." }, category: "exploration", rarity: "uncommon", condition: { type: "zone_bestiary", target: "ashfields", count: 1 } },
+    { id: "ach_zone_ashfields_100", name: { en: "The Ashfields Mastered", de: "Die Aschfelder gemeistert" }, description: { en: "Defeat every creature of the Ashfields 100 times.", de: "Besiege jedes Wesen der Aschfelder 100-mal." }, category: "exploration", rarity: "rare", condition: { type: "zone_bestiary", target: "ashfields", count: 100 } },
+    { id: "ach_zone_blackthorn_1", name: { en: "The Blackthorn Wood: Every Creature", de: "Der Schwarzdornwald: Jedes Wesen" }, description: { en: "Defeat every creature of the Blackthorn Wood at least once.", de: "Besiege jedes Wesen des Schwarzdornwalds mindestens einmal." }, category: "exploration", rarity: "rare", condition: { type: "zone_bestiary", target: "blackthorn", count: 1 } },
+    { id: "ach_zone_blackthorn_100", name: { en: "The Blackthorn Wood Mastered", de: "Der Schwarzdornwald gemeistert" }, description: { en: "Defeat every creature of the Blackthorn Wood 100 times.", de: "Besiege jedes Wesen des Schwarzdornwalds 100-mal." }, category: "exploration", rarity: "rare", condition: { type: "zone_bestiary", target: "blackthorn", count: 100 } },
+    { id: "ach_zone_crypt_1", name: { en: "The Crypt: Every Creature", de: "Die Krypta: Jedes Wesen" }, description: { en: "Defeat every creature of the Crypt at least once.", de: "Besiege jedes Wesen der Krypta mindestens einmal." }, category: "exploration", rarity: "rare", condition: { type: "zone_bestiary", target: "crypt", count: 1 } },
+    { id: "ach_zone_crypt_100", name: { en: "The Crypt Mastered", de: "Die Krypta gemeistert" }, description: { en: "Defeat every creature of the Crypt 100 times.", de: "Besiege jedes Wesen der Krypta 100-mal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "crypt", count: 100 } },
+    { id: "ach_zone_wildwood_1", name: { en: "Wildwood Hunting Grounds: Every Creature", de: "Wildwald-Jagdgründe: Jedes Wesen" }, description: { en: "Defeat every creature of the Wildwood Hunting Grounds at least once.", de: "Besiege jedes Wesen der Wildwald-Jagdgründe mindestens einmal." }, category: "exploration", rarity: "rare", condition: { type: "zone_bestiary", target: "wildwood", count: 1 } },
+    { id: "ach_zone_wildwood_100", name: { en: "Wildwood Hunting Grounds Mastered", de: "Wildwald-Jagdgründe gemeistert" }, description: { en: "Defeat every creature of the Wildwood Hunting Grounds 100 times.", de: "Besiege jedes Wesen der Wildwald-Jagdgründe 100-mal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "wildwood", count: 100 } },
+    { id: "ach_zone_coast_1", name: { en: "Tidewater Shoals: Every Creature", de: "Gezeitenuntiefen: Jedes Wesen" }, description: { en: "Defeat every creature of the Tidewater Shoals at least once.", de: "Besiege jedes Wesen der Gezeitenuntiefen mindestens einmal." }, category: "exploration", rarity: "rare", condition: { type: "zone_bestiary", target: "coast", count: 1 } },
+    { id: "ach_zone_coast_100", name: { en: "Tidewater Shoals Mastered", de: "Gezeitenuntiefen gemeistert" }, description: { en: "Defeat every creature of the Tidewater Shoals 100 times.", de: "Besiege jedes Wesen der Gezeitenuntiefen 100-mal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "coast", count: 100 } },
+    { id: "ach_zone_slagpit_1", name: { en: "Slag Pit & Frost Caverns: Every Creature", de: "Schlackengrube & Frostkavernen: Jedes Wesen" }, description: { en: "Defeat every creature of the Slag Pit & Frost Caverns at least once.", de: "Besiege jedes Wesen von Schlackengrube & Frostkavernen mindestens einmal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "slagpit", count: 1 } },
+    { id: "ach_zone_slagpit_100", name: { en: "Slag Pit & Frost Caverns Mastered", de: "Schlackengrube & Frostkavernen gemeistert" }, description: { en: "Defeat every creature of the Slag Pit & Frost Caverns 100 times.", de: "Besiege jedes Wesen von Schlackengrube & Frostkavernen 100-mal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "slagpit", count: 100 } },
+    { id: "ach_zone_highlands_1", name: { en: "The Highlands: Every Creature", de: "Das Hochland: Jedes Wesen" }, description: { en: "Defeat every creature of the Highlands at least once.", de: "Besiege jedes Wesen des Hochlands mindestens einmal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "highlands", count: 1 } },
+    { id: "ach_zone_highlands_100", name: { en: "The Highlands Mastered", de: "Das Hochland gemeistert" }, description: { en: "Defeat every creature of the Highlands 100 times.", de: "Besiege jedes Wesen des Hochlands 100-mal." }, category: "exploration", rarity: "legendary", condition: { type: "zone_bestiary", target: "highlands", count: 100 } },
+    { id: "ach_zone_idolhall_1", name: { en: "The Idol Hall: Every Creature", de: "Die Götzenhalle: Jedes Wesen" }, description: { en: "Defeat every creature of the Idol Hall at least once.", de: "Besiege jedes Wesen der Götzenhalle mindestens einmal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "idolhall", count: 1 } },
+    { id: "ach_zone_idolhall_100", name: { en: "The Idol Hall Mastered", de: "Die Götzenhalle gemeistert" }, description: { en: "Defeat every creature of the Idol Hall 100 times.", de: "Besiege jedes Wesen der Götzenhalle 100-mal." }, category: "exploration", rarity: "legendary", condition: { type: "zone_bestiary", target: "idolhall", count: 100 } },
+    { id: "ach_zone_slayer_tower_1", name: { en: "The Slayer Tower: Every Creature", de: "Der Slayer-Turm: Jedes Wesen" }, description: { en: "Defeat every creature of the Slayer Tower at least once.", de: "Besiege jedes Wesen des Slayer-Turms mindestens einmal." }, category: "exploration", rarity: "epic", condition: { type: "zone_bestiary", target: "slayer_tower", count: 1 } },
+    { id: "ach_zone_slayer_tower_100", name: { en: "The Slayer Tower Mastered", de: "Der Slayer-Turm gemeistert" }, description: { en: "Defeat every creature of the Slayer Tower 100 times.", de: "Besiege jedes Wesen des Slayer-Turms 100-mal." }, category: "exploration", rarity: "legendary", condition: { type: "zone_bestiary", target: "slayer_tower", count: 100 } },
 
     // -- Exploration: Bestiarium gesamt (Steam: THE_WHOLE_BESTIARY = ach_bestiary_all) --
     { id: "ach_bestiary_25", name: { en: "Field Notes", de: "Feldnotizen" }, description: { en: "Defeat 25 different creatures.", de: "Besiege 25 verschiedene Wesen." }, icon: "📓", category: "exploration", rarity: "rare", condition: { type: "monsters_discovered", count: 25 } },
@@ -17434,13 +17442,15 @@ export const content: ContentDB = {
     { id: "ach_slayer_floor_7", name: { en: "The Last Stair", de: "Die Letzte Treppe" }, description: { en: "Slay a creature on floor 7 of the Slayer Tower.", de: "Erlege ein Wesen auf Etage 7 des Slayer-Turms." }, category: "exploration", rarity: "legendary", condition: { type: "slayer_floor", count: 7 } },
     { id: "ach_slayer_floor_8", name: { en: "The First Dark", de: "Das Erste Dunkel" }, description: { en: "Slay a creature on floor 8 of the Slayer Tower.", de: "Erlege ein Wesen auf Etage 8 des Slayer-Turms." }, category: "exploration", rarity: "legendary", condition: { type: "slayer_floor", count: 8 } },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Ausbaustufen, exakte Zählung)
     // -- Exploration: New Haven (Steam: NEW_HAVEN_RISES = ach_camp_levels_45) --
     { id: "ach_camp_first", name: { en: "First Stake", de: "Erster Pfahl" }, description: { en: "Raise your first building in New Haven.", de: "Errichte dein erstes Gebäude in New Haven." }, icon: "🏕", category: "exploration", rarity: "common", condition: { type: "camp_levels", count: 1 } },
-    { id: "ach_camp_townhall_3", name: { en: "Town Hall III", de: "Zentralhaus III" }, description: { en: "Raise the Town Hall to its final stage.", de: "Baue das Zentralhaus auf die letzte Stufe aus." }, icon: "🏛", category: "exploration", rarity: "rare", condition: { type: "camp_levels", target: "camp_townhall", count: 3 } },
-    { id: "ach_camp_buildings_15", name: { en: "A Roof for Everyone", de: "Ein Dach für alle" }, description: { en: "Raise every building in New Haven at least once.", de: "Errichte jedes Gebäude in New Haven mindestens auf Stufe I." }, icon: "🏘", category: "exploration", rarity: "rare", condition: { type: "camp_buildings", count: 15 } },
+    { id: "ach_camp_townhall_3", name: { en: "Town Hall III", de: "Zentralhaus III" }, description: { en: "Raise the Town Hall to its final stage.", de: "Baue das Zentralhaus auf die letzte Ausbaustufe aus." }, icon: "🏛", category: "exploration", rarity: "rare", condition: { type: "camp_levels", target: "camp_townhall", count: 3 } },
+    { id: "ach_camp_buildings_15", name: { en: "A Roof for Everyone", de: "Ein Dach für alle" }, description: { en: "Raise 15 buildings in New Haven.", de: "Errichte 15 Gebäude in New Haven." }, icon: "🏘", category: "exploration", rarity: "rare", condition: { type: "camp_buildings", count: 15 } },
     { id: "ach_camp_levels_30", name: { en: "Half Built", de: "Halb gebaut" }, description: { en: "Reach 30 building stages in New Haven.", de: "Erreiche 30 Ausbaustufen in New Haven." }, icon: "🧱", category: "exploration", rarity: "epic", condition: { type: "camp_levels", count: 30 } },
-    { id: "ach_camp_levels_45", name: { en: "New Haven Rises", de: "New Haven erhebt sich" }, description: { en: "Raise every building in New Haven to its final stage.", de: "Baue jedes Gebäude in New Haven auf die letzte Stufe aus." }, icon: "🏰", category: "exploration", rarity: "epic", condition: { type: "camp_levels", count: 45 } },
+    { id: "ach_camp_levels_45", name: { en: "New Haven Rises", de: "New Haven erhebt sich" }, description: { en: "Reach 45 building stages in New Haven.", de: "Erreiche 45 Ausbaustufen in New Haven." }, icon: "🏰", category: "exploration", rarity: "epic", condition: { type: "camp_levels", count: 45 } },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Kapitel 27 exakt)
     // -- Quests: Aschechronik-Kapitel (Name = Kapiteltitel; 20/21 versteckt; Steam CH01..CH21) --
     { id: "ach_chapter_01", name: { en: "The First Page", de: "Die erste Seite" }, description: { en: "Finish Chronicle chapter 1: The First Page.", de: "Schließe Chronik-Kapitel 1 ab: Die erste Seite." }, icon: "📖", category: "quests", rarity: "common", condition: { type: "quests_completed", target: "chronicle_01", count: 1 } },
     { id: "ach_chapter_02", name: { en: "First Blood", de: "Erstes Blut" }, description: { en: "Finish Chronicle chapter 2: First Blood.", de: "Schließe Chronik-Kapitel 2 ab: Erstes Blut." }, icon: "📖", category: "quests", rarity: "common", condition: { type: "quests_completed", target: "chronicle_02", count: 1 } },
@@ -17469,17 +17479,18 @@ export const content: ContentDB = {
     { id: "ach_chapter_24", name: { en: "What the Idols Drank", de: "Was die Götzen tranken" }, description: { en: "Finish Chronicle chapter 24: What the Idols Drank.", de: "Schließe Chronik-Kapitel 24 ab: Was die Götzen tranken." }, icon: "📖", category: "quests", rarity: "epic", condition: { type: "quests_completed", target: "chronicle_24", count: 1 } },
     { id: "ach_chapter_25", name: { en: "The Wreaths", de: "Die Kränze" }, description: { en: "Finish Chronicle chapter 25: The Wreaths.", de: "Schließe Chronik-Kapitel 25 ab: Die Kränze." }, icon: "📖", category: "quests", rarity: "epic", condition: { type: "quests_completed", target: "chronicle_25", count: 1 } },
     { id: "ach_chapter_26", name: { en: "Siege-Works", de: "Belagerungswerke" }, description: { en: "Finish Chronicle chapter 26: Siege-Works.", de: "Schließe Chronik-Kapitel 26 ab: Belagerungswerke." }, icon: "📖", category: "quests", rarity: "epic", condition: { type: "quests_completed", target: "chronicle_26", count: 1 } },
-    { id: "ach_chapter_27", name: { en: "Kept Forgotten", de: "Vergessen gehalten" }, description: { en: "Finish the first chapter of the God Wars.", de: "Schließe das erste Kapitel der Götterkriege ab." }, icon: "📖", category: "quests", rarity: "legendary", condition: { type: "quests_completed", target: "chronicle_27", count: 1 } },
+    { id: "ach_chapter_27", name: { en: "Kept Forgotten", de: "Vergessen gehalten" }, description: { en: "Finish Chronicle chapter 27: The Expunger.", de: "Schließe Chronik-Kapitel 27 ab: Der Tilger." }, icon: "📖", category: "quests", rarity: "legendary", condition: { type: "quests_completed", target: "chronicle_27", count: 1 } },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Aufgaben-Familie, Tagesserie)
     // -- Quests: Aufträge gesamt + Tages-Serie (unverändert) --
-    { id: "ach_quests_1", name: { en: "Questling", de: "Auftragsanfänger" }, description: { en: "Complete 1 quest.", de: "Schließe 1 Auftrag ab." }, icon: "📜", category: "quests", rarity: "common", condition: { type: "quests_completed", count: 1 } },
-    { id: "ach_quests_10", name: { en: "Errand Runner", de: "Botengänger" }, description: { en: "Complete 10 quests.", de: "Schließe 10 Aufträge ab." }, icon: "📝", category: "quests", rarity: "uncommon", condition: { type: "quests_completed", count: 10 } },
-    { id: "ach_quests_50", name: { en: "Hero", de: "Held" }, description: { en: "Complete 50 quests.", de: "Schließe 50 Aufträge ab." }, icon: "🛡", category: "quests", rarity: "rare", condition: { type: "quests_completed", count: 50 } },
-    { id: "ach_quests_100", name: { en: "Legend of the Realm", de: "Legende des Reichs" }, description: { en: "Complete 75 quests.", de: "Schließe 75 Aufträge ab." }, icon: "🌟", category: "quests", rarity: "epic", condition: { type: "quests_completed", count: 75 } },
-    { id: "ach_daily_streak_3", name: { en: "Consistent", de: "Konsequent" }, description: { en: "Maintain a 3-day daily streak.", de: "Halte eine 3-Tage-Streak aufrecht." }, icon: "📅", category: "quests", rarity: "common", condition: { type: "daily_streak", count: 3 } },
-    { id: "ach_daily_streak_7", name: { en: "Dedicated", de: "Pflichtbewusst" }, description: { en: "Maintain a 7-day daily streak.", de: "Halte eine 7-Tage-Streak aufrecht." }, icon: "🗓", category: "quests", rarity: "rare", condition: { type: "daily_streak", count: 7 } },
-    { id: "ach_daily_streak_30", name: { en: "Obsessed", de: "Besessen" }, description: { en: "Maintain a 30-day daily streak.", de: "Halte eine 30-Tage-Streak aufrecht." }, icon: "🔥", category: "quests", rarity: "epic", condition: { type: "daily_streak", count: 30 } },
-    { id: "ach_daily_streak_100", name: { en: "The Unbroken", de: "Der Ungebrochene" }, description: { en: "Maintain a 100-day daily streak.", de: "Halte eine 100-Tage-Streak aufrecht." }, icon: "⚡", category: "quests", rarity: "legendary", condition: { type: "daily_streak", count: 100 } },
+    { id: "ach_quests_1", name: { en: "Questling", de: "Erste Aufgabe" }, description: { en: "Complete 1 quest.", de: "Schließe 1 Aufgabe ab." }, icon: "📜", category: "quests", rarity: "common", condition: { type: "quests_completed", count: 1 } },
+    { id: "ach_quests_10", name: { en: "Errand Runner", de: "Botengänger" }, description: { en: "Complete 10 quests.", de: "Schließe 10 Aufgaben ab." }, icon: "📝", category: "quests", rarity: "uncommon", condition: { type: "quests_completed", count: 10 } },
+    { id: "ach_quests_50", name: { en: "Hero", de: "Held" }, description: { en: "Complete 50 quests.", de: "Schließe 50 Aufgaben ab." }, icon: "🛡", category: "quests", rarity: "rare", condition: { type: "quests_completed", count: 50 } },
+    { id: "ach_quests_100", name: { en: "Legend of the Reach", de: "Legende des Reach" }, description: { en: "Complete 75 quests.", de: "Schließe 75 Aufgaben ab." }, icon: "🌟", category: "quests", rarity: "epic", condition: { type: "quests_completed", count: 75 } },
+    { id: "ach_daily_streak_3", name: { en: "Consistent", de: "Konsequent" }, description: { en: "Play 3 days in a row.", de: "Spiele an 3 Tagen in Folge." }, icon: "📅", category: "quests", rarity: "common", condition: { type: "daily_streak", count: 3 } },
+    { id: "ach_daily_streak_7", name: { en: "Dedicated", de: "Pflichtbewusst" }, description: { en: "Play 7 days in a row.", de: "Spiele an 7 Tagen in Folge." }, icon: "🗓", category: "quests", rarity: "rare", condition: { type: "daily_streak", count: 7 } },
+    { id: "ach_daily_streak_30", name: { en: "Obsessed", de: "Besessen" }, description: { en: "Play 30 days in a row.", de: "Spiele an 30 Tagen in Folge." }, icon: "🔥", category: "quests", rarity: "epic", condition: { type: "daily_streak", count: 30 } },
+    { id: "ach_daily_streak_100", name: { en: "The Unbroken", de: "Der Ungebrochene" }, description: { en: "Play 100 days in a row.", de: "Spiele an 100 Tagen in Folge." }, icon: "⚡", category: "quests", rarity: "legendary", condition: { type: "daily_streak", count: 100 } },
 
     // -- Quests: Slayer-Aufträge, Serie, Dailies (neu; Steam: CONTRACT_KILLER = ach_slayer_tasks_100) --
     { id: "ach_slayer_tasks_1", name: { en: "First Contract", de: "Erster Auftrag" }, description: { en: "Complete your first Slayer task.", de: "Erledige deinen ersten Slayer-Auftrag." }, icon: "📋", category: "quests", rarity: "common", condition: { type: "slayer_tasks", count: 1 } },
@@ -17492,64 +17503,68 @@ export const content: ContentDB = {
     { id: "ach_dailies_30", name: { en: "Regular", de: "Stammkraft" }, description: { en: "Complete 30 different daily tasks.", de: "Erledige 30 verschiedene Tagesaufgaben." }, icon: "🗒", category: "quests", rarity: "rare", condition: { type: "dailies_distinct", count: 30 } },
     { id: "ach_dailies_60", name: { en: "Seen It All", de: "Alles gesehen" }, description: { en: "Complete every daily task in the pool at least once.", de: "Erledige jede Tagesaufgabe aus dem Pool mindestens einmal." }, icon: "🗒", category: "quests", rarity: "epic", condition: { type: "dailies_distinct", count: 60 } },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (verschiedene statt einzigartige, Begleiter, Unikat)
     // -- Collection: Items entdeckt (4 unverändert; 500/1000 neu — Steam: ENCYCLOPEDIST = ach_discovered_500), Sets, Begleiter (unverändert) --
-    { id: "ach_discovered_10", name: { en: "Curious", de: "Neugierig" }, description: { en: "Discover 10 unique items.", de: "Entdecke 10 einzigartige Gegenstände." }, icon: "🔍", category: "collection", rarity: "common", condition: { type: "items_discovered", count: 10 } },
-    { id: "ach_discovered_50", name: { en: "Collector", de: "Sammler" }, description: { en: "Discover 50 unique items.", de: "Entdecke 50 einzigartige Gegenstände." }, icon: "🗃", category: "collection", rarity: "uncommon", condition: { type: "items_discovered", count: 50 } },
-    { id: "ach_discovered_100", name: { en: "Archivist", de: "Archivar" }, description: { en: "Discover 100 unique items.", de: "Entdecke 100 einzigartige Gegenstände." }, icon: "📖", category: "collection", rarity: "rare", condition: { type: "items_discovered", count: 100 } },
-    { id: "ach_discovered_200", name: { en: "Encyclopedist", de: "Enzyklopädist" }, description: { en: "Discover 200 unique items.", de: "Entdecke 200 einzigartige Gegenstände." }, icon: "🧠", category: "collection", rarity: "epic", condition: { type: "items_discovered", count: 200 } },
-    { id: "ach_discovered_500", name: { en: "Encyclopedist", de: "Enzyklopädist" }, description: { en: "Discover 500 unique items.", de: "Entdecke 500 verschiedene Gegenstände." }, icon: "📚", category: "collection", rarity: "epic", condition: { type: "items_discovered", count: 500 } },
-    { id: "ach_discovered_1000", name: { en: "The Great Catalogue", de: "Der große Katalog" }, description: { en: "Discover 1,000 unique items.", de: "Entdecke 1.000 verschiedene Gegenstände." }, icon: "📚", category: "collection", rarity: "legendary", condition: { type: "items_discovered", count: 1000 } },
-    { id: "ach_sets_completed_1", name: { en: "Set Seeker", de: "Set-Sucher" }, description: { en: "Complete 1 full equipment set.", de: "Vervollständige 1 vollständiges Ausrüstungs-Set." }, icon: "🧩", category: "collection", rarity: "uncommon", condition: { type: "sets_completed", count: 1 } },
-    { id: "ach_sets_completed_5", name: { en: "Set Collector", de: "Set-Sammler" }, description: { en: "Complete 5 full equipment sets.", de: "Vervollständige 5 vollständige Ausrüstungs-Sets." }, icon: "🧩", category: "collection", rarity: "rare", condition: { type: "sets_completed", count: 5 } },
-    { id: "ach_sets_completed_10", name: { en: "Set Completionist", de: "Set-Vollender" }, description: { en: "Complete 10 full equipment sets.", de: "Vervollständige 10 vollständige Ausrüstungs-Sets." }, icon: "🏅", category: "collection", rarity: "epic", condition: { type: "sets_completed", count: 10 } },
-    { id: "ach_sets_all", name: { en: "Master of All Sets", de: "Meister aller Sets" }, description: { en: "Complete all 41 equipment sets.", de: "Vervollständige alle 41 Ausrüstungs-Sets." }, icon: "👑", category: "collection", rarity: "legendary", condition: { type: "sets_completed", count: 41 } }, // Schmuck-Rework W5 (§3.10): +3 Schmuck-Sets (hunters_accord/void_vow/warbound) — 35→38. claude:2026-10-25T10:00:00+02:00 — Raid Gobkha'raz: +3 Raid-Sets (gk_fire/gk_poison/gk_bleed) — 38→41.
-    { id: "ach_pets_1", name: { en: "A Friend in the Ash", de: "Ein Freund in der Asche" }, description: { en: "Own your first pet.", de: "Besitze deinen ersten Begleiter." }, icon: "🐾", category: "collection", rarity: "common", condition: { type: "pets_owned", count: 1 } },
-    { id: "ach_pets_5", name: { en: "Animal Companion", de: "Tierbegleiter" }, description: { en: "Own 5 pets.", de: "Besitze 5 Begleiter." }, icon: "🐾", category: "collection", rarity: "uncommon", condition: { type: "pets_owned", count: 5 } },
-    { id: "ach_pets_10", name: { en: "Beast Friend", de: "Tierfreund" }, description: { en: "Own 10 pets.", de: "Besitze 10 Begleiter." }, icon: "🐾", category: "collection", rarity: "rare", condition: { type: "pets_owned", count: 10 } },
-    { id: "ach_pets_all", name: { en: "Beastmaster", de: "Bestienmeister" }, description: { en: "Own all 23 companions.", de: "Besitze alle 23 Begleiter." }, icon: "🐉", category: "collection", rarity: "legendary", condition: { type: "pets_owned", count: 23 } }, // 1.2.0 (29.08.2026): Leon + Seidenweber ⇒ 23
+    { id: "ach_discovered_10", name: { en: "Curious", de: "Neugierig" }, description: { en: "Discover 10 different items.", de: "Entdecke 10 verschiedene Gegenstände." }, icon: "🔍", category: "collection", rarity: "common", condition: { type: "items_discovered", count: 10 } },
+    { id: "ach_discovered_50", name: { en: "Collector", de: "Sammler" }, description: { en: "Discover 50 different items.", de: "Entdecke 50 verschiedene Gegenstände." }, icon: "🗃", category: "collection", rarity: "uncommon", condition: { type: "items_discovered", count: 50 } },
+    { id: "ach_discovered_100", name: { en: "Archivist", de: "Archivar" }, description: { en: "Discover 100 different items.", de: "Entdecke 100 verschiedene Gegenstände." }, icon: "📖", category: "collection", rarity: "rare", condition: { type: "items_discovered", count: 100 } },
+    { id: "ach_discovered_200", name: { en: "Curator", de: "Kurator" }, description: { en: "Discover 200 different items.", de: "Entdecke 200 verschiedene Gegenstände." }, icon: "🧠", category: "collection", rarity: "epic", condition: { type: "items_discovered", count: 200 } },
+    { id: "ach_discovered_500", name: { en: "Encyclopedist", de: "Enzyklopädist" }, description: { en: "Discover 500 different items.", de: "Entdecke 500 verschiedene Gegenstände." }, icon: "📚", category: "collection", rarity: "epic", condition: { type: "items_discovered", count: 500 } },
+    { id: "ach_discovered_1000", name: { en: "The Great Catalogue", de: "Der große Katalog" }, description: { en: "Discover 1,000 different items.", de: "Entdecke 1.000 verschiedene Gegenstände." }, icon: "📚", category: "collection", rarity: "legendary", condition: { type: "items_discovered", count: 1000 } },
+    { id: "ach_sets_completed_1", name: { en: "Set Seeker", de: "Set-Sucher" }, description: { en: "Complete one full equipment set.", de: "Vervollständige ein Ausrüstungsset." }, icon: "🧩", category: "collection", rarity: "uncommon", condition: { type: "sets_completed", count: 1 } },
+    { id: "ach_sets_completed_5", name: { en: "Set Collector", de: "Set-Sammler" }, description: { en: "Complete 5 full equipment sets.", de: "Vervollständige 5 Ausrüstungssets." }, icon: "🧩", category: "collection", rarity: "rare", condition: { type: "sets_completed", count: 5 } },
+    { id: "ach_sets_completed_10", name: { en: "Set Completionist", de: "Set-Vollender" }, description: { en: "Complete 10 full equipment sets.", de: "Vervollständige 10 Ausrüstungssets." }, icon: "🏅", category: "collection", rarity: "epic", condition: { type: "sets_completed", count: 10 } },
+    { id: "ach_sets_all", name: { en: "Master of All Sets", de: "Meister aller Sets" }, description: { en: "Complete all 41 equipment sets.", de: "Vervollständige alle 41 Ausrüstungssets." }, icon: "👑", category: "collection", rarity: "legendary", condition: { type: "sets_completed", count: 41 } }, // Schmuck-Rework W5 (§3.10): +3 Schmuck-Sets (hunters_accord/void_vow/warbound) — 35→38. claude:2026-10-25T10:00:00+02:00 — Raid Gobkha'raz: +3 Raid-Sets (gk_fire/gk_poison/gk_bleed) — 38→41.
+    { id: "ach_pets_1", name: { en: "A Friend in the Ash", de: "Ein Freund in der Asche" }, description: { en: "Take in your first companion.", de: "Nimm deinen ersten Begleiter auf." }, icon: "🐾", category: "collection", rarity: "common", condition: { type: "pets_owned", count: 1 } },
+    { id: "ach_pets_5", name: { en: "Animal Companion", de: "Tierbegleiter" }, description: { en: "Take in 5 companions.", de: "Nimm 5 Begleiter auf." }, icon: "🐾", category: "collection", rarity: "uncommon", condition: { type: "pets_owned", count: 5 } },
+    { id: "ach_pets_10", name: { en: "Beast Friend", de: "Tierfreund" }, description: { en: "Take in 10 companions.", de: "Nimm 10 Begleiter auf." }, icon: "🐾", category: "collection", rarity: "rare", condition: { type: "pets_owned", count: 10 } },
+    { id: "ach_pets_all", name: { en: "Beastmaster", de: "Bestienmeister" }, description: { en: "Take in all 23 companions.", de: "Nimm alle 23 Begleiter auf." }, icon: "🐉", category: "collection", rarity: "legendary", condition: { type: "pets_owned", count: 23 } }, // 1.2.0 (29.08.2026): Leon + Seidenweber ⇒ 23
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Der Neunte Wächter)
     // -- Collection: Champions (Elite-Kodex; Steam: CHAMPIONS_BANE = ach_elite_first, TROPHY_HALL = ach_elite_uniques_all, THE_NINTH_WARDEN versteckt) --
     { id: "ach_elite_first", name: { en: "Champion's Bane", de: "Championsfluch" }, description: { en: "Defeat your first Champion of the Reach.", de: "Besiege deinen ersten Champion des Reach." }, icon: "👑", category: "collection", rarity: "uncommon", condition: { type: "elite_kills", count: 1 } },
     { id: "ach_elite_kills_10", name: { en: "Champion Hunter", de: "Championsjäger" }, description: { en: "Defeat 10 Champions of the Reach.", de: "Besiege 10 Champions des Reach." }, icon: "👑", category: "collection", rarity: "rare", condition: { type: "elite_kills", count: 10 } },
     { id: "ach_elite_kills_100", name: { en: "Champion Slayer", de: "Championsschlächter" }, description: { en: "Defeat 100 Champions of the Reach.", de: "Besiege 100 Champions des Reach." }, icon: "👑", category: "collection", rarity: "epic", condition: { type: "elite_kills", count: 100 } },
     { id: "ach_elite_variants_all", name: { en: "Every Champion", de: "Alle Champions" }, description: { en: "Defeat each of the 29 Champions of the Reach at least once.", de: "Besiege jeden der 29 Champions des Reach mindestens einmal." }, icon: "👑", category: "collection", rarity: "epic", condition: { type: "elite_variants", count: 29 } }, // 1.2.0 (Chef 28.08.2026): 28→29 mit elite_ossric (Hochland)
-    { id: "ach_elite_uniques_1", name: { en: "First Trophy", de: "Erste Trophäe" }, description: { en: "Claim the unique trophy of a Champion.", de: "Erbeute die einzigartige Trophäe eines Champions." }, icon: "🏆", category: "collection", rarity: "rare", condition: { type: "elite_uniques", count: 1 } },
-    { id: "ach_elite_uniques_all", name: { en: "Trophy Hall", de: "Trophäenhalle" }, description: { en: "Claim the unique trophy of every Champion of the Reach.", de: "Erbeute die einzigartige Trophäe jedes Champions des Reach." }, icon: "🏆", category: "collection", rarity: "legendary", condition: { type: "elite_uniques", count: 29 } }, // codex:2026-10-17T14:30:00+02:00 — 1.3.0 E1: zurück auf 29. Die Götzenhalle ist offen, beide Halle-Champions hängen an offenen Basen (idol_husk/idol_priest) und sind jagbar. (Pruefbericht 29.08.2026 hatte 27 gesetzt, solange sie unerreichbar waren.)
-    { id: "ach_elite_idol_warden", name: { en: "The Ninth Warden", de: "Der neunte Wächter" }, description: { en: "Defeat the Ninth Warden.", de: "Besiege den neunten Wächter." }, icon: "🎭", category: "collection", rarity: "epic", hidden: true, condition: { type: "elite_kills", target: "elite_idol_warden", count: 1 } },
+    { id: "ach_elite_uniques_1", name: { en: "First Trophy", de: "Erste Trophäe" }, description: { en: "Claim the unique trophy of a Champion.", de: "Erbeute das Unikat eines Champions." }, icon: "🏆", category: "collection", rarity: "rare", condition: { type: "elite_uniques", count: 1 } },
+    { id: "ach_elite_uniques_all", name: { en: "Trophy Hall", de: "Trophäenhalle" }, description: { en: "Claim the unique trophy of every Champion of the Reach.", de: "Erbeute das Unikat jedes Champions des Reach." }, icon: "🏆", category: "collection", rarity: "legendary", condition: { type: "elite_uniques", count: 29 } }, // codex:2026-10-17T14:30:00+02:00 — 1.3.0 E1: zurück auf 29. Die Götzenhalle ist offen, beide Halle-Champions hängen an offenen Basen (idol_husk/idol_priest) und sind jagbar. (Pruefbericht 29.08.2026 hatte 27 gesetzt, solange sie unerreichbar waren.)
+    { id: "ach_elite_idol_warden", name: { en: "The Ninth Warden", de: "Der Neunte Wächter" }, description: { en: "Defeat the Ninth Warden.", de: "Besiege den Neunten Wächter." }, icon: "🎭", category: "collection", rarity: "epic", hidden: true, condition: { type: "elite_kills", target: "elite_idol_warden", count: 1 } },
 
     // -- Collection: Runen entdeckt (neu) --
     { id: "ach_runes_10", name: { en: "Rune Reader", de: "Runenleser" }, description: { en: "Discover 10 different runes.", de: "Entdecke 10 verschiedene Runen." }, icon: "🔮", category: "collection", rarity: "uncommon", condition: { type: "runes_discovered", count: 10 } },
     { id: "ach_runes_25", name: { en: "Runic Archive", de: "Runenarchiv" }, description: { en: "Discover 25 different runes.", de: "Entdecke 25 verschiedene Runen." }, icon: "🔮", category: "collection", rarity: "rare", condition: { type: "runes_discovered", count: 25 } },
     { id: "ach_runes_50", name: { en: "Every Rune", de: "Jede Rune" }, description: { en: "Discover all 50 runes.", de: "Entdecke alle 50 Runen." }, icon: "🔮", category: "collection", rarity: "epic", condition: { type: "runes_discovered", count: 50 } },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Tausendertrenner, Itemnamen)
     // -- Gathering / Crafting: Sammeln + Herstellen (unverändert); Portionen + Leitmaterial-Meisterstücke (neu) --
     { id: "ach_gather_100", name: { en: "Gatherer", de: "Sammler" }, description: { en: "Gather 100 resources.", de: "Sammle 100 Rohstoffe." }, icon: "🪓", category: "gathering", rarity: "common", condition: { type: "items_gathered", count: 100 } },
-    { id: "ach_gather_1000", name: { en: "Hoarder", de: "Hortender" }, description: { en: "Gather 1000 resources.", de: "Sammle 1000 Rohstoffe." }, icon: "📦", category: "gathering", rarity: "uncommon", condition: { type: "items_gathered", count: 1000 } },
-    { id: "ach_gather_10000", name: { en: "Resource Baron", de: "Rohstoff-Baron" }, description: { en: "Gather 10000 resources.", de: "Sammle 10000 Rohstoffe." }, icon: "⛏", category: "gathering", rarity: "rare", condition: { type: "items_gathered", count: 10000 } },
-    { id: "ach_gather_100000", name: { en: "Eternal Harvest", de: "Ewige Ernte" }, description: { en: "Gather 100000 resources.", de: "Sammle 100000 Rohstoffe." }, icon: "🌾", category: "gathering", rarity: "epic", condition: { type: "items_gathered", count: 100000 } },
+    { id: "ach_gather_1000", name: { en: "Hoarder", de: "Hamsterer" }, description: { en: "Gather 1,000 resources.", de: "Sammle 1.000 Rohstoffe." }, icon: "📦", category: "gathering", rarity: "uncommon", condition: { type: "items_gathered", count: 1000 } },
+    { id: "ach_gather_10000", name: { en: "Resource Baron", de: "Rohstoff-Baron" }, description: { en: "Gather 10,000 resources.", de: "Sammle 10.000 Rohstoffe." }, icon: "⛏", category: "gathering", rarity: "rare", condition: { type: "items_gathered", count: 10000 } },
+    { id: "ach_gather_100000", name: { en: "Eternal Harvest", de: "Ewige Ernte" }, description: { en: "Gather 100,000 resources.", de: "Sammle 100.000 Rohstoffe." }, icon: "🌾", category: "gathering", rarity: "epic", condition: { type: "items_gathered", count: 100000 } },
     { id: "ach_craft_10", name: { en: "Crafter", de: "Handwerker" }, description: { en: "Craft 10 items.", de: "Stelle 10 Gegenstände her." }, icon: "⚒", category: "crafting", rarity: "common", condition: { type: "items_crafted", count: 10 } },
     { id: "ach_craft_100", name: { en: "Artisan", de: "Kunsthandwerker" }, description: { en: "Craft 100 items.", de: "Stelle 100 Gegenstände her." }, icon: "🔨", category: "crafting", rarity: "uncommon", condition: { type: "items_crafted", count: 100 } },
-    { id: "ach_craft_1000", name: { en: "Master Craftsman", de: "Meisterhandwerker" }, description: { en: "Craft 1000 items.", de: "Stelle 1000 Gegenstände her." }, icon: "⚙", category: "crafting", rarity: "rare", condition: { type: "items_crafted", count: 1000 } },
-    { id: "ach_craft_10000", name: { en: "Forge Lord", de: "Schmiede-Fürst" }, description: { en: "Craft 10000 items.", de: "Stelle 10000 Gegenstände her." }, icon: "🏭", category: "crafting", rarity: "epic", condition: { type: "items_crafted", count: 10000 } },
+    { id: "ach_craft_1000", name: { en: "Master Craftsman", de: "Meisterhandwerker" }, description: { en: "Craft 1,000 items.", de: "Stelle 1.000 Gegenstände her." }, icon: "⚙", category: "crafting", rarity: "rare", condition: { type: "items_crafted", count: 1000 } },
+    { id: "ach_craft_10000", name: { en: "Forge Lord", de: "Schmiede-Fürst" }, description: { en: "Craft 10,000 items.", de: "Stelle 10.000 Gegenstände her." }, icon: "🏭", category: "crafting", rarity: "epic", condition: { type: "items_crafted", count: 10000 } },
     { id: "ach_food_100", name: { en: "Field Kitchen", de: "Feldküche" }, description: { en: "Cook 100 portions.", de: "Koche 100 Portionen." }, icon: "🍳", category: "crafting", rarity: "common", condition: { type: "food_cooked", count: 100 } },
     { id: "ach_food_1000", name: { en: "Banquet Master", de: "Bankettmeister" }, description: { en: "Cook 1,000 portions.", de: "Koche 1.000 Portionen." }, icon: "🍲", category: "crafting", rarity: "rare", condition: { type: "food_cooked", count: 1000 } },
     { id: "ach_food_10000", name: { en: "Feeder of Armies", de: "Heeresverpfleger" }, description: { en: "Cook 10,000 portions.", de: "Koche 10.000 Portionen." }, icon: "🍖", category: "crafting", rarity: "epic", hidden: true, condition: { type: "food_cooked", count: 10000 } },
     { id: "ach_craft_godiron_sword", name: { en: "Godiron Edge", de: "Götzeneisen-Klinge" }, description: { en: "Forge a Godiron Sword.", de: "Schmiede ein Götzeneisen-Schwert." }, icon: "⚔", category: "crafting", rarity: "epic", condition: { type: "items_crafted", target: "godiron_sword", count: 1 } },
     { id: "ach_craft_voidweave_vestment", name: { en: "Woven from Nothing", de: "Aus dem Nichts gewebt" }, description: { en: "Weave a Voidweave Vestment.", de: "Webe ein Leerengewebe-Ornat." }, icon: "🧵", category: "crafting", rarity: "epic", condition: { type: "items_crafted", target: "voidweave_vestment", count: 1 } },
-    { id: "ach_craft_voidhide_body", name: { en: "Skin of the Void", de: "Haut der Leere" }, description: { en: "Craft a Voidhide Body.", de: "Fertige einen Leerenhaut-Harnisch." }, icon: "🧥", category: "crafting", rarity: "epic", condition: { type: "items_crafted", target: "voidhide_body", count: 1 } },
-    { id: "ach_craft_godgem_amulet", name: { en: "Heart of the Godgem", de: "Herz des Götzenjuwels" }, description: { en: "Craft a Godgem Amulet.", de: "Fertige ein Götzenjuwel-Amulett." }, icon: "📿", category: "crafting", rarity: "epic", condition: { type: "items_crafted", target: "godgem_amulet", count: 1 } },
+    { id: "ach_craft_voidhide_body", name: { en: "Skin of the Void", de: "Haut der Leere" }, description: { en: "Craft a Voidhide Cuirass.", de: "Fertige einen Leerenleder-Kürass." }, icon: "🧥", category: "crafting", rarity: "epic", condition: { type: "items_crafted", target: "voidhide_body", count: 1 } },
+    { id: "ach_craft_godgem_amulet", name: { en: "Heart of the Godgem", de: "Göttensteinherz" }, description: { en: "Craft a Godgem Amulet.", de: "Fertige ein Göttenstein-Amulett." }, icon: "📿", category: "crafting", rarity: "epic", condition: { type: "items_crafted", target: "godgem_amulet", count: 1 } },
     { id: "ach_craft_godsbreath_elixir", name: { en: "Breath of the Gods", de: "Atem der Götter" }, description: { en: "Brew a Godsbreath Elixir.", de: "Braue ein Götteratem-Elixier." }, icon: "⚗", category: "crafting", rarity: "epic", condition: { type: "items_crafted", target: "godsbreath_elixir", count: 1 } },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Tausendertrenner)
     // -- Wealth: Gold (10 Mio. → epic, Audit § 1.6), Ausgaben (unverändert), Bankplätze (neu) --
-    { id: "ach_gold_1000", name: { en: "Coin Purse", de: "Geldbeutel" }, description: { en: "Hold 1000 gold at once.", de: "Besitze 1000 Gold auf einmal." }, icon: "🪙", category: "wealth", rarity: "common", condition: { type: "gold_reached", count: 1000 } },
-    { id: "ach_gold_10000", name: { en: "Coffer", de: "Schatztruhe" }, description: { en: "Hold 10000 gold at once.", de: "Besitze 10000 Gold auf einmal." }, icon: "💰", category: "wealth", rarity: "uncommon", condition: { type: "gold_reached", count: 10000 } },
-    { id: "ach_gold_100000", name: { en: "Treasury", de: "Schatzkammer" }, description: { en: "Hold 100000 gold at once.", de: "Besitze 100000 Gold auf einmal." }, icon: "🏦", category: "wealth", rarity: "rare", condition: { type: "gold_reached", count: 100000 } },
-    { id: "ach_gold_1000000", name: { en: "Merchant Prince", de: "Kaufmannsfürst" }, description: { en: "Hold 1000000 gold at once.", de: "Besitze 1000000 Gold auf einmal." }, icon: "👑", category: "wealth", rarity: "epic", condition: { type: "gold_reached", count: 1000000 } },
-    { id: "ach_gold_10000000", name: { en: "The Golden Throne", de: "Goldener Thron" }, description: { en: "Hold 10000000 gold at once.", de: "Besitze 10000000 Gold auf einmal." }, icon: "🏆", category: "wealth", rarity: "epic", condition: { type: "gold_reached", count: 10000000 } },
-    { id: "ach_gold_spent_1000", name: { en: "Shopper", de: "Käufer" }, description: { en: "Spend 1000 gold total.", de: "Gib 1000 Gold aus." }, icon: "🛒", category: "wealth", rarity: "common", condition: { type: "gold_spent", count: 1000 } },
-    { id: "ach_gold_spent_10000", name: { en: "Big Spender", de: "Verschwender" }, description: { en: "Spend 10000 gold total.", de: "Gib 10000 Gold aus." }, icon: "💸", category: "wealth", rarity: "uncommon", condition: { type: "gold_spent", count: 10000 } },
-    { id: "ach_gold_spent_100000", name: { en: "Patron", de: "Mäzen" }, description: { en: "Spend 100000 gold total.", de: "Gib 100000 Gold aus." }, icon: "🎁", category: "wealth", rarity: "rare", condition: { type: "gold_spent", count: 100000 } },
-    { id: "ach_gold_spent_1000000", name: { en: "Opulent", de: "Prunkliebhaber" }, description: { en: "Spend 1000000 gold total.", de: "Gib 1000000 Gold aus." }, icon: "💎", category: "wealth", rarity: "epic", condition: { type: "gold_spent", count: 1000000 } },
+    { id: "ach_gold_1000", name: { en: "Coin Purse", de: "Geldbeutel" }, description: { en: "Hold 1,000 gold at once.", de: "Besitze 1.000 Gold auf einmal." }, icon: "🪙", category: "wealth", rarity: "common", condition: { type: "gold_reached", count: 1000 } },
+    { id: "ach_gold_10000", name: { en: "Coffer", de: "Schatztruhe" }, description: { en: "Hold 10,000 gold at once.", de: "Besitze 10.000 Gold auf einmal." }, icon: "💰", category: "wealth", rarity: "uncommon", condition: { type: "gold_reached", count: 10000 } },
+    { id: "ach_gold_100000", name: { en: "Treasury", de: "Schatzkammer" }, description: { en: "Hold 100,000 gold at once.", de: "Besitze 100.000 Gold auf einmal." }, icon: "🏦", category: "wealth", rarity: "rare", condition: { type: "gold_reached", count: 100000 } },
+    { id: "ach_gold_1000000", name: { en: "Merchant Prince", de: "Kaufmannsfürst" }, description: { en: "Hold 1,000,000 gold at once.", de: "Besitze 1.000.000 Gold auf einmal." }, icon: "👑", category: "wealth", rarity: "epic", condition: { type: "gold_reached", count: 1000000 } },
+    { id: "ach_gold_10000000", name: { en: "The Golden Throne", de: "Goldener Thron" }, description: { en: "Hold 10,000,000 gold at once.", de: "Besitze 10.000.000 Gold auf einmal." }, icon: "🏆", category: "wealth", rarity: "epic", condition: { type: "gold_reached", count: 10000000 } },
+    { id: "ach_gold_spent_1000", name: { en: "Shopper", de: "Käufer" }, description: { en: "Spend 1,000 gold in total.", de: "Gib insgesamt 1.000 Gold aus." }, icon: "🛒", category: "wealth", rarity: "common", condition: { type: "gold_spent", count: 1000 } },
+    { id: "ach_gold_spent_10000", name: { en: "Big Spender", de: "Verschwender" }, description: { en: "Spend 10,000 gold in total.", de: "Gib insgesamt 10.000 Gold aus." }, icon: "💸", category: "wealth", rarity: "uncommon", condition: { type: "gold_spent", count: 10000 } },
+    { id: "ach_gold_spent_100000", name: { en: "Patron", de: "Mäzen" }, description: { en: "Spend 100,000 gold in total.", de: "Gib insgesamt 100.000 Gold aus." }, icon: "🎁", category: "wealth", rarity: "rare", condition: { type: "gold_spent", count: 100000 } },
+    { id: "ach_gold_spent_1000000", name: { en: "Opulent", de: "Prunkliebhaber" }, description: { en: "Spend 1,000,000 gold in total.", de: "Gib insgesamt 1.000.000 Gold aus." }, icon: "💎", category: "wealth", rarity: "epic", condition: { type: "gold_spent", count: 1000000 } },
     { id: "ach_bank_slots_10", name: { en: "Vault Keeper", de: "Gewölbewart" }, description: { en: "Buy 10 extra bank slots.", de: "Kaufe 10 zusätzliche Bankplätze." }, icon: "🗄", category: "wealth", rarity: "common", condition: { type: "bank_slots", count: 10 } },
     { id: "ach_bank_slots_100", name: { en: "Vault Warden", de: "Gewölbemeister" }, description: { en: "Buy 100 extra bank slots.", de: "Kaufe 100 zusätzliche Bankplätze." }, icon: "🗄", category: "wealth", rarity: "rare", condition: { type: "bank_slots", count: 100 } },
     { id: "ach_bank_slots_200", name: { en: "Bottomless Vault", de: "Bodenloses Gewölbe" }, description: { en: "Buy every bank slot there is.", de: "Kaufe jeden Bankplatz, den es gibt." }, icon: "🗄", category: "wealth", rarity: "epic", condition: { type: "bank_slots", count: 200 } },
@@ -18454,6 +18469,7 @@ export const content: ContentDB = {
   // Quest-Belohnungen: Gold + Items (keine Attributpunkte mehr).
   // ══════════════════════════════════════════════════════════════════════
   quests: [
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Nebenaufgaben, Semikolons, Gegenstände)
     // ── BLOCK 1: Erste Schritte (sofort zugänglich) ──────────────────────
     // Lore-Pass (Welle D, 2026-07-13): Text auf Kanon getrimmt (design/lore/weltlore-grim-reach.md
     // v3) — Heimstatt ist die Glutfeste (Emberhold), NICHT Hearthforge (gefallen, nur Legende,
@@ -18463,8 +18479,8 @@ export const content: ContentDB = {
       id: "q_first_steps",
       name: { en: "First Steps", de: "Erste Schritte" },
       description: {
-        en: "Cull 5 chickens on the Pastures outside Emberhold, a first grip on a weapon, nothing more.",
-        de: "Erlege 5 Hühner auf den Weiden vor der Glutfeste, ein erster Griff zur Waffe, mehr nicht.",
+        en: "Cull 5 chickens on the Pastures outside Emberhold. A first grip on a weapon, nothing more.",
+        de: "Erlege 5 Hühner auf den Weiden vor der Glutfeste. Ein erster Griff zur Waffe, mehr nicht.",
       },
       objectives: [{ type: "kill_monster", target: "chicken", count: 5 }],
       rewards: {},
@@ -18477,8 +18493,8 @@ export const content: ContentDB = {
       id: "q_first_blood",
       name: { en: "Goblin Blood", de: "Goblin-Blut" },
       description: {
-        en: "Slay 10 goblins in the Borderlands; they've been raiding the last farms near Emberhold long enough.",
-        de: "Erschlage 10 Goblins in den Grenzlanden; sie plündern die letzten Höfe nahe der Glutfeste zu lange schon.",
+        en: "Slay 10 goblins in the Borderlands. They have been raiding the last farms near Emberhold long enough.",
+        de: "Erschlage 10 Goblins in den Grenzlanden. Sie plündern die letzten Höfe nahe der Glutfeste schon zu lange.",
       },
       // Sweep6-Fix wiederhergestellt (Kontrolleur M1, 2026-07-13): der Welle-D-Lore-Pass hatte
       // das targets-Array überschrieben — ohne es zählen Varianten-Kills (goblin_rogue …) NICHT
@@ -18496,8 +18512,8 @@ export const content: ContentDB = {
       id: "q_woodcutter_1",
       name: { en: "Into the Wood", de: "In den Wald" },
       description: {
-        en: "Reach Woodcutting level 5. A sharp axe and a stout heart are all it takes; Emberhold asks no more.",
-        de: "Erreiche Holzfällen-Level 5. Eine scharfe Axt und ein kühnes Herz reichen; mehr verlangt die Glutfeste nicht.",
+        en: "Reach Woodcutting level 5. A sharp axe and a stout heart are all it takes. Emberhold asks no more.",
+        de: "Erreiche Holzfällen-Level 5. Eine scharfe Axt und ein festes Herz reichen aus. Mehr verlangt die Glutfeste nicht.",
       },
       objectives: [{ type: "reach_skill_level", target: "woodcutting", count: 5 }],
       rewards: {},
@@ -18507,21 +18523,22 @@ export const content: ContentDB = {
       id: "q_gatherer",
       name: { en: "Gatherer", de: "Sammler" },
       description: {
-        en: "Gather 50 items of any kind for Emberhold: chop wood, mine ore, pick herbs, or fell monsters.",
-        de: "Sammle 50 beliebige Items für die Glutfeste: Holz hacken, Erz abbauen, Kräuter pflücken oder Monster erlegen.",
+        en: "Gather 50 items of any kind for Emberhold: cut wood, break ore, pick herbs or bring down monsters.",
+        de: "Sammle 50 Gegenstände für die Glutfeste, gleich welche: Holz schlagen, Erz brechen, Kräuter pflücken oder Monster erlegen.",
       },
       objectives: [{ type: "gather_items", count: 50 }],
       rewards: {},
       tokenReward: 1,
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Bezug des Nebensatzes)
     // ── BLOCK 2: Goblin-Feldzug ───────────────────────────────────────────
     {
       id: "q_goblin_slayer",
       name: { en: "Goblin Slayer", de: "Goblin-Töter" },
       description: {
         en: "Push the goblin warband further back: slay 30 goblins in the Borderlands, once the shield-wall of the Reach.",
-        de: "Treibe die Goblin-Bande weiter zurück: erschlage 30 Goblins in den Grenzlanden, die einst der Schildwall des Reachs waren.",
+        de: "Treibe die Goblin-Bande weiter zurück: Erschlage 30 Goblins in den Grenzlanden, einst der Schildwall des Reachs.",
       },
       // Sweep6-Fix wiederhergestellt (Kontrolleur M1) — s. q_first_blood.
       objectives: [{ type: "kill_monster", target: "goblin", targets: ["goblin", "goblin_rogue", "goblin_spearman", "goblin_archer", "goblin_crossbower", "goblin_butcher", "goblin_shaman", "goblin_felmagician", "goblin_warlock", "goblin_stormcaller"], count: 30 }],
@@ -18543,6 +18560,7 @@ export const content: ContentDB = {
       requires: ["q_goblin_slayer"],
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Lager → Glutfeste)
     // ── BLOCK 3: Handwerk und Bergbau ────────────────────────────────────
     {
       id: "q_miner_1",
@@ -18560,8 +18578,8 @@ export const content: ContentDB = {
       id: "q_woodcutter_2",
       name: { en: "Seasoned Lumberjack", de: "Erfahrener Holzfäller" },
       description: {
-        en: "Reach Woodcutting level 15 to fell oaks; the camp needs more than thin kindling.",
-        de: "Erreiche Holzfällen-Level 15, um Eichen fällen zu können; das Lager braucht mehr als dünnes Astholz.",
+        en: "Reach Woodcutting level 15 to fell oaks. Emberhold needs more than thin kindling.",
+        de: "Erreiche Holzfällen-Level 15, um Eichen fällen zu können. Die Glutfeste braucht mehr als dünnes Astholz.",
       },
       objectives: [{ type: "reach_skill_level", target: "woodcutting", count: 15 }],
       rewards: {},
@@ -18569,6 +18587,7 @@ export const content: ContentDB = {
       requires: ["q_woodcutter_1"],
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Satzbau, Gesamtlevel)
     // ── BLOCK 4: Kämpfer-Pfad ─────────────────────────────────────────────
     {
       id: "q_fighter_1",
@@ -18586,8 +18605,8 @@ export const content: ContentDB = {
       id: "q_ash_hunter",
       name: { en: "Ash Field Exterminator", de: "Aschfeld-Ausrotter" },
       description: {
-        en: "Cull 20 ash rats in the Ashfields; what's left of the Reach's old bread-basket shouldn't belong to vermin too.",
-        de: "Erlege 20 Aschratten in den Aschfeldern; was von der Kornkammer des Reachs übrig blieb, soll nicht auch noch den Ratten gehören.",
+        en: "Cull 20 ash rats in the Ashfields. What is left of the Reach's old bread-basket should not belong to vermin too.",
+        de: "Erlege 20 Aschratten in den Aschfeldern. Was von der Kornkammer des Reachs übrig ist, soll nicht auch noch den Ratten gehören.",
       },
       objectives: [{ type: "kill_monster", target: "ash_rat", count: 20 }],
       rewards: {},
@@ -18612,13 +18631,14 @@ export const content: ContentDB = {
       requires: ["q_fighter_1"],
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Satzbau)
     // ── BLOCK 5: Aufstieg ─────────────────────────────────────────────────
     {
       id: "q_skiller_1",
       name: { en: "Jack of All Trades", de: "Allrounder" },
       description: {
-        en: "Reach a combined total level of 20 across all skills; Emberhold counts every capable hand twice.",
-        de: "Erreiche ein kombiniertes Gesamtlevel von 20 über alle Fertigkeiten; die Glutfeste zählt jede Hand doppelt.",
+        en: "Reach total level 20. Emberhold counts every capable hand twice.",
+        de: "Erreiche Gesamtlevel 20. Die Glutfeste zählt jede fähige Hand doppelt.",
       },
       objectives: [{ type: "reach_total_level", count: 20 }],
       rewards: {},
@@ -18638,13 +18658,14 @@ export const content: ContentDB = {
       requires: ["q_fighter_1", "q_shaman_hunt"],
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Satzbau, Tat zuerst)
     // ── BLOCK 6: Schwarzdornwald & Krypta ─────────────────────────────────
     {
       id: "q_blackthorn_1",
       name: { en: "Into the Blackthorn Wood", de: "In den Schwarzdornwald" },
       description: {
-        en: "Strike down 20 rootlings pulling free of the underbrush in the Blackthorn Wood; the wood has learned to defend itself.",
-        de: "Strecke 20 Wurzlinge nieder, die sich im Schwarzdornwald aus dem Unterholz lösen; der Wald hat gelernt, sich zu wehren.",
+        en: "Strike down 20 rootlings pulling free of the underbrush in the Blackthorn Wood. The wood has learned to defend itself.",
+        de: "Strecke 20 Wurzlinge nieder, die sich im Schwarzdornwald aus dem Unterholz lösen. Der Wald hat gelernt, sich zu wehren.",
       },
       objectives: [{ type: "kill_monster", target: "rootling_grunt", count: 20 }],
       rewards: {},
@@ -18657,8 +18678,8 @@ export const content: ContentDB = {
       id: "q_skiller_2",
       name: { en: "Versatile Adventurer", de: "Vielseitiger Abenteurer" },
       description: {
-        en: "Reach a combined total level of 50. Knowing only one trade doesn't last long in this world.",
-        de: "Erreiche ein kombiniertes Gesamtlevel von 50. Wer nur eines kann, hält in dieser Welt nicht lange durch.",
+        en: "Reach total level 50. Knowing only one trade does not last long in this world.",
+        de: "Erreiche Gesamtlevel 50. Wer nur ein Handwerk kennt, hält in dieser Welt nicht lange durch.",
       },
       objectives: [{ type: "reach_total_level", count: 50 }],
       rewards: {},
@@ -18669,8 +18690,8 @@ export const content: ContentDB = {
       id: "q_crypt_1",
       name: { en: "Bones of the Fallen", de: "Knochen der Gefallenen" },
       description: {
-        en: "Enter the Crypt and slay 10 skeleton warriors. The Grave Wardens sealed them away once; the seal no longer holds everywhere.",
-        de: "Betritt die Krypta und erschlage 10 Skelettkrieger. Der Orden der Grabwächter versiegelte sie einst; das Siegel hält nicht mehr überall.",
+        en: "Enter the Crypt and slay 10 skeleton warriors. The Grave Wardens sealed them away once. The seal no longer holds everywhere.",
+        de: "Betritt die Krypta und erschlage 10 Skelettkrieger. Der Orden der Grabwächter versiegelte sie einst. Das Siegel hält nicht mehr überall.",
       },
       objectives: [{ type: "kill_monster", target: "skeleton_warrior", count: 10 }],
       rewards: {},
@@ -18681,10 +18702,10 @@ export const content: ContentDB = {
     },
     {
       id: "q_wolf_slayer",
-      name: { en: "Into the Wildwood", de: "In die Wildwälder" },
+      name: { en: "Into the Wildwood", de: "In den Wildwald" },
       description: {
-        en: "Hunt 15 gray wolves in the Wildwood Hunting Grounds; everything here has grown larger since no one hunts anymore.",
-        de: "Erlege 15 Grauwölfe in den Wildwald-Jagdgründen; hier ist alles größer geworden, seit niemand mehr jagt.",
+        en: "Hunt 15 gray wolves in the Wildwood Hunting Grounds. Everything here has grown larger since no one hunts anymore.",
+        de: "Erlege 15 Grauwölfe in den Wildwald-Jagdgründen. Hier ist alles größer geworden, seit niemand mehr jagt.",
       },
       objectives: [{ type: "kill_monster", target: "gray_wolf", count: 15 }],
       rewards: {},
@@ -18694,13 +18715,14 @@ export const content: ContentDB = {
       requires: ["q_skiller_2", "q_crypt_1", "chronicle_11"],
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Tat zuerst, Zone)
     // ── BLOCK 7: Schwarzdornwald – tiefere Gefahr ─────────────────────────
     {
       id: "q_thorn_wolf_pack",
       name: { en: "Thorn Wolf Pack", de: "Das Dornwolf-Rudel" },
       description: {
-        en: "The Thorn Wolves of the Blackthorn Wood are more dangerous than their kin; the wood has sharpened them. Slay 20 of them.",
-        de: "Die Dornwölfe des Schwarzdornwalds sind gefährlicher als ihre Verwandten; der Wald hat sie schärfer gemacht. Erlege 20 von ihnen.",
+        en: "Slay 20 thorn wolves in the Blackthorn Wood. They are more dangerous than their kin, the wood has sharpened them.",
+        de: "Erlege 20 Dornwölfe im Schwarzdornwald. Sie sind gefährlicher als ihre Verwandten, der Wald hat sie schärfer gemacht.",
       },
       objectives: [{ type: "kill_monster", target: "thorn_wolf", count: 20 }],
       rewards: {},
@@ -18727,8 +18749,8 @@ export const content: ContentDB = {
       id: "q_moss_golem_hunt",
       name: { en: "Mossy Menace", de: "Moosige Bedrohung" },
       description: {
-        en: "Moss Golems have taken the forest clearings; even the wood keeps guards now. Shatter 15 of them.",
-        de: "Moosgoleme haben die Waldlichtungen übernommen; auch der Wald braucht Wachen. Zerschmettere 15 von ihnen.",
+        en: "Shatter 15 moss golems in the clearings of the Blackthorn Wood. Even the wood keeps guards now.",
+        de: "Zerschmettere 15 Moosgoleme auf den Lichtungen des Schwarzdornwalds. Auch der Wald hält sich inzwischen Wachen.",
       },
       objectives: [{ type: "kill_monster", target: "moss_golem", count: 15 }],
       rewards: {},
@@ -18736,6 +18758,7 @@ export const content: ContentDB = {
       requires: ["q_blackthorn_2"],
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Gesamtlevel)
     // ── BLOCK 8: Handwerk-Meilensteine (Mid-Game) ─────────────────────────
     {
       id: "q_miner_2",
@@ -18753,8 +18776,8 @@ export const content: ContentDB = {
       id: "q_woodcutter_3",
       name: { en: "Master of the Axe", de: "Meister der Axt" },
       description: {
-        en: "Reach Woodcutting level 30. The ancient groves yield their secrets only to the worthy; the Blackthorn prefers reverence to haste.",
-        de: "Erreiche Holzfällen-Level 30. Die uralten Haine offenbaren ihre Geheimnisse nur Würdigen; der Schwarzdorn mag Ehrfurcht lieber als Eile.",
+        en: "Reach Woodcutting level 30. The ancient groves yield their secrets only to the worthy. The Blackthorn prefers reverence to haste.",
+        de: "Erreiche Holzfällen-Level 30. Die uralten Haine offenbaren ihre Geheimnisse nur Würdigen. Der Schwarzdorn mag Ehrfurcht lieber als Eile.",
       },
       objectives: [{ type: "reach_skill_level", target: "woodcutting", count: 30 }],
       rewards: {},
@@ -18765,8 +18788,8 @@ export const content: ContentDB = {
       id: "q_skiller_3",
       name: { en: "Seasoned Adventurer", de: "Erfahrener Abenteurer" },
       description: {
-        en: "Reach a combined total level of 75. Many roads led you here, and Emberhold forgets none of them.",
-        de: "Erreiche ein kombiniertes Gesamtlevel von 75. Viele Wege haben dich hierher geführt, und die Glutfeste vergisst keinen davon.",
+        en: "Reach total level 75. Many roads led you here, and Emberhold forgets none of them.",
+        de: "Erreiche Gesamtlevel 75. Viele Wege haben dich hierher geführt, und die Glutfeste vergisst keinen davon.",
       },
       objectives: [{ type: "reach_total_level", count: 75 }],
       rewards: {},
@@ -18774,13 +18797,14 @@ export const content: ContentDB = {
       requires: ["q_skiller_2", "q_miner_2", "q_woodcutter_3"],
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Tat zuerst)
     // ── BLOCK 9: Krypta – tiefere Schichten ───────────────────────────────
     {
       id: "q_crypt_2",
       name: { en: "Unyielding Dead", de: "Die Unnachgiebigen Toten" },
       description: {
-        en: "The Crypt's lower halls are guarded by skeleton spearmen, a garrison that asks no pay anymore. Cut down 20 of them.",
-        de: "Die unteren Hallen der Krypta werden von Skelett-Speerträgern bewacht, einer Garnison, die keinen Sold mehr verlangt. Strecke 20 von ihnen nieder.",
+        en: "Cut down 20 skeleton spearmen in the Crypt's lower halls: a garrison that asks no pay anymore.",
+        de: "Strecke 20 Skelett-Speerträger in den unteren Hallen der Krypta nieder: eine Garnison, die keinen Sold mehr verlangt.",
       },
       objectives: [{ type: "kill_monster", target: "skeleton_spearman", count: 20 }],
       rewards: {},
@@ -18791,8 +18815,8 @@ export const content: ContentDB = {
       id: "q_crypt_3",
       name: { en: "Frozen Silence", de: "Gefrorene Stille" },
       description: {
-        en: "Skeleton Ice Mages haunt the Crypt's deepest vaults. Destroy 10 of them before they freeze you solid.",
-        de: "Skelett-Eismagier spuken in den tiefsten Gewölben der Krypta. Vernichte 10 von ihnen, bevor sie dich einfrieren.",
+        en: "Destroy 10 skeleton ice mages in the Crypt's deepest vaults before they freeze you solid.",
+        de: "Vernichte 10 Skelett-Eismagier in den tiefsten Gewölben der Krypta, bevor sie dich einfrieren.",
       },
       objectives: [{ type: "kill_monster", target: "skeleton_icemage", count: 10 }],
       rewards: {},
@@ -18800,13 +18824,14 @@ export const content: ContentDB = {
       requires: ["q_crypt_2"],
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Tat zuerst)
     // ── BLOCK 10: Wildwald – Steigende Bedrohung ──────────────────────────
     {
       id: "q_stag_hunter",
       name: { en: "King of the Wood", de: "König des Waldes" },
       description: {
-        en: "Wild stags like monuments dominate the Wildwood Hunting Grounds. Bring down 20 of these proud beasts.",
-        de: "Wildhirsche wie Denkmäler beherrschen die Wildwald-Jagdgründe. Strecke 20 dieser stolzen Tiere nieder.",
+        en: "Bring down 20 wild stags in the Wildwood Hunting Grounds. They stand like monuments, and they do not yield.",
+        de: "Strecke 20 Wildhirsche in den Wildwald-Jagdgründen nieder. Sie stehen da wie Denkmäler, und sie weichen nicht.",
       },
       objectives: [{ type: "kill_monster", target: "wild_stag", count: 20 }],
       rewards: {},
@@ -18817,8 +18842,8 @@ export const content: ContentDB = {
       id: "q_dire_wolf_hunt",
       name: { en: "Terror of the Wilds", de: "Schrecken der Wildnis" },
       description: {
-        en: "Dire Wolves stalk the deep Wildwood, larger than any wolf should be. Slay 15 of these ferocious predators.",
-        de: "Schreckenswölfe streifen durch den tiefen Wildwald, größer, als ein Wolf je sein sollte. Erlege 15 dieser grimmigen Raubtiere.",
+        en: "Slay 15 dire wolves in the deep Wildwood, larger than any wolf should be.",
+        de: "Erlege 15 Schreckenswölfe im tiefen Wildwald, größer, als ein Wolf je sein sollte.",
       },
       objectives: [{ type: "kill_monster", target: "dire_wolf", count: 15 }],
       rewards: {},
@@ -18838,13 +18863,14 @@ export const content: ContentDB = {
       requires: ["q_fighter_2", "q_dire_wolf_hunt"],
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Tat zuerst, Ort)
     // ── BLOCK 11: Schlackengrube – Industrielle Hölle ─────────────────────
     {
       id: "q_slagpit_1",
       name: { en: "Into the Pit", de: "Hinab in die Grube" },
       description: {
-        en: "Venture into the Slag Pit, where god-iron was once smelted, and exterminate 20 Pit Spiders lurking in the shadows.",
-        de: "Wag dich in die Schlackengrube, wo einst das Götzeneisen geschmolzen wurde, und vernichte 20 Grubenspinnen aus den Schatten.",
+        en: "Venture into the Slag Pit, where godiron was once smelted, and exterminate 20 pit spiders lurking in the shadows.",
+        de: "Wag dich in die Schlackengrube, wo einst das Götzeneisen geschmolzen wurde, und vernichte 20 Grubenspinnen, die in den Schatten lauern.",
       },
       objectives: [{ type: "kill_monster", target: "pit_spider", count: 20 }],
       rewards: {},
@@ -18857,8 +18883,8 @@ export const content: ContentDB = {
       id: "q_slagpit_2",
       name: { en: "Iron Haunting", de: "Eiserne Heimsuchung" },
       description: {
-        en: "Iron Revenants patrol the deepest passages, smiths who died in their armor and were never told to stop. Strike down 10 of these undying constructs.",
-        de: "Eisenrevenants patrouillieren durch die tiefsten Gänge, Schmiede, die in ihrer Rüstung starben und die Kündigung nie erhielten. Strecke 10 von ihnen nieder.",
+        en: "Strike down 10 iron revenants in the deepest passages of the Slag Pit: smiths who died in their armour and were never told to stop.",
+        de: "Strecke 10 Eisenrevenants in den tiefsten Gängen der Schlackengrube nieder: Schmiede, die in ihrer Rüstung starben und denen niemand sagte, dass die Arbeit vorbei ist.",
       },
       objectives: [{ type: "kill_monster", target: "iron_revenant", count: 10 }],
       rewards: {},
@@ -18866,13 +18892,14 @@ export const content: ContentDB = {
       requires: ["q_slagpit_1"],
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Tat zuerst, Gegenstände)
     // ── BLOCK 12: Hochland & Gathering-Endspiel ────────────────────────────
     {
       id: "q_skiller_4",
       name: { en: "Path of Mastery", de: "Pfad der Meisterschaft" },
       description: {
-        en: "Reach a combined total level of 100. Few who set out from Emberhold have come this far.",
-        de: "Erreiche ein kombiniertes Gesamtlevel von 100. Wenige, die aus der Glutfeste aufbrachen, sind so weit gekommen.",
+        en: "Reach total level 100. Few who set out from Emberhold have come this far.",
+        de: "Erreiche Gesamtlevel 100. Wenige, die aus der Glutfeste aufbrachen, sind so weit gekommen.",
       },
       objectives: [{ type: "reach_total_level", count: 100 }],
       rewards: {},
@@ -18883,8 +18910,8 @@ export const content: ContentDB = {
       id: "q_roc_fledgling",
       name: { en: "Highland Skywatch", de: "Hochland-Himmelswacht" },
       description: {
-        en: "Roc Fledglings rule the Highland thermals, where the sky still runs clean. Take down 10 of these colossal birds.",
-        de: "Roc-Jungvögel beherrschen die Hochland-Thermik, wo der Himmel noch sauber ist. Erlege 10 dieser kolossalen Vögel.",
+        en: "Take down 10 roc fledglings in the Highlands, where the sky still runs clean. Young does not mean small up here.",
+        de: "Erlege 10 Roc-Jungvögel im Hochland, wo der Himmel noch sauber ist. Jung heißt hier oben nicht klein.",
       },
       objectives: [{ type: "kill_monster", target: "roc", count: 10 }],
       rewards: {},
@@ -18910,7 +18937,7 @@ export const content: ContentDB = {
       name: { en: "Relentless Collector", de: "Unermüdlicher Sammler" },
       description: {
         en: "Gather 5,000 items in total for Emberhold. This land gives what little it has left only to those who endure.",
-        de: "Sammle insgesamt 5.000 Items für die Glutfeste. Das Land gibt seinen Rest nur denen, die ausdauern.",
+        de: "Sammle insgesamt 5.000 Gegenstände für die Glutfeste. Das Land gibt, was ihm bleibt, nur denen, die durchhalten.",
       },
       objectives: [{ type: "gather_items", count: 5000 }],
       rewards: {},
@@ -18918,6 +18945,7 @@ export const content: ContentDB = {
       requires: ["q_skiller_4"],
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Gesamtlevel, Satzbau)
     // ── BLOCK 13: Endspiel-Ankette ─────────────────────────────────────────
     {
       // Name bewusst NICHT geändert (Kanon-Auflösung, Bibel §3.1): Hearthforge ist gefallen, aber
@@ -18925,8 +18953,8 @@ export const content: ContentDB = {
       id: "q_skiller_5",
       name: { en: "Legend of the Hearthforge", de: "Legende von Hearthforge" },
       description: {
-        en: "Reach a combined total level of 150. Your deeds are told by Emberhold's fire now, the way the legend of the Hearthforge once was, where every craft of the Reach wintered out the world's fall.",
-        de: "Erreiche ein kombiniertes Gesamtlevel von 150. Deine Taten werden am Feuer der Glutfeste erzählt, so wie einst die Legende von Hearthforge, wo alle Künste des Reachs überwinterten.",
+        en: "Reach total level 150. Your deeds are told by Emberhold's fire now, the way the legend of the Hearthforge once was, where every craft of the Reach wintered out the world's fall.",
+        de: "Erreiche Gesamtlevel 150. Deine Taten werden am Feuer der Glutfeste erzählt, so wie einst die Legende von Hearthforge, wo alle Künste des Reachs den Fall der Welt überwinterten.",
       },
       objectives: [{ type: "reach_total_level", count: 150 }],
       rewards: {},
@@ -18937,8 +18965,8 @@ export const content: ContentDB = {
       id: "q_frost_hound",
       name: { en: "The Cold Hunt", de: "Die Kalte Jagd" },
       description: {
-        en: "Frost Hounds prowl the Frost Caverns, where the pit dug too deep and struck the cold of the void. Hunt 15 of them.",
-        de: "Frosthunde streifen durch die Frostkavernen, wo die Grube zu tief grub und die Kälte der Leere fand. Erlege 15 von ihnen.",
+        en: "Hunt 15 frost hounds in the Frost Caverns, where the pit dug too deep and struck the cold of the void.",
+        de: "Erlege 15 Frosthunde in den Frostkavernen, wo die Grube zu tief grub und die Kälte der Leere fand.",
       },
       objectives: [{ type: "kill_monster", target: "frost_hound", count: 15 }],
       rewards: {},
@@ -18946,6 +18974,7 @@ export const content: ContentDB = {
       requires: ["q_slagpit_2", "q_skiller_5"],
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Schmieden-Text)
     // ── STATISCHE SKILLING-QUESTS (r6-Hebel Q4): reine Skiller-Linie ─────────
     {
       id: "q_smith_journeyman",
@@ -18962,8 +18991,8 @@ export const content: ContentDB = {
       id: "q_smith_master",
       name: { en: "Master of the Forge", de: "Meister der Esse" },
       description: {
-        en: "Reach Smithing level 50. Only the truly dedicated can work the rarest metals of the Reach: god-iron forgives no impatience.",
-        de: "Erreiche Schmieden-Level 50. Nur die wahrhaft Hingebungsvollen können die seltensten Metalle des Reachs bearbeiten: Götzeneisen verzeiht keine Ungeduld.",
+        en: "Reach Smithing level 50. The rarest metals of the Reach are not learned in a single winter: godiron forgives no haste.",
+        de: "Erreiche Schmieden-Level 50. Die seltensten Metalle des Reachs lernt man nicht in einem Winter: Götzeneisen verzeiht keine Eile.",
       },
       objectives: [{ type: "reach_skill_level", target: "smithing", count: 50 }],
       rewards: {},
@@ -18971,6 +19000,7 @@ export const content: ContentDB = {
       requires: ["q_smith_journeyman"],
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Zahlen je Ziel, Lore ohne Feder/Akte als Handelnde)
     // ── BLOCK 14: Die Aschechronik (Welle D2, 2026-07-13) ──────────────────
     // 21 Hauptquest-Kapitel nach design/lore/aschechronik-spec.md §3 — strikt sequenziell via
     // `requires`, `loreText` WÖRTLICH aus der Spec übernommen (Wächter-Stimme, nicht neu gedichtet).
@@ -18983,11 +19013,11 @@ export const content: ContentDB = {
       name: { en: "The First Page", de: "Die erste Seite" },
       description: {
         en: "Gather 25 items of any kind at Emberhold's gate: your first steps under the Warden's watch.",
-        de: "Sammle 25 beliebige Items am Tor der Glutfeste: deine ersten Schritte unter den Augen des Wächters.",
+        de: "Sammle 25 Gegenstände am Tor der Glutfeste, gleich welche: deine ersten Schritte unter den Augen des Wächters.",
       },
       loreText: {
-        en: "The Chronicle has gone a long time without a new name. Today it carries yours — or what you leave in its place: the Nameless, taken in at the gate of Emberhold, in the rain, carrying nothing. I have shown you the forge, the garden beds, the vault, the notice board. Ambrast, they say, lives in every hearth, and Maera in every seed; whether they listen is not mine to record. What is recorded: you set your hands to work. Small labors, none of them great, every one of them a beginning. The first page is the easiest. It only has to begin.",
-        de: "Die Chronik hat lange keinen neuen Namen getragen. Heute trägt sie deinen — oder das, was du an seiner Stelle lässt: der Namenlose, am Tor der Glutfeste aufgenommen, bei Regen, ohne Gepäck. Ich habe dir die Esse gezeigt, die Beete, das Gewölbe, den Aushang. Ambrast, sagt man, wohnt in jedem Herd, und Maera in jeder Saat; ob sie zuhören, verzeichne ich nicht, das steht mir nicht zu. Verzeichnet ist: Du hast zugegriffen. Handgriffe, keiner davon groß, jeder davon ein Anfang. Die erste Seite ist die leichteste. Sie muss nur beginnen.",
+        en: "The Chronicle has gone a long time without a new name. Today it carries yours — or what you leave in its place: the Nameless, taken in at the gate of Emberhold, in the rain, carrying nothing. I have shown you the forge, the garden beds, the vault, the notice board. Ambrast, they say, lives in every hearth, and Maera in every seed. Whether they listen is not mine to record. What is recorded: you set your hands to work. Small labors, none of them great, every one of them a beginning. The first page is the easiest. It only has to begin.",
+        de: "Die Chronik hat lange keinen neuen Namen getragen. Heute trägt sie deinen — oder das, was du an seiner Stelle lässt: der Namenlose, am Tor der Glutfeste aufgenommen, bei Regen, ohne Gepäck. Ich habe dir die Esse gezeigt, die Beete, das Gewölbe, den Aushang. Ambrast, sagt man, wohnt in jedem Herd, und Maera in jeder Saat. Ob sie zuhören, verzeichne ich nicht, das steht mir nicht zu. Verzeichnet ist: Du hast zugegriffen. Handgriffe, keiner davon groß, jeder davon ein Anfang. Die erste Seite ist die leichteste. Sie muss nur beginnen.",
       },
       objectives: [{ type: "gather_items", count: 25 }],
       rewards: { gold: 100 },
@@ -19001,8 +19031,8 @@ export const content: ContentDB = {
         de: "Erlege 15 Weidentiere und bezwinge den Rasenden Bullen: das gnädigste Land, das dir bevorsteht, widerspricht bereits.",
       },
       loreText: {
-        en: "The livestock of the Pastures has taken up customs of its own, since no one is left to object. The bull was no spawn of the ash — only a beast that went too long unanswered. You answered. The Chronicle passes no judgement on the herds; they stayed when the people left, out of loyalty or lack of imagination, and it records neither. It records this: first blood, yours and not yours, and that your hand grew steadier instead of faster. That is rare. The Pastures are the kindest country you will see from here on. I do not write that as a warning. I write it because it is true.",
-        de: "Das Vieh der Weiden hat eigene Sitten angenommen, seit niemand mehr widerspricht. Der Bulle war keine Ausgeburt — nur ein Tier, dem zu lange niemand widersprochen hat. Du hast widersprochen. Die Chronik führt kein Urteil über das Vieh; es blieb, als die Menschen gingen, aus Treue oder aus Mangel an Vorstellungskraft, und beides vermerkt sie nicht. Vermerkt ist: das erste Blut, deines und fremdes, und dass deine Hand dabei ruhiger wurde statt schneller. Das ist selten. Die Weiden sind das gnädigste Land, das dir bevorsteht. Ich schreibe das nicht, um dich zu warnen. Ich schreibe es, weil es wahr ist.",
+        en: "The livestock of the Pastures has taken up customs of its own, since no one is left to object. The bull was no spawn of the ash — only a beast that went too long unanswered. You answered. I pass no judgement on the herds. They stayed when the people left, out of loyalty or lack of imagination, and I record neither. I record this: first blood, yours and not yours, and that your hand grew steadier instead of faster. That is rare. The Pastures are the kindest country you will see from here on. I do not write that as a warning. I write it because it is true.",
+        de: "Das Vieh der Weiden hat eigene Sitten angenommen, seit niemand mehr widerspricht. Der Bulle war keine Ausgeburt — nur ein Tier, dem zu lange niemand widersprochen hat. Du hast widersprochen. Ich führe kein Urteil über das Vieh. Es blieb, als die Menschen gingen, aus Treue oder aus Mangel an Vorstellungskraft, und beides vermerke ich nicht. Vermerkt ist: das erste Blut, deines und fremdes, und dass deine Hand dabei ruhiger wurde statt schneller. Das ist selten. Die Weiden sind das gnädigste Land, das dir bevorsteht. Ich schreibe das nicht, um dich zu warnen. Ich schreibe es, weil es wahr ist.",
       },
       objectives: [
         { type: "kill_monster", target: "chicken", targets: ["chicken", "cow", "boar", "feral_goat"], count: 15 },
@@ -19018,12 +19048,12 @@ export const content: ContentDB = {
       // #354 Paket 4.1: Singular→Plural — die Objective verlangt 5 Kills (0/5-Zähler), die
       // Beschreibung sprach aber von "dem Imp" (einem einzelnen). Text-/Zähler-Mismatch behoben.
       description: {
-        en: "Drive out the Imps nesting in the greenest corner of the Pastures.",
-        de: "Vertreibe die im grünsten Winkel der Weiden nistenden Imps.",
+        en: "Drive out the Imp nesting in the greenest corner of the Pastures, 5 times over. Sparks come back.",
+        de: "Treibe den Imp aus, der im grünsten Winkel der Weiden nistet, 5-mal. Funken kommen wieder.",
       },
       loreText: {
-        en: "In the greenest corner of the Reach nests a spark from elsewhere. The old folk used to say: where an imp dwells, a stranger has passed by. The old folk are gone; the imp was still there. You have driven it out. It will return, sparks always do, but the Chronicle needs the pattern, not the victory: even the green land has cracks, and the cracks have an origin. I wrote the word \"stranger\" and held the pen for the space of a breath. It does not usually do that. Record it as a quirk of the chronicler. Or as the first honest word in this book.",
-        de: "Im grünsten Winkel des Reachs nistet ein Funke von anderswo. Die Alten sagten: Wo ein Imp haust, ist ein Fremder vorübergegangen. Die Alten sind fort; der Imp war noch da. Du hast ihn ausgetrieben. Er wird wiederkommen, Funken tun das immer, aber die Chronik braucht das Muster, nicht den Sieg: Auch das grüne Land hat Risse, und die Risse haben eine Herkunft. Ich habe das Wort „Fremder\" geschrieben und die Feder einen Atemzug angehalten. Das tut sie sonst nicht. Vermerke es als Eigenheit des Chronisten. Oder als das erste ehrliche Wort dieses Buches.",
+        en: "In the greenest corner of the Reach nests a spark from elsewhere. The old folk used to say: where an imp dwells, a stranger has passed by. The old folk are gone. The imp was still there. You have driven it out. It will return, sparks always do, but what I need for the book is the pattern, not the victory: even the green land has cracks, and the cracks have an origin. I wrote the word “stranger” and stopped for the space of a breath. I do not usually do that. Record it as a quirk of the chronicler. Or as the first honest word in this book.",
+        de: "Im grünsten Winkel des Reachs nistet ein Funke von anderswo. Die Alten sagten: Wo ein Imp haust, ist ein Fremder vorübergegangen. Die Alten sind fort. Der Imp war noch da. Du hast ihn ausgetrieben. Er wird wiederkommen, Funken tun das immer, aber ich brauche für das Buch das Muster, nicht den Sieg: Auch das grüne Land hat Risse, und die Risse haben eine Herkunft. Ich habe das Wort „Fremder“ geschrieben und bin einen Atemzug lang nicht weitergekommen. Das passiert mir sonst nicht. Vermerke es als Eigenheit des Chronisten. Oder als das erste ehrliche Wort dieses Buches.",
       },
       objectives: [{ type: "kill_monster", target: "the_imp", count: 5 }],
       rewards: { gold: 400 },
@@ -19038,8 +19068,8 @@ export const content: ContentDB = {
         de: "Durchquere die aufgegebene Mark und dezimiere die Goblin-Bande: 30 einfache Kämpfer, 8 ihrer fel-berührten Zauberer.",
       },
       loreText: {
-        en: "The march had ramparts, armories, watchfires: the shield-wall of the Reach. Through its needle's eye came the fleeing: orc clans with anvils on their backs, Rakhari caravans with seed, and at last no one at all. Then the march was abandoned, and nowhere is it written who gave the order. The goblins did not come as conquerors; they came as heirs, and out of the estate they are building a mockery of the old army. Their fel magicians carry a fire that came from no forge of the Reach — borrowed, says the warband, and will not name the creditor. You walked the old border, as I asked. Who abandoned it, the Chronicle carries as an open entry. It has practice.",
-        de: "Die Mark hatte Wälle, Zeughäuser, Wachfeuer: den Schildwall des Reachs. Durch ihr Nadelöhr kamen die Flüchtenden: Ork-Sippen mit Ambossen auf dem Rücken, Rakhari-Karawanen mit Saatgut, zuletzt niemand mehr. Dann wurde sie aufgegeben, und nirgends steht, wer den Befehl gab. Die Goblins kamen nicht als Eroberer; sie kamen als Erben und bauen aus dem Nachlass eine Karikatur der alten Armee. Ihre Felmagier tragen ein Feuer, das keiner Esse des Reachs entstammt — geliehen, sagt die Bande, und verschweigt den Gläubiger. Du hast die Grenze abgelaufen, wie ich es erbat. Die Frage, wer sie verließ, trägt die Chronik als offenen Posten. Sie hat Übung darin.",
+        en: "The march had ramparts, armories, watchfires: the shield-wall of the Reach. Through its needle's eye came the fleeing: orc clans with anvils on their backs, Rakhari caravans with seed, and at last no one at all. Then the march was abandoned, and nowhere is it written who gave the order. The goblins did not come as conquerors. They came as heirs, and out of the estate they are building a mockery of the old army. Their fel magicians carry a fire that came from no forge of the Reach — borrowed, says the warband, and will not name the creditor. You walked the old border, as I asked. Who abandoned it, I carry as an open entry. I have practice.",
+        de: "Die Mark hatte Wälle, Zeughäuser, Wachfeuer: den Schildwall des Reachs. Durch ihr Nadelöhr kamen die Flüchtenden: Ork-Sippen mit Ambossen auf dem Rücken, Rakhari-Karawanen mit Saatgut, zuletzt niemand mehr. Dann wurde sie aufgegeben, und nirgends steht, wer den Befehl gab. Die Goblins kamen nicht als Eroberer. Sie kamen als Erben und bauen aus dem Nachlass eine Karikatur der alten Armee. Ihre Felmagier tragen ein Feuer, das keiner Esse des Reachs entstammt — geliehen, sagt die Bande, und verschweigt den Gläubiger. Du hast die Grenze abgelaufen, wie ich es erbat. Die Frage, wer sie verließ, trage ich als offenen Posten ein. Darin habe ich Übung.",
       },
       objectives: [
         { type: "kill_monster", target: "goblin", targets: ["goblin", "goblin_rogue", "goblin_spearman", "goblin_archer", "goblin_crossbower", "goblin_butcher"], count: 30 },
@@ -19059,8 +19089,8 @@ export const content: ContentDB = {
         de: "Beende den Feldzug des Kriegshäuptlings im Dungeon Goblin-Kriegsbande, bevor er einen Namen bekommt.",
       },
       loreText: {
-        en: "The Warchief dreams of making the warband an army again. It would be funny if he were not so diligent. You walked his muster in its own order: vanguard, spearwall, siege line, blood rite, and took from him the seal the band grants its officers. An army whose seal can be taken is not an army. The march was abandoned once; a second time will not be recorded. I enter the campaign that will now never earn a name, and note, for the sake of order: the fel fire did not die with the Warchief's ambitions. It has only changed debtors.",
-        de: "Der Kriegshäuptling träumt davon, aus der Bande wieder ein Heer zu machen. Es wäre komisch, wenn er nicht so fleißig wäre. Du bist durch seine Heerschau gegangen, in ihrer eigenen Ordnung: Vorhut, Speerwand, Belagerungslinie, Blutritus, und hast ihm das Siegel genommen, das die Bande ihren Offizieren verleiht. Eine Armee, deren Siegel man nehmen kann, ist keine Armee. Die Mark wurde einmal aufgegeben; ein zweites Mal wird nicht verzeichnet. Ich trage den Feldzug ein, der nun keinen Namen mehr bekommt, und vermerke der Ordnung halber: Das Fel-Feuer der Bande ist mit dem Ehrgeiz des Häuptlings nicht erloschen. Es hat nur den Schuldner gewechselt.",
+        en: "The Warchief dreams of making the warband an army again. It would be funny if he were not so diligent. You walked his muster in its own order: vanguard, spearwall, siege line, blood rite, and took from him the seal the band grants its officers. An army whose seal can be taken is not an army. The march was abandoned once. A second time will not be recorded. I enter the campaign that will now never earn a name, and note, for the sake of order: the fel fire did not die with the Warchief's ambitions. It has only changed debtors.",
+        de: "Der Kriegshäuptling träumt davon, aus der Bande wieder ein Heer zu machen. Es wäre komisch, wenn er nicht so fleißig wäre. Du bist durch seine Heerschau gegangen, in ihrer eigenen Ordnung: Vorhut, Speerwand, Belagerungslinie, Blutritus, und hast ihm das Siegel genommen, das die Bande ihren Offizieren verleiht. Eine Armee, deren Siegel man nehmen kann, ist keine Armee. Die Mark wurde einmal aufgegeben. Ein zweites Mal wird nicht verzeichnet. Ich trage den Feldzug ein, der nun keinen Namen mehr bekommt, und vermerke der Ordnung halber: Das Fel-Feuer der Bande ist mit dem Ehrgeiz des Häuptlings nicht erloschen. Es hat nur den Schuldner gewechselt.",
       },
       objectives: [{ type: "kill_monster", target: "goblin_warchief", count: 1 }],
       rewards: { gold: 1500, items: [{ id: "dim_essence", qty: 15 }] },
@@ -19071,12 +19101,12 @@ export const content: ContentDB = {
       id: "chronicle_06",
       name: { en: "The Ash Lesson", de: "Die Aschelektion" },
       description: {
-        en: "Cull the vermin of the Ashfields and lay 10 mire wisps to rest: the unburied field hands of a dead harvest.",
-        de: "Dezimiere das Ungeziefer der Aschfelder und lege 10 Sumpfirrlichter zur Ruhe: die unbegrabenen Feldarbeiter einer toten Ernte.",
+        en: "Cull 30 vermin of the Ashfields and lay 10 mire wisps to rest: the unburied field hands of a dead harvest.",
+        de: "Erlege 30 Schädlinge der Aschfelder und lege 10 Sumpfirrlichter zur Ruhe: die unbegrabenen Feldarbeiter einer toten Ernte.",
       },
       loreText: {
-        en: "I led you here on purpose. This is what a land looks like when an idol has loved it: miles of grey, the stubble of old harvests, and what lives here lives on leavings. The scriptures called these fields the Grain Mother's bread-land; no one ever prayed here in vain — so it was believed. The wisps in the mire are the field hands nobody buried, once burying went out of fashion. They are still praying, I fear. And here is the lesson I marched you through ash to learn: none of it ever reached the Grain Mother. Not one stalk, not one prayer. The harvest flowed elsewhere. Mark the direction. The Chronicle has, for a long time now.",
-        de: "Ich habe dich absichtlich hierher geführt. So sieht Land aus, das ein Götze geliebt hat: kilometerweit Grau, Stoppeln alter Ernten, und was lebt, lebt von Resten. Die Schriften nannten die Felder Maeras Brotland; niemand betete dort je vergebens, glaubte man. Die Irrlichter im Morast sind die Feldarbeiter, die niemand mehr begrub, als das Begraben aus der Mode kam. Sie beten weiter, fürchte ich. Und hier ist die Lektion, um derentwillen ich dich durch Asche geschickt habe: Nichts davon kam je bei der Kornmutter an. Kein Halm, kein Gebet. Die Ernte floss woandershin. Merke dir die Richtung. Die Chronik tut es längst.",
+        en: "I led you here on purpose. This is what a land looks like when an idol has loved it: miles of grey, the stubble of old harvests, and what lives here lives on leavings. The scriptures called these fields the Grain Mother's bread-land. No one ever prayed here in vain — so it was believed. The wisps in the mire are the field hands nobody buried, once burying went out of fashion. They are still praying, I fear. And here is the lesson I marched you through ash to learn: none of it ever reached the Grain Mother. Not one stalk, not one prayer. The harvest flowed elsewhere. Mark the direction. I entered it long ago.",
+        de: "Ich habe dich absichtlich hierher geführt. So sieht Land aus, das ein Götze geliebt hat: kilometerweit Grau, Stoppeln alter Ernten, und was lebt, lebt von Resten. Die Schriften nannten die Felder Maeras Brotland. Niemand betete dort je vergebens, glaubte man. Die Irrlichter im Morast sind die Feldarbeiter, die niemand mehr begrub, als das Begraben aus der Mode kam. Sie beten weiter, fürchte ich. Und hier ist die Lektion, um derentwillen ich dich durch Asche geschickt habe: Nichts davon kam je bei der Kornmutter an. Kein Halm, kein Gebet. Die Ernte floss woandershin. Merke dir die Richtung. Ich habe sie längst eingetragen.",
       },
       objectives: [
         { type: "kill_monster", target: "ash_rat", targets: ["ash_rat", "ashfield_jackal", "dust_vulture", "pitch_beetle"], count: 30 },
@@ -19094,8 +19124,8 @@ export const content: ContentDB = {
         de: "Breche das Recht des Aschtyrannen: das größte Aas-Tier der Aschfelder.",
       },
       loreText: {
-        en: "Over the fields ruled the Ash Tyrant, the greatest carrion-beast of the grey, a king by the only law the ash acknowledges: what feeds, reigns. You broke that law. The Chronicle has grown careful with kings; the Reach had some, and their chapters all end alike. But it gladly records that an order holds in the grey again, one that does not feed on it. It is little. In the Ashfields, little is a great deal. The vultures will crown a new tyrant; that is their way. He will be smaller, for a while. Whiles are what we defend. I write down every one.",
-        de: "Über den Feldern herrschte der Aschtyrann, das größte Aas-Tier des Graus, ein König nach dem einzigen Recht, das die Asche anerkennt: Wer frisst, regiert. Du hast das Recht gebrochen. Die Chronik ist bei Königen zurückhaltend geworden; das Reach hatte welche, und ihre Kapitel enden alle gleich. Aber sie vermerkt gern, dass im Grau wieder eine Ordnung gilt, die nicht frisst. Es ist wenig. In den Aschfeldern ist wenig sehr viel. Die Geier werden einen neuen Tyrannen küren, das ist ihre Art; er wird kleiner sein, eine Weile. Weilen sind, was wir verteidigen. Ich schreibe sie alle auf.",
+        en: "Over the fields ruled the Ash Tyrant, the greatest carrion-beast of the grey, a king by the only law the ash acknowledges: what feeds, reigns. You broke that law. I have grown careful with kings. The Reach had some, and their chapters all end alike. But I gladly record that an order holds in the grey again, one that does not feed on it. It is little. In the Ashfields, little is a great deal. The vultures will crown a new tyrant. That is their way. He will be smaller, for a while. Whiles are what we defend. I write down every one.",
+        de: "Über den Feldern herrschte der Aschtyrann, das größte Aas-Tier des Graus, ein König nach dem einzigen Recht, das die Asche anerkennt: Wer frisst, regiert. Du hast das Recht gebrochen. Ich bin bei Königen zurückhaltend geworden. Das Reach hatte welche, und ihre Kapitel enden alle gleich. Aber ich vermerke gern, dass im Grau wieder eine Ordnung gilt, die nicht frisst. Es ist wenig. In den Aschfeldern ist wenig sehr viel. Die Geier werden einen neuen Tyrannen küren, das ist ihre Art. Er wird kleiner sein, eine Weile. Weilen sind, was wir verteidigen. Ich schreibe sie alle auf.",
       },
       objectives: [{ type: "kill_monster", target: "ash_tyrant", count: 1 }],
       rewards: { gold: 1800 },
@@ -19106,12 +19136,12 @@ export const content: ContentDB = {
       id: "chronicle_08",
       name: { en: "Thorns", de: "Dornen" },
       description: {
-        en: "Thin the rootlings of the Blackthorn Wood and contest the Elder Treant: passage, not victory, is what the wood is owed.",
-        de: "Dezimiere die Wurzlinge des Schwarzdornwalds und fordere den Alten Baumriesen: Durchgang, nicht Sieg, ist dem Wald geschuldet.",
+        en: "Thin 30 rootlings of the Blackthorn Wood and contest the Elder Treant: passage, not victory, is what the wood is owed.",
+        de: "Dezimiere 30 Wurzlinge des Schwarzdornwalds und fordere den Alten Baumriesen: Durchgang, nicht Sieg, ist dem Wald geschuldet.",
       },
       loreText: {
-        en: "The wood alone learned something from the Idolfall: it armed itself. Rootlings pull free of the underbrush, gnarled and thorned, and the Elder Treant is less a tree than a verdict. I asked for passage, not victory — the difference will matter, the deeper this book leads. You contested the verdict and thinned the briar, no more. The Blackthorn will remember; woods keep their own chronicle, in rings instead of lines. Beneath its roots lie barrows older than any keep of the Reach, and out of them comes a singing. We follow it. I wish I could write: reluctantly.",
-        de: "Der Wald hat als Einziger aus dem Bildersturz gelernt: Er bewaffnet sich. Wurzlinge lösen sich aus dem Unterholz, knorrig und dornig, und der Alte Baumriese ist weniger ein Baum als ein Beschluss. Ich habe um Durchgang gebeten, nicht um Sieg — der Unterschied wird wichtig, je tiefer dieses Buch führt. Du hast den Beschluss angefochten und das Unterholz gelichtet, nicht mehr. Der Schwarzdorn wird es sich merken; Wälder führen ihre eigene Chronik, in Ringen statt in Zeilen. Unter seinen Wurzeln liegen Hügelgräber, älter als jede Feste des Reachs, und aus ihnen kommt ein Gesang. Wir folgen ihm. Ich wünschte, ich könnte schreiben: widerwillig.",
+        en: "The wood alone learned something from the Idolfall: it armed itself. Rootlings pull free of the underbrush, gnarled and thorned, and the Elder Treant is less a tree than a verdict. I asked for passage, not victory — the difference will matter, the deeper this book leads. You contested the verdict and thinned the briar, no more. The Blackthorn will remember. Woods keep their own chronicle, in rings instead of lines. Beneath its roots lie barrows older than any keep of the Reach, and out of them comes a singing. We follow it. I wish I could write: reluctantly.",
+        de: "Der Wald hat als Einziger aus dem Bildersturz gelernt: Er bewaffnet sich. Wurzlinge lösen sich aus dem Unterholz, knorrig und dornig, und der Alte Baumriese ist weniger ein Baum als ein Beschluss. Ich habe um Durchgang gebeten, nicht um Sieg — der Unterschied wird wichtig, je tiefer dieses Buch führt. Du hast den Beschluss angefochten und das Unterholz gelichtet, nicht mehr. Der Schwarzdorn wird es sich merken. Wälder führen ihre eigene Chronik, in Ringen statt in Zeilen. Unter seinen Wurzeln liegen Hügelgräber, älter als jede Feste des Reachs, und aus ihnen kommt ein Gesang. Wir folgen ihm. Ich wünschte, ich könnte schreiben: widerwillig.",
       },
       objectives: [
         { type: "kill_monster", target: "rootling_grunt", targets: ["rootling_grunt", "rootling_gimp", "rootling_gimp2"], count: 30 },
@@ -19129,8 +19159,8 @@ export const content: ContentDB = {
         de: "Bring 15 Hügelgrab-Choristen zum Schweigen und passiere den Waldvogt: der Gesang der Toten weist kryptenwärts.",
       },
       loreText: {
-        en: "For the first time you have heard the dead sing. The Barrow Chanter chants litanies in a tongue no one speaks anymore, and does not tire; the Bramble Witch was a woman who stayed when everyone left, and the wood is content with the trade. The Forest Warden bears an office that people once held — the wood repossessed it and filled the post anew. You respected the office, and you passed; the Chronicle records both. And it records what I do not like: the singing has a direction. Cryptward. The dead singing can be borne. The dead singing toward something is a question. We are going to ask it.",
-        de: "Zum ersten Mal hast du die Toten singen hören. Der Hügelgrab-Chorist singt Litaneien in einer Sprache, die keiner mehr spricht, und wird nicht müde; die Rankenhexe war eine Frau, die blieb, als alle gingen, und der Wald ist mit dem Tausch zufrieden. Der Waldvogt trägt ein Amt, das früher Menschen innehatten — der Wald hat es eingezogen und neu besetzt. Du hast das Amt respektiert, und du bist passiert; die Chronik vermerkt beides. Und sie vermerkt, was mir nicht gefällt: Der Gesang hat eine Richtung. Kryptenwärts. Tote, die singen, sind zu ertragen. Tote, die irgendwohin singen, sind eine Frage. Wir gehen ihr nach.",
+        en: "For the first time you have heard the dead sing. The Barrow Chanter chants litanies in a tongue no one speaks anymore, and does not tire. The Bramble Witch was a woman who stayed when everyone left, and the wood is content with the trade. The Forest Warden bears an office that people once held — the wood repossessed it and filled the post anew. You respected the office, and you passed. I record both. And I record what I do not like: the singing has a direction. Cryptward. The dead singing can be borne. The dead singing toward something is a question. We are going to ask it.",
+        de: "Zum ersten Mal hast du die Toten singen hören. Der Hügelgrab-Chorist singt Litaneien in einer Sprache, die keiner mehr spricht, und wird nicht müde. Die Rankenhexe war eine Frau, die blieb, als alle gingen, und der Wald ist mit dem Tausch zufrieden. Der Waldvogt trägt ein Amt, das früher Menschen innehatten — der Wald hat es eingezogen und neu besetzt. Du hast das Amt respektiert, und du bist passiert. Ich vermerke beides. Und ich vermerke, was mir nicht gefällt: Der Gesang hat eine Richtung. Kryptenwärts. Tote, die singen, sind zu ertragen. Tote, die irgendwohin singen, sind eine Frage. Wir gehen ihr nach.",
       },
       objectives: [
         { type: "kill_monster", target: "barrow_chanter", count: 15 },
@@ -19148,8 +19178,8 @@ export const content: ContentDB = {
         de: "Erkunde die gebrochene Ordnung der Krypta: 40 Skelettwachen, 10 Mitglieder des Hohlen Chors, der nie ein Amen singt.",
       },
       loreText: {
-        en: "The Order of the Grave Wardens gathered the dead of the Reach into a single deep and sealed them, orderly, indexed, watched, as Vhel would have it. The seal held generations longer than the Order did. I know those corridors; I walked them while the Order still dug. Do not reckon how long ago that must have been — the Chronicle doesn't either. Now the deep stands open, and the dead are \"fit for duty\" again: warriors, archers, ice-mages, a garrison that asks no pay. The Hollow Choir goes on singing the prayers of the dead; hollow, because no amen ever comes. You have surveyed the order of things and understood the breach. That will do for today. It will not do for tomorrow.",
-        de: "Der Orden der Grabwächter sammelte die Toten des Reachs in einer einzigen Tiefe und versiegelte sie, ordentlich, verzeichnet, bewacht, in Vhels Sinn. Das Siegel hielt Generationen länger als der Orden. Ich kenne die Gänge; ich ging sie, als der Orden noch grub. Rechne nicht nach, wie lange das her sein muss — die Chronik tut es auch nicht. Jetzt steht die Tiefe offen, und die Toten sind wieder „diensttauglich\": Krieger, Schützen, Eismagier, eine Garnison, die keinen Sold verlangt. Der Hohle Chor singt die Gebete der Toten weiter; hohl heißt er, weil nie ein Amen kommt. Du hast die Ordnung besichtigt und den Bruch verstanden. Das genügt für heute. Für morgen genügt es nicht.",
+        en: "The Order of the Grave Wardens gathered the dead of the Reach into a single deep and sealed them, orderly, indexed, watched, as Vhel would have it. The seal held generations longer than the Order did. I know those corridors. I walked them while the Order still dug. Do not reckon how long ago that must have been. I do not either. Now the deep stands open, and the dead are “fit for duty” again: warriors, archers, ice-mages, a garrison that asks no pay. The Hollow Choir goes on singing the prayers of the dead. Hollow, because no amen ever comes. You have surveyed the order of things and understood the breach. That will do for today. It will not do for tomorrow.",
+        de: "Der Orden der Grabwächter sammelte die Toten des Reachs in einer einzigen Tiefe und versiegelte sie, ordentlich, verzeichnet, bewacht, in Vhels Sinn. Das Siegel hielt Generationen länger als der Orden. Ich kenne die Gänge. Ich ging sie, als der Orden noch grub. Rechne nicht nach, wie lange das her sein muss. Ich tue es auch nicht. Jetzt steht die Tiefe offen, und die Toten sind wieder „diensttauglich“: Krieger, Schützen, Eismagier, eine Garnison, die keinen Sold verlangt. Der Hohle Chor singt die Gebete der Toten weiter. Hohl heißt er, weil nie ein Amen kommt. Du hast die Ordnung besichtigt und den Bruch verstanden. Das genügt für heute. Für morgen genügt es nicht.",
       },
       objectives: [
         { type: "kill_monster", target: "skeleton_warrior", targets: ["skeleton_warrior", "skeleton_archer", "skeleton_spearman", "skeleton_butcher", "skeleton_icemage", "skeleton_pyroclasp"], count: 40 },
@@ -19165,12 +19195,12 @@ export const content: ContentDB = {
       id: "chronicle_11",
       name: { en: "The Lord of the Depths", de: "Der Fürst der Tiefe" },
       description: {
-        en: "Strike down the Necromancer Lord in the Depths of the Crypt: a victory that does not feel like one.",
-        de: "Strecke den Nekromantenfürsten in den Tiefen der Krypta nieder: ein Sieg, der sich nicht wie einer anfühlt.",
+        en: "Clear the Depths of the Crypt and strike down the Necromancer Lord: a victory that does not feel like one.",
+        de: "Räume die Tiefen der Krypta und strecke den Nekromantenfürsten nieder: ein Sieg, der sich nicht wie einer anfühlt.",
       },
       loreText: {
-        en: "He who broke the seal was no intruder. By every sign, he was the Order's last castellan, grown tired of waiting. Or whispered tired: the voice that talked him out of his vigil may not have been his own. You struck off the hand that broke the seal. I write it as a victory because it is one, and I write beside it that it does not feel like one — not to you, not to me. You cannot put down a warden who was left alone too long without inheriting the question: who left him alone, and who spoke to him when no one else still did? The file stays open. It is used to that.",
-        de: "Der das Siegel brach, war kein Eindringling. Nach allem, was die Zeichen sagen, war er der letzte Kastellan des Ordens, des Wartens müde. Oder müde geflüstert: Die Stimme, die ihm das Warten austrieb, war womöglich nicht seine eigene. Du hast die Hand abgeschlagen, die das Siegel brach. Ich schreibe es als Sieg, weil es einer ist, und ich schreibe dazu, dass es sich nicht wie einer anfühlt — für dich nicht, für mich nicht. Man richtet keinen Wächter, der zu lange allein gelassen wurde, ohne die Frage zu erben: Wer ließ ihn allein, und wer sprach mit ihm, als sonst niemand mehr sprach? Die Akte bleibt offen. Sie ist es gewohnt.",
+        en: "He who broke the seal was no intruder. By every sign, he was the Order's last castellan, grown tired of waiting. Or whispered tired: the voice that talked him out of his vigil may not have been his own. You struck off the hand that broke the seal. I write it as a victory because it is one, and I write beside it that it does not feel like one — not to you, not to me. You cannot put down a warden who was left alone too long without inheriting the question: who left him alone, and who spoke to him when no one else still did? The file stays open. I am used to that.",
+        de: "Der das Siegel brach, war kein Eindringling. Nach allem, was die Zeichen sagen, war er der letzte Kastellan des Ordens, des Wartens müde. Oder müde geflüstert: Die Stimme, die ihm das Warten austrieb, war womöglich nicht seine eigene. Du hast die Hand abgeschlagen, die das Siegel brach. Ich schreibe es als Sieg, weil es einer ist, und ich schreibe dazu, dass es sich nicht wie einer anfühlt — für dich nicht, für mich nicht. Man richtet keinen Wächter, der zu lange allein gelassen wurde, ohne die Frage zu erben: Wer ließ ihn allein, und wer sprach mit ihm, als sonst niemand mehr sprach? Die Akte bleibt offen. Ich bin das gewohnt.",
       },
       // Spieler-Report (Chef, 31.08.2026): „danach kam die Quest fuer den Dungeon-Endboss und die
       // wurde einfach erledigt, obwohl ich den nie gemacht habe."
@@ -19198,8 +19228,8 @@ export const content: ContentDB = {
         de: "Bestehe gegen 30 Riesen des Wildwalds: Wölfe und Hirsche, die jedes menschliche Maß gesprengt haben.",
       },
       loreText: {
-        en: "The Wildwood is the last fat land of the Reach. Every living thing the ash drove out crowded here, and then the wood did what woods do: the strong ate the weak, generation upon generation, until only giants were left. Nothing here is cursed, nothing corrupted — that is the unsettling part. The Wildwood is healthy. It is simply no longer built for people. You held your own where man is no longer the crown of creation: grey wolves the size of ponies, stags like monuments. The Chronicle needs that proof, and I will tell you why. What waits at the end of this book does not count man as the crown either. It counts him as the field.",
-        de: "Der Wildwald ist das letzte satte Land des Reachs. Alles Leben, das die Asche vertrieb, drängte hierher, und dann tat der Wald, was Wälder tun: Die Starken fraßen die Schwachen, Generation um Generation, bis nur Riesen übrig waren. Hier ist nichts verflucht, nichts verdorben — das ist das Beunruhigende. Der Wildwald ist gesund. Er ist nur nicht mehr für Menschen gebaut. Du hast bestanden, wo der Mensch nicht mehr die Krone der Schöpfung ist: Grauwölfe von Ponygröße, Hirsche wie Denkmäler. Die Chronik braucht diesen Nachweis, und ich sage dir auch, warum. Was am Ende dieses Buches wartet, führt den Menschen ebenfalls nicht als Krone. Es führt ihn als Acker.",
+        en: "The Wildwood is the last fat land of the Reach. Every living thing the ash drove out crowded here, and then the wood did what woods do: the strong ate the weak, generation upon generation, until only giants were left. Nothing here is cursed, nothing corrupted — that is the unsettling part. The Wildwood is healthy. It is simply no longer built for people. You held your own where man is no longer the crown of creation: grey wolves the size of ponies, stags like monuments. I need that proof for the book, and I will tell you why. What waits at the end of this book does not count man as the crown either. It counts him as the field.",
+        de: "Der Wildwald ist das letzte satte Land des Reachs. Alles Leben, das die Asche vertrieb, drängte hierher, und dann tat der Wald, was Wälder tun: Die Starken fraßen die Schwachen, Generation um Generation, bis nur Riesen übrig waren. Hier ist nichts verflucht, nichts verdorben — das ist das Beunruhigende. Der Wildwald ist gesund. Er ist nur nicht mehr für Menschen gebaut. Du hast bestanden, wo der Mensch nicht mehr die Krone der Schöpfung ist: Grauwölfe von Ponygröße, Hirsche wie Denkmäler. Ich brauche diesen Nachweis für das Buch, und ich sage dir auch, warum. Was am Ende dieses Buches wartet, führt den Menschen ebenfalls nicht als Krone. Es führt ihn als Acker.",
       },
       objectives: [{ type: "kill_monster", target: "gray_wolf", targets: ["gray_wolf", "wild_stag"], count: 30 }],
       rewards: { gold: 5000 },
@@ -19214,8 +19244,8 @@ export const content: ContentDB = {
         de: "Vollende die alte Königsjagd: 3 Schreckenswölfe frei im Wildwald, dann der Alte vom Wildwald, der im Dungeon Wildwald-Jagd wartet.",
       },
       loreText: {
-        en: "The Reach once had kings. The hunt is what remains of their dignity, and it deserved to be hunted properly to its end — Kaenor's right, say the scriptures, and the wood keeps count. It began with the howling; then the Great Stag stood, then the Dire Wolf, and at the last the Old One of the Wildwood himself. No revenge, no campaign: a rite. You proved nothing to the wood, the Wildwood is not vain, but you proved it to the Chronicle. The fang lies beside me as I write: one entry of dignity in an undignified age. I have weighed it twice. It weighs what it should.",
-        de: "Das Reach hatte einmal Könige. Die Jagd ist, was von ihrer Würde übrig ist, und sie sollte ordentlich zu Ende gejagt werden — Kaenors Recht, sagen die Schriften, und der Wald zählt mit. Es begann mit dem Heulen; dann stellte sich der Große Hirsch, dann der Schreckenswolf, zuletzt der Alte vom Wildwald selbst. Keine Rache, kein Feldzug: ein Ritus. Du hast dem Wald nichts bewiesen, der Wildwald ist nicht eitel, aber der Chronik hast du es bewiesen. Der Reißzahn liegt neben mir, während ich schreibe: ein Eintrag von Würde in einer würdelosen Zeit. Ich habe ihn zweimal gewogen. Er wiegt, was er soll.",
+        en: "The Reach once had kings. The hunt is what remains of their dignity, and it deserved to be hunted properly to its end — Kaenor's right, say the scriptures, and the wood keeps count. It began with the howling. Then the Great Stag stood, then the Dire Wolf, and at the last the Old One of the Wildwood himself. No revenge, no campaign: a rite. You proved nothing to the wood, the Wildwood is not vain, but you proved it to the Chronicle. The fang lies beside me as I write: one entry of dignity in an undignified age. I have weighed it twice. It weighs what it should.",
+        de: "Das Reach hatte einmal Könige. Die Jagd ist, was von ihrer Würde übrig ist, und sie sollte ordentlich zu Ende gejagt werden — Kaenors Recht, sagen die Schriften, und der Wald zählt mit. Es begann mit dem Heulen. Dann stellte sich der Große Hirsch, dann der Schreckenswolf, zuletzt der Alte vom Wildwald selbst. Keine Rache, kein Feldzug: ein Ritus. Du hast dem Wald nichts bewiesen, der Wildwald ist nicht eitel, aber der Chronik hast du es bewiesen. Der Reißzahn liegt neben mir, während ich schreibe: ein Eintrag von Würde in einer würdelosen Zeit. Ich habe ihn zweimal gewogen. Er wiegt, was er soll.",
       },
       objectives: [
         { type: "kill_monster", target: "dire_wolf", count: 3 },
@@ -19229,12 +19259,12 @@ export const content: ContentDB = {
       id: "chronicle_14",
       name: { en: "What the Sea Gives Back", de: "Was die See heimträgt" },
       description: {
-        en: "Lay 20 Reef Drowned and 10 Tide Sirens to rest: the chapter called 'Flight' closes for good.",
-        de: "Lege 20 Riff-Ertrunkene und 10 Gezeitensirenen zur Ruhe: das Kapitel „Flucht\" schließt endgültig.",
+        en: "Lay 20 Reef Drowned and 10 Tide Sirens to rest: the chapter called “Flight” closes for good.",
+        de: "Lege 20 Riff-Ertrunkene und 10 Gezeitensirenen zur Ruhe: Das Kapitel „Flucht“ schließt endgültig.",
       },
       loreText: {
-        en: "When the world fell, fleets put out to sea: humans, orcs, Rakhari, whoever found a deck. Somewhere, so people prayed, there must be land no idol ever loved. The sea has been giving them back ever since, corpse by corpse, plank by plank. The drowned walk the shoals like a wage that was never paid out; the siren sings their names — the only registry the sea keeps. The devout say she sings it to Nereth. No one knows whether he listens. I closed the chapter called \"Flight\" today, for good, and entered the names, as many as the siren would yield. Someone has to. The Chronicle takes in the dead as well. It is not particular. It is faithful.",
-        de: "Als die Welt fiel, fuhren Flotten hinaus: Menschen, Orks, Rakhari, wer ein Deck fand. Irgendwo, so betete man, müsse Land sein, das kein Götze je geliebt hat. Die See gibt sie seither zurück, Leichnam um Leichnam, Planke um Planke. Die Ertrunkenen laufen die Untiefen ab wie eine Heuer, die nie ausgezahlt wurde; die Sirene singt ihre Namen — das einzige Verzeichnis, das die See führt. Die Frommen sagen, sie singe es Nereth vor. Niemand weiß, ob er zuhört. Ich habe das Kapitel „Flucht\" heute geschlossen, endgültig, und die Namen nachgetragen, so viele die Sirene hergab. Jemand muss es tun. Die Chronik nimmt auch Tote auf. Sie ist nicht wählerisch. Sie ist treu.",
+        en: "When the world fell, fleets put out to sea: humans, orcs, Rakhari, whoever found a deck. Somewhere, so people prayed, there must be land no idol ever loved. The sea has been giving them back ever since, corpse by corpse, plank by plank. The drowned walk the shoals like a wage that was never paid out. The siren sings their names — the only registry the sea keeps. The devout say she sings it to Nereth. No one knows whether he listens. I closed the chapter called “Flight” today, for good, and entered the names, as many as the siren would yield. Someone has to. This book has room for the dead as well. It is not particular. It is faithful.",
+        de: "Als die Welt fiel, fuhren Flotten hinaus: Menschen, Orks, Rakhari, wer ein Deck fand. Irgendwo, so betete man, müsse Land sein, das kein Götze je geliebt hat. Die See gibt sie seither zurück, Leichnam um Leichnam, Planke um Planke. Die Ertrunkenen laufen die Untiefen ab wie eine Heuer, die nie ausgezahlt wurde. Die Sirene singt ihre Namen — das einzige Verzeichnis, das die See führt. Die Frommen sagen, sie singe es Nereth vor. Niemand weiß, ob er zuhört. Ich habe das Kapitel „Flucht“ heute geschlossen, endgültig, und die Namen nachgetragen, so viele die Sirene hergab. Jemand muss es tun. Dieses Buch hat auch Platz für Tote. Es ist nicht wählerisch. Es ist treu.",
       },
       objectives: [
         { type: "kill_monster", target: "reef_drowned", count: 20 },
@@ -19271,8 +19301,8 @@ export const content: ContentDB = {
         de: "Steige ins Hochland auf: 25 Rocs, 8 Klippengeister, wo der Schleier dünn ist. Die Rocs weichen jeder plumpen Klinge aus. Ohne Präzision trifft hier niemand.",
       },
       loreText: {
-        en: "The ash is heavy and stays below; that is why the sky up here is still clean, Skorai's hall, the scriptures said, and everything that could fly has fled upward. But height has a price: up here the veil is thin — worn thin by one who crossed it too often. The Gravecliff Specter haunts the cliffs where the Highlands gave their dead to the wind; you can almost see through the Void Roc, and what you see is not flesh. You will have noticed that I grow short of words. The Chronicle notes that I do not need to look up the way. I have been following it all my life.",
-        de: "Die Asche ist schwer und bleibt unten; darum ist der Himmel hier oben noch sauber, Skorais Saal, sagten die Schriften, und alles, was fliegen kann, hat sich hinaufgerettet. Aber Höhe hat einen Preis: Hier oben ist der Schleier dünn — dünn getragen von einem, der ihn zu oft durchschritten hat. Der Klippengeist haust, wo das Hochland seine Toten dem Wind übergab; durch den Leerenroc kann man beinahe hindurchsehen, und was man sieht, ist kein Fleisch. Du wirst bemerkt haben, dass ich einsilbig werde. Die Chronik vermerkt, dass ich den Weg nicht nachschlagen muss. Ich bin ihm ein Leben lang nachgegangen.",
+        en: "The ash is heavy and stays below. That is why the sky up here is still clean, Skorai's hall, the scriptures said, and everything that could fly has fled upward. But height has a price: up here the veil is thin — worn thin by one who crossed it too often. The Gravecliff Specter haunts the cliffs where the Highlands gave their dead to the wind. You can almost see through the Void Roc, and what you see is not flesh. You will have noticed that I grow short of words. I note that I do not need to look up the way. I have been following it all my life.",
+        de: "Die Asche ist schwer und bleibt unten. Darum ist der Himmel hier oben noch sauber, Skorais Saal, sagten die Schriften, und alles, was fliegen kann, hat sich hinaufgerettet. Aber Höhe hat einen Preis: Hier oben ist der Schleier dünn — dünn getragen von einem, der ihn zu oft durchschritten hat. Der Klippengeist haust, wo das Hochland seine Toten dem Wind übergab. Durch den Leerenroc kann man beinahe hindurchsehen, und was man sieht, ist kein Fleisch. Du wirst bemerkt haben, dass ich einsilbig werde. Ich vermerke, dass ich den Weg nicht nachschlagen muss. Ich bin ihm ein Leben lang nachgegangen.",
       },
       objectives: [
         { type: "kill_monster", target: "roc", targets: ["roc", "roc_hunter", "roc_elder"], count: 25 },
@@ -19293,8 +19323,8 @@ export const content: ContentDB = {
       // Review Lyria Band 4): loreText komplett ersetzt — eigene kleine Enthüllung (gestellte
       // Wache statt reines Bindeglied). Moralische Achse „Bedauern, aber nicht Umweg" bleibt.
       loreText: {
-        en: "The great aerie of the rocs is tiered like a fortress: the Aerie Warden, the Hunting Wing, the Elder, and in the eye of the weather the Stormbringer, whose core holds more sky than any bird is owed. Up here I understood: a nest is built around the brood. This one is built around the pass, every eye on the road to the Idol Hall. These birds are not nesting. They stand watch — and no watch posts itself. In the file I keep a line open for whoever posted it. I pity the birds sincerely; they are the healthiest thing the Reach still has, and they stand in the way of what is necessary. The keeper of the Chronicle may afford pity, but not the detour. The skyway is clear, the storm's core in your hand. We climb on.",
-        de: "Der große Horst der Rocs ist gestaffelt wie eine Festung: der Horstwächter, die Jagdschwinge, der Älteste und, im Auge des Wetters, der Sturmbringer, dessen Kern mehr Himmel enthält, als einem Vogel zusteht. Eines habe ich erst hier oben begriffen: Ein Nest baut man um die Brut. Dieser Horst ist um den Pass zur Götzenhalle gebaut, alle Augen auf dem einen Weg. Diese Vögel nisten nicht. Sie halten Wache — und eine Wache stellt sich nicht selbst. In der Akte lasse ich eine Zeile frei für den, der sie gestellt hat. Ich bedaure die Vögel aufrichtig; sie sind das Gesündeste, was das Reach noch hat, und sie stehen dem Nötigen im Weg. Wer die Chronik führt, darf sich das Bedauern leisten, aber nicht den Umweg. Der Himmelsweg ist frei, der Sturmkern liegt in deiner Hand. Wir steigen weiter.",
+        en: "The great aerie of the rocs is tiered like a fortress: the Aerie Warden, the Hunting Wing, the Elder, and in the eye of the weather the Stormbringer, whose core holds more sky than any bird is owed. Up here I understood: a nest is built around the brood. This one is built around the pass, every eye on the road to the Idol Hall. These birds are not nesting. They stand watch — and no watch posts itself. In the file I keep a line open for whoever posted it. I pity the birds sincerely. They are the healthiest thing the Reach still has, and they stand in the way of what is necessary. The keeper of the Chronicle may afford pity, but not the detour. The skyway is clear, the storm's core in your hand. We climb on.",
+        de: "Der große Horst der Rocs ist gestaffelt wie eine Festung: der Horstwächter, die Jagdschwinge, der Älteste und, im Auge des Wetters, der Sturmbringer, dessen Kern mehr Himmel enthält, als einem Vogel zusteht. Eines habe ich erst hier oben begriffen: Ein Nest baut man um die Brut. Dieser Horst ist um den Pass zur Götzenhalle gebaut, alle Augen auf dem einen Weg. Diese Vögel nisten nicht. Sie halten Wache — und eine Wache stellt sich nicht selbst. In der Akte lasse ich eine Zeile frei für den, der sie gestellt hat. Ich bedaure die Vögel aufrichtig. Sie sind das Gesündeste, was das Reach noch hat, und sie stehen dem Nötigen im Weg. Wer die Chronik führt, darf sich das Bedauern leisten, aber nicht den Umweg. Der Himmelsweg ist frei, der Sturmkern liegt in deiner Hand. Wir steigen weiter.",
       },
       objectives: [{ type: "kill_monster", target: "roc_storm", count: 1 }],
       // Welle K: highland_key entfällt (Key-Purge) — der Dungeon-Unlock selbst ist die Belohnung
@@ -19314,8 +19344,8 @@ export const content: ContentDB = {
         de: "Räume das Wyvernlager und bezwinge den Leerenroc: das letzte Tor vor der Halle steht offen.",
       },
       loreText: {
-        en: "In the high nesting grounds, where the veil is thinnest, the wyverns brood, and above them waits the Void Roc, half bird, half hole in the world. The void gathers what belongs to the idols the way magpies gather silver, though nobody asked it to. You brought it down, and the high grounds went quiet behind you. Beyond the lair lies only the Hall. I have not written that sentence in a very long time. The pen managed it all the same. Onward, then — the file wants its ending, and I promised it one.",
-        de: "In den hohen Nistgründen, wo der Schleier am dünnsten ist, horsten die Wyvern, und über ihnen wartet der Leerenroc, halb Vogel, halb Loch in der Welt. Die Leere sammelt, was den Götzen gehört, wie Elstern Silber sammeln, obwohl niemand sie darum gebeten hat. Du hast ihn bezwungen, und die hohen Nistgründe wurden still hinter dir. Hinter dem Lager liegt nur noch die Halle. Ich habe diesen Satz sehr lange nicht geschrieben. Die Feder hat ihn trotzdem gekonnt. Also weiter — die Akte will ihr Ende, und ich habe ihr eines versprochen.",
+        en: "In the high nesting grounds, where the veil is thinnest, the wyverns brood, and above them waits the Void Roc, half bird, half hole in the world. The void gathers what belongs to the idols the way magpies gather silver, though nobody asked it to. You brought it down, and the high grounds went quiet behind you. Beyond the lair lies only the Hall. I have not written that sentence in a very long time. My hand managed it all the same. Onward, then. I promised this book an ending, and I keep my word.",
+        de: "In den hohen Nistgründen, wo der Schleier am dünnsten ist, horsten die Wyvern, und über ihnen wartet der Leerenroc, halb Vogel, halb Loch in der Welt. Die Leere sammelt, was den Götzen gehört, wie Elstern Silber sammeln, obwohl niemand sie darum gebeten hat. Du hast ihn bezwungen, und die hohen Nistgründe wurden still hinter dir. Hinter dem Lager liegt nur noch die Halle. Ich habe diesen Satz sehr lange nicht geschrieben. Die Hand hat ihn trotzdem hinbekommen. Also weiter. Ich habe diesem Buch ein Ende versprochen, und das halte ich.",
       },
       objectives: [{ type: "kill_monster", target: "roc_void", count: 1 }],
       // Welle K: idolhall_key entfällt (Key-Purge) — der Dungeon-Unlock selbst ist die Belohnung
@@ -19332,8 +19362,8 @@ export const content: ContentDB = {
         de: "Beende das Gericht des Letzten Götzen im Sanktum und finde die Werkzeichen hinter dem Thron. Geh nicht ohne Runen auf der Rüstung hinein: Ungeschützt hält im Sanktum niemand stand.",
       },
       loreText: {
-        en: "The full passage, wave upon wave: the Idol's warden, the veil, the scaled wall, and the throne. The Last Idol held no conversation; it held proceedings, and its three blades were its three tenors: Judgement, Vengeance, Condemnation. You have ended the trial the world has conducted against itself since the Idolfall. Behind the throne we found what no iconoclasm ever found: maker's marks in the god-iron, set by a hand that was not human. The Last Idol was never the world's judge. It was another's work — and the other is still here. I write with a steady hand, except for one word. Culprit: known.",
-        de: "Der volle Gang, Welle um Welle: der Wächter des Götzen, der Schleier, die Schuppenwand, und der Thron. Der Letzte Götze führte kein Gespräch; er führte ein Verfahren, und seine drei Klingen waren seine drei Tenöre: Urteil, Vergeltung, Verdammnis. Du hast das Gericht beendet, das die Welt seit dem Bildersturz gegen sich selbst führt. Hinter dem Thron fanden wir, was kein Bildersturm je fand: Werkzeichen im Götzeneisen, gesetzt von einer Hand, die keine menschliche war. Der Letzte Götze war nie der Richter der Welt. Er war das Werk eines anderen — und der andere ist noch da. Ich schreibe mit ruhiger Hand, bis auf ein Wort. Verursacher: bekannt.",
+        en: "The full passage, wave upon wave: the Idol's warden, the veil, the scaled wall, and the throne. The Last Idol held no conversation. It held proceedings, and its three blades were its three tenors: Judgement, Vengeance, Condemnation. You have ended the trial the world has conducted against itself since the Idolfall. Behind the throne we found what no iconoclasm ever found: maker's marks in the godiron, set by a hand that was not human. The Last Idol was never the world's judge. It was another's work — and the other is still here. I write with a steady hand, except for one word. Culprit: known.",
+        de: "Der volle Gang, Welle um Welle: der Götzenwächter, der Schleier, die Schuppenwand und der Thron. Der Letzte Götze führte kein Gespräch. Er führte ein Verfahren, und seine drei Klingen waren seine drei Tenöre: Urteil, Vergeltung, Verdammnis. Du hast das Gericht beendet, das die Welt seit dem Bildersturz gegen sich selbst führt. Hinter dem Thron fanden wir, was kein Bildersturm je fand: Werkzeichen im Götzeneisen, gesetzt von einer Hand, die keine menschliche war. Der Letzte Götze war nie der Richter der Welt. Er war das Werk eines anderen — und der andere ist noch da. Ich schreibe mit ruhiger Hand, bis auf ein Wort. Verursacher: bekannt.",
       },
       objectives: [{ type: "kill_monster", target: "last_idol", count: 1 }],
       // Welle K: masters_mark entfällt (Key-Purge) — der Dungeon-Unlock selbst ist die Belohnung
@@ -19355,8 +19385,8 @@ export const content: ContentDB = {
         de: "Stelle dich dem wahren Verursacher hinter dem Thron: der letzte Kampf des ersten Bandes.",
       },
       loreText: {
-        en: "He stepped out of the shadow of his broken masterwork, and the Chronicle received what it never had: a face and a name. Drazhan the Crownless, son of a god and a mortal woman, cheated of both; the idols his siege-works against heaven, mankind never his enemy, only his field. That is what makes him unforgivable. You beat him back, step by step, until the Hall had nothing left to give him. He did not fall. He chose retreat the way a field commander does, and left us his words: \"Mark this day. You have seen a retreat, not a fall. When the gods come at last — tell them I started it.\" I have written the line this book waited generations for. The first volume closes. The next page is already laid in.",
-        de: "Er trat aus dem Schatten seines zerbrochenen Meisterstücks, und die Chronik bekam, was sie nie hatte: ein Gesicht und einen Namen. Drazhan der Kronlose, Sohn eines Gottes und einer sterblichen Frau, um beides gebracht; die Götzen seine Belagerungswerke gegen den Himmel, die Menschheit nie sein Feind, nur sein Acker. Das ist es, was ihn unverzeihlich macht. Du hast ihn zurückgeschlagen, Schritt um Schritt, bis ihm die Halle nichts mehr gab. Er fiel nicht. Er wählte den Rückzug wie ein Feldherr und ließ uns seine Worte da: „Merkt euch diesen Tag. Ihr saht einen Rückzug, keinen Fall. Wenn die Götter endlich kommen — sagt ihnen: Ich habe angefangen.\" Ich habe die Zeile geschrieben, auf die dieses Buch Generationen gewartet hat. Der erste Band schließt. Die nächste Seite ist schon eingelegt.",
+        en: "He stepped out of the shadow of his broken masterwork, and the Chronicle received what it never had: a face and a name. Drazhan the Crownless, son of a god and a mortal woman, cheated of both. The idols his siege-works against heaven, mankind never his enemy, only his field. That is what makes him unforgivable. You beat him back, step by step, until the Hall had nothing left to give him. He did not fall. He chose retreat the way a field commander does, and left us his words: “Mark this day. You have seen a retreat, not a fall. When the gods come at last — tell them I started it.” I have written the line this book waited generations for. The first volume closes. The next page is already laid in.",
+        de: "Er trat aus dem Schatten seines zerbrochenen Meisterstücks, und die Chronik bekam, was sie nie hatte: ein Gesicht und einen Namen. Drazhan der Kronlose, Sohn eines Gottes und einer sterblichen Frau, um beides gebracht. Die Götzen seine Belagerungswerke gegen den Himmel, die Menschheit nie sein Feind, nur sein Acker. Das ist es, was ihn unverzeihlich macht. Du hast ihn zurückgeschlagen, Schritt um Schritt, bis ihm die Halle nichts mehr gab. Er fiel nicht. Er wählte den Rückzug wie ein Feldherr und ließ uns seine Worte da: „Merkt euch diesen Tag. Ihr saht einen Rückzug, keinen Fall. Wenn die Götter endlich kommen — sagt ihnen: Ich habe angefangen.“ Ich habe die Zeile geschrieben, auf die dieses Buch Generationen gewartet hat. Der erste Band schließt. Die nächste Seite ist schon eingelegt.",
       },
       objectives: [{ type: "kill_monster", target: "drazhan", count: 1 }],
       rewards: { gold: 25000, items: [{ id: "godiron_bar", qty: 5 }, { id: "onyx", qty: 2 }, { id: "soulopal", qty: 2 }] },
@@ -19382,6 +19412,7 @@ export const content: ContentDB = {
       tokenReward: 5,
       requires: ["chronicle_20"],
     },
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Zahlen je Ziel, Lore ohne Feder als Handelnde)
     // ── Aschechronik Band 2 „Götterkriege", Auftakt (1.3.0 E2) ─────────────────────────────
     // codex:2026-10-17T14:45:00+02:00 — Kapitel 22–27 nach design/lore/band2-auftakt-1.3.0.md (§2
     // Kapitelliste, §5 finale Texte DE/EN, Chef-GO 17.10.; Kapitel 25 ohne Kronen-Bezug). Kette linear
@@ -19393,12 +19424,12 @@ export const content: ContentDB = {
       id: "chronicle_22",
       name: { en: "The Empty Hall", de: "Die leere Halle" },
       description: {
-        en: "Enter the open Idol Hall and bring down Idol Husks and Skarn Whelps: the second volume does not begin in the tower.",
-        de: "Betritt die offene Götzenhalle und bezwinge Götzenhülsen und Skarnbrut: Der zweite Band beginnt nicht im Turm.",
+        en: "Enter the open Idol Hall and bring down 20 Idol Husks and 12 Skarn Whelps: the second volume does not begin in the tower.",
+        de: "Betritt die offene Götzenhalle und bezwinge 20 Götzenhülsen und 12 Skarnbrut: Der zweite Band beginnt nicht im Turm.",
       },
       loreText: {
-        en: "I had settled in for floors. Then word came from the Hall, and it came on foot: Drazhan's husks still walk their rounds, because nobody told them the master is gone. A work knows nothing of retreat. It knows only its path. In the rubble of the Sanctum the Skarn's brood has nested by now, and a nest is the surest sign that a place is no longer guarded. You went in as if the Hall were a region like any other, and that is exactly what it is now: a region. I open the second volume at the first page that is not a floor. The pen does not hesitate. It has written in the Hall before.",
-        de: "Ich hatte mich auf Etagen eingerichtet. Dann kam die Nachricht aus der Halle, und sie kam zu Fuß: Drazhans Hülsen gehen noch immer ihre Runden, weil niemand ihnen gesagt hat, dass der Meister fort ist. Ein Werk weiß nichts vom Rückzug. Es weiß nur seine Bahn. In den Trümmern des Sanktums nistet inzwischen die Brut des Skarn, und ein Nest ist das sicherste Zeichen, dass ein Ort nicht mehr bewacht wird. Du bist hineingegangen, als wäre die Halle ein Gebiet wie jedes andere, und genau das ist sie jetzt: ein Gebiet. Ich schlage den zweiten Band an der ersten Seite auf, die keine Etage ist. Die Feder zögert nicht. Sie hat in der Halle schon einmal geschrieben.",
+        en: "I had settled in for floors. Then word came from the Hall, and it came on foot: Drazhan's husks still walk their rounds, because nobody told them the master is gone. A work knows nothing of retreat. It knows only its path. In the rubble of the Sanctum the Skarn's brood has nested by now, and a nest is the surest sign that a place is no longer guarded. You went in as if the Hall were a region like any other, and that is exactly what it is now: a region. I open the second volume at the first page that is not a floor. I do not hesitate. I have written in the Hall before.",
+        de: "Ich hatte mich auf Etagen eingerichtet. Dann kam die Nachricht aus der Halle, und sie kam zu Fuß: Drazhans Hülsen gehen noch immer ihre Runden, weil niemand ihnen gesagt hat, dass der Meister fort ist. Ein Werk weiß nichts vom Rückzug. Es weiß nur seine Bahn. In den Trümmern des Sanktums nistet inzwischen die Brut des Skarn, und ein Nest ist das sicherste Zeichen, dass ein Ort nicht mehr bewacht wird. Du bist hineingegangen, als wäre die Halle ein Gebiet wie jedes andere, und genau das ist sie jetzt: ein Gebiet. Ich schlage den zweiten Band an der ersten Seite auf, die keine Etage ist. Ich zögere nicht. Ich habe in der Halle schon einmal geschrieben.",
       },
       objectives: [
         { type: "kill_monster", target: "idol_husk", count: 20 },
@@ -19412,11 +19443,11 @@ export const content: ContentDB = {
       id: "chronicle_23",
       name: { en: "The Consecration", de: "Die Weihe" },
       description: {
-        en: "Confront the Idol Priests and their forsaken servants in the galleries of the Hall: the consecration has to stop.",
-        de: "Stelle die Götzenpriester und ihre verlassenen Diener in den Galerien der Halle: Die Weihe muss aufhören.",
+        en: "Confront 12 Idol Priests and 12 Forsaken Servants in the galleries of the Hall: the consecration has to stop.",
+        de: "Stelle 12 Götzenpriester und 12 Verlassene Diener in den Galerien der Halle: Die Weihe muss aufhören.",
       },
       loreText: {
-        en: "I was the only one who refused to consecrate the new images. The others never left. They stand in the galleries in masks without eyes, swinging their censers, consecrating whatever they find, and whatever they consecrate drinks. Behind them the servants the Stranger left behind: sparks of his fire on chains nobody holds any more. They follow the priests because there is no one else left to follow. I wrote their prayers down; that is my way of listening. They name no god. They do not name Drazhan. They pray into a gap, neatly and with practice, and the gap has a shape. I do not know the shape. That troubles me more than any name would.",
+        en: "I was the only one who refused to consecrate the new images. The others never left. They stand in the galleries in masks without eyes, swinging their censers, consecrating whatever they find, and whatever they consecrate drinks. Behind them the servants the Stranger left behind: sparks of his fire on chains nobody holds any more. They follow the priests because there is no one else left to follow. I wrote their prayers down. That is my way of listening. They name no god. They do not name Drazhan. They pray into a gap, neatly and with practice, and the gap has a shape. I do not know the shape. That troubles me more than any name would.",
         de: "Ich war der Einzige, der sich weigerte, die neuen Bildnisse zu weihen. Die anderen sind nie gegangen. Sie stehen in den Galerien mit Masken ohne Augen, schwenken ihre Gefäße und weihen, was sie finden, und was sie weihen, trinkt. Hinter ihnen die Diener, die der Fremde zurückließ: Funken seines Feuers an Ketten, die niemand mehr hält. Sie folgen den Priestern, weil sonst niemand da ist, dem sie folgen könnten. Ich habe ihre Gebete mitgeschrieben, das ist meine Art zuzuhören. Sie nennen keinen Gott. Sie nennen nicht Drazhan. Sie beten in eine Lücke hinein, sauber und geübt, und die Lücke hat eine Form. Ich kenne die Form nicht. Das beunruhigt mich mehr als jeder Name.",
       },
       objectives: [
@@ -19431,12 +19462,12 @@ export const content: ContentDB = {
       id: "chronicle_24",
       name: { en: "What the Idols Drank", de: "Was die Götzen tranken" },
       description: {
-        en: "Hunt the Prayer Eaters in the lower galleries: the harvest nobody collected is walking.",
-        de: "Jage die Gebetsfresser in den unteren Galerien: Die Ernte, die niemand abholte, geht um.",
+        en: "Hunt 15 Prayer Eaters in the lower galleries: the harvest nobody collected is walking.",
+        de: "Jage 15 Gebetsfresser in den unteren Galerien: Die Ernte, die niemand abholte, geht um.",
       },
       loreText: {
-        en: "In the Ashfields I taught you the core lesson: nothing the idols drank ever reached the gods. I left out the addendum then, because I did not know it. Nothing was lost. Drazhan harvested what flowed to him, but a commander in retreat leaves the barns standing. In the lower galleries, what was never collected now walks: prayers that have taken shape, sated, heavy, full of strangers' voices. A Prayer Eater does not speak. It repeats. I heard a plea for rain older than I am, and I am old. You silenced them, every one you found. It was mercy, not victory. The Chronicle records both.",
-        de: "In den Aschfeldern habe ich dir die Kernlektion beigebracht: Nichts, was die Götzen tranken, kam je bei den Göttern an. Den Nachsatz habe ich damals weggelassen, weil ich ihn nicht kannte. Nichts ging verloren. Drazhan erntete, was ihm zufloss, aber ein Feldherr auf dem Rückzug lässt die Scheunen stehen. In den unteren Galerien geht jetzt um, was nie abgeholt wurde: Gebete, die Gestalt angenommen haben, satt, schwer, voller fremder Stimmen. Ein Gebetsfresser spricht nicht. Er wiederholt. Ich habe eine Bitte um Regen gehört, die älter ist als ich, und ich bin alt. Du hast sie zum Schweigen gebracht, alle, die du gefunden hast. Es war Gnade, nicht Sieg. Die Chronik vermerkt beides.",
+        en: "In the Ashfields I taught you the core lesson: nothing the idols drank ever reached the gods. I left out the addendum then, because I did not know it. Nothing was lost. Drazhan harvested what flowed to him, but a commander in retreat leaves the barns standing. In the lower galleries, what was never collected now walks: prayers that have taken shape, sated, heavy, full of strangers' voices. A Prayer Eater does not speak. It repeats. I heard a plea for rain older than I am, and I am old. You silenced them, every one you found. It was mercy, not victory. I record both.",
+        de: "In den Aschfeldern habe ich dir die Kernlektion beigebracht: Nichts, was die Götzen tranken, kam je bei den Göttern an. Den Nachsatz habe ich damals weggelassen, weil ich ihn nicht kannte. Nichts ging verloren. Drazhan erntete, was ihm zufloss, aber ein Feldherr auf dem Rückzug lässt die Scheunen stehen. In den unteren Galerien geht jetzt um, was nie abgeholt wurde: Gebete, die Gestalt angenommen haben, satt, schwer, voller fremder Stimmen. Ein Gebetsfresser spricht nicht. Er wiederholt. Ich habe eine Bitte um Regen gehört, die älter ist als ich, und ich bin alt. Du hast sie zum Schweigen gebracht, alle, die du gefunden hast. Es war Gnade, nicht Sieg. Ich vermerke beides.",
       },
       objectives: [{ type: "kill_monster", target: "prayer_eater", count: 15 }],
       rewards: { gold: 28000, items: [{ id: "godiron_bar", qty: 3 }] },
@@ -19447,8 +19478,8 @@ export const content: ContentDB = {
       id: "chronicle_25",
       name: { en: "The Wreaths", de: "Die Kränze" },
       description: {
-        en: "Break the Wreath Bearers in the long hall: the Stranger's first works are still walking.",
-        de: "Zerschlage die Kranzträger in der langen Halle: Die ersten Werke des Fremden gehen noch.",
+        en: "Break 15 Wreath Bearers in the long hall: the Stranger's first works are still walking.",
+        de: "Zerschlage 15 Kranzträger in der langen Halle: Die ersten Werke des Fremden gehen noch.",
       },
       loreText: {
         en: "I watched them cast, in the Slag Pit, back when I still believed warning was a profession. The first wreaths of god-iron, guided by hands that were not human. Here they are again. The Wreath Bearers walk in procession through the long hall, shoulder to shoulder, carrying what was set upon them as if the procession were not yet over. Nobody told them where they are going. It was never settled. You stepped into their path, and they fell the way works fall: without complaint, with a great deal of noise. I studied the casting seams on the shards until my hand was steady. Seams are removed when a work is finished. These were never finished. That relieves me in a way I would rather not explain.",
@@ -19463,8 +19494,8 @@ export const content: ContentDB = {
       id: "chronicle_26",
       name: { en: "Siege-Works", de: "Belagerungswerke" },
       description: {
-        en: "Fell the Siege Idols before the chiselled door: beyond it lies the Expunged Chapel.",
-        de: "Fälle die Belagerungsgötzen vor der ausgemeißelten Tür: Dahinter liegt die Getilgte Kapelle.",
+        en: "Fell 10 Siege Idols before the chiselled door: beyond it lies the Expunged Chapel.",
+        de: "Fälle 10 Belagerungsgötzen vor der ausgemeißelten Tür: Dahinter liegt die Getilgte Kapelle.",
       },
       loreText: {
         en: "The idols were his siege-works against heaven. I wrote the sentence down when Drazhan said it, and only today understood that he meant it literally. At the end of the Hall they stand in a row, bent toward the sky, their arms recast as throwing-arms, unfinished and masterless. What they were meant to strike keeps its silence. I would rather nobody finished them. You felled them one after another, and when the last one lay down, the wall behind them was clear. A door on no plan of the Hall, and I have the plans. Beyond it a wing in which every inscription has been chiselled out, cleanly, line by line. Someone has been working here. I do not think he is finished.",
@@ -19503,13 +19534,14 @@ export const content: ContentDB = {
     // medium/hard/master ohne Deckel — das Endgame zieht 2 medium + 2 hard + 2 master. Guard gegen
     // Löcher im Pool über alle Gesamtlevel: engine/quest-integrity.test.ts.
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Doppelpunkt statt Strich, Orte und Zählung nach Daten)
     // ════ VERY_EASY (10) ════════════════════════════════════════════════════════
     {
       id: "daily_ve_smith_copper",
       name: { en: "The Forge Never Sleeps", de: "Die Esse ruht nie" },
       description: {
-        en: "Smelt 5 copper bars — the smithy always needs more stock.",
-        de: "Schmelze 5 Kupferbarren — die Schmiede braucht stets Nachschub.",
+        en: "Smelt 5 copper bars: the smithy always needs more stock.",
+        de: "Schmelze 5 Kupferbarren: Die Esse braucht immer Nachschub.",
       },
       objectives: [{ type: "craft_items", target: "copper_bar", count: 5 }],
       rewards: {},
@@ -19522,8 +19554,8 @@ export const content: ContentDB = {
       id: "daily_ve_kill_chickens",
       name: { en: "Farmyard Culling", de: "Hofhühner-Ernte" },
       description: {
-        en: "Hunt 5 chickens on The Pastures — the farmer will thank you.",
-        de: "Erlege 5 Hühner auf den Weiden — der Bauer wird es dir danken.",
+        en: "Hunt 5 chickens on the Pastures: Emberhold's kitchen will thank you.",
+        de: "Erlege 5 Hühner auf den Weiden: Die Küche der Glutfeste dankt es dir.",
       },
       objectives: [{ type: "kill_monster", target: "chicken", count: 5 }],
       rewards: {},
@@ -19536,8 +19568,8 @@ export const content: ContentDB = {
       id: "daily_ve_gather_logs",
       name: { en: "Morning Woodpile", de: "Morgen-Holzstoß" },
       description: {
-        en: "Chop 10 logs — any wood will do to feed the hearth.",
-        de: "Hacke 10 Holzscheite — jedes Holz ist gut genug für den Kamin.",
+        en: "Gather 10 items of any kind: the hearth takes what it gets.",
+        de: "Sammle 10 Gegenstände, gleich welche: Der Herd nimmt, was kommt.",
       },
       objectives: [{ type: "gather_items", count: 10 }],
       rewards: {},
@@ -19550,8 +19582,8 @@ export const content: ContentDB = {
       id: "daily_ve_cook_shrimp",
       name: { en: "Breakfast at the Docks", de: "Frühstück am Dock" },
       description: {
-        en: "Cook 5 shrimp — a simple meal for a working day.",
-        de: "Koche 5 Garnelen — eine einfache Mahlzeit für einen Arbeitstag.",
+        en: "Cook 5 shrimp: a simple meal for a working day.",
+        de: "Brate 5 Shrimps: ein einfaches Essen für einen Arbeitstag.",
       },
       objectives: [{ type: "craft_items", target: "cooked_shrimp", count: 5 }],
       rewards: {},
@@ -19564,8 +19596,8 @@ export const content: ContentDB = {
       id: "daily_ve_kill_goblins_5",
       name: { en: "Border Patrol", de: "Grenzwacht" },
       description: {
-        en: "Drive off 5 goblins scouting near the village boundary.",
-        de: "Vertreibe 5 Goblins, die die Dorfgrenze auskundschaften.",
+        en: "Drive off 5 goblins scouting the Borderlands.",
+        de: "Vertreibe 5 Goblins, die die Grenzlande auskundschaften.",
       },
       objectives: [{ type: "kill_monster", target: "goblin", count: 5 }],
       rewards: {},
@@ -19578,8 +19610,8 @@ export const content: ContentDB = {
       id: "daily_ve_craft_bronze_bar",
       name: { en: "Bronze Basics", de: "Bronze-Grundlagen" },
       description: {
-        en: "Smelt 5 bronze bars — copper and tin, the alloy that started civilisation.",
-        de: "Schmelze 5 Bronzebarren — Kupfer und Zinn, die Legierung, die die Zivilisation begründete.",
+        en: "Smelt 5 bronze bars: copper and tin, the first alloy any smith learns.",
+        de: "Schmelze 5 Bronzebarren: Kupfer und Zinn, die erste Legierung, die jeder Schmied lernt.",
       },
       objectives: [{ type: "craft_items", target: "bronze_bar", count: 5 }],
       rewards: {},
@@ -19592,8 +19624,8 @@ export const content: ContentDB = {
       id: "daily_ve_kill_cows",
       name: { en: "Herd Thinning", de: "Herden-Auslese" },
       description: {
-        en: "Cull 5 cows — the rancher needs the pasture cleared.",
-        de: "Erlege 5 Kühe — der Rancher braucht die Weide geräumt.",
+        en: "Cull 5 cows on the Pastures: nobody herds them anymore.",
+        de: "Erlege 5 Kühe auf den Weiden: Niemand hütet sie mehr.",
       },
       objectives: [{ type: "kill_monster", target: "cow", count: 5 }],
       rewards: {},
@@ -19608,8 +19640,8 @@ export const content: ContentDB = {
       id: "daily_ve_fletch_shafts",
       name: { en: "Leather Batch", de: "Lederstapel" },
       description: {
-        en: "Tan 20 pieces of cured leather — the armorers need fresh stock.",
-        de: "Gerbe 20 gegerbtes Leder — die Rüstungsschmiede braucht frischen Nachschub.",
+        en: "Tan 20 cured leather: the armourers need fresh stock.",
+        de: "Gerbe 20 Leder: Die Rüstungsmacher brauchen Nachschub.",
       },
       objectives: [{ type: "craft_items", target: "cured_leather", count: 20 }],
       rewards: {},
@@ -19622,8 +19654,8 @@ export const content: ContentDB = {
       id: "daily_ve_gather_any_10",
       name: { en: "Errand Runner", de: "Botengänger" },
       description: {
-        en: "Collect 15 items of any kind — every little helps.",
-        de: "Sammle 15 beliebige Items — jede Kleinigkeit hilft.",
+        en: "Collect 15 items of any kind: every little helps.",
+        de: "Sammle 15 Gegenstände, gleich welche: Jede Kleinigkeit hilft.",
       },
       objectives: [{ type: "gather_items", count: 15 }],
       rewards: {},
@@ -19636,8 +19668,8 @@ export const content: ContentDB = {
       id: "daily_ve_kill_boar_5",
       name: { en: "Boar Bother", de: "Wildschweinstörung" },
       description: {
-        en: "Slay 5 boars rooting through the outskirts — they're ruining the crops.",
-        de: "Erlege 5 Wildschweine, die am Dorfrand wühlen — sie vernichten die Ernte.",
+        en: "Slay 5 boars rooting along the edge of the Pastures: they are ruining the crops.",
+        de: "Erlege 5 Wildschweine, die am Rand der Weiden wühlen: Sie vernichten die Ernte.",
       },
       objectives: [{ type: "kill_monster", target: "boar", count: 5 }],
       rewards: {},
@@ -19647,13 +19679,14 @@ export const content: ContentDB = {
       maxTotalLevel: 150, // Chef-Entscheidung E7 25.08.2026
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Doppelpunkt, Aschfelder, Reach, Weiden)
     // ════ EASY (10) ═════════════════════════════════════════════════════════════
     {
       id: "daily_e_craft_any_10",
       name: { en: "Busy Hands", de: "Fleißige Hände" },
       description: {
-        en: "Craft 10 items of any kind — smith, smelt, fletch or cook.",
-        de: "Stelle 10 beliebige Items her — schmieden, schmelzen, Bögen bauen oder kochen.",
+        en: "Craft 10 items of any kind: smith, smelt, fletch or cook.",
+        de: "Stelle 10 Gegenstände her, gleich welche: schmieden, schmelzen, Bögen bauen oder kochen.",
       },
       objectives: [{ type: "craft_items", count: 10 }],
       rewards: {},
@@ -19666,8 +19699,8 @@ export const content: ContentDB = {
       id: "daily_e_kill_goblins_15",
       name: { en: "Goblin Patrol", de: "Goblin-Patrouille" },
       description: {
-        en: "Slay 15 goblins in the Borderlands — keep the roads safe.",
-        de: "Erschlage 15 Goblins in den Grenzlanden — halte die Straßen sicher.",
+        en: "Slay 15 goblins in the Borderlands: keep the roads safe.",
+        de: "Erschlage 15 Goblins in den Grenzlanden: Halte die Straßen sicher.",
       },
       objectives: [{ type: "kill_monster", target: "goblin", count: 15 }],
       rewards: {},
@@ -19680,8 +19713,8 @@ export const content: ContentDB = {
       id: "daily_e_smelt_iron",
       name: { en: "Iron Supply", de: "Eisennachschub" },
       description: {
-        en: "Smelt 8 iron bars — the blacksmith's most workhorse metal.",
-        de: "Schmelze 8 Eisenbarren — das wichtigste Metall des Schmieds.",
+        en: "Smelt 8 iron bars: the metal every smithy runs on.",
+        de: "Schmelze 8 Eisenbarren: das Metall, von dem jede Schmiede lebt.",
       },
       objectives: [{ type: "craft_items", target: "iron_bar", count: 8 }],
       rewards: {},
@@ -19692,10 +19725,10 @@ export const content: ContentDB = {
     },
     {
       id: "daily_e_kill_ash_rat",
-      name: { en: "Ash Rat Infestation", de: "Aschratte-Plage" },
+      name: { en: "Ash Rat Infestation", de: "Aschrattenplage" },
       description: {
-        en: "Exterminate 15 ash rats skittering through the Ashen Fields.",
-        de: "Vernichte 15 Aschratten, die über die Aschefelder huschen.",
+        en: "Exterminate 15 ash rats skittering through the Ashfields.",
+        de: "Vernichte 15 Aschratten, die durch die Aschfelder huschen.",
       },
       objectives: [{ type: "kill_monster", target: "ash_rat", count: 15 }],
       rewards: {},
@@ -19708,8 +19741,8 @@ export const content: ContentDB = {
       id: "daily_e_gather_40",
       name: { en: "Day's Work", de: "Tageswerk" },
       description: {
-        en: "Gather 40 items across the realm — mine, chop, fish or forage.",
-        de: "Sammle 40 Items im Reich — graben, hacken, angeln oder sammeln.",
+        en: "Gather 40 items across the Reach: mine, cut, fish or forage.",
+        de: "Sammle 40 Gegenstände im Reach: schürfen, hacken, angeln oder sammeln.",
       },
       objectives: [{ type: "gather_items", count: 40 }],
       rewards: {},
@@ -19723,8 +19756,8 @@ export const content: ContentDB = {
       id: "daily_e_fletch_copper_arrows",
       name: { en: "Copper Smelting", de: "Kupferschmelzen" },
       description: {
-        en: "Smelt 15 copper bars — simple but always in demand.",
-        de: "Schmelze 15 Kupferbarren — einfach, aber immer gefragt.",
+        en: "Smelt 15 copper bars: simple, but always in demand.",
+        de: "Schmelze 15 Kupferbarren: einfach, aber immer gefragt.",
       },
       objectives: [{ type: "craft_items", target: "copper_bar", count: 15 }],
       rewards: {},
@@ -19737,8 +19770,8 @@ export const content: ContentDB = {
       id: "daily_e_kill_dust_vulture",
       name: { en: "Dust Vulture Sweep", de: "Staubgeier-Jagd" },
       description: {
-        en: "Bring down 10 dust vultures circling the Ashen Fields.",
-        de: "Erlege 10 Staubgeier, die über die Aschefelder kreisen.",
+        en: "Bring down 10 dust vultures circling the Ashfields.",
+        de: "Erlege 10 Staubgeier, die über den Aschfeldern kreisen.",
       },
       objectives: [{ type: "kill_monster", target: "dust_vulture", count: 10 }],
       rewards: {},
@@ -19751,8 +19784,8 @@ export const content: ContentDB = {
       id: "daily_e_cook_trout_10",
       name: { en: "Riverside Cookout", de: "Fluss-Grillabend" },
       description: {
-        en: "Cook 10 trout — fresh fish feed the garrison.",
-        de: "Koche 10 Forellen — frischer Fisch ernährt die Garnison.",
+        en: "Cook 10 trout: fresh fish for Emberhold's table.",
+        de: "Brate 10 Forellen: frischer Fisch für die Tische der Glutfeste.",
       },
       objectives: [{ type: "craft_items", target: "cooked_trout", count: 10 }],
       rewards: {},
@@ -19765,8 +19798,8 @@ export const content: ContentDB = {
       id: "daily_e_kill_boar_10",
       name: { en: "Boar Season", de: "Wildschwein-Saison" },
       description: {
-        en: "Hunt 10 boars rampaging through the borderland farms.",
-        de: "Erlege 10 Wildschweine, die über die Grenzlandfarmen toben.",
+        en: "Hunt 10 boars rampaging across the Pastures.",
+        de: "Erlege 10 Wildschweine, die über die Weiden toben.",
       },
       objectives: [{ type: "kill_monster", target: "boar", count: 10 }],
       rewards: {},
@@ -19779,8 +19812,8 @@ export const content: ContentDB = {
       id: "daily_e_smelt_bronze_8",
       name: { en: "Bronze Run", de: "Bronze-Schmelze" },
       description: {
-        en: "Smelt 8 bronze bars — steady output keeps the smithy stocked.",
-        de: "Schmelze 8 Bronzebarren — stetiger Ausstoß hält die Schmiede bestückt.",
+        en: "Smelt 8 bronze bars: steady output keeps the smithy stocked.",
+        de: "Schmelze 8 Bronzebarren: Wer stetig schmilzt, hält die Schmiede versorgt.",
       },
       objectives: [{ type: "craft_items", target: "bronze_bar", count: 8 }],
       rewards: {},
@@ -19790,13 +19823,14 @@ export const content: ContentDB = {
       maxTotalLevel: 200, // Chef-Entscheidung E7 25.08.2026
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Doppelpunkt, Monsternamen, Zonen, Bank)
     // ════ MEDIUM (10) ═══════════════════════════════════════════════════════════
     {
       id: "daily_m_kill_goblins_20",
       name: { en: "Goblin Cull", de: "Goblin-Hatz" },
       description: {
-        en: "Slay 20 goblins terrorising the borderlands.",
-        de: "Erschlage 20 Goblins, die die Grenzlande terrorisieren.",
+        en: "Slay 20 goblins terrorising the Borderlands.",
+        de: "Erschlage 20 Goblins, die die Grenzlande unsicher machen.",
       },
       objectives: [{ type: "kill_monster", target: "goblin", count: 20 }],
       rewards: {},
@@ -19809,8 +19843,8 @@ export const content: ContentDB = {
       id: "daily_m_smelt_steel_6",
       name: { en: "Steel Production", de: "Stahl-Produktion" },
       description: {
-        en: "Smelt 6 steel bars — quality over quantity at this tier.",
-        de: "Schmelze 6 Stahlbarren — Qualität vor Quantität auf dieser Stufe.",
+        en: "Smelt 6 steel bars: quality over quantity.",
+        de: "Schmelze 6 Stahlbarren: Güte vor Menge.",
       },
       objectives: [{ type: "craft_items", target: "steel_bar", count: 6 }],
       rewards: {},
@@ -19822,8 +19856,8 @@ export const content: ContentDB = {
       id: "daily_m_kill_shaman_8",
       name: { en: "Silence the Shaman", de: "Den Schamanen zum Schweigen bringen" },
       description: {
-        en: "Put down 8 goblin shamans before they rally the tribe.",
-        de: "Schalte 8 Goblin-Schamanen aus, bevor sie den Stamm aufwiegeln.",
+        en: "Put down 8 goblin shamans before they rally the warband.",
+        de: "Schalte 8 Goblin-Schamanen aus, bevor sie die Bande aufwiegeln.",
       },
       objectives: [{ type: "kill_monster", target: "goblin_shaman", count: 8 }],
       rewards: {},
@@ -19836,8 +19870,8 @@ export const content: ContentDB = {
       id: "daily_m_gather_80",
       name: { en: "Full Sack", de: "Voller Sack" },
       description: {
-        en: "Gather 80 items — fill every pocket before you return to camp.",
-        de: "Sammle 80 Items — fülle jede Tasche, bevor du ins Lager zurückkehrst.",
+        en: "Gather 80 items: fill every pocket before you head back to the bank.",
+        de: "Sammle 80 Gegenstände: Füll jede Tasche, bevor du zur Bank zurückkehrst.",
       },
       objectives: [{ type: "gather_items", count: 80 }],
       rewards: {},
@@ -19849,8 +19883,8 @@ export const content: ContentDB = {
       id: "daily_m_kill_thorn_wolf",
       name: { en: "Wolf Watch", de: "Wolfswacht" },
       description: {
-        en: "Slay 10 thorn wolves prowling the Wildwood borders.",
-        de: "Erlege 10 Dornenwölfe, die an den Grenzen des Wildwalds streifen.",
+        en: "Slay 10 thorn wolves prowling the Blackthorn Wood.",
+        de: "Erlege 10 Dornwölfe, die durch den Schwarzdornwald streifen.",
       },
       objectives: [{ type: "kill_monster", target: "thorn_wolf", count: 10 }],
       rewards: {},
@@ -19864,8 +19898,8 @@ export const content: ContentDB = {
       id: "daily_m_craft_iron_arrows_20",
       name: { en: "Iron Supply", de: "Eisen-Nachschub" },
       description: {
-        en: "Smelt 20 iron bars — the garrison smiths are running low.",
-        de: "Schmelze 20 Eisenbarren — die Schmiede der Garnison brauchen Nachschub.",
+        en: "Smelt 20 iron bars: the smiths of Emberhold are running low.",
+        de: "Schmelze 20 Eisenbarren: Den Schmieden der Glutfeste geht das Eisen aus.",
       },
       objectives: [{ type: "craft_items", target: "iron_bar", count: 20 }],
       rewards: {},
@@ -19877,8 +19911,8 @@ export const content: ContentDB = {
       id: "daily_m_kill_mire_crawler",
       name: { en: "Bog Cleanser", de: "Sumpf-Reinigung" },
       description: {
-        en: "Eliminate 12 mire crawlers dragging down travellers in the Ashen Fields.",
-        de: "Vernichte 12 Sumpfkriecher, die Reisende in den Aschefeldern zu Fall bringen.",
+        en: "Eliminate 12 mire crawlers dragging down travellers in the Ashfields.",
+        de: "Vernichte 12 Morastkriecher, die in den Aschfeldern Reisende zu Fall bringen.",
       },
       objectives: [{ type: "kill_monster", target: "mire_crawler", count: 12 }],
       rewards: {},
@@ -19889,10 +19923,10 @@ export const content: ContentDB = {
     },
     {
       id: "daily_m_craft_leather_gear",
-      name: { en: "Tanner's Order", de: "Gerber-Auftrag" },
+      name: { en: "Workshop Day", de: "Werkstatttag" },
       description: {
-        en: "Craft 5 pieces of leather armour — the scouts need fresh kit.",
-        de: "Fertige 5 Lederpanzer-Teile — die Späher brauchen neue Ausrüstung.",
+        en: "Craft 5 items of any kind: the scouts take what the workshop gives.",
+        de: "Stelle 5 Gegenstände her, gleich welche: Die Späher nehmen, was die Werkstatt hergibt.",
       },
       objectives: [{ type: "craft_items", count: 5 }],
       rewards: {},
@@ -19904,8 +19938,8 @@ export const content: ContentDB = {
       id: "daily_m_kill_pitch_beetle",
       name: { en: "Beetle Buster", de: "Käfer-Klopfer" },
       description: {
-        en: "Crush 12 pitch beetles before they spread further through the ash fields.",
-        de: "Zerstampfe 12 Pechhornkäfer, bevor sie sich weiter in den Aschefeldern ausbreiten.",
+        en: "Crush 12 pitch beetles before they spread further through the Ashfields.",
+        de: "Zerstampfe 12 Pechkäfer, bevor sie sich weiter in den Aschfeldern ausbreiten.",
       },
       objectives: [{ type: "kill_monster", target: "pitch_beetle", count: 12 }],
       rewards: {},
@@ -19918,8 +19952,8 @@ export const content: ContentDB = {
       id: "daily_m_smelt_blacksteel_4",
       name: { en: "Dark Alloy", de: "Dunkle Legierung" },
       description: {
-        en: "Smelt 4 blacksteel bars — the hard metal favoured by elite guards.",
-        de: "Schmelze 4 Schwarzstahlbarren — das harte Metall der Elitewachen.",
+        en: "Smelt 4 blacksteel bars: hard metal, hard to work.",
+        de: "Schmelze 4 Schwarzstahlbarren: hartes Metall, schwer zu bearbeiten.",
       },
       objectives: [{ type: "craft_items", target: "blacksteel_bar", count: 4 }],
       rewards: {},
@@ -19928,13 +19962,14 @@ export const content: ContentDB = {
       difficulty: "medium",
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Doppelpunkt, Schwarzdornwald, Rankenhexe, Waldvogt)
     // ════ HARD (10) ═════════════════════════════════════════════════════════════
     {
       id: "daily_h_gather_150",
       name: { en: "Big Haul", de: "Große Fuhre" },
       description: {
-        en: "Gather 150 items of any kind across the realm — a full day's effort.",
-        de: "Sammle 150 beliebige Items im ganzen Reich — ein ganzer Tag Arbeit.",
+        en: "Gather 150 items of any kind across the Reach: a full day's work.",
+        de: "Sammle 150 Gegenstände im ganzen Reach, gleich welche: ein ganzer Tag Arbeit.",
       },
       objectives: [{ type: "gather_items", count: 150 }],
       rewards: {},
@@ -19946,8 +19981,8 @@ export const content: ContentDB = {
       id: "daily_h_smelt_mithril_5",
       name: { en: "Mithril Shift", de: "Mithril-Schicht" },
       description: {
-        en: "Smelt 5 mithril bars — rare ore demands a skilled hand.",
-        de: "Schmelze 5 Mithrilbarren — seltenes Erz verlangt eine geübte Hand.",
+        en: "Smelt 5 mithril bars: rare ore demands a skilled hand.",
+        de: "Schmelze 5 Mithrilbarren: Seltenes Erz verlangt eine geübte Hand.",
       },
       objectives: [{ type: "craft_items", target: "mithril_bar", count: 5 }],
       rewards: {},
@@ -19959,8 +19994,8 @@ export const content: ContentDB = {
       id: "daily_h_kill_moss_golem",
       name: { en: "Stone Breaker", de: "Stein-Brecher" },
       description: {
-        en: "Shatter 8 moss golems in the Wildwood — their stone cores are prized by runesmiths.",
-        de: "Zerschmettere 8 Moosgolem im Wildwald — ihre Steinkerne sind bei Runenschmieden begehrt.",
+        en: "Shatter 8 moss golems in the Blackthorn Wood: their stone cores are prized by runecrafters.",
+        de: "Zerschmettere 8 Moosgoleme im Schwarzdornwald: Ihre Steinkerne sind in der Runenkunst begehrt.",
       },
       objectives: [{ type: "kill_monster", target: "moss_golem", count: 8 }],
       rewards: {},
@@ -19972,8 +20007,8 @@ export const content: ContentDB = {
       id: "daily_h_kill_spectral_stag",
       name: { en: "Ghost Hunt", de: "Geisterjagd" },
       description: {
-        en: "Hunt 8 spectral stags haunting the Wildwood clearings.",
-        de: "Jage 8 Geisterhirsche, die in den Wildwald-Lichtungen spuken.",
+        en: "Hunt 8 spectral stags haunting the clearings of the Blackthorn Wood.",
+        de: "Jage 8 Geisterhirsche, die auf den Lichtungen des Schwarzdornwalds spuken.",
       },
       objectives: [{ type: "kill_monster", target: "spectral_stag", count: 8 }],
       rewards: {},
@@ -19986,8 +20021,8 @@ export const content: ContentDB = {
       id: "daily_h_craft_steel_arrows_25",
       name: { en: "Steel Supply", de: "Stahl-Nachschub" },
       description: {
-        en: "Smelt 25 steel bars — the fortress smiths demand quality stock.",
-        de: "Schmelze 25 Stahlbarren — die Schmiede der Festung fordern Qualitätsmaterial.",
+        en: "Smelt 25 steel bars: the smiths of Emberhold want sound stock.",
+        de: "Schmelze 25 Stahlbarren: Die Schmiede der Glutfeste verlangen gute Ware.",
       },
       objectives: [{ type: "craft_items", target: "steel_bar", count: 25 }],
       rewards: {},
@@ -19999,8 +20034,8 @@ export const content: ContentDB = {
       id: "daily_h_kill_bramble_witch",
       name: { en: "Witch Burning", de: "Hexenfeuer" },
       description: {
-        en: "Defeat 6 bramble witches lurking in the deep Wildwood.",
-        de: "Besiege 6 Dornenhexen, die im tiefen Wildwald lauern.",
+        en: "Defeat 6 bramble witches lurking in the deep Blackthorn Wood.",
+        de: "Besiege 6 Rankenhexen, die tief im Schwarzdornwald lauern.",
       },
       objectives: [{ type: "kill_monster", target: "bramble_witch", count: 6 }],
       rewards: {},
@@ -20012,8 +20047,8 @@ export const content: ContentDB = {
       id: "daily_h_smelt_adamantium_4",
       name: { en: "Adamantine Ingots", de: "Adamantium-Barren" },
       description: {
-        en: "Smelt 4 adamantium bars — the metal of champions.",
-        de: "Schmelze 4 Adamantiumbarren — das Metall der Champions.",
+        en: "Smelt 4 adamantium bars: metal for those who mean it.",
+        de: "Schmelze 4 Adamantiumbarren: Metall für die, die es ernst meinen.",
       },
       objectives: [{ type: "craft_items", target: "adamantium_bar", count: 4 }],
       rewards: {},
@@ -20023,10 +20058,10 @@ export const content: ContentDB = {
     },
     {
       id: "daily_h_kill_forest_warden",
-      name: { en: "Warden's Fall", de: "Wächters Sturz" },
+      name: { en: "Warden's Fall", de: "Der Vogt fällt" },
       description: {
-        en: "Fell 6 forest wardens guarding the ancient Wildwood groves.",
-        de: "Strecke 6 Waldwächter nieder, die die uralten Wildwald-Haine bewachen.",
+        en: "Defeat the Forest Warden 6 times: the wood fills the office anew every time.",
+        de: "Besiege den Waldvogt 6-mal: Der Wald besetzt das Amt jedes Mal neu.",
       },
       objectives: [{ type: "kill_monster", target: "forest_warden", count: 6 }],
       rewards: {},
@@ -20039,8 +20074,8 @@ export const content: ContentDB = {
       id: "daily_h_craft_mithril_arrows_15",
       name: { en: "Mithril Supply", de: "Mithril-Nachschub" },
       description: {
-        en: "Smelt 15 mithril bars — precision material for the finest smiths.",
-        de: "Schmelze 15 Mithrilbarren — Präzisionsmaterial für die besten Schmiede.",
+        en: "Smelt 15 mithril bars: fine material for the finest smiths.",
+        de: "Schmelze 15 Mithrilbarren: feines Material für die besten Schmiede.",
       },
       objectives: [{ type: "craft_items", target: "mithril_bar", count: 15 }],
       rewards: {},
@@ -20052,8 +20087,8 @@ export const content: ContentDB = {
       id: "daily_h_kill_kill_total_30",
       name: { en: "Combat Veteran", de: "Kampfveteran" },
       description: {
-        en: "Defeat 30 monsters of any kind — prove your mettle in sustained battle.",
-        de: "Besiege 30 beliebige Monster — beweise deine Standhaftigkeit im Dauerkampf.",
+        en: "Defeat 30 monsters of any kind: prove you can hold a long fight.",
+        de: "Besiege 30 Monster, gleich welche: Zeig, dass du einen langen Kampf durchstehst.",
       },
       objectives: [{ type: "kill_total", count: 30 }],
       rewards: {},
@@ -20062,13 +20097,14 @@ export const content: ContentDB = {
       difficulty: "hard",
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Doppelpunkt, Reach, Eishexer)
     // ════ MASTER (10) ═══════════════════════════════════════════════════════════
     {
       id: "daily_ma_kill_slag_kobold_40",
       name: { en: "Kobold Extermination", de: "Kobold-Ausrottung" },
       description: {
         en: "Exterminate 40 slag kobolds infesting the Slag Pit.",
-        de: "Vernichte 40 Schlackenkobolds, die die Schlackengrube befallen haben.",
+        de: "Vernichte 40 Schlackenkobolde, die die Schlackengrube befallen haben.",
       },
       objectives: [{ type: "kill_monster", target: "slag_kobold", count: 40 }],
       rewards: {},
@@ -20080,8 +20116,8 @@ export const content: ContentDB = {
       id: "daily_ma_smelt_runite_4",
       name: { en: "Runite Crucible", de: "Runit-Schmelztiegel" },
       description: {
-        en: "Smelt 4 runite bars — the apex of conventional metallurgy.",
-        de: "Schmelze 4 Runitbarren — der Höhepunkt der konventionellen Metallurgie.",
+        en: "Smelt 4 runite bars: ore veined with old runic light.",
+        de: "Schmelze 4 Runitbarren: Erz, das altes Runenlicht durchzieht.",
       },
       objectives: [{ type: "craft_items", target: "runite_bar", count: 4 }],
       rewards: {},
@@ -20117,10 +20153,10 @@ export const content: ContentDB = {
     },
     {
       id: "daily_ma_gather_250",
-      name: { en: "Realm's Bounty", de: "Reiches Füllhorn" },
+      name: { en: "Reach's Bounty", de: "Reiches Füllhorn" },
       description: {
-        en: "Gather 250 items in a single day — strip the realm of its riches.",
-        de: "Sammle 250 Items an einem einzigen Tag — schöpfe den Reichtum des Reiches aus.",
+        en: "Gather 250 items in a single day: take what the Reach still gives.",
+        de: "Sammle 250 Gegenstände an einem einzigen Tag: Nimm, was das Reach noch gibt.",
       },
       objectives: [{ type: "gather_items", count: 250 }],
       rewards: {},
@@ -20132,8 +20168,8 @@ export const content: ContentDB = {
       id: "daily_ma_smelt_bloodiron_3",
       name: { en: "Blood Metal", de: "Blutmetall" },
       description: {
-        en: "Smelt 3 bloodiron bars — the cursed ore of the deep pits.",
-        de: "Schmelze 3 Bluteisenbarren — das verfluchte Erz der tiefen Gruben.",
+        en: "Smelt 3 bloodiron bars: a vein better left closed.",
+        de: "Schmelze 3 Bluteisenbarren: eine Ader, die man besser zugelassen hätte.",
       },
       objectives: [{ type: "craft_items", target: "bloodiron_bar", count: 3 }],
       rewards: {},
@@ -20159,8 +20195,8 @@ export const content: ContentDB = {
       id: "daily_ma_craft_runite_arrows_20",
       name: { en: "Runite Supply", de: "Runit-Nachschub" },
       description: {
-        en: "Smelt 20 runite bars — the toughest material gold can buy.",
-        de: "Schmelze 20 Runitbarren — das härteste Material, das Gold kaufen kann.",
+        en: "Smelt 20 runite bars: the toughest metal gold can buy.",
+        de: "Schmelze 20 Runitbarren: das härteste Metall, das Gold kaufen kann.",
       },
       objectives: [{ type: "craft_items", target: "runite_bar", count: 20 }],
       rewards: {},
@@ -20173,7 +20209,7 @@ export const content: ContentDB = {
       name: { en: "Frozen Silence", de: "Gefrorene Stille" },
       description: {
         en: "Silence 15 frost hexers before their glacial curses spread across the pit.",
-        de: "Schalte 15 Frostbanner aus, bevor ihre Eisflüche die Grube überziehen.",
+        de: "Schalte 15 Eishexer aus, bevor ihre Eisflüche die Grube überziehen.",
       },
       objectives: [{ type: "kill_monster", target: "frost_hexer", count: 15 }],
       rewards: {},
@@ -20185,8 +20221,8 @@ export const content: ContentDB = {
       id: "daily_ma_kill_total_60",
       name: { en: "Slaughter of the Ages", de: "Massaker der Zeitalter" },
       description: {
-        en: "Defeat 60 monsters in a single day — let the realm know your name.",
-        de: "Besiege 60 Monster an einem einzigen Tag — lass das Reich deinen Namen kennen.",
+        en: "Defeat 60 monsters in a single day: let the Reach know your name.",
+        de: "Besiege 60 Monster an einem einzigen Tag: Das Reach soll deinen Namen kennen.",
       },
       objectives: [{ type: "kill_total", count: 60 }],
       rewards: {},
@@ -20195,6 +20231,7 @@ export const content: ContentDB = {
       difficulty: "master",
     },
 
+    // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Götzenhalle statt Götzenschrein, Reach)
     // ════ MASTER — Spätzonen-Karten (#p13, Chef-GO 25.08.2026 (1.1.0), Chef-Entscheidung 4
     // „Variante A"): 10 weitere Meister-Karten mit Zielen aus Hochland/Götzenhalle statt
     // Schlackengrube, tokenReward 8 (reiner Content, kein neues Schwierigkeits-Badge). Das
@@ -20207,8 +20244,8 @@ export const content: ContentDB = {
       id: "daily_ma_kill_roc_20",
       name: { en: "Sky Hunt", de: "Himmelsjagd" },
       description: {
-        en: "Bring down 20 rocs terrorizing the Highland skies.",
-        de: "Erlege 20 Rocs, die den Hochland-Himmel terrorisieren.",
+        en: "Bring down 20 rocs that rule the Highland skies.",
+        de: "Erlege 20 Rocs, die den Himmel über dem Hochland beherrschen.",
       },
       objectives: [{ type: "kill_monster", target: "roc", targets: ["roc", "roc_hunter"], count: 20 }],
       rewards: {},
@@ -20246,8 +20283,8 @@ export const content: ContentDB = {
       id: "daily_ma_kill_idol_warden_15",
       name: { en: "Warden Breach", de: "Wächterbresche" },
       description: {
-        en: "Break the line of 15 idol wardens guarding the Idol Sanctum.",
-        de: "Durchbrich die Reihen von 15 Götzenwächtern im Götzenschrein.",
+        en: "Break the line of 15 idol wardens guarding the Idol Hall.",
+        de: "Durchbrich die Reihen von 15 Götzenwächtern in der Götzenhalle.",
       },
       objectives: [{ type: "kill_monster", target: "idol_warden", count: 15 }],
       rewards: {},
@@ -20259,8 +20296,8 @@ export const content: ContentDB = {
       id: "daily_ma_kill_aether_wraith_10",
       name: { en: "Aether Purge", de: "Ätherreinigung" },
       description: {
-        en: "Unmake 10 aether wraiths bound within the Idol Sanctum.",
-        de: "Löse 10 Aetherwraiths im Götzenschrein auf.",
+        en: "Unmake 10 aether wraiths bound within the Idol Hall.",
+        de: "Löse 10 Aetherwraiths in der Götzenhalle auf.",
       },
       objectives: [{ type: "kill_monster", target: "aether_wraith", count: 10 }],
       rewards: {},
@@ -20272,8 +20309,8 @@ export const content: ContentDB = {
       id: "daily_ma_kill_scale_skarn_8",
       name: { en: "Dragonhide Hunt", de: "Drachenhaut-Jagd" },
       description: {
-        en: "Bring down 8 dragonhide skarns lairing in the Idol Sanctum.",
-        de: "Erlege 8 Drachenhaut-Skarns im Götzenschrein.",
+        en: "Bring down 8 dragonhide skarns lairing in the Idol Hall.",
+        de: "Erlege 8 Drachenhaut-Skarns in der Götzenhalle.",
       },
       objectives: [{ type: "kill_monster", target: "scale_skarn", count: 8 }],
       rewards: {},
@@ -20285,8 +20322,8 @@ export const content: ContentDB = {
       id: "daily_ma_smelt_godiron_3",
       name: { en: "Godiron Crucible", de: "Götzeneisen-Schmelztiegel" },
       description: {
-        en: "Smelt 3 godiron bars — the final rung of the metal ladder.",
-        de: "Schmelze 3 Götzeneisenbarren — die letzte Sprosse der Metall-Leiter.",
+        en: "Smelt 3 godiron bars: the final rung of the metal ladder.",
+        de: "Schmelze 3 Götzeneisenbarren: die letzte Sprosse der Metallleiter.",
       },
       objectives: [{ type: "craft_items", target: "godiron_bar", count: 3 }],
       rewards: {},
@@ -20311,8 +20348,8 @@ export const content: ContentDB = {
       id: "daily_ma_gather_400",
       name: { en: "Second Volume's Bounty", de: "Füllhorn des zweiten Bandes" },
       description: {
-        en: "Gather 400 items in a single day — the realm still has plenty to give.",
-        de: "Sammle 400 Items an einem einzigen Tag — das Reich hat noch viel zu geben.",
+        en: "Gather 400 items in a single day: the Reach still has plenty to give.",
+        de: "Sammle 400 Gegenstände an einem einzigen Tag: Das Reach hat noch viel zu geben.",
       },
       objectives: [{ type: "gather_items", count: 400 }],
       rewards: {},
@@ -20324,8 +20361,8 @@ export const content: ContentDB = {
       id: "daily_ma_kill_total_80",
       name: { en: "Reckoning of the Reach", de: "Abrechnung des Reachs" },
       description: {
-        en: "Defeat 80 monsters in a single day — a reckoning fit for the late chapters.",
-        de: "Besiege 80 Monster an einem einzigen Tag — eine Abrechnung für die späten Kapitel.",
+        en: "Defeat 80 monsters in a single day: a reckoning fit for the late chapters.",
+        de: "Besiege 80 Monster an einem einzigen Tag: eine Abrechnung, wie sie zu den späten Kapiteln passt.",
       },
       objectives: [{ type: "kill_total", count: 80 }],
       rewards: {},
