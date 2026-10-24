@@ -1,4 +1,5 @@
 import { SHOW_ITEM_TIERS } from "../featureFlags";
+import { inventarRaster } from "../inventoryLayout";
 import { ITEM_RARITIES } from "@hearthforge/shared"; // claude:2026-10-23T23:10:00+02:00 — Bergung: Rarität-Rang
 import { SalvageBatchModal, SalvageConfirmModal } from "../components/SalvageModals"; // claude:2026-10-23T23:10:00+02:00 — Bergung (1.4.0)
 import { Fragment, useRef, useState, type CSSProperties, type ReactElement, type KeyboardEvent, useEffect } from "react";
@@ -139,6 +140,26 @@ export function CharacterPage(): JSX.Element {
   const [dragItem, setDragItem] = useState<string | null>(null);
   // Quell-Slot beim Drag&Drop-Umsortieren im Inventar (originalIdx); null = kein Inventar-Drag.
   const [dragInvIdx, setDragInvIdx] = useState<number | null>(null);
+  // claude:2026-10-24T19:54:00+02:00 — Spieler-Bugreport 24.10. („Drag & Drop wirft das Inventar durcheinander“): das Spiel läuft
+  // während des Ziehens weiter. Verbraucht eine Aktion den Quellstapel oder verschiebt ein Fund die Belegung, zeigte
+  // `dragInvIdx` beim Ablegen auf ein anderes (oder leeres) Fach und tauschte das Falsche. Deshalb wird das gezogene Item
+  // mitgemerkt und beim Ablegen gegengeprüft.
+  const dragInvItemRef = useRef<string | null>(null);
+  const zugBeenden = (): void => {
+    setDragInvIdx(null);
+    setDragItem(null);
+    dragInvItemRef.current = null;
+  };
+  const ablegenAuf = (toIdx: number): void => {
+    if (dragInvIdx === null) return;
+    let from = dragInvIdx;
+    const erwartet = dragInvItemRef.current;
+    if (erwartet !== null && state.inventory.slots[from]?.itemId !== erwartet) {
+      from = state.inventory.slots.findIndex((sl) => sl !== null && sl.itemId === erwartet);
+    }
+    if (from >= 0) moveInventorySlot(state.inventory, from, toIdx);
+    zugBeenden();
+  };
 
   /**
    * Sortieren als einmalige AKTION (Chef 31.08.2026: „Sortieren soll ein einmaliges Verschieben
@@ -177,9 +198,7 @@ export function CharacterPage(): JSX.Element {
         dragInvIdx !== null
           ? (e) => {
               e.preventDefault();
-              moveInventorySlot(state.inventory, dragInvIdx, originalIdx);
-              setDragInvIdx(null);
-              setDragItem(null);
+              ablegenAuf(originalIdx);
             }
           : undefined
       }
@@ -407,11 +426,20 @@ export function CharacterPage(): JSX.Element {
   // verzauberte Variante ohne Grundversion belegt eine Einheit, aber keinen Null-Slot, also
   // blieben Zellen leer, in die die Engine trotzdem nichts Neues legt (hasCapacityForNewCell).
   // Sichtbar sind jetzt nur so viele leere Zellen, wie Einheiten wirklich frei sind (übervoll = 0).
-  const freieEinheiten = Math.max(0, invCapacity - invUsedUnits);
-  const leereSichtbar = new Set<number>();
-  for (const { slot, originalIdx } of sortedSlots) {
-    if (!slot && leereSichtbar.size < freieEinheiten) leereSichtbar.add(originalIdx);
-  }
+  // claude:2026-10-24T19:54:00+02:00 — Spieler-Bugreport 24.10. („ein paar Items lassen sich nicht richtig ziehen“): reine Varianten
+  // (verzaubert/Suffix ohne Grundstapel) standen als Zusatzzellen HINTER dem letzten belegten Fach, und dafür verschwanden
+  // gleich viele Leerfächer. Alles hinter einer Lücke rutschte dadurch optisch nach vorne: Fach 18/19 erschien auf Zelle
+  // 15/16, und die letzten Zellen waren Variantenzellen, auf die man nichts ablegen konnte (nachgestellt mit
+  // ui-audit/_inv-dnd-repro.mjs). Jetzt belegen die Variantenzellen die LETZTEN freien Fächer; jede Zelle steht an ihrer
+  // echten Fachposition, und auf eine Variantenzelle gezogen landet das Item in genau diesem Fach.
+  // Die Chef-Regel vom 06.07. (Bild #43) bleibt: Variantenzellen stehen direkt HINTER dem letzten belegten Fach, vor
+  // den Leerfächern. Sie nehmen dafür die ersten freien Fächer dahinter ein (reicht das nicht, die letzten freien davor),
+  // statt Zusatzzellen einzuschieben, die alles Folgende verschieben.
+  const { variantenImFach, variantenFachlos, leereSichtbar } = inventarRaster(
+    inv.slots,
+    orphanInstanceGroups,
+    Math.max(0, invCapacity - invUsedUnits),
+  );
   // Chef 31.08.2026: Die Anzeige folgt IMMER der echten Fachreihenfolge — Sortieren ist jetzt eine
   // Aktion (`sortiereJetzt`), die die Faecher wirklich umordnet, keine Ansicht mehr. Damit ist auch
   // das Verschieben in jedem Zustand erlaubt; vorher ging es nur im Modus „Neueste", was niemand
@@ -421,11 +449,14 @@ export function CharacterPage(): JSX.Element {
   // claude:2026-10-17T21:00:00+02:00 Rein verzauberte Basis-Items (Orphans) stehen direkt HINTER dem
   // letzten befuellten Fach und damit VOR den Leerfaechern (Chef-Fix 2026-07-06, Bild #43). Items mit
   // Grundversion tragen den Stern schon an ihrem Slot (kein Doppel-Eintrag).
-  const orphanZellen = (): ReactElement[] =>
-    orphanInstanceGroups.map(([itemId, group]) => (
+  // claude:2026-10-24T19:55:00+02:00 — seit dem Bugreport 24.10. belegt die Zelle dabei ein echtes freies Fach (`variantenImFach`)
+  // und ist Ablageziel für dieses Fach; nur bei übervollem Inventar steht sie fachlos hinten (`fach === null`).
+  const variantenZelle = ([itemId, group]: (typeof orphanInstanceGroups)[number], fach: number | null): ReactElement => (
     <div
       key={`orphan-${itemId}`}
-      className={`cs-inv-slot-wrap${invFilterActive && !itemMatchesInvFilter(itemId) ? " invf-dim" : ""}`}
+      className={`cs-inv-slot-wrap${fach !== null && dragInvIdx !== null ? " inv-drop-target" : ""}${invFilterActive && !itemMatchesInvFilter(itemId) ? " invf-dim" : ""}`}
+      onDragOver={fach !== null && dragInvIdx !== null ? (e) => e.preventDefault() : undefined}
+      onDrop={fach !== null && dragInvIdx !== null ? (e) => { e.preventDefault(); ablegenAuf(fach); } : undefined}
     >
       <VariantContainerCell
         itemId={itemId}
@@ -437,9 +468,7 @@ export function CharacterPage(): JSX.Element {
         onNewBadgeSeen={() => markNewItemBadgeSeen(state, itemId)}
       />
     </div>
-  ));
-  let letztesBefuellt = -1;
-  sortedSlots.forEach(({ slot }, i) => { if (slot) letztesBefuellt = i; });
+  );
 
   // claude:2026-10-17T12:20:00+02:00 — `.cs-layout` ist Container-Query-Wurzel (Spalten nach
   // PANELbreite, character.css); das Spaltenraster sitzt deshalb eine Ebene tiefer in `.cs-grid`.
@@ -734,8 +763,7 @@ export function CharacterPage(): JSX.Element {
 
         {/* Inventory grid / list */}
         <div className={"cs-inv-grid"}>
-          {letztesBefuellt < 0 && orphanZellen()}
-          {sortedSlots.map(({ slot, originalIdx }, displayIdx) =>
+          {sortedSlots.map(({ slot, originalIdx }) =>
             !slot ? (
               /* Chef-Report 31.08.2026: „ich dragge etwas auf einen leeren platz aber es huepft
                  einfach auf einen anderen random platz". Ursache war, dass leere Faecher frueher
@@ -743,7 +771,9 @@ export function CharacterPage(): JSX.Element {
                  das man zog, gehoerte also gar nicht zu dem Fach, dessen Index beim Ablegen benutzt
                  wurde. Die Luecken stehen genau dort, wo sie im Inventar wirklich sind; sichtbar sind nur
                  so viele, wie Kapazitaetseinheiten frei sind (`leereSichtbar`). */
-              leereSichtbar.has(originalIdx) ? leeresFach(originalIdx) : null
+              variantenImFach.has(originalIdx)
+                ? variantenZelle(variantenImFach.get(originalIdx)!, originalIdx)
+                : leereSichtbar.has(originalIdx) ? leeresFach(originalIdx) : null
             ) : (
               /* Wrapper catches mousedown for selection without blocking ItemCell tooltip click.
                  Drag&Drop: Start merkt den Quell-Slot, Drop auf einen anderen Slot tauscht (Umsortieren). */
@@ -752,12 +782,12 @@ export function CharacterPage(): JSX.Element {
                 className={`cs-inv-slot-wrap${dragInvIdx !== null && dragInvIdx !== originalIdx ? " inv-drop-target" : ""}${invFilterActive && !itemMatchesInvFilter(slot.itemId) ? " invf-dim" : ""}`}
                 /* Quell-Slot IMMER merken (für Equip-per-Drag / Quick-Sell von Instanzen); das
                    Umsortier-Drop selbst bleibt aber auf "newest" begrenzt (sonst falsche Slot-Zuordnung). */
-                onDragStart={() => setDragInvIdx(originalIdx)}
-                onDragEnd={() => { setDragInvIdx(null); setDragItem(null); }}
+                onDragStart={() => { setDragInvIdx(originalIdx); dragInvItemRef.current = slot.itemId; }}
+                onDragEnd={zugBeenden}
                 onDragOver={dragInvIdx !== null ? (e) => e.preventDefault() : undefined}
                 onDrop={
                   dragInvIdx !== null
-                    ? (e) => { e.preventDefault(); moveInventorySlot(state.inventory, dragInvIdx, originalIdx); setDragInvIdx(null); setDragItem(null); }
+                    ? (e) => { e.preventDefault(); ablegenAuf(originalIdx); }
                     : undefined
                 }
               >
@@ -783,10 +813,11 @@ export function CharacterPage(): JSX.Element {
                   );
                 })()}
               </div>
-              {displayIdx === letztesBefuellt && orphanZellen()}
               </Fragment>
             ),
           )}
+          {/* Mehr Variantengruppen als freie Fächer (übervolles Inventar): ehrlich hinten anhängen. */}
+          {variantenFachlos.map((grp) => variantenZelle(grp, null))}
         </div>
 
         {/* Das Item-Detail-Panel ist raus (Chef 2026-07-09: „Diese Sektion kann raus aus dem Inv!") —
