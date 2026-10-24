@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:38:00+02:00 — W2 Gruppe D: feste px-Schriftgroessen auf --fs-Skala umgestellt (Chef 24.10. Texte zu klein); Woerter min. --fs-xs, Zahlen-Badges --fs-2xs. */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
@@ -75,7 +76,7 @@
 
 .achv-hero-sub {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-style: italic;
   color: var(--muted);
 }
@@ -90,7 +91,7 @@
 .achv-hero-bar-label {
   flex-shrink: 0;
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   letter-spacing: 1.4px;
   text-transform: uppercase;
   color: var(--accent-2);
@@ -117,7 +118,7 @@
 .achv-hero-bar-pct {
   flex-shrink: 0;
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--gold);
   min-width: 62px;
   text-align: right;
@@ -142,14 +143,14 @@
 
 .achv-hero-ap-val {
   font-family: var(--font-head);
-  font-size: 27px;
+  font-size: var(--fs-2xl);
   font-weight: 700;
   color: var(--accent-2);
   line-height: 1.1;
 }
 
 .achv-hero-ap-label {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   letter-spacing: 1.4px;
   text-transform: uppercase;
   color: var(--muted);
@@ -164,7 +165,7 @@
 }
 
 .achv-hero-ring-label {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   white-space: nowrap;
   text-align: center;
@@ -195,7 +196,7 @@
 .achv-ring-text {
   fill: var(--gold);
   font-family: var(--font-head);
-  font-size: 15px;
+  font-size: var(--fs-sm);
   font-weight: 700;
 }
 
@@ -212,7 +213,7 @@
 
 .achv-milestone-icon {
   flex-shrink: 0;
-  font-size: 20px;
+  font-size: var(--fs-lg);
 }
 
 .achv-milestone-body {
@@ -237,7 +238,7 @@
 }
 
 .achv-milestone-text {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
 }
 
@@ -253,7 +254,7 @@
 
 .achv-almost-title {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -290,7 +291,7 @@
 .achv-almost-card.achv-rarity--legendary { border-color: rgba(217, 138, 74, 0.5); }
 
 .achv-almost-emblem {
-  font-size: 22px;
+  font-size: var(--fs-xl);
   flex-shrink: 0;
 }
 .achv-almost-emblem img { width: 26px; height: 26px; object-fit: contain; }
@@ -304,7 +305,7 @@
 }
 
 .achv-almost-name {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   color: var(--text);
   white-space: nowrap;
@@ -331,7 +332,7 @@
 .achv-almost-bar-fill.achv-rarity--legendary { background: #e08030; }
 
 .achv-almost-pct {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--gold);
   flex-shrink: 0;
@@ -421,7 +422,7 @@
   border-right: 1px solid var(--border);
   color: var(--muted);
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.6px;
   text-transform: uppercase;
   cursor: pointer;
@@ -454,7 +455,7 @@
   border: 1px solid var(--border);
   color: var(--muted);
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.4px;
   cursor: pointer;
   transition: color 0.12s, background 0.12s, border-color 0.12s;
@@ -489,13 +490,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 19px;
+  font-size: var(--fs-lg);
 }
 .achv-group-icon img { width: 100%; height: 100%; object-fit: contain; }
 
 .achv-group-name {
   font-family: var(--font-head);
-  font-size: 18px;
+  font-size: var(--fs-lg);
   letter-spacing: 1.2px;
   text-transform: uppercase;
   color: var(--accent);
@@ -504,7 +505,7 @@
 .achv-group-count {
   margin-left: auto;
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--muted);
 }
 .achv-group-count strong { color: var(--gold); }
@@ -574,7 +575,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: var(--fs-sm);
   opacity: 0.9;
   z-index: 2;
   background: radial-gradient(circle, rgba(10, 8, 6, 0.92) 52%, transparent 74%);
@@ -591,7 +592,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 25px;
+  font-size: var(--fs-2xl);
   background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.06), rgba(10, 8, 6, 0.85) 74%);
   border: 2px solid #454d54;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
@@ -622,7 +623,7 @@
 
 .achv-name {
   font-family: var(--font-head);
-  font-size: 16px;
+  font-size: var(--fs-sm);
   letter-spacing: 0.3px;
   line-height: 1.25;
   color: var(--text);
@@ -641,7 +642,7 @@
   padding: 2px 8px;
   border-radius: 9px;
   border: 1px solid var(--border);
-  font-size: 10px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0.6px;
   text-transform: uppercase;
@@ -658,14 +659,14 @@
   align-items: center;
   gap: 5px;
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.4px;
   color: var(--accent-2);
 }
 
 .achv-desc {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   line-height: 1.4;
   color: var(--muted);
 }
@@ -695,7 +696,7 @@
 .achv-progress-fill.achv-rarity--legendary { background: #e08030; }
 
 .achv-progress-count {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   color: var(--muted);
   text-align: right;
 }
@@ -706,7 +707,7 @@
   align-items: center;
   gap: 6px;
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.5px;
   color: var(--gold);
 }
@@ -714,7 +715,7 @@
 .achv-footer {
   padding: 14px 4px 4px;
   text-align: center;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-style: italic;
   color: var(--muted);
 }
@@ -750,7 +751,7 @@
   gap: 6px;
   margin-top: 6px;
   color: #8f877a;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }

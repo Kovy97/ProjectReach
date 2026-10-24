@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:38:00+02:00 — W2 Gruppe D: feste px-Schriftgroessen auf --fs-Skala umgestellt (Chef 24.10. Texte zu klein); Woerter min. --fs-xs, Zahlen-Badges --fs-2xs. */
 /* ═══════════════════════════════════════════════════════════
    TAVERNE (1.2.0 „Alive", design/1.2.0-alive/taverne-spec-technik.md §6)
    Szene (tvn-stage/-seat/-object), Gäste-Karte (tvn-gm-*), Behälter-Dialog (tvn-crate-*).
@@ -47,7 +48,7 @@
 
 .tvn-construction-body {
   margin: 0;
-  font-size: 17px;
+  font-size: var(--fs-md);
   color: var(--text);
 }
 
@@ -143,7 +144,7 @@
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
-  font-size: 10px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -162,7 +163,7 @@
 
 .tvn-seat-nameband {
   font-family: var(--font-head);
-  font-size: clamp(11px, 1vw, 14px);
+  font-size: clamp(var(--fs-xs), 1vw, 14px);
   font-weight: 700;
   letter-spacing: 0.03em;
   color: var(--ds-parch-ink, var(--text));
@@ -215,7 +216,7 @@
 .tvn-level-note {
   flex: 0 0 auto;
   text-align: center;
-  font-size: 13px;
+  font-size: var(--fs-xs);
 }
 
 /* ─── Info-Popup (Tresen/Halvard, Kamin/Segen) ──────────────────────────────────────────────── */
@@ -242,7 +243,7 @@
 
 .tvn-info-title {
   font-family: var(--font-head);
-  font-size: 19px;
+  font-size: var(--fs-lg);
   font-weight: 700;
   color: var(--gold);
 }
@@ -253,7 +254,7 @@
 
 .tvn-info-line {
   margin: 0 0 8px;
-  font-size: 15px;
+  font-size: var(--fs-sm);
   line-height: 1.5;
   color: var(--text);
 }
@@ -311,18 +312,18 @@
 
 .tvn-gm-name {
   font-family: var(--font-head);
-  font-size: 22px;
+  font-size: var(--fs-xl);
   font-weight: 700;
   color: var(--gold);
 }
 
 .tvn-gm-role {
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 
 .tvn-gm-greeting {
   margin-top: 4px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-style: italic;
   color: var(--text);
 }
@@ -333,7 +334,7 @@
 }
 
 .tvn-gm-line {
-  font-size: 16px;
+  font-size: var(--fs-sm);
   line-height: 1.5;
   color: var(--text);
   margin-bottom: var(--ds-gap);
@@ -354,7 +355,7 @@
   flex: 0 0 auto;
   font-family: var(--font-head);
   font-weight: 700;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--gold);
   white-space: nowrap;
 }
@@ -365,13 +366,13 @@
   border: 1px solid var(--danger);
   border-radius: 3px;
   color: var(--danger);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   background: rgba(168, 90, 82, 0.1);
 }
 
 .tvn-gm-reward-head {
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin-bottom: 6px;
@@ -391,7 +392,7 @@
   border: 1px solid var(--border);
   border-radius: 4px;
   background: rgba(0, 0, 0, 0.25);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: var(--text);
 }
 
@@ -402,7 +403,7 @@
 }
 
 .tvn-gm-reward-icon-emoji {
-  font-size: 16px;
+  font-size: var(--fs-sm);
   line-height: 1;
 }
 
@@ -423,7 +424,7 @@
 
 .tvn-crate-title {
   font-family: var(--font-head);
-  font-size: 20px;
+  font-size: var(--fs-lg);
   font-weight: 700;
   color: var(--gold);
   margin-bottom: var(--ds-gap-lg);
@@ -451,7 +452,7 @@
   background: rgba(0, 0, 0, 0.25);
   color: var(--text);
   cursor: pointer;
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 
 .tvn-crate-tier:disabled {
@@ -471,7 +472,7 @@
 }
 
 .tvn-crate-tier-emoji {
-  font-size: 28px;
+  font-size: var(--fs-2xl);
 }
 
 .tvn-crate-tier-name {
@@ -480,7 +481,7 @@
 }
 
 .tvn-crate-tier-owned {
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
 
 .tvn-crate-qty-row {
@@ -497,12 +498,12 @@
   border-radius: 3px;
   color: var(--text);
   padding: 4px 8px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 
 .tvn-crate-reveal-head {
   font-family: var(--font-head);
-  font-size: 15px;
+  font-size: var(--fs-sm);
   color: var(--gold);
   margin-bottom: var(--ds-gap);
 }
@@ -532,7 +533,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: var(--fs-2xl);
 }
 
 .tvn-crate-card-icon img {
@@ -542,14 +543,14 @@
 }
 
 .tvn-crate-card-name {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   line-height: 1.25;
 }
 
 .tvn-crate-card-qty {
   font-family: var(--font-head);
   font-weight: 700;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: var(--gold);
 }
 

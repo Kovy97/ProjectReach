@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:38:00+02:00 — W2 Gruppe D: feste px-Schriftgroessen auf --fs-Skala umgestellt (Chef 24.10. Texte zu klein); Woerter min. --fs-xs, Zahlen-Badges --fs-2xs. */
 /* claude:2026-10-25T01:40:00+02:00 — Zufallsereignisse und Arbeitsaufträge (1.4.0 „Feder und Stahl“ Welle 3).
    Ereigniskarte als Toast mit Messing-Akzent, Chip im Kopf, Auftragskarten im Quest-Reiter, Logbuch in der
    Fertigkeiten-Übersicht. Bestehende Bausteine (Eisenrahmen-Knöpfe, ItemCell, panel); nichts steril. */
@@ -27,14 +28,14 @@
   border: 1px solid rgba(216, 192, 106, 0.45);
   background: rgba(30, 24, 14, 0.75);
   color: #e2c27a;
-  font-size: 0.85em;
+  font-size: var(--fs-xs);
   text-transform: none;
   white-space: nowrap;
 }
 .skill-event-chip--offer {
   cursor: pointer;
   font: inherit;
-  font-size: 0.85em;
+  font-size: var(--fs-xs);
   border-color: rgba(224, 160, 90, 0.7);
   color: #f0b46a;
 }
@@ -174,9 +175,23 @@
 }
 .skill-event-log-icon {
   text-align: center;
-  font-size: 20px;
+  font-size: var(--fs-lg);
 }
 .skill-event-log-name {
   font-family: var(--font-head);
   color: var(--gold, #d8c06a);
 }
+
+/* claude:2026-10-24T18:44:00+02:00 — W2 Gruppe D: Auftragskarten und Ereignis-Chips auf die Skala, Kundenbuste und Item groesser (Fliesstext in --font-body). */
+.work-orders-lead, .work-orders-empty { font-family: var(--font-body); font-size: var(--fs-md); line-height: 1.45; }
+.work-order { padding: 14px 16px; gap: 10px; }
+.work-order-portrait { width: clamp(60px, 4.6vw, 92px); height: clamp(75px, 5.75vw, 115px); }
+.work-order-head .item-cell { width: clamp(56px, 4.2vw, 84px); height: clamp(56px, 4.2vw, 84px); }
+.work-order-customer { font-size: var(--fs-md); }
+.work-order-line { font-family: var(--font-body); font-size: var(--fs-md); line-height: 1.35; }
+.work-order-reward { font-size: var(--fs-md); }
+.work-order-badge { font-size: var(--fs-sm); }
+.work-order-warn, .work-orders-msg { font-family: var(--font-body); font-size: var(--fs-sm); }
+.work-order-bar { height: 10px; }
+.work-order-progress { font-size: var(--fs-sm); }
+.skill-event-log-row { font-size: var(--fs-sm); }

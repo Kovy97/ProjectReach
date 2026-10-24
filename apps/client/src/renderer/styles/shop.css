@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:38:00+02:00 — W2 Gruppe D: feste px-Schriftgroessen auf --fs-Skala umgestellt (Chef 24.10. Texte zu klein); Woerter min. --fs-xs, Zahlen-Badges --fs-2xs. */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
@@ -55,7 +56,7 @@
 
 .shopv2-balance-amount {
   font-family: var(--font-head);
-  font-size: 23px;
+  font-size: var(--fs-xl);
   font-weight: 700;
   color: var(--gold);
   letter-spacing: 1px;
@@ -66,7 +67,7 @@
 
 .shopv2-balance-label {
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -89,7 +90,7 @@
    (kleine gedämpfte Schrift), aber per Hover-Tooltip (title=) auffindbar für Power-User. */
 .shopv2-tab-hotkey-hint {
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   letter-spacing: 3px;
   color: var(--muted);
   opacity: 0.55;
@@ -117,7 +118,7 @@
     url("../assets/bg_black.webp") repeat;
   color: var(--ds-parch-ink, #e8d8b0);
   font-family: var(--font-head);
-  font-size: 18px;
+  font-size: var(--fs-lg);
   font-weight: 700;
   letter-spacing: 1.2px;
   text-transform: uppercase;
@@ -194,7 +195,7 @@
     url("../assets/bg_black.webp") repeat;
   color: var(--ds-parch-ink, #e8d8b0);
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   letter-spacing: 0.4px;
   text-transform: uppercase;
@@ -244,7 +245,7 @@
 }
 
 .shopv2-chip-icon-img { width: 100%; height: 100%; object-fit: contain; }
-.shopv2-chip-icon-emoji { font-size: 18px; line-height: 1; }
+.shopv2-chip-icon-emoji { font-size: var(--fs-lg); line-height: 1; }
 
 
 /* ─── Buy-Tab: scrollbarer Sektionsbereich ───────────────────────────────── */
@@ -266,11 +267,11 @@
   gap: 10px;
 }
 
-.shopv2-section-orn { color: var(--ds-gold-dim, #a07840); font-size: 13px; flex-shrink: 0; }
+.shopv2-section-orn { color: var(--ds-gold-dim, #a07840); font-size: var(--fs-xs); flex-shrink: 0; }
 
 .shopv2-section-title {
   font-family: var(--font-head);
-  font-size: 17px;
+  font-size: var(--fs-md);
   font-weight: 700;
   letter-spacing: 1.6px;
   text-transform: uppercase;
@@ -280,7 +281,7 @@
 
 .shopv2-section-count {
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   flex-shrink: 0;
 }
@@ -382,7 +383,7 @@
 
 .shopv2-card-name {
   font-family: var(--font-head);
-  font-size: 15px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   color: var(--text);
   text-align: center;
@@ -401,12 +402,12 @@
   width: 100%;
 }
 
-.shopv2-buyqty-n { font-size: 12px; opacity: 0.8; }
+.shopv2-buyqty-n { font-size: var(--fs-xs); opacity: 0.8; }
 .shopv2-buyqty-cost {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-size: 13px;
+  font-size: var(--fs-xs);
 }
 
 /* ─── Sell-Tab: Inventar-Grid (voller Container) + Detail-/Rückkauf-Spalte ── */
@@ -434,7 +435,7 @@
    dadurch die Kaskade, obwohl 14px hier klar die Absicht ist. Die 19px-Zeile war ~13px höher als
    die schmale Rückkauf-Box im Verkaufen-Tab vorsah und ragte unten heraus. Tag-Selektor erzwingt
    jetzt deterministisch 14px, unabhängig von Import-Reihenfolge — .muted bleibt für die Farbe. */
-p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
+p.shopv2-hint { font-size: var(--fs-sm); flex-shrink: 0; }
 .shopv2-empty { padding: 20px 4px; }
 
 .shopv2-sell-grid {
@@ -479,7 +480,7 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 
 .shopv2-sell-detail-name {
   font-family: var(--font-head);
-  font-size: 16px;
+  font-size: var(--fs-sm);
   font-weight: 700;
 }
 
@@ -537,7 +538,7 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 
 /* claude:2026-10-17T11:20:00+02:00 — Name darf an Wortgrenzen umbrechen statt mit „…“ zu enden. */
 .shopv2-buyback-name {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   line-height: 1.25;
 }
@@ -546,7 +547,7 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 
 /* ─── Meisterring-Sicherheitsnetz (Welle SS) — reuses the Buy-Back row look.
@@ -688,7 +689,7 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 
 #root .shopv2-counter .shopv2-section-title,
 #root .shopv2-sell-aside .shopv2-section-title {
-  font-size: clamp(14px, 0.9vw, 17px);
+  font-size: clamp(var(--fs-xs), 0.9vw, 17px);
 }
 
 /* claude:2026-10-17T20:45:00+02:00 — Leisten-Chips etwas enger (Abstand Icon/Text, Laufweite), damit
@@ -950,7 +951,7 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   margin: 2px 0 0;
   color: var(--muted);
   font-family: Georgia, serif;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-style: italic;
   line-height: 1.35;
 }
@@ -972,14 +973,14 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   gap: 5px;
   color: var(--gold);
   font-family: var(--font-number, var(--font-head));
-  font-size: 19px;
+  font-size: var(--fs-lg);
   font-variant-numeric: tabular-nums;
 }
 
 #root .shopv2-counter-qty-label {
   color: var(--ds-gold-bright, #f0dca0);
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -1012,7 +1013,7 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   border-left: 3px solid #a94c45;
   background: rgba(82, 24, 20, 0.24);
   color: #dc8b82;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   line-height: 1.35;
 }
 
@@ -1134,3 +1135,24 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   border-bottom: 1px solid rgba(216, 192, 106, 0.18);
   background: none;
 }
+
+/* claude:2026-10-24T18:39:00+02:00 — W2 Gruppe D: Laden nutzt den Platz. Haendler-Begruessung, Aufwertungs-Karten und Mengen-Knoepfe wachsen
+   (Begruessung 16 % Fuellung, Upgrade-Karte 375x70 mit 18 %). Rahmen/Texturen bleiben, nur Groessen. */
+#root .shopv2-head > .npc-greeting--page .npc-greeting-head { width: clamp(64px, 4.8vw, 104px); height: clamp(64px, 4.8vw, 104px); }
+#root .shopv2-head > .npc-greeting--page .npc-bubble { padding: 10px 18px; }
+#root .shopv2-head > .npc-greeting--page .npc-bubble-name { font-size: var(--fs-md); }
+#root .shopv2-head > .npc-greeting--page .npc-bubble-text { font-size: var(--fs-md); line-height: 1.3; }
+@media (min-height: 900px) { #root .shopv2-head > .npc-greeting--page .npc-bubble-text { font-size: var(--fs-lg); } }
+#root .shopv2-upgrade-card { padding: var(--sp-2) var(--sp-4); min-height: clamp(70px, 5.4vw, 112px); }
+#root .shopv2-upgrade-text { font-size: var(--fs-md); gap: var(--sp-3); }
+@media (min-width: 1700px) { #root .shopv2-upgrade-text { font-size: var(--fs-lg); } }
+#root .shopv2-upgrade-icon { width: clamp(30px, 2.6vw, 52px) !important; height: clamp(30px, 2.6vw, 52px) !important; }
+#root .shopv2-upgrade-btn { font-size: var(--fs-md); padding-inline: var(--sp-4); }
+#root .shopv2-section-count { font-size: var(--fs-sm); }
+#root .shopv2-buyqty-n { font-size: var(--fs-sm); opacity: 0.9; }
+#root .shopv2-buyqty-cost { font-size: var(--fs-xs); }
+
+/* claude:2026-10-24T18:48:00+02:00 — W2 Gruppe D: Handelstresen-Spalte waechst mit der Textgroesse; Titel und Name brechen um statt abgeschnitten zu werden. */
+#root .shopv2-pane { --shop-counter-w: clamp(calc(280px * var(--text-scale)), 28cqi, calc(360px * var(--text-scale))); }
+#root .shopv2-counter .shopv2-section-title, #root .shopv2-sell-aside .shopv2-section-title { white-space: normal; overflow-wrap: anywhere; line-height: 1.15; }
+#root .shopv2-counter-name, #root .shopv2-counter-copy { overflow-wrap: anywhere; min-width: 0; }

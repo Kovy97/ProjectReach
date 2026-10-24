@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:38:00+02:00 — W2 Gruppe D: feste px-Schriftgroessen auf --fs-Skala umgestellt (Chef 24.10. Texte zu klein); Woerter min. --fs-xs, Zahlen-Badges --fs-2xs. */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
@@ -29,7 +30,7 @@
 
 .chronicle-tab-kicker {
   font-family: var(--font-head);
-  font-size: 15px;
+  font-size: var(--fs-sm);
   letter-spacing: 0.6px;
   text-transform: uppercase;
   color: var(--muted);
@@ -37,7 +38,7 @@
 
 .chronicle-tab-counter {
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--gold, #d8c06a);
   letter-spacing: 0.4px;
   white-space: nowrap;
@@ -82,7 +83,7 @@
 .chronicle-stage-chapnum {
   flex-shrink: 0;
   font-family: var(--font-head);
-  font-size: 20px;
+  font-size: var(--fs-lg);
   font-weight: 700;
   color: var(--gold, #d8c06a);
   padding: 4px 12px;
@@ -95,7 +96,7 @@
   flex: 1;
   min-width: 0;
   font-family: var(--font-head);
-  font-size: 28px;
+  font-size: var(--fs-2xl);
   letter-spacing: 0.4px;
   color: var(--ds-gold-bright, #f0dca0);
 }
@@ -121,7 +122,7 @@
    Warnsätzen — dezent zwischen Erzähl-Blase und Zielen, kursiv wie eine Randnotiz des Wächters. */
 .chronicle-stage-directive {
   margin: 2px 0 0;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   line-height: 1.5;
   font-style: italic;
   color: var(--gold, #d8c06a);
@@ -134,7 +135,7 @@
    "completed" darunter geparkt — nicht mehr Gold/Warnung, nur ein gedämpfter Nachhall dessen, was
    verlangt war. Der loreText in der Blase darüber trägt jetzt den eigentlichen Akzent. */
 .chronicle-stage-directive--done {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-style: normal;
   color: var(--muted);
   opacity: 0.7;
@@ -170,7 +171,7 @@
 .chronicle-stage-claim {
   align-self: flex-start;
   padding: 10px 30px;
-  font-size: 16px;
+  font-size: var(--fs-sm);
   animation: chronicle-claim-pulse 2.2s ease-in-out infinite;
 }
 
@@ -223,7 +224,7 @@
   border: 1.5px solid var(--border);
   color: var(--gold, #d8c06a);
   font-weight: 700;
-  font-size: 13px;
+  font-size: var(--fs-xs);
 }
 
 .chronicle-obj--done .chronicle-obj-check {
@@ -234,7 +235,7 @@
 .chronicle-obj-label {
   flex: 1;
   min-width: 140px;
-  font-size: 16px;
+  font-size: var(--fs-sm);
   color: var(--ds-parch-ink, #e8d8b0);
 }
 
@@ -247,7 +248,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   padding: 2px 9px;
   border: 1px solid var(--border);
   color: var(--muted);
@@ -256,7 +257,7 @@
 
 .chronicle-obj-count {
   font-family: var(--font-head);
-  font-size: 17px;
+  font-size: var(--fs-md);
   font-weight: 700;
   color: var(--gold, #d8c06a);
   white-space: nowrap;
@@ -284,7 +285,7 @@
 }
 
 .quest-reward-chip-kind {
-  font-size: 10px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -311,7 +312,7 @@
   border: none;
   color: var(--muted);
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   letter-spacing: 0.4px;
   text-transform: uppercase;
   cursor: pointer;
@@ -323,7 +324,7 @@
 }
 
 .chronicle-history-caret {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   width: 12px;
   text-align: center;
   flex-shrink: 0;
@@ -354,7 +355,7 @@
   text-align: left;
   padding: 7px 4px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: var(--fs-sm);
 }
 
 .chronicle-history-row-head:hover {
@@ -381,7 +382,7 @@
 
 .chronicle-history-text {
   margin: 0 0 8px 44px;
-  font-size: 15px;
+  font-size: var(--fs-sm);
   line-height: 1.55;
   font-style: italic;
   color: var(--muted);
@@ -598,4 +599,51 @@
   border-image: none;
   background: none;
   border-left: 1px solid rgba(216, 192, 106, 0.18);
+}
+
+/* claude:2026-10-24T18:39:00+02:00 — W2 Gruppe D: Chronik-Bühne nutzt den Platz. Ziel-Zeilen, Wächter-Rede und Belohnungen
+   wachsen (vorher 75 px hohe Ziel-Karte mit 3 % Füllung in 1463 px Breite). Nur Größen, Rahmen unverändert. */
+.quests-contract-wall .chronicle-stage .chronicle-stage-npc .npc-greeting-head { width: clamp(120px, 9vw, 190px); height: clamp(120px, 9vw, 190px); }
+.quests-contract-wall .chronicle-stage .npc-bubble-name { font-size: var(--fs-md); }
+.quests-contract-wall .chronicle-stage .npc-bubble-text { font-size: var(--fs-lg); line-height: 1.45; }
+.quests-contract-wall .chronicle-stage-directive { font-size: var(--fs-md); }
+.quests-contract-wall .chronicle-stage-objectives { gap: 12px; }
+.quests-contract-wall .chronicle-obj { min-height: clamp(92px, 7vw, 130px); padding: clamp(12px, 1vw, 20px) clamp(14px, 1.2vw, 24px); gap: 10px; justify-content: center; }
+.quests-contract-wall :is(.quest-obj-label, .chronicle-obj-label) { font-size: var(--fs-lg); }
+.quests-contract-wall :is(.quest-obj-count, .chronicle-obj-count) { font-size: var(--fs-xl); }
+.quests-contract-wall .chronicle-obj-where { font-size: var(--fs-sm); padding: 3px 11px; }
+.quests-contract-wall .chronicle-obj-check { width: 28px; height: 28px; font-size: var(--fs-sm); }
+.quests-contract-wall .chronicle-obj-bar { height: 12px; }
+.quests-contract-wall .chronicle-stage .quest-rewards { gap: 10px; margin-top: 6px; }
+.quests-contract-wall .chronicle-stage .quest-rewards-label { font-size: var(--fs-lg); }
+.quests-contract-wall .chronicle-stage .quest-reward-chip { font-size: var(--fs-md); padding: 6px 14px; gap: 8px; }
+.quests-contract-wall .chronicle-stage .quest-reward-chip img { width: 1.3em; height: 1.3em; }
+.quests-contract-wall .chronicle-stage .quest-status-badge { font-size: var(--fs-sm); padding: 5px 14px; }
+
+/* claude:2026-10-24T18:41:00+02:00 — W2 Gruppe D: bei niedrigen Fenstern (1366x768) eine Stufe kleiner, damit Belohnungen ohne Scrollen sichtbar bleiben. */
+@media (max-height: 820px) {
+  .quests-contract-wall .chronicle-stage .npc-bubble-text { font-size: var(--fs-md); }
+  .quests-contract-wall .chronicle-stage .npc-bubble-name { font-size: var(--fs-sm); }
+  .quests-contract-wall .chronicle-obj { min-height: 70px; padding: 8px 14px; gap: 6px; }
+  .quests-contract-wall :is(.quest-obj-label, .chronicle-obj-label) { font-size: var(--fs-md); }
+  .quests-contract-wall :is(.quest-obj-count, .chronicle-obj-count) { font-size: var(--fs-lg); }
+  .quests-contract-wall .chronicle-obj-bar { height: 9px; }
+  .quests-contract-wall .chronicle-stage .quest-rewards { margin-top: 0; }
+  .quests-contract-wall .chronicle-stage .quest-rewards-label { font-size: var(--fs-md); }
+  .quests-contract-wall .chronicle-stage .quest-reward-chip { font-size: var(--fs-sm); padding: 4px 12px; }
+  .quests-contract-wall .chronicle-stage .chronicle-stage-npc .npc-greeting-head { width: 104px; height: 104px; }
+}
+
+/* claude:2026-10-24T18:48:00+02:00 — W2 Gruppe D: grosse Textgroesse auf niedrigem Fenster: Chronik-Buehne wieder kompakt, damit die Belohnungen sichtbar bleiben. */
+@media (max-height: 820px) {
+  :root[data-text-scale="large"] .quests-contract-wall .chronicle-stage .npc-bubble-text,
+  :root[data-text-scale="xlarge"] .quests-contract-wall .chronicle-stage .npc-bubble-text { font-size: var(--fs-sm); }
+  :root[data-text-scale="large"] .quests-contract-wall :is(.quest-obj-label, .chronicle-obj-label),
+  :root[data-text-scale="xlarge"] .quests-contract-wall :is(.quest-obj-label, .chronicle-obj-label) { font-size: var(--fs-sm); }
+  :root[data-text-scale="large"] .quests-contract-wall .chronicle-obj,
+  :root[data-text-scale="xlarge"] .quests-contract-wall .chronicle-obj { min-height: 56px; padding: 6px 12px; gap: 4px; }
+  :root[data-text-scale="large"] .quests-contract-wall .chronicle-stage .quest-reward-chip,
+  :root[data-text-scale="xlarge"] .quests-contract-wall .chronicle-stage .quest-reward-chip { font-size: var(--fs-xs); padding: 3px 10px; }
+  :root[data-text-scale="large"] .quests-contract-wall .chronicle-stage .chronicle-stage-npc .npc-greeting-head,
+  :root[data-text-scale="xlarge"] .quests-contract-wall .chronicle-stage .chronicle-stage-npc .npc-greeting-head { width: 84px; height: 84px; }
 }

@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:38:00+02:00 — W2 Gruppe D: feste px-Schriftgroessen auf --fs-Skala umgestellt (Chef 24.10. Texte zu klein); Woerter min. --fs-xs, Zahlen-Badges --fs-2xs. */
 /* codex:2026-08-03T19:02:00+02:00 — Chef-Auswahl 02 „Warden Ledger“: produktive, vollständig
    auf die Achievement-Seite begrenzte Layoutschicht. Engine- und Persistenzdaten bleiben unberührt. */
 
@@ -69,7 +70,7 @@
 }
 
 .achv-page--warden .achv-hero-sub {
-  font-size: clamp(12px, 0.76vw, 13px);
+  font-size: clamp(var(--fs-xs), 0.76vw, 13px);
 }
 
 /* claude:2026-10-17T12:50:00+02:00 — Ring-Beschriftung neben den Ring statt darunter: flachere Bilanzleiste. */
@@ -198,7 +199,7 @@
   background: transparent;
   color: #a9b1b6;
   font-family: var(--font-head);
-  font-size: clamp(12px, 0.72vw, 13px);
+  font-size: clamp(var(--fs-xs), 0.72vw, 13px);
   text-align: left;
   cursor: pointer;
 }
@@ -286,13 +287,13 @@
   background: transparent;
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 
 .achv-ledger-search > span {
   color: #8f9ba2;
   font-family: Arial, sans-serif;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-variant-numeric: tabular-nums;
 }
 
@@ -408,12 +409,12 @@
 }
 
 .achv-page--warden .achv-name {
-  font-size: clamp(14px, 0.92vw, 17px);
+  font-size: clamp(var(--fs-xs), 0.92vw, 17px);
 }
 
 .achv-page--warden .achv-desc {
   margin: 0;
-  font-size: clamp(12px, 0.7vw, 13px);
+  font-size: clamp(var(--fs-xs), 0.7vw, 13px);
   line-height: 1.3;
   overflow: hidden;
   display: -webkit-box;
@@ -516,7 +517,7 @@
 .achv-ledger-detail-plaque > p {
   margin: 0 0 18px;
   color: #9da8ad;
-  font-size: clamp(12px, 0.8vw, 14px);
+  font-size: clamp(var(--fs-xs), 0.8vw, 14px);
   line-height: 1.5;
   text-align: center;
 }
@@ -530,7 +531,7 @@
   border-top: 1px solid rgba(180, 130, 65, 0.28);
   color: #95a0a6;
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: var(--fs-xs);
 }
 
 .achv-ledger-detail-row strong {
@@ -549,7 +550,7 @@
   margin-top: 8px;
   color: #98a3a8;
   font-family: Arial, sans-serif;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   text-align: right;
@@ -640,3 +641,19 @@
     max-height: none;
   }
 }
+
+/* claude:2026-10-24T18:42:00+02:00 — W2 Gruppe D: Erfolge-Liste lesbarer. Beschreibung/AP/Status eine Stufe groesser, Kategorien-Leiste und Detail-Plakette mit. */
+#root .achv-card .achv-desc { font-size: var(--fs-sm); line-height: 1.35; }
+#root .achv-card .achv-ap, #root .achv-card .achv-status { font-size: var(--fs-sm); }
+#root .achv-card .achv-badge { font-size: var(--fs-xs); }
+#root .achv-ledger-cat { font-size: var(--fs-xs); }
+#root .achv-ledger-cat strong { font-size: var(--fs-xs); }
+#root .achv-ledger-detail-row { font-size: var(--fs-sm); }
+#root .achv-ledger-detail-plaque .achv-desc, #root .achv-ledger-detail .achv-desc { font-size: var(--fs-md); }
+#root .achv-almost-pct, #root .achv-hero-bar-label, #root .achv-hero-sub { font-size: var(--fs-sm); }
+#root .achv-ledger-search input { font-size: var(--fs-md); }
+
+/* claude:2026-10-24T18:48:00+02:00 — W2 Gruppe D: Kategorie-Name bricht um statt in die Zaehlung zu laufen (RU/DE bei grosser Textgroesse). */
+#root .achv-ledger-cat > span:nth-child(2) { min-width: 0; overflow-wrap: anywhere; hyphens: auto; line-height: 1.15; }
+#root .achv-ledger-cat > strong { white-space: nowrap; }
+#root .achv-ledger-cat { gap: 6px; }

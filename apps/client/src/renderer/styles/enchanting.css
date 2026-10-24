@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:38:00+02:00 — W2 Gruppe D: feste px-Schriftgroessen auf --fs-Skala umgestellt (Chef 24.10. Texte zu klein); Woerter min. --fs-xs, Zahlen-Badges --fs-2xs. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════════════════════
    ENCHANTING PAGE — Task #275 Altar-Rework
@@ -197,7 +198,7 @@
    Liste scrollt ohnehin (`.ench-select-list{overflow-y:auto}`), darum jetzt Umbruch auf 2 Zeilen
    statt Kappung — macht nur die eine lange Zeile etwas höher, kein Layout-Bruch. */
 .ench-item-name {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: var(--text);
   overflow: visible;
   white-space: normal;
@@ -226,7 +227,7 @@
   align-self: stretch;
   padding: 8px 14px;
   border-radius: var(--radius);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   text-align: center;
 }
 .ench-feedback.success {
@@ -346,11 +347,11 @@
 }
 .ench-altar-cell .item-cell-img { max-width: 84px; max-height: 84px; }
 .ench-altar-cell .item-cell-emoji { font-size: 60px; }
-.ench-altar-cell .item-cell-name { font-size: 13px; }
+.ench-altar-cell .item-cell-name { font-size: var(--fs-xs); }
 
 .ench-altar-name {
   font-family: var(--font-head);
-  font-size: 19px;
+  font-size: var(--fs-lg);
   font-weight: 700;
   letter-spacing: 0.3px;
   line-height: 1.2;
@@ -483,7 +484,7 @@
 
 .ench-candidate-name {
   font-family: var(--font-head);
-  font-size: 15px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   color: var(--gold);
   text-shadow: 0 0 8px rgba(216, 192, 106, 0.45);
@@ -609,7 +610,7 @@
   padding-bottom: 4px;
   border-bottom: 1px solid var(--border);
 }
-.ench-rune-section-icon { font-size: 12px; }
+.ench-rune-section-icon { font-size: var(--fs-xs); }
 
 .ench-rune-section-head--weapon { color: #d88a6e; border-bottom-color: rgba(200, 90, 60, 0.30); }
 .ench-rune-section-head--armor  { color: #8fb8d8; border-bottom-color: rgba(110, 150, 190, 0.30); }
@@ -722,7 +723,7 @@
   .ench-altar-cell { width: 68px; height: 68px; }
   .ench-altar-cell .item-cell-img { max-width: 58px; max-height: 58px; }
   .ench-altar-cell .item-cell-emoji { font-size: 36px; }
-  .ench-altar-name { font-size: 16px; }
+  .ench-altar-name { font-size: var(--fs-sm); }
   .ench-section-label { margin: 6px 0 2px; }
   .ench-divider { margin-top: 0; }
   .ench-candidate { gap: 4px; }
@@ -730,3 +731,23 @@
   .ench-statblock { padding: 5px 8px; }
   .ench-newfx { padding: 3px 8px; }
 }
+
+/* claude:2026-10-24T18:39:00+02:00 — W2 Gruppe D: Verzauberung nutzt den Platz. Altar-Sockel und Item-/Runenzeilen wachsen mit der Seite,
+   die leere Mitte bekommt einen grossen Sockel statt 132-px-Kachel in leerer Spalte. Rahmen/Texturen unveraendert. */
+#root .ench-item-name { font-size: var(--fs-sm); }
+#root .ench-item-sub { font-size: var(--fs-xs); }
+#root .ench-item-row { gap: 12px; padding: 7px 8px; }
+#root .ench-altar-socket { width: clamp(132px, 12vw, 230px); height: clamp(132px, 12vw, 230px); }
+#root .ench-altar-empty-glyph { font-size: clamp(44px, 4.4vw, 86px); }
+#root .ench-altar-cell { width: 72%; height: 72%; }
+#root .ench-altar-cell .item-cell-img { max-width: 100%; max-height: 100%; width: 100%; height: 100%; object-fit: contain; }
+#root .ench-altar-cell .item-cell-emoji { font-size: clamp(60px, 5.4vw, 104px); }
+#root .ench-altar-empty { gap: clamp(18px, 3vh, 36px); padding-top: clamp(24px, 8vh, 96px); }
+#root .ench-altar-empty .muted { font-size: var(--fs-lg); max-width: 28ch; text-align: center; line-height: 1.4; }
+#root .ench-altar-name { font-size: var(--fs-xl); }
+#root .ench-rune-card { gap: 14px; padding: 10px 12px; }
+#root .ench-rune-card-name { font-size: var(--fs-md); }
+#root .ench-rune-card-effect, #root .ench-rune-card .muted { font-size: var(--fs-sm); }
+#root .ench-rune-badge { padding: 2px 10px; }
+#root .ench-rune-section-head { font-size: var(--fs-sm); }
+#root .ench-affix-name, #root .ench-bonus-line, #root .ench-newfx-line { font-size: var(--fs-md); }

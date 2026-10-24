@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:38:00+02:00 — W2 Gruppe D: feste px-Schriftgroessen auf --fs-Skala umgestellt (Chef 24.10. Texte zu klein); Woerter min. --fs-xs, Zahlen-Badges --fs-2xs. */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
@@ -68,7 +69,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
+  font-size: var(--fs-sm);
   background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.05), rgba(10, 8, 6, 0.85) 74%);
   border: 2px solid rgba(216, 192, 106, 0.42);
 }
@@ -82,7 +83,7 @@
 
 .stx-section-title {
   font-family: var(--font-head);
-  font-size: 18px;
+  font-size: var(--fs-lg);
   letter-spacing: 1.3px;
   text-transform: uppercase;
   color: var(--accent);
@@ -111,7 +112,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  font-size: 26px;
+  font-size: var(--fs-2xl);
   background: radial-gradient(circle, rgba(216, 192, 106, 0.16), rgba(216, 192, 106, 0.03) 70%, transparent);
   border: 2px solid rgba(216, 192, 106, 0.4);
   box-shadow: 0 0 14px rgba(216, 192, 106, 0.16);
@@ -125,7 +126,7 @@
 
 .stx-medallion-value {
   font-family: var(--font-head);
-  font-size: 22px;
+  font-size: var(--fs-xl);
   font-weight: 700;
   color: var(--gold);
   margin-top: 6px;
@@ -133,7 +134,7 @@
 }
 
 .stx-medallion-label {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -157,14 +158,14 @@
 
 .stx-completion-label {
   font-family: var(--font-head);
-  font-size: 16px;
+  font-size: var(--fs-sm);
   letter-spacing: 0.4px;
   color: var(--text);
 }
 
 .stx-completion-val {
   flex-shrink: 0;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   color: var(--gold);
   white-space: nowrap;
@@ -185,3 +186,6 @@
   box-shadow: 0 0 10px rgba(216, 192, 106, 0.5);
   transition: width 0.4s ease;
 }
+
+/* claude:2026-10-24T18:39:00+02:00 — W2 Gruppe D: Medaillon-Beschriftung eine Stufe groesser (war 12 px). */
+.stx-medallion-label { font-size: var(--fs-sm); }

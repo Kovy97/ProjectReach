@@ -1,3 +1,11 @@
 /* claude:2026-10-24T18:34:00+02:00 — UI-Überarbeitung 1.4, Welle 2, Gruppe D Erfolge, Quests, Statistik, New Haven, Laden, Verzauberung, Taverne.
    Einziger Schreiber: der Agent dieser Gruppe. Hier stehen Überschreibungen für geteilte Dateien (v. a. pages.css),
    die die Gruppe nicht selbst bearbeiten darf. Geladen nach classic-skin/classic-chrome, vor typography.css. */
+
+/* claude:2026-10-24T18:39:00+02:00 — W2 Gruppe D: Ueberschreibungen fuer pages.css-Klassen, die die Seiten dieser Gruppe noch nutzen.
+   Der Rest der alten pages.css-Regeln (ach2-*, enchant-*, shop-item-*, shop-sell-*, stats-page) ist ohne Verwender. */
+#root .shop-section-orn, #root .shop-section-title { font-size: var(--fs-xs); }
+#root .shop-section-title { font-size: var(--fs-sm); }
+#root .shop-cell .item-cell-qty { font-size: var(--fs-2xs); }
+/* claude:2026-10-24T18:50:00+02:00 — Abschnittstitel in der Verzauberung brechen bei langen Texten um statt abgeschnitten zu werden (RU, grosse Textgroesse). */
+#root .ench-col .shop-section-title { white-space: normal; overflow-wrap: anywhere; line-height: 1.15; }
