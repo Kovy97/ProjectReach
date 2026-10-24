@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:44:00+02:00 — UI 1.4 W2 Gruppe E: feste Schriftgroessen auf die Skala --fs-* umgestellt (Regelbloecke unveraendert, nur font-size). */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* ══════════════════════════════════════════════════════════════════════════════════════════
@@ -76,7 +77,7 @@
   flex: 0 0 auto;
   text-align: center;
   font-family: var(--font-head);
-  font-size: clamp(18px, 1.6vw, 24px);
+  font-size: var(--fs-xl);
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -112,7 +113,7 @@
   background: transparent;
   color: var(--text);
   font-family: var(--font-head);
-  font-size: 15px;
+  font-size: var(--fs-sm);
 }
 
 .encp-search-row input::placeholder {
@@ -122,7 +123,7 @@
 .encp-result-count {
   color: #8f9ba2;
   font-family: var(--font-info);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -163,7 +164,7 @@
   background: transparent;
   color: #a9b1b6;
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   text-align: left;
   cursor: pointer;
   /* RU und DE tragen die langen Kategorienamen („Материалы", „Materialien") — die Zeile darf
@@ -188,7 +189,7 @@
   place-items: center;
   width: 20px;
   height: 20px;
-  font-size: 15px;
+  font-size: var(--fs-sm);
 }
 
 .encp-cat-count {
@@ -215,7 +216,8 @@
 
 .encp-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(156px, 1fr));
+  /* claude:2026-10-24T18:50:00+02:00 — Karten mit grossem Bild und Namen in --fs-sm; wachsen mit der Fensterbreite. */
+  grid-template-columns: repeat(auto-fill, minmax(clamp(160px, 12.4vw, 220px), 1fr));
   gap: 12px;
 }
 
@@ -231,7 +233,7 @@
      alles außerhalb des Sichtfelds — dasselbe Mittel wie in bestiary.css/achievements.css, kein
      Virtualisierungs-Paket nötig. */
   content-visibility: auto;
-  contain-intrinsic-size: 160px;
+  contain-intrinsic-size: 190px;
   border-style: solid;
   border-width: 5px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
@@ -261,12 +263,12 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 76px;
+  height: clamp(84px, 6.6vw, 124px);
 }
 
 .encp-card-img-area img {
-  max-width: 68px;
-  max-height: 68px;
+  max-width: clamp(76px, 5.8vw, 112px);
+  max-height: clamp(76px, 5.8vw, 112px);
   object-fit: contain;
 }
 
@@ -277,7 +279,7 @@
 
 .encp-card-name {
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   color: var(--text);
   text-align: center;
@@ -310,7 +312,7 @@
   padding: 46px 20px;
   text-align: center;
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--fs-xs);
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:44:00+02:00 — UI 1.4 W2 Gruppe E: feste Schriftgroessen auf die Skala --fs-* umgestellt (Regelbloecke unveraendert, nur font-size). */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* ═══════════════════════════════════════════════════════════════════════════════════════════
    CHARACTER CREATION — "Frontline Registry" (Chef-Auftrag 26.08.2026, Vorlage Mira "Character
@@ -144,7 +145,7 @@
   display: block;
   color: #b7ab91;
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(11px, 0.85vw, 14px);
+  font-size: var(--fs-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -189,7 +190,7 @@
 .creation-heading span {
   display: block;
   color: var(--muted);
-  font-size: clamp(12px, 0.9vw, 14px);
+  font-size: var(--fs-xs);
   font-style: italic;
 }
 
@@ -239,11 +240,11 @@
   border-radius: 50%;
   background: #111;
   font-family: "Metamorphous", var(--font-head), Georgia, serif;
-  font-size: clamp(16px, 1.4vw, 21px);
+  font-size: var(--fs-lg);
 }
 .creation-step-rail span {
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(9px, 0.7vw, 11px);
+  font-size: var(--fs-xs);
   letter-spacing: 0.05em;
   text-transform: uppercase;
   max-width: 92px;
@@ -287,7 +288,7 @@
   gap: 10px;
   margin: 0 0 12px;
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(13px, 1vw, 15px);
+  font-size: var(--fs-xs);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #c7b38a;
@@ -303,7 +304,7 @@
   border: 1px solid rgba(216, 192, 106, 0.55);
   background: rgba(216, 192, 106, 0.08);
   color: var(--gold);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0;
 }
@@ -325,7 +326,7 @@
   background-repeat: no-repeat, repeat;
   padding: 13px 68px 13px 18px;
   color: var(--text);
-  font-size: clamp(18px, 1.5vw, 22px);
+  font-size: var(--fs-lg);
   font-family: "Metamorphous", var(--font-head), Georgia, serif;
   letter-spacing: 0.03em;
   text-transform: uppercase;
@@ -341,7 +342,7 @@
   transform: translateY(-50%);
   color: #6f695c;
   font-family: "Cinzel", var(--font-head);
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
 
 /* ─── Rasse-/Gruppen-/Varianten-Filterzeilen (Human-Roster-Rework 26.08.2026) — Chips sind immer
@@ -357,7 +358,7 @@
 }
 .creation-filter-label {
   font-family: "Cinzel", var(--font-head);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -403,7 +404,7 @@
 .creation-portrait-cell-name {
   padding: 4px 3px 6px;
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(10px, 0.8vw, 14px);
+  font-size: var(--fs-xs);
   line-height: 1.2;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -474,7 +475,7 @@
      das für jede Sprache kollisionsfrei. */
   left: 8px;
   color: var(--gold);
-  font-size: 15px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   text-shadow: 0 0 8px rgba(216, 192, 106, 0.7);
 }
@@ -494,14 +495,14 @@
 }
 .creation-style-name {
   font-family: var(--font-head);
-  font-size: clamp(14px, 1.1vw, 17px);
+  font-size: var(--fs-sm);
   font-weight: 700;
   letter-spacing: 1.2px;
   text-transform: uppercase;
   color: var(--gold);
 }
 .creation-style-desc {
-  font-size: clamp(12px, 0.9vw, 14px);
+  font-size: var(--fs-xs);
   color: var(--muted);
   line-height: 1.35;
   /* Fließtext bleibt auch bei knapper Höhe sichtbar (s. Media-Query unten) statt sich zu
@@ -511,7 +512,7 @@
 
 .creation-style-hint {
   margin: 10px 0 0;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   text-align: center;
   font-style: italic;
@@ -530,12 +531,12 @@
 }
 .creation-start span {
   font-family: "Metamorphous", var(--font-head), Georgia, serif;
-  font-size: clamp(18px, 1.8vw, 24px);
+  font-size: var(--fs-xl);
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 .creation-start small {
-  font-size: clamp(11px, 0.85vw, 13px);
+  font-size: var(--fs-xs);
   color: #c9b889;
   text-transform: none;
   letter-spacing: 0;
@@ -547,7 +548,7 @@
    Begin-Adventure-Knopf bei 900px Höhe knapp unter dem Falz) — Größen-Floor statt Clip. ───────── */
 @media (max-height: 920px) {
   .creation-heading { padding: 12px 20px 10px; }
-  .creation-heading h1 { font-size: 28px; }
+  .creation-heading h1 { font-size: var(--fs-2xl); }
   .creation-step-rail { gap: 16px; padding: 14px 6px; }
   .creation-form { padding: 12px clamp(20px, 2.6vw, 36px) 20px; }
   .creation-step { padding: 8px 0; }
@@ -560,7 +561,7 @@
   /* Bugfund (Chef-Prüfrunde 26.08.): die Beschreibung war hier komplett ausgeblendet — Karten
      zeigten nur Bild+Name. Sie bleibt jetzt sichtbar (etwas kompakter), die Karte wächst mit statt
      zu clippen (`.creation-form` scrollt ohnehin). */
-  .creation-style-desc { font-size: 11.5px; line-height: 1.25; }
+  .creation-style-desc { font-size: var(--fs-sm); line-height: 1.25; }
   .creation-start { min-height: 58px; margin-top: 8px; padding: 10px 20px; }
 }
 
@@ -606,7 +607,8 @@
 .creation-step {
   position: relative;
   display: grid;
-  grid-template-columns: clamp(84px, 6.6vw, 112px) minmax(0, 1fr);
+  /* claude:2026-10-24T18:56:00+02:00 — Markenspalte etwas breiter, damit lange Schrittnamen (RU, Sehr gross) in die Spalte passen. */
+  grid-template-columns: clamp(96px, 7.2vw, 124px) minmax(0, 1fr);
   column-gap: clamp(10px, 1vw, 20px);
   align-items: start;
 }
@@ -614,7 +616,7 @@
 .creation-step::before {
   content: "";
   position: absolute;
-  left: calc(clamp(84px, 6.6vw, 112px) / 2);
+  left: calc(clamp(96px, 7.2vw, 124px) / 2);
   top: 0;
   bottom: 0;
   width: 1px;
@@ -648,15 +650,15 @@
   background: #111;
   color: var(--gold);
   font-family: "Metamorphous", var(--font-head), Georgia, serif;
-  font-size: clamp(16px, 1.4vw, 21px);
+  font-size: var(--fs-lg);
   box-shadow: 0 0 0 4px #15130f, 0 0 0 5px rgba(90, 71, 45, 0.8);
 }
 .creation-step-marker span {
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(9px, 0.7vw, 11px);
-  letter-spacing: 0.05em;
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  max-width: 100px;
+  max-width: 118px;
   overflow-wrap: normal;
   word-break: keep-all;
   hyphens: manual;
@@ -717,7 +719,10 @@
 .creation-portrait-cell-name {
   flex: 0 0 auto;
   padding: 3px 3px 5px;
-  font-size: clamp(9px, 0.72vw, 13px);
+  /* claude:2026-10-24T18:47:00+02:00 — Portrait-Namen: gemischte Schreibung statt Versalien, damit die Klassennamen bei 13 px in die Zelle passen. */
+  font-size: var(--fs-2xs);
+  text-transform: none;
+  letter-spacing: 0;
   line-height: 1.15;
   white-space: nowrap;
   overflow: hidden;
@@ -726,7 +731,7 @@
   display: block;
 }
 .creation-style-card { padding: clamp(6px, 0.8vh, 10px); gap: 8px; }
-.creation-style-desc { font-size: clamp(10.5px, 0.75vw, 13px); line-height: 1.25; }
+.creation-style-desc { font-size: var(--fs-sm); line-height: 1.25; }
 .creation-start { min-height: clamp(52px, 6vh, 72px); margin-top: clamp(6px, 0.8vh, 12px); }
 
 /* Nachbesserung 27.08.: Die Karten brachten über das Bild ihre natürliche Höhe ein, das Raster
@@ -755,18 +760,18 @@
 .creation-style-card { padding: clamp(5px, 0.7vh, 10px) clamp(8px, 0.8vw, 12px); }
 .creation-style-icon, .creation-style-icon-img { width: clamp(40px, 4.4vh, 64px); height: clamp(40px, 4.4vh, 64px); }
 .creation-style-desc { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-.creation-style-hint { margin: clamp(4px, 0.6vh, 10px) 0 0; font-size: clamp(10px, 0.75vw, 13px); }
+.creation-style-hint { margin: clamp(4px, 0.6vh, 10px) 0 0; font-size: var(--fs-xs); }
 @media (max-height: 900px) {
   .creation-style-desc { -webkit-line-clamp: 1; }
   .creation-heading { padding-top: 10px; padding-bottom: 6px; }
-  .creation-heading h1 { font-size: 24px; }
+  .creation-heading h1 { font-size: var(--fs-xl); }
 }
 
 @media (max-height: 800px) {
   .creation-style-hint { display: none; }
   .creation-heading span { display: none; }
   .creation-heading { padding-top: 8px; padding-bottom: 4px; }
-  .creation-heading h1 { font-size: 22px; }
+  .creation-heading h1 { font-size: var(--fs-xl); }
   .creation-start { min-height: 48px; }
 }
 

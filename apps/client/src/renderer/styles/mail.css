@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:44:00+02:00 — UI 1.4 W2 Gruppe E: feste Schriftgroessen auf die Skala --fs-* umgestellt (Regelbloecke unveraendert, nur font-size). */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* ═══════════════════════════════════════════════════════════
    MAIL / POSTFACH — WoW-artiges Postfach (packages/engine/src/mail.ts)
@@ -61,7 +62,7 @@
   border: 1.5px solid rgba(200, 100, 60, 0.55);
   background: rgba(200, 100, 60, 0.12);
   color: #e08060;
-  font-size: 14px;
+  font-size: var(--fs-xs);
   flex-shrink: 0;
 }
 
@@ -88,12 +89,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  flex-wrap: wrap; /* claude:2026-10-24T19:01:00+02:00 — Titel und Sammelknopf duerfen bei langen Uebersetzungen/grosser Schrift umbrechen statt sich zu ueberlappen */
+  gap: 6px 8px;
 }
 
 .mail-list-title {
   font-family: var(--font-head);
-  font-size: 15px;
+  font-size: var(--fs-sm);
   letter-spacing: 0.5px;
   text-transform: uppercase;
   color: var(--accent);
@@ -141,7 +143,7 @@
 
 .mail-row-icon {
   flex-shrink: 0;
-  font-size: 20px;
+  font-size: var(--fs-lg);
   line-height: 1;
   color: var(--gold, #d8c06a);
 }
@@ -208,7 +210,7 @@
 
 .mail-detail-subject {
   font-family: var(--font-head);
-  font-size: 20px;
+  font-size: var(--fs-lg);
   color: var(--accent);
 }
 
@@ -217,7 +219,7 @@
 }
 
 .mail-attachments-label {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #9a8060;
@@ -259,7 +261,7 @@
 
 .mail-letter-sender-name {
   font-family: var(--font-head);
-  font-size: 18px;
+  font-size: var(--fs-md);
   color: var(--ds-gold-bright, #f0dca0);
 }
 
@@ -269,7 +271,7 @@
   background: rgba(0, 0, 0, 0.22);
   border: 1px dashed rgba(216, 184, 112, 0.28);
   color: var(--ds-parch-ink, #e8d8b0);
-  font-size: 15px;
+  font-size: var(--fs-sm);
   line-height: 1.55;
   white-space: pre-wrap;
 }

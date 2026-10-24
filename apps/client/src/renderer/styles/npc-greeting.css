@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:44:00+02:00 — UI 1.4 W2 Gruppe E: feste Schriftgroessen auf die Skala --fs-* umgestellt (Regelbloecke unveraendert, nur font-size). */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══ NPC-Begrüßung („Speaking Head", Chef-GO 2026-07-13) ══════════════════════
@@ -171,7 +172,7 @@
 
 .npc-bubble-name {
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0.07em;
   color: var(--gold, #d8c06a);
@@ -180,7 +181,7 @@
 }
 
 .npc-bubble-text {
-  font-size: 16px;
+  font-size: var(--fs-sm);
   line-height: 1.45;
   font-style: italic;
   color: var(--text, #ccd5db);
@@ -219,7 +220,7 @@
 }
 
 .guide-bubble-speaker .npc-bubble-name {
-  font-size: clamp(15px, 1vw, 18px);
+  font-size: var(--fs-sm);
 }
 
 .guide-bubble-speaker .npc-bubble {

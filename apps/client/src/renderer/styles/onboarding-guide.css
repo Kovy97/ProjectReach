@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:44:00+02:00 — UI 1.4 W2 Gruppe E: feste Schriftgroessen auf die Skala --fs-* umgestellt (Regelbloecke unveraendert, nur font-size). */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
@@ -81,13 +82,13 @@ body.guide-active .onboarding-guide-root .guide-bubble * {
 
 .guide-bubble-title {
   margin: 0 0 10px;
-  font-size: clamp(21px, 1.4vw, 27px);
+  font-size: var(--fs-xl);
   color: var(--gold);
 }
 
 .guide-bubble-body {
   margin: 0 0 16px;
-  font-size: clamp(17px, 1.15vw, 21px);
+  font-size: var(--fs-md);
   line-height: 1.6;
   color: var(--text);
 }
@@ -104,7 +105,7 @@ body.guide-active .onboarding-guide-root .guide-bubble * {
   border: none;
   color: var(--accent-2);
   font-family: var(--font-head);
-  font-size: clamp(13px, 0.85vw, 16px);
+  font-size: var(--fs-xs);
   cursor: pointer;
   opacity: 0.75;
 }
@@ -114,7 +115,7 @@ body.guide-active .onboarding-guide-root .guide-bubble * {
 }
 
 .guide-bubble-hint {
-  font-size: clamp(13px, 0.85vw, 16px);
+  font-size: var(--fs-xs);
   color: var(--accent-2);
   font-style: italic;
 }
@@ -127,7 +128,7 @@ body.guide-active .onboarding-guide-root .guide-bubble * {
   border-radius: var(--ds-radius-sm, 2px);
   color: var(--accent-2);
   font-family: var(--font-head);
-  font-size: clamp(12px, 0.8vw, 14px);
+  font-size: var(--fs-xs);
   padding: 5px 12px;
   cursor: pointer;
 }
@@ -140,7 +141,7 @@ body.guide-active .onboarding-guide-root .guide-bubble * {
 /* Primärer "Weiter"-Button: eigene Größenregel statt .btn-iron direkt anzufassen (design-system.css
    ist gesperrt, parallel belegt) — höhere Selektor-Spezifität gewinnt zuverlässig. */
 .guide-bubble-footer .btn-iron {
-  font-size: clamp(16px, 1vw, 20px);
+  font-size: max(var(--fs-sm), clamp(16px, 1vw, 20px));
   padding: clamp(11px, 1vw, 14px) clamp(20px, 2vw, 28px);
   min-height: 48px;
 }

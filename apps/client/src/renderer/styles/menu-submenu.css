@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:44:00+02:00 — UI 1.4 W2 Gruppe E: feste Schriftgroessen auf die Skala --fs-* umgestellt (Regelbloecke unveraendert, nur font-size). */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* ═══════════════════════════════════════════════════════════════════════════════════════════
    NEW GAME / LOAD GAME — eigene Vollbild-Screens (Chef-Auftrag 26.08.2026, wörtlich: "New Game
@@ -64,7 +65,7 @@
   min-width: clamp(38px, 3vw, 52px);
   padding: clamp(5px, 0.45vw, 8px) clamp(8px, 0.8vw, 14px);
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(11px, 0.85vw, 15px);
+  font-size: var(--fs-xs);
 }
 
 .subscreen-header {
@@ -101,7 +102,7 @@
   margin-top: 4px;
   color: #aa9d82;
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(11px, 0.85vw, 14px);
+  font-size: var(--fs-xs);
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
@@ -180,7 +181,7 @@
   background: rgba(10, 10, 10, 0.85);
   color: #ead07e;
   font-family: "Metamorphous", var(--font-head), Georgia, serif;
-  font-size: clamp(18px, 1.6vw, 24px);
+  font-size: var(--fs-xl);
 }
 
 .new-relic-window {
@@ -231,14 +232,14 @@
   margin: 0;
   color: var(--gold);
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(10px, 0.8vw, 13px);
+  font-size: var(--fs-xs);
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 .new-relic-copy h2 {
   margin: 2px 0;
   font-family: "Metamorphous", var(--font-head), Georgia, serif;
-  font-size: clamp(21px, 2vw, 28px);
+  font-size: var(--fs-2xl);
   color: #d5cbb4;
   text-transform: uppercase;
   overflow-wrap: anywhere;
@@ -246,7 +247,7 @@
 .new-relic-copy > p {
   margin: 0 0 6px;
   color: var(--muted);
-  font-size: clamp(12.5px, 0.95vw, 14.5px);
+  font-size: var(--fs-xs);
 }
 .new-relic-cta {
   width: 84%;
@@ -305,14 +306,14 @@
   margin: 0;
   color: var(--gold);
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(10px, 0.8vw, 13px);
+  font-size: var(--fs-xs);
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 .load-dossier-info h2 {
   margin: 3px 0 6px;
   font-family: "Metamorphous", var(--font-head), Georgia, serif;
-  font-size: clamp(21px, 1.9vw, 32px);
+  font-size: var(--fs-2xl);
   letter-spacing: 0.03em;
   text-transform: uppercase;
   color: var(--text);
@@ -321,7 +322,7 @@
 .load-empty-note {
   margin: 4px 0 14px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--fs-xs);
   line-height: 1.5;
 }
 
@@ -335,13 +336,13 @@
 .load-level-block span {
   color: var(--muted);
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(10px, 0.8vw, 12px);
+  font-size: var(--fs-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 .load-level-block strong {
   font-family: "Metamorphous", var(--font-head), Georgia, serif;
-  font-size: clamp(23px, 2.1vw, 34px);
+  font-size: max(var(--fs-2xl), clamp(23px, 2.1vw, 34px));
   color: var(--text);
 }
 
@@ -360,14 +361,14 @@
   margin: 0;
   color: var(--muted);
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(9px, 0.75vw, 11px);
+  font-size: var(--fs-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .load-metadata dd {
   margin: 2px 0 0;
   color: #cfc2a2;
-  font-size: clamp(13px, 1vw, 16px);
+  font-size: var(--fs-xs);
   overflow-wrap: anywhere;
 }
 
@@ -396,7 +397,8 @@
 .slot-thumb {
   position: relative;
   min-width: 0;
-  height: clamp(128px, 16vh, 172px);
+  /* claude:2026-10-24T19:01:00+02:00 — Slot-Karten hoeher, damit leere Slots mit langem Label (RU, Sehr gross) nicht am Rand abgeschnitten werden. */
+  height: clamp(132px, 17vh, 176px);
   padding: 0;
   border: 6px solid transparent;
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
@@ -441,7 +443,7 @@
   border: 1px solid rgba(216, 192, 106, 0.4);
   color: var(--gold);
   font-family: "Metamorphous", var(--font-head), Georgia, serif;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   text-align: center;
 }
 
@@ -477,7 +479,7 @@
 }
 .slot-thumb-name {
   font-family: var(--font-head);
-  font-size: clamp(13px, 0.95vw, 16px);
+  font-size: var(--fs-xs);
   font-weight: 600;
   color: var(--text);
   line-height: 1.2;
@@ -486,13 +488,13 @@
 }
 .slot-thumb-meta {
   margin-top: 2px;
-  font-size: 11.5px;
+  font-size: var(--fs-xs);
   color: #cdbb8e;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 .slot-thumb-sub {
   margin-top: 1px;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
@@ -502,19 +504,19 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 10px 8px;
+  gap: 2px;
+  padding: 6px 8px;
   filter: grayscale(0.25) brightness(0.88);
 }
 .slot-thumb--empty:hover {
   filter: none;
 }
 .slot-thumb-empty-mark {
-  font-size: clamp(20px, 2.2vw, 28px);
+  font-size: var(--fs-xl);
   color: rgba(216, 192, 106, 0.3);
 }
 .slot-thumb-empty-label {
-  font-size: clamp(11px, 0.85vw, 13px);
+  font-size: var(--fs-xs);
   color: var(--muted);
   text-transform: uppercase;
   font-family: "Cinzel", var(--font-head);
@@ -522,7 +524,7 @@
   text-align: center;
 }
 .slot-thumb-begin {
-  font-size: clamp(10px, 0.8vw, 12px);
+  font-size: var(--fs-xs);
   color: var(--gold);
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -534,10 +536,10 @@
   .subscreen-header h1 { font-size: clamp(24px, 3vw, 40px); }
   .new-relic-window { height: clamp(110px, 15vh, 170px); }
   .new-relic-copy { padding: 10px clamp(16px, 2vw, 22px) 14px; gap: 4px; }
-  .load-dossier-card { height: clamp(270px, 36vh, 380px); }
+  .load-dossier-card { height: clamp(296px, 40vh, 400px); }
   .load-dossier-info { padding: 10px clamp(16px, 2vw, 24px) 8px; }
-  .load-level-block strong { font-size: 24px; }
-  .slot-thumb { height: clamp(110px, 14vh, 148px); }
+  .load-level-block strong { font-size: var(--fs-xl); }
+  .slot-thumb { height: clamp(132px, 17vh, 152px); }
 }
 
 /* ─── Schmale Fenster: Slot-Leiste bricht auf zwei Reihen statt zu clippen. ──────────────────── */

@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:44:00+02:00 — UI 1.4 W2 Gruppe E: feste Schriftgroessen auf die Skala --fs-* umgestellt (Regelbloecke unveraendert, nur font-size). */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
@@ -106,7 +107,7 @@
 
 .mwc-tag {
   letter-spacing: 0.22em;
-  font-size: 0.7rem;
+  font-size: var(--fs-xs);
   font-weight: 900;
   color: var(--ds-gold-bright, #f0dca0);
   background: rgba(216, 192, 106, 0.12);
@@ -208,7 +209,7 @@
 
 .mwc-subtitle {
   font-family: var(--font-head);
-  font-size: 1.02rem;
+  font-size: var(--fs-sm);
   color: var(--ds-gold-dim, #a07840);
 }
 
@@ -224,7 +225,7 @@
 }
 
 .mwc-journey-title {
-  font-size: 0.78rem;
+  font-size: var(--fs-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -250,13 +251,13 @@
 
 .mwc-stat-value {
   font-family: var(--font-head);
-  font-size: 1.15rem;
+  font-size: var(--fs-md);
   font-weight: 700;
   color: var(--text);
 }
 
 .mwc-stat-label {
-  font-size: 0.7rem;
+  font-size: var(--fs-xs);
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -274,7 +275,7 @@
 }
 
 .mwc-cape-tag {
-  font-size: 0.68rem;
+  font-size: var(--fs-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
@@ -306,20 +307,20 @@
 
 .mwc-cape-name {
   font-family: var(--font-head);
-  font-size: 1.08rem;
+  font-size: var(--fs-md);
   font-weight: 700;
   color: var(--rar-legendary, #e0902a);
 }
 
 .mwc-cape-perk {
-  font-size: 0.84rem;
+  font-size: var(--fs-xs);
   line-height: 1.4;
   color: var(--ds-parch-ink, #e8d8b0);
   max-width: 340px;
 }
 
 .mwc-queue-hint {
-  font-size: 0.76rem;
+  font-size: var(--fs-xs);
   color: var(--muted);
   font-style: italic;
 }
@@ -350,7 +351,7 @@
   .mwc-icon-wrap { width: 100px; height: 100px; margin: 0; }
   .mwc-icon-img { width: 74px; height: 74px; }
   .mwc-icon-fallback { font-size: 3.2rem; }
-  .mwc-title { font-size: 1.5rem; }
-  .mwc-subtitle { font-size: 0.9rem; }
+  .mwc-title { font-size: var(--fs-xl); }
+  .mwc-subtitle { font-size: var(--fs-xs); }
   .mwc-stat { min-width: 72px; padding: 4px 8px; }
 }

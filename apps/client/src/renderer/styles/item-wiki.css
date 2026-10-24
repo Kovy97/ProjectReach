@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:44:00+02:00 — UI 1.4 W2 Gruppe E: feste Schriftgroessen auf die Skala --fs-* umgestellt (Regelbloecke unveraendert, nur font-size). */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* ═══════════════════════════════════════════════════════════
    ITEM WIKI MODAL (Task #308, Chef-Feature; Redesign nach Mira-Mockup "02 Forge Flow",
@@ -61,7 +62,7 @@
   flex: 0 0 auto;
   text-align: center;
   font-family: var(--font-head);
-  font-size: clamp(18px, 1.6vw, 24px);
+  font-size: var(--fs-xl);
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -73,7 +74,7 @@
   min-height: 34px;
   min-width: 0;
   padding: 2px 12px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   border-width: 6px;
   border-image-width: calc(6px * 2.125);
 }
@@ -147,7 +148,8 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 10px;
+  flex-wrap: wrap; /* claude:2026-10-24T19:01:00+02:00 — lange Zaehler (RU) bruchen unter den Titel statt aus dem Panel zu laufen */
+  gap: 4px 10px;
   padding-bottom: 8px;
   margin-bottom: 10px;
   border-bottom: 1px solid var(--border);
@@ -155,7 +157,7 @@
 
 .iwk-panel-head > span:first-child {
   font-family: var(--font-head);
-  font-size: 15px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -163,13 +165,13 @@
 }
 
 .iwk-panel-head > span:last-child {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   white-space: nowrap;
 }
 
 .iwk-empty {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-style: italic;
   color: var(--muted);
   padding: 4px 0 6px;
@@ -182,7 +184,7 @@
   align-items: center;
   gap: 6px;
   margin-bottom: 10px;
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   font-style: italic;
   color: var(--muted);
 }
@@ -273,7 +275,7 @@
      design-system.css) — viel zu groß für die feste `minmax(0,1fr)`-Spalte neben Icon und Chance.
      15px matcht die übrigen kompakten Zeilen-Namen im Spiel (z.B. `.cl-food-name`/`.cl-stance-
      name`, combat.css). */
-  font-size: 15px;
+  font-size: var(--fs-sm);
   line-height: 1.28;
   color: var(--text);
   font-weight: 600;
@@ -293,7 +295,7 @@
 
 .iwk-source-subline {
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--fs-sm);
   line-height: 1.35;
   overflow-wrap: break-word;
 }
@@ -303,7 +305,7 @@
    Optik wie `.iwk-source-subline` nur mit einem klickbaren Samen-Namen mittendrin. */
 .iwk-seed-origin {
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--fs-sm);
   line-height: 1.35;
   overflow-wrap: break-word;
 }
@@ -389,7 +391,7 @@
   min-height: 30px;
   min-width: 0;
   padding: 2px 10px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   border-width: 6px;
   border-image-width: calc(6px * 2.125);
 }
@@ -406,7 +408,7 @@
 .iwk-item-kicker {
   flex: 0 0 auto;
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -428,7 +430,7 @@
   flex: 0 0 auto;
   margin: 6px 0 14px;
   font-family: var(--font-head);
-  font-size: clamp(21px, 2vw, 29px);
+  font-size: var(--fs-2xl);
   font-weight: 700;
   line-height: 1.18;
   overflow-wrap: break-word;
@@ -487,9 +489,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  flex-wrap: wrap; /* claude:2026-10-24T19:01:00+02:00 — Faktenkachel bricht um statt Wert abzuschneiden */
+  gap: 2px 8px;
   padding: 7px 10px;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   border: 1px solid rgba(154, 128, 96, 0.32);
   background: rgba(0, 0, 0, 0.34);
 }
@@ -513,7 +516,7 @@
   flex: 0 0 auto;
   max-width: 60ch;
   margin: 0;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   font-style: italic;
   line-height: 1.5;
   color: var(--muted);
@@ -608,7 +611,7 @@
   min-width: 0;
   /* Runde 2: derselbe 21px-Body-Erb-Fehler wie `.iwk-source-name` (s. dortiger Kommentar) — in der
      schmalen 2-spaltigen Knoten-Karte erst recht zu groß, 14px passt neben Bild (42px) + Menge. */
-  font-size: 14px;
+  font-size: var(--fs-sm);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -671,7 +674,7 @@
 
 .iwk-ribbon-name {
   /* Runde 2: derselbe 21px-Body-Erb-Fehler wie `.iwk-source-name` (s. dortiger Kommentar). */
-  font-size: 15px;
+  font-size: var(--fs-sm);
   color: var(--text);
   font-weight: 600;
   overflow-wrap: break-word;
@@ -683,7 +686,7 @@
 
 .iwk-ribbon-sub {
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--fs-sm);
   overflow-wrap: break-word;
 }
 

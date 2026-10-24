@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:44:00+02:00 — UI 1.4 W2 Gruppe E: feste Schriftgroessen auf die Skala --fs-* umgestellt (Regelbloecke unveraendert, nur font-size). */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
@@ -119,7 +120,7 @@
   padding: clamp(5px, 0.45vw, 8px) clamp(8px, 0.8vw, 14px);
   /* Chef-Vorgabe (Vorlage Mira): Sprachchips in Cinzel, Runde 2 (26.08.): wächst mit (clamp). */
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(11px, 0.85vw, 15px);
+  font-size: var(--fs-xs);
 }
 
 /* ─── Ambient-FX: driftende Glut + Nebelschwaden (rein CSS, self-contained) ──────────────── */
@@ -274,7 +275,8 @@
   border-radius: 0;
   padding: clamp(14px, 1.6vw, 24px);
   box-shadow: 0 16px 64px rgba(0, 0, 0, 0.90);
-  animation: menu-panel-reveal 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* claude:2026-10-24T18:50:00+02:00 — fill backwards statt both: ein bleibendes transform machte das Panel zum Containing-Block, der Fehlerbericht-Dialog (position: fixed) klemmte im Panel statt im Fenster. */
+  animation: menu-panel-reveal 0.42s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
 /* Weicher Reveal beim Panel-Wechsel — die Komponente wird per React-`key` bei jedem
@@ -316,7 +318,7 @@
   align-items: center;
   gap: 12px;
   font-family: var(--font-head);
-  font-size: clamp(18px, 1.6vw, 22px);
+  font-size: var(--fs-xl);
   color: var(--gold);
   letter-spacing: 0.6px;
   margin: 0 0 16px;
@@ -337,7 +339,7 @@
   align-items: center;
   justify-content: center;
   color: var(--gold);
-  font-size: 18px;
+  font-size: var(--fs-md);
 }
 
 .menu-panel-title::after {
@@ -352,7 +354,7 @@
 
 .menu-empty-note {
   color: var(--muted);
-  font-size: 16px;
+  font-size: var(--fs-sm);
   padding: 20px 4px;
   text-align: center;
 }
@@ -382,7 +384,7 @@
   border-radius: 0;
   cursor: pointer;
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0.8px;
   text-transform: uppercase;
@@ -504,7 +506,7 @@
   max-width: 92vw;
   padding: 0 12px;
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(10px, 0.75vw, 14px);
+  font-size: var(--fs-xs);
   letter-spacing: 0.4px;
   color: rgba(205, 187, 142, 0.42);
   text-align: center;
@@ -572,7 +574,7 @@
   justify-content: flex-start;
   gap: clamp(14px, 1.3vw, 20px);
   padding: clamp(10px, 1.2vh, 18px) clamp(20px, 2vw, 30px);
-  font-size: clamp(22px, 1.7vw, 32px);
+  font-size: max(var(--fs-xl), clamp(22px, 1.7vw, 32px));
   text-align: left;
   text-transform: uppercase;
 }
@@ -583,7 +585,7 @@
   height: clamp(28px, 2.1vw, 42px);
   flex-shrink: 0;
   object-fit: contain;
-  font-size: clamp(22px, 1.7vw, 32px);
+  font-size: max(var(--fs-xl), clamp(22px, 1.7vw, 32px));
 }
 .menu-nav-btn .menu-action-glyph {
   display: flex;
@@ -671,7 +673,7 @@
   margin: 0;
   color: var(--gold);
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(10px, 0.8vw, 14px);
+  font-size: var(--fs-xs);
   letter-spacing: 0.19em;
   text-transform: uppercase;
 }
@@ -701,7 +703,7 @@
   margin: 0;
   color: var(--muted);
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(10px, 0.8vw, 14px);
+  font-size: var(--fs-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -709,14 +711,14 @@
   margin: 2px 0 0;
   color: var(--text);
   font-family: "Metamorphous", "Cinzel", Georgia, serif;
-  font-size: clamp(18px, 1.4vw, 26px);
+  font-size: max(var(--fs-lg), clamp(18px, 1.4vw, 26px));
   overflow-wrap: anywhere;
 }
 
 .save-empty-note {
   margin: 6px 0 16px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--fs-xs);
   line-height: 1.5;
 }
 
@@ -751,7 +753,7 @@
   display: block;
   font-family: "Metamorphous", "Cinzel", Georgia, serif;
   font-weight: 400;
-  font-size: clamp(20px, 1.8vw, 30px);
+  font-size: var(--fs-2xl);
   letter-spacing: 0.05em;
   color: var(--gold);
   text-transform: uppercase;
@@ -764,7 +766,7 @@
   padding-top: 7px;
   border-top: 1px solid rgba(190, 156, 91, 0.32);
   color: #c9b889;
-  font-size: clamp(12px, 1vw, 15px);
+  font-size: var(--fs-xs);
 }
 .continue-card i {
   min-width: 0;
@@ -784,18 +786,18 @@
 .menu-credits p {
   margin: 0;
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--fs-xs);
   line-height: 1.55;
 }
 .menu-credits-version {
   font-family: "Metamorphous", "Cinzel", Georgia, serif;
   color: var(--gold);
-  font-size: 18px;
+  font-size: var(--fs-md);
 }
 .menu-credits-copyright {
   margin-top: 8px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 
 .menu-panel-title-text {
@@ -868,12 +870,12 @@
    Eyebrow + Name + zwei Wertezeilen + FORTSETZEN-Karte ohne internes Scrollen in den Rahmen passen. */
 @media (max-height: 820px) {
   .save-copy { padding: 10px clamp(14px, 1.6vw, 20px) 10px; }
-  .save-copy h1 { margin: 2px 0 4px; font-size: 28px; }
+  .save-copy h1 { margin: 2px 0 4px; font-size: var(--fs-2xl); }
   .save-copy dl { gap: 4px 12px; margin-bottom: 8px; }
   .save-copy dl > div { padding-bottom: 3px; }
-  .save-copy dd { font-size: 17px; }
+  .save-copy dd { font-size: var(--fs-md); }
   .continue-card { min-height: 68px; padding: 8px 16px; }
-  .continue-card strong { font-size: 20px; }
+  .continue-card strong { font-size: var(--fs-lg); }
 }
 
 

@@ -1,3 +1,4 @@
+/* claude:2026-10-24T18:44:00+02:00 — UI 1.4 W2 Gruppe E: feste Schriftgroessen auf die Skala --fs-* umgestellt (Regelbloecke unveraendert, nur font-size). */
 /* codex:2026-08-31T01:26:00+02:00 — Produktive Umsetzung von „02 – Der Beutetisch“.
    Das Offline-Fenster nutzt dieselben Ashen-Iron-Rahmen und Gravewood-Texturen wie die
    modernisierten New-Haven-Flächen. Kopf, Ereignisband und Einsammeln bleiben sichtbar;
@@ -74,7 +75,7 @@
 .offline-stage-title {
   margin: 0;
   color: var(--ofs-gold-hi);
-  font-size: clamp(27px, 2.1vw, 40px);
+  font-size: max(var(--fs-2xl), clamp(27px, 2.1vw, 40px));
   font-weight: 400;
   line-height: .98;
   letter-spacing: .025em;
@@ -84,7 +85,7 @@
 .offline-stage-subtitle {
   margin: 6px 0 0;
   color: var(--muted);
-  font-size: clamp(11px, .76vw, 14px);
+  font-size: var(--fs-xs);
   letter-spacing: .055em;
 }
 
@@ -114,7 +115,7 @@
   align-self: end;
   color: var(--ofs-gold-hi);
   font-family: var(--font-head);
-  font-size: clamp(16px, 1.2vw, 23px);
+  font-size: max(var(--fs-sm), clamp(16px, 1.2vw, 23px));
   font-variant-numeric: tabular-nums;
   line-height: 1;
   white-space: nowrap;
@@ -124,7 +125,7 @@
   align-self: start;
   margin-top: 4px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: var(--fs-xs);
   letter-spacing: .08em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -168,7 +169,7 @@
   border: 2px solid #8a6730;
   border-radius: 50%;
   color: var(--ofs-gold);
-  font-size: 29px;
+  font-size: var(--fs-2xl);
   background: rgba(0, 0, 0, .44);
   box-shadow: inset 0 0 14px rgba(208, 169, 80, .14);
 }
@@ -180,7 +181,7 @@
 .ofs-warden-frame {
   color: var(--ofs-gold-hi);
   font-family: var(--font-head);
-  font-size: clamp(14px, 1vw, 18px);
+  font-size: var(--fs-xs);
   line-height: 1.25;
 }
 
@@ -193,7 +194,7 @@
 
 .ofs-warden-line {
   color: #c8c1b2;
-  font-size: clamp(12px, .82vw, 15px);
+  font-size: var(--fs-xs);
   font-style: italic;
   line-height: 1.32;
 }
@@ -201,7 +202,7 @@
 .offline-stage-cap-note {
   margin-top: 4px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   line-height: 1.25;
 }
 
@@ -248,7 +249,7 @@
 .ofs-incident strong {
   color: var(--ofs-gold-hi);
   font-family: var(--font-head);
-  font-size: 16px;
+  font-size: var(--fs-sm);
 }
 
 .ofs-incident--danger strong { color: #e78572; }
@@ -256,7 +257,7 @@
 .ofs-incident small {
   margin-top: 3px;
   color: #bdb8ad;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   line-height: 1.3;
 }
 
@@ -303,8 +304,8 @@
   text-align: center;
 }
 
-.ofs-column-title { font-size: clamp(20px, 1.38vw, 27px); }
-.ofs-section-title { font-size: clamp(14px, 1vw, 18px); }
+.ofs-column-title { font-size: var(--fs-lg); }
+.ofs-section-title { font-size: var(--fs-xs); }
 .ofs-section + .ofs-section { margin-top: 13px; }
 
 .ofs-skills { display: grid; gap: 5px; margin-top: 8px; }
@@ -328,13 +329,13 @@
   min-width: 0;
   overflow-wrap: anywhere;
   color: #d7d2c5;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   hyphens: auto;
 }
 
 .ofs-skill-gain { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
-.ofs-skill-xp { color: var(--ofs-green); font-size: 11px; white-space: nowrap; }
+.ofs-skill-xp { color: var(--ofs-green); font-size: var(--fs-xs); white-space: nowrap; }
 
 .ofs-skill-lvl {
   padding: 1px 5px;
@@ -342,7 +343,7 @@
   color: var(--ofs-gold-hi);
   background: rgba(72, 48, 13, .38);
   font-family: var(--font-head);
-  font-size: 9px;
+  font-size: var(--fs-xs);
   letter-spacing: .04em;
   white-space: nowrap;
 }
@@ -357,13 +358,14 @@
 }
 
 .ofs-achievement-row img { width: 28px; height: 28px; object-fit: contain; }
-.ofs-achievement-row strong { color: var(--ofs-gold); font-size: 12px; }
-.ofs-achievement-more { margin: 6px 3px 0; color: var(--muted); font-size: 11px; text-align: right; }
+.ofs-achievement-row strong { color: var(--ofs-gold); font-size: var(--fs-xs); }
+.ofs-achievement-more { margin: 6px 3px 0; color: var(--muted); font-size: var(--fs-xs); text-align: right; }
 
 .ofs-loot-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(62px, 1fr));
-  gap: clamp(6px, .48vw, 9px);
+  /* claude:2026-10-24T18:47:00+02:00 — Beute-Raster: grosse Felder, damit wenige Treffer die Flaeche fuellen statt als Mini-Icons zu verschwinden. */
+  grid-template-columns: repeat(auto-fill, minmax(clamp(84px, 6.4vw, 128px), 1fr));
+  gap: clamp(8px, .6vw, 12px);
   margin-top: 10px;
 }
 
@@ -371,7 +373,7 @@
 
 .ofs-loot-item {
   width: 100%;
-  max-width: 78px;
+  max-width: clamp(96px, 7.2vw, 140px);
   aspect-ratio: 1;
   display: flex;
   align-items: center;
@@ -384,8 +386,8 @@
 }
 
 .ofs-loot-item .item-cell-img { max-width: 84%; max-height: 84%; object-fit: contain; }
-.ofs-loot-item .item-cell-qty { right: 4px; bottom: 2px; font-size: 14px; }
-.ofs-loot-item .item-cell-qty--wide { font-size: 11px; }
+.ofs-loot-item .item-cell-qty { right: 4px; bottom: 2px; font-size: var(--fs-sm); }
+.ofs-loot-item .item-cell-qty--wide { font-size: var(--fs-sm); }
 
 .ofs-rare-block {
   margin-top: clamp(12px, 1.2dvh, 20px);
@@ -396,18 +398,18 @@
 .ofs-rare-block h4 {
   margin: 0;
   color: #cda8ee;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 400;
   letter-spacing: .12em;
   text-align: center;
   text-transform: uppercase;
 }
 
-.ofs-loot-grid--rare { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); max-width: 560px; margin-inline: auto; }
-.ofs-loot-cell.is-rare .ofs-loot-item { max-width: 92px; box-shadow: inset 0 0 17px rgba(159, 96, 205, .15), 0 0 0 1px rgba(148, 95, 185, .65); }
-.ofs-loot-rare-name { max-width: 100px; color: #cdb6dc; font-size: 10px; line-height: 1.15; text-align: center; }
-.ofs-loot-grid--small { grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); }
-.ofs-loot-grid--small .ofs-loot-item { max-width: 66px; }
+.ofs-loot-grid--rare { grid-template-columns: repeat(auto-fill, minmax(clamp(104px, 7.6vw, 144px), 1fr)); max-width: 720px; margin-inline: auto; }
+.ofs-loot-cell.is-rare .ofs-loot-item { max-width: clamp(112px, 8.4vw, 156px); box-shadow: inset 0 0 17px rgba(159, 96, 205, .15), 0 0 0 1px rgba(148, 95, 185, .65); }
+.ofs-loot-rare-name { max-width: 100px; color: #cdb6dc; font-size: var(--fs-xs); line-height: 1.15; text-align: center; }
+.ofs-loot-grid--small { grid-template-columns: repeat(auto-fill, minmax(clamp(72px, 5.4vw, 104px), 1fr)); }
+.ofs-loot-grid--small .ofs-loot-item { max-width: clamp(80px, 6vw, 116px); }
 
 .ofs-camp-row { grid-template-columns: 58px minmax(0, 1fr) auto; }
 .ofs-camp-art { display: grid; place-items: center; width: 56px; height: 42px; overflow: hidden; }
@@ -431,7 +433,7 @@
 }
 
 .ofs-empty-icon img { width: 58px; height: 58px; object-fit: contain; opacity: .82; }
-.ofs-empty-text { margin: 0; color: var(--muted); font-size: clamp(14px, 1vw, 17px); line-height: 1.4; }
+.ofs-empty-text { margin: 0; color: var(--muted); font-size: var(--fs-xs); line-height: 1.4; }
 .ofs-empty-btn { min-height: 48px; padding-inline: 22px; }
 
 .ofs-collect,
@@ -441,7 +443,7 @@
   min-height: clamp(52px, 6dvh, 68px) !important;
   margin: 0 auto;
   flex: 0 0 auto;
-  font-size: clamp(20px, 1.65vw, 29px);
+  font-size: max(var(--fs-xl), clamp(20px, 1.65vw, 29px));
 }
 
 @media (max-width: 1120px) {
@@ -483,7 +485,7 @@
   .offline-stage-subtitle { margin-top: 3px; }
   .ofs-event-ribbon { min-height: 76px; }
   .ofs-warden { padding-block: 6px; }
-  .ofs-warden-mark { width: 46px; height: 46px; font-size: 24px; }
+  .ofs-warden-mark { width: 46px; height: 46px; font-size: var(--fs-xl); }
   .ofs-skill-row { min-height: 40px; padding-block: 3px; }
   .ofs-loot-item { max-width: 66px; }
   .ofs-loot-cell.is-rare .ofs-loot-item { max-width: 76px; }

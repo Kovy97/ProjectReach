@@ -1,3 +1,26 @@
 /* claude:2026-10-24T18:34:00+02:00 — UI-Überarbeitung 1.4, Welle 2, Gruppe E Offline-Bericht, Post, Hauptmenü, Erstellung, Wiki, Fehlerbericht, Rundgang, Optionen-Seite, Momente.
    Einziger Schreiber: der Agent dieser Gruppe. Hier stehen Überschreibungen für geteilte Dateien (v. a. pages.css),
    die die Gruppe nicht selbst bearbeiten darf. Geladen nach classic-skin/classic-chrome, vor typography.css. */
+
+/* claude:2026-10-24T18:48:00+02:00 — W2 Gruppe E: Fliesstext-Schrift fuer Prosa-Klassen der Rahmen-Ansichten (typography.css deckt sie noch nicht ab). */
+.bugreport-fallback-body, .bugreport-clipboard-empty, .cst-package-copy, .encp-empty, .guide-bubble-body, .guide-bubble-hint,
+.iwk-empty, .iwk-item-flavor, .iwk-ribbon-sub, .iwk-seed-origin-detail, .iwk-source-subline, .iwk-source-text,
+.load-empty-note, .mail-empty, .mail-letter-body, .mail-row-meta, .mail-detail-meta, .menu-credits p,
+.menu-credits-copyright, .mwc-queue-hint, .mwc-subtitle, .new-relic-copy p, .save-empty-note, .creation-hero-caption {
+  font-family: var(--font-body);
+}
+
+/* claude:2026-10-24T18:48:00+02:00 — Menue: Credits-Text nutzt die leere Panelflaeche (vorher 14 px in grossem Rahmen). */
+.menu-credits p { font-size: var(--fs-md); }
+.menu-credits-version { font-size: var(--fs-xl); }
+.menu-credits-copyright { font-size: var(--fs-sm); }
+
+/* claude:2026-10-24T18:48:00+02:00 — Spiel-Warnung (pages.css Z. 751): Skala statt rem, grosse Schrift fuer eine Warnung. */
+.game-alert { font-size: var(--fs-lg); }
+
+/* claude:2026-10-24T18:48:00+02:00 — Optionen-Reste (geteilte OptionControls, pages.css Z. 1555-1690): Skalenwerte, Hinweistext in Fliessschrift. */
+.opt-row-label { font-size: var(--fs-md); }
+.opt-row-hint { font-family: var(--font-body); font-size: var(--fs-sm); max-width: 46ch; }
+.opt-segment .lang-btn { font-size: var(--fs-sm); }
+.opt-slider-val { font-size: var(--fs-sm); }
+.options-hint { font-family: var(--font-body); font-size: var(--fs-sm); }
