@@ -2320,7 +2320,8 @@ export const ru: Record<string, string> = {
     "estates.banner": "Работает само, в том числе офлайн и параллельно с основным занятием.",
     "estates.farm.status": "Грядки {n}/{m}",
     "estates.farm.next": "{min} мин",
-    "estates.farm.idle": "Ничего не посажено",
+    // claude:2026-10-24T23:02:00+02:00 — Abschluss-Check: passte in der Seitenleiste nicht (9 px abgeschnitten)
+    "estates.farm.idle": "Не засеяно",
     "estates.farm.empty": "{n} пусто",
     "estates.hunt.status": "Ловушки {n}/{m}",
     "estates.hunt.next": "{min} мин",
