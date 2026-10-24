@@ -1,4 +1,4 @@
-// claude:2026-10-24T10:05:00+02:00 — Trailer-Bühne: Renderer, Kamera und Bild-Pipeline (Bloom → Unterframe-Akkumulation für echte
+// claude:2026-10-24T09:00:00+02:00 — Trailer-Bühne: Renderer, Kamera und Bild-Pipeline (Bloom → Unterframe-Akkumulation für echte
 // Bewegungsunschärfe → Farbkorrektur mit Vignette, Korn, Blitz, Abblende). Gerendert wird Bild für Bild, nie in Echtzeit.
 import * as THREE from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
@@ -29,8 +29,8 @@ export interface Grade {
 
 export const DEFAULT_GRADE: Grade = {
   exposure: 1,
-  saturation: 0.92,
-  contrast: 1.08,
+  saturation: 1,
+  contrast: 1,
   split: 0.5,
   vignette: 0.55,
   grain: 0.045,
@@ -41,13 +41,31 @@ export const DEFAULT_GRADE: Grade = {
   tint: [1, 1, 1],
 };
 
+/**
+ * claude:2026-10-24T10:24:00+02:00 — Chef 24.10.: „zu dunkel, zu unscharf“. Die Shots wurden mit kräftiger Vignette, Split-Toning, Kontrast und Korn
+ * abgestimmt; hier zentral auf eine originalgetreue Bildsprache zurückgenommen, damit die Gemälde aussehen wie im Spiel.
+ */
+export function look(g: Grade): Grade {
+  return {
+    ...g,
+    contrast: 1,
+    saturation: Math.min(1, g.saturation + 0.06),
+    vignette: Math.min(g.vignette, 0.8) * 0.35,
+    split: g.split * 0.3,
+    grain: Math.min(g.grain, 0.018),
+    aberration: g.aberration * 0.5,
+    bloom: g.bloom * 0.7,
+  };
+}
+
 export interface TrailerScene {
   id: string;
   /** Länge in Sekunden (Musikzeit) */
   duration: number;
   /** Startpunkt im Track settings.mp3 */
   audioStart: number;
-  setup(stage: Stage): Promise<void>;
+  /** baut die Szene; `root` = Elterngruppe im Gesamt-Trailer (sonst die Bühnen-Szene) */
+  setup(stage: Stage, root?: THREE.Object3D): Promise<void>;
   /** setzt alles für die Musikzeit τ (rein, ohne Zustand) */
   update(tau: number, stage: Stage): void;
   grade(tau: number): Partial<Grade>;
@@ -60,7 +78,8 @@ uniform float uSeed, uExposure, uSat, uContrast, uSplit, uVignette, uGrain, uFla
 uniform vec3 uTint;
 varying vec2 vUv;
 float hash(vec2 p){ p = fract(p*vec2(123.34, 456.21)); p += dot(p, p+45.32); return fract(p.x*p.y); }
-vec3 aces(vec3 x){ return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14), 0.0, 1.0); }
+// claude:2026-10-24T10:24:00+02:00 — originalgetreu: bis 0,85 linear (Gemälde wie im Spiel), darüber weiche Schulter nur für überhelle Effekte
+vec3 shoulder(vec3 x){ vec3 k = max(x - 0.85, 0.0); return min(x, vec3(0.85)) + 0.15 * (1.0 - exp(-k / 0.15)); }
 vec3 toSRGB(vec3 c){ return mix(c*12.92, 1.055*pow(c, vec3(1.0/2.4))-0.055, step(0.0031308, c)); }
 void main(){
   vec2 d = (vUv-0.5);
@@ -70,7 +89,7 @@ void main(){
   c.g = texture2D(tAcc, vUv).g;
   c.b = texture2D(tAcc, vUv - off).b;
   c *= uExposure * uTint;
-  c = aces(c * 1.15);
+  c = shoulder(c);
   float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
   c = mix(vec3(l), c, uSat);
   c = (c - 0.5) * uContrast + 0.5;
@@ -117,7 +136,7 @@ export class Stage {
     this.composer = new EffectComposer(this.renderer, rt());
     this.composer.renderToScreen = false;
     this.composer.addPass(new RenderPass(this.scene, this.camera));
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(WIDTH, HEIGHT), 0.35, 0.42, 1.0);
+    this.bloom = new UnrealBloomPass(new THREE.Vector2(WIDTH, HEIGHT), 0.35, 0.28, 1.0);
     this.composer.addPass(this.bloom);
 
     this.acc = new THREE.WebGLRenderTarget(WIDTH, HEIGHT, { type: THREE.FloatType });
@@ -165,7 +184,7 @@ export class Stage {
       const t = tau + ((k + 0.5) / sub - 0.5) * (shutter / fps);
       scene.update(Math.max(0, t), this);
       this.camPos.copy(this.camera.position);
-      const g = { ...DEFAULT_GRADE, ...scene.grade(Math.max(0, t)) };
+      const g = look({ ...DEFAULT_GRADE, ...scene.grade(Math.max(0, t)) });
       this.bloom.strength = g.bloom;
       this.composer.render();
       this.accMat.map = this.composer.readBuffer.texture;
@@ -176,7 +195,7 @@ export class Stage {
       r.render(this.accScene, this.quadCam);
       r.autoClear = true;
     }
-    const g = { ...DEFAULT_GRADE, ...scene.grade(tau) };
+    const g = look({ ...DEFAULT_GRADE, ...scene.grade(tau) });
     const u = this.gradeMat.uniforms;
     u.uSeed!.value = (frame * 7.13) % 97;
     u.uExposure!.value = g.exposure;

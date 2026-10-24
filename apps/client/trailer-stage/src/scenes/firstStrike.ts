@@ -1,10 +1,10 @@
-// claude:2026-10-24T10:45:00+02:00 — Testszene A „Erster Schlag“ = Storyboard-Shots 09–11 (Musik 22,13–27,32 s).
+// claude:2026-10-24T09:00:00+02:00 — Testszene A „Erster Schlag“ = Storyboard-Shots 09–11 (Musik 22,13–27,32 s).
 // τ 0,00–1,87  Shot 09: Nahaufnahme, Kamera fährt am Schwert hoch zum Gesicht, Hintergrund unscharf.
 // τ 1,87–2,59  Shot 10: Schwarz im Aussetzer, Funkenregen von unten, Weißblitz auf den Crash.
 // τ 2,59–5,19  Shot 11: Treffer exakt auf dem Crash (24,72 s) in Zeitlupe, Rampe auf Echtzeit, zweiter Hieb auf Schlag 3.
 import * as THREE from "three";
 import { easeInOutCubic, easeOutCubic, pulse, ramp, smooth, timeRemap, track, wobble, type Vec3 } from "../anim";
-import { Atmosphere, blurredTexture, buildBackdrop } from "../env";
+import { Atmosphere, buildBackdrop } from "../env";
 import { Burst, DamageNumber, Glow, Ring, SlashArc, TEX } from "../fx";
 import { Puppet } from "../puppet";
 import type { Grade, Stage, TrailerScene } from "../stage";
@@ -30,7 +30,6 @@ export function firstStrike(): TrailerScene {
   let gob!: Puppet;
   let backdrop!: THREE.Mesh;
   let sharpTex!: THREE.Texture;
-  let softTex!: THREE.Texture;
   let atmo!: Atmosphere;
   let riser!: Burst;
   let sparks1!: Burst;
@@ -51,13 +50,14 @@ export function firstStrike(): TrailerScene {
     id: "firstStrike",
     duration: 5.19,
     audioStart: 22.13,
-    async setup(stage: Stage) {
+    async setup(stage: Stage, root?: THREE.Object3D) {
+      const parent = root ?? stage.scene;
       const bdImg = await loadImage(asset("battlescreens/borderlands.webp"));
       sharpTex = await stage.texture(asset("battlescreens/borderlands.webp"));
-      softTex = blurredTexture(bdImg, 7);
-      backdrop = buildBackdrop(sharpTex, bdImg.width / bdImg.height, { eye: 1.6, z: 10, horizon: 0.41, nearDist: 4, wallDist: 26 });
-      stage.scene.add(backdrop);
-      stage.scene.add(world);
+      // claude:2026-10-24T10:24:00+02:00 — Malerposition wie im Gesamt-Trailer (kit.PAINTER), kein Weichzeichner mehr
+      backdrop = buildBackdrop(sharpTex, bdImg.width / bdImg.height, { eye: 1.6, z: 6.2, horizon: 0.41, nearDist: 4, wallDist: 26 });
+      parent.add(backdrop);
+      parent.add(world);
 
       const heroImg = await loadImage(asset("portraits/human_warrior_m.webp"));
       hero = new Puppet({ url: "", height: 2.25, mirror: false, capeC: [0.62, 0.38], capeR: [0.2, 0.3], chest: 0.7, hip: 0.46 }, await stage.texture(asset("portraits/human_warrior_m.webp")), heroImg);
@@ -97,25 +97,25 @@ export function firstStrike(): TrailerScene {
       if (shot === 9) {
         const k = tau / SHOT10;
         // Original blickt nach rechts (zum Gegner); das Schwert hängt links am Körper
-        pos = track<Vec3>([{ t: 0, v: [-1.62, 0.5, 1.45] }, { t: 1, v: [-1.0, 1.74, 1.75], ease: easeInOutCubic }], k);
-        look = track<Vec3>([{ t: 0, v: [-1.95, 0.42, 0] }, { t: 1, v: [-1.32, 1.88, 0], ease: easeInOutCubic }], k);
-        fov = 28;
+        pos = track<Vec3>([{ t: 0, v: [-1.0, 0.95, 4.2] }, { t: 1, v: [-1.05, 1.75, 3.6], ease: easeInOutCubic }], k);
+        look = track<Vec3>([{ t: 0, v: [-1.3, 0.8, 0] }, { t: 1, v: [-1.3, 1.8, 0], ease: easeInOutCubic }], k);
+        fov = 32;
       } else if (shot === 10) {
         pos = [0, 1.0, 4];
         look = [0, 1.6, 0];
       } else {
         const k = (tau - CRASH) / (5.19 - CRASH);
         pos = track<Vec3>([
-          { t: 0, v: [0.15, 1.12, 3.4] },
-          { t: 0.3, v: [0.85, 1.28, 3.25] },
-          { t: 1, v: [1.05, 1.5, 4.7] },
+          { t: 0, v: [0.1, 1.5, 5.0] },
+          { t: 0.3, v: [0.5, 1.55, 4.8] },
+          { t: 1, v: [0.75, 1.6, 5.8] },
         ], k);
         look = track<Vec3>([
-          { t: 0, v: [0.35, 1.18, 0.1] },
-          { t: 0.3, v: [0.55, 1.15, 0.1] },
-          { t: 1, v: [0.75, 1.05, 0] },
+          { t: 0, v: [0.3, 1.35, 0.1] },
+          { t: 0.3, v: [0.45, 1.35, 0.1] },
+          { t: 1, v: [0.6, 1.4, 0] },
         ], k);
-        fov = 34 - 4 * pulse(tau, CRASH, 0.001, 0.5);
+        fov = 37 - 3 * pulse(tau, CRASH, 0.001, 0.5);
         // Kamerastöße (in Handlungszeit, damit sie in der Zeitlupe mitverlangsamen)
         const s1 = shot === 11 ? 0.07 * Math.exp(-Math.max(0, a) * 7) : 0;
         const s2 = a >= A2 ? 0.05 * Math.exp(-(a - A2) * 9) : 0;
@@ -134,7 +134,6 @@ export function firstStrike(): TrailerScene {
       world.visible = true;
       hero.group.visible = !blackout;
       gob.group.visible = shot === 11;
-      (backdrop.material as THREE.MeshBasicMaterial).map = shot === 9 ? softTex : sharpTex;
 
       // ── Held ──
       const breathe = Math.sin(tau * 2.6) * 0.012;

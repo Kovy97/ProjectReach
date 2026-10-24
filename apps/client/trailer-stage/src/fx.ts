@@ -1,4 +1,4 @@
-// claude:2026-10-24T10:30:00+02:00 — Trailer-Bühne: Effekte. Jeder Effekt ist eine reine Funktion seiner Handlungszeit
+// claude:2026-10-24T09:00:00+02:00 — Trailer-Bühne: Effekte. Jeder Effekt ist eine reine Funktion seiner Handlungszeit
 // (ballistisch mit Luftwiderstand, geschlossene Form), damit Unterframes und Zeitlupen exakt stimmen.
 import * as THREE from "three";
 import { clamp, easeOutCubic, rng, smooth } from "./anim";
@@ -83,6 +83,8 @@ export interface BurstOpts {
   emitOver?: number;
   /** zufälliger Versatz des Startpunkts je Achse (± Hälfte) */
   originSpread?: THREE.Vector3;
+  /** claude:2026-10-24T10:24:00+02:00 — Einblenden je Teilchen über diese Zeit: verhindert den überhellen Klumpen im Geburtsbild */
+  birthFade?: number;
 }
 
 export class Burst {
@@ -153,6 +155,7 @@ export class Burst {
       m.setPosition(p);
       this.mesh.setMatrixAt(i, m);
       this.color.copy(o.colors[0]).lerp(o.colors[1], smooth(life)).multiplyScalar(1 - smooth((life - 0.6) / 0.4));
+      if (o.birthFade) this.color.multiplyScalar(smooth(t / o.birthFade));
       this.mesh.setColorAt(i, this.color);
     });
     this.mesh.instanceMatrix.needsUpdate = true;

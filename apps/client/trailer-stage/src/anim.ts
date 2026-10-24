@@ -1,4 +1,4 @@
-// claude:2026-10-24T10:00:00+02:00 — Trailer-Bühne (Trailer v3 „Gehalten“): Zeit, Easing, Keyframes, Zufall.
+// claude:2026-10-24T09:00:00+02:00 — Trailer-Bühne (Trailer v3 „Gehalten“): Zeit, Easing, Keyframes, Zufall.
 // Alles ist eine reine Funktion der Zeit: jede Szene kann für jedes t ausgewertet werden (Unterframes, Zeitlupe, Wiederholung).
 
 export const clamp = (v: number, a = 0, b = 1): number => Math.min(b, Math.max(a, v));

@@ -1,4 +1,4 @@
-// claude:2026-10-24T10:10:00+02:00 — Trailer-Bühne: Kulisse als Projektion (Camera Mapping) und Atmosphäre.
+// claude:2026-10-24T09:00:00+02:00 — Trailer-Bühne: Kulisse als Projektion (Camera Mapping) und Atmosphäre.
 // Jeder Bildpunkt der gemalten Kulisse wird entlang seines Sehstrahls aus der „Malerkamera“ auf den Boden (y = 0) oder eine
 // zylindrische Rückwand gelegt. Aus der Malerkamera sieht das Bild exakt aus wie gemalt; jede andere Kamera bekommt echte
 // Parallaxe zwischen Vordergrund-Boden und Hintergrund.
@@ -20,15 +20,19 @@ export interface PainterCam {
 
 export function buildBackdrop(tex: THREE.Texture, imgAspect: number, pc: PainterCam): THREE.Mesh {
   const F = (pc.horizon * pc.nearDist) / pc.eye; // Brennweite in Bildhöhen-Einheiten
-  const NU = 128;
-  const NV = 160;
+  const NU = 160;
+  const NV = 180;
+  // claude:2026-10-24T10:24:00+02:00 — Rand: links/rechts 12 %, oben 12 %, unten 10 % gespiegelt angesetzt (MirroredRepeat), statt Schwarz am Bildrand
+  const EU = 0.12;
+  const EVT = 0.12;
+  const EVB = 0.1;
   const pos: number[] = [];
   const uvs: number[] = [];
   const idx: number[] = [];
   for (let j = 0; j <= NV; j++) {
-    const v = j / NV;
+    const v = -EVB + ((1 + EVB + EVT) * j) / NV;
     for (let i = 0; i <= NU; i++) {
-      const u = i / NU;
+      const u = -EU + ((1 + 2 * EU) * i) / NU;
       const X = ((u - 0.5) * imgAspect) / F;
       const Y = (v - pc.horizon) / F;
       const tWall = pc.wallDist / Math.sqrt(X * X + 1);
@@ -51,10 +55,56 @@ export function buildBackdrop(tex: THREE.Texture, imgAspect: number, pc: Painter
   geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
   geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
   geo.setIndex(idx);
-  tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
-  const mat = new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide, toneMapped: false });
+  tex.wrapS = tex.wrapT = THREE.MirroredRepeatWrapping;
+  tex.needsUpdate = true;
+  const img = tex.image as { width: number; height: number };
+  const mat = new THREE.ShaderMaterial({
+    vertexShader: BD_VERT,
+    fragmentShader: BD_FRAG,
+    side: THREE.DoubleSide,
+    uniforms: { map: { value: tex }, uSize: { value: new THREE.Vector2(img.width, img.height) }, uTint: { value: new THREE.Color(1, 1, 1) } },
+  });
   return new THREE.Mesh(geo, mat);
 }
+
+/** claude:2026-10-24T10:24:00+02:00 — Kulisse abdunkeln/einfärben (z. B. Gegenlicht-Silhouette) */
+export function tintBackdrop(mesh: THREE.Mesh, r: number, g: number, b: number): void {
+  ((mesh.material as THREE.ShaderMaterial).uniforms.uTint!.value as THREE.Color).setRGB(r, g, b);
+}
+
+// claude:2026-10-24T10:24:00+02:00 — bikubische Catmull-Rom-Abtastung (9 bilineare Zugriffe): bei Vergrößerung deutlich schärfer als bilinear
+const BD_VERT = /* glsl */ `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
+const BD_FRAG = /* glsl */ `
+uniform sampler2D map;
+uniform vec2 uSize;
+uniform vec3 uTint;
+varying vec2 vUv;
+vec4 catmullRom(vec2 uv){
+  vec2 sp = uv * uSize;
+  vec2 t1 = floor(sp - 0.5) + 0.5;
+  vec2 f = sp - t1;
+  vec2 w0 = f * (-0.5 + f * (1.0 - 0.5 * f));
+  vec2 w1 = 1.0 + f * f * (-2.5 + 1.5 * f);
+  vec2 w2 = f * (0.5 + f * (2.0 - 1.5 * f));
+  vec2 w3 = f * f * (-0.5 + 0.5 * f);
+  vec2 w12 = w1 + w2;
+  vec2 t0 = (t1 - 1.0) / uSize;
+  vec2 t3 = (t1 + 2.0) / uSize;
+  vec2 t12 = (t1 + w2 / w12) / uSize;
+  vec4 c = texture2D(map, vec2(t0.x, t0.y)) * w0.x * w0.y
+    + texture2D(map, vec2(t12.x, t0.y)) * w12.x * w0.y
+    + texture2D(map, vec2(t3.x, t0.y)) * w3.x * w0.y
+    + texture2D(map, vec2(t0.x, t12.y)) * w0.x * w12.y
+    + texture2D(map, vec2(t12.x, t12.y)) * w12.x * w12.y
+    + texture2D(map, vec2(t3.x, t12.y)) * w3.x * w12.y
+    + texture2D(map, vec2(t0.x, t3.y)) * w0.x * w3.y
+    + texture2D(map, vec2(t12.x, t3.y)) * w12.x * w3.y
+    + texture2D(map, vec2(t3.x, t3.y)) * w3.x * w3.y;
+  return max(c, 0.0);
+}
+void main(){
+  gl_FragColor = vec4(catmullRom(vUv).rgb * uTint, 1.0);
+}`;
 
 /** Weich gezeichnete Kopie einer Textur (für Schärfentiefe in Nahaufnahmen). */
 export function blurredTexture(img: HTMLImageElement | ImageBitmap, px: number): THREE.CanvasTexture {
@@ -161,8 +211,9 @@ export class Atmosphere {
       // Bokeh: nahe an der Kamera groß und weich
       const near = Math.max(0, 1 - (camZ - zz) / 2.2);
       const flick = 0.75 + 0.25 * Math.sin(t * 3 + p.ph);
-      this.ash.col.set([this.ashColor[0], this.ashColor[1], this.ashColor[2], (0.5 - near * 0.38) * flick * intensity], i * 4);
-      this.ash.size[i] = p.s * (0.045 + near * 0.07);
+      // claude:2026-10-24T10:24:00+02:00 — Asche dezenter: keine großen Bokeh-Flecken vor der Linse
+      this.ash.col.set([this.ashColor[0], this.ashColor[1], this.ashColor[2], (0.32 - near * 0.3) * flick * intensity], i * 4);
+      this.ash.size[i] = p.s * (0.03 + near * 0.012);
     });
     this.emberSeed.forEach((p, i) => {
       const yy = y[0] + (((p.y * H + t * p.sp) % H) + H) % H;

@@ -1,4 +1,4 @@
-// claude:2026-10-24T10:40:00+02:00 — Trailer-Bühne: Spiel-Assets kommen über publicDir (= src/renderer/assets) direkt aus dem Client.
+// claude:2026-10-24T09:00:00+02:00 — Trailer-Bühne: Spiel-Assets kommen über publicDir (= src/renderer/assets) direkt aus dem Client.
 export const asset = (p: string): string => `/${p}`;
 
 export async function loadImage(url: string): Promise<HTMLImageElement> {

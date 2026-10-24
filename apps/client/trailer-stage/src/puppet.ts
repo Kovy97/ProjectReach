@@ -1,4 +1,4 @@
-// claude:2026-10-24T10:20:00+02:00 — Trailer-Bühne: Puppen-Morphs für freigestellte 2D-Gemälde. Das Bild liegt auf einem
+// claude:2026-10-24T09:00:00+02:00 — Trailer-Bühne: Puppen-Morphs für freigestellte 2D-Gemälde. Das Bild liegt auf einem
 // Gitter; Verformer (Biegen, Lehnen, Atmen, Stauchen, Mantel-Schwung) laufen im Vertex-Shader. Dazu Treffer-Blitz, Frost-Überzug,
 // Randlicht und Bodenkontakt über die unterste deckende Bildzeile.
 import * as THREE from "three";
@@ -25,11 +25,13 @@ void main(){
 
 const FRAG = /* glsl */ `
 uniform sampler2D map;
-uniform float uFlash, uFrost, uOpacity, uRim, uTime, uDark;
+uniform float uFlash, uFrost, uOpacity, uRim, uTime, uDark, uDissolve;
 uniform vec3 uTint, uRimColor, uFlashColor;
 uniform vec2 uRimDir, uTexel;
 varying vec2 vUv;
 float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+float vnoise(vec2 p){ vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y); }
 void main(){
   vec4 c = texture2D(map, vUv);
   // halbtransparente Freisteller-Säume tragen oft hellen Hintergrund mit: unter 0,3 verwerfen, darüber weich ausblenden
@@ -40,7 +42,8 @@ void main(){
   float a2 = texture2D(map, vUv + uRimDir * uTexel * 10.0).a;
   float a3 = texture2D(map, vUv + uRimDir * uTexel * 22.0).a;
   float rim = clamp(c.a - min(a2, a3), 0.0, 1.0);
-  col += min(uRimColor, vec3(1.0)) * rim * uRim * 0.35;
+  // claude:2026-10-24T10:24:00+02:00 — Randlicht halbiert: bei 1:1 wirkte es als heller Aufkleber-Rand und ließ Waffen schimmern
+  col += min(uRimColor, vec3(1.0)) * rim * uRim * 0.16;
   // Frost: entsättigt, kalt, kristallines Glitzern
   float l = dot(col, vec3(0.299, 0.587, 0.114));
   vec3 ice = vec3(l) * vec3(0.8, 0.95, 1.2) * 1.35 + vec3(0.04, 0.07, 0.11);
@@ -49,6 +52,13 @@ void main(){
   col = mix(col, ice * 0.85 + sparkle * 0.9 * vec3(0.8, 0.95, 1.2), uFrost);
   col += uFrost * rim * vec3(0.5, 0.75, 1.0) * 0.3;
   col = mix(col, uFlashColor, uFlash);
+  // Glut-Auflösung (Übergänge): Rauschen frisst das Bild, die Kante glimmt
+  if (uDissolve > 0.0) {
+    float n = vnoise(vUv * 9.0) * 0.6 + vnoise(vUv * 27.0) * 0.4;
+    if (n < uDissolve) discard;
+    float edge = 1.0 - smoothstep(uDissolve, uDissolve + 0.06, n);
+    col += vec3(2.4, 1.05, 0.35) * edge;
+  }
   gl_FragColor = vec4(col, c.a * uOpacity);
 }`;
 
@@ -107,6 +117,7 @@ export class Puppet {
         uTexel: { value: new THREE.Vector2(1 / img.width, 1 / img.height) },
         uTint: { value: new THREE.Color(1, 1, 1) },
         uDark: { value: 0 },
+        uDissolve: { value: 0 },
       },
     });
     this.mesh = new THREE.Mesh(geo, this.mat);

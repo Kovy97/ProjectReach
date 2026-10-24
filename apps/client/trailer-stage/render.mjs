@@ -1,4 +1,4 @@
-// claude:2026-10-24T11:10:00+02:00 — Trailer-Bühne: Aufnahme. Startet die Bühne (Vite), rendert eine Szene Bild für Bild in
+// claude:2026-10-24T09:00:00+02:00 — Trailer-Bühne: Aufnahme. Startet die Bühne (Vite), rendert eine Szene Bild für Bild in
 // Chromium (60 fps, 4 Unterframes je Bild für echte Bewegungsunschärfe), baut mit ffmpeg ein MP4 mit dem passenden Ausschnitt
 // aus settings.mp3. Aufruf aus apps/client:  node trailer-stage/render.mjs <szene> [--sub 4] [--frames a-b] [--still τ]
 import { spawnSync } from "node:child_process";
@@ -17,6 +17,9 @@ const opt = (name, def) => {
   return i >= 0 ? args[i + 1] : def;
 };
 const sub = Number(opt("--sub", "4"));
+const fps = Number(opt("--fps", "60"));
+const range = opt("--range", null); // Sekunden a-b (nur Gesamt-Trailer)
+const audio = opt("--audio", null); // statt --music: fertige Mischung ab 0 s
 const still = opt("--still", null);
 const music = resolve(opt("--music", "C:/Users/MSchu/Downloads/settings.mp3"));
 const outDir = resolve(opt("--out", resolve(here, "../../../marketing/trailer-v3/tests")));
@@ -24,7 +27,7 @@ const frameDir = resolve(opt("--frames-dir", join(tmpdir(), "grimreach-trailer-f
 
 const server = await createServer({ configFile: resolve(here, "vite.config.ts") });
 await server.listen();
-const url = `http://localhost:5420/?scene=${scene}&sub=${sub}`;
+const url = `http://localhost:5420/?scene=${scene}&sub=${sub}&fps=${fps}`;
 const browser = await chromium.launch({
   headless: true,
   args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist", "--enable-unsafe-swiftshader"],
@@ -55,18 +58,23 @@ try {
   } else {
     if (existsSync(frameDir)) rmSync(frameDir, { recursive: true, force: true });
     mkdirSync(frameDir, { recursive: true });
-    const [a, b] = (opt("--frames", `0-${info.frames - 1}`)).split("-").map(Number);
+    let [a, b] = (opt("--frames", `0-${info.frames - 1}`)).split("-").map(Number);
+    if (range) {
+      const [ra, rb] = range.split("-").map(Number);
+      a = Math.round(ra * info.fps);
+      b = Math.min(info.frames - 1, Math.round(rb * info.fps) - 1);
+    }
     const t0 = Date.now();
     for (let i = a; i <= b; i++) {
       await page.evaluate((k) => window.trailer.renderFrame(k), i);
       await canvas.screenshot({ path: join(frameDir, `f${String(i).padStart(5, "0")}.png`) });
       if (i % 30 === 0) console.log(`  Bild ${i}/${b}  (${((Date.now() - t0) / 1000).toFixed(0)} s)`);
     }
-    const mp4 = join(outDir, `${scene}.mp4`);
+    const mp4 = join(outDir, range ? `${scene}-${range.replace(/[.]/g, ",")}.mp4` : `${scene}.mp4`);
     const ff = spawnSync("ffmpeg", [
       "-y", "-v", "error",
       "-framerate", String(info.fps), "-start_number", String(a), "-i", join(frameDir, "f%05d.png"),
-      "-ss", String(info.audioStart + a / info.fps), "-t", String((b - a + 1) / info.fps), "-i", music,
+      "-ss", String(info.audioStart + a / info.fps), "-t", String((b - a + 1) / info.fps), "-i", audio ? resolve(audio) : music,
       "-map", "0:v", "-map", "1:a",
       "-c:v", "libx264", "-preset", "slow", "-crf", "15", "-pix_fmt", "yuv420p",
       "-c:a", "aac", "-b:a", "256k", "-af", "afade=t=in:d=0.04,afade=t=out:st=" + ((b - a + 1) / info.fps - 0.08).toFixed(3) + ":d=0.08",

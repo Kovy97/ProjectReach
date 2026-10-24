@@ -1,6 +1,6 @@
 # Trailer v3 „Gehalten“: Storyboard
 
-<!-- claude:2026-10-24T09:30:00+02:00 — Chef-Auftrag 24.10.: Storyboard für einen dynamischen Trailer auf settings.mp3 (1:21),
+<!-- claude:2026-10-24T09:00:00+02:00 — Chef-Auftrag 24.10.: Storyboard für einen dynamischen Trailer auf settings.mp3 (1:21),
 so viel Gameplay wie möglich, Kampf als inszenierte Fake-3D-Szenen statt abgefilmter Oberfläche, Narration mit KI-Stimme. -->
 
 Status: **Chef-Entscheide vom 24.10. eingearbeitet** (§ 9). Testszenen A und B in Arbeit (`apps/client/trailer-stage`). Der Trailer zeigt das ganze Spiel (kein Update-, kein
@@ -94,7 +94,7 @@ Spielansicht als Textur im Raum, **Vignette** = Skill-Vorlage (§ 6.7), **Typo**
 
 ## 5 Sprechertext
 
-<!-- claude:2026-10-24T11:40:00+02:00 — Aufnahme des Chefs („Video Project 2“, 43,4 s) in 14 Zeilen geschnitten und eingepasst -->
+<!-- claude:2026-10-24T09:00:00+02:00 — Aufnahme des Chefs („Video Project 2“, 43,4 s) in 14 Zeilen geschnitten und eingepasst -->
 
 Regie: Der Wächter spricht wie ein wortkarger, alter Mann am Feuer. Kein Trailer-Pathos, keine tiefe Kinostimme, eher
 müde Ruhe mit trockenem Unterton. Musik wird unter jeder Zeile um etwa 5 dB abgesenkt.
@@ -217,3 +217,52 @@ Ton) zur Abnahme des Looks. Erst danach der Rest.
 5. **Raid** als Höhepunkt.
 6. **Keine** Texteinblendungen (Text-Ebene entfällt).
 7. **Nur 16:9.**
+
+## 10 Baustand (24.10., Abend)
+
+<!-- claude:2026-10-24T10:24:00+02:00 -->
+
+Alle 32 Shots sind auf der Trailer-Bühne gebaut (`apps/client/trailer-stage/src/shots/*`, Zeitstrahl in `trailer.ts`).
+Rendern in Abschnitten unter 10 Minuten (`--range a-b`), dann Videoströme zusammenfügen und den Ton
+(`marketing/trailer-v3/voice/vo-preview-mix.wav`) einmal über die volle Länge anlegen.
+
+| Shots | Datei | Stand |
+|---|---|---|
+| 01–08 | `shots/opening.ts` | fertig mit Bestand |
+| 09–11 | `scenes/firstStrike.ts` | Testszene A (abgenommen), unverändert eingehängt |
+| 12–18 | `shots/breadth.ts` | fertig mit Bestand |
+| 19–29 | `shots/raid.ts` | echte Raid-Räume `gk_room_1–4`, Truhe und Raid-Beute; **Gegner noch Platzhalter** |
+| 24 | `scenes/frostMoment.ts` | Testszene B (abgenommen), jetzt in den Gruben (`gk_room_3`) |
+| 30–32 | `shots/finale.ts` | fertig mit Bestand, Logo `ui/logo.webp` formt sich aus Glut |
+
+**Platzhalter bis zur Codex-Lieferung (Gruppe B):** Getauscht wird in `RAID_CAST` (`shots/raid.ts`), die Grubenhunde in Shot 24 direkt in `scenes/frostMoment.ts`.
+
+| Rolle | Platzhalter | Ziel-ID |
+|---|---|---|
+| Vrikka, die Zählerin | `goblin_warlock` | `gk_tallymistress` |
+| Krogg | `goblin_siegebrute` | `gk_quartermaster` |
+| Zil'gath | `goblin_felmagician` | `gk_felmagus` |
+| Kriegskönig Rakkzul | `goblin_warchief` | `gk_warking` |
+| Goblin-Welle, Torwachen | `goblin_reaver/spearman/pikeman/butcher/rogue` | `gk_gate_pikeman`, `gk_toll_thug`, `gk_bannerman` … |
+| Ushkas Grubenhunde (24) | `thorn_wolf` | `gk_pit_hound` |
+
+**Abweichungen vom Plan oben (wegen Chef-Entscheid 6, keine Texteinblendungen, oder fehlender Assets):**
+
+- 14: statt fallender Ereigniskarten Kamerafahrten in vier Ereignis-Gemälde (je ein Schlag).
+- 22: Phasen-Ansage als Schrift entfällt. 25: Toast „Mythic find!“ und Heroisch-/Mythisch-Rahmen entfallen.
+- 27: Phasenwechsel als Raumwechsel (Schuldbuch, Zeughaus, Gruben, Erbe) mit Farbton statt Bossleiste.
+- 29: Es gibt noch kein Kronen-Bild; stattdessen fällt das Zepter (`gk_king_scepter`) in die Asche.
+- 30: Kein Erfolgs-Popup (UI-Text); Montage aus Aschegang, Paragonturm, Jägerkodex, Götzenhalle, Meisterring, Glut-Set, Held.
+
+**Bildsprache (Chef 24.10.: erster Schnitt „zu reingezoomt, zu unscharf, zu dunkel“, neuer Look per Vorher/Nachher
+abgenommen):**
+
+- Kamera steht an der Malerposition der Kulisse (`kit.CAM0`, z 6,2, Bildwinkel 40°). Das Gemälde erscheint in voller
+  Breite und unvergrößert, Figuren füllen etwa die halbe Bildhöhe wie im Kampfbildschirm. Fahrten bleiben nah an CAM0
+  (z ≥ ~4,4, Bildwinkel ≥ 32°), keine Orbits.
+- Nahaufnahmen von Gegenständen: Der Gegenstand kommt zur Kamera, die Kulisse wird nicht vergrößert. Porträts nie über
+  ~1:1 (Kamera ≥ ~3,5 vor der Figur).
+- Kein Weichzeichner, keine Tiefenunschärfe. Kulissen bikubisch abgetastet, am Rand gespiegelt fortgesetzt.
+- Originalgetreue Tonkurve (bis 0,85 linear), Vignette und Split-Toning zentral stark zurückgenommen (`stage.look`),
+  Bildblitze quadriert, Randlicht halbiert (kein Schimmer auf Waffen). Kalibrierbild: `?scene=calib` gegen das Gemälde
+  (mittlere Helligkeit 93/76/60 gegen 98/78/62).

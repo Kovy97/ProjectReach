@@ -1,12 +1,13 @@
-// claude:2026-10-24T10:50:00+02:00 — Trailer-Bühne: Einstieg. ?scene=<id> lädt eine Szene; ?preview=1 spielt sie in Echtzeit ab
+// claude:2026-10-24T09:00:00+02:00 — Trailer-Bühne: Einstieg. ?scene=<id> lädt eine Szene; ?preview=1 spielt sie in Echtzeit ab
 // (ohne Unterframes), sonst steuert render.mjs Bild für Bild über window.trailer.renderFrame(i).
 import { loadFonts } from "./assets";
 import { Stage, type TrailerScene } from "./stage";
+import { calib } from "./scenes/calib";
 import { firstStrike } from "./scenes/firstStrike";
 import { frostMoment } from "./scenes/frostMoment";
+import { trailer } from "./trailer";
 
-const SCENES: Record<string, () => TrailerScene> = { firstStrike, frostMoment };
-const FPS = 60;
+const SCENES: Record<string, () => TrailerScene> = { calib, firstStrike, frostMoment: () => frostMoment(), trailer: () => trailer() };
 
 declare global {
   interface Window {
@@ -16,6 +17,7 @@ declare global {
 
 async function boot(): Promise<void> {
   const q = new URLSearchParams(location.search);
+  const FPS = Number(q.get("fps") ?? 60);
   const id = q.get("scene") ?? "firstStrike";
   const make = SCENES[id];
   if (!make) throw new Error(`Unbekannte Szene ${id}`);

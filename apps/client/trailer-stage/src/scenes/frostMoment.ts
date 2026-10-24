@@ -1,4 +1,4 @@
-// claude:2026-10-24T11:00:00+02:00 — Testszene B „Frost-Moment“ (Technik von Storyboard-Shot 24 mit Bestandsfiguren, Musik 55,53–58,44 s).
+// claude:2026-10-24T09:00:00+02:00 — Testszene B „Frost-Moment“ (Technik von Storyboard-Shot 24 mit Bestandsfiguren, Musik 55,53–58,44 s).
 // τ 0,00–0,32  Zwei Dornwölfe springen auf die Frostmagierin zu, sie reißt die Hände hoch, die Frostwelle läuft los.
 // τ 0,32       Taktschlag (55,85 s): Die Wölfe frieren im Sprung ein, alles andere läuft in Zeitlupe weiter.
 // τ 0,40–2,91  Kamerafahrt durch die erstarrten Wölfe; Schock-Kette auf Schlag 3 (57,15 s) und Schlag 4 (57,80 s).
@@ -18,7 +18,8 @@ const SHOCK2 = 2.27;
 const END = 2.91;
 const slow = (tau: number): number => timeRemap([{ from: 0, rate: 1 }, { from: FREEZE, rate: 0.22 }], tau);
 
-export function frostMoment(): TrailerScene {
+// claude:2026-10-24T10:24:00+02:00 — Kulisse wählbar: im Gesamt-Trailer steht die Szene in den Raid-Gruben (gk_room_3).
+export function frostMoment(bg = "battlescreens/blackthorn.webp"): TrailerScene {
   let mage!: Puppet;
   let wolf1!: Puppet;
   let wolf2!: Puppet;
@@ -44,10 +45,12 @@ export function frostMoment(): TrailerScene {
     id: "frostMoment",
     duration: END,
     audioStart: 55.53,
-    async setup(stage: Stage) {
-      const bdImg = await loadImage(asset("battlescreens/blackthorn.webp"));
-      const bd = buildBackdrop(await stage.texture(asset("battlescreens/blackthorn.webp")), bdImg.width / bdImg.height, { eye: 1.6, z: 10, horizon: 0.4, nearDist: 4, wallDist: 24 });
-      stage.scene.add(bd, world);
+    async setup(stage: Stage, root?: THREE.Object3D) {
+      const parent = root ?? stage.scene;
+      const bdImg = await loadImage(asset(bg));
+      // claude:2026-10-24T10:24:00+02:00 — Malerposition wie im Gesamt-Trailer
+      const bd = buildBackdrop(await stage.texture(asset(bg)), bdImg.width / bdImg.height, { eye: 1.6, z: 6.2, horizon: 0.4, nearDist: 4, wallDist: 24 });
+      parent.add(bd, world);
       const mImg = await loadImage(asset("portraits/human_frost_mage_f.webp"));
       mage = new Puppet({ url: "", height: 2.2, mirror: false, capeC: [0.45, 0.3], capeR: [0.25, 0.3], chest: 0.7, hip: 0.47 }, await stage.texture(asset("portraits/human_frost_mage_f.webp")), mImg);
       const wImg = await loadImage(asset("monsters/thorn_wolf.webp"));
@@ -89,22 +92,22 @@ export function frostMoment(): TrailerScene {
       // ── Kamera ──
       // nah durch die erstarrten Wölfe, dann vor dem ersten Schock in die halbnahe Seitenansicht (alle drei im Bild)
       let pos = track<Vec3>([
-        { t: 0, v: [0.25, 0.72, 6.3] },
-        { t: FREEZE, v: [0.2, 0.78, 5.7] },
-        { t: 1.15, v: [1.15, 1.1, 3.4] },
-        { t: 1.55, v: [2.0, 1.3, 4.3] },
-        { t: END, v: [2.55, 1.45, 4.65] },
+        { t: 0, v: [0.2, 1.05, 6.0] },
+        { t: FREEZE, v: [0.2, 1.1, 5.6] },
+        { t: 1.15, v: [0.9, 1.3, 4.5] },
+        { t: 1.55, v: [1.2, 1.45, 5.2] },
+        { t: END, v: [1.4, 1.55, 5.6] },
       ], tau);
       const look = track<Vec3>([
-        { t: 0, v: [0.4, 1.0, 0] },
-        { t: FREEZE, v: [0.5, 1.05, 0.1] },
-        { t: 1.15, v: [0.7, 1.1, 0.2] },
-        { t: 1.55, v: [0.25, 1.1, 0.1] },
-        { t: END, v: [0.15, 1.15, 0.0] },
+        { t: 0, v: [0.4, 1.15, 0] },
+        { t: FREEZE, v: [0.5, 1.2, 0.1] },
+        { t: 1.15, v: [0.75, 1.25, 0.2] },
+        { t: 1.55, v: [0.45, 1.3, 0.1] },
+        { t: END, v: [0.35, 1.35, 0.0] },
       ], tau);
       const shake = 0.06 * pulse(tau, FREEZE, 0.0001, 0.35) + 0.035 * pulse(tau, SHOCK1, 0.0001, 0.25) + 0.03 * pulse(tau, SHOCK2, 0.0001, 0.25);
       pos = [pos[0] + wobble(tau * 2, 3) * shake, pos[1] + wobble(tau * 2, 4) * shake, pos[2]];
-      cam.fov = 34 - 4 * ramp(tau, FREEZE - 0.02, FREEZE + 0.06, easeOutCubic) + 4 * ramp(tau, 1.15, 1.55);
+      cam.fov = 38 - 3 * ramp(tau, FREEZE - 0.02, FREEZE + 0.06, easeOutCubic) + 3 * ramp(tau, 1.15, 1.55);
       cam.updateProjectionMatrix();
       cam.position.set(...pos);
       cam.lookAt(new THREE.Vector3(...look));
