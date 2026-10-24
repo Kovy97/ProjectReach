@@ -132,6 +132,12 @@
 @import "./classic-skin.css";
 @import "./classic-chrome.css";
 
+/* claude:2026-10-24T18:34:00+02:00 — Welle-2-Gruppendateien der UI-Überarbeitung 1.4 (je ein Schreiber), vor der Typografie-Schicht. */
+@import "./ui14-skills.css";
+@import "./ui14-inventar.css";
+@import "./ui14-kampf.css";
+@import "./ui14-fortschritt.css";
+@import "./ui14-rahmen.css";
 /* claude:2026-10-24T18:45:00+02:00 — Typografie-Schicht (Fließtext-Schrift), bewusst ZULETZT: s. typography.css. */
 @import "./typography.css";
 
