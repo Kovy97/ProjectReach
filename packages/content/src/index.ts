@@ -89,9 +89,9 @@ export const content: ContentDB = {
     // Holzfällen-Stufe (L15/45/75). Sink: die 45 Lager-Stücklisten (campBuildings unten). Quelle:
     // craft_timber_beam/brace/anchor (neue Holzfällen-Rezepte, s. Aktionen-Block). Fallback-Icons bis
     // Chef-Kunst da ist — Ziel-Dateiname `apps/client/src/renderer/assets/items/<id>.png`.
-    timber_beam: { id: "timber_beam", name: { en: "Timber Beam", de: "Balken" }, type: "material", stackable: true, icon: "🪵", value: 30, rarity: "common", description: { en: "Building component for New Haven. Assembled while woodcutting (level 15).", de: "Bauteil für New Haven. Wird beim Holzfällen gezimmert (Stufe 15)." } },
-    timber_brace: { id: "timber_brace", name: { en: "Timber Brace", de: "Verstrebung" }, type: "material", stackable: true, icon: "🔧", value: 140, rarity: "common", description: { en: "Building component for New Haven. Assembled while woodcutting (level 45).", de: "Bauteil für New Haven. Wird beim Holzfällen gezimmert (Stufe 45)." } },
-    timber_anchor: { id: "timber_anchor", name: { en: "Timber Anchor", de: "Verankerung" }, type: "material", stackable: true, icon: "⚓", value: 480, rarity: "common", description: { en: "Building component for New Haven. Assembled while woodcutting (level 75).", de: "Bauteil für New Haven. Wird beim Holzfällen gezimmert (Stufe 75)." } },
+    timber_beam: { id: "timber_beam", name: { en: "Timber Beam", de: "Balken" }, type: "material", stackable: true, icon: "🪵", value: 30, rarity: "common", description: { en: "Squared oak for New Haven's buildings, hewn while woodcutting: from level 15.", de: "Behauene Eiche für New Havens Bauten, beim Holzfällen gezimmert: ab Level 15." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
+    timber_brace: { id: "timber_brace", name: { en: "Timber Brace", de: "Verstrebung" }, type: "material", stackable: true, icon: "🔧", value: 140, rarity: "common", description: { en: "Blackwood bracing for New Haven's buildings, hewn while woodcutting: from level 45.", de: "Schwarzholz-Strebe für New Haven, beim Holzfällen gezimmert: ab Level 45." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
+    timber_anchor: { id: "timber_anchor", name: { en: "Timber Anchor", de: "Verankerung" }, type: "material", stackable: true, icon: "⚓", value: 480, rarity: "common", description: { en: "Shadowpine anchoring for New Haven's buildings, hewn while woodcutting: from level 75.", de: "Schattenkiefer-Anker für New Haven, beim Holzfällen gezimmert: ab Level 75." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     // balance-fix 2026-07 (Sweep4 P3): explizite value statt 1-Gold-Floor, konsistent zur Erz-Staffel (iron_ore=8 @L10)
     copper_ore: { id: "copper_ore", name: { en: "Copper Ore", de: "Kupfererz" }, type: "material", stackable: true, value: 2 },
     tin_ore: { id: "tin_ore", name: { en: "Tin Ore", de: "Zinnerz" }, type: "material", stackable: true, value: 2 },
@@ -99,12 +99,12 @@ export const content: ContentDB = {
     raw_trout: { id: "raw_trout", name: { en: "Raw Trout", de: "Rohe Forelle" }, type: "material", stackable: true, value: 6 },
     raw_cod: { id: "raw_cod", name: { en: "Raw Cod", de: "Roher Kabeljau" }, type: "material", stackable: true, value: 12 },
     raw_salmon: { id: "raw_salmon", name: { en: "Raw Salmon", de: "Roher Lachs" }, type: "material", stackable: true, icon: "🐟", value: 24 },
-    raw_lobster: { id: "raw_lobster", name: { en: "Raw Lobster", de: "Roher Hummer" }, type: "material", stackable: true, icon: "🦞", rarity: "common", value: 45, description: { en: "Pulled clawing from cold water; best cooked before it decides to pinch back.", de: "Zappelnd aus kaltem Wasser gezogen; am besten gegart, bevor er sich zu wehren beginnt." } },
+    raw_lobster: { id: "raw_lobster", name: { en: "Raw Lobster", de: "Roher Hummer" }, type: "material", stackable: true, icon: "🦞", rarity: "common", value: 45, description: { en: "Pulled clawing from cold water. Best cooked before it decides to pinch back.", de: "Zappelnd aus kaltem Wasser gezogen. Am besten gegart, bevor er sich zu wehren beginnt." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     raw_anglerfish: { id: "raw_anglerfish", name: { en: "Raw Anglerfish", de: "Roher Anglerfisch" }, type: "material", stackable: true, icon: "🐡", value: 80, rarity: "common", description: { en: "An ugly catch with a lure of its own, best eaten and not looked at too closely.", de: "Ein hässlicher Fang mit eigener Lockangel, am besten gegessen und nicht zu genau angeschaut." } },
     raw_voidray: { id: "raw_voidray", name: { en: "Raw Voidray", de: "Roher Leerenrochen" }, type: "material", stackable: true, icon: "🐟", value: 140, rarity: "common" },
     raw_murk_perch: { id: "raw_murk_perch", name: { en: "Raw Murk Perch", de: "Roher Sumpfbarsch" }, type: "material", stackable: true, value: 4 },
     raw_ghostfin_pike: { id: "raw_ghostfin_pike", name: { en: "Raw Ghostfin Pike", de: "Roher Geisterflosser-Hecht" }, type: "material", stackable: true, value: 15 },
-    raw_ironscale_bass: { id: "raw_ironscale_bass", name: { en: "Raw Ironscale Bass", de: "Roher Eisenschuppen-Barsch" }, type: "material", stackable: true, value: 20, rarity: "common", description: { en: "Scales stiff enough to dull a knife; the meat beneath is worth the trouble.", de: "Schuppen, hart genug, um ein Messer stumpf zu machen; das Fleisch darunter lohnt die Mühe." } },
+    raw_ironscale_bass: { id: "raw_ironscale_bass", name: { en: "Raw Ironscale Bass", de: "Roher Eisenschuppen-Barsch" }, type: "material", stackable: true, value: 20, rarity: "common", description: { en: "Scales stiff enough to dull a knife. The meat beneath is worth the trouble.", de: "Schuppen, hart genug, um ein Messer stumpf zu machen. Das Fleisch darunter lohnt die Mühe." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     raw_duskfin_carp: { id: "raw_duskfin_carp", name: { en: "Raw Duskfin Carp", de: "Roher Dämmerflossen-Karpfen" }, type: "material", stackable: true, value: 34, rarity: "common" },
     raw_bloodfang_eel: { id: "raw_bloodfang_eel", name: { en: "Raw Bloodfang Eel", de: "Roher Blutfang-Aal" }, type: "material", stackable: true, value: 62, rarity: "common" },
     raw_wraithscale: { id: "raw_wraithscale", name: { en: "Raw Wraithscale", de: "Roher Geisterschupper" }, type: "material", stackable: true, value: 110, rarity: "common" },
@@ -120,12 +120,12 @@ export const content: ContentDB = {
     raw_crypteel: { id: "raw_crypteel", name: { en: "Raw Crypteel", de: "Roher Krypta-Aal" }, type: "material", stackable: true, value: 55, rarity: "common", description: { en: "An eel hauled from crypt-flooded water, cold and slick and unwilling to hold still.", de: "Ein Aal aus krypta-geflutetem Wasser, kalt und glitschig und keinesfalls stillzuhalten." } },
     goblin_ear: { id: "goblin_ear", name: { en: "Goblin Ear", de: "Goblin-Ohr" }, type: "material", stackable: true, icon: "👂", value: 5, rarity: "poor" },
     crude_bone: { id: "crude_bone", name: { en: "Crude Bone", de: "Morscher Knochen" }, type: "material", stackable: true, icon: "🦴", value: 3, rarity: "poor", description: { en: "A splintered bone of no particular value, but every scrap has a use to someone in New Haven.", de: "Ein gesplitterter Knochen ohne besonderen Wert, doch jeder Rest findet in New Haven irgendwo Verwendung." } },
-    shaman_totem: { id: "shaman_totem", name: { en: "Shaman Totem", de: "Schamanen-Totem" }, type: "material", stackable: true, icon: "🪬", value: 22, rarity: "common", description: { en: "Carved and hung with trinkets by some tribe's shaman, its magic long since spent but still eerie to hold.", de: "Von einem Stammesschamanen geschnitzt und mit Trinkerten behängt, seine Magie längst verbraucht, aber noch immer unheimlich in der Hand." } },
+    shaman_totem: { id: "shaman_totem", name: { en: "Shaman Totem", de: "Schamanen-Totem" }, type: "material", stackable: true, icon: "🪬", value: 22, rarity: "common", description: { en: "Carved and hung with trinkets by some tribe's shaman. Its magic is long spent, but it is still eerie to hold.", de: "Von einem Stammesschamanen geschnitzt und mit Tand behängt. Die Magie ist längst verbraucht, unheimlich bleibt es trotzdem." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     // the_imp (Pastures, L11) Trophäen-Drop — reiner Sink über Verkaufswert, keine Rezept-Bindung nötig.
     imp_horn: { id: "imp_horn", name: { en: "Imp Horn", de: "Imp-Horn" }, type: "material", stackable: true, icon: "😈", value: 8, rarity: "common" },
 
     // Verarbeitete Materialien & Essen
-    bronze_bar: { id: "bronze_bar", name: { en: "Bronze Bar", de: "Bronzebarren" }, type: "material", stackable: true, icon: "🟫", value: 12, description: { en: "Copper and tin sweated together in the crucible; the first alloy any smith learns.", de: "Kupfer und Zinn im Tiegel zusammengeschmolzen; die erste Legierung, die jeder Schmied lernt." } },
+    bronze_bar: { id: "bronze_bar", name: { en: "Bronze Bar", de: "Bronzebarren" }, type: "material", stackable: true, icon: "🟫", value: 12, description: { en: "Copper and tin sweated together in the crucible. The first alloy any smith learns.", de: "Kupfer und Zinn im Tiegel zusammengeschmolzen. Die erste Legierung, die jeder Schmied lernt." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     cooked_shrimp: {
       id: "cooked_shrimp",
       name: { en: "Cooked Shrimp", de: "Gebratener Shrimp" },
@@ -412,9 +412,9 @@ export const content: ContentDB = {
       // (cracked_bow/cracked_staff, je cost 18 / value 8) legen ratio value = cost × 8/18 ≈
       // 0.444 fest; rusty_sword kostet im Shop 20 (s. content.shop) ⇒ 20×8/18 = 8.9 → 9.
       value: 9,
-      description: {
-        en: "A pitted, blunt blade. Better than bare fists — barely.",
-        de: "Eine schartige, stumpfe Klinge. Besser als bloße Fäuste — kaum.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A pitted, blunt blade. Better than bare fists, but only just.",
+        de: "Eine schartige, stumpfe Klinge. Besser als bloße Fäuste, aber nur knapp.",
       },
     },
     wooden_shield: {
@@ -521,9 +521,9 @@ export const content: ContentDB = {
       damageMin: 0.2, damageMax: 0.2, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       rarity: "common",
       value: 8,
-      description: {
-        en: "A warped stick with a fraying string. It shoots — most of the time.",
-        de: "Ein verzogener Stock mit zerschlissener Sehne. Er schießt — meistens.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A warped stick with a fraying string. It shoots, most of the time.",
+        de: "Ein verzogener Stock mit zerschlissener Sehne. Er schießt, meistens.",
       },
     },
     // Magier-Material-Paritäts-Audit F5 (2026-07-23): Shop-Parität zu gnarled_staff (120g, req 1)
@@ -656,25 +656,25 @@ export const content: ContentDB = {
     // ── Thieving-Beute ───────────────────────────────────────────────
     stolen_coinpurse: { id: "stolen_coinpurse", name: { en: "Stolen Coinpurse", de: "Gestohlener Geldbeutel" }, type: "material", stackable: true, icon: "💰", value: 18, description: { en: "A stranger's coin, lighter now than when they last checked it.", de: "Der Geldbeutel eines Fremden, leichter jetzt, als er es zuletzt geprüft hat." } },
     cutpurse_trinket: { id: "cutpurse_trinket", name: { en: "Cutpurse Trinket", de: "Beutelschneider-Schmuck" }, type: "material", stackable: true, icon: "📿", value: 30, description: { en: "A small charm lifted along with the coin, worth more to a fence than its previous owner.", de: "Ein kleiner Talisman, mitgenommen zusammen mit dem Geld, wertvoller für einen Hehler als für den früheren Besitzer." } },
-    smugglers_key: { id: "smugglers_key", name: { en: "Smuggler's Key", de: "Schmugglerschlüssel" }, type: "material", stackable: true, icon: "🗝️", value: 45, description: { en: "Opens something somewhere; the trick is remembering where before someone else does.", de: "Öffnet irgendwo irgendetwas; die Kunst ist, sich zu erinnern, wo, bevor es ein anderer tut." } },
+    smugglers_key: { id: "smugglers_key", name: { en: "Smuggler's Key", de: "Schmugglerschlüssel" }, type: "material", stackable: true, icon: "🗝️", value: 45, description: { en: "Opens something somewhere. The trick is remembering where before someone else does.", de: "Öffnet irgendwo irgendetwas. Die Kunst ist, sich zu erinnern, wo, bevor es ein anderer tut." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     // Stehlbare Wertsachen (Thieving-Ausbau) — Verkauf bringt das meiste Gold.
     guard_insignia: { id: "guard_insignia", name: { en: "Guard Insignia", de: "Wachabzeichen" }, type: "material", stackable: true, icon: "🎖️", value: 60, rarity: "common", description: { en: "A badge that opens doors it shouldn't, so long as no one looks too hard at the face wearing it.", de: "Ein Abzeichen, das Türen öffnet, die es nicht sollte, solange niemand das Gesicht dahinter zu genau ansieht." } },
     ledger_page: { id: "ledger_page", name: { en: "Ledger Page", de: "Kontobuchseite" }, type: "material", stackable: true, icon: "📄", value: 75, description: { en: "A page torn from someone's accounts, listing debts that were never meant to be public.", de: "Eine Seite, aus fremden Büchern gerissen, mit Schulden, die nie öffentlich werden sollten." } },
     signet_ring: { id: "signet_ring", name: { en: "Signet Ring", de: "Siegelring" }, type: "material", stackable: true, icon: "💍", value: 120, rarity: "common", description: { en: "Bears a house crest that opens more doors than it should, once the original owner stops asking after it.", de: "Trägt ein Hauswappen, das mehr Türen öffnet, als es sollte, sobald der ursprüngliche Besitzer aufhört, danach zu fragen." } },
-    cut_gemstone: { id: "cut_gemstone", name: { en: "Cut Gemstone", de: "Geschliffener Edelstein" }, type: "material", stackable: true, icon: "💎", value: 180, rarity: "common", description: { en: "Faceted and set to catch the light; worth a fair sum to anyone not asking where it came from.", de: "Geschliffen und gefasst, um das Licht zu fangen; einiges wert für jeden, der nicht fragt, woher es stammt." } },
+    cut_gemstone: { id: "cut_gemstone", name: { en: "Cut Gemstone", de: "Geschliffener Edelstein" }, type: "material", stackable: true, icon: "💎", value: 180, rarity: "common", description: { en: "Faceted and set to catch the light. Worth a fair sum to anyone not asking where it came from.", de: "Geschliffen und gefasst, um das Licht zu fangen. Einiges wert für jeden, der nicht fragt, woher es stammt." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     ornate_goblet: { id: "ornate_goblet", name: { en: "Ornate Goblet", de: "Prunkkelch" }, type: "material", stackable: true, icon: "🏆", value: 240, rarity: "common", description: { en: "Fine enough for a lord's table, awkward enough to explain if seen anywhere else.", de: "Fein genug für die Tafel eines Lords, unangenehm zu erklären, wenn es sonstwo gesehen wird." } },
     reliquary_shard: { id: "reliquary_shard", name: { en: "Reliquary Shard", de: "Reliquiar-Splitter" }, type: "material", stackable: true, icon: "🔱", value: 360, rarity: "common", description: { en: "A fragment pried from something once holy, still faintly warm to the touch.", de: "Ein Splitter, aus etwas einst Heiligem gebrochen, noch immer schwach warm im Griff." } },
     idol_coin: { id: "idol_coin", name: { en: "Idol Coin", de: "Götzenmünze" }, type: "material", stackable: true, icon: "🪙", value: 600, rarity: "common" },
 
     // ── Häute & Leder (Leatherworking) ───────────────────────────────
     raw_hide: { id: "raw_hide", name: { en: "Raw Hide", de: "Rohleder" }, type: "material", stackable: true, icon: "🟤", value: 6, description: { en: "Fresh off the carcass, still needing scraping and salt before it is worth anything to a tanner.", de: "Frisch vom Kadaver, muss noch abgeschabt und gesalzen werden, bevor sie einem Gerber etwas wert ist." } },
-    scarred_hide: { id: "scarred_hide", name: { en: "Scarred Hide", de: "Narbenleder" }, type: "material", stackable: true, icon: "🟫", value: 16, description: { en: "Marked by old wounds that healed before the beast was finally brought down; tougher for the scarring.", de: "Von alten Wunden gezeichnet, die verheilten, bevor das Tier endlich zur Strecke gebracht wurde; zäher durch die Narben." } },
+    scarred_hide: { id: "scarred_hide", name: { en: "Scarred Hide", de: "Narbenleder" }, type: "material", stackable: true, icon: "🟫", value: 16, description: { en: "Old wounds, healed long before the beast finally went down. The scars make the hide tougher.", de: "Alte Wunden, verheilt, lange bevor das Tier fiel. Die Narben machen das Leder zäher." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     cured_leather: { id: "cured_leather", name: { en: "Cured Leather", de: "Gegerbtes Leder" }, type: "material", stackable: true, icon: "🧱", value: 12 },
     scaled_leather: { id: "scaled_leather", name: { en: "Scaled Leather", de: "Schuppenleder" }, type: "material", stackable: true, icon: "🐊", value: 28 },
     hardened_leather: { id: "hardened_leather", name: { en: "Hardened Leather", de: "Gehärtetes Leder" }, type: "material", stackable: true, icon: "🟫", value: 40, rarity: "common" },
     studded_leather: { id: "studded_leather", name: { en: "Studded Leather", de: "Genietetes Leder" }, type: "material", stackable: true, icon: "🛡️", value: 95, rarity: "common" },
-    warhide: { id: "warhide", name: { en: "Warhide", de: "Kriegsleder" }, type: "material", stackable: true, icon: "🟫", value: 180, rarity: "common", description: { en: "Hide from something that fought for every year of its life; thick enough to turn a blade before it turns to leather.", de: "Fell von etwas, das um jedes Jahr seines Lebens gekämpft hat; dick genug, eine Klinge abzuwehren, noch bevor es zu Leder wird." } },
-    wyvern_scale: { id: "wyvern_scale", name: { en: "Wyvern Scale", de: "Wyvernschuppe" }, type: "material", stackable: true, icon: "🐉", value: 180, rarity: "common", description: { en: "A dense iridescent scale shed by a Highland Wyvern. Prized by leatherworkers.", de: "Eine dichte schillernde Schuppe eines Hochland-Wyvernen. Von Lederarbeitern begehrt." } },
+    warhide: { id: "warhide", name: { en: "Warhide", de: "Kriegsleder" }, type: "material", stackable: true, icon: "🟫", value: 180, rarity: "common", description: { en: "Hide from something that fought for every year of its life. Thick enough to turn a blade before it is even leather.", de: "Haut von etwas, das um jedes Jahr seines Lebens gekämpft hat. Dick genug, eine Klinge abzuwehren, noch bevor sie Leder ist." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
+    wyvern_scale: { id: "wyvern_scale", name: { en: "Wyvern Scale", de: "Wyvernschuppe" }, type: "material", stackable: true, icon: "🐉", value: 180, rarity: "common", description: { en: "A dense, iridescent scale shed by a Highland Wyvern. Leatherworkers cure it into warhide.", de: "Eine dichte, schillernde Schuppe eines Hochland-Wyverns. Lederarbeiter gerben sie zu Kriegsleder." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
 
     // ── Holz-Halbzeug & Bogen-Komponenten (Fletching) ────────────────
     // Task #286 Stage B: die gesamte Pfeil-/Pfeilspitzen-Munitionskette (arrow_shaft + 12 *_arrow-
@@ -898,7 +898,7 @@ export const content: ContentDB = {
     essence_ash: { id: "essence_ash", name: { en: "Ash Essence", de: "Ascheessenz" }, type: "material", stackable: true, value: 8, description: { en: "The lingering trace left behind after something is well and truly burned away.", de: "Die Spur, die zurückbleibt, wenn etwas gründlich verbrannt wurde." } },
     essence_mire: { id: "essence_mire", name: { en: "Mire Essence", de: "Sumpfessenz" }, type: "material", stackable: true, rarity: "common", value: 20, description: { en: "Condensed swamp-rot, thick and faintly glowing, pulled from the deepest bog water.", de: "Verdichtete Sumpffäulnis, dickflüssig und schwach leuchtend, aus dem tiefsten Moorwasser gezogen." } },
     essence_grave: { id: "essence_grave", name: { en: "Grave Essence", de: "Grabessenz" }, type: "material", stackable: true, rarity: "common", value: 45, description: { en: "A cold residue that clings to anything pulled fresh from consecrated ground.", de: "Ein kalter Rückstand, der an allem haftet, was frisch aus geweihtem Boden gezogen wird." } },
-    essence_void: { id: "essence_void", name: { en: "Hollow Essence", de: "Hohle Essenz" }, type: "material", stackable: true, rarity: "common", value: 100, description: { en: "A hollow, light-swallowing trace left where something that should not exist briefly did.", de: "Eine hohle, licht-verschluckende Spur dort, wo kurz etwas existierte, das es nicht geben sollte." } },
+    essence_void: { id: "essence_void", name: { en: "Hollow Essence", de: "Hohle Essenz" }, type: "material", stackable: true, rarity: "common", value: 100, description: { en: "A hollow, light-swallowing trace left where something that should not exist briefly did.", de: "Eine hohle, lichtschluckende Spur dort, wo kurz etwas existierte, das es nicht geben sollte." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     essence_divine: { id: "essence_divine", name: { en: "Divine Essence", de: "Göttliche Essenz" }, type: "material", stackable: true, rarity: "common", value: 220 },
 
     // ── C) Pigmente (Farming + Foraging → Inscription Tinte) ─────────
@@ -1168,7 +1168,7 @@ export const content: ContentDB = {
     // ── Metall-Leiter: Erze & Barren (12 Tiers; Werte = Platzhalter) ──
     copper_bar: { id: "copper_bar", name: { en: "Copper Bar", de: "Kupferbarren" }, type: "material", stackable: true, icon: "🟧", value: 8 },
     iron_ore: { id: "iron_ore", name: { en: "Iron Ore", de: "Eisenerz" }, type: "material", stackable: true, icon: "🪨", value: 8 },
-    iron_bar: { id: "iron_bar", name: { en: "Iron Bar", de: "Eisenbarren" }, type: "material", stackable: true, icon: "🟫", value: 16, description: { en: "Ore beaten and smelted into a plain, dependable bar; the backbone of every smithy.", de: "Erz, geschmolzen und zu einem schlichten, verlässlichen Barren geschlagen; das Rückgrat jeder Schmiede." } },
+    iron_bar: { id: "iron_bar", name: { en: "Iron Bar", de: "Eisenbarren" }, type: "material", stackable: true, icon: "🟫", value: 16, description: { en: "Ore beaten and smelted into a plain, dependable bar. The backbone of every smithy.", de: "Erz, geschmolzen und zu einem schlichten, verlässlichen Barren geschlagen. Das Rückgrat jeder Schmiede." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     coal: { id: "coal", name: { en: "Coal", de: "Kohle" }, type: "material", stackable: true, icon: "🪨", value: 6, description: { en: "Dug from the seams beneath the Reach, burning hot enough to melt more than firewood ever could.", de: "Aus den Flözen unter dem Reach gegraben, brennt heiß genug, um mehr zu schmelzen, als Feuerholz je könnte." } },
     steel_bar: { id: "steel_bar", name: { en: "Steel Bar", de: "Stahlbarren" }, type: "material", stackable: true, icon: "⬜", value: 30, description: { en: "Iron folded and reforged until it holds an edge no plain bar ever could.", de: "Eisen, gefaltet und umgeschmiedet, bis es eine Schärfe hält, die ein einfacher Barren nie könnte." } },
     blacksteel_bar: { id: "blacksteel_bar", name: { en: "Blacksteel Bar", de: "Schwarzstahlbarren" }, type: "material", stackable: true, icon: "⬛", value: 52, rarity: "common" },
@@ -1177,7 +1177,7 @@ export const content: ContentDB = {
     adamantite_ore: { id: "adamantite_ore", name: { en: "Adamantite Ore", de: "Adamantiterz" }, type: "material", stackable: true, icon: "🟩", value: 50, rarity: "common" },
     adamantium_bar: { id: "adamantium_bar", name: { en: "Adamantium Bar", de: "Adamantiumbarren" }, type: "material", stackable: true, icon: "🟢", value: 120, rarity: "common", description: { en: "A dense green-black alloy, heavy in the hand and stubborn against the hammer.", de: "Eine dichte grünschwarze Legierung, schwer in der Hand und widerspenstig gegen den Hammer." } },
     runite_ore: { id: "runite_ore", name: { en: "Runite Ore", de: "Runiterz" }, type: "material", stackable: true, icon: "🔹", value: 75, rarity: "common" },
-    runite_bar: { id: "runite_bar", name: { en: "Runite Bar", de: "Runitbarren" }, type: "material", stackable: true, icon: "🟦", value: 160, rarity: "common", description: { en: "Smelted from ore veined with old runic light; the bar keeps a faint blue sheen no polish explains.", de: "Aus Erz geschmolzen, das von altem Runenlicht durchzogen ist; der Barren behält einen schwachen blauen Schimmer, den kein Polieren erklärt." } },
+    runite_bar: { id: "runite_bar", name: { en: "Runite Bar", de: "Runitbarren" }, type: "material", stackable: true, icon: "🟦", value: 160, rarity: "common", description: { en: "Smelted from ore veined with old runic light. The bar keeps a faint blue sheen no polish explains.", de: "Geschmolzen aus Erz, das altes Runenlicht durchzieht. Der Barren behält einen blauen Schimmer, den kein Polieren erklärt." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     murkvein_ore: { id: "murkvein_ore", name: { en: "Murkvein Ore", de: "Trübergaderz" }, type: "material", stackable: true, icon: "🪨", value: 85, rarity: "common", description: { en: "Ore dug from veins that run dark even in torchlight, heavier than its size suggests.", de: "Erz aus Adern, die selbst im Fackellicht dunkel bleiben, schwerer als seine Größe vermuten lässt." } },
     murkvein_bar: { id: "murkvein_bar", name: { en: "Murkvein Bar", de: "Trübergadbarren" }, type: "material", stackable: true, icon: "🟧", value: 180, rarity: "common" },
     // ── Murkvein-Gear (L63 Zwischentier; murkvein_bar-Senke) ────────────────
@@ -1467,9 +1467,9 @@ export const content: ContentDB = {
       icon: "💍", slot: "ring1", modifiers: { dex: 7, con: 4, lck: 2 }, skillBoost: { ranged: 3 },
       precision: 0.014, evasionRating: 5,
       requirements: { jewelcrafting: 70 }, value: 2400, rarity: "rare",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Onyx set in warhide, fletched black to vanish against a night sky. The archer's answer to the onyx ring the swordsmen wear.",
-        de: "Onyx in Kriegshaut gefasst, schwarz befiedert, um sich gegen den Nachthimmel zu verlieren. Die Antwort der Bogenschützen auf den Onyxring der Schwertkämpfer.",
+        de: "Onyx in Kriegsleder gefasst, schwarz befiedert, um sich gegen den Nachthimmel zu verlieren. Die Antwort der Bogenschützen auf den Onyxring der Schwertkämpfer.",
       },
     },
     ghostquiver_notch: {
@@ -1477,9 +1477,9 @@ export const content: ContentDB = {
       icon: "💍", slot: "ring1", modifiers: { dex: 8, con: 4, lck: 3 }, skillBoost: { ranged: 4 },
       precision: 0.016, evasionRating: 6,
       requirements: { jewelcrafting: 85 }, value: 4200, rarity: "rare",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Wrapped in dragonhide gone pale with age. Those who wear it say the quiver on their back feels lighter, though it never is.",
-        de: "In altersblass gewordene Drachenhaut gewickelt. Wer ihn trägt, sagt, der Köcher am Rücken fühle sich leichter an, obwohl er es nie ist.",
+        de: "In altersblass gewordenes Drachenleder gewickelt. Wer ihn trägt, sagt, der Köcher am Rücken fühle sich leichter an, obwohl er es nie ist.",
       },
     },
     worldpiercer_barb: {
@@ -1487,9 +1487,9 @@ export const content: ContentDB = {
       icon: "💍", slot: "ring1", modifiers: { dex: 9, con: 5, lck: 3 }, skillBoost: { ranged: 4 },
       precision: 0.018, evasionRating: 7,
       requirements: { jewelcrafting: 95 }, value: 7800, rarity: "epic",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Godgem set in shadowhide over an aetherium band. Said to have put an arrow through something that should not have had a far side.",
-        de: "Göttenstein in Schattenhaut über einem Aetheriumreif gefasst. Man sagt, er habe einen Pfeil durch etwas getrieben, das keine andere Seite hätte haben dürfen.",
+        de: "Göttenstein in Schattenleder über einem Aetheriumreif gefasst. Man sagt, er habe einen Pfeil durch etwas getrieben, das keine andere Seite hätte haben dürfen.",
       },
     },
     longsight_cord: {
@@ -1537,9 +1537,9 @@ export const content: ContentDB = {
       icon: "📿", slot: "amulet", modifiers: { dex: 7, con: 4, lck: 3 }, skillBoost: { ranged: 3 },
       evasionRating: 8,
       requirements: { jewelcrafting: 75 }, value: 3200, rarity: "rare",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Onyx caught in dark warhide, fletched with feathers that seem to drink the light around them. The archer's answer to the onyx amulet.",
-        de: "Onyx in dunkler Kriegshaut gefasst, befiedert mit Federn, die das Licht um sich herum zu trinken scheinen. Die Antwort der Bogenschützen auf das Onyxamulett.",
+        de: "Onyx in dunklem Kriegsleder gefasst, befiedert mit Federn, die das Licht um sich herum zu trinken scheinen. Die Antwort der Bogenschützen auf das Onyxamulett.",
       },
     },
     nightquarry_wreath: {
@@ -1547,9 +1547,9 @@ export const content: ContentDB = {
       icon: "📿", slot: "amulet", modifiers: { dex: 8, con: 6, lck: 3 }, skillBoost: { ranged: 4 },
       evasionRating: 9,
       requirements: { jewelcrafting: 88 }, value: 5500, rarity: "rare",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Voidstone wound in dragonhide and blackened iron. Trophies taken by moonlight never quite look the same by day.",
-        de: "Leerenstein, in Drachenhaut und geschwärztes Eisen gewunden. Trophäen, die im Mondlicht erbeutet wurden, sehen bei Tag nie ganz dieselben aus.",
+        de: "Leerenstein, in Drachenleder und geschwärztes Eisen gewunden. Trophäen, die im Mondlicht erbeutet wurden, sehen bei Tag nie ganz gleich aus.",
       },
     },
     deadeye_reliquary: {
@@ -1557,9 +1557,9 @@ export const content: ContentDB = {
       icon: "📿", slot: "amulet", modifiers: { dex: 9, con: 6, lck: 3 }, skillBoost: { ranged: 4 },
       evasionRating: 10,
       requirements: { jewelcrafting: 99 }, value: 9800, rarity: "epic",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "A godgem reliquary bound in shadowhide over aetherium. Holds the last aim of an archer who never needed a second arrow.",
-        de: "Ein Göttenstein-Reliquiar, in Schattenhaut über Aetherium gefasst. Bewahrt das letzte Zielen einer Bogenschützin, die nie einen zweiten Pfeil brauchte.",
+        de: "Ein Göttenstein-Reliquiar, in Schattenleder über Aetherium gefasst. Bewahrt das letzte Zielen einer Bogenschützin, die nie einen zweiten Pfeil brauchte.",
       },
     },
 
@@ -1635,8 +1635,8 @@ export const content: ContentDB = {
       icon: "📿", slot: "amulet", modifiers: { int: 4, wis: 2, con: 2 }, skillBoost: { magic: 2 },
       wardCapacity: 14,
       requirements: { jewelcrafting: 38 }, value: 980, rarity: "rare",
-      description: {
-        en: "A ruby strung on iron wire, wound with a chant sung over ash. The words are long forgotten; the warmth remains.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A ruby strung on iron wire, wound with a chant sung over ash. The words are long forgotten, the warmth remains.",
         de: "Ein Rubin an Eisendraht, umwunden mit einem über Asche gesungenen Gesang. Die Worte sind längst vergessen, die Wärme bleibt.",
       },
     },
@@ -1645,9 +1645,9 @@ export const content: ContentDB = {
       icon: "📿", slot: "amulet", modifiers: { int: 5, wis: 3, con: 2 }, skillBoost: { magic: 2 },
       wardCapacity: 20,
       requirements: { jewelcrafting: 48 }, value: 1200, rarity: "rare",
-      description: {
-        en: "A bloodstone bound in gravesteel and grave-ash, meant to call a shield from somewhere the caster cannot see.",
-        de: "Ein Blutstein, in Grabstahl und Grabasche gefasst, um einen Schutzschild aus einem Ort zu rufen, den der Zauberer selbst nicht sieht.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A bloodstone bound in gravesteel and grave-ash, meant to call a ward from somewhere the caster cannot see.",
+        de: "Ein Blutstein, in Grabstahl und Grabasche gefasst, um einen Ward aus einem Ort zu rufen, den der Zauberer selbst nicht sieht.",
       },
     },
     duskveil_wreath: {
@@ -1655,9 +1655,9 @@ export const content: ContentDB = {
       icon: "📿", slot: "amulet", modifiers: { int: 7, wis: 4, con: 3 }, skillBoost: { magic: 3 },
       wardCapacity: 30,
       requirements: { jewelcrafting: 75 }, value: 3200, rarity: "rare",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Onyx wrapped in runite and ghostweave, said to dim the room a little wherever it is worn.",
-        de: "Onyx, in Runit und Geistgewebe gewickelt, der den Raum ein wenig verdunkeln soll, wo immer er getragen wird.",
+        de: "Onyx, in Runit und Geistertuch gewickelt, der den Raum ein wenig verdunkeln soll, wo immer er getragen wird.",
       },
     },
     voidsong_locket: {
@@ -1675,9 +1675,9 @@ export const content: ContentDB = {
       icon: "📿", slot: "amulet", modifiers: { int: 9, wis: 5, con: 4 }, skillBoost: { magic: 4 },
       wardCapacity: 40,
       requirements: { jewelcrafting: 99 }, value: 9800, rarity: "epic",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "A godgem reliquary woven through with starweave, holding the last ward of a caster who never needed a second one.",
-        de: "Ein Göttenstein-Reliquiar, mit Sterngewebe durchwoben, das den letzten Schutzschild einer Zauberin bewahrt, die nie einen zweiten brauchte.",
+        de: "Ein Göttenstein-Reliquiar, mit Sternweb durchwoben, das den letzten Ward einer Zauberin bewahrt, die nie einen zweiten brauchte.",
       },
     },
 
@@ -1697,9 +1697,9 @@ export const content: ContentDB = {
       icon: "📿", slot: "amulet", modifiers: { str: 5, con: 4, lck: 1 }, skillBoost: { power: 2 },
       armorPen: 0.010,
       requirements: { jewelcrafting: 48 }, value: 1200, rarity: "rare",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "A bloodstone set in gravesteel over warhide, said to remember every battle its wearer walked away from.",
-        de: "Ein Blutstein, in Grabstahl über Kriegshaut gefasst, der sich angeblich an jede Schlacht erinnert, die sein Träger überlebte.",
+        de: "Ein Blutstein, in Grabstahl über Kriegsleder gefasst, der sich angeblich an jede Schlacht erinnert, die sein Träger überlebte.",
       },
     },
     ironvow_collar: {
@@ -1727,9 +1727,9 @@ export const content: ContentDB = {
       icon: "📿", slot: "amulet", modifiers: { str: 8, con: 6, lck: 3 }, skillBoost: { power: 4 },
       armorPen: 0.017,
       requirements: { jewelcrafting: 88 }, value: 5500, rarity: "rare",
-      description: {
-        en: "A voidstone locket wound twice in bloodiron. Opens onto nothing — the war it remembers ended badly for everyone else.",
-        de: "Ein Leerenstein-Medaillon, zweifach in Bluteisen gewunden. Öffnet sich zu nichts — der Krieg, an den es sich erinnert, endete für alle anderen schlecht.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A voidstone locket wound twice in bloodiron. It opens onto nothing. The war it remembers ended badly for everyone else.",
+        de: "Ein Leerenstein-Medaillon, zweifach in Bluteisen gewunden. Es öffnet sich zu nichts. Der Krieg, an den es sich erinnert, endete für alle anderen schlecht.",
       },
     },
     warcrown_reliquary: {
@@ -1786,9 +1786,9 @@ export const content: ContentDB = {
       // Quelle bleibt (Spezialeffekte gleicher Art stapeln nicht, die stärkste zählt; Affix-Kommentar „MAX über Quellen 0,10“).
       weaponEffect: { type: "wardSiphon", chance: 1, magnitude: 0.08, durationMs: 0 },
       value: 1800, rarity: "rare",
-      description: {
-        en: "Salt-crusted and cold, taken from a singer who drowned sailors with her own voice. Turns stolen strength into a shield.",
-        de: "Salzverkrustet und kalt, einer Sängerin abgenommen, die Seeleute mit der eigenen Stimme ertränkte. Verwandelt gestohlene Kraft in einen Schutzschild.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Salt-crusted and cold, taken from a singer who drowned sailors with her own voice. Turns stolen strength into ward.",
+        de: "Salzverkrustet und kalt, einer Sängerin abgenommen, die Seeleute mit der eigenen Stimme ertränkte. Verwandelt gestohlene Kraft in Ward.",
       },
     },
     hollowmarch_notch: {
@@ -1826,9 +1826,9 @@ export const content: ContentDB = {
       icon: "💍", slot: "ring1", modifiers: { str: 7, con: 7, lck: 2 }, skillBoost: { attack: 3 },
       weaponEffect: { type: "thorns", chance: 1, magnitude: 1.8, durationMs: 0 } /* Chef 29.08.2026: Guard gelockert, thorns darf mehrere Traeger haben — passt zum Motiv (Ring aus Eisendornen) */,
       value: 5800, rarity: "epic",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Carved by a guardian who turned every blow taken into the next one thrown. Rewards the fighter still standing.",
-        de: "Geschnitzt von einem Wächter, der jeden erlittenen Schlag in den nächsten eigenen verwandelte. Belohnt den Kämpfer, der noch steht.",
+        de: "Geschnitzt von einem Hüter, der jeden erlittenen Schlag in den nächsten eigenen verwandelte. Belohnt den Kämpfer, der noch steht.",
       },
     },
     sunder_crown: {
@@ -1837,9 +1837,9 @@ export const content: ContentDB = {
       // Abweichung von §3.8 (kein skillBoost mehr, war attack+ranged+magic): s. Wellen-Kopfkommentar oben.
       weaponEffect: { type: "critBurst", chance: 1, magnitude: 15, durationMs: 0 },
       value: 15000, rarity: "legendary",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Shattered from a crown that ruled over no single kingdom, worn by those who master every art at once. A killing blow lands harder when it could have come from anywhere.",
-        de: "Aus einer Krone geborsten, die über kein einziges Königreich herrschte, getragen von jenen, die jede Kunst zugleich beherrschen. Ein tödlicher Treffer schlägt härter ein, wenn er von überall hätte kommen können.",
+        de: "Aus einer Krone geborsten, die kein einzelnes Königreich beherrschte, getragen von jenen, die jede Kunst zugleich meistern. Ein tödlicher Treffer schlägt härter ein, wenn er von überall hätte kommen können.",
       },
     },
 
@@ -1918,9 +1918,9 @@ export const content: ContentDB = {
       // ring_master_farming trägt cropSpeed 0,08 — hier bewusst die Hälfte.
       masterPerk: { kind: "cropSpeed", skill: "farming", value: 0.04 },
       requirements: { jewelcrafting: 80 }, value: 4000, rarity: "superRare",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "A voidstone chain wrapped in starweave, warm as turned soil even in the dead of winter.",
-        de: "Eine Leerenstein-Kette, in Sterngewebe gewickelt, warm wie umgegrabene Erde selbst im tiefsten Winter.",
+        de: "Eine Leerenstein-Kette, in Sternweb gewickelt, warm wie umgegrabene Erde selbst im tiefsten Winter.",
       },
     },
 
@@ -3578,9 +3578,9 @@ export const content: ContentDB = {
       weaponEffects: [ { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 } ],
       requirements: { ranged: 99 },
       value: 25000, rarity: "legendary",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Woven from spectral sinew and wraith-touched wood. Arrows leave a trail of ether.",
-        de: "Aus Geistersehnen und leerenbergührtem Holz gewoben. Pfeile hinterlassen eine Aetherspur.",
+        de: "Aus Geistersehne und wraithberührtem Holz gefertigt. Die Pfeile hinterlassen eine Aetherspur.",
       },
     },
 
@@ -3612,9 +3612,9 @@ export const content: ContentDB = {
       modifiers: { con: 21, lck: 2 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> armorRating (Platte) statt totem skillBoost.
       requirements: { defence: 99 },
       value: 30000, rarity: "legendary",
-      description: {
-        en: "Hardened void-crystal plates bound with ancient idol-essence. Grants heavy defense, endurance, evasion, and sharpened instincts.",
-        de: "Gehärtete Leerenkristallplatten, gebunden mit uralter Götzenessenz. Gewährt starke Verteidigung, Ausdauer, Ausweichen und geschärfte Instinkte.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Hardened void-crystal plates bound with ancient idol-essence. Heavy on the shoulders, and the wounds beneath it close on their own.",
+        de: "Gehärtete Leerenkristallplatten, gebunden mit uralter Götzenessenz. Schwer auf den Schultern, und die Wunden darunter schließen sich von selbst.",
       }, armorRating: 42.0, // Chef-Entscheidung E1 25.08.2026: 37.5 -> 42.0 (n=4, toter defence-Boost -> armorRating).
     },
 
@@ -3630,9 +3630,9 @@ export const content: ContentDB = {
       weaponEffects: [ { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 }, { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 } ],
       requirements: { attack: 99 },
       value: 60000, rarity: "godly",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "The idol's final weapon, reforged by sheer divine will. Nothing survives its verdict.",
-        de: "Die finale Waffe des Götzen, durch göttlichen Willen neu geschmiedet. Nichts übersteht sein Urteil.",
+        de: "Die letzte Waffe des Götzen, durch göttlichen Willen neu geschmiedet. Nichts übersteht sein Urteil.",
       },
     },
 
@@ -3649,9 +3649,9 @@ export const content: ContentDB = {
       weaponEffects: [ { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 }, { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 2000 } ],
       requirements: { ranged: 99 },
       value: 60000, rarity: "godly",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "The idol's final arrow, loosed beyond death. Distance means nothing to its aim.",
-        de: "Der finale Pfeil des Götzen, abgeschossen jenseits des Todes. Distanz bedeutet seiner Zielgenauigkeit nichts.",
+        de: "Der letzte Pfeil des Götzen, abgeschossen jenseits des Todes. Entfernung bedeutet ihm nichts.",
       },
     },
 
@@ -3724,9 +3724,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "📿", slot: "amulet",
       bonus: { hpRegenPerSec: 0.3 }, modifiers: { str: 5, dex: 3, con: 15, int: 5, wis: 3, lck: 6 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +5 con.
       requirements: { defence: 99 }, value: 95000, rarity: "godly",
-      description: {
-        en: "Seven crowns hung broken from one chain — one for each of the Silent. Worn across the chest of the Crownless himself, until he chose to travel lighter.",
-        de: "Sieben Kronen, zerbrochen an einer Kette — eine für jeden der Stillen. Getragen quer über der Brust des Kronenlosen selbst, bis er beschloss, leichter zu reisen.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Seven crowns hung broken from one chain, one for each of the Silent. Worn across the chest of the Crownless himself, until he chose to travel lighter.",
+        de: "Sieben Kronen, zerbrochen an einer Kette, eine für jeden der Stillen. Getragen quer über der Brust des Kronenlosen selbst, bis er beschloss, leichter zu reisen.",
       },
     },
 
@@ -4359,10 +4359,10 @@ export const content: ContentDB = {
     },
 
     // ── Neue Hide-Materialien (T6/T7) ───────────────────────────────────
-    raw_dragonhide: { id: "raw_dragonhide", name: { en: "Raw Dragonhide", de: "Rohdrachenleder" }, type: "material", stackable: true, icon: "🐉", value: 140, rarity: "common", description: { en: "Untanned hide from a draconic creature. Needs curing before use.", de: "Ungegerbtes Leder eines drakonischen Wesens. Muss zuerst gegerbt werden." } },
-    raw_shadowhide: { id: "raw_shadowhide", name: { en: "Raw Shadowhide", de: "Rohschattenleder" }, type: "material", stackable: true, icon: "🌑", value: 260, rarity: "common", description: { en: "Untanned void-touched hide. Leatherworking mastery required to cure it.", de: "Ungegerbtes, leerenbergührtes Leder. Erfordert Lederarbeits-Meisterschaft zum Gerben." } },
+    raw_dragonhide: { id: "raw_dragonhide", name: { en: "Raw Dragonhide", de: "Rohdrachenleder" }, type: "material", stackable: true, icon: "🐉", value: 140, rarity: "common", description: { en: "Untanned hide from a draconic beast, stiff and rank until it is cured.", de: "Ungegerbte Haut eines drakonischen Wesens, steif und streng, bis sie gegerbt ist." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
+    raw_shadowhide: { id: "raw_shadowhide", name: { en: "Raw Shadowhide", de: "Rohschattenleder" }, type: "material", stackable: true, icon: "🌑", value: 260, rarity: "common", description: { en: "Untanned hide touched by the void. Only a seasoned hand can cure it: Crafting 90.", de: "Ungegerbte, leerenberührte Haut. Gerben kann sie nur, wer das Handwerk beherrscht: ab Level 90." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     dragonhide: { id: "dragonhide", name: { en: "Dragonhide", de: "Drachenleder" }, type: "material", stackable: true, icon: "🐉", value: 320, rarity: "common", description: { en: "Thick iridescent hide from draconic creatures. Prized by master leatherworkers.", de: "Dickes, schillerndes Leder drakonischer Wesen. Begehrt bei Meister-Lederarbeitern." } },
-    shadowhide: { id: "shadowhide", name: { en: "Shadowhide", de: "Schattenleder" }, type: "material", stackable: true, icon: "🌑", value: 580, rarity: "common", description: { en: "Void-touched hide that seems to absorb light. Rare beyond reckoning.", de: "Leerenbergührtes Leder, das Licht zu absorbieren scheint. Unfassbar selten." } },
+    shadowhide: { id: "shadowhide", name: { en: "Shadowhide", de: "Schattenleder" }, type: "material", stackable: true, icon: "🌑", value: 580, rarity: "common", description: { en: "Void-touched hide that drinks the light. Cured at the top of the craft.", de: "Leerenberührtes Leder, das Licht schluckt. Gegerbt am oberen Ende des Handwerks." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
 
     // ── Leder-Handschuhe / Vambraces (alle 5 bestehenden Tiers) ─────────
     cured_leather_vambraces: {
@@ -5146,7 +5146,7 @@ export const content: ContentDB = {
     raw_boar_loin:     { id: "raw_boar_loin",     name: { en: "Razorback Loin",     de: "Klingenrücken-Lende"    }, type: "material", stackable: true, icon: "🥩", value: 5 },
     raw_hare_meat:     { id: "raw_hare_meat",     name: { en: "Forest Hare",        de: "Waldhasen-Keule"        }, type: "material", stackable: true, icon: "🥩", value: 5 },
     raw_wolf_haunch:   { id: "raw_wolf_haunch",   name: { en: "Wolf Haunch",        de: "Wolfskeulen-Braten"     }, type: "material", stackable: true, icon: "🥩", value: 6 },
-    raw_venison:       { id: "raw_venison",       name: { en: "Wildwood Venison",   de: "Wildwald-Hirschkeule"   }, type: "material", stackable: true, icon: "🥩", value: 8, description: { en: "A haunch from a Wildwood deer, lean and gamey; better smoked than eaten as is.", de: "Eine Keule vom Wildwald-Hirsch, mager und wildlastig im Geschmack; besser geräuchert als roh gegessen." } },
+    raw_venison:       { id: "raw_venison",       name: { en: "Wildwood Venison",   de: "Wildwald-Hirschkeule"   }, type: "material", stackable: true, icon: "🥩", value: 8, description: { en: "A haunch from a Wildwood deer, lean and gamey. Better smoked than eaten as it comes.", de: "Eine Keule vom Wildwald-Hirsch, mager und kräftig im Geschmack. Besser geräuchert als roh gegessen." } }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     raw_roc_drumstick: { id: "raw_roc_drumstick", name: { en: "Roc Drumstick",      de: "Roc-Keule"              }, type: "material", stackable: true, icon: "🍗", value: 10 },
     raw_bear_shank:    { id: "raw_bear_shank",    name: { en: "Elder Bear Shank",   de: "Altbär-Haxe"           }, type: "material", stackable: true, icon: "🥩", value: 12, description: { en: "A heavy cut from an elder bear, tough until the smoke has its way with it.", de: "Ein schweres Stück vom Altbären, zäh, bis der Rauch seine Arbeit getan hat." } },
     raw_wyvern_haunch: { id: "raw_wyvern_haunch", name: { en: "Wyvern Haunch",      de: "Wyvern-Braten"         }, type: "material", stackable: true, icon: "🥩", value: 16 },
@@ -5180,7 +5180,7 @@ export const content: ContentDB = {
       modifiers: { lck: 2 },
       weaponEffects: [ { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 } ],
       requirements: { attack: 50 }, value: 280, rarity: "rare", // fix 2026-07-01: req 18→46 (drops from thorn_wolf L54, was ~36 Level unter Mob)
-      description: { en: "A blade carved from the Wolf of Thorns' fang-crown — every edge draws blood.", de: "Eine Klinge aus dem Dornenkranz des Dornwolfs — jede Kante zieht Blut." },
+      description: { en: "Carved from the Wolf of Thorns' fang-crown. Every edge draws blood.", de: "Geschnitzt aus dem Zahnkranz des Dornwolfs. Jede Kante zieht Blut." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     // bramble_witch → Hexenstab der Rankenhexe (Magie, Frost+Burn)
     bramble_witchstaff: {
@@ -5207,7 +5207,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🛡️", slot: "body",
       modifiers: { con: 5 },
       requirements: { defence: 50 }, value: 380, rarity: "rare", // fix 2026-07-01: req 22→48 (drops from moss_golem L56, war ~34 Level unter Mob)
-      description: { en: "Thick plates of living moss fused to iron. Repairs itself slowly.", de: "Dicke Platten lebenden Mooses auf Eisen gefugt. Heilt sich langsam selbst." }, armorRating: 26.71,
+      description: { en: "Living moss fused to iron plate. A lucky hit against it comes back with interest.", de: "Lebendes Moos auf Eisenplatten gefugt. Ein Glückstreffer dagegen kommt mit Zinsen zurück." }, armorRating: 26.71, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     // ash_tyrant → Aschklinge (Nahkampf, Burn, Tier Blacksteel)
     ashen_reaper: {
@@ -5220,7 +5220,7 @@ export const content: ContentDB = {
       modifiers: { lck: 2 },
       weaponEffects: [ { type: "healOnKill", chance: 1, magnitude: 2, durationMs: 0 } ],
       requirements: { attack: 40 }, value: 540, rarity: "rare", // fix 2026-07-01: req 18→38 (drops from ash_tyrant L45, war ~27 Level unter Mob)
-      description: { en: "Forged in the Ash Tyrant's furnace-belly. The edge smokes with heat.", de: "Im Ofenbauch des Aschtyrann geschmiedet. Die Schneide raucht vor Hitze." },
+      description: { en: "Forged in the Ash Tyrant's furnace-belly. The edge smokes with heat.", de: "Im Ofenbauch des Aschtyrannen geschmiedet. Die Schneide raucht vor Hitze." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     // spectral_stag → Geisterhirsch-Kapuze (Helm, Ranged/Crit-Fokus)
     spectral_coif: {
@@ -5230,7 +5230,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪖", slot: "helmet",
       modifiers: { dex: 1, con: 1, lck: 3 },
       requirements: { ranged: 50 }, value: 420, rarity: "rare", // fix 2026-07-01: req 25→50 (drops from spectral_stag L58, war ~33 Level unter Mob)
-      description: { en: "A hood stitched from spectral hide — the hunter becomes the hunted.", de: "Eine Kapuze aus Geisterleder — der Jäger wird zum Gejagten." }, evasionRating: 16.8, // item-drop-audit P2 (2026-07-25): EVR 0→15.0 — Trinity-Datenfehler (Leder-Helm ohne evasionRating); studded_leather_helm-Anker (ran50: EVR 14.6) + lck-Bonus obendrauf.
+      description: { en: "A hood stitched from spectral hide. The hunter becomes the hunted.", de: "Eine Kapuze aus Geisterleder. Der Jäger wird zum Gejagten." }, evasionRating: 16.8, // item-drop-audit P2 (2026-07-25): EVR 0→15.0 — Trinity-Datenfehler (Leder-Helm ohne evasionRating); studded_leather_helm-Anker (ran50: EVR 14.6) + lck-Bonus obendrauf. // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     // forest_warden → Waldvogt-Rüstung (Body, leicht + Evasion, Wildwald-Thema)
     warden_brigandine: {
@@ -5240,7 +5240,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🦺", slot: "body",
       modifiers: { dex: 1, con: 4 },
       requirements: { ranged: 56 }, value: 720, rarity: "superRare", // fix 2026-07-01: ranged-req 36→56 (drops from forest_warden L65, war ~29 Level unter Mob); armor-iter2 §8: leatherworking-Gate entfernt, evasionRating auf R56 neu geeicht
-      description: { en: "Worn by the forest's guardian. Moves silently between the trees.", de: "Getragen vom Wächter des Waldes. Bewegt sich lautlos zwischen den Bäumen." }, evasionRating: 25.84,
+      description: { en: "Worn by the Forest Warden himself. It moves silently between the trees.", de: "Getragen vom Waldvogt selbst. Sie bewegt sich lautlos zwischen den Bäumen." }, evasionRating: 25.84, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     // pitch_beetle → Chitinschild (Offhand, defensiv, mid-Tier)
     chitin_bulwark: {
@@ -5262,7 +5262,7 @@ export const content: ContentDB = {
       weaponEffect: { type: "bleed", chance: 0.22, magnitude: 3, durationMs: 4000 }, // balance-fix 2026-07-05: magnitude 0.4→1 (rounded to "0 damage/s" in tooltip)
       modifiers: { dex: 1, lck: 1 },
       requirements: { attack: 40 }, value: 110, rarity: "rare", // fix 2026-07-01: req 6→30 (drops from mire_crawler L38, war ~32 Level unter Mob — Chef-Report)
-      description: { en: "A barbed crawler-fang set in bog-iron. Quick and dirty.", de: "Ein widerhakenbesetzter Kiefer des Morastkriechers. Schnell und dreckig." },
+      description: { en: "A barbed crawler-fang set in bog-iron. Quick and dirty.", de: "Ein Widerhaken-Reißzahn des Morastkriechers in Sumpfeisen. Schnell und dreckig." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     // boar → Eberzahn-Amulett (bereits bestehend als fang_necklace-Pendant für Nahkampf/Stärke)
     // Stattdessen: Eberhauer-Streitkolben
@@ -5286,7 +5286,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🎩", slot: "helmet",
       modifiers: { con: 1 },
       requirements: { magic: 1 }, value: 55,
-      description: { en: "Worn, pointed, and slightly too large. But the int boost is real.", de: "Abgenutzt, spitz und etwas zu groß. Aber der Magie-Boost ist echt." }, wardCapacity: 9, // armor-iter2.1 §3a: R10-Parität Σ45 (war 4.86)
+      description: { en: "Worn, pointed and a size too large. But the ward it holds is real.", de: "Abgetragen, spitz und etwas zu groß. Aber der Ward, den er hält, ist echt." }, wardCapacity: 9, // armor-iter2.1 §3a: R10-Parität Σ45 (war 4.86) // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     apprentice_robe_body: {
       id: "apprentice_robe_body",
@@ -5435,7 +5435,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "👖", slot: "legs",
       modifiers: { con: 2, int: 2 },
       requirements: { magic: 30 }, value: 760, rarity: "rare",
-      description: { en: "Skirt panels stitched with ember-thread. The hem smoulders faintly in cold air.", de: "Bahnenpaneele aus Glut-Faden genäht. Der Saum schwelt schwach in kalter Luft." }, wardCapacity: 22.66,
+      description: { en: "Skirt panels stitched with ember-thread. The hem smoulders faintly in cold air.", de: "Stoffbahnen, mit Glutfaden genäht. Der Saum schwelt schwach in kalter Luft." }, wardCapacity: 22.66, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     ember_handwraps: {
       id: "ember_handwraps",
@@ -5591,7 +5591,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "👗", slot: "body",
       modifiers: { con: 5, int: 8, wis: 2 },
       requirements: { magic: 70 }, value: 4200, rarity: "superRare",
-      description: { en: "Warhide layered beneath void-rune weaves. Spells tear through resistance.", de: "Kriegsleder unter Leerenrunen-Geweben verborgen. Zauber reißen durch Widerstände." }, wardCapacity: 100.7,
+      description: { en: "Ghostweave layered beneath void-rune weave, cool as the grave and twice as patient.", de: "Geistertuch unter Leerenrunen-Gewebe, kühl wie das Grab und doppelt so geduldig." }, wardCapacity: 100.7, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     runewoven_robe_legs: {
       id: "runewoven_robe_legs",
@@ -5599,7 +5599,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "👖", slot: "legs",
       modifiers: { con: 4, int: 6 },
       requirements: { magic: 70 }, value: 3000, rarity: "superRare",
-      description: { en: "Flowing leg wraps laced with void rune sigils. Your spell reserve runs deep.", de: "Fließende Beinwickel mit Leerenrunen-Sigilen besetzt. Die Zauberreserve strömt frei." }, wardCapacity: 73.85,
+      description: { en: "Flowing leg wraps laced with void-rune sigils. They move like smoke with every step.", de: "Fließende Beinwickel mit Leerenrunen-Sigilen besetzt. Sie bewegen sich mit jedem Schritt wie Rauch." }, wardCapacity: 73.85, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     runewoven_handwraps: {
       id: "runewoven_handwraps",
@@ -5607,7 +5607,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "gloves",
       modifiers: { con: 4, int: 5, wis: 1 },
       requirements: { magic: 70 }, value: 2730, rarity: "superRare",
-      description: { en: "Void-rune handwraps threaded through warhide. Spells tear free of the fingers like hungry shadows.", de: "Leerenrunen-Handwickel, durch Kriegsleder gefädelt. Zauber reißen sich wie hungrige Schatten von den Fingern los." }, wardCapacity: 46.99,
+      description: { en: "Void-rune handwraps threaded through ghostweave. Spells tear free of the fingers like hungry shadows.", de: "Leerenrunen-Handwickel, durch Geistertuch gefädelt. Zauber reißen sich wie hungrige Schatten von den Fingern los." }, wardCapacity: 46.99, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     runewoven_treads: {
       id: "runewoven_treads",
@@ -5615,7 +5615,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "boots",
       modifiers: { con: 4, int: 5 },
       requirements: { magic: 70 }, value: 2730, rarity: "superRare",
-      description: { en: "Heavy warhide boots woven through with void runes. The wearer's footsteps fall in silence.", de: "Schwere Kriegsleder-Stiefel, mit Leerenrunen durchwirkt. Die Schritte des Trägers fallen in Stille." }, wardCapacity: 46.99,
+      description: { en: "Ghostweave treads woven through with void runes. The wearer's footsteps fall in silence.", de: "Geistertuch-Schrittschuhe, mit Leerenrunen durchwirkt. Die Schritte des Trägers fallen in Stille." }, wardCapacity: 46.99, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     // Tier 4: Götzenfunken-Ornat (Runecrafting Lvl 88)
     godspark_mitre: {
@@ -5697,7 +5697,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "👑", slot: "helmet",
       modifiers: { con: 5, int: 9, wis: 5, lck: 1 }, // balance-pass2 2026-07-01: voidweave-Set-Inversion-Fix (>godspark)
       requirements: { magic: 99 }, value: 5500, rarity: "epic",
-      description: { en: "A void-threaded mitre that hums with annihilating power. Thoughts become voids.", de: "Eine leerenfädige Mitra, die mit vernichtender Macht summt. Gedanken werden Leeren." }, wardCapacity: 128,
+      description: { en: "A void-threaded mitre that hums with annihilating power. Thoughts become voids.", de: "Eine leerenfädige Mitra, die mit vernichtender Macht summt. Gedanken werden zu Leere." }, wardCapacity: 128, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     voidweave_vestment: {
       id: "voidweave_vestment",
@@ -5721,7 +5721,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "gloves",
       modifiers: { con: 5, int: 9, wis: 4, lck: 1 }, // balance-pass2 2026-07-01: voidweave-Set-Inversion-Fix (>godspark)
       requirements: { magic: 99 }, value: 6500, rarity: "epic",
-      description: { en: "Handwraps threaded with void-rune silk. The caster's spells strike faster and harder.", de: "Handwickel aus Leerenrune-Seide. Die Zauber des Trägers treffen schneller und härter." }, wardCapacity: 89.6,
+      description: { en: "Handwraps threaded with void-rune silk. The caster's spells strike harder.", de: "Handwickel aus Leerenrunen-Seide. Die Zauber des Trägers treffen härter." }, wardCapacity: 89.6, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     voidweave_sandals: {
       id: "voidweave_sandals",
@@ -5752,7 +5752,7 @@ export const content: ContentDB = {
       name: { en: "Mirror Ward", de: "Spiegelschutz" },
       icon: "🪞",
       type: "material", stackable: true, value: 150, rarity: "common",
-      description: { en: "A polished iron talisman etched with anti-reflection runes. Protects the eyes from petrifying gazes.", de: "Ein poliertes Eisentalisman, mit Anti-Reflexions-Runen graviert. Schützt die Augen vor versteinernden Blicken." },
+      description: { en: "A polished iron talisman etched with runes against reflection. Protects the eyes from petrifying gazes.", de: "Ein polierter Eisentalisman, mit Runen gegen Spiegelung graviert. Schützt die Augen vor versteinernden Blicken." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     ear_plugs: {
       id: "ear_plugs",
@@ -5778,7 +5778,7 @@ export const content: ContentDB = {
       name: { en: "Slayer Ward Capsule", de: "Slayer-Schutzkapsule" },
       icon: "💊",
       type: "material", stackable: true, value: 1500, rarity: "rare",
-      description: { en: "A sealed vessel containing all four tower ward components, fused into a single protective core.", de: "Ein versiegeltes Gefäß mit allen vier Turmschutz-Komponenten, zu einem einzigen Schutzkern verschmolzen." },
+      description: { en: "A sealed vessel holding all four tower wards, fused into a single protective core.", de: "Ein versiegeltes Gefäß, in dem alle vier Schutzstücke des Turms zu einem Kern verschmolzen sind." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     tower_forge_compound: {
       id: "tower_forge_compound",
@@ -5797,26 +5797,26 @@ export const content: ContentDB = {
       id: "blighted_bone",
       name: { en: "Blighted Bone", de: "Pestiges Knochenfragment" },
       type: "material", stackable: true, value: 15, rarity: "common",
-      description: { en: "A fragment of bone infused with pestilential rot. Crumbles at the edges but holds a strange warmth.", de: "Ein Knochenfragment, durchdrungen von pestartigem Fäulnis. Bröckelt an den Rändern, hält aber eine seltsame Wärme." },
+      description: { en: "A fragment of bone infused with pestilential rot. Crumbles at the edges but holds a strange warmth.", de: "Ein Knochenfragment, durchdrungen von pestartiger Fäulnis. Bröckelt an den Rändern, hält aber eine seltsame Wärme." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     rot_gland: {
       id: "rot_gland",
       name: { en: "Rot Gland", de: "Verfaulte Drüse" },
       icon: "🟢",
       type: "material", stackable: true, value: 10, rarity: "common",
-      description: { en: "A suppurating gland harvested from a plague creature. Stinks. Herblore ingredient for resistance tonics.", de: "Eine eiternde Drüse, von einem Seuchenwesen entnommen. Stinkt. Kräuterkunde-Zutat für Resistenz-Tonika." },
+      description: { en: "A suppurating gland cut from a plague creature. It stinks. Brewed into a tonic against the rot.", de: "Eine eiternde Drüse, einem Seuchenwesen entnommen. Stinkt. Wird zu einem Tonikum gegen die Fäulnis gebraut." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     basilisk_scale: {
       id: "basilisk_scale",
       name: { en: "Basilisk Scale", de: "Basilisken-Schuppe" },
       type: "material", stackable: true, value: 25, rarity: "common",
-      description: { en: "A heavy iridescent scale from a gaze basilisk. Prized by leatherworkers for its anti-petrification properties.", de: "Eine schwere schillernde Schuppe eines Blick-Basilisken. Von Lederhandwerkern für ihre Anti-Versteinerungs-Eigenschaften begehrt." },
+      description: { en: "A heavy, iridescent scale from a gaze basilisk. Leatherworkers prize it, since no stare turns it to stone.", de: "Eine schwere, schillernde Schuppe eines Blick-Basilisken. Lederarbeiter schätzen sie, denn kein Blick macht sie zu Stein." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     shade_wisp: {
       id: "shade_wisp",
       name: { en: "Shade Wisp", de: "Klag-Licht" },
       type: "material", stackable: true, value: 30, rarity: "common",
-      description: { en: "A captured fragment of a wailing shade's spectral energy. Flickers with mournful light. Runecrafting input.", de: "Ein eingefangenes Fragment der Geisterenergie eines klagenden Schattens. Flackert mit trauervollem Licht. Runenkunst-Zutat." },
+      description: { en: "A captured scrap of a wailing shade's light, flickering and mournful. Bound into runes.", de: "Ein eingefangener Rest vom Licht eines Klagenden Schattens, flackernd und trauervoll. Wird in Runen gebunden." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     forge_ember: {
       id: "forge_ember",
@@ -5828,25 +5828,25 @@ export const content: ContentDB = {
       id: "slag_carapace",
       name: { en: "Slag Carapace", de: "Schlackenpanzer" },
       type: "material", stackable: true, value: 35, rarity: "common",
-      description: { en: "Hardened lava-fused chitin from a slag abomination. Smithing-grade material for tower armour pieces.", de: "Gehärtetes, lavaverschmolzenes Chitin einer Schlacken-Abomination. Schmiede-Qualität für Turm-Rüstungsteile." },
+      description: { en: "Hardened, lava-fused chitin from a slag abomination. Forged into the Slayer Greaves.", de: "Gehärtetes, lavaverschmolzenes Chitin einer Schlacken-Abomination. Wird zu Slayer-Beinschienen geschmiedet." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     dread_fang_shard: {
       id: "dread_fang_shard",
       name: { en: "Dread Fang Shard", de: "Schreckenzahn-Splitter" },
       type: "material", stackable: true, value: 55, rarity: "common",
-      description: { en: "A jagged fragment of a dreadfang's tooth. Vibrates faintly. Jewelcrafting input for amulets.", de: "Ein gezacktes Fragment des Zahns eines Schreckenzahns. Vibriert leise. Juwelierskunst-Zutat für Amulette." },
+      description: { en: "A jagged fragment of a dreadfang's tooth. It vibrates faintly. Reinforces the Slayer Greaves.", de: "Ein gezacktes Stück vom Zahn eines Schreckenzahns. Vibriert leise. Verstärkt die Slayer-Beinschienen." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     void_thread: {
       id: "void_thread",
       name: { en: "Void Thread", de: "Leeren-Faden" },
       type: "material", stackable: true, value: 90, rarity: "superRare",
-      description: { en: "A strand of solidified void-energy pulled from a void stalker. Inscription and runecrafting input.", de: "Ein Strang verfestigter Leerenenergie, von einem Leerenjäger gezogen. Schreibkunst- und Runenkunst-Zutat." },
+      description: { en: "A strand of solidified void pulled from a void stalker. Tailors weave it into the Void Shroud.", de: "Ein Strang verfestigter Leere, einem Leerenjäger entrissen. Schneider weben ihn in den Leeren-Umhang." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     abyssal_core: {
       id: "abyssal_core",
       name: { en: "Abyssal Core", de: "Abyssaler Kern" },
       type: "material", stackable: true, value: 500, rarity: "superRare",
-      description: { en: "A pulsing shard of compressed void from the abyssal devourer. Extremely rare ingredient for the Slayer Helm.", de: "Ein pulsierender Splitter komprimierter Leere vom abyssalen Verschlinger. Äußerst seltene Zutat für den Slayer-Helm." },
+      description: { en: "A pulsing shard of compressed void from the abyssal devourer. Rare, and the heart of the Slayer Helm.", de: "Ein pulsierender Splitter komprimierter Leere vom Abyssalen Verschlinger. Selten, und das Herz des Slayer-Helms." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     soul_flayer_fang: {
       id: "soul_flayer_fang",
@@ -5856,7 +5856,7 @@ export const content: ContentDB = {
       // Chef-GO 03 26.08.2026: nicht mehr Zutat der Slayer-Armschienen (Etage-5-Material bei
       // einem Etage-3-Ausrüstungsstück war ein Gate-Mismatch, s. craft_slayer_vambraces-Kommentar).
       // Bleibt erhältlich/verdrahtet über den einzigen verbleibenden Sink: camp_trophy_wall Stufe 3.
-      description: { en: "A curved fang reeking of burned souls. Rare drop from the soul flayer, prized as a trophy for the camp's Trophy Wall.", de: "Ein geschwungener Reißzahn, der nach verbrannten Seelen riecht. Seltener Drop des Seelenschinders, begehrt als Trophäe für die Trophäenwand des Lagers." },
+      description: { en: "A curved fang that reeks of burned souls. The soul flayer rarely gives one up. It belongs on the Trophy Wall in New Haven.", de: "Ein gebogener Reißzahn, der nach verbrannten Seelen riecht. Der Seelenschinder gibt ihn nur selten her. An der Trophäenwand von New Haven hängt er am besten." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     // Chef-GO 03 26.08.2026: Ersatz-Zutat für die Slayer-Armschienen (s. craft_slayer_vambraces).
     // Etage 3 (Die Schmiedeabgründe, Slayer 40) statt Etage 5 (Slayer 80) — passt zum eigenen
@@ -5867,13 +5867,13 @@ export const content: ContentDB = {
       name: { en: "Cinderwretch Hide", de: "Aschenelend-Haut" },
       icon: "🩹",
       type: "material", stackable: true, value: 60, rarity: "superRare",
-      description: { en: "A tough hide scorched black by an eternal ember-heart, stripped from a cinder wretch deep in the tower. Crafting component for Slayer Vambraces.", de: "Eine zähe Haut, von einem ewigen Glutherz kohlschwarz versengt, einem Aschenelend tief im Turm entrissen. Handwerks-Zutat für Slayer-Armschienen." },
+      description: { en: "Tough hide scorched black by an ember-heart that never cools, stripped from a cinder wretch deep in the tower. It goes into the Slayer Vambraces.", de: "Zähe Haut, kohlschwarz versengt von einem Glutherz, das nie erkaltet, einem Aschenelend tief im Turm abgezogen. Sie gehört in die Slayer-Armschienen." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     void_herald_shard: {
       id: "void_herald_shard",
       name: { en: "Void Herald Shard", de: "Leeren-Herold-Splitter" },
       type: "material", stackable: true, value: 250, rarity: "superRare",
-      description: { en: "A crystalline shard from a void herald, radiating cold void energy. Crafting component for the Slayer Amulet.", de: "Ein kristalliner Splitter eines Leeren-Herolds, der kalte Leerenenergie ausstrahlt. Handwerks-Zutat für das Slayer-Amulett." },
+      description: { en: "A crystal shard from a void herald, cold to the core. It goes into the Slayer Amulet.", de: "Ein Kristallsplitter aus einem Leeren-Herold, kalt bis in den Kern. Er gehört in das Slayer-Amulett." }, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     // ══ Slayer Phase 2 — Ausrüstungs-Items (content-dev, 2026-06-28) ═══════
     // Chef-Test 25.08.2026 (design/slayer-shop-1.1.0.md §4.1/§4.6 #1): "die Rüstungen scheinen mir
@@ -5902,9 +5902,9 @@ export const content: ContentDB = {
       modifiers: { str: 4, dex: 4, int: 4, con: 7 },
       weaponEffect: { type: "bounty", chance: 1, magnitude: 0.20, durationMs: 0 },
       requirements: { slayer: 80 }, value: 8000,
-      description: {
-        en: "A masterwork helm forged from the essence of the Slayer Tower's worst horrors. It marks its bearer's contract: +20% damage against the current slayer target, and no ward items are needed against any tower threat while worn.",
-        de: "Ein Meisterwerk-Helm, geschmiedet aus dem Wesen der schlimmsten Schrecken des Slayer-Turms. Er zeichnet den Auftrag seines Trägers: +20 % Schaden gegen das aktuelle Auftragsziel, und im Turm sind keine Schutzgegenstände mehr nötig, solange er getragen wird.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A masterwork helm forged from the worst the Slayer Tower holds. It marks its bearer's contract: +20% damage against the current Slayer target, and no tower ward is needed while worn.",
+        de: "Ein Meisterhelm, geschmiedet aus dem Schlimmsten, was der Slayer-Turm birgt. Er zeichnet den Auftrag seines Trägers: +20 % Schaden gegen das aktuelle Slayer-Ziel, und im Turm braucht es keine Schutzstücke mehr, solange er getragen wird.",
       },
     },
     // Chef-Test 25.08.2026 (design/slayer-shop-1.1.0.md §4.1/§4.6 #3): Trinity-Wert der NÄCHSTEN
@@ -5927,9 +5927,9 @@ export const content: ContentDB = {
       modifiers: { str: 2, dex: 2, int: 2, con: 7, lck: 3 }, skillBoost: { attack: 3, ranged: 3, magic: 3 },
       weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 },
       requirements: { slayer: 50 }, value: 3200,
-      description: {
-        en: "Vambraces fashioned from a scorched cinderwretch hide and hardened tower leather. Every kill on the hunt knits the hunter's wounds: +4 HP per kill.",
-        de: "Armschienen aus versengter Aschenelend-Haut und gehärtetem Turm-Leder. Jeder Abschuss auf der Jagd schließt die Wunden des Jägers: +4 LP je Kill.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Vambraces of scorched cinderwretch hide and hardened tower leather. Every kill on the hunt knits the hunter's wounds: +4 HP per kill.",
+        de: "Armschienen aus versengter Aschenelend-Haut und gehärtetem Turmleder. Jeder Sieg auf der Jagd schließt die Wunden des Jägers: +4 HP je Kill.",
       },
     },
     // Chef-Entscheidung E6 (25.08.2026), design/slayer-shop-1.1.0.md §4.4: Lücke Slayer 30–50 im
@@ -5945,9 +5945,9 @@ export const content: ContentDB = {
       modifiers: { str: 2, dex: 2, con: 3, int: 2 },
       weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.15, durationMs: 0 },
       requirements: { slayer: 30 }, value: 1200,
-      description: {
-        en: "A weathered cape issued by Brenna to hunters who have earned their first thirty contracts. The first hit of every hunt lands hardest: +15% damage against an unwounded target.",
-        de: "Ein verwitterter Umhang, den Brenna an Jäger ausgibt, die sich ihre ersten dreißig Aufträge verdient haben. Der erste Treffer jeder Jagd sitzt am tiefsten: +15 % Schaden gegen ein unverletztes Ziel.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A weathered cape Brenna hands to hunters who have reached Slayer level 30. The first hit of every hunt lands hardest: +15% damage against an unwounded target.",
+        de: "Ein verwitterter Umhang, den Brenna an Jäger ausgibt, die Slayer-Level 30 erreicht haben. Der erste Treffer jeder Jagd sitzt am tiefsten: +15 % Schaden gegen ein unverletztes Ziel.",
       },
     },
     // Chef-Test 25.08.2026 (design/slayer-shop-1.1.0.md §4.1/§4.6 #2): Trinity-Wert der NÄCHSTEN
@@ -5971,9 +5971,9 @@ export const content: ContentDB = {
       modifiers: { str: 3, dex: 3, int: 3, con: 7 },
       weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.20, durationMs: 0 },
       requirements: { slayer: 65 }, value: 4500,
-      description: {
-        en: "Greaves reinforced with the fractured shards of dreadfang teeth. Built for prey above your station: +20% damage against monsters of higher level than you.",
-        de: "Beinschienen, mit zersplitterten Schreckenzahn-Zähnen verstärkt. Gebaut für Beute über deinem Stand: +20 % Schaden gegen Monster, die über deinem Kampflevel liegen.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Greaves reinforced with the shattered teeth of Dreadfang. Built for prey above your station: +20% damage against monsters above your combat level.",
+        de: "Beinschienen, verstärkt mit den zersplitterten Zähnen des Schreckenzahns. Gebaut für Beute über deinem Stand: +20 % Schaden gegen Monster über deinem Kampflevel.",
       },
     },
     // Chef-Entscheid 26.08.2026 (Slayer omnifunktional): Slayer-Ausrüstung ist das EINZIGE Set, das
@@ -5988,9 +5988,9 @@ export const content: ContentDB = {
       slot: "amulet", rarity: "epic",
       modifiers: { str: 4, dex: 4, con: 4, int: 3, lck: 3 }, skillBoost: { attack: 3, ranged: 3, magic: 3 },
       requirements: { slayer: 70 }, value: 5500,
-      description: {
-        en: "A crystalline amulet set with a void herald shard. Emanates cold, precise power across all combat styles.",
-        de: "Ein kristallines Amulett mit einem Leeren-Herold-Splitter. Ausstrahlung kalter, präziser Kraft über alle Kampfstile hinweg.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A crystalline amulet set with a void herald shard. Emanates cold, exact power across all three combat styles.",
+        de: "Ein kristallines Amulett mit einem Leeren-Herold-Splitter. Strahlt kalte, klare Kraft über alle drei Kampfstile aus.",
       },
     },
     // ── Slayer-Turm Etage 6–8: Punkte-Uniques (1.3.0 E3) ─────────────────────────────────────
@@ -6011,8 +6011,8 @@ export const content: ContentDB = {
       modifiers: { str: 5, dex: 5, int: 5, con: 7, lck: 2 }, skillBoost: { attack: 3, ranged: 3, magic: 3 },
       weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 },
       requirements: { slayer: 85 }, value: 12000,
-      description: {
-        en: "The First Turnkey's ring, gone blind with rust and duty. It opens nothing anymore; it only ever held things shut. A foe that burns, bleeds or suffers poison cannot regenerate while you wear it.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "The First Turnkey's ring, gone blind with rust and duty. It opens nothing anymore. It only ever held things shut. A foe that burns, bleeds or suffers poison cannot regenerate while you wear it.",
         de: "Der Ring des Ersten Schließers, blind geworden von Rost und Pflicht. Er öffnet nichts mehr, er hat immer nur zugehalten. Wer brennt, blutet oder vergiftet ist, regeneriert nicht, solange du ihn trägst.",
       },
     },
@@ -6024,9 +6024,9 @@ export const content: ContentDB = {
       modifiers: { str: 4, dex: 4, int: 4, con: 6, lck: 1 }, skillBoost: { attack: 3, ranged: 3, magic: 3 },
       weaponEffect: { type: "desperation", chance: 1, magnitude: 0.3, durationMs: 0, threshold: 0.3 },
       requirements: { slayer: 90 }, value: 15000,
-      description: {
-        en: "Brenna's predecessor wore it when he went down after something that had escaped. He never came back up, but the mantle turned up on the last stair. Below 30% health you deal 30% more damage.",
-        de: "Brennas Vorgänger trug ihn, als er einer entkommenen Sache hinab folgte. Er kam nie wieder herauf, doch der Mantel lag auf der letzten Treppe. Unter 30 % Leben verursachst du 30 % mehr Schaden.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Brenna's predecessor wore it when he went down after something that had escaped. He never came back up, but the mantle turned up on the last stair. Below 30% HP: +30% damage.",
+        de: "Brennas Vorgänger trug ihn, als er einer entkommenen Sache hinab folgte. Er kam nie wieder herauf, doch der Mantel lag auf der letzten Treppe. Unter 30 % HP: +30 % Schaden.",
       },
     },
     slayer_guest_right: {
@@ -6038,9 +6038,9 @@ export const content: ContentDB = {
       bonus: { hpRegenPerSec: 0.2 },
       weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.3, durationMs: 0 },
       requirements: { slayer: 95 }, value: 20000,
-      description: {
-        en: "A flat stone on a cord, colder than the hand that holds it. Its bearer was tolerated once, and some things below remember that. Whoever strikes you breaks guest-right: your next hit deals 30% more damage.",
-        de: "Ein flacher Stein an einer Schnur, kälter als die Hand, die ihn hält. Sein Träger wurde einmal geduldet, und manches da unten erinnert sich daran. Wer dich schlägt, bricht das Gastrecht: Dein nächster Treffer verursacht 30 % mehr Schaden.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A flat stone on a cord, colder than the hand that holds it. Its bearer was tolerated once, and some things below remember that. Whoever strikes you breaks guest-right: your next hit deals +30% damage.",
+        de: "Ein flacher Stein an einer Schnur, kälter als die Hand, die ihn hält. Sein Träger wurde einmal geduldet, und manches da unten erinnert sich daran. Wer dich schlägt, bricht das Gastrecht: Dein nächster Treffer macht +30 % Schaden.",
       },
     },
     // ── Slayer-Punkte-Sink: Verbrauchsgüter (run6-fix P1 — wiederkehrender Sink) ───────────
@@ -6054,11 +6054,11 @@ export const content: ContentDB = {
       // Task #238 (Trank-Impact-Pass): -150→-450, +3%→+8% crit — auf superRare-Gold-Tonika-Tier gehoben,
       // damit die Slayer-Punkte-Sinks nicht hinter den (jetzt stärkeren) Gold-Tränken zurückfallen.
       buff: { category: "offense", durationMs: 600_000, bonus: { attackIntervalMs: -450, critChance: 0.08 } },
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         // sweep6-batchE P3-3-fix: Text stand 10× über dem echten Buff-Wert (Stat-Squish-Drift nie
         // nachgezogen, s. W2-slayer.md). Effizienz: 1×10 / 12 Pkt = 0,83 dmg-min/pt.
-        en: "Distilled from Slayer Tower essence. Quickens your strikes (-450ms attack interval) and sharpens your aim (+8% crit) for 10 minutes.",
-        de: "Aus der Essenz des Slayer-Turms destilliert. Beschleunigt deine Schläge (-450 ms Angriffsintervall) und schärft deinen Blick (+8 % Krit) für 10 Minuten.",
+        en: "Distilled from Slayer Tower essence. For 10 minutes: attack interval −450 ms, crit chance +8%.",
+        de: "Destilliert aus der Essenz des Slayer-Turms. Für 10 Minuten: Angriffsintervall −450 ms, Krit-Chance +8 %.",
       },
     },
     slayer_hunters_elixir: {
@@ -6072,9 +6072,9 @@ export const content: ContentDB = {
       // Itemization 2.5 (Buff-Rework): melee/ranged/magicDamage (verboten) → attackIntervalMs (Tempo).
       // Task #238 (Trank-Impact-Pass): -270→-600, +5%→+12% crit, +15%→+20% crit dmg — epic-Gold-Tonika-Tier.
       buff: { category: "offense", durationMs: 1_800_000, bonus: { attackIntervalMs: -600, critChance: 0.12, critDamage: 0.20 } },
-      description: {
-        en: "Reserved for veteran Slayers. Hastens your attacks (-600ms interval), +12% crit, +20% crit damage for 30 minutes. Superior sustained uptime vs. the Combat Draught.",
-        de: "Nur für Slayer-Veteranen. Beschleunigt deine Angriffe (-600 ms Intervall), +12 % Krit, +20 % Krit-Schaden für 30 Minuten. Überlegene Dauerversorgung gegenüber dem Kampftrank.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Reserved for veteran Slayers. For 30 minutes: attack interval −600 ms, crit chance +12%, crit damage +20%. Outlasts the Combat Draught.",
+        de: "Vorbehalten den Veteranen der Jagd. Für 30 Minuten: Angriffsintervall −600 ms, Krit-Chance +12 %, Krit-Schaden +20 %. Hält länger vor als der Kampftrank.",
       },
     },
     // ══════════════════════════════════════════════════════════════════
@@ -6195,9 +6195,9 @@ export const content: ContentDB = {
       // Task #238 (Trank-Impact-Pass): -525→-750, +16%→+20% crit, +25%→+30% crit dmg — bleibt die
       // stärkste Tempo/Krit-Kombination im Spiel (aspirational, über allen Gold-Tonika).
       buff: { category: "offense", durationMs: 3_600_000, bonus: { attackIntervalMs: -750, critChance: 0.20, critDamage: 0.30 } },
-      description: {
-        en: "An ancient Slayer Master's formula. Greatly hastens your attacks (-750ms interval), +20% crit, +30% crit damage for 60 minutes. Reserved for the greatest hunts.",
-        de: "Die Formel eines alten Slayer-Meisters. Beschleunigt deine Angriffe drastisch (-750 ms Intervall), +20 % Krit, +30 % Krit-Schaden für 60 Minuten. Nur für die größten Jagden.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "An old Slayer Master's formula, kept for the greatest hunts. For 60 minutes: attack interval −750 ms, crit chance +20%, crit damage +30%.",
+        de: "Die Formel eines alten Slayer-Meisters, aufgehoben für die größten Jagden. Für 60 Minuten: Angriffsintervall −750 ms, Krit-Chance +20 %, Krit-Schaden +30 %.",
       },
     },
 
@@ -6802,7 +6802,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "offhand",
       modifiers: { con: 3, lck: 2 },
       requirements: { defence: 26 }, value: 260, rarity: "rare",
-      description: { en: "A tomb-marker recast as a ward. Carrying it feels like keeping a small, watchful grave close at hand.", de: "Ein Grabstein, umgeschmiedet zu einem Schutzzeichen. Es zu tragen fühlt sich an, als hielte man ein kleines, wachsames Grab bei sich." }, armorRating: 11.76, blockChance: 0.293,
+      description: { en: "A tomb-marker recast as a shield. Carrying it feels like keeping a small, watchful grave close at hand.", de: "Ein Grabstein, umgeschmiedet zu einem Schild. Es zu tragen fühlt sich an, als hielte man ein kleines, wachsames Grab bei sich." }, armorRating: 11.76, blockChance: 0.293, // claude:2026-10-24T20:16:00+02:00 Textpass P4
     },
     gravesteel_warplate: {
       id: "gravesteel_warplate", name: { en: "Gravesteel Warplate", de: "Grabstahl-Kriegsplatte" },
@@ -7594,9 +7594,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { attack: 99 }, value: 50000,
       modifiers: { str: 7, dex: 3, con: 2 }, armorPen: 0.02,
-      description: {
-        en: "Earned by a blade that has found every gap in every guard. Grants 2% armor penetration.",
-        de: "Erworben von einer Klinge, die jede Lücke in jeder Deckung fand. Gewährt 2 % Rüstungsdurchdringung.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Earned by a blade that has found every gap in every guard: +2% armor penetration.",
+        de: "Erworben von einer Klinge, die jede Lücke in jeder Deckung fand: +2 % Rüstungsbruch.",
       },
     },
     // Krönung: alle 20 Meisterweihen. Automatisch verliehen über den COMPLETION_CAPE_KEY-Pfad
@@ -7643,9 +7643,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { cooking: 99 }, value: 50000,
       modifiers: { int: 4, wis: 3, lck: 2 }, masterPerk: { kind: "alwaysSucceed", skill: "cooking", value: 1 },
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Stained by every dish it has ever overseen. Meals prepared while worn never fail.",
-        de: "Befleckt von jedem Gericht, das er je begleitet hat. Gerichte misslingen im Tragen nie.",
+        de: "Befleckt von jedem Gericht, das er je begleitet hat. Solange du ihn trägst, misslingt kein Gericht.",
       },
     },
     ring_master_defence: {
@@ -7653,9 +7653,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { defence: 99 }, value: 50000,
       modifiers: { con: 8, str: 2, dex: 2 }, blockChance: 0.02,
-      description: {
-        en: "Has turned aside blows that would have felled lesser guards. Grants 2% block chance.",
-        de: "Hat Schläge abgewehrt, die schwächere Wächter gefällt hätten. Gewährt 2 % Blockchance.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Has turned aside blows that would have felled lesser guards: +2% block chance.",
+        de: "Hat Schläge abgewehrt, die schwächere Wachen gefällt hätten: +2 % Blockchance.",
       },
     },
     // ring_master_enchanting: ERSATZLOS ENTFERNT (Welle TT, Chef-Entscheid 2026-07-18:
@@ -7669,9 +7669,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { farming: 99 }, value: 50000,
       modifiers: { con: 5, str: 2, lck: 2 }, evasionRating: 4, masterPerk: { kind: "cropSpeed", skill: "farming", value: 0.08 },
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Smells of turned soil and patient seasons. Crop plots ripen 8% faster while worn.",
-        de: "Riecht nach umgegrabener Erde und geduldigen Jahreszeiten. Beete reifen im Tragen 8 % schneller.",
+        de: "Riecht nach umgegrabener Erde und geduldigen Jahreszeiten. Beete reifen 8 % schneller, solange du ihn trägst.",
       },
     },
     ring_master_fishing: {
@@ -7699,9 +7699,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { herblore: 99 }, value: 50000,
       modifiers: { int: 4, wis: 3, lck: 2 }, masterPerk: { kind: "buffDuration", skill: "herblore", value: 0.10 },
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Steeped in bitter fumes for longer than memory. Tonics and brews last 10% longer while worn.",
-        de: "Länger als jede Erinnerung in bitteren Dämpfen gezogen. Tonika und Tränke wirken im Tragen 10 % länger.",
+        de: "Länger als jede Erinnerung in bitteren Dämpfen gezogen. Tonika und Tränke wirken 10 % länger, solange du ihn trägst.",
       },
     },
     // 1.2.0 „Fasern und Fallen": 21. Skill "hunting" braucht seinen Meisterring (Muster wie jeder
@@ -7719,9 +7719,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { hunting: 99 }, value: 50000,
       modifiers: { con: 5, dex: 2, lck: 2 }, evasionRating: 4, masterPerk: { kind: "doubleYield", skill: "hunting", value: 0.05 },
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Worn smooth by a thousand snares set and sprung. Every piece of loot from a catch has a 5% chance to come in double.",
-        de: "Von tausend gestellten und zugeschnappten Schlingen glatt geschliffen. Jeder Beute-Eintrag eines Fangs fällt mit 5 % Chance doppelt.",
+        de: "Von tausend gestellten und zugeschnappten Schlingen glatt geschliffen. Jede Beute aus einem Fang fällt mit 5 % Chance doppelt an.",
       },
     },
     ring_master_jewelcrafting: {
@@ -7749,9 +7749,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { magic: 99 }, value: 50000,
       modifiers: { int: 7, wis: 3, con: 2 }, wardBreak: 0.03,
-      description: {
-        en: "Forged from the residue of a thousand shattered wards. Grants 3% ward break.",
-        de: "Aus dem Rückstand tausend zerbrochener Schutzschilde geschmiedet. Gewährt 3 % Ward-Bruch.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Forged from the residue of a thousand shattered wards: +3% ward break.",
+        de: "Aus dem Rückstand tausend zerbrochener Wards geschmiedet: +3 % Ward-Bruch.",
       },
     },
     ring_master_mining: {
@@ -7769,9 +7769,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { power: 99 }, value: 50000,
       modifiers: { str: 7, con: 3, dex: 2 }, bonus: { critDamage: 0.03 },
-      description: {
-        en: "Carries the weight of a warlord's every finishing blow. Grants 3% critical damage.",
-        de: "Trägt das Gewicht jedes entscheidenden Schlags eines Kriegsherrn. Gewährt 3 % Krit-Schaden.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Carries the weight of a warlord's every finishing blow: +3% crit damage.",
+        de: "Trägt das Gewicht jedes entscheidenden Schlags eines Kriegsherrn: +3 % Krit-Schaden.",
       },
     },
     ring_master_ranged: {
@@ -7779,9 +7779,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { ranged: 99 }, value: 50000,
       modifiers: { dex: 7, con: 3, lck: 2 }, precision: 0.02,
-      description: {
-        en: "Sharpens the eye until no dodge feels fast enough. Grants 2% precision.",
-        de: "Schärft das Auge, bis kein Ausweichen mehr schnell genug scheint. Gewährt 2 % Präzision.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Sharpens the eye until no dodge feels fast enough: +2% precision.",
+        de: "Schärft das Auge, bis kein Ausweichen mehr schnell genug scheint: +2 % Präzision.",
       },
     },
     ring_master_runecrafting: {
@@ -7855,9 +7855,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { vitality: 99 }, value: 50000,
       modifiers: { con: 9, str: 2, dex: 1 }, bonus: { hpRegenPerSec: 0.2 },
-      description: {
-        en: "Has never once let its bearer fall for good. Grants 0.2 HP regeneration per second.",
-        de: "Ließ seinen Träger nie endgültig fallen. Gewährt 0,2 HP-Regeneration pro Sekunde.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Has never once let its bearer fall for good: +0.2 HP regeneration per second.",
+        de: "Ließ seinen Träger nie endgültig fallen: +0,2 HP-Regeneration pro Sekunde.",
       },
     },
     ring_master_warding: {
@@ -7865,9 +7865,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { warding: 99 }, value: 50000,
       modifiers: { wis: 7, con: 3, int: 2 }, skillBoost: { warding: 5 },
-      description: {
-        en: "Keeps silent vigil over the soul's own shield. Raises effective Warding by 5, strengthening ward regeneration.",
-        de: "Hält stille Wacht über den Schutzschild der Seele. Erhöht die effektive Abwehr-Stufe um 5 und stärkt die Ward-Regeneration.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Keeps silent vigil over the soul's own ward. Counts as 5 extra levels of Warding, so your ward regenerates faster.",
+        de: "Hält stille Wacht über den Ward der Seele. Zählt als 5 Level Abwehr mehr und lässt den Ward darum schneller nachwachsen.",
       },
     },
     ring_master_woodcutting: {
@@ -7875,9 +7875,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { woodcutting: 99 }, value: 50000,
       modifiers: { con: 5, str: 2, lck: 2 }, evasionRating: 4, masterPerk: { kind: "doubleYield", skill: "woodcutting", value: 0.05 },
-      description: {
-        en: "Carved from living bark by the first Grovewarden. Grants a 5% chance to fell double timber.",
-        de: "Aus lebender Rinde vom ersten Hainhüter geschnitzt. Gewährt 5 % Chance auf doppeltes Holz.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Carved from living bark by the first Grovewarden: 5% chance to fell double timber.",
+        de: "Aus lebender Rinde vom ersten Hainhüter geschnitzt: 5 % Chance auf doppeltes Holz.",
       },
     },
 
@@ -8201,9 +8201,9 @@ export const content: ContentDB = {
     // Gated-Drop-Decke ±15"-Konvention gegen sim-consistency checkDropRequirementGap geprüft.
     duskfang_ripper: {
       id: "duskfang_ripper", name: { en: "Duskfang Ripper", de: "Dämmerfang-Reißer" },
-      description: {
-        en: "A curved shiv forged from a vulture's talon — light, quick, and cruel in the draw.",
-        de: "Ein gekrümmter Stichdolch aus einer Geierkralle geschmiedet — leicht, schnell und grausam im Zug.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A curved shiv forged from a vulture's talon. Light, quick, and cruel on the draw.",
+        de: "Ein krummer Stichdolch, geschmiedet aus einer Geierkralle. Leicht, schnell und grausam, sobald er zieht.",
       },
       type: "equipment", stackable: false, icon: "🗡️", slot: "mainhand", weaponStyle: "melee",
       weaponType: "dagger",
@@ -8215,9 +8215,9 @@ export const content: ContentDB = {
     ribcage_hewer: {
       weaponEffect: { type: "critBurst", chance: 1, magnitude: 8, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "ribcage_hewer", name: { en: "Ribcage Hewer", de: "Rippenkäfig-Hauer" },
-      description: {
-        en: "A treant-bark battleaxe, its edge hardened in Blackthorn sap until it bites like iron.",
-        de: "Eine Baumrinden-Kampfaxt, deren Schneide in Schwarzdorn-Harz gehärtet wurde, bis sie wie Eisen beißt.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A battleaxe with a blade split from a bone colossus's ribcage, honed until it bites like iron.",
+        de: "Eine Kampfaxt mit einem Blatt aus dem Rippenkäfig eines Knochenkolosses, geschliffen, bis es wie Eisen beißt.",
       },
       type: "equipment", stackable: false, icon: "🪓", slot: "mainhand", weaponStyle: "melee",
       weaponType: "battleaxe",
@@ -8228,9 +8228,9 @@ export const content: ContentDB = {
     mossheart_crusher: {
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 5 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "mossheart_crusher", name: { en: "Mossheart Crusher", de: "Moosherz-Zermalmer" },
-      description: {
-        en: "A golem-core maul of packed stone and root — every swing lands like a falling wall.",
-        de: "Ein Streithammer aus verdichtetem Stein und Wurzelwerk mit Golem-Kern — jeder Schlag trifft wie eine einstürzende Mauer.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A golem-core maul of packed stone and root. Every swing lands like a falling wall.",
+        de: "Ein Streithammer aus verdichtetem Stein und Wurzelwerk um einen Golemkern. Jeder Schlag trifft wie eine einstürzende Mauer.",
       },
       type: "equipment", stackable: false, icon: "🔨", slot: "mainhand", weaponStyle: "melee", twoHanded: true,
       weaponType: "maul",
@@ -8240,9 +8240,9 @@ export const content: ContentDB = {
     },
     chorus_impaler: {
       id: "chorus_impaler", name: { en: "Chorus Impaler", de: "Chorspieß" },
-      description: {
-        en: "A grave-forged pike, its haft wound in burial cloth — the crypt's silence rides on its point.",
-        de: "Ein grabgeschmiedeter Spieß, dessen Schaft in Grabtuch gewickelt ist — die Stille der Krypta reitet auf seiner Spitze.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A grave-forged pike, its haft wound in burial cloth. The crypt's silence rides on its point.",
+        de: "Ein grabgeschmiedeter Spieß, der Schaft in Grabtuch gewickelt. Die Stille der Krypta reitet auf seiner Spitze.",
       },
       type: "equipment", stackable: false, icon: "🔱", slot: "mainhand", weaponStyle: "melee", twoHanded: true,
       weaponType: "spear",
@@ -8331,9 +8331,9 @@ export const content: ContentDB = {
     // Chase (kein Zusatzeffekt — reiner Next-Tier-Statstick).
     choirbound_relic: {
       id: "choirbound_relic", name: { en: "Choirbound Relic", de: "Chorgebundenes Relikt" },
-      description: {
-        en: "A staff salvaged from the hollow choir's shrine — it carries their drone into every strike.",
-        de: "Ein Stab aus dem Schrein des hohlen Chors geborgen — er trägt ihr Dröhnen in jeden Schlag.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A staff salvaged from the Hollow Choir's shrine. It carries their drone into every strike.",
+        de: "Ein Stab, aus dem Schrein des Hohlen Chors geborgen. Er trägt ihr Dröhnen in jeden Schlag.",
       },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
@@ -8357,9 +8357,9 @@ export const content: ContentDB = {
     soulflayer_snapbow: {
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "soulflayer_snapbow", name: { en: "Soulflayer Snapbow", de: "Seelenschinder-Schnappbogen" },
-      description: {
-        en: "A short, wicked recurve carved from flayed-soul horn — its draw is nearly silent.",
-        de: "Ein kurzer, bösartiger Recurve aus geschundenem Seelenhorn geschnitzt — sein Zug ist fast lautlos.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A short, wicked recurve carved from flayed-soul horn. Its draw is nearly silent.",
+        de: "Ein kurzer, bösartiger Recurve, geschnitzt aus geschundenem Seelenhorn. Sein Zug ist fast lautlos.",
       },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
@@ -8408,9 +8408,9 @@ export const content: ContentDB = {
       icon: "🧭",
       type: "equipment", stackable: false, slot: "ring1", rarity: "rare", value: 650,
       weaponEffect: { type: "lootChance", chance: 1, magnitude: 0.03, durationMs: 0 },
-      description: {
-        en: "Carried by pilgrims marking the road from the border camp to the first shrine of ash. A keener eye for the road grants +3% loot chance from regular kills while worn.",
-        de: "Getragen von Pilgern, die den Weg vom Grenzlager zum ersten Aschen-Schrein markierten. Ein geschärfter Blick für den Weg gewährt +3 % Beutechance auf reguläre Kills, solange es getragen wird.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Carried by pilgrims who marked the road from the border camp to the first shrine of ash. An eye that knows the road sees more beside it: +3% loot chance from regular kills while worn.",
+        de: "Getragen von Pilgern, die den Weg vom Grenzlager zum ersten Aschenschrein absteckten. Wer den Weg so gut kennt, sieht mehr am Wegrand: +3 % Beutechance bei gewöhnlichen Gegnern, solange du es trägst.",
       },
     },
     chronicle_ash_mark: {
@@ -8419,9 +8419,9 @@ export const content: ContentDB = {
       icon: "🔥",
       type: "equipment", stackable: false, slot: "amulet", rarity: "rare", value: 800,
       weaponEffect: { type: "combatXp", chance: 1, magnitude: 0.05, durationMs: 0 },
-      description: {
-        en: "Branded into hunters who survived the Ashfields' burning collapse. Grants +5% combat experience while worn.",
-        de: "Gebrannt in Jäger, die den brennenden Einsturz der Aschfelder überlebten. Gewährt +5 % Kampf-Erfahrung, solange es getragen wird.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Branded into hunters who survived the Ashfields' burning collapse: +5% combat XP while worn.",
+        de: "Gebrannt in Jäger, die den brennenden Einsturz der Aschfelder überlebten: +5 % Kampf-XP, solange du sie trägst.",
       },
     },
     chronicle_crypt_lantern: {
@@ -8430,9 +8430,9 @@ export const content: ContentDB = {
       icon: "🏮",
       type: "equipment", stackable: false, slot: "cape", rarity: "rare", value: 850,
       weaponEffect: { type: "lootChance", chance: 1, magnitude: 0.05, durationMs: 0 },
-      description: {
-        en: "Once lit the passages of the Crypt for the diggers who first broke its seals. Grants +5% loot chance from regular kills while worn.",
-        de: "Erhellte einst die Gänge der Krypta für die Ausgräber, die ihre Siegel als Erste brachen. Gewährt +5 % Beutechance auf reguläre Kills, solange es getragen wird.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "It once lit the passages of the Crypt for the diggers who first broke its seals: +5% loot chance from regular kills while worn.",
+        de: "Erhellte einst die Gänge der Krypta für die Ausgräber, die ihre Siegel als Erste brachen: +5 % Beutechance bei gewöhnlichen Gegnern, solange du sie trägst.",
       },
     },
     // cooldownOnKill 500ms = die Hälfte der Rune der Rastlosen (1000ms, design/runen-tier-iv.html
@@ -8443,9 +8443,9 @@ export const content: ContentDB = {
       icon: "🌊",
       type: "equipment", stackable: false, slot: "amulet", rarity: "rare", value: 1100,
       weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 500 },
-      description: {
-        en: "Forged from links dredged out of the Slag Pit's flooded coast. Kills shave half a second off your recovery pause.",
-        de: "Geschmiedet aus Gliedern, die aus der überfluteten Küste der Schlackengrube gebaggert wurden. Tötungen verkürzen deine Erholungspause um eine halbe Sekunde.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Forged from links dredged out of the Slag Pit's flooded coast: every kill shortens your recovery pause by half a second.",
+        de: "Geschmiedet aus Gliedern, aus der überfluteten Küste der Schlackengrube gebaggert: Jeder Kill verkürzt deine Erholungspause um eine halbe Sekunde.",
       },
     },
     chronicle_idol_eye_ring: {
@@ -8454,9 +8454,9 @@ export const content: ContentDB = {
       icon: "👁️",
       type: "equipment", stackable: false, slot: "ring1", rarity: "rare", value: 1250,
       weaponEffect: { type: "bounty", chance: 1, magnitude: 0.10, durationMs: 0 },
-      description: {
-        en: "Set with a shard pried from the Idol Hall's watching statue. Grants +10% damage against your active slayer target.",
-        de: "Besetzt mit einem Splitter aus der wachenden Statue der Götzenhalle. Gewährt +10 % Schaden gegen dein aktives Slayer-Ziel.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Set with a shard pried from the Idol Hall's watching statue: +10% damage against your active Slayer target.",
+        de: "Besetzt mit einem Splitter aus der wachenden Statue der Götzenhalle: +10 % Schaden gegen dein aktives Slayer-Ziel.",
       },
     },
     // Chase des Ladens (höchstes Regal): combatXp 0.08 bleibt unter der Chronik-Rune (0.10, s.o.),
@@ -8468,9 +8468,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "ring1", rarity: "rare", value: 1500,
       modifiers: { con: 5, lck: 1 },
       weaponEffect: { type: "combatXp", chance: 1, magnitude: 0.08, durationMs: 0 },
-      description: {
-        en: "Pressed into the wax of every chapter sealed in the camp's growing chronicle. Grants +8% combat experience while worn.",
-        de: "In das Wachs jedes Kapitels gedrückt, das in der wachsenden Chronik des Lagers versiegelt wurde. Gewährt +8 % Kampf-Erfahrung, solange es getragen wird.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Pressed into the wax of every chapter sealed in the growing Chronicle: +8% combat XP while worn.",
+        de: "In das Wachs jedes Kapitels gedrückt, das in der wachsenden Chronik versiegelt wurde: +8 % Kampf-XP, solange du es trägst.",
       },
     },
     // Engine-Kind `slayerReroll` liefert logic-dev parallel (shared ConsumableEffectKind,
@@ -8482,9 +8482,9 @@ export const content: ContentDB = {
       icon: "📋",
       type: "consumable", stackable: true, rarity: "rare", value: 15,
       consumable: { kind: "slayerReroll" },
-      description: {
-        en: "A stamped token traded among slayers for a fresh contract. Rerolls your active slayer task for free without breaking your streak.",
-        de: "Eine gestempelte Marke, die Monsterjäger gegen einen frischen Auftrag eintauschen. Würfelt deinen aktiven Slayer-Auftrag gratis neu, ohne deine Serie zu brechen.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "A stamped token slayers trade for a fresh contract. Rerolls your active Slayer task for free, without breaking your streak.",
+        de: "Eine gestempelte Marke, die Slayer gegen einen frischen Auftrag eintauschen. Würfelt deinen aktiven Slayer-Auftrag gratis neu, ohne deine Serie zu brechen.",
       },
     },
 
@@ -8528,9 +8528,9 @@ export const content: ContentDB = {
       modifiers: { lck: 1 },
       weaponEffect: { type: "healOnKill", chance: 1, magnitude: 2, durationMs: 0 },
       requirements: { ranged: 15 }, value: 230, rarity: "rare",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Carved from bone hollowed out by the Slayer Tower's lowest wretches. Every kill draws a sliver of vigor back through the bowstring.",
-        de: "Geschnitzt aus Knochen, die von den niedrigsten Elenden des Monsterjäger-Turms ausgehöhlt wurden. Jede Tötung zieht einen Splitter Kraft zurück durch die Bogensehne.",
+        de: "Geschnitzt aus Knochen, die die niedrigsten Elenden des Slayer-Turms ausgehöhlt haben. Jeder Kill zieht einen Splitter Kraft zurück durch die Sehne.",
       },
     },
     crossbower_warbow: {
@@ -8564,9 +8564,9 @@ export const content: ContentDB = {
       modifiers: { lck: 2 },
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
       requirements: { ranged: 50 }, value: 1200, rarity: "superRare",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Grown and bent around a moss golem's petrified heartwood core. Draws true against anything already staggering toward death.",
-        de: "Gewachsen und gebogen um den versteinerten Kernholzkern eines Moosgolems. Zielt sicher auf alles, was bereits dem Tod entgegentaumelt.",
+        de: "Gewachsen und gebogen um das versteinerte Kernholz eines Moosgolems. Zielt sicher auf alles, was schon dem Tod entgegentaumelt.",
       },
     },
     emberglass_shortbow: {
@@ -8600,9 +8600,9 @@ export const content: ContentDB = {
       modifiers: { dex: 1, lck: 1 },
       weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.25, durationMs: 0 },
       requirements: { ranged: 70 }, value: 1900, rarity: "superRare",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Wrought from the fused vertebrae of a Crypt spearman who never laid down his spear. The first drop of blood it draws always draws the most.",
-        de: "Geschmiedet aus den verschmolzenen Wirbeln eines Gruft-Speerträgers, der seinen Speer nie ablegte. Der erste gezogene Blutstropfen zieht stets am meisten.",
+        de: "Geschmiedet aus den verschmolzenen Wirbeln eines Speerträgers der Krypta, der seinen Speer nie ablegte. Der erste Blutstropfen, den er zieht, zieht stets am meisten.",
       },
     },
     butchers_hookbow: {
@@ -8612,9 +8612,9 @@ export const content: ContentDB = {
       modifiers: { lck: 2 },
       weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 },
       requirements: { ranged: 70 }, value: 1900, rarity: "superRare",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Fitted with the meat hooks of the Crypt's skeleton butcher, still faintly rust red. Every kill lets its wielder carve a little vigor back for themselves.",
-        de: "Bestückt mit den Fleischerhaken des Gruft-Skelettschlächters, noch leicht rostrot. Jede Tötung erlaubt seinem Träger, sich ein wenig Kraft zurückzuschneiden.",
+        de: "Bestückt mit den Fleischerhaken des Skelett-Schlächters der Krypta, noch leicht rostrot. Mit jedem Kill schneidet sich sein Träger ein wenig Kraft zurück.",
       },
     },
 
@@ -8625,9 +8625,9 @@ export const content: ContentDB = {
       damageMin: 1.3, damageMax: 1.6, spellFocus: 0.0025, attackIntervalMs: 2700,
       weaponEffect: { type: "burn", chance: 0.2, magnitude: 2, durationMs: 3000 },
       requirements: { magic: 10 }, value: 230, rarity: "rare",
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Whittled from a pasture imp's own charred horn, still warm to the touch. A tap of its tip is enough to set cloth smoldering.",
-        de: "Geschnitzt aus dem verkohlten Horn eines Weiden-Imps, noch warm bei Berührung. Eine Berührung mit der Spitze genügt, um Stoff schwelen zu lassen.",
+        de: "Geschnitzt aus dem verkohlten Horn eines Weiden-Imps, noch warm in der Hand. Ein Tippen mit der Spitze genügt, um Stoff schwelen zu lassen.",
       },
     },
     shaman_gnarlstaff: {
@@ -8696,9 +8696,9 @@ export const content: ContentDB = {
       modifiers: { int: 2, wis: 3, lck: 1 },
       weaponEffect: { type: "catalyst", chance: 1, magnitude: 0, durationMs: 1500 },
       requirements: { magic: 30 }, value: 640, rarity: "rare",
-      description: {
-        en: "Blown from felglass cooled on the Tower's whispering floor, an ashfield wraith's dying breath sealed inside. Every so often it shortens the wait before the next spell.",
-        de: "Aus Felglas geblasen, das auf der flüsternden Etage des Turms erkaltete, der letzte Atemzug eines Aschefeld-Wraiths darin versiegelt. Hin und wieder verkürzt es die Wartezeit bis zum nächsten Zauber.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Blown from felglass cooled in the Tower's Mirror Halls, an ashfield wraith's dying breath sealed inside. Every so often it shortens the wait before the next spell.",
+        de: "Aus Felglas geblasen, das in den Spiegelhallen des Turms erkaltete, der letzte Atem eines Aschefeld-Wraiths darin versiegelt. Hin und wieder verkürzt es die Wartezeit bis zum nächsten Zauber.",
       },
     },
     dreadfang_fetish: {
@@ -8707,9 +8707,9 @@ export const content: ContentDB = {
       modifiers: { int: 3, wis: 5, lck: 2 },
       weaponEffect: { type: "wardSiphon", chance: 1, magnitude: 0.08, durationMs: 0 },
       requirements: { magic: 60 }, value: 2700, rarity: "superRare",
-      description: {
-        en: "Strung from the fangs of Dreadfang itself, deep on the Tower's whispering floor. Every hit siphons a sliver of its target's own ward back to its bearer.",
-        de: "Aus den Fängen von Schreckenzahn selbst gefertigt, tief auf der flüsternden Etage des Turms. Jeder Treffer entzieht dem Ziel einen Splitter seines eigenen Schilds und gibt ihn dem Träger zurück.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Strung from the fangs of Dreadfang itself, deep in the Tower's Whispering Void. Every hit siphons a sliver of its target's own ward back to its bearer.",
+        de: "Aus den Fängen von Schreckenzahn selbst gefertigt, tief in der Flüsternden Leere des Turms. Jeder Treffer entzieht dem Ziel einen Splitter seines Wards und gibt ihn dem Träger.",
       },
     },
 
@@ -8808,9 +8808,9 @@ export const content: ContentDB = {
       modifiers: { dex: 1, con: 5 },
       weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 },
       requirements: { ranged: 60 }, value: 1150, rarity: "superRare", evasionRating: 13.3,
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Wrapped from a Crypt skeleton's own binding cloth, still holding its shape long after the bone beneath it crumbled. Sit tightest when their wearer's own strength is running thin.",
-        de: "Umwickelt mit dem eigenen Bindetuch eines Gruft-Skeletts, das seine Form noch lange hielt, nachdem der Knochen darunter zerfiel. Sitzen am festesten, wenn die eigene Kraft des Trägers zur Neige geht.",
+        de: "Gewickelt aus dem Bindetuch eines Krypta-Skeletts, das seine Form lange hielt, nachdem der Knochen darunter zerfiel. Sitzen am festesten, wenn die Kraft des Trägers zur Neige geht.",
       },
     },
     butchers_hide_leggings: {
@@ -8821,9 +8821,9 @@ export const content: ContentDB = {
       // Guard-Korrektur (drop-gear-beats-craft.test.ts): echtes Craft-Gegenstück dragonhide_legs
       // (R82) trägt 23.64, nicht 23.6 aus der Dokument-Rundung — auf 23.7 angehoben.
       requirements: { ranged: 70 }, value: 5300, rarity: "superRare", evasionRating: 23.7,
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Cut from the same hide the Crypt's skeleton butcher once wore into its own kills. They fall hardest on anything built bigger than their wearer.",
-        de: "Geschnitten aus demselben Leder, das der Gruft-Skelettschlächter einst bei seinen eigenen Tötungen trug. Sie treffen am härtesten alles, was größer gebaut ist als ihr Träger.",
+        de: "Geschnitten aus demselben Leder, das der Skelett-Schlächter der Krypta einst bei seinen Kills trug. Sie treffen am härtesten alles, was größer gebaut ist als ihr Träger.",
       },
     },
     roc_feather_cap: {
@@ -8978,9 +8978,9 @@ export const content: ContentDB = {
       // Guard-Korrektur (drop-gear-beats-craft.test.ts): echtes Craft-Gegenstück godspark_vestment
       // (R85) trägt 142.85, nicht 142.8 aus der Dokument-Rundung — auf 142.9 angehoben.
       requirements: { magic: 70 }, value: 8600, rarity: "superRare", wardCapacity: 142.9,
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Draped from a Crypt spearman's own burial vestment, the weave still cold as the grave. A lucky hit against its wearer comes back with interest.",
-        de: "Drapiert aus dem eigenen Grabgewand eines Gruft-Speerträgers, das Gewebe noch kalt wie das Grab. Ein glücklicher Treffer gegen seinen Träger kommt mit Zinsen zurück.",
+        de: "Drapiert aus dem eigenen Grabgewand eines Speerträgers der Krypta, das Gewebe noch kalt wie das Grab. Ein glücklicher Treffer gegen seinen Träger kommt mit Zinsen zurück.",
       },
     },
     hexed_bone_gloves: {
@@ -8989,9 +8989,9 @@ export const content: ContentDB = {
       modifiers: { con: 4, int: 7, wis: 3 },
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
       requirements: { magic: 70 }, value: 5600, rarity: "superRare", wardCapacity: 66.7,
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Fitted with finger bones hexed by the Crypt's own skeleton butcher. They finish what already stands at death's door.",
-        de: "Bestückt mit Fingerknochen, die vom Skelettschlächter der Gruft selbst verhext wurden. Sie beenden, was bereits an der Schwelle des Todes steht.",
+        de: "Bestückt mit Fingerknochen, die der Skelett-Schlächter der Krypta selbst verhext hat. Sie beenden, was bereits an der Schwelle des Todes steht.",
       },
     },
     drowned_choir_mitre: {
@@ -9035,9 +9035,9 @@ export const content: ContentDB = {
       id: "tonic_windstride", name: { en: "Windstride Tonic", de: "Windschritt-Tonikum" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "consumable", stackable: true, rarity: "superRare", value: 110,
       buff: { category: "attribute", durationMs: 90_000, bonus: {}, modifiers: { dex: 6 } },
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "A tonic brewed to lengthen a hunter's stride between shots. The world seems to slow just enough to line up the next one.",
-        de: "Ein Tonikum, gebraut um den Schritt eines Jägers zwischen den Schüssen zu verlängern. Die Welt scheint sich gerade genug zu verlangsamen, um den nächsten zu setzen.",
+        de: "Ein Tonikum, gebraut, um den Schritt eines Jägers zwischen zwei Schüssen zu strecken. Die Welt wird gerade langsam genug, um den nächsten zu setzen.",
       },
     },
     tonic_wardveil: {
@@ -9156,17 +9156,17 @@ export const content: ContentDB = {
     fiber_nettle: {
       id: "fiber_nettle", name: { en: "Nettle Fiber", de: "Nesselfaser" },
       type: "material", stackable: true, icon: "🧵", value: 4,
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Stinging nettle stalks, stripped and dried until the sting is gone and only the thread remains.",
-        de: "Brennnesselstängel, gestreift und getrocknet, bis der Stich verschwindet und nur der Faden bleibt.",
+        de: "Brennnesselstängel, abgezogen und getrocknet, bis das Brennen verschwindet und nur der Faden bleibt.",
       },
     },
     fiber_flax: {
       id: "fiber_flax", name: { en: "Flax", de: "Flachs" },
       type: "material", stackable: true, icon: "🧵", value: 9,
-      description: {
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
         en: "Slender stalks retted and combed smooth, the oldest thread the Reach ever spun.",
-        de: "Schlanke Stängel, geröstet und glattgekämmt, der älteste Faden, den der Reach je gesponnen hat.",
+        de: "Schlanke Stängel, geröstet und glattgekämmt, der älteste Faden, den das Reach je gesponnen hat.",
       },
     },
     fiber_thornhemp: {
@@ -9287,33 +9287,33 @@ export const content: ContentDB = {
     bait_maggot: {
       id: "bait_maggot", name: { en: "Maggot Bait", de: "Madenköder" },
       type: "material", stackable: true, icon: "🐛", value: 3,
-      description: {
-        en: "Fat maggots scooped from the mud where the fish gather; game in the ash and thorn country cannot resist them.",
-        de: "Fette Maden aus dem Schlamm, in dem sich die Fische sammeln; das Wild der Asche- und Dornenlande kann ihnen nicht widerstehen.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Fat maggots scooped from the mud where the fish gather. Game in the ash and thorn country cannot resist them.",
+        de: "Fette Maden aus dem Schlamm, in dem sich die Fische sammeln. Das Wild der Asche- und Dornenlande kann ihnen nicht widerstehen.",
       },
     },
     bait_crab: {
       id: "bait_crab", name: { en: "Crab Bait", de: "Krebsköder" },
       type: "material", stackable: true, icon: "🦀", value: 8,
-      description: {
-        en: "Cracked crab meat, salted for the trip; the beasts of crypt and wildwood follow the smell for miles.",
-        de: "Aufgebrochenes Krebsfleisch, für den Weg gesalzen; das Wild von Krypta und Wildwald folgt dem Geruch meilenweit.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Cracked crab meat, salted for the road. The beasts of crypt and wildwood follow the smell for miles.",
+        de: "Aufgebrochenes Krebsfleisch, für den Weg gesalzen. Das Wild von Krypta und Wildwald folgt dem Geruch meilenweit.",
       },
     },
     bait_squid: {
       id: "bait_squid", name: { en: "Squid Bait", de: "Tintenfischköder" },
       type: "material", stackable: true, icon: "🦑", value: 20,
-      description: {
-        en: "Strips of squid from the deep coast, dark and oily; nothing on the shore or in the slag pits ignores it.",
-        de: "Streifen Tintenfisch von der tiefen Küste, dunkel und ölig; nichts am Strand oder in den Schlackengruben lässt ihn liegen.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Strips of squid from the deep coast, dark and oily. Nothing on the shore or in the slag pits ignores it.",
+        de: "Streifen Tintenfisch von der tiefen Küste, dunkel und ölig. Nichts am Strand oder in den Schlackengruben lässt ihn liegen.",
       },
     },
     bait_glow: {
       id: "bait_glow", name: { en: "Glow Bait", de: "Glühköder" },
       type: "material", stackable: true, icon: "✨", value: 50,
-      description: {
-        en: "Glowworms bound into a faintly shining lure; the wyverns of the highlands and the wardens of the idol hall come to the light.",
-        de: "Glühwürmer, zu einem schwach leuchtenden Köder gebunden; die Wyvern des Hochlands und die Wächter der Götzenhalle kommen zum Licht.",
+      description: { // claude:2026-10-24T20:16:00+02:00 Textpass P4
+        en: "Glowworms bound into a faintly shining lure. The wyverns of the highlands and the wardens of the idol hall come to the light.",
+        de: "Glühwürmer, zu einem schwach leuchtenden Köder gebunden. Die Wyvern des Hochlands und die Wächter der Götzenhalle kommen zum Licht.",
       },
     },
   },
