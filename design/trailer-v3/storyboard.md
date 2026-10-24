@@ -94,27 +94,34 @@ Spielansicht als Textur im Raum, **Vignette** = Skill-Vorlage (§ 6.7), **Typo**
 
 ## 5 Sprechertext
 
-Regie: Der Wächter spricht wie ein wortkarger, alter Mann am Feuer. Kein Trailer-Pathos, keine tiefe Kinostimme,
-eher müde Ruhe mit trockenem Unterton. Der Kriegskönig spricht langsam, rau, selbstsicher. Musik wird unter jeder Zeile
-um etwa 5 dB abgesenkt.
+<!-- claude:2026-10-24T11:40:00+02:00 — Aufnahme des Chefs („Video Project 2“, 43,4 s) in 14 Zeilen geschnitten und eingepasst -->
 
-| # | Start (s) | Sprecher | Text | Länge ca. |
+Regie: Der Wächter spricht wie ein wortkarger, alter Mann am Feuer. Kein Trailer-Pathos, keine tiefe Kinostimme, eher
+müde Ruhe mit trockenem Unterton. Musik wird unter jeder Zeile um etwa 5 dB abgesenkt.
+
+**Aufnahme vorhanden** (Chef, 24.10.): geschnitten nach `marketing/trailer-v3/voice/vo01.wav` … `vo14.wav`, Pausen
+innerhalb einer Zeile behutsam gekürzt (höchstens 0,22–0,40 s), Spitze −1 dBFS. Hörprobe Musik + Stimme:
+`marketing/trailer-v3/voice/trailer-ton-vorschau.mp3`. Start = Zeitpunkt im Trailer, Ende inklusive kurzem Ausklang.
+
+| # | Start (s) | Ende (s) | Text | Anschluss |
 |---|---|---|---|---|
-| VO1 | 4,6 | Wächter | The world out there is lost. | 2,2 s |
-| VO2 | 9,5 | Wächter | Hearthforge fell. We carried the embers here. | 3,0 s |
-| VO3 | 13,2 | Wächter | It isn't much. It's all we have left. | 2,7 s |
-| VO4 | 17,2 | Wächter | So you'll do the work. | 1,5 s |
-| VO5 | 19,9 | Wächter | All of it. | 0,8 s |
-| VO6 | 22,3 | Wächter | And when they come, you fight. | 1,8 s (endet vor dem Aussetzer bei 24,0) |
-| VO7 | 27,6 | Wächter | Fish. Herbs. Leather. Whatever keeps us breathing. | 2,8 s |
-| VO8 | 31,0 | Wächter | Steel holds better. | 1,2 s |
-| VO9 | 32,6 | Wächter | And when you sleep, the work goes on. | 2,3 s (endet vor dem Crash 35,10) |
-| VO10 | 35,6 | Wächter | Out past the wall, they're waiting. | 2,1 s |
-| VO11 | 40,5 | Wächter | Goblins. The dead. Things with too many teeth. | 2,9 s |
-| VO12 | 45,6 | Wächter | Under the old keep, there's a king. | 2,0 s (endet in der Stille vor 48,07) |
-| VO13 | 69,2 / 70,5 | Wächter | The Reach can't be saved. … Only held. | 1,4 s + 0,8 s |
+| VO1 | 4,60 | 7,28 | The world out there is lost. | |
+| VO2 | 9,40 | 13,17 | Hearthforge fell. We carried the embers here. | |
+| VO3 | 13,40 | 16,22 | It isn't much. It's all we have left. | |
+| VO4 | 17,20 | 18,97 | So you'll do the work. | |
+| VO5 | 19,90 | 20,73 | All of it. | |
+| VO6 | 21,50 | 24,01 | And when they come, you fight. | Sprache endet vor dem Aussetzer bei 24,0 |
+| VO7 | 25,70 | 30,09 | Fish. Herbs. Leather. Whatever keeps us breathing. | nach dem ersten Treffer |
+| VO8 | 30,15 | 32,09 | Steel holds better. | |
+| VO9 | 32,15 | 35,09 | And when you sleep, the work goes on. | endet vor dem Crash 35,10 |
+| VO10 | 35,60 | 38,17 | Out past the wall, they're waiting. | |
+| VO11 | 40,30 | 44,18 | Goblins. The dead. Things with too many teeth. | |
+| VO12 | 45,60 | 48,02 | Under the old keep, there's a king. | endet in der Stille vor dem Epic Switch |
+| VO13 | 68,85 | 70,77 | The Reach can't be saved. | direkt nach dem Höhepunkt |
+| VO14 | 70,95 | 72,13 | Only held. | „held“ fällt auf den Finale-Einsatz 71,41 |
 
-
+Hinweis: Die Aufnahme ist langsamer gesprochen als geschätzt. Der Block VO7–VO9 füllt 25,7–35,1 s fast lückenlos; wird
+er zu dicht, ist „Steel holds better.“ die Zeile, die am ehesten entfallen kann.
 
 ## 6 Technik-Plan: die Trailer-Bühne
 
