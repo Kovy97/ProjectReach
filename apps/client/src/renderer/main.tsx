@@ -1,4 +1,5 @@
 import React from "react";
+import { GlobalTitleTip } from "./components/GlobalTitleTip";
 import ReactDOM from "react-dom/client";
 import { App } from "./App";
 // Scene-Builder (Chef-Auftrag "Arena-Scene-Builder", reaktiviert 2026-08-04): der EINE externe
@@ -32,5 +33,9 @@ if (!root) throw new Error("#root nicht gefunden");
 const sceneBuilderZoneId = getSceneBuilderZoneId();
 
 ReactDOM.createRoot(root).render(
-  <React.StrictMode>{sceneBuilderZoneId ? <SceneBuilderApp initialZoneId={sceneBuilderZoneId} /> : <App />}</React.StrictMode>,
+  <React.StrictMode>
+    {sceneBuilderZoneId ? <SceneBuilderApp initialZoneId={sceneBuilderZoneId} /> : <App />}
+    {/* claude:2026-10-24T22:57:00+02:00 — native Windows-Tooltips app-weit durch den Citadel-Tooltip ersetzen (Chef 24.10.) */}
+    <GlobalTitleTip />
+  </React.StrictMode>,
 );

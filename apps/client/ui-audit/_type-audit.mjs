@@ -77,7 +77,19 @@ try {
       const chromeFs = texts.filter((x) => { const el = document.elementFromPoint(x.r[0] + 1, x.r[1] + 1); return el && el.closest(chromeSel); }).map((x) => x.fs);
       const chromeSmall = texts.filter((x) => x.fs < 13).filter((x) => { const el = document.elementFromPoint(x.r[0] + 1, x.r[1] + 1); return el && el.closest(chromeSel); }).map((x) => x.p + " " + x.fs + " " + x.t).slice(0, 8);
       const overflowX = document.documentElement.scrollWidth - innerWidth;
-      return { n: texts.length, chromeSmall, chromeMin: chromeFs.length ? Math.min(...chromeFs) : null, overflowX, hist, minFs: Math.min(...texts.map((x) => x.fs)), small: smallTop, sparse: sparseU };
+      // claude:2026-10-24T22:55:00+02:00 — Abschluss-Check 1.4: abgeschnittene Texte (Text breiter als sein Feld bei verstecktem Überlauf
+      // oder mit „…“), nach dem Textpass (längere Wörter) nötig.
+      const clipped = [];
+      for (const e of document.querySelectorAll("#root *")) {
+        const own = [...e.childNodes].some((k) => k.nodeType === 3 && k.textContent.trim());
+        if (!own) continue;
+        const r = e.getBoundingClientRect();
+        if (!vis(r)) continue;
+        const cs = getComputedStyle(e);
+        const hidden = cs.overflowX !== "visible" || cs.textOverflow === "ellipsis";
+        if (hidden && e.scrollWidth > e.clientWidth + 2) clipped.push({ p: path(e), t: e.textContent.trim().slice(0, 40), ueber: e.scrollWidth - e.clientWidth });
+      }
+      return { clipped: clipped.slice(0, 40), n: texts.length, chromeSmall, chromeMin: chromeFs.length ? Math.min(...chromeFs) : null, overflowX, hist, minFs: Math.min(...texts.map((x) => x.fs)), small: smallTop, sparse: sparseU };
     });
   }
 } finally {
