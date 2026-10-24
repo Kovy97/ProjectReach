@@ -20,8 +20,9 @@ export const TALENT_TREES: TalentTreeDef[] = [
     // Jagen-Skills). Andere Sprachen unterschieden beide Bücher schon.
     name: { en: "Slayer's Book", de: "Jägerkodex" },
     description: {
-      en: "Brenna's ledger of the hunt. Slayer points spent here become permanent upgrades for your whole account.",
-      de: "Brennas Buch der Jagd. Slayer-Punkte werden hier zu dauerhaften Verbesserungen für deinen ganzen Account.",
+      // claude:2026-10-24T18:42:00+02:00 Textpass P3/P7 (Glossar 24.10.)
+      en: "Brenna's ledger of the hunt. Slayer points spent here become permanent upgrades for every run you play.",
+      de: "Brennas Buch der Jagd. Hier ausgegebene Slayer-Punkte werden zu bleibenden Verbesserungen für jeden deiner Durchgänge.",
     },
     unlock: { skill: "slayer", level: 85 },
     currency: "slayerPoints",
@@ -31,12 +32,13 @@ export const TALENT_TREES: TalentTreeDef[] = [
       { id: "lore", name: { en: "Lore", de: "Wissen" } },
     ],
     nodes: [
+      // claude:2026-10-24T18:42:00+02:00 Textpass P3/P7 (Glossar 24.10.) (Jägerkodex-Knoten: Wirkung gegen pets.ts/slayer.ts/combat.ts geprüft)
       {
         id: "tracking",
         name: { en: "Tracking", de: "Fährtenkunde" },
         description: {
           en: "Every companion drops {value} more often.",
-          de: "Jeder Begleiter fällt {value} häufiger.",
+          de: "Jeder Begleiter fällt dir {value} öfter zu.",
         },
         branch: "companions",
         row: 0,
@@ -48,8 +50,8 @@ export const TALENT_TREES: TalentTreeDef[] = [
         id: "trail",
         name: { en: "On the Trail", de: "Spur aufgenommen" },
         description: {
-          en: "After {value} the expected number of attempts without a companion, your next roll is guaranteed.",
-          de: "Nach {value} so vielen Versuchen wie erwartet ohne Begleiter ist der nächste Wurf garantiert.",
+          en: "After {value} the expected number of failed rolls for a companion you are missing, your next roll for it is guaranteed.",
+          de: "Nach {value} so vielen Fehlwürfen wie erwartet ist der nächste Wurf auf einen Begleiter garantiert, den du noch nicht hast.",
         },
         branch: "companions",
         row: 1,
@@ -62,8 +64,8 @@ export const TALENT_TREES: TalentTreeDef[] = [
         id: "collar",
         name: { en: "Second Collar", de: "Zweites Halsband" },
         description: {
-          en: "Unlocks a second companion slot. Only its passive effect applies there.",
-          de: "Schaltet einen zweiten Begleiter-Platz frei. Dort wirkt nur der passive Effekt.",
+          en: "Unlocks a second companion slot. There, only the skill effect works, not the combat ability.",
+          de: "Schaltet einen zweiten Begleiter-Platz frei. Dort wirkt nur der Fertigkeits-Effekt, nicht die Kampf-Fähigkeit.",
         },
         branch: "companions",
         row: 2,
@@ -76,8 +78,8 @@ export const TALENT_TREES: TalentTreeDef[] = [
         id: "pace",
         name: { en: "Hunting Pace", de: "Jagdtempo" },
         description: {
-          en: "Completed tasks pay {value} more Slayer points.",
-          de: "Abgeschlossene Aufträge bringen {value} mehr Slayer-Punkte.",
+          en: "Completed Slayer tasks pay {value} more Slayer points.",
+          de: "Abgeschlossene Slayer-Aufträge bringen {value} mehr Slayer-Punkte.",
         },
         branch: "hunt",
         row: 0,
@@ -102,8 +104,8 @@ export const TALENT_TREES: TalentTreeDef[] = [
         id: "lore",
         name: { en: "Hunter's Lore", de: "Jägerwissen" },
         description: {
-          en: "You deal {value} more damage to monster families whose bestiary is complete.",
-          de: "Du verursachst {value} mehr Schaden an Monsterfamilien mit vollständigem Bestiarium.",
+          en: "You deal {value} more damage to a monster family once you have defeated every monster in it at least once.",
+          de: "Du verursachst {value} mehr Schaden an einer Monsterfamilie, sobald du jedes ihrer Monster mindestens einmal besiegt hast.",
         },
         branch: "lore",
         row: 0,
@@ -122,6 +124,7 @@ export const TALENT_TREES: TalentTreeDef[] = [
   // Freischaltung: mindestens ein Aufstieg (Narben gibt es ohnehin nur aus dem Aschesturz).
   {
     id: "prestige",
+    // claude:2026-10-24T18:42:00+02:00 Textpass P3/P7 (Glossar 24.10.) (Narbenbuch-Knoten: Wirkung gegen prestige-effects.ts/prestige.ts geprüft)
     name: { en: "The Book of Scars", de: "Das Narbenbuch" },
     description: {
       en: "The Warden's record of every Cinderfall. Scars earned at the Shard Altar become lasting gifts for every run that follows.",
@@ -167,8 +170,8 @@ export const TALENT_TREES: TalentTreeDef[] = [
         id: "keepBankStacks",
         name: { en: "Buried Chest", de: "Vergrabene Truhe" },
         description: {
-          en: "{value} stacks of materials or consumables survive the Cinderfall, up to 50 of each. What was buried never saw the fire.",
-          de: "{value} Stapel aus Materialien oder Verbrauchsgütern überstehen den Aschesturz, je bis zu 50 Stück. Was vergraben war, hat kein Feuer gesehen.",
+          en: "You choose {value} stacks of materials or consumables to survive the Cinderfall, up to 50 of each. What was buried never saw the fire.",
+          de: "Du wählst {value} Stapel aus Materialien oder Verbrauchsgütern, die den Aschesturz überstehen, je bis zu 50 Stück. Was vergraben war, hat kein Feuer gesehen.",
         },
         branch: "legacy",
         row: 2,
@@ -181,8 +184,8 @@ export const TALENT_TREES: TalentTreeDef[] = [
         id: "keepEquipment",
         name: { en: "Heirloom", de: "Erbstück" },
         description: {
-          en: "Chosen equipment survives the Cinderfall (pieces: {value}) if each piece requires level 80 or more. A piece the ash does not get.",
-          de: "Gewählte Ausrüstung übersteht den Aschesturz (Teile: {value}), sofern jedes Teil eine Anforderung ab Stufe 80 hat. Ein Stück, das die Asche nicht bekommt.",
+          en: "You choose {value} pieces of equipment to survive the Cinderfall, each with a requirement of level 80 or more. Tools and master rings are excluded. A piece the ash does not get.",
+          de: "Du wählst {value} Ausrüstungsteile, die den Aschesturz überstehen, mit einer Anforderung ab Level 80. Werkzeuge und Meisterringe sind ausgenommen. Ein Stück, das die Asche nicht bekommt.",
         },
         branch: "legacy",
         row: 3,
@@ -196,7 +199,7 @@ export const TALENT_TREES: TalentTreeDef[] = [
         name: { en: "Apprentice Years", de: "Lehrjahre" },
         description: {
           en: "{value} more skill XP below level 80. What you have learned once, you learn faster the second time.",
-          de: "{value} mehr Fertigkeits-XP unter Stufe 80. Was man einmal gelernt hat, lernt man schneller noch einmal.",
+          de: "{value} mehr Fertigkeits-XP unter Level 80. Was man einmal gelernt hat, lernt man schneller noch einmal.",
         },
         branch: "haste",
         row: 0,
@@ -208,8 +211,8 @@ export const TALENT_TREES: TalentTreeDef[] = [
         id: "chronicleRecall",
         name: { en: "Familiar Pages", de: "Bekannte Seiten" },
         description: {
-          en: "Chronicle chapters 1 to 18 that you have lived through can be completed with a click, for half the gold and without tokens or items. The Chronicle will not read you a chapter you have already lived.",
-          de: "Erlebte Chronik-Kapitel 1 bis 18 lassen sich per Klick abschließen, für das halbe Gold und ohne Marken oder Gegenstände. Kapitel, die du gelebt hast, liest die Chronik dir nicht zweimal vor.",
+          en: "You can complete Chronicle chapters 1 to 18 with a click, one after another. They pay half the gold, and no tokens, items or XP. The Chronicle will not read you a chapter you have already lived.",
+          de: "Die Chronik-Kapitel 1 bis 18 schließt du per Klick ab, eines nach dem anderen. Sie zahlen das halbe Gold, aber keine Marken, Gegenstände oder XP. Kapitel, die du gelebt hast, liest die Chronik dir nicht zweimal vor.",
         },
         branch: "haste",
         row: 1,
@@ -222,8 +225,8 @@ export const TALENT_TREES: TalentTreeDef[] = [
         id: "masteredXp",
         name: { en: "Second Nature", de: "Handgedächtnis" }, // claude:2026-10-18T11:00:00+02:00 — Chef 18.10.: EN „Second Nature“ (lore § 9.1)
         description: {
-          en: "{value} more skill XP up to level 99 in skills you have mastered before. Your hands still know where to reach.",
-          de: "{value} mehr Fertigkeits-XP bis Stufe 99 in Fertigkeiten, die du schon einmal gemeistert hast. Die Hände wissen noch, wohin sie greifen.",
+          en: "{value} more skill XP up to level 99 in skills you have taken to level 99 before. Your hands still know where to reach.",
+          de: "{value} mehr Fertigkeits-XP bis Level 99 in Fertigkeiten, die du schon einmal auf Level 99 gebracht hast. Die Hände wissen noch, wohin sie greifen.",
         },
         branch: "haste",
         row: 1,
@@ -236,8 +239,8 @@ export const TALENT_TREES: TalentTreeDef[] = [
         id: "dungeonRecall",
         name: { en: "Old Paths", de: "Alte Pfade" },
         description: {
-          en: "Dungeons you cleared in an earlier run are open to you at once. Gates you have cleared once know you.",
-          de: "Dungeons aus einem früheren Durchgang stehen dir sofort offen. Tore, die du einmal geräumt hast, kennen dich.",
+          en: "Dungeons you have cleared before are open to you at once, even if their quest or zone is still locked. The Paragon Spire is excluded. Gates you have cleared once know you.",
+          de: "Dungeons, die du schon einmal abgeschlossen hast, stehen dir sofort offen, auch wenn Aufgabe oder Zone noch gesperrt sind. Der Paragonturm ist ausgenommen. Tore, die du einmal geräumt hast, kennen dich.",
         },
         branch: "haste",
         row: 2,
@@ -276,8 +279,8 @@ export const TALENT_TREES: TalentTreeDef[] = [
         id: "goldFind",
         name: { en: "Magpie's Eye", de: "Elsternauge" },
         description: {
-          en: "{value} more gold from actions, fights, dungeons and quests, but not from selling. You gather what belonged to the idols, the way magpies gather silver.",
-          de: "{value} mehr Gold aus Aktionen, Kämpfen, Dungeons und Aufgaben, aber nicht beim Verkauf. Du sammelst, was den Götzen gehörte, wie Elstern Silber sammeln.",
+          en: "{value} more gold from actions, fights, dungeons, quests, hunting and the tavern, but not from selling. You gather what belonged to the idols, the way magpies gather silver.",
+          de: "{value} mehr Gold aus Aktionen, Kämpfen, Dungeons, Aufgaben, Jagen und der Taverne, aber nicht beim Verkauf. Du sammelst, was den Götzen gehörte, wie Elstern Silber sammeln.",
         },
         branch: "might",
         row: 1,

@@ -43,7 +43,8 @@ export const content: ContentDB = {
     runecrafting: { id: "runecrafting", name: { en: "Runecrafting", de: "Runenkunst" }, trains: "int" }, // Runenkunst = arkanes Wissen → INT
     herblore: { id: "herblore", name: { en: "Herblore", de: "Kräuterkunde" }, trains: "wis" }, // Kräuterkunde = Weisheit/Naturwissen → WIS
     // ── Slayer-Fertigkeit ─────────────────────────────────────────────
-    slayer: { id: "slayer", name: { en: "Slayer", de: "Monsterjäger" }, trains: "con" },
+    // claude:2026-10-24T18:42:00+02:00 Textpass P3/P7 (Glossar 24.10.) (Slayer als Eigenname, Chef 24.10.)
+    slayer: { id: "slayer", name: { en: "Slayer", de: "Slayer" }, trains: "con" },
     // ── Jagen (1.2.0 „Fasern und Fallen", design/handwerk-fasern-jagen/spec-technik.md §1.7) ──
     // Passive Beute über Fallen (engine/hunting.ts); trainiert DEX (Falle stellen/Köder wählen).
     hunting: { id: "hunting", name: { en: "Hunting", de: "Jagen" }, trains: "dex" },
@@ -6045,7 +6046,7 @@ export const content: ContentDB = {
     // ── Slayer-Punkte-Sink: Verbrauchsgüter (run6-fix P1 — wiederkehrender Sink) ───────────
     slayer_combat_draught: {
       id: "slayer_combat_draught",
-      name: { en: "Slayer's Combat Draught", de: "Monsterjäger-Kampftrank" },
+      name: { en: "Slayer's Combat Draught", de: "Slayer-Kampftrank" }, // claude:2026-10-24T18:42:00+02:00 Textpass P3/P7 (Glossar 24.10.)
       type: "consumable", stackable: true, rarity: "superRare", value: 180,
       // Itemization 2.5 (Buff-Rework): melee/ranged/magicDamage (verboten) → attackIntervalMs (Tempo,
       // stilneutral). Effizienz-Kommentar unten bezog sich auf den alten dmg-Flat und ist nur noch
@@ -6062,7 +6063,7 @@ export const content: ContentDB = {
     },
     slayer_hunters_elixir: {
       id: "slayer_hunters_elixir",
-      name: { en: "Slayer's Hunter Elixir", de: "Monsterjäger-Jagdelixier" },
+      name: { en: "Slayer's Hunter Elixir", de: "Slayer-Jagdelixier" }, // claude:2026-10-24T18:42:00+02:00 Textpass P3/P7 (Glossar 24.10.)
       type: "consumable", stackable: true, rarity: "epic", value: 400,
       // run7-fix P2: Dauer 10→30 min → klar andersartig als Trank (Uptime-Buff statt Burst-Buff).
       // sweep6-batchE P2-1/P3-3-fix: Preis 120→28 (Punkte-Ökonomie-Rekalibrierung, s. slayerShop-
@@ -6184,7 +6185,7 @@ export const content: ContentDB = {
     // Einmalige Investition für eine 60-min-Power-Session; Prestige-Horizont nach Kit-Out.
     slayer_war_brew: {
       id: "slayer_war_brew",
-      name: { en: "Slayer's War Brew", de: "Monsterjäger-Kriegsgebräu" },
+      name: { en: "Slayer's War Brew", de: "Slayer-Kriegsgebräu" }, // claude:2026-10-24T18:42:00+02:00 Textpass P3/P7 (Glossar 24.10.)
       type: "consumable", stackable: true, rarity: "epic", value: 1200,
       // sweep6-batchE P3-3-fix: Text war 10× der echte Buff-Wert (dmg UND accuracy).
       // Effizienz: 3,5×60 / 110 Pkt = 1,91 dmg-min/pt (knapp unter Elixier, gleicht Krit/Genauigkeit
@@ -17287,11 +17288,12 @@ export const content: ContentDB = {
     { id: "ach_skill_herblore_75", name: { en: "Herblore Master", de: "Kräuterkunde-Meister" }, description: { en: "Reach Herblore level 75.", de: "Erreiche Kräuterkunde Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "herblore", count: 75 } },
     { id: "ach_skill_herblore_90", name: { en: "Herblore Legend", de: "Kräuterkunde-Legende" }, description: { en: "Reach Herblore level 90.", de: "Erreiche Kräuterkunde Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "herblore", count: 90 } },
     { id: "ach_skill_herblore_99", name: { en: "Herblore Maxed", de: "Kräuterkunde-Maximiert" }, description: { en: "Reach Herblore level 99.", de: "Erreiche Kräuterkunde Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "herblore", count: 99 } },
-    { id: "ach_skill_slayer_25", name: { en: "Slayer Journeyman", de: "Monsterjäger-Geselle" }, description: { en: "Reach Slayer level 25.", de: "Erreiche Monsterjäger Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "slayer", count: 25 } },
-    { id: "ach_skill_slayer_50", name: { en: "Slayer Veteran", de: "Monsterjäger-Veteran" }, description: { en: "Reach Slayer level 50.", de: "Erreiche Monsterjäger Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "slayer", count: 50 } },
-    { id: "ach_skill_slayer_75", name: { en: "Slayer Master", de: "Monsterjäger-Meister" }, description: { en: "Reach Slayer level 75.", de: "Erreiche Monsterjäger Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "slayer", count: 75 } },
-    { id: "ach_skill_slayer_90", name: { en: "Slayer Legend", de: "Monsterjäger-Legende" }, description: { en: "Reach Slayer level 90.", de: "Erreiche Monsterjäger Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "slayer", count: 90 } },
-    { id: "ach_skill_slayer_99", name: { en: "Slayer Maxed", de: "Monsterjäger-Maximiert" }, description: { en: "Reach Slayer level 99.", de: "Erreiche Monsterjäger Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "slayer", count: 99 } },
+    // claude:2026-10-24T18:42:00+02:00 Textpass P3/P7 (Glossar 24.10.) (Monsterjäger -> Slayer)
+    { id: "ach_skill_slayer_25", name: { en: "Slayer Journeyman", de: "Slayer-Geselle" }, description: { en: "Reach Slayer level 25.", de: "Erreiche Slayer Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "slayer", count: 25 } },
+    { id: "ach_skill_slayer_50", name: { en: "Slayer Veteran", de: "Slayer-Veteran" }, description: { en: "Reach Slayer level 50.", de: "Erreiche Slayer Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "slayer", count: 50 } },
+    { id: "ach_skill_slayer_75", name: { en: "Slayer Master", de: "Slayer-Meister" }, description: { en: "Reach Slayer level 75.", de: "Erreiche Slayer Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "slayer", count: 75 } },
+    { id: "ach_skill_slayer_90", name: { en: "Slayer Legend", de: "Slayer-Legende" }, description: { en: "Reach Slayer level 90.", de: "Erreiche Slayer Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "slayer", count: 90 } },
+    { id: "ach_skill_slayer_99", name: { en: "Slayer Maxed", de: "Slayer-Maximiert" }, description: { en: "Reach Slayer level 99.", de: "Erreiche Slayer Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "slayer", count: 99 } },
 
     // -- Skilling: Alleskönner + Meisterschaft (neu) --
     { id: "ach_all_skills_50", name: { en: "Jack of All Trades", de: "Alleskönner" }, description: { en: "Reach level 50 in every skill.", de: "Erreiche Stufe 50 in jeder Fertigkeit." }, category: "skilling", rarity: "epic", condition: { type: "min_skill_level", count: 50 } },
@@ -18115,7 +18117,8 @@ export const content: ContentDB = {
     { id: "steal", name: { en: "Steal", de: "Stehlen" } },
     { id: "fence", name: { en: "Fence", de: "Hehler" } },
     // Slayer — Anforderungs-Item-Crafting
-    { id: "slayer_requirements", name: { en: "Slayer Requirements", de: "Monsterjäger-Ausrüstung" } },
+    // claude:2026-10-24T18:42:00+02:00 Textpass P3/P7 (Glossar 24.10.)
+    { id: "slayer_requirements", name: { en: "Slayer Requirements", de: "Slayer-Ausrüstung" } },
     // Performance P1.4 (60-Hz-Analyse 2026-07-22): Cooking/Herblore/Foraging waren flache Listen ohne
     // Kategorien → alle Aktionen mounteten sofort (Cooking 2.405 DOM-Knoten/88ms kalt). Kategorien nach
     // Nahrungsart/Produkttyp/Fundgut, damit eingeklappte Kategorien wie bei Smithing gar nicht mounten.
@@ -22127,7 +22130,7 @@ export const content: ContentDB = {
     },
     suffix_sentinel: {
       id: "suffix_sentinel",
-      suffix: { en: "of the Sentinel", de: "des Wächters" },
+      suffix: { en: "of the Sentinel", de: "des Hüters" }, // claude:2026-10-24T18:42:00+02:00 Textpass P3/P7 (Glossar 24.10.) ("Wächter" ist der Erzähler, Glossar § 16)
       // Klassen-Schnitt (Chef-GO 25.08.2026, 1.1.0, #p14): trägt dex → nur noch armor_leather
       // (Schild/Platte raus, con/dex passte dort nicht zur Mitigations-Schiene).
       appliesTo: ["armor_leather"],
