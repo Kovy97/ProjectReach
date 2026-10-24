@@ -183,7 +183,10 @@
   grid-column: 3;
   min-width: 0;
   font-family: var(--font-info, var(--font-head)) !important;
-  font-size: calc(var(--fs-sm) * var(--sb-scale-eff)) !important; /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px */
+  /* claude:2026-10-24T21:56:00+02:00 — Chef 24.10.: „99/99“ ragte rechts aus dem Knopf (Textgröße Groß/Sehr groß, große Fenster). Die Spalte ist
+     42 px × Leiste × Textgröße breit, „99/99“ braucht in Cinzel ≈ 2,7 em: die Zahl wächst mit Leiste und Textgröße, aber nicht
+     zusätzlich mit der Fensterbreite (sonst wird die Spalte für die Skill-Namen zu breit). */
+  font-size: min(calc(var(--fs-sm) * var(--sb-scale-eff)), calc(15px * var(--sb-scale-eff) * var(--text-scale))) !important;
   line-height: 1;
   font-variant-numeric: tabular-nums;
   text-align: right;
