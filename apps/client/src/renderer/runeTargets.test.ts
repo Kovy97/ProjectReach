@@ -48,7 +48,8 @@ describe("runeFitsHint — requiresTrinity ohne trinityByTier", () => {
   it("liefert den armorRating-Hinweis, nicht null", () => {
     const t = tFor("de");
     const def = makeRequiresTrinityAffix();
-    expect(runeFitsHint(def, 4, t)).toBe("Nur auf Teilen, die selbst Schutzwert tragen.");
+    // claude:2026-10-24T18:56:00+02:00 — Textpass P1: „Rüstungswert“ wie das Stat-Label (Glossar 24.10.)
+    expect(runeFitsHint(def, 4, t)).toBe("Nur auf Teilen, die selbst einen Rüstungswert tragen.");
   });
 });
 
