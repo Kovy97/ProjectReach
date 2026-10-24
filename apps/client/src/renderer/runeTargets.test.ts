@@ -93,7 +93,7 @@ describe("weaponEffectProse — DE/EN Wortlaut der drei neuen Kinds (wörtliche 
   it("DE", () => {
     const t = tFor("de");
     expect(weaponEffectProse(makeSyntheticEffect("blockRestore"), t)).toBe(
-      "Jeder erfolgreiche Block heilt dich um 10 % deiner maximalen Leben.",
+      "Jeder erfolgreiche Block heilt dich um 10 % deiner maximalen HP (gedeckelt).",
     );
     expect(weaponEffectProse(makeSyntheticEffect("combatXp"), t)).toBe(
       "+10 % Kampf-XP aus jeder Quelle.",
@@ -106,7 +106,7 @@ describe("weaponEffectProse — DE/EN Wortlaut der drei neuen Kinds (wörtliche 
   it("EN", () => {
     const t = tFor("en");
     expect(weaponEffectProse(makeSyntheticEffect("blockRestore"), t)).toBe(
-      "Each successful block heals you for 10% of your max health.",
+      "Each successful block heals you for 10% of your max health (capped).",
     );
     expect(weaponEffectProse(makeSyntheticEffect("combatXp"), t)).toBe(
       "+10% combat XP from all sources.",
