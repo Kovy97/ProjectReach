@@ -26,19 +26,22 @@
   color: var(--gold, #d8c06a);
   letter-spacing: 0.04em;
 }
+/* claude:2026-10-24T18:50:00+02:00 — Welle 2 Gruppe B: Lager auf die Skala, größere Plätze. */
 .storage-summary {
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .storage-search {
-  min-width: 180px;
-  padding: 6px 10px;
+  min-width: 220px;
+  padding: 7px 12px;
+  font-size: var(--fs-sm);
   background: rgba(10, 9, 8, 0.75);
   color: var(--text, #ddd6c8);
   border: 1px solid rgba(216, 192, 106, 0.35);
 }
 .storage-lead {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--fs-sm);
+  font-family: var(--font-body);
 }
 .storage-shelves {
   display: flex;
@@ -66,21 +69,21 @@
   padding-bottom: 4px;
   border-bottom: 1px solid rgba(216, 192, 106, 0.3);
   font-family: var(--font-head);
-  font-size: 15px;
+  font-size: var(--fs-md);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--gold, #d8c06a);
 }
 .storage-shelf-count {
   font-family: var(--font-body, inherit);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   letter-spacing: 0;
   text-transform: none;
 }
 .storage-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(64px, 4.4vw, 100px), 1fr));
+  gap: 7px;
 }
 .storage-slot {
   aspect-ratio: 1;
@@ -99,7 +102,7 @@
 }
 .storage-unknown-mark {
   font-family: var(--font-head);
-  font-size: 20px;
+  font-size: var(--fs-lg);
   color: rgba(216, 192, 106, 0.28);
 }
 
@@ -132,7 +135,7 @@
 }
 .salvage-subject-name {
   font-family: var(--font-head);
-  font-size: 16px;
+  font-size: var(--fs-sm);
 }
 .salvage-warn {
   margin: 0;
@@ -153,7 +156,8 @@
   gap: 8px;
 }
 .salvage-rarity-btn {
-  padding: 4px 10px;
+  padding: 5px 12px;
+  font-size: var(--fs-xs);
   background: rgba(14, 12, 10, 0.7);
   border: 1px solid rgba(216, 192, 106, 0.25);
   font-family: var(--font-head);

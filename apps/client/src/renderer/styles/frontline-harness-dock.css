@@ -1,3 +1,4 @@
+/* claude:2026-10-24T19:02:00+02:00 — Welle 2 Gruppe B: Schriftgrößen unter 15 px auf --fs-Skala umgestellt (Wörter ≥ xs, Fließtext ≥ sm, Zahlen-Badges 2xs), Stufen je Selektor. */
 /* codex:2026-08-03T17:02:00+02:00 — Chef-Auswahl Gear-Dock 03 „Frontline Harness“:
    isolierter Materialvertrag für Zonenwahl und laufenden Kampf. Der Layer verändert ausschließlich
    Darstellung; EquipmentDoll, Stats, Buffs, Stances, Prep-Handler und Engine-Daten bleiben intakt. */
@@ -409,7 +410,7 @@
   padding: 7px 0;
   border-block: 1px solid rgba(169, 119, 54, 0.36);
   font-family: var(--font-info);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0.13em;
 }

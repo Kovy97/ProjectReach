@@ -1,3 +1,4 @@
+/* claude:2026-10-24T19:02:00+02:00 — Welle 2 Gruppe B: Schriftgrößen unter 15 px auf --fs-Skala umgestellt (Wörter ≥ xs, Fließtext ≥ sm, Zahlen-Badges 2xs), Stufen je Selektor. */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
@@ -165,7 +166,7 @@
   position: absolute;
   bottom: 8%;
   right: 13%;
-  font-size: 16px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   color: #fff;
   text-shadow: 0 1px 2px #000;
@@ -366,7 +367,7 @@ body .item-cell.rarity-mythic {
   border-radius: 0;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   padding: 14px;
-  font-size: 17px;
+  font-size: var(--fs-md);
   /* UI-Feel-Pass: kurzes Fade-in statt hartem Aufpoppen (interaction.css @keyframes ui-fade-in,
      dasselbe Muster wie .ct-tip unten). Der Overlay-Wrapper mountet/unmountet pro
      Erscheinen (ItemTooltip.tsx gibt bei leerem Payload null zurück) — die Animation feuert
@@ -435,7 +436,7 @@ body .item-cell.rarity-mythic {
   min-width: 168px;
 }
 .ct-difflegend-row {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   line-height: 1.3;
   text-align: left;
   opacity: 0.72;
@@ -480,7 +481,7 @@ body .item-cell.rarity-mythic {
 
 .it-name {
   font-family: var(--font-head);
-  font-size: 19px;
+  font-size: var(--fs-lg);
   text-align: center;
   color: var(--text);
 }
@@ -488,7 +489,7 @@ body .item-cell.rarity-mythic {
 .it-type {
   text-align: center;
   margin-bottom: 8px;
-  font-size: 15px;
+  font-size: var(--fs-sm);
 }
 
 .it-stats {
@@ -533,7 +534,7 @@ body .item-cell.rarity-mythic {
 
 .it-value {
   margin-top: 8px;
-  font-size: 15px;
+  font-size: var(--fs-sm);
 }
 
 .it-actions {
@@ -559,7 +560,7 @@ body .item-cell.rarity-mythic {
   text-shadow: 0 1px 3px #000;
   cursor: pointer;
   font-family: var(--font-head);
-  font-size: 15px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   letter-spacing: 0.6px;
   text-transform: uppercase;
@@ -711,7 +712,7 @@ body .item-cell.rarity-mythic {
   align-items: center;
   gap: clamp(5px, 1.43cqw, 8px);
   margin-top: clamp(6px, 1.79cqw, 10px);
-  font-size: clamp(13px, 3.04cqw, 17px);
+  font-size: clamp(var(--fs-xs), 3.04cqw, 17px);
 }
 .skillcard-produces .item-chip-img {
   width: clamp(18px, 4.64cqw, 26px);
@@ -1926,7 +1927,7 @@ body .item-cell.rarity-mythic {
   position: absolute;
   top: 10%;
   left: 10%;
-  font-size: 13px;
+  font-size: var(--fs-2xs);
   line-height: 1;
   color: var(--gold);
   text-shadow: 0 0 6px rgba(216, 192, 106, 0.7);
@@ -2044,7 +2045,7 @@ body .item-cell.rarity-mythic {
 }
 
 .cs-detail-affixes-label {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--muted);
@@ -2056,7 +2057,7 @@ body .item-cell.rarity-mythic {
   align-items: center;
   gap: 4px;
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: var(--gold);
   padding: 2px 8px;
   border-style: solid;
@@ -2096,7 +2097,7 @@ body .item-cell.rarity-mythic {
   max-width: 100%;
   cursor: pointer;
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   padding: 3px 9px 3px 4px;
   border-style: solid;
   border-color: transparent;
@@ -2117,7 +2118,7 @@ body .item-cell.rarity-mythic {
   justify-content: center;
   width: 20px;
   height: 20px;
-  font-size: 16px;
+  font-size: var(--fs-sm);
   line-height: 1;
   flex-shrink: 0;
 }
@@ -2160,7 +2161,7 @@ body .item-cell.rarity-mythic {
   .active-buff-icon {
     width: 15px;
     height: 15px;
-    font-size: 12px;
+    font-size: var(--fs-xs);
   }
 }
 

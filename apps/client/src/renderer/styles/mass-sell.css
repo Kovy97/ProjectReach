@@ -1,3 +1,4 @@
+/* claude:2026-10-24T19:02:00+02:00 — Welle 2 Gruppe B: Schriftgrößen unter 15 px auf --fs-Skala umgestellt (Wörter ≥ xs, Fließtext ≥ sm, Zahlen-Badges 2xs), Stufen je Selektor. */
 /* ═══════════════════════════════════════════════════════════════════════════
    MASS-SELL — Task #323 (Chef-Feature „Mass-Sell im Shop")
    Eigene, direkt von components/MassSellPopups.tsx importierte Stylesheet-Datei
@@ -72,7 +73,7 @@
   border: 2px solid rgba(216, 192, 106, 0.55);
   background: rgba(10, 8, 6, 0.78);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   line-height: 1;
   color: var(--gold);
@@ -93,7 +94,7 @@
   bottom: 6%;
   right: 6%;
   max-width: 82%;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   color: #fff;
   background: rgba(10, 8, 6, 0.8);
@@ -111,7 +112,7 @@
 }
 
 .mshop-popup-subtitle {
-  font-size: 14px;
+  font-size: var(--fs-sm); font-family: var(--font-body);
   color: var(--text);
   margin: 0 0 14px;
   line-height: 1.35;
@@ -181,7 +182,7 @@
   min-width: 46px;
   text-align: right;
   font-family: var(--font-head);
-  font-size: 17px;
+  font-size: var(--fs-lg);
   font-weight: 700;
   color: var(--gold);
   font-variant-numeric: tabular-nums;
@@ -191,7 +192,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 13px;
+  font-size: var(--fs-sm); font-family: var(--font-body);
   color: var(--muted);
   margin-bottom: 16px;
 }
@@ -236,7 +237,7 @@
 
 .mshop-mode-card-title {
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -244,7 +245,7 @@
 }
 
 .mshop-mode-card-hint {
-  font-size: 12px;
+  font-size: var(--fs-sm); font-family: var(--font-body);
   color: var(--muted);
   line-height: 1.35;
 }
@@ -260,7 +261,7 @@
   background: none;
   border: none;
   color: var(--accent-2);
-  font-size: 12px;
+  font-size: var(--fs-sm);
   text-decoration: underline;
   cursor: pointer;
   padding: 2px 4px;
@@ -305,12 +306,12 @@
 }
 
 .mshop-row-img { max-width: 88%; max-height: 88%; object-fit: contain; }
-.mshop-row-emoji { font-size: 24px; }
+.mshop-row-emoji { font-size: var(--fs-2xl); }
 
 .mshop-row-name {
   flex: 1;
   min-width: 0;
-  font-size: 15px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   overflow-wrap: anywhere;
 }
@@ -328,7 +329,7 @@
 
 .mshop-row-qty {
   flex: 0 0 auto;
-  font-size: 12px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   color: var(--accent-2);
 }
@@ -336,7 +337,7 @@
 .mshop-row-price {
   flex: 0 0 auto;
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--gold);
   white-space: nowrap;
 }
@@ -366,7 +367,7 @@
 
 .mshop-result-title {
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.6px;
@@ -374,7 +375,7 @@
 }
 
 .mshop-result-detail {
-  font-size: 13px;
+  font-size: var(--fs-sm); font-family: var(--font-body);
   color: var(--text);
 }
 

@@ -1,3 +1,4 @@
+/* claude:2026-10-24T19:02:00+02:00 — Welle 2 Gruppe B: Schriftgrößen unter 15 px auf --fs-Skala umgestellt (Wörter ≥ xs, Fließtext ≥ sm, Zahlen-Badges 2xs), Stufen je Selektor. */
 /* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -23,8 +24,9 @@
   border: 1px solid var(--ds-border-gold);
   border-radius: var(--ds-radius);
   color: var(--ds-parch-ink);
+  /* claude:2026-10-24T18:55:00+02:00 — Welle 2 Gruppe B: Filter-Chips größer (Text sm, Zahl xs, Symbol 22 px). */
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   letter-spacing: 0.3px;
   padding: 6px 10px;
@@ -67,7 +69,7 @@
     url("../assets/bg_black.webp") repeat;
   color: var(--ds-parch-ink, #e8d8b0);
   font-family: var(--font-head);
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0.3px;
   text-transform: uppercase;
@@ -108,8 +110,8 @@
 }
 
 .invf-chip-icon {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -117,11 +119,11 @@
 }
 
 .invf-chip-icon-img { width: 100%; height: 100%; object-fit: contain; }
-.invf-chip-icon-emoji { font-size: 14px; line-height: 1; }
+.invf-chip-icon-emoji { font-size: var(--fs-xs); line-height: 1; }
 
 .invf-chip-count {
   font-family: var(--font-head);
-  font-size: 10px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--muted);
   background: rgba(255, 255, 255, 0.07);
@@ -141,18 +143,18 @@
 .invf-bar--compact { gap: 5px 6px; flex-wrap: nowrap; }
 
 .invf-chiprow--compact { flex-wrap: nowrap; }
-.invf-chiprow--compact .invf-chip { min-height: 26px; padding: 4px 7px; font-size: 10.5px; }
+.invf-chiprow--compact .invf-chip { min-height: 26px; padding: 4px 7px; font-size: var(--fs-xs); }
 .invf-chiprow--compact .invf-chip-icon { width: 14px; height: 14px; }
 .invf-chiprow--compact .invf-chip-label,
 .invf-chiprow--compact .invf-chip-count { display: none; }
 
-.invf-search--compact { min-width: 90px; flex: 1 1 110px; font-size: 12px; padding: 4px 8px; }
+.invf-search--compact { min-width: 90px; flex: 1 1 110px; font-size: var(--fs-xs); padding: 4px 8px; }
 
 /* ─── Leer-Hinweis innerhalb eines gefilterten Grids (Drop-Ziel bleibt erhalten) ───────── */
 .invf-empty-note {
   padding: 14px 4px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--fs-xs);
   grid-column: 1 / -1;
 }
 

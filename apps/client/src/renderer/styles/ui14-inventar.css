@@ -1,3 +1,60 @@
 /* claude:2026-10-24T18:34:00+02:00 — UI-Überarbeitung 1.4, Welle 2, Gruppe B Charakter, Bank, Lager, Itemkarte.
    Einziger Schreiber: der Agent dieser Gruppe. Hier stehen Überschreibungen für geteilte Dateien (v. a. pages.css),
    die die Gruppe nicht selbst bearbeiten darf. Geladen nach classic-skin/classic-chrome, vor typography.css. */
+
+/* claude:2026-10-24T18:37:00+02:00 — Charakter: Lebens-/Ward-Leiste und Inventar nutzen den Platz. */
+#root .cs-col-left .vital-head { font-size: var(--fs-sm); margin-bottom: 3px; }
+#root .cs-col-left .vital-icon { font-size: var(--fs-sm); }
+#root .cs-col-left .vital-bar { height: 22px; }
+#root .cs-col-left .cs-vitals { gap: 7px; padding-top: 8px; padding-bottom: 8px; }
+/* Inventarplätze etwas größer: bei 1920 war rechts viel leere Höhle, die Kacheln wirkten verloren. */
+#root .cs-layout .cs-inv-grid { grid-template-columns: repeat(auto-fill, clamp(60px, 4.5vw, 112px)); gap: 7px; }
+#root .cs-layout .cs-inv-grid .inv-slot,
+#root .cs-layout .cs-inv-grid .cs-inv-slot-wrap { height: clamp(60px, 4.5vw, 112px); }
+#root .cs-layout .cs-inv-grid .item-cell-img { max-width: clamp(44px, 3.8vw, 98px); max-height: clamp(44px, 3.8vw, 98px); }
+
+/* claude:2026-10-24T18:40:00+02:00 — Item-Tooltip/Itemkarte: Hinweis- und Beschreibungszeilen waren 13 px (Verzauberungs-, Stapel-, Runenhinweise),
+   die Beschreibung unter dem Bild 16 px bei viel Leerraum darunter. Fließtext jetzt mindestens 15 px × Kartenfaktor, Wörter mindestens 14 px. */
+#root .itip-warbanner-record .itip-enchant-slot-hint,
+#root .itip-warbanner-record .itip-rune-target-hint,
+#root .itip-warbanner-record .itip-slot-free-hint,
+#root .itip-warbanner-record .itip-tool-hint { font-size: calc(var(--itip-fs-scale) * 15px); line-height: 1.38; font-family: var(--font-body); }
+#root .itip-warbanner-record .itip-rune-target { font-size: calc(var(--itip-fs-scale) * 15px); }
+#root .itip-warbanner-record .itip-enchant-group .itip-group-title,
+#root .itip-warbanner-record .itip-group-title { font-size: calc(var(--itip-fs-scale) * 14.5px); }
+#root .itip-equipped-badge { font-size: calc(var(--itip-fs-scale) * 14px); }
+#root .itip-delta { font-size: calc(var(--itip-fs-scale) * 15px); }
+#root .itip-inst-affix-tier { font-size: calc(var(--itip-fs-scale) * 15px); }
+#root .itip-warbanner-main .itip-flavor {
+  font-size: calc(var(--itip-fs-scale) * 18.5px);
+  line-height: 1.42;
+  padding: 12px 14px 6px;
+  font-family: var(--font-body);
+}
+#root .itip-warbanner-main .itip-flavor::before { font-size: calc(var(--itip-fs-scale) * 13px); }
+#root .item-tooltip.itip-panel .it-hint { font-size: calc(var(--itip-fs-scale) * 15px); font-family: var(--font-body); margin-top: 9px; }
+#root .item-tooltip.itip-panel .it-action-btn { font-size: clamp(var(--fs-sm), 1.05vw, var(--fs-lg)); }
+
+/* claude:2026-10-24T18:45:00+02:00 — Hover-Vergleichskarte fängt keine Mausereignisse (sonst mouseleave an der Zelle, Karte weg). */
+#root .itip-compare-wrap--hover { pointer-events: none; }
+
+/* claude:2026-10-24T18:46:00+02:00 — „Stapelt nicht, die stärkste Quelle zählt“ war 0,8em (≈12,8 px), jetzt 14 px × Kartenfaktor, Fließtext-Schrift. */
+#root .itip-effect-nostack { font-size: calc(var(--itip-fs-scale) * 14px); font-family: var(--font-body); opacity: 0.75; margin-top: 2px; }
+
+/* claude:2026-10-24T18:47:00+02:00 — Bank: Kopf (Einleitung/Zähler), Hinweise, Spaltentitel, NPC-Sprechblase auf die Skala; Slots wachsen mit dem Fenster. */
+#root .bank-page .bank-head > .muted { font-size: clamp(var(--fs-sm), 1.05vw, var(--fs-lg)); line-height: 1.4; font-family: var(--font-body); }
+#root .bank-page .bank-count { font-size: var(--fs-md); }
+#root .bank-page .bank-hint,
+#root .bank-page .bank-full-note { font-size: var(--fs-sm); line-height: 1.3; font-family: var(--font-body); }
+#root .bank-ledger .npc-bubble-name { font-size: var(--fs-sm); }
+#root .bank-ledger .npc-bubble-text { font-size: clamp(var(--fs-md), 1.05vw, var(--fs-xl)); line-height: 1.3; font-family: var(--font-body); }
+#root .bank-page .bank-col-title { font-size: clamp(var(--fs-md), 1.02vw, var(--fs-xl)); }
+#root .bank-page .bank-col-icon { font-size: var(--fs-sm); }
+#root .bank-page .bank-grid.bank-ledger-list .item-cell-qty { font-size: clamp(var(--fs-xs), 0.8vw, var(--fs-md)); }
+#root .bank-page .bank-grid { grid-template-columns: repeat(auto-fill, clamp(56px, 4.2vw, 108px)); gap: 7px; }
+#root .bank-page .bank-grid .inv-slot,
+#root .bank-page .bank-grid .cs-inv-slot-wrap { height: clamp(56px, 4.2vw, 108px); }
+#root .bank-page .bank-grid .item-cell-img { max-width: clamp(40px, 3.5vw, 92px); max-height: clamp(40px, 3.5vw, 92px); }
+
+/* claude:2026-10-24T18:48:00+02:00 — Sortieren-/Beute-zerlegen-Knöpfe waren 12 px (Regel steht in pages.css). */
+#root .cs-inv-sortbtn { font-size: var(--fs-xs); padding: 5px 12px; }

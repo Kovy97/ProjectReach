@@ -2103,8 +2103,9 @@ export function ItemTooltipOverlay(): JSX.Element | null {
   // reinen Hover-Vorschauen), nicht nur der gepinnten, damit der Knopf überhaupt erst auffällt.
   const wikiBtnPulse = !state?.onboarding.toursSeen.itemCardGuideV1;
 
+  // claude:2026-10-24T18:45:00+02:00 — Hover-Karte nie klickbar (pointer-events:none per Klasse): bei 1366 px deckte die Vergleichsansicht den Cursor, die Zelle bekam mouseleave und die Karte verschwand sofort.
   return (
-    <div ref={ref} className="itip-compare-wrap" style={{ left: pos.left, top: pos.top }}>
+    <div ref={ref} className={`itip-compare-wrap ${payload.pinned ? "itip-compare-wrap--pinned" : "itip-compare-wrap--hover"}`} style={{ left: pos.left, top: pos.top }}>
       <ItemTooltipCard
         item={item}
         instance={payload.instance}
