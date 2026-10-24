@@ -48,8 +48,9 @@ THE RANGED REWORK
   shot, and effect arrows add bleed, poison or burn. When the quiver is empty, the bow simply keeps shooting.
 - The quiver is the off-hand for bows. It saves arrows and can refill itself from your storage.
 - A quiver holds up to 1,000 arrows. Anything above that stays in storage.
-- Crafted bows now match the best drop of their tier. The defensive stance costs ranged 10% damage instead
-  of attack speed. Every zone now drops leather armor and bows.
+- Crafted bows are a full tier stronger, and every dropped bow rises by the same step, so loot still beats
+  crafting and raid bows stay on top. The defensive stance costs ranged 10% damage instead of attack speed.
+  Every zone now drops leather armor and bows.
 - Leather is stronger. Close to the evasion cap it softens the hits that still land, by up to 58% at the cap
   instead of 18%. A leather archer without raid gear now has a real chance on Normal.
 
