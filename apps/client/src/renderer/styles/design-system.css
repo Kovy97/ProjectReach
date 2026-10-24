@@ -105,8 +105,8 @@
      Usage going forward: reach for `--ds-fs-base` (21px) for new body-weight text, `-sm`/`-xs` for
      compact component chrome (buttons/badges/pills), `-md`/`-lg`/`-xl`/`-2xl` for sub-heading/
      heading tiers. Don't hand-roll a new literal px value if one of these already fits. */
-  --ds-fs-xs:   var(--fs-2xs); /* claude:2026-10-24T20:00:00+02:00 — war 13px, jetzt fließend */
-  --ds-fs-sm:   var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — war 15px */
+  --ds-fs-xs:   var(--fs-2xs); /* claude:2026-10-24T18:30:00+02:00 — war 13px, jetzt fließend */
+  --ds-fs-sm:   var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — war 15px */
   --ds-fs-base: 21px;
   --ds-fs-md:   24px;
   --ds-fs-lg:   28px;
@@ -539,7 +539,7 @@
   background-repeat: no-repeat, repeat;
   color: #ead8a0;
   font-family: var(--font-head);
-  font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war clamp(14px, 0.95vw, 18px) */
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war clamp(14px, 0.95vw, 18px) */
   line-height: 1.15;
   letter-spacing: 0.03em;
   text-shadow: 0 1px 2px #000;
@@ -567,7 +567,7 @@
   min-height: 38px;
   min-width: 120px;
   padding: 4px 12px;
-  font-size: var(--fs-xs); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war clamp(13px, 0.85vw, 16px) */
+  font-size: var(--fs-xs); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war clamp(13px, 0.85vw, 16px) */
 }
 
 /* ── Destruktive Variante (Chef-Entscheid 26.08.2026, "combat-btn/flee faellt komplett weg") ───

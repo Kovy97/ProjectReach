@@ -1,4 +1,4 @@
-// claude:2026-10-24T19:40:00+02:00 — Screenshots je Seite bei gewählter Textgröße/Sprache + Überlaufprüfung (Seite, Seitenleiste).
+// claude:2026-10-24T18:30:00+02:00 — Screenshots je Seite bei gewählter Textgröße/Sprache + Überlaufprüfung (Seite, Seitenleiste).
 // node ui-audit/_scale-shots.mjs <outPrefix> <B>x<H> <port> <locale> <scale> [seiten]
 import { writeFileSync } from "node:fs";
 import { startHarness } from "./sim-harness.mjs";

@@ -138,7 +138,7 @@
 @import "./ui14-kampf.css";
 @import "./ui14-fortschritt.css";
 @import "./ui14-rahmen.css";
-/* claude:2026-10-24T18:45:00+02:00 — Typografie-Schicht (Fließtext-Schrift), bewusst ZULETZT: s. typography.css. */
+/* claude:2026-10-24T18:30:00+02:00 — Typografie-Schicht (Fließtext-Schrift), bewusst ZULETZT: s. typography.css. */
 @import "./typography.css";
 
 /* Dev-Zeitraffer: Knopf für die Offline-Demo (Chef-Auftrag 31.08.2026). Bewusst schlicht und

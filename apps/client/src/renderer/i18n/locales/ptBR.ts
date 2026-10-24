@@ -2663,7 +2663,7 @@ export const ptBR: Record<string, string> = {
     "salvage.batchUpTo": "Até:",
     "salvage.batchNothing": "Nada para desmontar no inventário até esta raridade.",
     "salvage.batchConfirm": "Desmontar {n}",
-    // claude:2026-10-24T19:50:00+02:00 — Bognerei/Köcher (1.4.0 FK)
+    // claude:2026-10-24T18:30:00+02:00 — Bognerei/Köcher (1.4.0 FK)
     "nav.bowcraft": "Flecharia",
     "onboarding.guide.sidebarSkill.bowcraft.title": "Flecharia",
     "onboarding.guide.sidebarSkill.bowcraft.body": "Esta é a Flecharia. Aqui você entalha hastes, empluma flechas, encorda arcos e costura aljavas. As pontas vêm da Ferraria e as penas do espólio ou da coleta. Todos começam no nível 1.",

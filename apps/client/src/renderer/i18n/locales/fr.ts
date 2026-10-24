@@ -2709,7 +2709,7 @@ export const fr: Record<string, string> = {
     "salvage.batchUpTo": "Jusqu'à :",
     "salvage.batchNothing": "Rien à démonter dans votre inventaire jusqu'à cette rareté.",
     "salvage.batchConfirm": "Démonter {n}",
-    // claude:2026-10-24T19:50:00+02:00 — Bognerei/Köcher (1.4.0 FK)
+    // claude:2026-10-24T18:30:00+02:00 — Bognerei/Köcher (1.4.0 FK)
     "nav.bowcraft": "Archerie",
     "onboarding.guide.sidebarSkill.bowcraft.title": "Archerie",
     "onboarding.guide.sidebarSkill.bowcraft.body": "Voici l'Archerie. Vous y taillez des hampes, empennez des flèches, montez des arcs et cousez des carquois. Les pointes viennent de la Forge, les plumes du butin ou de la cueillette. Tout le monde commence au niveau 1.",

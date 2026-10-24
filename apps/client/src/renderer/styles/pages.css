@@ -415,15 +415,15 @@ body.bank-dragging-noselect {
 @media (max-width: 2900px) {
   .toast { min-width: 360px; max-width: 520px; padding: 16px 20px; gap: 14px; border-width: 8px; }
   .toast-stack { gap: 12px; right: 18px; bottom: 18px; }
-  .toast-title { font-size: var(--fs-md); /* claude:2026-10-24T20:00:00+02:00 — Toast auf Skala, war 17px */ }
-  .toast-detail { font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Toast auf Skala, war 14px */ }
+  .toast-title { font-size: var(--fs-md); /* claude:2026-10-24T18:30:00+02:00 — Toast auf Skala, war 17px */ }
+  .toast-detail { font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Toast auf Skala, war 14px */ }
   .toast-icon { font-size: 30px; }
   .toast-icon img { width: 44px; height: 44px; }
 }
 @media (max-width: 2100px) {
   .toast { min-width: 300px; max-width: 430px; padding: 12px 16px; gap: 12px; border-width: 7px; }
-  .toast-title { font-size: var(--fs-md); /* claude:2026-10-24T20:00:00+02:00 — Toast auf Skala, war 15px */ }
-  .toast-detail { font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Toast auf Skala, war 13px */ }
+  .toast-title { font-size: var(--fs-md); /* claude:2026-10-24T18:30:00+02:00 — Toast auf Skala, war 15px */ }
+  .toast-detail { font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Toast auf Skala, war 13px */ }
   .toast-icon { font-size: 24px; }
   .toast-icon img { width: 36px; height: 36px; }
 }
@@ -434,8 +434,8 @@ body.bank-dragging-noselect {
   .toast { min-width: 260px; max-width: 360px; padding: 6px 12px; gap: 10px; border-width: 6px; }
   /* Basisregeln (.toast-title/-detail/-icon) stehen weiter unten in der Datei; deshalb der Stack-Präfix für die Spezifität. */
   .toast-stack .toast-body { gap: 1px; }
-  .toast-stack .toast-title { font-size: var(--fs-md); /* claude:2026-10-24T20:00:00+02:00 — Toast auf Skala, war 15px */ line-height: 1.2; letter-spacing: 0.3px; }
-  .toast-stack .toast-detail { font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Toast auf Skala, war 13px */ line-height: 1.25; }
+  .toast-stack .toast-title { font-size: var(--fs-md); /* claude:2026-10-24T18:30:00+02:00 — Toast auf Skala, war 15px */ line-height: 1.2; letter-spacing: 0.3px; }
+  .toast-stack .toast-detail { font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Toast auf Skala, war 13px */ line-height: 1.25; }
   .toast-stack .toast-icon { font-size: 22px; }
   .toast-stack .toast-icon img, .toast-stack .toast-icon .ui-icon { width: 30px; height: 30px; }
 }
@@ -5156,7 +5156,7 @@ body.bank-dragging-noselect {
   border-radius: 0;
   cursor: pointer;
   font-family: var(--font-head);
-  font-size: var(--fs-xs); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 13px */
+  font-size: var(--fs-xs); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 13px */
   font-weight: 700;
   letter-spacing: 0.6px;
   background: linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)),
@@ -5200,7 +5200,7 @@ body.bank-dragging-noselect {
   min-width: 44px;
   min-height: 24px;
   padding: 3px 8px;
-  font-size: var(--fs-xs); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 14px */
+  font-size: var(--fs-xs); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 14px */
 }
 
 /* Größere Buttons (Chef): Upgrade-Kauf-Buttons + Verkaufs-Mengen-Buttons */
@@ -5696,7 +5696,7 @@ body.bank-dragging-noselect {
   right: 26px;
   bottom: 9px;
   font-family: "Cinzel", var(--font-head);
-  font-size: var(--fs-xs); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 12px */
+  font-size: var(--fs-xs); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 12px */
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--gold);

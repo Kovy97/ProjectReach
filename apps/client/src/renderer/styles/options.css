@@ -74,7 +74,7 @@
 
 .opz-header-text p {
   margin: 4px 0 0;
-  font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 14px */
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 14px */
   font-style: italic;
   color: var(--muted);
 }
@@ -165,7 +165,7 @@
 }
 
 .opz-row-hint {
-  font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 13px */
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 13px */
   color: var(--muted);
   line-height: 1.35;
   max-width: 360px;
@@ -295,7 +295,7 @@
   height: 26px;
   padding: 0 8px;
   font-family: var(--font-head);
-  font-size: var(--fs-xs); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 13px */
+  font-size: var(--fs-xs); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 13px */
   font-weight: 700;
   color: var(--gold);
   background: rgba(20, 14, 10, 0.6);
@@ -306,7 +306,7 @@
 
 .opz-key-or,
 .opz-key-dash {
-  font-size: var(--fs-xs); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 12px */
+  font-size: var(--fs-xs); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 12px */
   color: var(--muted);
 }
 
@@ -318,7 +318,7 @@
 /* ─── Save-Data-Panel ── */
 .opz-hint {
   margin: 0 0 12px;
-  font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 14px */
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 14px */
   color: var(--muted);
 }
 
@@ -328,7 +328,7 @@
   margin-top: 4px;
   padding: 10px 12px;
   font-family: var(--font-mono, monospace);
-  font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 13px */
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 13px */
   line-height: 1.4;
   resize: vertical;
   background: var(--bg-deep);
@@ -348,8 +348,8 @@
   flex-wrap: wrap;
 }
 
-.opz-status-ok { color: #8fd88f; font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 14px */ }
-.opz-status-error { color: #e08a8a; font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 14px */ }
+.opz-status-ok { color: #8fd88f; font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 14px */ }
+.opz-status-error { color: #e08a8a; font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 14px */ }
 
 /* ─── About-Panel ── */
 .opz-about-version {
@@ -361,7 +361,7 @@
 
 .opz-about-line {
   margin: 0 0 8px;
-  font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 14px */
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 14px */
   color: var(--muted);
 }
 
@@ -374,7 +374,7 @@
 
 .opz-about-copyright {
   margin-top: 12px;
-  font-size: var(--fs-2xs); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 12px */
+  font-size: var(--fs-2xs); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 12px */
   color: var(--muted);
 }
 
@@ -443,7 +443,7 @@
 }
 
 #root .opz-section-title {
-  font-size: var(--fs-xl); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war clamp(18px, 1.25vw, 22px) */
+  font-size: var(--fs-xl); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war clamp(18px, 1.25vw, 22px) */
   color: #d9bd78;
 }
 
@@ -453,13 +453,13 @@
 }
 
 #root .opz-row-label {
-  font-size: var(--fs-md); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war clamp(16px, 1.05vw, 19px) */
+  font-size: var(--fs-md); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war clamp(16px, 1.05vw, 19px) */
 }
 
 #root .opz-row-hint,
 #root .opz-hint,
 #root .opz-about-line {
-  font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war clamp(13px, 0.9vw, 16px) */
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war clamp(13px, 0.9vw, 16px) */
   line-height: 1.45;
 }
 
@@ -536,7 +536,7 @@
 
 .opz-font-note {
   margin: 0;
-  font-size: var(--fs-xs); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 12px */
+  font-size: var(--fs-xs); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 12px */
   text-align: right;
   max-width: 34ch;
 }

@@ -2706,7 +2706,7 @@ export const ru: Record<string, string> = {
     "salvage.batchUpTo": "До:",
     "salvage.batchNothing": "В инвентаре нечего разобрать до этой редкости.",
     "salvage.batchConfirm": "Разобрать: {n}",
-    // claude:2026-10-24T19:50:00+02:00 — Bognerei/Köcher (1.4.0 FK)
+    // claude:2026-10-24T18:30:00+02:00 — Bognerei/Köcher (1.4.0 FK)
     "nav.bowcraft": "Лучное дело",
     "onboarding.guide.sidebarSkill.bowcraft.title": "Лучное дело",
     "onboarding.guide.sidebarSkill.bowcraft.body": "Это лучное дело. Здесь вы вытачиваете древки, оперяете стрелы, натягиваете луки и шьёте колчаны. Наконечники даёт кузнечное дело, перья приходят с добычей или со сбора. Все начинают с 1-го уровня.",

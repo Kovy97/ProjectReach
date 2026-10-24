@@ -1,4 +1,4 @@
-/* claude:2026-10-24T18:45:00+02:00 — Typografie-Schicht (UI-Überarbeitung 1.4, Welle 1). Wird als LETZTES Stylesheet geladen
+/* claude:2026-10-24T18:30:00+02:00 — Typografie-Schicht (UI-Überarbeitung 1.4, Welle 1). Wird als LETZTES Stylesheet geladen
    (index.css) und sammelt alle Fließtext-Regeln an einer Stelle: Chef 24.10. — Beschreibungen, Effekte, Tooltips, Quests
    bekommen eine Schrift mit ECHTEN Kleinbuchstaben (--font-body, base.css); Titel, Namen und Knöpfe bleiben in der Hausschrift
    (Kapitälchen). Umkehren: den @import dieser Datei aus index.css nehmen. Schrift wechseln: --body-face in base.css.

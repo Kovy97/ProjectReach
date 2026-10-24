@@ -2665,7 +2665,7 @@ export const es: Record<string, string> = {
     "salvage.batchUpTo": "Hasta:",
     "salvage.batchNothing": "No hay nada desguazable en tu inventario hasta esta rareza.",
     "salvage.batchConfirm": "Desguazar {n}",
-    // claude:2026-10-24T19:50:00+02:00 — Bognerei/Köcher (1.4.0 FK)
+    // claude:2026-10-24T18:30:00+02:00 — Bognerei/Köcher (1.4.0 FK)
     "nav.bowcraft": "Flechería",
     "onboarding.guide.sidebarSkill.bowcraft.title": "Flechería",
     "onboarding.guide.sidebarSkill.bowcraft.body": "Esta es la Flechería. Aquí tallas astiles, emplumas flechas, tensas arcos y coses carcajs. Las puntas salen de la Herrería y las plumas del botín o de la recolección. Todos empiezan en el nivel 1.",

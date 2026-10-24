@@ -155,7 +155,7 @@
 }
 
 .item-cell-name {
-  font-size: var(--fs-xs); /* claude:2026-10-24T18:35:00+02:00 — war 14px */
+  font-size: var(--fs-xs); /* claude:2026-10-24T18:30:00+02:00 — war 14px */
   line-height: 1.15;
   color: var(--text);
   overflow: hidden;
@@ -174,7 +174,7 @@
 /* Vierstellige Mengen (Stack-Cap 9999, Welle SS): etwas kleiner statt "9,9k"-Kürzung — echte
    Zahlen bleiben echte Zahlen, nur die Zell-Ecke bekommt mehr Luft. */
 .item-cell-qty--wide {
-  font-size: var(--fs-2xs); /* claude:2026-10-24T18:35:00+02:00 — war 12px */
+  font-size: var(--fs-2xs); /* claude:2026-10-24T18:30:00+02:00 — war 12px */
   right: 6%;
 }
 
@@ -279,7 +279,7 @@ body .item-cell.rarity-mythic {
 }
 
 .shop-cell .item-cell-name {
-  font-size: var(--fs-2xs); /* claude:2026-10-24T18:35:00+02:00 — war 12px */
+  font-size: var(--fs-2xs); /* claude:2026-10-24T18:30:00+02:00 — war 12px */
 }
 
 /* Paperdoll-Item innerhalb eines Slots — echtes Flex-Centering, kein Offset-Hack mehr
@@ -409,14 +409,14 @@ body .item-cell.rarity-mythic {
 }
 .ct-tip-title {
   font-family: var(--font-head);
-  font-size: var(--fs-sm); /* claude:2026-10-24T18:35:00+02:00 — war 13px */
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — war 13px */
   letter-spacing: 0.4px;
   text-transform: uppercase;
   color: var(--attr-color, var(--gold));
   text-shadow: 0 1px 2px rgba(0,0,0,0.85);
 }
 .ct-tip-desc {
-  font-size: var(--fs-sm); /* claude:2026-10-24T18:35:00+02:00 — war 12px */
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — war 12px */
   line-height: 1.32;
   color: #d9cca9;
 }
@@ -508,7 +508,7 @@ body .item-cell.rarity-mythic {
   border-radius: 4px;
   background: var(--accent-2);
   color: var(--bg, #000);
-  font-size: var(--fs-xs); /* claude:2026-10-24T18:35:00+02:00 — war 14px */
+  font-size: var(--fs-xs); /* claude:2026-10-24T18:30:00+02:00 — war 14px */
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -593,7 +593,7 @@ body .item-cell.rarity-mythic {
 .it-hint {
   margin-top: 8px;
   padding: 0 20px;
-  font-size: var(--fs-sm); /* claude:2026-10-24T18:35:00+02:00 — war 13px */
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — war 13px */
   text-align: center;
 }
 
@@ -1968,7 +1968,7 @@ body .item-cell.rarity-mythic {
   left: 7%;
   padding: 0 3px;
   font-family: var(--font-display, "Cinzel", Georgia, serif);
-  font-size: var(--fs-2xs); /* claude:2026-10-24T18:35:00+02:00 — war 10px */
+  font-size: var(--fs-2xs); /* claude:2026-10-24T18:30:00+02:00 — war 10px */
   font-weight: 700;
   line-height: 13px;
   letter-spacing: 0.02em;
@@ -2171,7 +2171,7 @@ body .item-cell.rarity-mythic {
   font-family: "Cinzel", Georgia, "Times New Roman", serif;
 }
 
-/* claude:2026-10-24T19:05:00+02:00 — .itip-effect-line ist hier raus: Effektzeilen sind Fließtext und laufen über
+/* claude:2026-10-24T18:30:00+02:00 — .itip-effect-line ist hier raus: Effektzeilen sind Fließtext und laufen über
    --font-body (typography.css). Name und Gruppentitel bleiben Metamorphous. */
 .item-tooltip.itip-panel :is(.itip-name, .itip-group-title) {
   font-family: "Metamorphous", "Cinzel", Georgia, serif;

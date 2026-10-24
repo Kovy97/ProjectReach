@@ -1,4 +1,4 @@
-// claude:2026-10-24T18:55:00+02:00 — Schrift-Vergleich Fließtext: Begleiter-Beschreibung + Item-Tooltip je Kandidatin, de.
+// claude:2026-10-24T18:30:00+02:00 — Schrift-Vergleich Fließtext: Begleiter-Beschreibung + Item-Tooltip je Kandidatin, de.
 // Aufruf (aus apps/client): node ui-audit/_font-compare.mjs <outDir> <B>x<H> <port>
 import { mkdirSync } from "node:fs";
 import { startHarness } from "./sim-harness.mjs";

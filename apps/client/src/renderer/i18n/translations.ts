@@ -2985,7 +2985,7 @@ const en = {
     "salvage.batchUpTo": "Up to:",
     "salvage.batchNothing": "Nothing in your inventory to salvage up to this rarity.",
     "salvage.batchConfirm": "Salvage {n}",
-    // claude:2026-10-24T19:50:00+02:00 — Bognerei/Köcher (1.4.0 FK)
+    // claude:2026-10-24T18:30:00+02:00 — Bognerei/Köcher (1.4.0 FK)
     "nav.bowcraft": "Fletching",
     "onboarding.guide.sidebarSkill.bowcraft.title": "Fletching",
     "onboarding.guide.sidebarSkill.bowcraft.body": "This is Fletching. You carve shafts, fletch arrows, string bows and stitch quivers. Arrowheads come from Smithing and feathers from loot or gathering. Everyone starts at level 1.",
@@ -6031,7 +6031,7 @@ const de: Record<keyof typeof en, string> = {
     "salvage.batchUpTo": "Bis:",
     "salvage.batchNothing": "Bis zu dieser Rarität liegt nichts Zerlegbares im Inventar.",
     "salvage.batchConfirm": "{n} zerlegen",
-    // claude:2026-10-24T19:50:00+02:00 — Bognerei/Köcher (1.4.0 FK)
+    // claude:2026-10-24T18:30:00+02:00 — Bognerei/Köcher (1.4.0 FK)
     "nav.bowcraft": "Bognerei",
     "onboarding.guide.sidebarSkill.bowcraft.title": "Bognerei",
     "onboarding.guide.sidebarSkill.bowcraft.body": "Das ist die Bognerei. Hier schnitzt du Schäfte, befiederst Pfeile, spannst Bögen und nähst Köcher. Pfeilspitzen kommen aus der Schmiede, Federn aus Beute oder vom Sammeln. Alle starten bei Stufe 1.",

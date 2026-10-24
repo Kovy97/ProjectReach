@@ -517,7 +517,7 @@
   bottom: auto;
   transform: translateY(-50%);
   font-family: "Metamorphous", Georgia, "Times New Roman", serif !important;
-  font-size: calc(var(--fs-sm) * var(--sb-scale-eff, 1)) !important; /* claude:2026-10-24T19:20:00+02:00 — Skala statt fester px */
+  font-size: calc(var(--fs-sm) * var(--sb-scale-eff, 1)) !important; /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px */
   line-height: 1;
   letter-spacing: 0.01em;
   font-variant-numeric: tabular-nums;

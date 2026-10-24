@@ -2705,7 +2705,7 @@ export const zh: Record<string, string> = {
     "salvage.batchUpTo": "上限：",
     "salvage.batchNothing": "背包中没有该稀有度及以下可拆解的物品。",
     "salvage.batchConfirm": "拆解 {n} 件",
-    // claude:2026-10-24T19:50:00+02:00 — Bognerei/Köcher (1.4.0 FK)
+    // claude:2026-10-24T18:30:00+02:00 — Bognerei/Köcher (1.4.0 FK)
     "nav.bowcraft": "制弓",
     "onboarding.guide.sidebarSkill.bowcraft.title": "制弓",
     "onboarding.guide.sidebarSkill.bowcraft.body": "这是制弓。你在这里削箭杆、装箭羽、上弓弦、缝箭袋。箭头来自锻造，羽毛来自战利品或采集。所有人都从 1 级开始。",

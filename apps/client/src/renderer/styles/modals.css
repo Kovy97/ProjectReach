@@ -160,7 +160,7 @@
   border: none;
   color: var(--muted);
   font-family: var(--font-head);
-  font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 14px */
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 14px */
   cursor: pointer;
 }
 
@@ -316,7 +316,7 @@
   width: 44px;
   font-family: var(--font-head);
   font-weight: 700;
-  font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 14px */
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 14px */
   color: #9a8060;
   text-align: center;
 }
@@ -451,7 +451,7 @@
 /* Eskalationszeile (mehrfach/oft gestorben) — kleiner und gedämpfter als die Chronik-Hauptzeile,
    dieselbe Größenordnung wie `.death-modal-paragon-hint` darunter. */
 .death-modal-escalation {
-  font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 14px */
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 14px */
   line-height: 1.5;
   color: var(--muted);
   margin: 0 0 8px;
@@ -471,7 +471,7 @@
    kleiner als der Haupttext, aber sichtbar genug, dass der Run-/Etagen-Reset nicht untergeht
    (Chef-Leitplanke: KEIN stilles Zurücksetzen). Von beiden Death-Popup-Hinweiszeilen geteilt. */
 .death-modal-paragon-hint {
-  font-size: var(--fs-sm); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war 14px */
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war 14px */
   color: #d8c39a;
   margin: 0 0 18px;
 }
@@ -577,7 +577,7 @@
 
 .update-notice-title {
   font-family: var(--font-head);
-  font-size: var(--fs-xl); /* claude:2026-10-24T20:00:00+02:00 — Skala statt fester px, war clamp(19px, 1.5vw, 25px) */
+  font-size: var(--fs-xl); /* claude:2026-10-24T18:30:00+02:00 — Skala statt fester px, war clamp(19px, 1.5vw, 25px) */
   color: var(--gold);
   margin: 6px 0 2px;
 }
