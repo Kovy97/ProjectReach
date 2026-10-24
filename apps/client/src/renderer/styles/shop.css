@@ -1156,3 +1156,27 @@ p.shopv2-hint { font-size: var(--fs-sm); flex-shrink: 0; }
 #root .shopv2-pane { --shop-counter-w: clamp(calc(280px * var(--text-scale)), 28cqi, calc(360px * var(--text-scale))); }
 #root .shopv2-counter .shopv2-section-title, #root .shopv2-sell-aside .shopv2-section-title { white-space: normal; overflow-wrap: anywhere; line-height: 1.15; }
 #root .shopv2-counter-name, #root .shopv2-counter-copy { overflow-wrap: anywhere; min-width: 0; }
+
+/* claude:2026-10-24T22:49:00+02:00 — Chef 24.10.: „mehr Kontrast im Shop, die Item Cards mit braunem painterly Texturhintergrund, nicht grau auf
+   grau“. Die Karten lagen auf kaltem Schiefer im ebenfalls grauen Regal. Jetzt gemaltes braunes Leder (dieselbe Textur wie
+   Sidebar-Alternativknöpfe und Meisterschaftsleiste), das Bildfeld darin dunkler braun abgesetzt, damit das Item vorne steht.
+   Rahmen (v3 card-frame) und Seltenheits-Innenring bleiben. Doppelte Klasse hebt die Spezifität über die :is()-Regel oben. */
+#root .shopv2-card.shopv2-card {
+  background-color: #2a1b10;
+  background-image:
+    linear-gradient(180deg, rgba(168, 112, 58, 0.16), rgba(24, 14, 6, 0.16)),
+    url("../assets/ui/gravewood/textures/texture-leather.webp");
+  background-size: auto, 520px 520px;
+  background-repeat: no-repeat, repeat;
+}
+#root .shopv2-card.shopv2-card .shopv2-card-image-area {
+  background-image:
+    radial-gradient(ellipse at 50% 45%, rgba(176, 124, 70, 0.30), rgba(18, 10, 4, 0.45)),
+    url("../assets/ui/gravewood/textures/texture-leather.webp");
+  background-size: auto, 520px 520px;
+  box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.6);
+}
+#root .shopv2-card.shopv2-card .shopv2-card-name {
+  color: #efe2c4;
+  text-shadow: 0 1px 2px #000;
+}
