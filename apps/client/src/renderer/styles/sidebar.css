@@ -539,7 +539,7 @@
 }
 .sb-blessing-name {
   font-family: var(--font-head);
-  font-size: clamp(9px, calc(12.5px * var(--sb-scale-eff)), 19px);
+  font-size: calc(var(--fs-md) * var(--sb-scale-eff)); /* claude:2026-10-24T19:20:00+02:00 — Skala statt fester px */
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -550,7 +550,7 @@
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 .sb-blessing-effect {
-  font-size: clamp(8px, calc(10px * var(--sb-scale-eff)), 14px);
+  font-size: calc(var(--fs-sm) * var(--sb-scale-eff)); /* claude:2026-10-24T19:20:00+02:00 — Skala statt fester px */
   color: #e7dcc0;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
@@ -683,7 +683,7 @@
   /* Task #291: skaliert mit --sb-scale (ausgeblendet unter der Icon-Rail-Schwelle). */
   width: calc(78px * var(--sb-scale-eff));
   font-family: var(--font-head);
-  font-size: clamp(8px, calc(11px * var(--sb-scale-eff)), 18px);
+  font-size: calc(var(--fs-sm) * var(--sb-scale-eff)); /* claude:2026-10-24T19:20:00+02:00 — Skala statt fester px */
   font-weight: 700;
   letter-spacing: 0.2px;
   color: #9a8860;
@@ -716,7 +716,7 @@
   flex-shrink: 0;
   font-family: var(--font-head);
   /* Task #291 */
-  font-size: clamp(8px, calc(11px * var(--sb-scale-eff)), 18px);
+  font-size: calc(var(--fs-sm) * var(--sb-scale-eff)); /* claude:2026-10-24T19:20:00+02:00 — Skala statt fester px */
   color: #7a6840;
   white-space: nowrap;
   min-width: 24px;
@@ -1153,7 +1153,7 @@
   top: auto;
   transform: none;
   z-index: 2;
-  font-size: clamp(9px, calc(11px * var(--sb-scale-eff)), 19px);
+  font-size: calc(var(--fs-sm) * var(--sb-scale-eff)); /* claude:2026-10-24T19:20:00+02:00 — Skala statt fester px */
   font-family: var(--font-head);
   font-weight: 700; /* Chef 2026-07-02: doch wieder fett */
   color: #cbb48c; /* Chef 2026-07-03: Leinenbraun, ähnlich Titel-Schrift */
@@ -1163,7 +1163,7 @@
 /* Combat combined-level badge — slightly brighter than plain level text */
 .sb-combat-lvl-badge {
   color: rgba(255, 255, 255, 0.78);
-  font-size: 12px;
+  font-size: var(--fs-2xs); /* claude:2026-10-24T19:20:00+02:00 — Skala statt fester px */
 }
 
 /* Meisterweihe-Insignie (design/master-capes-konzept.md §3, "Goldene Insignien"): dezente
@@ -1379,7 +1379,7 @@
   background: var(--gold, #d8c06a);
   color: #241a0c;
   font-family: var(--font-head);
-  font-size: 10px;
+  font-size: var(--fs-2xs); /* claude:2026-10-24T19:20:00+02:00 — Skala statt fester px */
   font-weight: 800;
   line-height: 15px;
   text-align: center;
@@ -1506,7 +1506,7 @@
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 480px 480px repeat;
   color: var(--gold, #d8c06a);
   font-family: var(--font-head);
-  font-size: clamp(10px, calc(12px * var(--sb-scale-eff)), 19px);
+  font-size: calc(var(--fs-xs) * var(--sb-scale-eff)); /* claude:2026-10-24T19:20:00+02:00 — Skala statt fester px */
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1527,7 +1527,7 @@
 }
 
 .sb-footer-drawer-chevron {
-  font-size: 0.8em;
+  font-size: 1em;
   line-height: 1;
   transition: transform 220ms cubic-bezier(0.2, 0.82, 0.2, 1);
 }
@@ -1740,7 +1740,7 @@
 .sb-estates-head {
   font-family: var(--font-head);
   font-variant: small-caps;
-  font-size: calc(11px * var(--sb-scale-eff, 1));
+  font-size: calc(var(--fs-xs) * var(--sb-scale-eff, 1)); /* claude:2026-10-24T19:20:00+02:00 — Skala statt fester px */
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(216, 192, 106, 0.72);
@@ -1764,7 +1764,7 @@
   right: calc(48px * var(--sb-scale-eff, 1));
   bottom: calc(4px * var(--sb-scale-eff, 1));
   z-index: 1;
-  font-size: calc(9.5px * var(--sb-scale-eff, 1));
+  font-size: calc(var(--fs-2xs) * var(--sb-scale-eff, 1)); /* claude:2026-10-24T19:20:00+02:00 — Skala statt fester px */
   line-height: 1.1;
   text-align: center;
   white-space: nowrap;

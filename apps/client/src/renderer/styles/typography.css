@@ -1,0 +1,253 @@
+/* claude:2026-10-24T18:45:00+02:00 — Typografie-Schicht (UI-Überarbeitung 1.4, Welle 1). Wird als LETZTES Stylesheet geladen
+   (index.css) und sammelt alle Fließtext-Regeln an einer Stelle: Chef 24.10. — Beschreibungen, Effekte, Tooltips, Quests
+   bekommen eine Schrift mit ECHTEN Kleinbuchstaben (--font-body, base.css); Titel, Namen und Knöpfe bleiben in der Hausschrift
+   (Kapitälchen). Umkehren: den @import dieser Datei aus index.css nehmen. Schrift wechseln: --body-face in base.css.
+
+   Vorgehen: gelistet sind nur EINDEUTIGE Fließtext-Klassen (Satz- und Absatztexte). Kurze Etiketten, Zahlen, Namen,
+   Knöpfe stehen NICHT hier. Wer neuen Fließtext baut, hängt die Klasse in die passende Gruppe ein (oder nimmt .prose).
+   `:root :is(...)` hebt die Spezifität (0,2,0) über einfache Klassenregeln, die font-family setzen.
+
+   Gewicht 500: die Hausschrift hat nur Regular, der Body steht auf 700 (synthetisch fett). Die Fließtextschriften sind
+   Variable Fonts mit echten Gewichten, 700 wäre zu schwer. Ziffern proportional statt tabellarisch, damit „1.240“ nicht
+   auseinanderfällt; Spaltenzahlen bleiben in den Hausschrift-Regeln tabellarisch. */
+
+:root :is(
+  .prose,
+  p,
+  /* Erfolge / Meisterschaft / Statistik */
+  .achv-desc,
+  .ach2-desc,
+  .achv-hero-sub,
+  .achv-milestone-text,
+  .ach2-header-sub,
+  .ms2-tabs-head-desc,
+  .ms2-pool-next,
+  /* Bank / Lager / Charakter / Postfach */
+  .bank-hint,
+  .bank-full-note,
+  .bank-notes,
+  .storage-lead,
+  .lacking-note,
+  .mail-blocked-note,
+  .mail-page-actions-note,
+  .cs-detail-desc,
+  .eq-kit-hint,
+  .invf-empty-note,
+  .save-empty-note,
+  .load-empty-note,
+  .menu-empty-note,
+  /* Bestiarium / Jagen / Begleiter / Kampf */
+  .bestiary-unknown-hint,
+  .bjw-unknown-hint,
+  .bjw-zone-locked-note,
+  .bjw-regen-note,
+  .bjw-head-subtitle,
+  .status-legend-desc,
+  .hbk-zone-locked-note,
+  .hunt-trap-state-text,
+  .hunt-trap-art-hint,
+  .hzp-mon-card-reason,
+  .hzp-nt-reason,
+  .hzp-zone-tile-reason,
+  .hzp-footer-hint,
+  .codex-card-zonehint,
+  .pet-card-desc,
+  .pet-card-effect,
+  .pet-celebration-desc,
+  .pet-celebration-sub,
+  .pet-field-description,
+  .pet-field-effects-hint,
+  .pet-field-effects-unknown-text,
+  .pet-field-book-note,
+  .pet-field-echo-summary,
+  .pet-field-echo-state,
+  .pet-field-active-effect,
+  .pet-effect-value,
+  .cl-food-hint,
+  .cl-potion-cooldown-hint,
+  .cl-stance-effect,
+  .cl-stance-note,
+  .combat-return-note,
+  .melee-only-note,
+  .dungeon-locked-hint,
+  .dungeon-boss-intro-content,
+  .zone-card-locked-hint,
+  .zone-card-story-locked,
+  .death-modal-chronicle,
+  .death-modal-paragon-hint,
+  .paragon-chest-hint,
+  .paragon-death-hint,
+  .paragon-hint,
+  .dcc-loot-skiphint,
+  .fighter-effects,
+  .log-line,
+  /* Skills / Anbau / Handwerk / Verzauberung */
+  .farm-picker-lead,
+  .farm-catalogue-meta,
+  .farm-catalogue-sink,
+  .estate-banner-lead,
+  .estates-note,
+  .camp-boost-note,
+  .skilloverview-guide,
+  .skillguide-desc,
+  .skillcard-queue-hint,
+  .skill-summary,
+  .plot-next-text,
+  .plot-state-text,
+  .thieving-risk-hint,
+  .ench-empty-hint,
+  .ench-pick-hint,
+  .ench-suffix-hint,
+  .enchant-autosalvage-hint,
+  .ench-bonus-line,
+  .enchant-bonus-line,
+  .ench-newfx-line,
+  .enchant-preview-newfx-line,
+  .ench-rune-card-effect,
+  .enchant-rune-card-effect,
+  .pouch-enchant-effect,
+  .pouch-enchant-line,
+  .salvage-lead,
+  .macro-style-hint,
+  .mwc-queue-hint,
+  .mwc-subtitle,
+  .queue-panel-blocked-text,
+  /* Quests / Chronik / Lore / Dialog */
+  .quest-card-desc,
+  .quest-locked-hint,
+  .quest-shop-offer-hint,
+  .quest-shop-panel-desc,
+  .chronicle-history-text,
+  .chronicle-payoff,
+  .chronicle-stage-directive,
+  .chronicle-obj-where,
+  .chronicle-obj-label,
+  .npc-bubble-text,
+  .raid-dialog-body,
+  .raid-intro,
+  .raid-lock-hint,
+  .raid-mod-desc,
+  .raid-note,
+  .raid-rest-desc,
+  .talent-node-desc,
+  .talent-node-reason,
+  .talent-tree-intro,
+  .talent-tree-lock-hint,
+  .work-order-line,
+  .work-order-text,
+  .work-orders-lead,
+  .slayer-cancel-confirm-text,
+  .slayer-task-empty-hint,
+  .prestige-note,
+  .prestige-pick-sub,
+  .prestige-pick-text,
+  .prestige-recall-text,
+  /* New Haven / Laden */
+  .nh-card-flavor,
+  .nh-crew-text,
+  .nh-effect,
+  .nh-header-flavor,
+  .nh-list-reason,
+  .nh-map-empty-hint,
+  .nh-place-hint,
+  .nh-place-reason,
+  .nh-progress-speednote,
+  .nh-refinery-note,
+  .nh-buildmenu-reason,
+  .nh-debug-free-note,
+  .shop-sell-hint,
+  .shop-shift-hint,
+  .shopv2-hint,
+  .shopv2-counter-reason,
+  .shopv2-upgrade-text,
+  .mshop-hint-inline,
+  .mshop-mode-card-hint,
+  .mshop-popup-subtitle,
+  .tvn-info-line,
+  .tvn-level-note,
+  /* Optionen / Menü / Berichte / Hilfe */
+  .opz-row-hint,
+  .opz-hint,
+  .opz-about-line,
+  .opz-font-note,
+  .opt-row-hint,
+  .options-hint,
+  .bugreport-entry-hint,
+  .bugreport-entry-text,
+  .bugreport-subtitle,
+  .bugreport-dropzone-hint,
+  .bugreport-fallback-explain,
+  .bugreport-mailto-hint,
+  .category-hint,
+  .chdef-hint,
+  .creation-style-desc,
+  .creation-style-hint,
+  .offline-stage-cap-note,
+  .offline-stage-subtitle,
+  .ofs-empty-text,
+  .ofs-warden-line,
+  .rlc-open-note,
+  .update-notice-intro,
+  .guide-bubble-body,
+  .guide-bubble-hint,
+  .toast-note,
+  .zonemap-tooltip,
+  /* Item-Tooltips / Wiki / Citadel-Tips */
+  .ct-tip-desc,
+  .blessing-tip-effect,
+  .ib-desc,
+  .it-desc,
+  .it-hint,
+  .itip-effect-line,
+  .itip-enchant-slot-hint,
+  .itip-flavor,
+  .itip-req-line,
+  .itip-set-line,
+  .itip-slot-free-hint,
+  .itip-special-effect,
+  .itip-tool-hint,
+  .itip-rune-target-hint,
+  .iwk-item-flavor,
+  .iwk-ribbon-sub,
+  .iwk-source-text,
+  .iwk-ribbon-text
+
+) {
+  font-family: var(--font-body);
+  font-weight: 500;
+  text-transform: none;
+  font-variant-caps: normal;
+  letter-spacing: normal;
+  font-feature-settings: "lnum" 1;
+  font-variant-numeric: lining-nums proportional-nums;
+}
+
+/* ─── Classic-Stil: Mindestgrößen ─────────────────────────────────────────────────────────────
+   classic-chrome.css (Seitenleiste/Kopfzeile von 1.2.3) ist GENERIERT und wird nicht von Hand angefasst. Die alten
+   Schriftgrößen (9–12 px) bleiben dort stehen; diese Regeln heben nur die Untergrenzen auf die fließende Skala
+   (nur Größe, keine Rahmen oder Materialien). Spezifität: :root[…] #root … übertrifft die generierten Regeln. */
+:root[data-ui-style="classic"] #root .sb-skill-btn .sb-skill-level,
+:root[data-ui-style="classic"] #root .sb-skill-level {
+  font-size: calc(var(--fs-sm) * var(--sb-scale-eff, 1)) !important;
+}
+:root[data-ui-style="classic"] #root :is(.sb-combat-name, .sb-combat-level, .sb-blessing-effect) {
+  font-size: calc(var(--fs-sm) * var(--sb-scale-eff, 1));
+}
+:root[data-ui-style="classic"] #root .sb-blessing-name {
+  font-size: calc(var(--fs-md) * var(--sb-scale-eff, 1));
+}
+:root[data-ui-style="classic"] #root :is(.sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit, .sb-footer-drawer-tab) {
+  font-size: calc(var(--fs-xs) * var(--sb-scale-eff, 1));
+}
+:root[data-ui-style="classic"] #root :is(.sb-footer-badge, .sb-combat-lvl-badge, .sb-estate-status) {
+  font-size: var(--fs-2xs);
+}
+:root[data-ui-style="classic"] #root .topbar-item {
+  font-size: calc(max(var(--fs-2xs), 0.78vw) * var(--tb-scale, 1));
+}
+:root[data-ui-style="classic"] #root :is(.tb-bar-labels, .header-charinfo-stat, .gamestats-slayer-chip, .gamestats-stop-btn) {
+  font-size: calc(var(--fs-2xs) * var(--tb-scale, 1));
+}
+:root[data-ui-style="classic"] #root :is(.header-charinfo-name, .game-stats, .gamestats-vs, .activity) {
+  font-size: calc(var(--fs-sm) * var(--tb-scale, 1));
+}

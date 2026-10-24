@@ -1,0 +1,27 @@
+{
+ "character": {
+  "docOverflowX": 0,
+  "sbOverflowX": 0,
+  "clipped": []
+ },
+ "bank": {
+  "docOverflowX": 0,
+  "sbOverflowX": 0,
+  "clipped": []
+ },
+ "woodcutting": {
+  "docOverflowX": 0,
+  "sbOverflowX": 0,
+  "clipped": []
+ },
+ "combat": {
+  "docOverflowX": 0,
+  "sbOverflowX": 0,
+  "clipped": []
+ },
+ "options": {
+  "docOverflowX": 0,
+  "sbOverflowX": 0,
+  "clipped": []
+ }
+}

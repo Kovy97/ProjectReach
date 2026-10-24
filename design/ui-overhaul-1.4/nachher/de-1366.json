@@ -1,0 +1,1328 @@
+{
+ "viewport": "1366x768",
+ "pages": {
+  "character": {
+   "n": 75,
+   "chromeSmall": [],
+   "chromeMin": 14.0041,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 49,
+    "18+": 10,
+    "13-14": 12,
+    "11-12": 4
+   },
+   "minFs": 12,
+   "small": [
+    {
+     "p": "cs-inv-toolbar > cs-inv-toolbar-right > cs-inv-sortbtn",
+     "fs": 12,
+     "n": 2,
+     "bsp": "Sortieren"
+    },
+    {
+     "p": "cs-col.cs-col-left > cs-panel-header > cs-section-title",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Charakter"
+    },
+    {
+     "p": "cs-col.cs-col-tabpanel > cs-tabbar > cs-tab-btn.active",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Ausrüstung"
+    },
+    {
+     "p": "cs-col.cs-col-tabpanel > cs-tabbar > cs-tab-btn",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Stats"
+    },
+    {
+     "p": "cs-col.cs-col-right > cs-panel-header > cs-section-title",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Inventar"
+    },
+    {
+     "p": "cs-inv-toolbar > cs-inv-toolbar-right > cs-sort-label",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Sortieren:"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    },
+    {
+     "p": "cs-col.cs-col-left > cs-col-left-info > cs-vitals",
+     "wh": [
+      738,
+      80
+     ],
+     "fill": 4,
+     "maxFs": 14.0041
+    }
+   ]
+  },
+  "combat": {
+   "n": 69,
+   "chromeSmall": [],
+   "chromeMin": 13.5,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 46,
+    "18+": 9,
+    "13-14": 14
+   },
+   "minFs": 13.5,
+   "small": [
+    {
+     "p": "sb-combat-level > skill-boost-value > skill-boost-tag",
+     "fs": 13.5,
+     "n": 1,
+     "bsp": "(95)"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    },
+    {
+     "p": "sb-combat-section > sb-combat-subskills > sb-combat-row.sb-combat-row--training",
+     "wh": [
+      213,
+      61
+     ],
+     "fill": 17,
+     "maxFs": 15
+    },
+    {
+     "p": "combat-select > zone-grid > zone-card.has-bg",
+     "wh": [
+      323,
+      190
+     ],
+     "fill": 1,
+     "maxFs": 0
+    }
+   ]
+  },
+  "skills-overview": {
+   "n": 77,
+   "chromeSmall": [],
+   "chromeMin": 13.5,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 60,
+    "18+": 12,
+    "13-14": 5
+   },
+   "minFs": 13,
+   "small": [
+    {
+     "p": "sb-combat-level > skill-boost-value > skill-boost-tag",
+     "fs": 13.5,
+     "n": 1,
+     "bsp": "(95)"
+    },
+    {
+     "p": "skilloverview-head > skilloverview-total > skilloverview-total-label",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Gesamtlevel"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    },
+    {
+     "p": "sb-combat-section > sb-combat-subskills > sb-combat-row.sb-combat-row--training",
+     "wh": [
+      213,
+      61
+     ],
+     "fill": 17,
+     "maxFs": 15
+    }
+   ]
+  },
+  "woodcutting": {
+   "n": 88,
+   "chromeSmall": [],
+   "chromeMin": 14.0041,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 43,
+    "18+": 22,
+    "13-14": 20,
+    "11-12": 3
+   },
+   "minFs": 12,
+   "small": [
+    {
+     "p": "skillcard-grid > skillcard-tile",
+     "fs": 13,
+     "n": 12,
+     "bsp": "XP"
+    },
+    {
+     "p": "skillcard-output-zone > skillcard-produces.muted > skillcard-produces-label",
+     "fs": 12,
+     "n": 3,
+     "bsp": "Produziert :"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    },
+    {
+     "p": "sb-combat-section > sb-combat-subskills > sb-combat-row.sb-combat-row--training",
+     "wh": [
+      213,
+      61
+     ],
+     "fill": 17,
+     "maxFs": 15
+    },
+    {
+     "p": "skillcard-body.skillcard-body--no-inputs > skillcard-output-zone > skillcard-produces.muted",
+     "wh": [
+      277,
+      214
+     ],
+     "fill": 13,
+     "maxFs": 17.1
+    }
+   ]
+  },
+  "smithing": {
+   "n": 77,
+   "chromeSmall": [],
+   "chromeMin": 14.0041,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 40,
+    "18+": 35,
+    "13-14": 2
+   },
+   "minFs": 14.0041,
+   "small": [],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    },
+    {
+     "p": "sb-combat-section > sb-combat-subskills > sb-combat-row.sb-combat-row--training",
+     "wh": [
+      213,
+      61
+     ],
+     "fill": 17,
+     "maxFs": 15
+    }
+   ]
+  },
+  "cooking": {
+   "n": 65,
+   "chromeSmall": [],
+   "chromeMin": 14.0041,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 40,
+    "18+": 23,
+    "13-14": 2
+   },
+   "minFs": 14.0041,
+   "small": [],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    },
+    {
+     "p": "sb-combat-section > sb-combat-subskills > sb-combat-row.sb-combat-row--training",
+     "wh": [
+      213,
+      61
+     ],
+     "fill": 17,
+     "maxFs": 15
+    }
+   ]
+  },
+  "farming": {
+   "n": 70,
+   "chromeSmall": [],
+   "chromeMin": 13,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 38,
+    "18+": 22,
+    "13-14": 9,
+    "11-12": 1
+   },
+   "minFs": 12,
+   "small": [
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "farm-section-content > muted",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Saat wächst passiv – online wie offl"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    },
+    {
+     "p": "farm-section-content > farm-plots > plot-card",
+     "wh": [
+      327,
+      236
+     ],
+     "fill": 4,
+     "maxFs": 16
+    }
+   ]
+  },
+  "hunting": {
+   "n": 74,
+   "chromeSmall": [],
+   "chromeMin": 13,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 40,
+    "18+": 20,
+    "13-14": 10,
+    "11-12": 4
+   },
+   "minFs": 11,
+   "small": [
+    {
+     "p": "hunt-trap-topband > hunt-trap-topband-right > hunt-trap-badge.hunt-trap-badge--locked",
+     "fs": 11,
+     "n": 2,
+     "bsp": "Ab Stufe 5"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "hunt-trap-topband > hunt-trap-topband-right > hunt-trap-badge.hunt-trap-badge--empty",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Leer"
+    },
+    {
+     "p": "hunt-trap-card.needs-zone > hunt-trap-art > hunt-trap-art-hint",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Gebiet wählen"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    },
+    {
+     "p": "hunt-page > hunt-traps > hunt-trap-card.locked",
+     "wh": [
+      327,
+      300
+     ],
+     "fill": 15,
+     "maxFs": 19
+    }
+   ]
+  },
+  "tailoring": {
+   "n": 77,
+   "chromeSmall": [],
+   "chromeMin": 14.0041,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 35,
+    "18+": 40,
+    "13-14": 2
+   },
+   "minFs": 14.0041,
+   "small": [],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    }
+   ]
+  },
+  "bank": {
+   "n": 78,
+   "chromeSmall": [],
+   "chromeMin": 14.0041,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 33,
+    "18+": 12,
+    "13-14": 11,
+    "11-12": 22
+   },
+   "minFs": 12,
+   "small": [
+    {
+     "p": "cs-inv-slot-wrap.bank-drag-cell > item-cell.rarity-common > item-cell-qty",
+     "fs": 12,
+     "n": 18,
+     "bsp": "92"
+    },
+    {
+     "p": "shop-panel.bank-ledger-panel > bank-col-head > bank-col-title",
+     "fs": 13,
+     "n": 2,
+     "bsp": "Inventar"
+    },
+    {
+     "p": "npc-greeting.npc-greeting--page > npc-bubble.npc-bubble--tail-left > npc-bubble-name",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Die Verwalterin"
+    },
+    {
+     "p": "npc-greeting.npc-greeting--page > npc-bubble.npc-bubble--tail-left > npc-bubble-text",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Eiserne Schlösser, keine Fragen. Das"
+    },
+    {
+     "p": "bank-filter-row > bank-sort-inline > cs-sort-label",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Sortieren:"
+    },
+    {
+     "p": "bank-filter-row > bank-sort-inline > cs-inv-sortbtn",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Sortieren"
+    },
+    {
+     "p": "cs-inv-slot-wrap.bank-drag-cell > item-cell.rarity-epic > item-cell-qty",
+     "fs": 12,
+     "n": 1,
+     "bsp": "15"
+    },
+    {
+     "p": "shop-panel.bank-ledger-panel > bank-col-head > bank-count",
+     "fs": 12,
+     "n": 1,
+     "bsp": "0 / 60"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    },
+    {
+     "p": "bank-ledger > bank-columns > shop-panel.bank-ledger-panel",
+     "wh": [
+      501,
+      451
+     ],
+     "fill": 1,
+     "maxFs": 13
+    }
+   ]
+  },
+  "storage": {
+   "n": 101,
+   "chromeSmall": [],
+   "chromeMin": 14.0041,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 37,
+    "18+": 57,
+    "13-14": 7
+   },
+   "minFs": 13,
+   "small": [
+    {
+     "p": "storage-shelf.storage-shelf--ores > storage-shelf-title > storage-shelf-count.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "0 / 13"
+    },
+    {
+     "p": "storage-shelf.storage-shelf--bars > storage-shelf-title > storage-shelf-count.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "0 / 14"
+    },
+    {
+     "p": "storage-shelf.storage-shelf--wood > storage-shelf-title > storage-shelf-count.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "0 / 22"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    }
+   ]
+  },
+  "shop": {
+   "n": 98,
+   "chromeSmall": [
+    "shopv2-counter-item > shopv2-counter-copy 12 Eine schartige, stumpfe Klinge. Bess",
+    "qty-picker-presets > btn-iron.btn-iron--sm > shopv2-buyqty-n 12 1 ×",
+    "qty-picker-presets > btn-iron.btn-iron--sm > shopv2-buyqty-n 12 10 ×"
+   ],
+   "chromeMin": 12,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 48,
+    "18+": 19,
+    "13-14": 24,
+    "11-12": 7
+   },
+   "minFs": 12,
+   "small": [
+    {
+     "p": "qty-picker-presets > btn-iron.btn-iron--sm > shopv2-buyqty-n",
+     "fs": 12,
+     "n": 4,
+     "bsp": "1 ×"
+    },
+    {
+     "p": "shopv2-card-image-area > item-cell.rarity-common > item-cell-2h-badge",
+     "fs": 13,
+     "n": 3,
+     "bsp": "2H"
+    },
+    {
+     "p": "shopv2-section > shopv2-section-head > shopv2-section-orn",
+     "fs": 13,
+     "n": 2,
+     "bsp": "◆"
+    },
+    {
+     "p": "qty-picker-presets > btn-iron.btn-iron--sm > shopv2-buyqty-cost",
+     "fs": 13,
+     "n": 2,
+     "bsp": "20"
+    },
+    {
+     "p": "shopv2-topbar > shopv2-maintabs-wrap > shopv2-tab-hotkey-hint",
+     "fs": 12,
+     "n": 1,
+     "bsp": "◂ ▸"
+    },
+    {
+     "p": "shopv2-section > shopv2-section-head > shopv2-section-count",
+     "fs": 12,
+     "n": 1,
+     "bsp": "5"
+    },
+    {
+     "p": "shopv2-counter > shopv2-section-head > shopv2-section-orn",
+     "fs": 13,
+     "n": 1,
+     "bsp": "◆"
+    },
+    {
+     "p": "shopv2-counter-item > shopv2-counter-copy",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Eine schartige, stumpfe Klinge. Bess"
+    },
+    {
+     "p": "shopv2-buy-counter > shopv2-counter > shopv2-counter-qty-label",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Menge wählen"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    },
+    {
+     "p": "shopv2-section > shopv2-upgrade-row > shopv2-upgrade-card",
+     "wh": [
+      330,
+      72
+     ],
+     "fill": 20,
+     "maxFs": 17
+    }
+   ]
+  },
+  "quests": {
+   "n": 71,
+   "chromeSmall": [],
+   "chromeMin": 14.0041,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 39,
+    "18+": 19,
+    "13-14": 13
+   },
+   "minFs": 13,
+   "small": [
+    {
+     "p": "chronicle-stage > chronicle-stage-headrow > quest-status-badge.quest-status-badge--active",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Läuft"
+    },
+    {
+     "p": "chronicle-stage > quest-rewards > quest-reward-chip.quest-reward-chip--gold",
+     "fs": 13,
+     "n": 1,
+     "bsp": "100"
+    },
+    {
+     "p": "chronicle-stage > quest-rewards > quest-reward-chip.quest-reward-chip--tokens",
+     "fs": 13,
+     "n": 1,
+     "bsp": "1"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    },
+    {
+     "p": "chronicle-stage > chronicle-stage-objectives > chronicle-obj",
+     "wh": [
+      920,
+      75
+     ],
+     "fill": 5,
+     "maxFs": 17
+    }
+   ]
+  },
+  "achievements": {
+   "n": 101,
+   "chromeSmall": [
+    "achv-ledger-categories > achv-ledger-cat.achv-ledger-cat--active 12 Alle",
+    "achv-ledger-categories > achv-ledger-cat 12 Fertigkeiten",
+    "achv-ledger-categories > achv-ledger-cat 12 Kampf",
+    "achv-ledger-categories > achv-ledger-cat 12 Sammeln",
+    "achv-ledger-categories > achv-ledger-cat 12 Handwerk",
+    "achv-ledger-categories > achv-ledger-cat 12 Aufgaben",
+    "achv-ledger-categories > achv-ledger-cat 12 Reichtum",
+    "achv-ledger-detail > achv-ledger-detail-plaque > achv-badge.achv-rarity--common 10 Gewöhnlich"
+   ],
+   "chromeMin": 10,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 34,
+    "18+": 15,
+    "13-14": 32,
+    "11-12": 16,
+    "<11": 4
+   },
+   "minFs": 10,
+   "small": [
+    {
+     "p": "achv-ledger-categories > achv-ledger-cat",
+     "fs": 12,
+     "n": 14,
+     "bsp": "Fertigkeiten"
+    },
+    {
+     "p": "achv-ledger-detail-plaque > achv-ledger-detail-row",
+     "fs": 13,
+     "n": 4,
+     "bsp": "Fertigkeiten"
+    },
+    {
+     "p": "achv-body > achv-ap",
+     "fs": 12,
+     "n": 3,
+     "bsp": "5 AP"
+    },
+    {
+     "p": "achv-ledger-categories > achv-ledger-cat.achv-ledger-cat--active",
+     "fs": 12,
+     "n": 2,
+     "bsp": "Alle"
+    },
+    {
+     "p": "achv-almost-row > achv-almost-card.achv-rarity--epic > achv-almost-pct",
+     "fs": 13,
+     "n": 2,
+     "bsp": "98 %"
+    },
+    {
+     "p": "achv-card.achv-card--unlocked > achv-body > achv-desc",
+     "fs": 12,
+     "n": 2,
+     "bsp": "Erreiche Gesamtlevel 25."
+    },
+    {
+     "p": "achv-card.achv-card--unlocked > achv-body > achv-status",
+     "fs": 13,
+     "n": 2,
+     "bsp": "✓ Freigeschaltet"
+    },
+    {
+     "p": "achv-hero > achv-hero-title > achv-hero-sub",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Beweise dein Können. Sichere dein Ve"
+    },
+    {
+     "p": "achv-hero-title > achv-hero-bar-row > achv-hero-bar-label",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Freigeschaltet"
+    },
+    {
+     "p": "achv-ledger-main > achv-ledger-search",
+     "fs": 11,
+     "n": 1,
+     "bsp": "363 / 363"
+    },
+    {
+     "p": "achv-body > achv-head > achv-badge.achv-rarity--common",
+     "fs": 10,
+     "n": 1,
+     "bsp": "Gewöhnlich"
+    },
+    {
+     "p": "achv-body > achv-head > achv-badge.achv-rarity--uncommon",
+     "fs": 10,
+     "n": 1,
+     "bsp": "Ungewöhnlich"
+    },
+    {
+     "p": "achv-body > achv-head > achv-badge.achv-rarity--rare",
+     "fs": 10,
+     "n": 1,
+     "bsp": "Selten"
+    },
+    {
+     "p": "achv-ledger-detail > achv-ledger-detail-plaque > achv-badge.achv-rarity--common",
+     "fs": 10,
+     "n": 1,
+     "bsp": "Gewöhnlich"
+    },
+    {
+     "p": "achv-ledger-detail > achv-ledger-detail-plaque",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Erreiche Gesamtlevel 25."
+    },
+    {
+     "p": "achv-ledger-detail > achv-ledger-detail-plaque > achv-ledger-detail-status.achv-ledger-detail-status--done",
+     "fs": 13,
+     "n": 1,
+     "bsp": "✓ Freigeschaltet"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    },
+    {
+     "p": "achv-ledger-main > achv-ledger-list > achv-card.achv-card--unlocked",
+     "wh": [
+      480,
+      112
+     ],
+     "fill": 9,
+     "maxFs": 14
+    }
+   ]
+  },
+  "mastery": {
+   "n": 86,
+   "chromeSmall": [],
+   "chromeMin": 14.0041,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 39,
+    "18+": 21,
+    "13-14": 26
+   },
+   "minFs": 13,
+   "small": [
+    {
+     "p": "ms2-skill-pool-row > ms2-pool-perks",
+     "fs": 13,
+     "n": 9,
+     "bsp": "+ 8 % ×2"
+    },
+    {
+     "p": "ms2-skill-block > ms2-skill-hdr > ms2-skill-badge.ms2-rarity--legendary",
+     "fs": 13,
+     "n": 3,
+     "bsp": "Legendär"
+    },
+    {
+     "p": "ms2-skill-pool > ms2-skill-pool-row > ms2-skill-pool-label",
+     "fs": 13,
+     "n": 3,
+     "bsp": "Pool"
+    },
+    {
+     "p": "ms2-agg-stats > ms2-agg-stat > ms2-agg-stat-label",
+     "fs": 13,
+     "n": 2,
+     "bsp": "GESAMT-MEISTERSCHAFT"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    }
+   ]
+  },
+  "bestiary": {
+   "n": 73,
+   "chromeSmall": [],
+   "chromeMin": 14.0041,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 38,
+    "18+": 22,
+    "13-14": 11,
+    "11-12": 2
+   },
+   "minFs": 11,
+   "small": [
+    {
+     "p": "bjw-head-row > bjw-seals > bjw-seal",
+     "fs": 11,
+     "n": 2,
+     "bsp": "/ 1439  Entdeckt"
+    },
+    {
+     "p": "bjw-head-row > bjw-head-subtitle",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Von den Weiden bis in die Tiefe"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    }
+   ]
+  },
+  "companions": {
+   "n": 81,
+   "chromeSmall": [],
+   "chromeMin": 13,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 33,
+    "18+": 14,
+    "13-14": 28,
+    "11-12": 6
+   },
+   "minFs": 11,
+   "small": [
+    {
+     "p": "pet-field-index > pet-field-index-head > pet-field-count",
+     "fs": 13,
+     "n": 1,
+     "bsp": "7 / 23"
+    },
+    {
+     "p": "pet-field-detail > pet-field-stage.has-bg > pet-equipped-badge",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ausgerüstet"
+    },
+    {
+     "p": "pet-field-dossier-head > pet-field-kicker",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Skill: Holzfällen"
+    },
+    {
+     "p": "pet-field-dossier > pet-field-dossier-head > pet-field-drop",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Drop-Chance: 1 / 60.000"
+    },
+    {
+     "p": "pet-field-effects.pet-field-effects-detailed > pet-effect-row > pet-effect-tag.pet-effect-tag-passive",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Passiv"
+    },
+    {
+     "p": "pet-field-effects.pet-field-effects-detailed > pet-effect-row > pet-effect-value",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Wurzelgespür. 6 % Chance je gefällte"
+    },
+    {
+     "p": "pet-field-effects.pet-field-effects-detailed > pet-effect-row > pet-effect-tag.pet-effect-tag-active",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Aktiv (im Kampf)"
+    },
+    {
+     "p": "pet-effect-row > pet-effect-value",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Wurzelschlinge. Alle 6,0 s: Betäubt "
+    },
+    {
+     "p": "pet-field-effects.pet-field-effects-detailed > pet-effect-row.pet-effect-row-echo > pet-effect-tag.pet-effect-tag-echo",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Echo"
+    },
+    {
+     "p": "pet-effect-row.pet-effect-row-echo > pet-effect-value",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Wurzelgespür. 1,5 % Chance je gefäll"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    }
+   ]
+  },
+  "enchanting": {
+   "n": 81,
+   "chromeSmall": [],
+   "chromeMin": 13,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 41,
+    "18+": 12,
+    "13-14": 27,
+    "11-12": 1
+   },
+   "minFs": 12,
+   "small": [
+    {
+     "p": "ench-item-row > ench-item-text > ench-item-name",
+     "fs": 13,
+     "n": 8,
+     "bsp": "Slayer-Helm"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "ench-col.ench-col-target > shop-section-head > shop-section-orn",
+     "fs": 13,
+     "n": 1,
+     "bsp": "◆"
+    },
+    {
+     "p": "ench-col.ench-col-target > shop-section-head > shop-section-title",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Item auswählen"
+    },
+    {
+     "p": "ench-col.ench-col-grimoire > shop-section-head > shop-section-orn",
+     "fs": 13,
+     "n": 1,
+     "bsp": "◆"
+    },
+    {
+     "p": "ench-col.ench-col-grimoire > shop-section-head > shop-section-title",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Rune auswählen"
+    },
+    {
+     "p": "ench-rune-section > ench-rune-section-head.ench-rune-section-head--armor > ench-rune-section-icon",
+     "fs": 12,
+     "n": 1,
+     "bsp": "🛡"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    }
+   ]
+  },
+  "stats": {
+   "n": 69,
+   "chromeSmall": [],
+   "chromeMin": 13,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 31,
+    "18+": 28,
+    "13-14": 5,
+    "11-12": 5
+   },
+   "minFs": 12,
+   "small": [
+    {
+     "p": "stx-medallion-row > stx-medallion > stx-medallion-label",
+     "fs": 12,
+     "n": 5,
+     "bsp": "Besiegte Monster"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Keine Falle"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    }
+   ]
+  },
+  "prestige": {
+   "fehlt": true
+  },
+  "newhaven": {
+   "n": 88,
+   "chromeSmall": [
+    "nh-list-register-scroll > nh-list-row.is-selected > nh-list-row-index 12 01",
+    "nh-list-register-scroll > nh-list-row > nh-list-row-index 12 02",
+    "nh-list-register-scroll > nh-list-row > nh-list-row-index 12 03"
+   ],
+   "chromeMin": 12,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 46,
+    "13-14": 19,
+    "18+": 13,
+    "11-12": 10
+   },
+   "minFs": 12,
+   "small": [
+    {
+     "p": "nh-queue-list > nh-queue-item.is-empty > nh-queue-pos",
+     "fs": 13.5,
+     "n": 6,
+     "bsp": "1 ."
+    },
+    {
+     "p": "nh-queue-list > nh-queue-item.is-empty > nh-queue-name",
+     "fs": 13.5,
+     "n": 6,
+     "bsp": "Freier Bauplatz"
+    },
+    {
+     "p": "nh-list-register-scroll > nh-list-row > nh-list-row-index",
+     "fs": 12,
+     "n": 2,
+     "bsp": "02"
+    },
+    {
+     "p": "nh-list-row > nh-list-row-actions > btn-iron.nh-list-row-action",
+     "fs": 13,
+     "n": 2,
+     "bsp": "Einreihen"
+    },
+    {
+     "p": "sb-combat-level > skill-boost-value > skill-boost-tag",
+     "fs": 13.5,
+     "n": 1,
+     "bsp": "(95)"
+    },
+    {
+     "p": "nh-view-controls > nh-view-tabbar > nh-view-tab",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Karte"
+    },
+    {
+     "p": "nh-view-controls > nh-view-tabbar > nh-view-tab.active",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Liste"
+    },
+    {
+     "p": "newhaven-page > nh-view-controls > nh-view-tab.nh-move-toggle",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Verschieben"
+    },
+    {
+     "p": "newhaven-page > nh-view-controls > nh-view-tab.nh-debug-toggle",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Debug: Gratis"
+    },
+    {
+     "p": "newhaven-page > nh-view-controls > nh-view-tab.nh-debug-complete",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Debug: Fertig"
+    },
+    {
+     "p": "newhaven-page > nh-view-controls > nh-view-tab.nh-debug-light",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Tag"
+    },
+    {
+     "p": "nh-list-register-scroll > nh-list-row.is-selected > nh-list-row-index",
+     "fs": 12,
+     "n": 1,
+     "bsp": "01"
+    },
+    {
+     "p": "nh-list-row.is-selected > nh-list-row-actions > btn-iron.nh-list-row-action",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Einreihen"
+    },
+    {
+     "p": "nh-list-shell > nh-queue-strip.is-empty > nh-queue-strip-title",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Geplant"
+    },
+    {
+     "p": "nh-queue-strip.is-empty > nh-queue-strip-title",
+     "fs": 12,
+     "n": 1,
+     "bsp": "0 / 8"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    },
+    {
+     "p": "sb-combat-section > sb-combat-subskills > sb-combat-row.sb-combat-row--training",
+     "wh": [
+      213,
+      61
+     ],
+     "fill": 17,
+     "maxFs": 15
+    }
+   ]
+  },
+  "tavern": {
+   "fehlt": true
+  },
+  "options": {
+   "n": 77,
+   "chromeSmall": [],
+   "chromeMin": 14,
+   "overflowX": 0,
+   "hist": {
+    "15-17": 52,
+    "13-14": 16,
+    "18+": 9
+   },
+   "minFs": 13,
+   "small": [
+    {
+     "p": "sb-combat-level > skill-boost-value > skill-boost-tag",
+     "fs": 13.5,
+     "n": 1,
+     "bsp": "(95)"
+    },
+    {
+     "p": "bugreport-entry-banner > bugreport-entry-text > bugreport-entry-hint",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Fehler gefunden oder eine Idee? Erzä"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      123
+     ],
+     "fill": 18,
+     "maxFs": 17
+    },
+    {
+     "p": "sb-combat-section > sb-combat-subskills > sb-combat-row.sb-combat-row--training",
+     "wh": [
+      213,
+      61
+     ],
+     "fill": 17,
+     "maxFs": 15
+    },
+    {
+     "p": "opz-grid > opz-section > opz-row",
+     "wh": [
+      416,
+      68
+     ],
+     "fill": 10,
+     "maxFs": 17
+    }
+   ]
+  }
+ }
+}

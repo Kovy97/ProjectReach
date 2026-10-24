@@ -1,0 +1,518 @@
+{
+ "character": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  }
+ },
+ "combat": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  },
+  "zone-card-meta": {
+   "n": 21,
+   "fs": 17,
+   "f": "Grim Reach Numerals",
+   "ex": "Stufe 1–15 · 6  Gegner"
+  },
+  "zone-card-meta.zone-card-locked-hint": {
+   "n": 17,
+   "fs": 17,
+   "f": "Grim Reach Numerals",
+   "ex": "Erfordert Chronik-Kapitel: Der Funke im Korn"
+  },
+  "zone-card-name": {
+   "n": 2,
+   "fs": 22,
+   "f": "Grim Reach Numerals",
+   "ex": "Sanktum des Letzten Götzen"
+  },
+  "dungeon-locked-hint": {
+   "n": 1,
+   "fs": 14,
+   "f": "Grim Reach Numerals",
+   "ex": "Besiege Hinter dem Thron einmal, um die Hallen zu "
+  }
+ },
+ "skills-overview": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  },
+  "skilloverview-guide": {
+   "n": 23,
+   "fs": 16,
+   "f": "Grim Reach Numerals",
+   "ex": "Fällt Bäume für Holz — Grundlage für Handwerk."
+  }
+ },
+ "woodcutting": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  }
+ },
+ "smithing": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  }
+ },
+ "cooking": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  }
+ },
+ "farming": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  },
+  "estate-banner-lead": {
+   "n": 1,
+   "fs": 14,
+   "f": "Grim Reach Numerals",
+   "ex": "Läuft von selbst, auch offline und neben deiner Ha"
+  },
+  "muted": {
+   "n": 3,
+   "fs": 19,
+   "f": "Grim Reach Numerals",
+   "ex": "9 von 9 Beeten freigeschaltet"
+  },
+  "skillcard-cta.farm-plant-all-btn.farm-next-all-btn": {
+   "n": 1,
+   "fs": 14,
+   "f": "Grim Reach Numerals",
+   "ex": "Für alle Beete danach säen"
+  },
+  "farm-catalogue-meta.muted": {
+   "n": 35,
+   "fs": 19,
+   "f": "Grim Reach Numerals",
+   "ex": "Wächst in: 10m 0s · 18 XP"
+  },
+  "farm-catalogue-sink.muted": {
+   "n": 3,
+   "fs": 19,
+   "f": "Grim Reach Numerals",
+   "ex": "→ Kochen, Kräuterkunde, Handwerk"
+  }
+ },
+ "hunting": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  },
+  "estate-banner-lead": {
+   "n": 1,
+   "fs": 14,
+   "f": "Grim Reach Numerals",
+   "ex": "Läuft von selbst, auch offline und neben deiner Ha"
+  },
+  "hunt-trap-state-text.muted": {
+   "n": 5,
+   "fs": 19,
+   "f": "Grim Reach Numerals",
+   "ex": "Schaltet sich bei Jagen-Stufe 5 frei"
+  },
+  "SPAN": {
+   "n": 10,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "Köder: Wurmköder · 0 im Vorrat"
+  },
+  "hbk-mon-firstbadge": {
+   "n": 27,
+   "fs": 11,
+   "f": "Grim Reach Numerals",
+   "ex": "Noch nie gefangen · Erstfang zählt doppelt"
+  },
+  "hbk-zone-locked-note": {
+   "n": 9,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "Dieses Gebiet ist noch nicht offen."
+  },
+  "hbk-mon-status.hbk-mon-status--locked": {
+   "n": 45,
+   "fs": 12,
+   "f": "Grim Reach Numerals",
+   "ex": "Erst im Kampf besiegen"
+  }
+ },
+ "tailoring": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  }
+ },
+ "bank": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  },
+  "npc-bubble-text": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "Eiserne Schlösser, keine Fragen. Das ist der ganze"
+  },
+  "muted": {
+   "n": 1,
+   "fs": 14.0041,
+   "f": "Grim Reach Numerals",
+   "ex": "Lagere hier Items — jeder Slot ist ein unbegrenzte"
+  },
+  "bank-hint.muted": {
+   "n": 1,
+   "fs": 14.0041,
+   "f": "Grim Reach Numerals",
+   "ex": "Tipp: Shift+Klick auf einen Stapel lagert ihn sofo"
+  }
+ },
+ "storage": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  },
+  "storage-summary.muted": {
+   "n": 1,
+   "fs": 14,
+   "f": "Grim Reach Numerals",
+   "ex": "0 Materialien · 0 Stück"
+  },
+  "storage-lead.muted": {
+   "n": 1,
+   "fs": 14,
+   "f": "Grim Reach Numerals",
+   "ex": "Jedes Material hat hier seinen festen Platz, ohne "
+  }
+ },
+ "shop": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  },
+  "npc-bubble-text": {
+   "n": 1,
+   "fs": 17,
+   "f": "Grim Reach Numerals",
+   "ex": "Alles hier hat seinen letzten Besitzer überlebt. D"
+  },
+  "P": {
+   "n": 1,
+   "fs": 12,
+   "f": "Georgia",
+   "ex": "Eine schartige, stumpfe Klinge. Besser als bloße F"
+  }
+ },
+ "quests": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  },
+  "npc-bubble-text": {
+   "n": 2,
+   "fs": 17,
+   "f": "Grim Reach Numerals",
+   "ex": "Jede Tat wird verzeichnet. Das Reach vergisst nich"
+  }
+ },
+ "achievements": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  },
+  "achv-hero-sub": {
+   "n": 1,
+   "fs": 12,
+   "f": "Grim Reach Numerals",
+   "ex": "Beweise dein Können. Sichere dein Vermächtnis."
+  },
+  "achv-milestone-text": {
+   "n": 1,
+   "fs": 12,
+   "f": "Grim Reach Numerals",
+   "ex": "Nächster Meilenstein: 25 % — +5 Aufgabenmarken"
+  },
+  "achv-desc": {
+   "n": 312,
+   "fs": 12,
+   "f": "Grim Reach Numerals",
+   "ex": "Erreiche Gesamtlevel 1900. Der Gipfel liegt direkt"
+  },
+  "achv-name": {
+   "n": 46,
+   "fs": 14,
+   "f": "Grim Reach Numerals",
+   "ex": "Fünfzig Künste, ein Wille"
+  }
+ },
+ "mastery": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  },
+  "ms2-tabs-head-desc": {
+   "n": 1,
+   "fs": 14,
+   "f": "Grim Reach Numerals",
+   "ex": "Jede Skilling-Aktion gewinnt durch Wiederholung ei"
+  },
+  "ms2-pool-next.muted": {
+   "n": 8,
+   "fs": 19,
+   "f": "Grim Reach Numerals",
+   "ex": "Nächster Checkpoint: +3 % Doppelertrag in 8.493 XP"
+  }
+ },
+ "bestiary": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  },
+  "bjw-head-subtitle": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "Von den Weiden bis in die Tiefe"
+  },
+  "status-legend-desc.muted": {
+   "n": 5,
+   "fs": 19,
+   "f": "Grim Reach Numerals",
+   "ex": "Feuerschaden über Zeit. Brennende Ziele nehmen 10 "
+  },
+  "bjw-zone-locked-note": {
+   "n": 9,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "Erfordert Chronik-Kapitel: Der Funke im Korn"
+  },
+  "bjw-unknown-hint.bestiary-unknown-hint": {
+   "n": 109,
+   "fs": 16,
+   "f": "Grim Reach Numerals",
+   "ex": "Besiege diesen Gegner, um ihn einzutragen."
+  }
+ },
+ "companions": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  },
+  "pet-field-echo-summary": {
+   "n": 1,
+   "fs": 14.0041,
+   "f": "Grim Reach Numerals",
+   "ex": "Echo: 6 Begleiter mit 25 %"
+  },
+  "SMALL": {
+   "n": 23,
+   "fs": 14.0041,
+   "f": "Grim Reach Numerals",
+   "ex": "Drop-Chance: 1 / 60.000"
+  },
+  "pet-field-drop": {
+   "n": 1,
+   "fs": 12,
+   "f": "Grim Reach Numerals",
+   "ex": "Drop-Chance: 1 / 60.000"
+  },
+  "pet-field-description": {
+   "n": 1,
+   "fs": 14,
+   "f": "Grim Reach Numerals",
+   "ex": "Ein rindenfauliges Wesen, das zwischen Wurzel und "
+  },
+  "pet-effect-value": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "Wurzelgespür. 6 % Chance je gefälltem Baum, eine S"
+  },
+  "SPAN": {
+   "n": 2,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "Wurzelschlinge. Alle 6,0 s: Betäubt den Gegner für"
+  },
+  "pet-field-effects-hint": {
+   "n": 1,
+   "fs": 14.0041,
+   "f": "Grim Reach Numerals",
+   "ex": "Feuert automatisch im Kampf – du musst nichts tun."
+  },
+  "pet-field-echo-state": {
+   "n": 1,
+   "fs": 14.0041,
+   "f": "Grim Reach Numerals",
+   "ex": "Wirkt gerade nicht: ausgerüstete Begleiter wirken "
+  }
+ },
+ "enchanting": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  },
+  "ench-item-name": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "Siegel des Neunten Wächters"
+  },
+  "muted.ench-suffix-hint": {
+   "n": 1,
+   "fs": 15,
+   "f": "Grim Reach Numerals",
+   "ex": "Gecraftete und gedroppte Ausrüstung kann einen zuf"
+  },
+  "muted": {
+   "n": 1,
+   "fs": 17,
+   "f": "Grim Reach Numerals",
+   "ex": "Lege ein Item auf den Altar, um zu beginnen."
+  }
+ },
+ "stats": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  }
+ },
+ "newhaven": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  },
+  "nh-list-reason": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "Gold oder Material fehlen."
+  }
+ },
+ "options": {
+  "sb-blessing-effect": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "15% Chance auf doppelte Beute"
+  },
+  "P": {
+   "n": 1,
+   "fs": 14,
+   "f": "Grim Reach Numerals",
+   "ex": "Passe das Spiel nach deinem Geschmack an."
+  },
+  "bugreport-entry-title": {
+   "n": 1,
+   "fs": 17,
+   "f": "Grim Reach Numerals",
+   "ex": "Bug melden / Feature vorschlagen"
+  },
+  "bugreport-entry-hint": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "Fehler gefunden oder eine Idee? Erzähl uns davon."
+  },
+  "opz-row-hint": {
+   "n": 16,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "Klassisch bringt Seitenleiste, Reiterleiste und Ko"
+  },
+  "opz-font-note.muted": {
+   "n": 1,
+   "fs": 19,
+   "f": "Grim Reach Numerals",
+   "ex": "Die Hausschrift. Alter Buchdruck, raue Kanten."
+  },
+  "opz-font-preview": {
+   "n": 1,
+   "fs": 17,
+   "f": "Grim Reach Numerals",
+   "ex": "Der Altbär bewacht die Krypta. 1.240 Gold."
+  },
+  "opz-row-label": {
+   "n": 3,
+   "fs": 16,
+   "f": "Grim Reach Numerals",
+   "ex": "Auto-Lager bei vollem Inventar"
+  },
+  "opz-hint": {
+   "n": 2,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "Tastenkürzel für Profis — immer verfügbar, nie erf"
+  },
+  "btn-iron.btn-iron--danger": {
+   "n": 1,
+   "fs": 14,
+   "f": "Grim Reach Numerals",
+   "ex": "Importieren (überschreibt aktuellen Spielstand)"
+  },
+  "opz-about-line": {
+   "n": 2,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "Danke fürs Spielen. Fehlermeldungen und Ideen sind"
+  },
+  "btn-iron.btn-iron--sm": {
+   "n": 1,
+   "fs": 13,
+   "f": "Grim Reach Numerals",
+   "ex": "Bug melden / Feature vorschlagen"
+  },
+  "opz-about-copyright": {
+   "n": 1,
+   "fs": 12,
+   "f": "Grim Reach Numerals",
+   "ex": "© 2026 Heartforge Studio. Alle Rechte vorbehalten."
+  }
+ }
+}

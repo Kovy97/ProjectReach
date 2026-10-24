@@ -1,0 +1,1125 @@
+{
+ "viewport": "1920x1080",
+ "pages": {
+  "character": {
+   "n": 106,
+   "chromeSmall": [],
+   "chromeMin": 15,
+   "overflowX": 0,
+   "hist": {
+    "18+": 36,
+    "15-17": 47,
+    "13-14": 15,
+    "11-12": 8
+   },
+   "minFs": 12,
+   "small": [
+    {
+     "p": "cs-attr-grid > cs-attr-card > cs-attr-card-name",
+     "fs": 13,
+     "n": 6,
+     "bsp": "Stärke"
+    },
+    {
+     "p": "cs-inv-toolbar > cs-inv-toolbar-right > cs-inv-sortbtn",
+     "fs": 12,
+     "n": 2,
+     "bsp": "Sortieren"
+    },
+    {
+     "p": "cs-col.cs-col-left > cs-panel-header > cs-section-title",
+     "fs": 13.5,
+     "n": 1,
+     "bsp": "Charakter"
+    },
+    {
+     "p": "cs-portrait-wrap > cs-nameplate > cs-hero-level",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Gesamtlevel 1918"
+    },
+    {
+     "p": "vital.hp > vital-head > vital-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Leben"
+    },
+    {
+     "p": "vital.hp > vital-head > vital-values",
+     "fs": 12,
+     "n": 1,
+     "bsp": "258 / 258"
+    },
+    {
+     "p": "vital.ward > vital-head > vital-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Ward"
+    },
+    {
+     "p": "vital.ward > vital-head > vital-values",
+     "fs": 12,
+     "n": 1,
+     "bsp": "167 / 167"
+    },
+    {
+     "p": "active-buffs-bar > active-buff-chip > active-buff-name",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Sumpfwurzel-Eintopf"
+    },
+    {
+     "p": "active-buffs-bar > active-buff-chip > active-buff-timer",
+     "fs": 13,
+     "n": 1,
+     "bsp": "33s"
+    },
+    {
+     "p": "cs-attr-section > cs-section-heading > cs-section-title",
+     "fs": 13.5,
+     "n": 1,
+     "bsp": "Attribute"
+    },
+    {
+     "p": "cs-col.cs-col-tabpanel > cs-tabbar > cs-tab-btn.active",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Ausrüstung"
+    },
+    {
+     "p": "cs-col.cs-col-tabpanel > cs-tabbar > cs-tab-btn",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Stats"
+    },
+    {
+     "p": "cs-col.cs-col-right > cs-panel-header > cs-section-title",
+     "fs": 13.5,
+     "n": 1,
+     "bsp": "Inventar"
+    },
+    {
+     "p": "cs-inv-toolbar > cs-inv-toolbar-right > cs-sort-label",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Sortieren:"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "cs-col.cs-col-left > cs-col-left-info > cs-vitals",
+     "wh": [
+      430,
+      84
+     ],
+     "fill": 10,
+     "maxFs": 12
+    }
+   ]
+  },
+  "combat": {
+   "n": 94,
+   "chromeSmall": [],
+   "chromeMin": 15,
+   "overflowX": 0,
+   "hist": {
+    "18+": 34,
+    "15-17": 57,
+    "13-14": 3
+   },
+   "minFs": 14,
+   "small": [],
+   "sparse": [
+    {
+     "p": "sb-combat-section > sb-combat-subskills > sb-combat-row.sb-combat-row--training",
+     "wh": [
+      213,
+      66
+     ],
+     "fill": 19,
+     "maxFs": 16.9484
+    }
+   ]
+  },
+  "skills-overview": {
+   "n": 122,
+   "chromeSmall": [],
+   "chromeMin": 15,
+   "overflowX": 0,
+   "hist": {
+    "18+": 40,
+    "15-17": 81,
+    "13-14": 1
+   },
+   "minFs": 13,
+   "small": [
+    {
+     "p": "skilloverview-head > skilloverview-total > skilloverview-total-label",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Gesamtlevel"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sb-combat-section > sb-combat-subskills > sb-combat-row.sb-combat-row--training",
+     "wh": [
+      213,
+      66
+     ],
+     "fill": 19,
+     "maxFs": 16.9484
+    }
+   ]
+  },
+  "woodcutting": {
+   "n": 144,
+   "chromeSmall": [],
+   "chromeMin": 15,
+   "overflowX": 0,
+   "hist": {
+    "18+": 52,
+    "15-17": 47,
+    "13-14": 40,
+    "11-12": 5
+   },
+   "minFs": 12,
+   "small": [
+    {
+     "p": "skillcard-grid > skillcard-tile",
+     "fs": 13,
+     "n": 16,
+     "bsp": "XP"
+    },
+    {
+     "p": "skillcard-output-zone > skillcard-produces.muted > skillcard-produces-label",
+     "fs": 12.25,
+     "n": 4,
+     "bsp": "Produziert :"
+    },
+    {
+     "p": "skillcard-body > skillcard-state-slot.blocked > craftable.none",
+     "fs": 12,
+     "n": 1,
+     "bsp": "🔨 Herstellbar: 0×"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sb-combat-section > sb-combat-subskills > sb-combat-row.sb-combat-row--training",
+     "wh": [
+      213,
+      66
+     ],
+     "fill": 19,
+     "maxFs": 16.9484
+    },
+    {
+     "p": "skillcard-body.skillcard-body--no-inputs > skillcard-output-zone > skillcard-produces.muted",
+     "wh": [
+      330,
+      214
+     ],
+     "fill": 14,
+     "maxFs": 19.95
+    },
+    {
+     "p": "skillcard-body > skillcard-output-zone > skillcard-produces.muted",
+     "wh": [
+      330,
+      62
+     ],
+     "fill": 14,
+     "maxFs": 15.96
+    },
+    {
+     "p": "skill-page > actions > skillcard",
+     "wh": [
+      378,
+      720
+     ],
+     "fill": 9,
+     "maxFs": 14
+    }
+   ]
+  },
+  "smithing": {
+   "n": 103,
+   "chromeSmall": [],
+   "chromeMin": 15.8268,
+   "overflowX": 0,
+   "hist": {
+    "18+": 74,
+    "15-17": 29
+   },
+   "minFs": 15.8268,
+   "small": [],
+   "sparse": [
+    {
+     "p": "sb-combat-section > sb-combat-subskills > sb-combat-row.sb-combat-row--training",
+     "wh": [
+      213,
+      66
+     ],
+     "fill": 19,
+     "maxFs": 16.9484
+    }
+   ]
+  },
+  "cooking": {
+   "n": 75,
+   "chromeSmall": [],
+   "chromeMin": 15.8268,
+   "overflowX": 0,
+   "hist": {
+    "18+": 46,
+    "15-17": 29
+   },
+   "minFs": 15.8268,
+   "small": [],
+   "sparse": [
+    {
+     "p": "sb-combat-section > sb-combat-subskills > sb-combat-row.sb-combat-row--training",
+     "wh": [
+      213,
+      66
+     ],
+     "fill": 19,
+     "maxFs": 16.9484
+    }
+   ]
+  },
+  "farming": {
+   "n": 96,
+   "chromeSmall": [],
+   "chromeMin": 14.686,
+   "overflowX": 0,
+   "hist": {
+    "18+": 57,
+    "15-17": 32,
+    "13-14": 6,
+    "11-12": 1
+   },
+   "minFs": 12,
+   "small": [
+    {
+     "p": "farm-section-content > muted",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Saat wächst passiv – online wie offl"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "farm-section-content > farm-info-bar",
+     "wh": [
+      1566,
+      70
+     ],
+     "fill": 21,
+     "maxFs": 19
+    }
+   ]
+  },
+  "hunting": {
+   "n": 97,
+   "chromeSmall": [],
+   "chromeMin": 14.686,
+   "overflowX": 0,
+   "hist": {
+    "18+": 49,
+    "15-17": 37,
+    "13-14": 4,
+    "11-12": 7
+   },
+   "minFs": 11,
+   "small": [
+    {
+     "p": "hunt-trap-topband > hunt-trap-topband-right > hunt-trap-badge.hunt-trap-badge--locked",
+     "fs": 11,
+     "n": 5,
+     "bsp": "Ab Stufe 5"
+    },
+    {
+     "p": "hunt-trap-topband > hunt-trap-topband-right > hunt-trap-badge.hunt-trap-badge--empty",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Leer"
+    },
+    {
+     "p": "hunt-trap-card.needs-zone > hunt-trap-art > hunt-trap-art-hint",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Gebiet wählen"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "hunt-page > hunt-traps > hunt-trap-card.locked",
+     "wh": [
+      511,
+      305
+     ],
+     "fill": 9,
+     "maxFs": 19
+    }
+   ]
+  },
+  "tailoring": {
+   "n": 103,
+   "chromeSmall": [],
+   "chromeMin": 14.686,
+   "overflowX": 0,
+   "hist": {
+    "18+": 78,
+    "15-17": 23,
+    "13-14": 2
+   },
+   "minFs": 14.686,
+   "small": [],
+   "sparse": []
+  },
+  "bank": {
+   "n": 101,
+   "chromeSmall": [],
+   "chromeMin": 14.686,
+   "overflowX": 0,
+   "hist": {
+    "18+": 33,
+    "15-17": 47,
+    "13-14": 6,
+    "11-12": 8,
+    "<11": 7
+   },
+   "minFs": 10,
+   "small": [
+    {
+     "p": "invf-chiprow > invf-chip > invf-chip-label",
+     "fs": 12.5,
+     "n": 6,
+     "bsp": "Waffen"
+    },
+    {
+     "p": "invf-chiprow > invf-chip > invf-chip-count",
+     "fs": 10,
+     "n": 6,
+     "bsp": "1"
+    },
+    {
+     "p": "bank-ledger > bank-head > muted",
+     "fs": 13.824,
+     "n": 1,
+     "bsp": "Lagere hier Items — jeder Slot ist e"
+    },
+    {
+     "p": "invf-chiprow > invf-chip.active > invf-chip-label",
+     "fs": 12.5,
+     "n": 1,
+     "bsp": "Alle"
+    },
+    {
+     "p": "invf-chiprow > invf-chip.active > invf-chip-count",
+     "fs": 10,
+     "n": 1,
+     "bsp": "20"
+    },
+    {
+     "p": "bank-filter-row > bank-sort-inline > cs-sort-label",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Sortieren:"
+    },
+    {
+     "p": "bank-filter-row > bank-sort-inline > cs-inv-sortbtn",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Sortieren"
+    },
+    {
+     "p": "bank-ledger > bank-notes > bank-hint.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Tipp: Shift+Klick auf einen Stapel l"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "bank-ledger > npc-greeting.npc-greeting--page > npc-bubble.npc-bubble--tail-left",
+     "wh": [
+      829,
+      72
+     ],
+     "fill": 20,
+     "maxFs": 17
+    },
+    {
+     "p": "bank-sheet > bank-ledger > bank-head",
+     "wh": [
+      639,
+      72
+     ],
+     "fill": 21,
+     "maxFs": 13.824
+    }
+   ]
+  },
+  "storage": {
+   "n": 158,
+   "chromeSmall": [],
+   "chromeMin": 14.686,
+   "overflowX": 0,
+   "hist": {
+    "18+": 118,
+    "15-17": 30,
+    "13-14": 10
+   },
+   "minFs": 13,
+   "small": [
+    {
+     "p": "storage-shelf.storage-shelf--ores > storage-shelf-title > storage-shelf-count.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "0 / 13"
+    },
+    {
+     "p": "storage-shelf.storage-shelf--bars > storage-shelf-title > storage-shelf-count.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "0 / 14"
+    },
+    {
+     "p": "storage-shelf.storage-shelf--wood > storage-shelf-title > storage-shelf-count.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "0 / 22"
+    },
+    {
+     "p": "storage-shelf.storage-shelf--hides > storage-shelf-title > storage-shelf-count.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "0 / 14"
+    },
+    {
+     "p": "storage-shelf.storage-shelf--fibers > storage-shelf-title > storage-shelf-count.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "0 / 12"
+    },
+    {
+     "p": "storage-shelf.storage-shelf--gems > storage-shelf-title > storage-shelf-count.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "0 / 17"
+    }
+   ],
+   "sparse": []
+  },
+  "shop": {
+   "n": 139,
+   "chromeSmall": [
+    "shopv2-counter-item > shopv2-counter-copy 12 Eine schartige, stumpfe Klinge. Bess",
+    "qty-picker-presets > btn-iron.btn-iron--sm > shopv2-buyqty-n 12 1 ×",
+    "qty-picker-presets > btn-iron.btn-iron--sm > shopv2-buyqty-n 12 10 ×",
+    "qty-picker-presets > btn-iron.btn-iron--sm > shopv2-buyqty-n 12 25 ×",
+    "qty-picker-presets > btn-iron.btn-iron--sm > shopv2-buyqty-n 12 100 ×"
+   ],
+   "chromeMin": 12,
+   "overflowX": 0,
+   "hist": {
+    "18+": 66,
+    "15-17": 36,
+    "13-14": 26,
+    "11-12": 11
+   },
+   "minFs": 12,
+   "small": [
+    {
+     "p": "shopv2-section > shopv2-section-head > shopv2-section-orn",
+     "fs": 13,
+     "n": 6,
+     "bsp": "◆"
+    },
+    {
+     "p": "shopv2-section > shopv2-section-head > shopv2-section-count",
+     "fs": 12,
+     "n": 5,
+     "bsp": "5"
+    },
+    {
+     "p": "qty-picker-presets > btn-iron.btn-iron--sm > shopv2-buyqty-n",
+     "fs": 12,
+     "n": 4,
+     "bsp": "1 ×"
+    },
+    {
+     "p": "qty-picker-presets > btn-iron.btn-iron--sm > shopv2-buyqty-cost",
+     "fs": 13,
+     "n": 4,
+     "bsp": "20"
+    },
+    {
+     "p": "shopv2-topbar > shopv2-maintabs-wrap > shopv2-tab-hotkey-hint",
+     "fs": 12,
+     "n": 1,
+     "bsp": "◂ ▸"
+    },
+    {
+     "p": "shopv2-counter > shopv2-section-head > shopv2-section-orn",
+     "fs": 13,
+     "n": 1,
+     "bsp": "◆"
+    },
+    {
+     "p": "shopv2-counter-item > shopv2-counter-copy",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Eine schartige, stumpfe Klinge. Bess"
+    },
+    {
+     "p": "shopv2-buy-counter > shopv2-counter > shopv2-counter-qty-label",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Menge wählen"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "shopv2-page > shopv2-head > npc-greeting.npc-greeting--page",
+     "wh": [
+      939,
+      82
+     ],
+     "fill": 22,
+     "maxFs": 19.2008
+    },
+    {
+     "p": "shopv2-section > shopv2-upgrade-row > shopv2-upgrade-card",
+     "wh": [
+      375,
+      78
+     ],
+     "fill": 19,
+     "maxFs": 19.2008
+    },
+    {
+     "p": "shopv2-section > shopv2-grid > shopv2-card.rarity-common",
+     "wh": [
+      141,
+      196
+     ],
+     "fill": 21,
+     "maxFs": 0
+    }
+   ]
+  },
+  "quests": {
+   "n": 80,
+   "chromeSmall": [],
+   "chromeMin": 14.686,
+   "overflowX": 0,
+   "hist": {
+    "18+": 39,
+    "15-17": 28,
+    "13-14": 13
+   },
+   "minFs": 13,
+   "small": [
+    {
+     "p": "chronicle-stage > chronicle-stage-headrow > quest-status-badge.quest-status-badge--active",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Läuft"
+    },
+    {
+     "p": "chronicle-stage > quest-rewards > quest-reward-chip.quest-reward-chip--gold",
+     "fs": 13,
+     "n": 1,
+     "bsp": "100"
+    },
+    {
+     "p": "chronicle-stage > quest-rewards > quest-reward-chip.quest-reward-chip--tokens",
+     "fs": 13,
+     "n": 1,
+     "bsp": "1"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "chronicle-stage > chronicle-stage-objectives > chronicle-obj",
+     "wh": [
+      1463,
+      75
+     ],
+     "fill": 3,
+     "maxFs": 17
+    }
+   ]
+  },
+  "achievements": {
+   "n": 132,
+   "chromeSmall": [
+    "achv-milestone-strip > achv-milestone-body > achv-milestone-text 12 Nächster Meilenstein: 25 % — +5 Aufg",
+    "achv-ledger-detail > achv-ledger-detail-plaque > achv-badge.achv-rarity--common 10 Gewöhnlich"
+   ],
+   "chromeMin": 10,
+   "overflowX": 0,
+   "hist": {
+    "18+": 34,
+    "15-17": 39,
+    "13-14": 44,
+    "11-12": 8,
+    "<11": 7
+   },
+   "minFs": 10,
+   "small": [
+    {
+     "p": "achv-ledger-categories > achv-ledger-cat",
+     "fs": 13,
+     "n": 9,
+     "bsp": "Fertigkeiten"
+    },
+    {
+     "p": "achv-body > achv-ap",
+     "fs": 12,
+     "n": 6,
+     "bsp": "5 AP"
+    },
+    {
+     "p": "achv-card.achv-card--unlocked > achv-body > achv-desc",
+     "fs": 13,
+     "n": 5,
+     "bsp": "Erreiche Gesamtlevel 25."
+    },
+    {
+     "p": "achv-card.achv-card--unlocked > achv-body > achv-status",
+     "fs": 13,
+     "n": 5,
+     "bsp": "✓ Freigeschaltet"
+    },
+    {
+     "p": "achv-ledger-detail-plaque > achv-ledger-detail-row",
+     "fs": 13,
+     "n": 4,
+     "bsp": "Fertigkeiten"
+    },
+    {
+     "p": "achv-almost-row > achv-almost-card.achv-rarity--epic > achv-almost-pct",
+     "fs": 13,
+     "n": 3,
+     "bsp": "98 %"
+    },
+    {
+     "p": "achv-body > achv-head > achv-badge.achv-rarity--rare",
+     "fs": 10,
+     "n": 2,
+     "bsp": "Selten"
+    },
+    {
+     "p": "achv-hero > achv-hero-title > achv-hero-sub",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Beweise dein Können. Sichere dein Ve"
+    },
+    {
+     "p": "achv-hero-title > achv-hero-bar-row > achv-hero-bar-label",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Freigeschaltet"
+    },
+    {
+     "p": "achv-ledger-categories > achv-ledger-cat.achv-ledger-cat--active",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Alle"
+    },
+    {
+     "p": "achv-milestone-strip > achv-milestone-body > achv-milestone-text",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Nächster Meilenstein: 25 % — +5 Aufg"
+    },
+    {
+     "p": "achv-ledger-main > achv-ledger-search",
+     "fs": 11,
+     "n": 1,
+     "bsp": "363 / 363"
+    },
+    {
+     "p": "achv-body > achv-head > achv-badge.achv-rarity--common",
+     "fs": 10,
+     "n": 1,
+     "bsp": "Gewöhnlich"
+    },
+    {
+     "p": "achv-body > achv-head > achv-badge.achv-rarity--uncommon",
+     "fs": 10,
+     "n": 1,
+     "bsp": "Ungewöhnlich"
+    },
+    {
+     "p": "achv-body > achv-head > achv-badge.achv-rarity--epic",
+     "fs": 10,
+     "n": 1,
+     "bsp": "Episch"
+    },
+    {
+     "p": "achv-body > achv-head > achv-badge.achv-rarity--legendary",
+     "fs": 10,
+     "n": 1,
+     "bsp": "Legendär"
+    },
+    {
+     "p": "achv-ledger-detail > achv-ledger-detail-plaque > achv-badge.achv-rarity--common",
+     "fs": 10,
+     "n": 1,
+     "bsp": "Gewöhnlich"
+    },
+    {
+     "p": "achv-ledger-detail > achv-ledger-detail-plaque > achv-ledger-detail-status.achv-ledger-detail-status--done",
+     "fs": 13,
+     "n": 1,
+     "bsp": "✓ Freigeschaltet"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "achv-ledger-main > achv-ledger-list > achv-card.achv-card--unlocked",
+     "wh": [
+      876,
+      112
+     ],
+     "fill": 7,
+     "maxFs": 17
+    }
+   ]
+  },
+  "mastery": {
+   "n": 119,
+   "chromeSmall": [],
+   "chromeMin": 14.686,
+   "overflowX": 0,
+   "hist": {
+    "18+": 46,
+    "15-17": 29,
+    "13-14": 44
+   },
+   "minFs": 13,
+   "small": [
+    {
+     "p": "ms2-skill-pool-row > ms2-pool-perks",
+     "fs": 13,
+     "n": 15,
+     "bsp": "+ 8 % ×2"
+    },
+    {
+     "p": "ms2-skill-block > ms2-skill-hdr > ms2-skill-badge.ms2-rarity--legendary",
+     "fs": 13,
+     "n": 6,
+     "bsp": "Legendär"
+    },
+    {
+     "p": "ms2-skill-pool > ms2-skill-pool-row > ms2-skill-pool-label",
+     "fs": 13,
+     "n": 6,
+     "bsp": "Pool"
+    },
+    {
+     "p": "ms2-agg-stats > ms2-agg-stat > ms2-agg-stat-label",
+     "fs": 13,
+     "n": 2,
+     "bsp": "GESAMT-MEISTERSCHAFT"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "ms2-page > ms2-skills > ms2-skill-block",
+     "wh": [
+      1566,
+      90
+     ],
+     "fill": 2,
+     "maxFs": 0
+    }
+   ]
+  },
+  "bestiary": {
+   "n": 123,
+   "chromeSmall": [],
+   "chromeMin": 14.686,
+   "overflowX": 0,
+   "hist": {
+    "18+": 45,
+    "15-17": 52,
+    "13-14": 20,
+    "11-12": 6
+   },
+   "minFs": 11,
+   "small": [
+    {
+     "p": "bjw-card > bjw-body > bjw-kills",
+     "fs": 13,
+     "n": 4,
+     "bsp": "28"
+    },
+    {
+     "p": "bjw-body > bjw-kills",
+     "fs": 13,
+     "n": 4,
+     "bsp": "⚔"
+    },
+    {
+     "p": "bjw-body > bjw-name-row > monster-card-defense-badge.mc-defense-evasion",
+     "fs": 12,
+     "n": 3,
+     "bsp": "Flink"
+    },
+    {
+     "p": "bjw-head-row > bjw-seals > bjw-seal",
+     "fs": 11,
+     "n": 2,
+     "bsp": "/ 1439  Entdeckt"
+    },
+    {
+     "p": "bjw-head-row > bjw-head-subtitle",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Von den Weiden bis in die Tiefe"
+    },
+    {
+     "p": "bjw-body > bjw-name-row > monster-card-defense-badge.mc-defense-ward",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Beschildet"
+    }
+   ],
+   "sparse": []
+  },
+  "companions": {
+   "n": 103,
+   "chromeSmall": [],
+   "chromeMin": 13,
+   "overflowX": 0,
+   "hist": {
+    "18+": 33,
+    "15-17": 60,
+    "13-14": 3,
+    "11-12": 7
+   },
+   "minFs": 11,
+   "small": [
+    {
+     "p": "pet-field-head-meta > pet-field-active > pet-field-active-effect",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Passiv: Wurzelgespür +6% · Aktiv: Wu"
+    },
+    {
+     "p": "pet-field-index > pet-field-index-head > pet-field-count",
+     "fs": 13,
+     "n": 1,
+     "bsp": "7 / 23"
+    },
+    {
+     "p": "pet-field-detail > pet-field-stage.has-bg > pet-equipped-badge",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ausgerüstet"
+    },
+    {
+     "p": "pet-field-dossier-head > pet-field-kicker",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Skill: Holzfällen"
+    },
+    {
+     "p": "pet-field-dossier > pet-field-dossier-head > pet-field-drop",
+     "fs": 12.672,
+     "n": 1,
+     "bsp": "Drop-Chance: 1 / 60.000"
+    },
+    {
+     "p": "pet-field-effects.pet-field-effects-detailed > pet-effect-row > pet-effect-tag.pet-effect-tag-passive",
+     "fs": 12.48,
+     "n": 1,
+     "bsp": "Passiv"
+    },
+    {
+     "p": "pet-field-effects.pet-field-effects-detailed > pet-effect-row > pet-effect-tag.pet-effect-tag-active",
+     "fs": 12.48,
+     "n": 1,
+     "bsp": "Aktiv (im Kampf)"
+    },
+    {
+     "p": "pet-field-effects.pet-field-effects-detailed > pet-effect-row.pet-effect-row-echo > pet-effect-tag.pet-effect-tag-echo",
+     "fs": 12.48,
+     "n": 1,
+     "bsp": "Echo"
+    }
+   ],
+   "sparse": []
+  },
+  "enchanting": {
+   "n": 100,
+   "chromeSmall": [],
+   "chromeMin": 14.686,
+   "overflowX": 0,
+   "hist": {
+    "18+": 33,
+    "15-17": 48,
+    "13-14": 18,
+    "11-12": 1
+   },
+   "minFs": 12,
+   "small": [
+    {
+     "p": "ench-item-row > ench-item-text > ench-item-name",
+     "fs": 13,
+     "n": 12,
+     "bsp": "Slayer-Helm"
+    },
+    {
+     "p": "ench-col.ench-col-target > shop-section-head > shop-section-orn",
+     "fs": 13,
+     "n": 1,
+     "bsp": "◆"
+    },
+    {
+     "p": "ench-col.ench-col-target > shop-section-head > shop-section-title",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Item auswählen"
+    },
+    {
+     "p": "ench-col.ench-col-grimoire > shop-section-head > shop-section-orn",
+     "fs": 13,
+     "n": 1,
+     "bsp": "◆"
+    },
+    {
+     "p": "ench-col.ench-col-grimoire > shop-section-head > shop-section-title",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Rune auswählen"
+    },
+    {
+     "p": "ench-rune-section > ench-rune-section-head.ench-rune-section-head--armor > ench-rune-section-icon",
+     "fs": 12,
+     "n": 1,
+     "bsp": "🛡"
+    }
+   ],
+   "sparse": []
+  },
+  "stats": {
+   "n": 94,
+   "chromeSmall": [],
+   "chromeMin": 14.686,
+   "overflowX": 0,
+   "hist": {
+    "18+": 49,
+    "15-17": 28,
+    "13-14": 6,
+    "11-12": 11
+   },
+   "minFs": 12,
+   "small": [
+    {
+     "p": "stx-medallion-row > stx-medallion > stx-medallion-label",
+     "fs": 12,
+     "n": 11,
+     "bsp": "Besiegte Monster"
+    }
+   ],
+   "sparse": []
+  },
+  "prestige": {
+   "fehlt": true
+  },
+  "newhaven": {
+   "n": 120,
+   "chromeSmall": [],
+   "chromeMin": 13.5,
+   "overflowX": 0,
+   "hist": {
+    "18+": 45,
+    "15-17": 43,
+    "13-14": 31,
+    "11-12": 1
+   },
+   "minFs": 12,
+   "small": [
+    {
+     "p": "nh-queue-list > nh-queue-item.is-empty > nh-queue-pos",
+     "fs": 13.5,
+     "n": 8,
+     "bsp": "1 ."
+    },
+    {
+     "p": "nh-queue-list > nh-queue-item.is-empty > nh-queue-name",
+     "fs": 13.5,
+     "n": 8,
+     "bsp": "Freier Bauplatz"
+    },
+    {
+     "p": "nh-list-shell > nh-queue-strip.is-empty > nh-queue-strip-title",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Geplant"
+    },
+    {
+     "p": "nh-queue-strip.is-empty > nh-queue-strip-title",
+     "fs": 12,
+     "n": 1,
+     "bsp": "0 / 8"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sb-combat-section > sb-combat-subskills > sb-combat-row.sb-combat-row--training",
+     "wh": [
+      213,
+      66
+     ],
+     "fill": 19,
+     "maxFs": 16.9484
+    }
+   ]
+  },
+  "tavern": {
+   "fehlt": true
+  },
+  "options": {
+   "n": 99,
+   "chromeSmall": [],
+   "chromeMin": 14,
+   "overflowX": 0,
+   "hist": {
+    "18+": 39,
+    "15-17": 55,
+    "13-14": 5
+   },
+   "minFs": 14,
+   "small": [],
+   "sparse": [
+    {
+     "p": "sb-combat-section > sb-combat-subskills > sb-combat-row.sb-combat-row--training",
+     "wh": [
+      213,
+      66
+     ],
+     "fill": 19,
+     "maxFs": 16.9484
+    },
+    {
+     "p": "opz-grid > opz-section > opz-row",
+     "wh": [
+      681,
+      162
+     ],
+     "fill": 18,
+     "maxFs": 19.2008
+    }
+   ]
+  }
+ }
+}

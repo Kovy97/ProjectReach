@@ -155,7 +155,7 @@
 }
 
 .item-cell-name {
-  font-size: 14px;
+  font-size: var(--fs-xs); /* claude:2026-10-24T18:35:00+02:00 — war 14px */
   line-height: 1.15;
   color: var(--text);
   overflow: hidden;
@@ -174,7 +174,7 @@
 /* Vierstellige Mengen (Stack-Cap 9999, Welle SS): etwas kleiner statt "9,9k"-Kürzung — echte
    Zahlen bleiben echte Zahlen, nur die Zell-Ecke bekommt mehr Luft. */
 .item-cell-qty--wide {
-  font-size: 12px;
+  font-size: var(--fs-2xs); /* claude:2026-10-24T18:35:00+02:00 — war 12px */
   right: 6%;
 }
 
@@ -279,7 +279,7 @@ body .item-cell.rarity-mythic {
 }
 
 .shop-cell .item-cell-name {
-  font-size: 12px;
+  font-size: var(--fs-2xs); /* claude:2026-10-24T18:35:00+02:00 — war 12px */
 }
 
 /* Paperdoll-Item innerhalb eines Slots — echtes Flex-Centering, kein Offset-Hack mehr
@@ -409,14 +409,14 @@ body .item-cell.rarity-mythic {
 }
 .ct-tip-title {
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:35:00+02:00 — war 13px */
   letter-spacing: 0.4px;
   text-transform: uppercase;
   color: var(--attr-color, var(--gold));
   text-shadow: 0 1px 2px rgba(0,0,0,0.85);
 }
 .ct-tip-desc {
-  font-size: 12px;
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:35:00+02:00 — war 12px */
   line-height: 1.32;
   color: #d9cca9;
 }
@@ -508,7 +508,7 @@ body .item-cell.rarity-mythic {
   border-radius: 4px;
   background: var(--accent-2);
   color: var(--bg, #000);
-  font-size: 14px;
+  font-size: var(--fs-xs); /* claude:2026-10-24T18:35:00+02:00 — war 14px */
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -593,7 +593,7 @@ body .item-cell.rarity-mythic {
 .it-hint {
   margin-top: 8px;
   padding: 0 20px;
-  font-size: 13px;
+  font-size: var(--fs-sm); /* claude:2026-10-24T18:35:00+02:00 — war 13px */
   text-align: center;
 }
 
@@ -752,9 +752,13 @@ body .item-cell.rarity-mythic {
      heute, weil der Faktor dort bereits am clamp()-Maximum saettigt. Alle font-size-Werte auf
      dieser Karte multiplizieren mit dieser EINEN Variable (calc(var(--itip-fs-scale) * Npx))
      statt eigene vw-Formeln zu wiederholen. */
-  --itip-fs-scale: clamp(0.8, calc(0.8 + 0.2 * (100vw - 1024px) / 576px), 1);
+  /* claude:2026-10-24T18:25:00+02:00 — UI-Überarbeitung 1.4: der alte Wert rechnete mit calc(Länge / Länge), das
+     Electron 32 (Chromium 128) nicht kennt, und verkleinerte unter 1600 px auf 0,8. Jetzt: --vp-k (stufenweise 1 … 1,15) ×
+     --text-scale (Option „Textgröße“). Bei 1366 px = 1, d. h. kleinste Tooltip-Schrift 13 px. */
+  --itip-fs-scale: calc(var(--vp-k) * var(--text-scale));
   box-sizing: border-box;
-  width: 480px;
+  /* claude:2026-10-24T18:25:00+02:00 — Karte wächst mit Schrift (480 px bei Faktor 1), nie breiter als das Fenster. */
+  width: min(calc(480px * var(--itip-fs-scale)), 96vw);
   max-height: 97vh;
   overflow-y: auto;
   overflow-x: hidden;
@@ -800,7 +804,7 @@ body .item-cell.rarity-mythic {
 /* „Angelegt"-Tag — dezent, stört den Inhalt nicht. */
 .itip-equipped-badge {
   font-family: var(--font-head);
-  font-size: calc(var(--itip-fs-scale) * 12px);
+  font-size: calc(var(--itip-fs-scale) * 13px);
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1108,7 +1112,7 @@ body .item-cell.rarity-mythic {
   border-bottom: none;
 }
 .itip-group-title {
-  font-size: calc(var(--itip-fs-scale) * 13.5px);
+  font-size: calc(var(--itip-fs-scale) * 14px);
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -1186,7 +1190,7 @@ body .item-cell.rarity-mythic {
    wenn Zeilen mit/ohne Delta in derselben Gruppe wechseln. */
 .itip-delta {
   flex-shrink: 0;
-  font-size: calc(var(--itip-fs-scale) * 13.5px);
+  font-size: calc(var(--itip-fs-scale) * 14px);
   font-weight: 700;
   margin-left: 6px;
   font-variant-numeric: tabular-nums;
@@ -1214,7 +1218,7 @@ body .item-cell.rarity-mythic {
     url("../assets/bg_black.webp") repeat;
   border: 1px solid rgba(159, 196, 220, 0.38);
   color: var(--accent-2);
-  font-size: calc(var(--itip-fs-scale) * 14.5px);
+  font-size: calc(var(--itip-fs-scale) * 15px);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -1238,7 +1242,7 @@ body .item-cell.rarity-mythic {
 .itip-tool-hint {
   align-self: stretch;
   color: var(--muted);
-  font-size: calc(var(--itip-fs-scale) * 14.5px);
+  font-size: calc(var(--itip-fs-scale) * 15px);
   line-height: 1.35;
   font-style: normal;
   background: none;
@@ -1280,12 +1284,12 @@ body .item-cell.rarity-mythic {
   flex: 1;
 }
 .itip-inst-affix-tier {
-  font-size: calc(var(--itip-fs-scale) * 13.5px);
+  font-size: calc(var(--itip-fs-scale) * 14px);
   color: var(--muted);
 }
 .itip-inst-affix-val {
   margin-left: 19px;
-  font-size: calc(var(--itip-fs-scale) * 14.5px);
+  font-size: calc(var(--itip-fs-scale) * 15px);
   line-height: 1.35;
   color: var(--gold, #d8b35a);
 }
@@ -1354,7 +1358,7 @@ body .item-cell.rarity-mythic {
   margin: 10px 22px 0;
   padding-top: 8px;
   border-top: 1px solid rgba(216, 192, 106, 0.14);
-  font-size: calc(var(--itip-fs-scale) * 14.5px);
+  font-size: calc(var(--itip-fs-scale) * 15px);
   color: var(--muted);
 }
 
@@ -1400,7 +1404,7 @@ body .item-cell.rarity-mythic {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-size: calc(var(--itip-fs-scale) * 14.5px);
+  font-size: calc(var(--itip-fs-scale) * 15px);
   color: rgba(216, 192, 106, 0.6);
 }
 .itip-req-label {
@@ -1424,7 +1428,7 @@ body .item-cell.rarity-mythic {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: calc(var(--itip-fs-scale) * 14.5px);
+  font-size: calc(var(--itip-fs-scale) * 15px);
   color: rgba(216, 192, 106, 0.6);
 }
 .itip-value-amount {
@@ -1964,7 +1968,7 @@ body .item-cell.rarity-mythic {
   left: 7%;
   padding: 0 3px;
   font-family: var(--font-display, "Cinzel", Georgia, serif);
-  font-size: 10px;
+  font-size: var(--fs-2xs); /* claude:2026-10-24T18:35:00+02:00 — war 10px */
   font-weight: 700;
   line-height: 13px;
   letter-spacing: 0.02em;
@@ -2167,7 +2171,9 @@ body .item-cell.rarity-mythic {
   font-family: "Cinzel", Georgia, "Times New Roman", serif;
 }
 
-.item-tooltip.itip-panel :is(.itip-name, .itip-group-title, .itip-effect-line) {
+/* claude:2026-10-24T19:05:00+02:00 — .itip-effect-line ist hier raus: Effektzeilen sind Fließtext und laufen über
+   --font-body (typography.css). Name und Gruppentitel bleiben Metamorphous. */
+.item-tooltip.itip-panel :is(.itip-name, .itip-group-title) {
   font-family: "Metamorphous", "Cinzel", Georgia, serif;
 }
 
@@ -2175,7 +2181,7 @@ body .item-cell.rarity-mythic {
   font-family: Georgia, "Times New Roman", "Noto Serif", serif;
 }
 
-:root:lang(ru) .item-tooltip.itip-panel :is(.itip-name, .itip-group-title, .itip-effect-line) {
+:root:lang(ru) .item-tooltip.itip-panel :is(.itip-name, .itip-group-title) {
   font-family: Georgia, "Times New Roman", "Noto Serif", serif;
 }
 
@@ -2183,7 +2189,7 @@ body .item-cell.rarity-mythic {
   font-family: "Microsoft YaHei", "Noto Serif CJK SC", "STSong", "SimSun", serif;
 }
 
-:root:lang(zh) .item-tooltip.itip-panel :is(.itip-name, .itip-group-title, .itip-effect-line) {
+:root:lang(zh) .item-tooltip.itip-panel :is(.itip-name, .itip-group-title) {
   font-family: "Microsoft YaHei", "Noto Serif CJK SC", "STSong", "SimSun", serif;
 }
 
@@ -2208,7 +2214,7 @@ body .item-cell.rarity-mythic {
 
 .itip-offense-group .itip-stat-label {
   color: #c9c0ad;
-  font-size: calc(var(--itip-fs-scale) * 14.5px);
+  font-size: calc(var(--itip-fs-scale) * 15px);
   letter-spacing: 0.035em;
 }
 

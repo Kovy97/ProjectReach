@@ -46,6 +46,9 @@ import {
   setzeFontChoice,
 } from "../fontChoice";
 import type { FontChoice } from "../fontChoice";
+// claude:2026-10-24T18:20:00+02:00 — Textgröße (Normal/Groß/Sehr groß), s. textScale.ts.
+import { TEXT_SCALES, TEXT_SCALE_LABEL_KEY, ladeTextScale, setzeTextScale } from "../textScale";
+import type { TextScale } from "../textScale";
 import { UI_STYLES, UI_STYLE_LABEL_KEY, setzeUiStyle, useUiStyle } from "../uiStyle";
 import "../styles/options.css";
 
@@ -184,6 +187,7 @@ export function DisplayAudioPrefs(): JSX.Element {
   // Schriftwahl (Chef 31.08.2026): reine Anzeige-Einstellung im localStorage, kein SAVE-Bump —
   // dieselbe Mechanik wie die Sprachwahl. Begruendung in renderer/fontChoice.ts.
   const [font, setFontState] = useState<FontChoice>(ladeFontChoice);
+  const [textScale, setTextScaleState] = useState<TextScale>(ladeTextScale);
   // claude:2026-10-19T10:05:00+02:00 — Chef 19.10.: Oberflächen-Stil Reforged/Classic (uiStyle.ts), wirkt sofort.
   const uiStyle = useUiStyle();
 
@@ -213,6 +217,7 @@ export function DisplayAudioPrefs(): JSX.Element {
   const toggleTooltipPopup = (): void => { const next = !tooltipPopup; setTooltipImagePopupEnabled(next); setTooltipPopupState(next); };
   const changeCombatFx = (level: CombatFxLevel): void => { setCombatFxLevel(level); setCombatFxState(level); };
   const changeFont = (wahl: FontChoice): void => { setzeFontChoice(wahl); setFontState(wahl); };
+  const changeTextScale = (stufe: TextScale): void => { setzeTextScale(stufe); setTextScaleState(stufe); };
 
   return (
     <>
@@ -290,6 +295,17 @@ export function DisplayAudioPrefs(): JSX.Element {
             <p className="opz-font-preview" style={{ fontFamily: FONT_PREVIEW_STACK[font] }}>
               {t("options.fontPreview")}
             </p>
+          </div>
+        </OptRow>
+
+        {/* claude:2026-10-24T18:20:00+02:00 — Textgröße: skaliert nur die Schrift (--text-scale), kein Zoom. */}
+        <OptRow label={t("options.textSize")} hint={t("options.textSizeHint")}>
+          <div className="opz-segment">
+            {TEXT_SCALES.map((stufe) => (
+              <button key={stufe} className={optBtnCls(textScale === stufe)} onClick={() => changeTextScale(stufe)}>
+                {t(TEXT_SCALE_LABEL_KEY[stufe])}
+              </button>
+            ))}
           </div>
         </OptRow>
       </OptSection>

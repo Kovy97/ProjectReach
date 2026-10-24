@@ -201,7 +201,7 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
     resize.observe(el);
     if (navRef.current) resize.observe(navRef.current);
     const fonts = new MutationObserver(fitNames);
-    fonts.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "style", "lang", "data-font"] });
+    fonts.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "style", "lang", "data-font", "data-text-scale"] });
     document.fonts.addEventListener("loadingdone", fitNames);
     fitNames();
     return () => {

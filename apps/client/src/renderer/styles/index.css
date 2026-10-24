@@ -132,6 +132,9 @@
 @import "./classic-skin.css";
 @import "./classic-chrome.css";
 
+/* claude:2026-10-24T18:45:00+02:00 — Typografie-Schicht (Fließtext-Schrift), bewusst ZULETZT: s. typography.css. */
+@import "./typography.css";
+
 /* Dev-Zeitraffer: Knopf für die Offline-Demo (Chef-Auftrag 31.08.2026). Bewusst schlicht und
    klar vom Zurücksetzen-Knopf getrennt — das Panel ist ein Werkzeug, kein Spielelement. */
 .devspeed-demo {

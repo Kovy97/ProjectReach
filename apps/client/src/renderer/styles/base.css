@@ -47,6 +47,35 @@
   src: url("../fonts/IMFellEnglishSC-Regular.woff2") format("woff2");
   font-display: swap;
 }
+/* claude:2026-10-24T18:10:00+02:00 — Fließtext-Kandidaten (Google Fonts, OFL; Lizenzen als fonts/OFL-*.txt).
+   Variable Schriften (EB Garamond, Alegreya) decken Gewichte 400–800 ab. `size-adjust` gleicht die x-Höhe an, damit
+   dieselbe font-size bei allen drei gleich groß wirkt (Garamond hat sonst eine kleine x-Höhe). */
+@font-face {
+  font-family: "IM Fell English";
+  src: url("../fonts/IMFellEnglish-Regular.woff2") format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "EB Garamond";
+  src: url("../fonts/EBGaramond-Variable.woff2") format("woff2");
+  font-weight: 400 800;
+  font-display: swap;
+  size-adjust: 108%;
+}
+@font-face {
+  font-family: "Alegreya";
+  src: url("../fonts/Alegreya-Variable.woff2") format("woff2");
+  font-weight: 400 900;
+  font-display: swap;
+}
+/* Kursiv echt statt synthetisch (Flavor-, Hinweis- und Zitatzeilen) — nur für die Empfehlung Alegreya gebündelt. */
+@font-face {
+  font-family: "Alegreya";
+  font-style: italic;
+  src: url("../fonts/Alegreya-Italic-Variable.woff2") format("woff2");
+  font-weight: 400 900;
+  font-display: swap;
+}
 /* Task #316 (B3): "Cormorant Garamond" @font-face removed — the shipped woff2 (13.9 KB, roughly
    a quarter the size of comparable display fonts here) was a heavily-subsetted/corrupted dummy
    file missing glyphs, and the unrelated "Cormorant-Regular.ttf" sitting next to it in fonts/ was
@@ -90,17 +119,36 @@
   --font-head: "Grim Reach Numerals", "IM Fell English SC", Georgia, "Times New Roman", serif;
   --font-info: "Grim Reach Numerals", "Cinzel", Georgia, "Times New Roman", serif;
 
+  /* claude:2026-10-24T18:10:00+02:00 — Fließtext-Schrift (Chef 24.10.): ECHTE Kleinbuchstaben für Beschreibungen, Effekte,
+     Tooltips, Quests. Titel, Namen und Knöpfe bleiben in --font-head (Kapitälchen). Angewandt wird sie gesammelt in
+     styles/typography.css. WECHSEL = EINE ZEILE: `--body-face` auf "EB Garamond", "Alegreya" oder "IM Fell English" setzen
+     (alle drei liegen gebündelt in fonts/, OFL). Kyrillisch deckt nur EB Garamond und Alegreya; IM Fell fällt für ru auf
+     Georgia zurück (Rückfallkette unten), CJK kommt immer aus der Systemschrift. */
+  --body-face: "Alegreya";
+  --font-body: var(--body-face), Georgia, "Times New Roman", "Microsoft YaHei", "Noto Serif CJK SC", serif;
+  --text-scale: 1;
+  /* claude:2026-10-24T18:25:00+02:00 — --vp-k: stufenweise UNITLOSE Fensterbreiten-Zahl (1 bei ≤1366 px, 1,13 bei 1920, 1,15 ab ~2100),
+     für Stellen, die eine Zahl statt einer Länge brauchen (Kachel-Maße, --itip-fs-scale). calc(Länge / Länge) gibt es in
+     Electron 32 (Chromium 128) NICHT, deshalb Stufen statt Formel. */
+  --vp-k: 1;
   /* claude:2026-10-17T10:30:00+02:00 — UI-Fundament (Test-Branch): EINE Schriftgroessen-Skala statt
      52 einzelner px-Werte. Neue und ueberarbeitete Regeln nehmen nur noch diese Stufen.
      --fs-2xs nur fuer Zahlen-Badges auf Icons, nie fuer Woerter. Fliesstext mindestens --fs-sm. */
-  --fs-2xs: 11px;
-  --fs-xs: 12px;
-  --fs-sm: 13px;
-  --fs-md: 15px;
-  --fs-lg: 17px;
-  --fs-xl: 20px;
-  --fs-2xl: 24px;
-  --fs-3xl: 32px;
+  /* claude:2026-10-24T18:10:00+02:00 — UI-Überarbeitung 1.4 Welle 1 (Chef 24.10.: „Texte zu klein, obwohl Platz da ist“).
+     Die Skala ist jetzt FLIESSEND: clamp(Wert bei 1366 px, Wert + vw-Anteil, 1,15 × Wert) × --text-scale.
+     Bei 1366 px (und darunter) gelten die Basiswerte, bei 1920 px etwa +13 %, ab ca. 2000 px gedeckelt (+15 %).
+     Basis bei 1366: 13 / 14 / 15 / 17 / 19 / 22 / 26 / 34 px. Kleinster sichtbarer Text = --fs-2xs = 13 px,
+     Fließtext mindestens --fs-sm = 15 px. Token-Namen unverändert (ca. 150 Nutzer).
+     --text-scale (1 / 1,12 / 1,25) kommt aus der Option „Textgröße“ (textScale.ts, data-text-scale am Wurzelelement);
+     sie skaliert nur die Schrift, kein Zoom. Neue Tokens-Werte hier ändern, nicht an den Nutzern. */
+  --fs-2xs: calc(clamp(13px, 8.83px + 0.305vw, 14.9px) * var(--text-scale));
+  --fs-xs: calc(clamp(14px, 9.51px + 0.329vw, 16.1px) * var(--text-scale));
+  --fs-sm: calc(clamp(15px, 10.19px + 0.352vw, 17.2px) * var(--text-scale));
+  --fs-md: calc(clamp(17px, 11.54px + 0.399vw, 19.5px) * var(--text-scale));
+  --fs-lg: calc(clamp(19px, 12.9px + 0.446vw, 21.8px) * var(--text-scale));
+  --fs-xl: calc(clamp(22px, 14.94px + 0.516vw, 25.3px) * var(--text-scale));
+  --fs-2xl: calc(clamp(26px, 17.65px + 0.61vw, 29.9px) * var(--text-scale));
+  --fs-3xl: calc(clamp(34px, 23.09px + 0.798vw, 39.1px) * var(--text-scale));
   /* Abstands-Skala (4er-Raster). */
   --sp-1: 4px;
   --sp-2: 8px;
@@ -116,17 +164,35 @@
   text-wrap: balance;
 }
 
+@media (min-width: 1500px) { :root { --vp-k: 1.04; } }
+@media (min-width: 1650px) { :root { --vp-k: 1.075; } }
+@media (min-width: 1800px) { :root { --vp-k: 1.105; } }
+@media (min-width: 1900px) { :root { --vp-k: 1.13; } }
+@media (min-width: 2100px) { :root { --vp-k: 1.15; } }
+
+/* claude:2026-10-24T18:10:00+02:00 — Textgrößen-Option (textScale.ts): nur Schrift, kein Zoom. Normal = kein Attribut. */
+:root[data-text-scale="large"] {
+  --text-scale: 1.12;
+}
+:root[data-text-scale="xlarge"] {
+  --text-scale: 1.25;
+}
+
 /* codex:2026-08-01T10:04:43+02:00 — IM Fell English SC besitzt kein vollständiges Kyrillisch/CJK.
    Sprachgebundene Stacks vermeiden zufällige Glyphenmischung innerhalb russischer/chinesischer
    Wörter. `:lang(ru/zh)` trifft die von i18n gesetzten BCP-47-Tags ru-RU und zh-CN. */
 :root:lang(ru) {
   --font-head: "Grim Reach Numerals", Georgia, "Times New Roman", "Noto Serif", serif;
   --font-info: "Grim Reach Numerals", Georgia, "Times New Roman", "Noto Serif", serif;
+  /* claude:2026-10-24T18:10:00+02:00 — EB Garamond und Alegreya haben Kyrillisch (gemessen 64/64); IM Fell nicht, dann greift Georgia. */
+  --font-body: var(--body-face), Georgia, "Times New Roman", "Noto Serif", serif;
 }
 
 :root:lang(zh) {
   --font-head: "Grim Reach Numerals", "Microsoft YaHei", "Noto Serif CJK SC", "STSong", "SimSun", serif;
   --font-info: "Grim Reach Numerals", "Microsoft YaHei", "Noto Serif CJK SC", "STSong", "SimSun", serif;
+  /* claude:2026-10-24T18:10:00+02:00 — keine Lateinschrift vor der CJK-Schrift (sonst Glyphenmischung innerhalb eines Satzes). */
+  --font-body: "Grim Reach Numerals", "Microsoft YaHei", "Noto Serif CJK SC", "STSong", "SimSun", serif;
 }
 
 /* ─── Schriftwahl (Chef-Auftrag 31.08.2026, 1.2.2) ────────────────────────────────────────────
@@ -150,16 +216,19 @@
 :root[data-font="book"] {
   --font-head: "Grim Reach Numerals", Georgia, "Microsoft YaHei", "Noto Serif CJK SC", "Times New Roman", serif;
   --font-info: "Grim Reach Numerals", Georgia, "Microsoft YaHei", "Noto Serif CJK SC", "Times New Roman", serif;
+  --font-body: "Grim Reach Numerals", Georgia, "Microsoft YaHei", "Noto Serif CJK SC", "Times New Roman", serif; /* claude:2026-10-24T18:10:00+02:00 — Systemschriften haben echte Kleinbuchstaben */
 }
 
 :root[data-font="antiqua"] {
   --font-head: "Grim Reach Numerals", "Palatino Linotype", "Book Antiqua", Palatino, "Microsoft YaHei", "Noto Serif CJK SC", serif;
   --font-info: "Grim Reach Numerals", "Palatino Linotype", "Book Antiqua", Palatino, "Microsoft YaHei", "Noto Serif CJK SC", serif;
+  --font-body: "Grim Reach Numerals", "Palatino Linotype", "Book Antiqua", Palatino, "Microsoft YaHei", "Noto Serif CJK SC", serif; /* claude:2026-10-24T18:10:00+02:00 — Systemschriften haben echte Kleinbuchstaben */
 }
 
 :root[data-font="clear"] {
   --font-head: "Grim Reach Numerals", "Segoe UI", Tahoma, Verdana, "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
   --font-info: "Grim Reach Numerals", "Segoe UI", Tahoma, Verdana, "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  --font-body: "Grim Reach Numerals", "Segoe UI", Tahoma, Verdana, "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; /* claude:2026-10-24T18:10:00+02:00 — Systemschriften haben echte Kleinbuchstaben */
 }
 
 * {

@@ -1,0 +1,2830 @@
+{
+ "viewport": "1920x1080",
+ "pages": {
+  "character": {
+   "n": 106,
+   "chromeMin": 11.2,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 22,
+    "18+": 21,
+    "11-12": 24,
+    "15-17": 39
+   },
+   "minFs": 11.2,
+   "small": [
+    {
+     "p": "sb-nav.sb-nav--scrollable > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 12,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "cs-attr-grid > cs-attr-card > cs-attr-card-name",
+     "fs": 13,
+     "n": 6,
+     "bsp": "Stärke"
+    },
+    {
+     "p": "cs-inv-toolbar > cs-inv-toolbar-right > cs-inv-sortbtn",
+     "fs": 12,
+     "n": 2,
+     "bsp": "Sortieren"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-combat-btn-row > sb-skill-btn.sb-skill-btn--has-level > sb-skill-level.sb-combat-lvl-badge",
+     "fs": 12,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    },
+    {
+     "p": "cs-col.cs-col-left > cs-panel-header > cs-section-title",
+     "fs": 13.5,
+     "n": 1,
+     "bsp": "Charakter"
+    },
+    {
+     "p": "cs-portrait-wrap > cs-nameplate > cs-hero-level",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Gesamtlevel 1918"
+    },
+    {
+     "p": "vital.hp > vital-head > vital-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Leben"
+    },
+    {
+     "p": "vital.hp > vital-head > vital-values",
+     "fs": 12,
+     "n": 1,
+     "bsp": "258 / 258"
+    },
+    {
+     "p": "vital.ward > vital-head > vital-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Ward"
+    },
+    {
+     "p": "vital.ward > vital-head > vital-values",
+     "fs": 12,
+     "n": 1,
+     "bsp": "167 / 167"
+    },
+    {
+     "p": "active-buffs-bar > active-buff-chip > active-buff-name",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Sumpfwurzel-Eintopf"
+    },
+    {
+     "p": "active-buffs-bar > active-buff-chip > active-buff-timer",
+     "fs": 13,
+     "n": 1,
+     "bsp": "33s"
+    },
+    {
+     "p": "cs-attr-section > cs-section-heading > cs-section-title",
+     "fs": 13.5,
+     "n": 1,
+     "bsp": "Attribute"
+    },
+    {
+     "p": "cs-col.cs-col-tabpanel > cs-tabbar > cs-tab-btn.active",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Ausrüstung"
+    },
+    {
+     "p": "cs-col.cs-col-tabpanel > cs-tabbar > cs-tab-btn",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Stats"
+    },
+    {
+     "p": "cs-slot.tool4 > cs-slot-empty-hit > cs-slot-empty-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Werkzeug"
+    },
+    {
+     "p": "cs-slot.tool3 > cs-slot-empty-hit > cs-slot-empty-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Werkzeug"
+    },
+    {
+     "p": "cs-col.cs-col-right > cs-panel-header > cs-section-title",
+     "fs": 13.5,
+     "n": 1,
+     "bsp": "Inventar"
+    },
+    {
+     "p": "cs-inv-toolbar > cs-inv-toolbar-right > cs-sort-label",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Sortieren:"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    },
+    {
+     "p": "cs-col.cs-col-left > cs-col-left-info > cs-vitals",
+     "wh": [
+      430,
+      84
+     ],
+     "fill": 10,
+     "maxFs": 12
+    }
+   ]
+  },
+  "combat": {
+   "n": 98,
+   "chromeMin": 10.8,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 22,
+    "18+": 21,
+    "11-12": 17,
+    "15-17": 37,
+    "<11": 1
+   },
+   "minFs": 10.8,
+   "small": [
+    {
+     "p": "sb-combat-subskills > sb-combat-row > sb-combat-name",
+     "fs": 13,
+     "n": 6,
+     "bsp": "Angriff"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row > sb-combat-level",
+     "fs": 12,
+     "n": 5,
+     "bsp": "92/99"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrollable > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 5,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-combat-btn-row > sb-skill-btn.sb-skill-btn--has-level > sb-skill-level.sb-combat-lvl-badge",
+     "fs": 12,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "sb-combat-style > sb-combat-style-text > sb-combat-style-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Kampfstil"
+    },
+    {
+     "p": "sb-combat-style > sb-combat-style-text > sb-combat-style-value",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Fokus"
+    },
+    {
+     "p": "sb-combat-row > sb-combat-level > skill-boost-value",
+     "fs": 12,
+     "n": 1,
+     "bsp": "92/99"
+    },
+    {
+     "p": "sb-combat-level > skill-boost-value > skill-boost-tag",
+     "fs": 10.8,
+     "n": 1,
+     "bsp": "(95)"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row.sb-combat-row--training > sb-combat-name",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Magie"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row.sb-combat-row--training > sb-combat-level",
+     "fs": 12,
+     "n": 1,
+     "bsp": "97/99"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    },
+    {
+     "p": "cs-slot.tool4 > cs-slot-empty-hit > cs-slot-empty-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Werkzeug"
+    },
+    {
+     "p": "cs-slot.tool3 > cs-slot-empty-hit > cs-slot-empty-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Werkzeug"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    }
+   ]
+  },
+  "skills-overview": {
+   "n": 126,
+   "chromeMin": 10.8,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 16,
+    "18+": 27,
+    "11-12": 15,
+    "15-17": 67,
+    "<11": 1
+   },
+   "minFs": 10.8,
+   "small": [
+    {
+     "p": "sb-combat-subskills > sb-combat-row > sb-combat-name",
+     "fs": 13,
+     "n": 6,
+     "bsp": "Angriff"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row > sb-combat-level",
+     "fs": 12,
+     "n": 5,
+     "bsp": "92/99"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrollable > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 5,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-combat-btn-row > sb-skill-btn.sb-skill-btn--has-level > sb-skill-level.sb-combat-lvl-badge",
+     "fs": 12,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "sb-combat-style > sb-combat-style-text > sb-combat-style-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Kampfstil"
+    },
+    {
+     "p": "sb-combat-style > sb-combat-style-text > sb-combat-style-value",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Fokus"
+    },
+    {
+     "p": "sb-combat-row > sb-combat-level > skill-boost-value",
+     "fs": 12,
+     "n": 1,
+     "bsp": "92/99"
+    },
+    {
+     "p": "sb-combat-level > skill-boost-value > skill-boost-tag",
+     "fs": 10.8,
+     "n": 1,
+     "bsp": "(95)"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row.sb-combat-row--training > sb-combat-name",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Magie"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row.sb-combat-row--training > sb-combat-level",
+     "fs": 12,
+     "n": 1,
+     "bsp": "97/99"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    },
+    {
+     "p": "skilloverview-head > skilloverview-total > skilloverview-total-label",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Gesamtlevel"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    }
+   ]
+  },
+  "woodcutting": {
+   "n": 148,
+   "chromeMin": 10.8,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 55,
+    "18+": 36,
+    "11-12": 20,
+    "15-17": 36,
+    "<11": 1
+   },
+   "minFs": 10.8,
+   "small": [
+    {
+     "p": "skillcard-grid > skillcard-tile",
+     "fs": 13,
+     "n": 16,
+     "bsp": "XP"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row > sb-combat-name",
+     "fs": 13,
+     "n": 6,
+     "bsp": "Angriff"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row > sb-combat-level",
+     "fs": 12,
+     "n": 5,
+     "bsp": "92/99"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrollable > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 5,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "skillcard-output-zone > skillcard-produces.muted > skillcard-produces-label",
+     "fs": 12.25,
+     "n": 4,
+     "bsp": "Produziert :"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-combat-btn-row > sb-skill-btn.sb-skill-btn--has-level > sb-skill-level.sb-combat-lvl-badge",
+     "fs": 12,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "sb-combat-style > sb-combat-style-text > sb-combat-style-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Kampfstil"
+    },
+    {
+     "p": "sb-combat-style > sb-combat-style-text > sb-combat-style-value",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Fokus"
+    },
+    {
+     "p": "sb-combat-row > sb-combat-level > skill-boost-value",
+     "fs": 12,
+     "n": 1,
+     "bsp": "92/99"
+    },
+    {
+     "p": "sb-combat-level > skill-boost-value > skill-boost-tag",
+     "fs": 10.8,
+     "n": 1,
+     "bsp": "(95)"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row.sb-combat-row--training > sb-combat-name",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Magie"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row.sb-combat-row--training > sb-combat-level",
+     "fs": 12,
+     "n": 1,
+     "bsp": "97/99"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    },
+    {
+     "p": "skillcard-body > skillcard-state-slot.blocked > craftable.none",
+     "fs": 12,
+     "n": 1,
+     "bsp": "🔨 Herstellbar: 0×"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    },
+    {
+     "p": "skillcard-body.skillcard-body--no-inputs > skillcard-output-zone > skillcard-produces.muted",
+     "wh": [
+      330,
+      214
+     ],
+     "fill": 14,
+     "maxFs": 19.95
+    },
+    {
+     "p": "skillcard-body > skillcard-output-zone > skillcard-produces.muted",
+     "wh": [
+      330,
+      62
+     ],
+     "fill": 14,
+     "maxFs": 15.96
+    },
+    {
+     "p": "skill-page > actions > skillcard",
+     "wh": [
+      378,
+      720
+     ],
+     "fill": 9,
+     "maxFs": 14
+    }
+   ]
+  },
+  "smithing": {
+   "n": 103,
+   "chromeMin": 10.8,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 15,
+    "18+": 53,
+    "11-12": 15,
+    "15-17": 19,
+    "<11": 1
+   },
+   "minFs": 10.8,
+   "small": [
+    {
+     "p": "sb-combat-subskills > sb-combat-row > sb-combat-name",
+     "fs": 13,
+     "n": 6,
+     "bsp": "Angriff"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row > sb-combat-level",
+     "fs": 12,
+     "n": 5,
+     "bsp": "92/99"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrollable > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 5,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-combat-btn-row > sb-skill-btn.sb-skill-btn--has-level > sb-skill-level.sb-combat-lvl-badge",
+     "fs": 12,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "sb-combat-style > sb-combat-style-text > sb-combat-style-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Kampfstil"
+    },
+    {
+     "p": "sb-combat-style > sb-combat-style-text > sb-combat-style-value",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Fokus"
+    },
+    {
+     "p": "sb-combat-row > sb-combat-level > skill-boost-value",
+     "fs": 12,
+     "n": 1,
+     "bsp": "92/99"
+    },
+    {
+     "p": "sb-combat-level > skill-boost-value > skill-boost-tag",
+     "fs": 10.8,
+     "n": 1,
+     "bsp": "(95)"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row.sb-combat-row--training > sb-combat-name",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Magie"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row.sb-combat-row--training > sb-combat-level",
+     "fs": 12,
+     "n": 1,
+     "bsp": "97/99"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    }
+   ]
+  },
+  "cooking": {
+   "n": 76,
+   "chromeMin": 11.2,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 11,
+    "11-12": 18,
+    "18+": 29,
+    "15-17": 18
+   },
+   "minFs": 11.2,
+   "small": [
+    {
+     "p": "sb-nav.sb-nav--scrollable > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 12,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row > sb-combat-level",
+     "fs": 12,
+     "n": 4,
+     "bsp": "92/99"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row > sb-combat-name",
+     "fs": 13,
+     "n": 3,
+     "bsp": "Fernkampf"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row.sb-combat-row--training > sb-combat-name",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Magie"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row.sb-combat-row--training > sb-combat-level",
+     "fs": 12,
+     "n": 1,
+     "bsp": "97/99"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    }
+   ]
+  },
+  "farming": {
+   "n": 96,
+   "chromeMin": 9.5,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 11,
+    "18+": 39,
+    "11-12": 17,
+    "<11": 2,
+    "15-17": 27
+   },
+   "minFs": 9.5,
+   "small": [
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 12,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 2,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-estates > sb-estates-head",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ländereien"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    },
+    {
+     "p": "farm-section-content > muted",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Saat wächst passiv – online wie offl"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    },
+    {
+     "p": "farm-section-content > farm-info-bar",
+     "wh": [
+      1566,
+      70
+     ],
+     "fill": 21,
+     "maxFs": 19
+    }
+   ]
+  },
+  "hunting": {
+   "n": 97,
+   "chromeMin": 9.5,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 10,
+    "18+": 31,
+    "11-12": 23,
+    "<11": 2,
+    "15-17": 31
+   },
+   "minFs": 9.5,
+   "small": [
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 12,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "hunt-trap-topband > hunt-trap-topband-right > hunt-trap-badge.hunt-trap-badge--locked",
+     "fs": 11,
+     "n": 5,
+     "bsp": "Ab Stufe 5"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 2,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-estates > sb-estates-head",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ländereien"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    },
+    {
+     "p": "hunt-trap-topband > hunt-trap-topband-right > hunt-trap-badge.hunt-trap-badge--empty",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Leer"
+    },
+    {
+     "p": "hunt-trap-card.needs-zone > hunt-trap-art > hunt-trap-art-hint",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Gebiet wählen"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    },
+    {
+     "p": "hunt-page > hunt-traps > hunt-trap-card.locked",
+     "wh": [
+      511,
+      305
+     ],
+     "fill": 10,
+     "maxFs": 19
+    }
+   ]
+  },
+  "tailoring": {
+   "n": 103,
+   "chromeMin": 9.5,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 7,
+    "18+": 60,
+    "11-12": 16,
+    "<11": 2,
+    "15-17": 18
+   },
+   "minFs": 9.5,
+   "small": [
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 12,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 2,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-estates > sb-estates-head",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ländereien"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    }
+   ]
+  },
+  "bank": {
+   "n": 101,
+   "chromeMin": 9.5,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 13,
+    "18+": 18,
+    "11-12": 24,
+    "<11": 9,
+    "15-17": 37
+   },
+   "minFs": 9.5,
+   "small": [
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 12,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "invf-chiprow > invf-chip > invf-chip-label",
+     "fs": 12.5,
+     "n": 6,
+     "bsp": "Waffen"
+    },
+    {
+     "p": "invf-chiprow > invf-chip > invf-chip-count",
+     "fs": 10,
+     "n": 6,
+     "bsp": "1"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 2,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-estates > sb-estates-head",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ländereien"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    },
+    {
+     "p": "bank-ledger > bank-head > muted",
+     "fs": 13.824,
+     "n": 1,
+     "bsp": "Lagere hier Items — jeder Slot ist e"
+    },
+    {
+     "p": "invf-chiprow > invf-chip.active > invf-chip-label",
+     "fs": 12.5,
+     "n": 1,
+     "bsp": "Alle"
+    },
+    {
+     "p": "invf-chiprow > invf-chip.active > invf-chip-count",
+     "fs": 10,
+     "n": 1,
+     "bsp": "20"
+    },
+    {
+     "p": "bank-filter-row > bank-sort-inline > cs-sort-label",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Sortieren:"
+    },
+    {
+     "p": "bank-filter-row > bank-sort-inline > cs-inv-sortbtn",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Sortieren"
+    },
+    {
+     "p": "bank-ledger > bank-notes > bank-hint.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Tipp: Shift+Klick auf einen Stapel l"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    },
+    {
+     "p": "bank-ledger > npc-greeting.npc-greeting--page > npc-bubble.npc-bubble--tail-left",
+     "wh": [
+      829,
+      72
+     ],
+     "fill": 20,
+     "maxFs": 17
+    },
+    {
+     "p": "bank-sheet > bank-ledger > bank-head",
+     "wh": [
+      639,
+      72
+     ],
+     "fill": 21,
+     "maxFs": 13.824
+    }
+   ]
+  },
+  "storage": {
+   "n": 158,
+   "chromeMin": 9.5,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 15,
+    "18+": 104,
+    "11-12": 16,
+    "<11": 2,
+    "15-17": 21
+   },
+   "minFs": 9.5,
+   "small": [
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 12,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 2,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-estates > sb-estates-head",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ländereien"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    },
+    {
+     "p": "storage-shelf.storage-shelf--ores > storage-shelf-title > storage-shelf-count.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "0 / 13"
+    },
+    {
+     "p": "storage-shelf.storage-shelf--bars > storage-shelf-title > storage-shelf-count.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "0 / 14"
+    },
+    {
+     "p": "storage-shelf.storage-shelf--wood > storage-shelf-title > storage-shelf-count.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "0 / 22"
+    },
+    {
+     "p": "storage-shelf.storage-shelf--hides > storage-shelf-title > storage-shelf-count.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "0 / 14"
+    },
+    {
+     "p": "storage-shelf.storage-shelf--fibers > storage-shelf-title > storage-shelf-count.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "0 / 12"
+    },
+    {
+     "p": "storage-shelf.storage-shelf--gems > storage-shelf-title > storage-shelf-count.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "0 / 17"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    }
+   ]
+  },
+  "shop": {
+   "n": 139,
+   "chromeMin": 9.5,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 28,
+    "18+": 23,
+    "11-12": 28,
+    "<11": 6,
+    "15-17": 54
+   },
+   "minFs": 9.5,
+   "small": [
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 12,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "shopv2-section > shopv2-section-head > shopv2-section-orn",
+     "fs": 13,
+     "n": 6,
+     "bsp": "◆"
+    },
+    {
+     "p": "shopv2-section > shopv2-section-head > shopv2-section-count",
+     "fs": 12,
+     "n": 5,
+     "bsp": "5"
+    },
+    {
+     "p": "shopv2-card-image-area > item-cell.rarity-common > item-cell-2h-badge",
+     "fs": 10,
+     "n": 4,
+     "bsp": "2H"
+    },
+    {
+     "p": "qty-picker-presets > btn-iron.btn-iron--sm > shopv2-buyqty-n",
+     "fs": 12,
+     "n": 4,
+     "bsp": "1 ×"
+    },
+    {
+     "p": "qty-picker-presets > btn-iron.btn-iron--sm > shopv2-buyqty-cost",
+     "fs": 13,
+     "n": 4,
+     "bsp": "20"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 2,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-estates > sb-estates-head",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ländereien"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    },
+    {
+     "p": "npc-greeting.npc-greeting--page > npc-bubble.npc-bubble--tail-left > npc-bubble-name",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Der Händler"
+    },
+    {
+     "p": "shopv2-topbar > shopv2-maintabs-wrap > shopv2-tab-hotkey-hint",
+     "fs": 12,
+     "n": 1,
+     "bsp": "◂ ▸"
+    },
+    {
+     "p": "shopv2-counter > shopv2-section-head > shopv2-section-orn",
+     "fs": 13,
+     "n": 1,
+     "bsp": "◆"
+    },
+    {
+     "p": "shopv2-counter-item > shopv2-counter-copy > shopv2-counter-stock",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Unbegrenzter Bestand"
+    },
+    {
+     "p": "shopv2-counter-item > shopv2-counter-copy",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Eine schartige, stumpfe Klinge. Bess"
+    },
+    {
+     "p": "shopv2-buy-counter > shopv2-counter > shopv2-counter-qty-label",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Menge wählen"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    },
+    {
+     "p": "shopv2-page > shopv2-head > npc-greeting.npc-greeting--page",
+     "wh": [
+      939,
+      82
+     ],
+     "fill": 14,
+     "maxFs": 15
+    },
+    {
+     "p": "shopv2-section > shopv2-upgrade-row > shopv2-upgrade-card",
+     "wh": [
+      375,
+      70
+     ],
+     "fill": 18,
+     "maxFs": 16
+    },
+    {
+     "p": "shopv2-section > shopv2-grid > shopv2-card.rarity-common",
+     "wh": [
+      141,
+      196
+     ],
+     "fill": 21,
+     "maxFs": 0
+    }
+   ]
+  },
+  "quests": {
+   "n": 80,
+   "chromeMin": 9.5,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 19,
+    "18+": 23,
+    "11-12": 16,
+    "<11": 2,
+    "15-17": 20
+   },
+   "minFs": 9.5,
+   "small": [
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 12,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 2,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-estates > sb-estates-head",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ländereien"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    },
+    {
+     "p": "npc-greeting.npc-greeting--page > npc-bubble.npc-bubble--tail-left > npc-bubble-name",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Der Wächter"
+    },
+    {
+     "p": "chronicle-stage > chronicle-stage-headrow > quest-status-badge.quest-status-badge--active",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Läuft"
+    },
+    {
+     "p": "chronicle-stage > quest-rewards > quest-reward-chip.quest-reward-chip--gold",
+     "fs": 13,
+     "n": 1,
+     "bsp": "100"
+    },
+    {
+     "p": "chronicle-stage > quest-rewards > quest-reward-chip.quest-reward-chip--tokens",
+     "fs": 13,
+     "n": 1,
+     "bsp": "1"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    },
+    {
+     "p": "chronicle-stage > chronicle-stage-objectives > chronicle-obj",
+     "wh": [
+      1463,
+      75
+     ],
+     "fill": 3,
+     "maxFs": 17
+    }
+   ]
+  },
+  "achievements": {
+   "n": 133,
+   "chromeMin": 9.5,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 40,
+    "18+": 19,
+    "11-12": 43,
+    "<11": 9,
+    "15-17": 22
+   },
+   "minFs": 9.5,
+   "small": [
+    {
+     "p": "achv-ledger-categories > achv-ledger-cat",
+     "fs": 13,
+     "n": 18,
+     "bsp": "Fertigkeiten"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 12,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "achv-body > achv-ap",
+     "fs": 12,
+     "n": 6,
+     "bsp": "5 AP"
+    },
+    {
+     "p": "achv-card.achv-card--unlocked > achv-body > achv-desc",
+     "fs": 13,
+     "n": 6,
+     "bsp": "Erreiche Gesamtlevel 25."
+    },
+    {
+     "p": "achv-card.achv-card--unlocked > achv-body > achv-status",
+     "fs": 13,
+     "n": 5,
+     "bsp": "✓ Freigeschaltet"
+    },
+    {
+     "p": "achv-ledger-detail-plaque > achv-ledger-detail-row",
+     "fs": 13,
+     "n": 4,
+     "bsp": "Fertigkeiten"
+    },
+    {
+     "p": "achv-almost-card.achv-rarity--epic > achv-almost-body > achv-almost-name",
+     "fs": 12,
+     "n": 3,
+     "bsp": "Bergbau-Maximiert"
+    },
+    {
+     "p": "achv-almost-row > achv-almost-card.achv-rarity--epic > achv-almost-pct",
+     "fs": 13,
+     "n": 3,
+     "bsp": "98 %"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 2,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "achv-ledger-rail > achv-ledger-filter-group > achv-filter-btn",
+     "fs": 12,
+     "n": 2,
+     "bsp": "Freigeschaltet"
+    },
+    {
+     "p": "achv-ledger-categories > achv-ledger-cat.achv-ledger-cat--active",
+     "fs": 13,
+     "n": 2,
+     "bsp": "Alle"
+    },
+    {
+     "p": "achv-body > achv-head > achv-badge.achv-rarity--rare",
+     "fs": 10,
+     "n": 2,
+     "bsp": "Selten"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-estates > sb-estates-head",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ländereien"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    },
+    {
+     "p": "achv-hero > achv-hero-title > achv-hero-sub",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Beweise dein Können. Sichere dein Ve"
+    },
+    {
+     "p": "achv-hero-title > achv-hero-bar-row > achv-hero-bar-label",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Freigeschaltet"
+    },
+    {
+     "p": "achv-hero-stats > achv-hero-ap > achv-hero-ap-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Gesamt-Erfolgspunkte"
+    },
+    {
+     "p": "achv-hero-stats > achv-hero-ring > achv-hero-ring-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Nächster Meilenstein: 25%"
+    },
+    {
+     "p": "achv-ledger-rail > achv-ledger-filter-group > achv-filter-btn.achv-filter-btn--active",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Alle"
+    },
+    {
+     "p": "achv-milestone-strip > achv-milestone-body > achv-milestone-text",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Nächster Meilenstein: 25 % — +5 Aufg"
+    },
+    {
+     "p": "achv-ledger-main > achv-ledger-search",
+     "fs": 11,
+     "n": 1,
+     "bsp": "363 / 363"
+    },
+    {
+     "p": "achv-ledger-main > achv-almost > achv-almost-title",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Kurz davor"
+    },
+    {
+     "p": "achv-body > achv-head > achv-badge.achv-rarity--common",
+     "fs": 10,
+     "n": 1,
+     "bsp": "Gewöhnlich"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    }
+   ]
+  },
+  "mastery": {
+   "n": 121,
+   "chromeMin": 9.5,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 50,
+    "18+": 32,
+    "11-12": 16,
+    "<11": 2,
+    "15-17": 21
+   },
+   "minFs": 9.5,
+   "small": [
+    {
+     "p": "ms2-skill-pool-row > ms2-pool-perks",
+     "fs": 13,
+     "n": 15,
+     "bsp": "+ 8 % ×2"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 12,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "ms2-skill-pool > ms2-skill-pool-row > ms2-skill-pool-label",
+     "fs": 13,
+     "n": 7,
+     "bsp": "Pool"
+    },
+    {
+     "p": "ms2-skill-block > ms2-skill-hdr > ms2-skill-badge.ms2-rarity--legendary",
+     "fs": 13,
+     "n": 6,
+     "bsp": "Legendär"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 2,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "ms2-agg-stats > ms2-agg-stat > ms2-agg-stat-label",
+     "fs": 13,
+     "n": 2,
+     "bsp": "GESAMT-MEISTERSCHAFT"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-estates > sb-estates-head",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ländereien"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    }
+   ]
+  },
+  "bestiary": {
+   "n": 123,
+   "chromeMin": 9.5,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 25,
+    "18+": 30,
+    "11-12": 22,
+    "<11": 2,
+    "15-17": 44
+   },
+   "minFs": 9.5,
+   "small": [
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 12,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "bjw-card > bjw-body > bjw-kills",
+     "fs": 13,
+     "n": 4,
+     "bsp": "28"
+    },
+    {
+     "p": "bjw-body > bjw-kills",
+     "fs": 13,
+     "n": 4,
+     "bsp": "⚔"
+    },
+    {
+     "p": "bjw-body > bjw-name-row > monster-card-defense-badge.mc-defense-evasion",
+     "fs": 12,
+     "n": 3,
+     "bsp": "Flink"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 2,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "bjw-head-row > bjw-seals > bjw-seal",
+     "fs": 11,
+     "n": 2,
+     "bsp": "/ 1439  Entdeckt"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-estates > sb-estates-head",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ländereien"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    },
+    {
+     "p": "bjw-head-row > bjw-head-subtitle",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Von den Weiden bis in die Tiefe"
+    },
+    {
+     "p": "bjw-body > bjw-name-row > monster-card-defense-badge.mc-defense-ward",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Beschildet"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    }
+   ]
+  },
+  "companions": {
+   "n": 107,
+   "chromeMin": 9.5,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 8,
+    "18+": 18,
+    "11-12": 50,
+    "<11": 2,
+    "15-17": 29
+   },
+   "minFs": 9.5,
+   "small": [
+    {
+     "p": "pet-field-entry.is-owned > pet-field-entry-copy",
+     "fs": 12,
+     "n": 14,
+     "bsp": "Skill: Holzfällen"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 12,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "pet-field-entry.is-owned > pet-field-entry-copy > pet-role-badge.pet-role-damage",
+     "fs": 12,
+     "n": 4,
+     "bsp": "Schaden"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 2,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "pet-field-entry.is-owned > pet-field-entry-copy > pet-role-badge.pet-role-control",
+     "fs": 12,
+     "n": 2,
+     "bsp": "Kontrolle"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-estates > sb-estates-head",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ländereien"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    },
+    {
+     "p": "pet-field-head-meta > pet-field-active > pet-slot-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Begleiter"
+    },
+    {
+     "p": "pet-field-head-meta > pet-field-active > pet-field-active-effect",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Passiv: Wurzelgespür +6% · Aktiv: Wu"
+    },
+    {
+     "p": "pet-gallery-head > pet-field-head-meta > pet-field-echo-summary",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Echo: 6 Begleiter mit 25 %"
+    },
+    {
+     "p": "pet-field-index > pet-field-index-head > pet-field-count",
+     "fs": 13,
+     "n": 1,
+     "bsp": "7 / 23"
+    },
+    {
+     "p": "pet-field-list > pet-field-entry.is-owned > pet-field-entry-mark",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Ausgerüstet"
+    },
+    {
+     "p": "pet-field-entry.is-owned > pet-field-entry-copy > pet-role-badge.pet-role-loot",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Beute"
+    },
+    {
+     "p": "pet-field-detail > pet-field-stage.has-bg > pet-equipped-badge",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ausgerüstet"
+    },
+    {
+     "p": "pet-field-dossier-head > pet-field-kicker",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Skill: Holzfällen"
+    },
+    {
+     "p": "pet-field-dossier-head > pet-role-badge.pet-role-control",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Kontrolle"
+    },
+    {
+     "p": "pet-field-dossier > pet-field-dossier-head > pet-field-drop",
+     "fs": 12.672,
+     "n": 1,
+     "bsp": "Drop-Chance: 1 / 60.000"
+    },
+    {
+     "p": "pet-field-effects.pet-field-effects-detailed > pet-effect-row > pet-effect-tag.pet-effect-tag-passive",
+     "fs": 12.48,
+     "n": 1,
+     "bsp": "Passiv"
+    },
+    {
+     "p": "pet-field-effects.pet-field-effects-detailed > pet-effect-row > pet-effect-tag.pet-effect-tag-active",
+     "fs": 12.48,
+     "n": 1,
+     "bsp": "Aktiv (im Kampf)"
+    },
+    {
+     "p": "pet-effect-row > pet-effect-value > pet-field-effects-hint",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Feuert automatisch im Kampf – du mus"
+    },
+    {
+     "p": "pet-field-effects.pet-field-effects-detailed > pet-effect-row.pet-effect-row-echo > pet-effect-tag.pet-effect-tag-echo",
+     "fs": 12.48,
+     "n": 1,
+     "bsp": "Echo"
+    },
+    {
+     "p": "pet-effect-row.pet-effect-row-echo > pet-effect-value > pet-field-echo-state",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Wirkt gerade nicht: ausgerüstete Beg"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    }
+   ]
+  },
+  "enchanting": {
+   "n": 100,
+   "chromeMin": 9.5,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 33,
+    "18+": 17,
+    "11-12": 32,
+    "<11": 2,
+    "15-17": 16
+   },
+   "minFs": 9.5,
+   "small": [
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 12,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "ench-item-row > ench-item-text > ench-item-name",
+     "fs": 13,
+     "n": 12,
+     "bsp": "Slayer-Helm"
+    },
+    {
+     "p": "ench-item-row > ench-item-text > ench-item-sub",
+     "fs": 12,
+     "n": 12,
+     "bsp": "Helm"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 2,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "ench-rune-card-body > ench-rune-card-head > ench-rune-card-name",
+     "fs": 13,
+     "n": 2,
+     "bsp": "Ausweichend"
+    },
+    {
+     "p": "ench-rune-card-body > ench-rune-card-head > ench-rune-card-tier.muted",
+     "fs": 13,
+     "n": 2,
+     "bsp": "T 3"
+    },
+    {
+     "p": "ench-rune-card.ench-rune-card--armor > ench-rune-card-body > ench-rune-card-effect.muted",
+     "fs": 13,
+     "n": 2,
+     "bsp": "+16 Ausweichwert"
+    },
+    {
+     "p": "ench-rune-card-body > ench-rune-card-foot > ench-rune-badge.ench-rune-badge--armor",
+     "fs": 12,
+     "n": 2,
+     "bsp": "Lederrüstung"
+    },
+    {
+     "p": "ench-rune-card-body > ench-rune-card-foot > ench-rune-card-qty.muted",
+     "fs": 13,
+     "n": 2,
+     "bsp": "× 58"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-estates > sb-estates-head",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ländereien"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    },
+    {
+     "p": "ench-col.ench-col-target > shop-section-head > shop-section-orn",
+     "fs": 13,
+     "n": 1,
+     "bsp": "◆"
+    },
+    {
+     "p": "ench-col.ench-col-target > shop-section-head > shop-section-title",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Item auswählen"
+    },
+    {
+     "p": "ench-col.ench-col-target > ench-select-list > ench-section-label.muted",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Ausgerüstet"
+    },
+    {
+     "p": "ench-body.ds-frame > ench-col.ench-col-target > muted.ench-suffix-hint",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Gecraftete und gedroppte Ausrüstung "
+    },
+    {
+     "p": "ench-col.ench-col-grimoire > shop-section-head > shop-section-orn",
+     "fs": 13,
+     "n": 1,
+     "bsp": "◆"
+    },
+    {
+     "p": "ench-col.ench-col-grimoire > shop-section-head > shop-section-title",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Rune auswählen"
+    },
+    {
+     "p": "ench-rune-section > ench-rune-section-head.ench-rune-section-head--armor > ench-rune-section-icon",
+     "fs": 12,
+     "n": 1,
+     "bsp": "🛡"
+    },
+    {
+     "p": "ench-rune-section > ench-rune-section-head.ench-rune-section-head--armor > ench-rune-section-title",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Rüstungs-Runen"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    }
+   ]
+  },
+  "stats": {
+   "n": 94,
+   "chromeMin": 9.5,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 11,
+    "18+": 34,
+    "11-12": 27,
+    "<11": 2,
+    "15-17": 20
+   },
+   "minFs": 9.5,
+   "small": [
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 12,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "stx-medallion-row > stx-medallion > stx-medallion-label",
+     "fs": 12,
+     "n": 11,
+     "bsp": "Besiegte Monster"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 2,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrolled > sb-estates > sb-estates-head",
+     "fs": 11,
+     "n": 1,
+     "bsp": "Ländereien"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status.sb-estate-status--warn",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Nichts gepflanzt"
+    },
+    {
+     "p": "sb-estates > sb-skill-btn.ds-button > sb-estate-status",
+     "fs": 9.5,
+     "n": 1,
+     "bsp": "Keine Falle"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    }
+   ]
+  },
+  "prestige": {
+   "fehlt": true
+  },
+  "newhaven": {
+   "n": 122,
+   "chromeMin": 10.8,
+   "overflowX": 0,
+   "hist": {
+    "13-14": 46,
+    "18+": 32,
+    "11-12": 18,
+    "15-17": 25,
+    "<11": 1
+   },
+   "minFs": 10.8,
+   "small": [
+    {
+     "p": "nh-queue-list > nh-queue-item.is-empty > nh-queue-pos",
+     "fs": 13.5,
+     "n": 8,
+     "bsp": "1 ."
+    },
+    {
+     "p": "nh-queue-list > nh-queue-item.is-empty > nh-queue-name",
+     "fs": 13.5,
+     "n": 8,
+     "bsp": "Freier Bauplatz"
+    },
+    {
+     "p": "sb-nav.sb-nav--scrollable > sb-skill-btn.ds-button > sb-skill-level",
+     "fs": 12,
+     "n": 7,
+     "bsp": "97 /99"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row > sb-combat-name",
+     "fs": 13,
+     "n": 6,
+     "bsp": "Angriff"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row > sb-combat-level",
+     "fs": 12,
+     "n": 5,
+     "bsp": "92/99"
+    },
+    {
+     "p": "sb-blessing-card > sb-blessing-textbox > sb-blessing-effect",
+     "fs": 13,
+     "n": 1,
+     "bsp": "15% Chance auf doppelte Beute"
+    },
+    {
+     "p": "sb-combat-btn-row > sb-skill-btn.sb-skill-btn--has-level > sb-skill-level.sb-combat-lvl-badge",
+     "fs": 12,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "sb-combat-style > sb-combat-style-text > sb-combat-style-label",
+     "fs": 12,
+     "n": 1,
+     "bsp": "Kampfstil"
+    },
+    {
+     "p": "sb-combat-style > sb-combat-style-text > sb-combat-style-value",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Fokus"
+    },
+    {
+     "p": "sb-combat-row > sb-combat-level > skill-boost-value",
+     "fs": 12,
+     "n": 1,
+     "bsp": "92/99"
+    },
+    {
+     "p": "sb-combat-level > skill-boost-value > skill-boost-tag",
+     "fs": 10.8,
+     "n": 1,
+     "bsp": "(95)"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row.sb-combat-row--training > sb-combat-name",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Magie"
+    },
+    {
+     "p": "sb-combat-subskills > sb-combat-row.sb-combat-row--training > sb-combat-level",
+     "fs": 12,
+     "n": 1,
+     "bsp": "97/99"
+    },
+    {
+     "p": "sb-footer > sb-footer-drawer-tab > sb-footer-drawer-chevron",
+     "fs": 11.2,
+     "n": 1,
+     "bsp": "▴"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Kampf Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--combat",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "96"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total > hs-level-label",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "Ges. Lv"
+    },
+    {
+     "p": "hs-levels > hs-level.hs-level--total",
+     "fs": 13.0341,
+     "n": 1,
+     "bsp": "1918"
+    },
+    {
+     "p": "nh-list-shell > nh-queue-strip.is-empty > nh-queue-strip-title",
+     "fs": 13,
+     "n": 1,
+     "bsp": "Geplant"
+    },
+    {
+     "p": "nh-queue-strip.is-empty > nh-queue-strip-title",
+     "fs": 12,
+     "n": 1,
+     "bsp": "0 / 8"
+    }
+   ],
+   "sparse": [
+    {
+     "p": "sidebar > sb-brand.sb-blessing > sb-blessing-card",
+     "wh": [
+      230,
+      148
+     ],
+     "fill": 11,
+     "maxFs": 14
+    }
+   ]
+  },
+  "tavern": {
+   "fehlt": true
+  },
+  "options": {
+   "klickFehler": true
+  }
+ }
+}
