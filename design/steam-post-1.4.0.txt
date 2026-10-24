@@ -13,7 +13,8 @@ THE RAID: HALLS OF GOBKHA'RAZ
 - Every attempt costs a fee: 300,000 gold on Normal, 900,000 on Heroic, 2,500,000 on Mythic. Raid enemies
   drop no gold.
 - If you die on Normal, the room restarts for free. On Heroic a restart costs 100,000 gold. On Mythic the run
-  is over and you get a quarter of the fee back. Leaving the fight inside the raid counts as falling.
+  is over and you get a quarter of the fee back, and the same goes for giving up. Leaving the fight inside the
+  raid counts as falling, and the game asks before you flee.
 - Bosses change phase at 75, 50 and 25% health, and they tell you when.
 - After every boss a chest opens: a 35% chance for a raid piece (50% from the final boss), otherwise
   materials. Then you rest: full health, time to sort gear and supplies, and on to the next room by button
@@ -27,7 +28,7 @@ THE RAID: HALLS OF GOBKHA'RAZ
 RAID LOOT
 
 - 31 raid pieces in three versions: Normal (godly), Heroic (a new teal rarity) and Mythic (a new pink rarity).
-  Each version is a few percent stronger. Raid gear is tier XIII and wears a crown.
+  Each version is a few percent stronger.
 - Three sets with bonuses at 2, 4 and 5 pieces: Regalia of the Borrowed Fire (magic), Pitpack Stalker's Garb
   (ranged) and Bloodoath of the Crownguard (melee). Heroic and Mythic pieces count toward the same set.
 - Raid jewelry has a main attribute that counts as Strength, Dexterity or Intelligence, depending on your weapon.
@@ -46,12 +47,16 @@ THE RANGED REWORK
 - Plain arrows are always there and never run out. Real arrows go into your quiver and add damage to every
   shot, and effect arrows add bleed, poison or burn. When the quiver is empty, the bow simply keeps shooting.
 - The quiver is the off-hand for bows. It saves arrows and can refill itself from your storage.
+- A quiver holds up to 1,000 arrows. Anything above that stays in storage.
 - Crafted bows now match the best drop of their tier. The defensive stance costs ranged 10% damage instead
   of attack speed. Every zone now drops leather armor and bows.
+- Leather is stronger. Close to the evasion cap it softens the hits that still land, by up to 58% at the cap
+  instead of 18%. A leather archer without raid gear now has a real chance on Normal.
 
 MAGES IN CLOTH
 
-- Ward now holds up. Whatever part of a hit your Ward takes is reduced by 30%.
+- Ward now holds up. Whatever part of a hit your Ward takes is reduced by 30%. This only applies to the part
+  the Ward actually absorbs.
 - Every spell you cast recharges 4% of your maximum Ward, instead of a small fixed amount.
 - Bleeding, burning and poison now hit your Ward first and only then your health.
 - Mages in cloth can now last through long boss fights without switching to plate.
@@ -70,6 +75,7 @@ STORAGE AND SALVAGE
 - Looted gear can now be salvaged into tier materials and relic dust for the high runes. Only loot can be
   salvaged: crafted gear, shop items and master rings never can. You can lock pieces, and the game asks
   before salvaging anything legendary or better. Salvage works in your bags and right in the bank.
+- A locked piece is safe from everything: salvage never touches it, and work orders never take it.
 
 LIFE IN THE WORKSHOP
 
@@ -77,13 +83,28 @@ LIFE IN THE WORKSHOP
   Harvest and Fresh Trail on your estates.
 - Sometimes a customer brings a work order. Up to three run at once, with no time limit, and they pay gold,
   experience and now and then a workshop crate.
+- An order only counts what you make or gather with its own skill after you accept it, offline included.
+  Harvests, thieving and side finds don't count.
 
 CLARITY
 
 - Meals get their own slot in combat prep. Auto-eat no longer touches meals, and "Keep meal up" refreshes
   them in time.
-- Every weapon shows whether it is one- or two-handed.
-- Gear shows its tier as stars, and the bank and your bags can sort by tier.
-- Farming and Hunting sit in a new Estates group with live status.
+- Every weapon shows whether it is one- or two-handed. Bows were never marked, and a few spears and maces
+  had it wrong.
+- Enchanted pieces now carry a rune mark, and rarity colors are the same everywhere.
+- Farming and Hunting sit in a new Estates group with live status. While fields or traps are working, the
+  header no longer says "Idle", and the offline report has its own block for harvests and catches.
+
+[UI SECTION: added once the interface overhaul is finished]
+
+FIXES
+
+- If an older save was running an action without the required level, that action no longer keeps producing.
+  It stops and tells you why.
+- Cinderwretch Hide was the only item without a picture and now has its own.
+- The item card buttons are reachable and fully labeled at 1366x768, and the header no longer wraps when an
+  event is running.
+- Many fixes in Russian and Chinese: grammar, plural forms and full-width punctuation.
 
 As always: if something looks off, tell me here or through the bug report button in the options.
