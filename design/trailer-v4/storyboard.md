@@ -108,3 +108,16 @@ Abweichungen vom Plan: 06 zeigt den göttlichen Schild „Aegis of the Last Idol
 der zweiten Hälfte „3 ARMOR TYPES“ mit den Spalten Plate/Leather/Cloth, 14 zeigt alle Erfolgsnamen als Wand (statt
 Einblendungen aus dem Spiel), 16 ohne Offline-Fenster. Echte UI-Aufnahmen (Item-Karte, Erfolgs-Einblendung,
 Offline-Zusammenfassung) sind ein möglicher nächster Schritt.
+
+## 7 Ton (24.10.)
+
+<!-- claude:2026-10-24T16:00:00+02:00 -->
+
+Sprachaufnahme des Chefs (`Downloads/2026-10-24 11-41-56.mkv`, als MP3 daneben) per Whisper-Wortzeiten und Pausen in
+31 Stücke geschnitten und auf die Bildzeitleiste gelegt (`vo-timing.json`); Musik unter der Stimme −5 dB. Fertig:
+`marketing/trailer-v4/GrimReach-Trailer-v4-Inventar.mp4`.
+
+- Die Aufnahme entstand vor der Zählkorrektur und enthält noch „More than a hundred and forty monsters“ und „fourteen
+  dungeons“. Beide Teile sind **nicht verwendet**; im Trailer laufen nur „Twenty-nine champions.“ und „Eleven lands.“.
+  Neu einsprechen bei Bedarf: „A hundred and twenty monsters.“ und „Nine dungeons.“
+- „Forty-two sets.“ ohne „to complete“ (so eingesprochen).
