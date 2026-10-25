@@ -1358,6 +1358,9 @@ export const ru: Record<string, string> = {
     "farm.readyYield": "Ожидает: {n}×",
     "farm.remaining": "осталось {time}",
     "farm.cropPicker.title": "Выбери культуру",
+    // claude:2026-10-25T19:33:00+01:00 — Saatauswahl gruppiert (Chef 25.10.)
+    "farm.cropPicker.groupWithSeeds": "Есть семена ({n})",
+    "farm.cropPicker.groupNoSeeds": "Нет семян ({n})",
     "farm.cropPicker.empty": "На твоём уровне нет доступных культур.",
     "farm.grow": "Растёт за: {time}",
     "farm.yield": "Урожай: {min}–{max}",

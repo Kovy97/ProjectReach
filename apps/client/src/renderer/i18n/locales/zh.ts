@@ -1357,6 +1357,9 @@ export const zh: Record<string, string> = {
     "farm.readyYield": "等待中：{n}x",
     "farm.remaining": "剩余 {time}",
     "farm.cropPicker.title": "选择一种作物",
+    // claude:2026-10-25T19:33:00+01:00 — Saatauswahl gruppiert (Chef 25.10.)
+    "farm.cropPicker.groupWithSeeds": "有种子（{n}）",
+    "farm.cropPicker.groupNoSeeds": "无种子（{n}）",
     "farm.cropPicker.empty": "你的等级暂无可用作物。",
     "farm.grow": "生长时间：{time}",
     "farm.yield": "产出：{min}–{max}",

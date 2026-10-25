@@ -1325,6 +1325,9 @@ export const ptBR: Record<string, string> = {
     "farm.readyYield": "Aguardando: {n}x",
     "farm.remaining": "{time} restantes",
     "farm.cropPicker.title": "Escolha um Cultivo",
+    // claude:2026-10-25T19:33:00+01:00 — Saatauswahl gruppiert (Chef 25.10.)
+    "farm.cropPicker.groupWithSeeds": "Com sementes ({n})",
+    "farm.cropPicker.groupNoSeeds": "Sem sementes ({n})",
     "farm.cropPicker.empty": "Nenhum cultivo disponível no seu nível.",
     "farm.grow": "Cresce em: {time}",
     "farm.yield": "Rendimento: {min}–{max}",

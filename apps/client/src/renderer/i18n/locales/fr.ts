@@ -2525,6 +2525,9 @@ export const fr: Record<string, string> = {
     "thieving.fenceHint": "Écoule ici les biens volés pour les convertir en gemmes et en or.",
     "toast.fence.body": "Ouvre le Vol et déplie la catégorie Receleur pour les convertir en gemmes et en or.",
     "farm.cropPicker.title": "Choisis une culture",
+    // claude:2026-10-25T19:33:00+01:00 — Saatauswahl gruppiert (Chef 25.10.)
+    "farm.cropPicker.groupWithSeeds": "Avec graines ({n})",
+    "farm.cropPicker.groupNoSeeds": "Sans graines ({n})",
     "farm.cropPicker.empty": "Aucune culture disponible à ton niveau.",
     "nav.slayer": "Slayer",
     "slayer.master.title": "Maître Slayer",

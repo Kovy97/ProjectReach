@@ -261,6 +261,15 @@ function CropOverview(): JSX.Element {
 
 // ─── Crop Picker Modal ────────────────────────────────────────────────────────
 
+/** claude:2026-10-25T19:33:00+01:00 — Wachstumszeit kompakt für die Saatauswahl: „20m“ statt „20m 0s“, „1h 30m“ ab einer Stunde. */
+function wachstumKurz(ms: number): string {
+  const sek = Math.max(0, Math.round(ms / 1000));
+  const h = Math.floor(sek / 3600);
+  const m = Math.floor((sek % 3600) / 60);
+  const s = sek % 60;
+  return [h ? `${h}h` : "", m ? `${m}m` : "", s ? `${s}s` : ""].filter(Boolean).join(" ") || "0s";
+}
+
 type PickerMode = "plant" | "next";
 
 function CropPicker({
@@ -319,6 +328,99 @@ function CropPicker({
     return n;
   }
 
+  // claude:2026-10-25T19:33:00+01:00 — Saatauswahl: Gruppen mit/ohne Saat (je nach Stufe sortiert, s. `eligible`).
+  const mitSaat = eligible.filter((c) => seedCount(state, c.seedItem) > 0);
+  const ohneSaat = eligible.filter((c) => seedCount(state, c.seedItem) <= 0);
+
+  // claude:2026-10-25T19:33:00+01:00 — Chef 25.10. („Diese Seed-Auswahl bitte verbessern“): Karte als eigene Funktion, damit die Liste in
+  // zwei Gruppen (mit Saat / ohne Saat) zerfallen kann. Inhalt und Klickverhalten unverändert.
+  const karte = (c: (typeof eligible)[number]): JSX.Element => {
+    const seeds = seedCount(state, c.seedItem);
+    // Icon resolution (matches CropOverview): CROP_ICON_MAP farming icon
+    // → yield item image → seed item image → null (emoji fallback).
+    const iconUrl =
+      getCropIconUrl(c.id) ?? getItemImage(c.yieldItem) ?? getItemImage(c.seedItem);
+    const hasSeeds = seeds > 0;
+    const isCurrent = c.id === currentCropId;
+    // Was dieser Klick WIRKLICH tut: so viele Beete, wie frei sind — begrenzt durch die
+    // Saat im Beutel und Lager. Genau die Zahl steht auf dem Knopf.
+    // Modus "next": geplant wird OHNE Saat-Grenze (die Saat wird erst zur Reife
+    // abgezogen); die Zeile nennt, wie viel Saat dann noetig ist, und warnt, wenn sie
+    // heute fehlt (#12.2: Management-Sache des Spielers, kein stilles Verfallen).
+    const planbar = next ? planbarFuer(c.id) : 0;
+    const wirdGepflanzt = next ? planbar : Math.min(freieBeete, seeds);
+    const reichtNicht =
+      plotIndex === null && (next ? seeds < planbar : seeds > 0 && seeds < freieBeete);
+    const disabled = next ? wirdGepflanzt === 0 : !hasSeeds || wirdGepflanzt === 0;
+    return (
+      <button
+        key={c.id}
+        // Modus "next" ohne Saat: waehlbar (Saat wird erst zur Reife gebraucht), deshalb
+        // nur leicht gedimmt statt „not-allowed".
+        className={`farm-picker-card${!hasSeeds ? (next ? " no-seed-plan" : " no-seed") : ""}${isCurrent ? " current" : ""}`}
+        disabled={disabled}
+        onClick={() => handlePick(c.id)}
+      >
+        <div className="farm-picker-icon">
+          {iconUrl ? (
+            <img loading="lazy" decoding="async" src={iconUrl} alt="" className="pixelart" />
+          ) : (
+            <span className="farm-crop-fallback" aria-hidden="true">
+              🌱
+            </span>
+          )}
+        </div>
+        <div className="farm-picker-info">
+          {/* Kopfzeile: Name links, Stufe rechts. Der Badge stand vorher als eigenes
+              Flex-Kind NEBEN der Infospalte und nahm ihr die Breite, die Fakten brachen
+              auf vier Zeilen (Chef 25.08.2026: "macht die Anzeige kaputt"). */}
+          <span className="farm-picker-head">
+            <span className="farm-picker-name">{tr(c.name)}</span>
+            <span className="farm-picker-lv muted">
+              {t("skill.levelShort").replace("{n}", String(c.levelRequired))}
+            </span>
+          </span>
+          {/* Drei kurze Fakten als Chips statt eines Satzes mit Doppelpunkten. */}
+          <span className="farm-picker-meta muted">
+            <span className="farm-picker-fact" title={t("farm.grow").replace("{time}", formatMs(c.growMs))}>
+              ⏱ {wachstumKurz(c.growMs)}
+            </span>
+            <span className="farm-picker-fact" title={t("farm.yield").replace("{min}", String(c.yieldMin)).replace("{max}", String(c.yieldMax))}>
+              ×{c.yieldMin}–{c.yieldMax}
+            </span>
+            <span className="farm-picker-fact">
+              {t("farm.xpGain").replace("{n}", String(c.xp))}
+            </span>
+          </span>
+          <span className={`farm-picker-seeds${!hasSeeds ? " none" : ""}`}>
+            {hasSeeds
+              ? t("farm.seedCount").replace("{n}", String(seeds))
+              : t("farm.noSeed")}
+          </span>
+          {isCurrent && (
+            <span className="farm-picker-current">{t("farm.next.current")}</span>
+          )}
+          {plotIndex === null && (next ? planbar > 0 : hasSeeds) && (
+            /* Die Rechnung offen hinschreiben: X von Y Beeten, Z Saat wird verbraucht.
+               Reicht die Saat nicht fuer alle Beete, sagt die Zeile das — statt still
+               nur einen Teil zu bepflanzen. Modus "next": „n von m Beeten, k Saat
+               noetig" (#12.4), warnend, wenn die Saat heute nicht reicht. */
+            <span className={`farm-picker-plan${reichtNicht ? " short" : ""}`}>
+              {next
+                ? t("farm.nextAll.plan")
+                    .replace("{n}", String(planbar))
+                    .replace("{total}", String(freieBeete))
+                    .replace("{k}", String(planbar))
+                : t("farm.plantAll.plan")
+                    .replace("{n}", String(wirdGepflanzt))
+                    .replace("{total}", String(freieBeete))}
+            </span>
+          )}
+        </div>
+      </button>
+    );
+  };
+
   function handlePick(cropId: string): void {
     if (next) {
       if (plotIndex === null) {
@@ -367,93 +469,17 @@ function CropPicker({
         {eligible.length === 0 ? (
           <p className="muted">{t("farm.cropPicker.empty")}</p>
         ) : (
-          <div className="farm-picker-list">
-            {eligible.map((c) => {
-              const seeds = seedCount(state, c.seedItem);
-              // Icon resolution (matches CropOverview): CROP_ICON_MAP farming icon
-              // → yield item image → seed item image → null (emoji fallback).
-              const iconUrl =
-                getCropIconUrl(c.id) ?? getItemImage(c.yieldItem) ?? getItemImage(c.seedItem);
-              const hasSeeds = seeds > 0;
-              const isCurrent = c.id === currentCropId;
-              // Was dieser Klick WIRKLICH tut: so viele Beete, wie frei sind — begrenzt durch die
-              // Saat im Beutel und Lager. Genau die Zahl steht auf dem Knopf.
-              // Modus "next": geplant wird OHNE Saat-Grenze (die Saat wird erst zur Reife
-              // abgezogen); die Zeile nennt, wie viel Saat dann noetig ist, und warnt, wenn sie
-              // heute fehlt (#12.2: Management-Sache des Spielers, kein stilles Verfallen).
-              const planbar = next ? planbarFuer(c.id) : 0;
-              const wirdGepflanzt = next ? planbar : Math.min(freieBeete, seeds);
-              const reichtNicht =
-                plotIndex === null && (next ? seeds < planbar : seeds > 0 && seeds < freieBeete);
-              const disabled = next ? wirdGepflanzt === 0 : !hasSeeds || wirdGepflanzt === 0;
-              return (
-                <button
-                  key={c.id}
-                  // Modus "next" ohne Saat: waehlbar (Saat wird erst zur Reife gebraucht), deshalb
-                  // nur leicht gedimmt statt „not-allowed".
-                  className={`farm-picker-card${!hasSeeds ? (next ? " no-seed-plan" : " no-seed") : ""}${isCurrent ? " current" : ""}`}
-                  disabled={disabled}
-                  onClick={() => handlePick(c.id)}
-                >
-                  <div className="farm-picker-icon">
-                    {iconUrl ? (
-                      <img loading="lazy" decoding="async" src={iconUrl} alt="" className="pixelart" />
-                    ) : (
-                      <span className="farm-crop-fallback" aria-hidden="true">
-                        🌱
-                      </span>
-                    )}
-                  </div>
-                  <div className="farm-picker-info">
-                    {/* Kopfzeile: Name links, Stufe rechts. Der Badge stand vorher als eigenes
-                        Flex-Kind NEBEN der Infospalte und nahm ihr die Breite, die Fakten brachen
-                        auf vier Zeilen (Chef 25.08.2026: "macht die Anzeige kaputt"). */}
-                    <span className="farm-picker-head">
-                      <span className="farm-picker-name">{tr(c.name)}</span>
-                      <span className="farm-picker-lv muted">
-                        {t("skill.levelShort").replace("{n}", String(c.levelRequired))}
-                      </span>
-                    </span>
-                    {/* Drei kurze Fakten als Chips statt eines Satzes mit Doppelpunkten. */}
-                    <span className="farm-picker-meta muted">
-                      <span className="farm-picker-fact" title={t("farm.grow").replace("{time}", formatMs(c.growMs))}>
-                        ⏱ {formatMs(c.growMs)}
-                      </span>
-                      <span className="farm-picker-fact" title={t("farm.yield").replace("{min}", String(c.yieldMin)).replace("{max}", String(c.yieldMax))}>
-                        ×{c.yieldMin}–{c.yieldMax}
-                      </span>
-                      <span className="farm-picker-fact">
-                        {t("farm.xpGain").replace("{n}", String(c.xp))}
-                      </span>
-                    </span>
-                    <span className={`farm-picker-seeds${!hasSeeds ? " none" : ""}`}>
-                      {hasSeeds
-                        ? t("farm.seedCount").replace("{n}", String(seeds))
-                        : t("farm.noSeed")}
-                    </span>
-                    {isCurrent && (
-                      <span className="farm-picker-current">{t("farm.next.current")}</span>
-                    )}
-                    {plotIndex === null && (next ? planbar > 0 : hasSeeds) && (
-                      /* Die Rechnung offen hinschreiben: X von Y Beeten, Z Saat wird verbraucht.
-                         Reicht die Saat nicht fuer alle Beete, sagt die Zeile das — statt still
-                         nur einen Teil zu bepflanzen. Modus "next": „n von m Beeten, k Saat
-                         noetig" (#12.4), warnend, wenn die Saat heute nicht reicht. */
-                      <span className={`farm-picker-plan${reichtNicht ? " short" : ""}`}>
-                        {next
-                          ? t("farm.nextAll.plan")
-                              .replace("{n}", String(planbar))
-                              .replace("{total}", String(freieBeete))
-                              .replace("{k}", String(planbar))
-                          : t("farm.plantAll.plan")
-                              .replace("{n}", String(wirdGepflanzt))
-                              .replace("{total}", String(freieBeete))}
-                      </span>
-                    )}
-                  </div>
-                </button>
-              );
-            })}
+          // claude:2026-10-25T19:33:00+01:00 — Gruppen: zuerst Sorten mit Saat, darunter die ohne Saat (vorher gemischt und auf 42 % gedimmt,
+          // kaum lesbar). Innerhalb der Gruppen weiter nach Stufe. data-nav-skin="basalt": Karten im Basalt-Knopf-Stil (chrome.css).
+          <div className="farm-picker-list" data-nav-skin="basalt">
+            {mitSaat.length > 0 && ohneSaat.length > 0 && (
+              <h4 className="farm-picker-group">{t("farm.cropPicker.groupWithSeeds").replace("{n}", String(mitSaat.length))}</h4>
+            )}
+            {mitSaat.map(karte)}
+            {ohneSaat.length > 0 && mitSaat.length > 0 && (
+              <h4 className="farm-picker-group">{t("farm.cropPicker.groupNoSeeds").replace("{n}", String(ohneSaat.length))}</h4>
+            )}
+            {ohneSaat.map(karte)}
           </div>
         )}
       </div>

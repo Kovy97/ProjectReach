@@ -1332,6 +1332,9 @@ export const es: Record<string, string> = {
     "farm.readyYield": "Esperando: {n}x",
     "farm.remaining": "quedan {time}",
     "farm.cropPicker.title": "Elige una cosecha",
+    // claude:2026-10-25T19:33:00+01:00 — Saatauswahl gruppiert (Chef 25.10.)
+    "farm.cropPicker.groupWithSeeds": "Con semillas ({n})",
+    "farm.cropPicker.groupNoSeeds": "Sin semillas ({n})",
     "farm.cropPicker.empty": "No hay cosechas disponibles para tu nivel.",
     "farm.grow": "Crece en: {time}",
     "farm.yield": "Rendimiento: {min}–{max}",

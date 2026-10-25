@@ -2862,3 +2862,79 @@ button.skilloverview-card {
   border-bottom: 1px solid rgba(216, 184, 112, 0.18);
   background-origin: border-box;
 }
+
+/* claude:2026-10-25T19:34:00+01:00 — Chef 25.10. („Diese Seed-Auswahl bitte verbessern“, Screenshot): Karten im Basalt-Knopf-Stil wie die
+   New-Haven-Liste (data-nav-skin="basalt" an der Liste, Variablen aus chrome.css), gleich hohe Karten, Stufe immer rechts
+   oben, Fakten in Knopf-Gold statt dunkelbraun. Sorten ohne Saat stehen in einer eigenen Gruppe und bleiben lesbar
+   (Bild entsättigt statt der ganzen Karte auf 42 % Deckkraft). Nur Reforged; Classic behält die Holzkarten. */
+#root .layout--reforged .farm-picker-list {
+  align-items: stretch;
+  gap: 10px;
+}
+#root .layout--reforged .farm-picker-group {
+  grid-column: 1 / -1;
+  margin: 6px 2px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(216, 184, 112, 0.22);
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: #c8b07a;
+}
+#root .layout--reforged .farm-picker-group:first-child { margin-top: 0; }
+#root .layout--reforged .farm-picker-card {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+  min-height: 108px;
+  padding: 10px 14px;
+  border: 3px solid transparent;
+  border-image: var(--nav-skin-frame) var(--nav-skin-frame-slice) / var(--nav-skin-frame-w) round;
+  background: var(--nav-skin-surface);
+  background-origin: border-box;
+  background-clip: border-box;
+  box-shadow: inset 0 0 12px #0007, 0 3px 5px #0008;
+  color: #e4cc83;
+  opacity: 1;
+}
+#root .layout--reforged .farm-picker-card:hover:not(:disabled),
+#root .layout--reforged .farm-picker-card:focus-visible {
+  background: var(--nav-skin-selected);
+  background-origin: border-box;
+  background-clip: border-box;
+  box-shadow: inset 0 0 15px #b9832b26, 0 0 7px #ba8a4538, 0 3px 5px #0008;
+}
+#root .layout--reforged .farm-picker-icon { width: 68px; height: 68px; }
+#root .layout--reforged .farm-picker-icon img { max-width: 64px; max-height: 64px; }
+#root .layout--reforged .farm-picker-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 8px;
+}
+#root .layout--reforged .farm-picker-name { color: #e4cc83; text-shadow: 0 1px 1px #000; }
+#root .layout--reforged .farm-picker-meta {
+  gap: 2px 12px;
+  color: #cbbf9f;
+}
+#root .layout--reforged .farm-picker-fact .ui-icon {
+  width: 1.05em;
+  height: 1.05em;
+  vertical-align: -0.15em;
+}
+#root .layout--reforged .farm-picker-card.no-seed,
+#root .layout--reforged .farm-picker-card.no-seed-plan,
+#root .layout--reforged .farm-picker-card.current {
+  opacity: 1;
+}
+#root .layout--reforged .farm-picker-card.no-seed { cursor: not-allowed; }
+#root .layout--reforged .farm-picker-card:is(.no-seed, .no-seed-plan, .current) .farm-picker-icon img {
+  filter: grayscale(0.85) brightness(0.75) drop-shadow(0 3px 8px rgba(0, 0, 0, 0.6));
+}
+#root .layout--reforged .farm-picker-card:is(.no-seed, .current) :is(.farm-picker-name, .farm-picker-meta) {
+  color: #a59c86;
+}
+

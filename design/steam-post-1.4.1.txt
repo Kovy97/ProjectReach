@@ -87,6 +87,8 @@ OPTIONS AND SOUND
   top bar and category bars.
 - The category bars you click to fold out recipes now look exactly like the sidebar and top bar buttons.
 - The building list in New Haven has a new basalt and iron look instead of the wooden background.
+- The seed picker in Farming is easier to read: crops you have seeds for come first, the others follow in their own
+  group and stay readable, and every card has the same layout.
 - Text size is now a slider from 90 to 140%, with quick buttons for 100, 110 and 125%. Your old setting
   carries over.
 - New option "Mute in background": music and sounds pause while the game is minimized or in the background.

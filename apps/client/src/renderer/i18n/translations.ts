@@ -1830,6 +1830,9 @@ const en = {
     "farm.readyYield": "Waiting: {n}x",
     "farm.remaining": "{time} left",
     "farm.cropPicker.title": "Choose a Crop",
+    // claude:2026-10-25T19:33:00+01:00 — Saatauswahl gruppiert (Chef 25.10.)
+    "farm.cropPicker.groupWithSeeds": "With seeds ({n})",
+    "farm.cropPicker.groupNoSeeds": "No seeds ({n})",
     "farm.cropPicker.empty": "No crops available at your level.",
     "farm.grow": "Grows in: {time}",
     "farm.yield": "Yield: {min}–{max}",
@@ -4981,6 +4984,9 @@ const de: Record<keyof typeof en, string> = {
     "farm.readyYield": "Abholbar: {n}x",
     "farm.remaining": "Noch {time}",
     "farm.cropPicker.title": "Saat wählen",
+    // claude:2026-10-25T19:33:00+01:00 — Saatauswahl gruppiert (Chef 25.10.)
+    "farm.cropPicker.groupWithSeeds": "Mit Saat ({n})",
+    "farm.cropPicker.groupNoSeeds": "Ohne Saat ({n})",
     "farm.cropPicker.empty": "Noch keine Saat auf deinem Level verfügbar.",
     "farm.grow": "Wächst in: {time}",
     "farm.yield": "Ertrag: {min}–{max}",
