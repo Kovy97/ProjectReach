@@ -30,7 +30,7 @@
 /* claude:2026-10-25T18:09:00+01:00 — Knopf-Stile (navSkin.ts). Jedes Profil setzt Fläche, Auswahl-Fläche und Rahmen; dieselben Werte gelten für
    die Vorschau-Muster in den Optionen (.nav-skin-sample[data-nav-skin]). Ohne Attribut gilt Holz (DEFAULT_NAV_SKIN, Chef 25.10. claude:2026-10-25T18:14:00+01:00). */
 /* Holz (19.10.–25.10.): texture-nav-wood2, Holzstreifen Schnitt 47 / 5,5 px */
-:root,
+:root:not([data-nav-skin]),
 :root[data-nav-skin="wood"],
 [data-nav-skin="wood"] {
   --nav-skin-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(8, 11, 13, .06), rgba(2, 4, 5, .28)), url("../assets/ui/gravewood/textures/texture-nav-wood2.webp") 110px 37px / 304px 304px repeat;
@@ -509,3 +509,25 @@
   #root .layout--reforged .topbar-item { transition: none; }
   #root .layout--reforged .hs-hp-trail { transition: none; }
 }
+
+/* claude:2026-10-25T18:17:00+01:00 — Chef 25.10.: Die Kategorie-Leisten zum Auf- und Zuklappen (Skills, Anbau, Jagd; die Zonen-Leisten im
+   Bestiarium sind derselbe Design-Baustein, pages.css) sehen aus wie die Knöpfe in Seitenleiste und Kopfleiste: Fläche, Rahmen,
+   Schatten und Schrift aus dem gewählten Knopf-Stil (navSkin.ts). Nur Reforged; Classic behält seine Leisten. */
+#root .layout--reforged :is(.category-header, .bestiary-zone-header) {
+  border: 3px solid transparent;
+  border-image: var(--nav-skin-frame) var(--nav-skin-frame-slice) / var(--nav-skin-frame-w) round;
+  background: var(--nav-skin-surface);
+  background-origin: border-box;
+  background-clip: border-box;
+  box-shadow: inset 0 0 12px #0007, 0 3px 5px #0008;
+  color: #e4cc83;
+  text-shadow: 0 1px 1px #000;
+}
+#root .layout--reforged :is(.category-header, .bestiary-zone-header):hover {
+  background: var(--nav-skin-surface);
+  background-origin: border-box;
+  background-clip: border-box;
+  color: #ffe5a2;
+  box-shadow: inset 0 0 15px #b9832b26, 0 0 7px #ba8a4538, 0 3px 5px #0008;
+}
+
