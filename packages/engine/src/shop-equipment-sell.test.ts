@@ -147,6 +147,21 @@ describe("Sammelverkauf: Ausschlüsse", () => {
     expect(itemCount(s.inventory, COMMON_SWORD)).toBe(0);
   });
 
+  // claude:2026-10-25T11:42:00+01:00 — Review 1.4.1: Slayer-Shop-Ausrüstung (Punkte) bleibt.
+  it("mit Slayer-Punkten gekaufte Ausrüstung bleibt (Slayer-Helm)", () => {
+    const s = fresh();
+    const helm = "slayer_helm";
+    expect(content.items[helm]).toBeTruthy();
+    expect((content.slayerShop ?? []).some((e) => e.itemId === helm)).toBe(true);
+    addItem(s.inventory, content, helm, 1);
+    addItem(s.inventory, content, COMMON_SWORD, 1);
+    const plan = equipmentSellPlan(s, content, { ...INV_ALL, maxRarity: "legendary" });
+    expect(plan.entries.map((e) => e.itemId)).toEqual([COMMON_SWORD]);
+    expect(plan.skipped.pointShop).toBe(1);
+    sellEquipmentBatch(s, content, { ...INV_ALL, maxRarity: "legendary" });
+    expect(itemCount(s.inventory, helm)).toBe(1);
+  });
+
   it("angelegte Ausrüstung und Kits bleiben unberührt", () => {
     const s = fresh();
     s.character.equipment.mainhand = COMMON_SWORD;

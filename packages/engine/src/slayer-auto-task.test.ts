@@ -100,13 +100,13 @@ describe("S1 Kampfwechsel", () => {
     expect(switches, "mindestens ein echter Monsterwechsel").toBeGreaterThan(0);
   });
 
-  it("Queue-Kampf: Rest = neue Auftragsgröße, altes Monster nicht zurück in die Queue, andere Einträge bleiben", () => {
+  // claude:2026-10-25T11:42:00+01:00 — Review 1.4.1: Queue-Planung geht vor; ∞ bleibt ∞.
+  it("endlicher Queue-Kampf ohne weitere Einträge: Rest = neue Auftragsgröße, altes Monster nicht zurück", () => {
     const s = hunter(4);
     setSlayerAutoTask(s, true);
     assignTask(s, content, MASTER);
     const old = s.slayerTask!.monsterId;
     expect(enqueueFight(s, content, old, 25)).toBe(true);
-    expect(enqueueAction(s, content, ACTION, 10)).toBe(true);
     advance(s, content, 100); // Leerlauf startet den Queue-Kampf
     expect(s.queueFight).toEqual({ monsterId: old, remaining: 25 });
     s.slayerTask!.progress = s.slayerTask!.required - 1;
@@ -114,17 +114,46 @@ describe("S1 Kampfwechsel", () => {
     const next = s.slayerTask!;
     expect(s.queueFight).toEqual({ monsterId: next.monsterId, remaining: next.required });
     expect(s.combat.monsterId).toBe(next.monsterId);
-    expect(s.actionQueue).toEqual([{ kind: "action", actionId: ACTION, target: 10 }]);
-
-    // Schalter aus: der neue Auftrag läuft genau bis zu seinem Ende, dann geht die Queue weiter.
-    setSlayerAutoTask(s, false);
-    finishTask(s);
-    advance(s, content, 100);
-    expect(s.slayerTask).toBeNull();
-    expect(s.queueFight).toBeNull();
-    expect(s.combat.monsterId).toBeNull();
-    expect(s.activeActionId).toBe(ACTION);
     expect(s.actionQueue).toEqual([]);
+  });
+
+  it("endlicher Queue-Kampf mit wartenden Einträgen: kein Wechsel, Eintrag läuft zu Ende, dann geht die Queue weiter", () => {
+    const s = hunter(4);
+    setSlayerAutoTask(s, true);
+    assignTask(s, content, MASTER);
+    const old = s.slayerTask!.monsterId;
+    expect(enqueueFight(s, content, old, 25)).toBe(true);
+    expect(enqueueAction(s, content, ACTION, 10)).toBe(true);
+    advance(s, content, 100);
+    expect(s.queueFight).toEqual({ monsterId: old, remaining: 25 });
+    s.slayerTask!.progress = s.slayerTask!.required - 1;
+    finishTask(s);
+    expect(s.slayerTask).not.toBeNull(); // neuer Auftrag ist vergeben
+    expect(s.queueFight?.monsterId).toBe(old); // aber der geplante Kampf läuft weiter
+    expect(s.queueFight!.remaining).toBe(24);
+    expect(s.combat.monsterId).toBe(old);
+    expect(s.actionQueue).toEqual([{ kind: "action", actionId: ACTION, target: 10 }]);
+    let guard = 0;
+    while (s.activeActionId !== ACTION && guard++ < 200_000) advance(s, content, 100);
+    expect(s.activeActionId).toBe(ACTION); // Holzfällen startet nach den restlichen Kills
+    expect(s.queueFight).toBeNull();
+    expect(s.actionQueue).toEqual([]);
+  });
+
+  it("∞-Queue-Kampf: Wechsel aufs neue Ziel, bleibt ∞", () => {
+    const s = hunter(4);
+    setSlayerAutoTask(s, true);
+    assignTask(s, content, MASTER);
+    const old = s.slayerTask!.monsterId;
+    expect(enqueueFight(s, content, old, null)).toBe(true);
+    expect(enqueueAction(s, content, ACTION, 10)).toBe(true);
+    advance(s, content, 100);
+    s.slayerTask!.progress = s.slayerTask!.required - 1;
+    finishTask(s);
+    const next = s.slayerTask!;
+    expect(s.queueFight).toEqual({ monsterId: next.monsterId, remaining: null });
+    expect(s.combat.monsterId).toBe(next.monsterId);
+    expect(s.actionQueue).toEqual([{ kind: "action", actionId: ACTION, target: 10 }]);
   });
 
   it("nicht bekämpfbares neues Ziel: Auftrag bleibt vergeben, kein Wechsel, Queue unverändert", () => {

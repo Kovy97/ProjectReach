@@ -51,7 +51,7 @@ export function EquipmentSellModal({
   const shown = rows.slice(0, MAX_ROWS);
   const more = rows.length - shown.length;
   const summaryKinds: readonly EquipmentSellKind[] = kind === "all" ? EQUIPMENT_SELL_KINDS : [kind];
-  const skipped = plan.skipped.locked + plan.skipped.runes + plan.skipped.tools + plan.skipped.masterRings + plan.skipped.orders;
+  const skipped = plan.skipped.locked + plan.skipped.runes + plan.skipped.tools + plan.skipped.masterRings + plan.skipped.orders + plan.skipped.pointShop; // claude:2026-10-25T11:42:00+01:00 — Slayer-Shop-Teile
   const gold = (n: number): string => t("shop.gold").replace("{n}", formatNum(n));
   const count = (n: number): string => t("equipSell.count").replace("{n}", formatNum(n));
 

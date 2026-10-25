@@ -428,6 +428,8 @@ export interface EquipmentSellSkipped {
   tools: number;
   masterRings: number;
   orders: number;
+  /** claude:2026-10-25T11:42:00+01:00 — Review 1.4.1: mit Slayer-Punkten gekaufte Teile (content.slayerShop), wie Meisterringe geschützt. */
+  pointShop: number;
 }
 
 export interface EquipmentSellTotals {
@@ -501,7 +503,9 @@ export function equipmentSellPlan(state: GameState, content: ContentDB, opts: Eq
 
   const entries: EquipmentSellPlanEntry[] = [];
   const byKind = emptyKindTotals();
-  const skipped: EquipmentSellSkipped = { locked: 0, runes: 0, tools: 0, masterRings: 0, orders: 0 };
+  const skipped: EquipmentSellSkipped = { locked: 0, runes: 0, tools: 0, masterRings: 0, orders: 0, pointShop: 0 };
+  // claude:2026-10-25T11:42:00+01:00 — Slayer-Helm & Co. kosten Punkte; Sammelverkauf (ohne Rückkauf) soll sie nie für Gold wegnehmen.
+  const pointShopIds = new Set((content.slayerShop ?? []).map((entry) => entry.itemId));
   let pieces = 0;
   let gold = 0;
   for (const itemId of ids) {
@@ -515,6 +519,7 @@ export function equipmentSellPlan(state: GameState, content: ContentDB, opts: Eq
     const all = stackQty + group.length;
     // Geschützte Arten: die ganze Gruppe bleibt liegen (Reihenfolge = Vorrang beim Zählen).
     if (itemId.startsWith("ring_master_")) { skipped.masterRings += all; continue; }
+    if (pointShopIds.has(itemId)) { skipped.pointShop += all; continue; }
     if (item.tool) { skipped.tools += all; continue; }
     if (orderItems.has(itemId)) { skipped.orders += all; continue; }
     if (locked[itemId] === true) { skipped.locked += all; continue; }

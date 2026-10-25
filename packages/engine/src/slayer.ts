@@ -598,9 +598,12 @@ export function setSlayerAutoTask(state: GameState, on: boolean): void {
  * Voraussetzungen: Schalter an, ein neuer Auftrag ist vergeben, der laufende Kampf galt dem alten Auftragsmonster
  * (`completedMonsterId` = Kill-Credit-Id des abschließenden Kills).
  *  - Warteschlange: Ist der laufende Kampf ein Queue-Kampf (`queueFight` gegen genau diesen Gegner), wird seine Laufzeit
- *    durch das NEUE Auftragsmonster mit der neuen Auftragsgröße als Rest ersetzt (neues Objekt, damit die Kill-Zählung im
- *    Tick den abschließenden Kill nicht noch auf den neuen Rest bucht). Das alte Monster kehrt nicht in die Queue zurück,
- *    andere Einträge bleiben unberührt. Gilt auch, wenn der neue Auftrag zufällig dasselbe Monster trifft.
+ *    durch das NEUE Auftragsmonster ersetzt (neues Objekt, damit die Kill-Zählung im Tick den abschließenden Kill nicht
+ *    noch auf den neuen Rest bucht): ein ∞-Eintrag bleibt ∞, ein endlicher bekommt die neue Auftragsgröße als Rest. Das
+ *    alte Monster kehrt nicht in die Queue zurück. Gilt auch, wenn der neue Auftrag zufällig dasselbe Monster trifft.
+ *  - claude:2026-10-25T11:42:00+01:00 — Review 1.4.1: Wartet hinter einem ENDLICHEN Queue-Kampf noch etwas in der Queue, hat die
+ *    Planung des Spielers Vorrang: kein Wechsel, der Eintrag läuft mit seinem Rest zu Ende, danach geht die Queue weiter
+ *    (der neue Auftrag bleibt vergeben). Vorher hielt die Auto-Kette alle späteren Einträge dauerhaft an.
  *  - Nicht bekämpfbares neues Ziel (`canFightMonster` false, unbekannt, Dungeon-only): kein Wechsel, auch die Queue bleibt;
  *    der Auftrag bleibt vergeben.
  * Rückgabe: das Content-Monster, auf das der Kampf wechseln soll, oder null (weiter wie bisher). Kein RNG.
@@ -620,7 +623,10 @@ export function applySlayerAutoSwitch(
   const next = content.monsters[task.monsterId];
   if (!next || next.dungeonOnly || !canFightMonster(state, content, next.id)) return null;
   const qf = state.queueFight;
-  if (qf && qf.monsterId === cs.monsterId) state.queueFight = { monsterId: next.id, remaining: task.required };
+  const isQueueFight = !!qf && qf.monsterId === cs.monsterId;
+  // claude:2026-10-25T11:42:00+01:00 — endlicher Queue-Kampf mit wartenden Einträgen: Queue-Planung geht vor (s. JSDoc).
+  if (isQueueFight && qf!.remaining !== null && state.actionQueue.length > 0) return null;
+  if (isQueueFight) state.queueFight = { monsterId: next.id, remaining: qf!.remaining === null ? null : task.required };
   // Gleiches Monster ⇒ der Respawn läuft ohnehin weiter, nur die Queue-Laufzeit (oben) wurde neu gesetzt.
   return next.id === cs.monsterId ? null : next;
 }
