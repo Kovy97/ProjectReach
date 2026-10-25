@@ -58,6 +58,7 @@ import {
   setzeTextScale,
 } from "../textScale";
 import { UI_STYLES, UI_STYLE_LABEL_KEY, setzeUiStyle, useUiStyle } from "../uiStyle";
+import { NAV_SKINS, NAV_SKIN_LABEL_KEY, setzeNavSkin, useNavSkin } from "../navSkin"; // claude:2026-10-25T18:09:00+01:00 — Knopf-Stile
 import "../styles/options.css";
 
 /** Eisenrahmen-Knopf einer Segment-/Umschalter-/Auswahl-Reihe (Chef-Entscheid 25.08.2026:
@@ -229,6 +230,7 @@ export function DisplayAudioPrefs(): JSX.Element {
   const [muteInBackground, setMuteInBackgroundState] = useState(isMuteInBackground());
   // claude:2026-10-19T10:05:00+02:00 — Chef 19.10.: Oberflächen-Stil Reforged/Classic (uiStyle.ts), wirkt sofort.
   const uiStyle = useUiStyle();
+  const navSkin = useNavSkin(); // claude:2026-10-25T18:09:00+01:00 — Knopf-Stil (navSkin.ts), wirkt sofort
 
   // Tatsächlichen Fensterzustand beim Öffnen abgleichen + live aktualisieren (z. B. nach F11).
   useEffect(() => {
@@ -268,6 +270,24 @@ export function DisplayAudioPrefs(): JSX.Element {
             {UI_STYLES.map((stil) => (
               <button key={stil} className={optBtnCls(uiStyle === stil)} onClick={() => setzeUiStyle(stil)}>
                 {t(UI_STYLE_LABEL_KEY[stil])}
+              </button>
+            ))}
+          </div>
+        </OptRow>
+        {/* claude:2026-10-25T18:09:00+01:00 — Chef 25.10.: Knopf-Stile mit Vorschau. Jedes Muster trägt sein Profil selbst (data-nav-skin), zeigt
+            also genau Fläche und Rahmen, die Seitenleiste und Kopfleiste nach dem Klick bekommen. */}
+        <OptRow label={t("options.navSkin")} hint={t("options.navSkinHint")}>
+          <div className="nav-skin-picks" role="radiogroup" aria-label={t("options.navSkin")}>
+            {NAV_SKINS.map((skin) => (
+              <button
+                key={skin}
+                type="button"
+                role="radio"
+                aria-checked={navSkin === skin}
+                className={`nav-skin-pick${navSkin === skin ? " is-on" : ""}`}
+                onClick={() => setzeNavSkin(skin)}
+              >
+                <span className="nav-skin-sample" data-nav-skin={skin}>{t(NAV_SKIN_LABEL_KEY[skin])}</span>
               </button>
             ))}
           </div>

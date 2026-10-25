@@ -401,6 +401,10 @@ def prefix_selector(sel):
     for p in split_selector(sel):
         if '.layout--reforged' in p:
             continue
+        # claude:2026-10-25T18:10:00+01:00 — Knopf-Stile (navSkin.ts) gehören nur zur Reforged-Oberfläche; ihre Vorschau-Muster in den
+        # Optionen sollen auch im Classic-Stil die echten Profile zeigen. Keine Classic-Überschreibung.
+        if 'data-nav-skin' in p or 'nav-skin-' in p:
+            continue
         if p.startswith(':root'):
             out.append(PREFIX + p[len(':root'):])
         elif re.match(r'^html(?![\w-])', p):

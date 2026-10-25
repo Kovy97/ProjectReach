@@ -83,7 +83,7 @@
   padding: calc(4px * var(--sb-scale-eff)) calc(5px * var(--sb-scale-eff)) !important;
   border: calc(3px * var(--sb-scale-eff)) solid transparent !important; /* claude:2026-10-19T18:40:00+02:00 — Chef 19.10.: Rahmen der Reforged-Knöpfe 50 % dünner (11 → 5,5 px Bild, 6 → 3 px Rand). */
   /* claude:2026-10-19T01:00:00+02:00 — Chef 19.10. (Demo): Sidebar-Knöpfe mit Holzrahmen + Moos. */
-  border-image: url("../assets/ui/gravewood/frames/iron-frame-strip.webp") 32 / calc(6px * var(--sb-scale-eff)) / 0 round !important; /* claude:2026-10-25T18:03:00+01:00 — Chef-Knopf 25.10. (zweite Fassung): Eisenstreifen, Schnitt 32, Breite 6 */
+  border-image: var(--nav-skin-frame) var(--nav-skin-frame-slice) / calc(var(--nav-skin-frame-w) * var(--sb-scale-eff)) / 0 round !important; /* claude:2026-10-25T18:09:00+01:00 — Rahmen aus dem Knopf-Stil (navSkin.ts) */
   background: var(--chrome-nav-surface) !important;
   background-origin: border-box !important;
   background-clip: border-box !important;
@@ -326,7 +326,7 @@
   margin: calc(4px * var(--sb-scale-eff)) 0 calc(6px * var(--sb-scale-eff));
   padding: calc(4px * var(--sb-scale-eff)) calc(8px * var(--sb-scale-eff));
   border: calc(2px * var(--sb-scale-eff)) solid transparent; /* claude:2026-10-19T18:40:00+02:00 — Chef 19.10.: Rahmen der Reforged-Knöpfe 50 % dünner (11 → 5,5 px Bild, 6 → 3 px Rand). */
-  border-image: url("../assets/ui/gravewood/frames/iron-frame-strip.webp") 32 / calc(6px * var(--sb-scale-eff)) round; /* claude:2026-10-25T18:03:00+01:00 — Kampfstil-Knopf wie die Sidebar-Knöpfe (Eisenstreifen, Schnitt 32, Breite 6) */
+  border-image: var(--nav-skin-frame) var(--nav-skin-frame-slice) / calc(var(--nav-skin-frame-w) * var(--sb-scale-eff)) round; /* claude:2026-10-25T18:09:00+01:00 — Kampfstil-Knopf: Rahmen aus dem Knopf-Stil */
   background: var(--chrome-nav-surface);
   color: var(--chrome-text);
   font-family: var(--font-head);

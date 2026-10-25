@@ -17,6 +17,7 @@ import { initTextScale } from "./textScale";
 import { initBackgroundAudio } from "./util/backgroundAudio";
 // claude:2026-10-19T10:05:00+02:00 — Oberflächen-Stil (Reforged/Classic) vor dem ersten Render setzen, s. uiStyle.ts.
 import { initUiStyle } from "./uiStyle";
+import { initNavSkin } from "./navSkin"; // claude:2026-10-25T18:09:00+01:00 — Knopf-Stile Seitenleiste/Kopfleiste
 import "./styles/index.css";
 
 // Schriftwahl VOR dem ersten Render anwenden (Chef 31.08.2026), damit die Oberflaeche
@@ -24,6 +25,7 @@ import "./styles/index.css";
 initFontChoice();
 initTextScale();
 initUiStyle();
+initNavSkin(); // claude:2026-10-25T18:09:00+01:00
 initBackgroundAudio();
 
 const root = document.getElementById("root");

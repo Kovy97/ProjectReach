@@ -586,3 +586,44 @@
   border-color: rgba(216, 184, 112, 0.22);
   box-shadow: none;
 }
+
+/* claude:2026-10-25T18:09:00+01:00 — Knopf-Stile (navSkin.ts): Vorschau-Muster in Seitenleisten-Optik. Fläche und Rahmen kommen aus den
+   --nav-skin-*-Variablen, die das Muster über sein eigenes data-nav-skin bekommt (styles/chrome.css). */
+#root .nav-skin-picks {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 190px), 1fr));
+  gap: 10px;
+  width: 100%;
+}
+#root .nav-skin-pick {
+  display: flex;
+  padding: 4px;
+  border: 2px solid transparent;
+  background: none;
+  cursor: pointer;
+}
+#root .nav-skin-pick:hover { border-color: rgba(216, 192, 106, 0.35); }
+#root .nav-skin-pick.is-on { border-color: var(--gold, #d8c06a); }
+#root .nav-skin-pick:focus-visible { outline: 2px solid var(--gold, #d8c06a); outline-offset: 2px; }
+#root .nav-skin-sample {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 4px 12px;
+  border: 3px solid transparent;
+  border-image: var(--nav-skin-frame) var(--nav-skin-frame-slice) / var(--nav-skin-frame-w) round;
+  background: var(--nav-skin-surface);
+  background-origin: border-box;
+  background-clip: border-box;
+  box-shadow: inset 0 0 12px #0007, 0 3px 5px #0008;
+  color: #e4cc83;
+  font-family: var(--font-head);
+  font-size: var(--fs-md, 17px);
+  text-shadow: 0 1px 1px #000;
+  white-space: normal;
+  text-align: center;
+}
+#root .nav-skin-pick.is-on .nav-skin-sample { background: var(--nav-skin-selected); }
+

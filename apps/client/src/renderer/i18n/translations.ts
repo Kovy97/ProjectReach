@@ -488,6 +488,13 @@ const en = {
     "options.uiStyleHint": "Classic brings back the sidebar, tab bar and header from before 1.3. Both styles scale with the sidebar handle and the header height handle.",
     "options.uiStyle.reforged": "Reforged",
     "options.uiStyle.classic": "Classic",
+    // claude:2026-10-25T18:09:00+01:00 — Knopf-Stile Seitenleiste/Kopfleiste (navSkin.ts)
+    "options.navSkin": "Button style",
+    "options.navSkinHint": "Look of the sidebar and top bar buttons. Only applies to the Reforged interface style.",
+    "options.navSkin.wood": "Wood",
+    "options.navSkin.moss": "Moss & wood",
+    "options.navSkin.basalt": "Basalt & iron",
+    "options.navSkin.leather": "Leather & slot",
     // claude:2026-10-19T11:45:00+02:00 — für die Classic-Kopfzeile (1.2.3) zurückgeholt.
     "header.stopCombat": "End Fight",
     "skill.doing": "In progress",
@@ -3712,6 +3719,13 @@ const de: Record<keyof typeof en, string> = {
     "options.uiStyleHint": "Klassisch bringt Seitenleiste, Reiterleiste und Kopfzeile von vor 1.3 zurück. Beide Stile wachsen mit dem Griff der Seitenleiste und dem Höhenregler der Kopfzeile.",
     "options.uiStyle.reforged": "Reforged",
     "options.uiStyle.classic": "Klassisch",
+    // claude:2026-10-25T18:09:00+01:00 — Knopf-Stile Seitenleiste/Kopfleiste (navSkin.ts)
+    "options.navSkin": "Knopf-Stil",
+    "options.navSkinHint": "Aussehen der Knöpfe in Seitenleiste und Kopfleiste. Gilt nur im Oberflächen-Stil Reforged.",
+    "options.navSkin.wood": "Holz",
+    "options.navSkin.moss": "Moos & Holz",
+    "options.navSkin.basalt": "Basalt & Eisen",
+    "options.navSkin.leather": "Leder & Fassung",
     // claude:2026-10-19T11:45:00+02:00 — für die Classic-Kopfzeile (1.2.3) zurückgeholt.
     "header.stopCombat": "Kampf abbrechen",
     "skill.doing": "Läuft gerade",

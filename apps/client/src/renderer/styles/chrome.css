@@ -20,10 +20,51 @@
   /* claude:2026-10-25T18:03:00+01:00 — Chef 25.10. zweiter Knopf (Knopf-Editor, 18:02): Basalt statt Moos, Helligkeit 1,03 / Kontrast 1,04 /
      Sättigung 1,67 / Tönung #3a2a14 26 %, Drehung 180° (design/ui-fundament/bake-nav-texture.py → texture-nav-basalt2.webp),
      Phase 107px 125px wie die Editor-Vorschau. Moos-Fassung texture-nav-moss2.webp bleibt im Bestand. */
-  --chrome-nav-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(6, 7, 8, .03), rgba(2, 3, 4, .28)), url("../assets/ui/gravewood/textures/texture-nav-basalt2.webp") 107px 125px / 304px 304px repeat;
-  --chrome-nav-selected: radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%), linear-gradient(rgba(33, 23, 12, .16), rgba(16, 11, 6, .22)), url("../assets/ui/gravewood/textures/texture-nav-basalt2.webp") 107px 125px / 304px 304px repeat;
+  /* claude:2026-10-25T18:09:00+01:00 — seit 25.10. wählbar (Optionen → Knopf-Stil, navSkin.ts): Fläche und Rahmen kommen aus dem Profil. */
+  --chrome-nav-surface: var(--nav-skin-surface);
+  --chrome-nav-selected: var(--nav-skin-selected);
   /* claude:2026-10-17T12:00:00+02:00 — Vertiefte Basalt-Mulde der Statuszellen (Quiet-Citadel-Material). */
   --chrome-well: linear-gradient(rgba(58, 31, 19, .36), rgba(9, 12, 14, .72)), url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 480px repeat;
+}
+
+/* claude:2026-10-25T18:09:00+01:00 — Knopf-Stile (navSkin.ts). Jedes Profil setzt Fläche, Auswahl-Fläche und Rahmen; dieselben Werte gelten für
+   die Vorschau-Muster in den Optionen (.nav-skin-sample[data-nav-skin]). Ohne Attribut gilt Leder (DEFAULT_NAV_SKIN). */
+/* Holz (19.10.–25.10.): texture-nav-wood2, Holzstreifen Schnitt 47 / 5,5 px */
+:root[data-nav-skin="wood"],
+[data-nav-skin="wood"] {
+  --nav-skin-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(8, 11, 13, .06), rgba(2, 4, 5, .28)), url("../assets/ui/gravewood/textures/texture-nav-wood2.webp") 110px 37px / 304px 304px repeat;
+  --nav-skin-selected: radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%), linear-gradient(rgba(33, 23, 12, .16), rgba(16, 11, 6, .22)), url("../assets/ui/gravewood/textures/texture-nav-wood2.webp") 110px 37px / 304px 304px repeat;
+  --nav-skin-frame: url("../assets/ui/gravewood/frames/wood-frame-strip.webp");
+  --nav-skin-frame-slice: 47;
+  --nav-skin-frame-w: 5.5px;
+}
+/* Moos & Holz (Editor 25.10. 17:55): Moos gebacken, 270° */
+:root[data-nav-skin="moss"],
+[data-nav-skin="moss"] {
+  --nav-skin-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(6, 7, 8, .03), rgba(2, 3, 4, .28)), url("../assets/ui/gravewood/textures/texture-nav-moss2.webp") 145px 246px / 304px 304px repeat;
+  --nav-skin-selected: radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%), linear-gradient(rgba(33, 23, 12, .16), rgba(16, 11, 6, .22)), url("../assets/ui/gravewood/textures/texture-nav-moss2.webp") 145px 246px / 304px 304px repeat;
+  --nav-skin-frame: url("../assets/ui/gravewood/frames/wood-frame-strip.webp");
+  --nav-skin-frame-slice: 42;
+  --nav-skin-frame-w: 6px;
+}
+/* Basalt & Eisen (Editor 25.10. 18:02): Basalt gebacken, 180°, Eisenstreifen */
+:root[data-nav-skin="basalt"],
+[data-nav-skin="basalt"] {
+  --nav-skin-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(6, 7, 8, .03), rgba(2, 3, 4, .28)), url("../assets/ui/gravewood/textures/texture-nav-basalt2.webp") 107px 125px / 304px 304px repeat;
+  --nav-skin-selected: radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%), linear-gradient(rgba(33, 23, 12, .16), rgba(16, 11, 6, .22)), url("../assets/ui/gravewood/textures/texture-nav-basalt2.webp") 107px 125px / 304px 304px repeat;
+  --nav-skin-frame: url("../assets/ui/gravewood/frames/iron-frame-strip.webp");
+  --nav-skin-frame-slice: 32;
+  --nav-skin-frame-w: 6px;
+}
+/* Leder & Slot (Editor 25.10. 18:06): Leder gebacken, Sättigung 0,49, 180°, Inventar-Slot-Rahmen */
+:root,
+:root[data-nav-skin="leather"],
+[data-nav-skin="leather"] {
+  --nav-skin-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(6, 7, 8, .03), rgba(2, 3, 4, .28)), url("../assets/ui/gravewood/textures/texture-nav-leather2.webp") 107px 125px / 304px 304px repeat;
+  --nav-skin-selected: radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%), linear-gradient(rgba(33, 23, 12, .16), rgba(16, 11, 6, .22)), url("../assets/ui/gravewood/textures/texture-nav-leather2.webp") 107px 125px / 304px 304px repeat;
+  --nav-skin-frame: url("../assets/ui/gravewood/frames/inventory-slot-9slice.webp");
+  --nav-skin-frame-slice: 60;
+  --nav-skin-frame-w: 5px;
 }
 
 /* codex:2026-09-10T10:35:00+02:00 — Maßgeblich ist der Platz ZWISCHEN Sidebar/Queue,
@@ -81,7 +122,7 @@
   border: calc(3px * var(--tb-k)) solid transparent; /* claude:2026-10-19T18:40:00+02:00 — Chef 19.10.: Rahmen der Reforged-Knöpfe 50 % dünner (11 → 5,5 px Bild, 6 → 3 px Rand). */
   /* claude:2026-10-19T02:30:00+02:00 — Chef 19.10. Knopf-Editor „knopf-sidebar-moos-holz“: Wood 2 (Kachel 304, Versatz 110/37,
      Tönung #3a2a14 26 % eingebacken) + Original-Holzstreifen (Slice 47, 11 px, round). */
-  border-image: url("../assets/ui/gravewood/frames/iron-frame-strip.webp") 32 / calc(6px * var(--tb-k)) round; /* claude:2026-10-25T18:03:00+01:00 — Chef-Knopf 25.10. (zweite Fassung): Eisenstreifen, Schnitt 32, Breite 6 */
+  border-image: var(--nav-skin-frame) var(--nav-skin-frame-slice) / calc(var(--nav-skin-frame-w) * var(--tb-k)) round; /* claude:2026-10-25T18:09:00+01:00 — Rahmen aus dem Knopf-Stil */
   border-radius: 0;
   background: var(--chrome-nav-surface);
   color: #e4cc83;

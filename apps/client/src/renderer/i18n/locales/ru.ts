@@ -377,6 +377,13 @@ export const ru: Record<string, string> = {
     "options.uiStyleHint": "Классический возвращает боковую панель, вкладки и шапку, как до версии 1.3. Оба стиля масштабируются ручкой боковой панели и регулятором высоты шапки.",
     "options.uiStyle.reforged": "Reforged",
     "options.uiStyle.classic": "Классический",
+    // claude:2026-10-25T18:09:00+01:00 — Knopf-Stile Seitenleiste/Kopfleiste (navSkin.ts)
+    "options.navSkin": "Стиль кнопок",
+    "options.navSkinHint": "Вид кнопок боковой и верхней панели. Действует только в стиле интерфейса Reforged.",
+    "options.navSkin.wood": "Дерево",
+    "options.navSkin.moss": "Мох и дерево",
+    "options.navSkin.basalt": "Базальт и железо",
+    "options.navSkin.leather": "Кожа и оправа",
     // claude:2026-10-19T11:45:00+02:00 — für die Classic-Kopfzeile (1.2.3) zurückgeholt.
     "header.stopCombat": "Закончить бой",
     "skill.doing": "В процессе",

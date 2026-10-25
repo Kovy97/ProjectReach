@@ -372,6 +372,13 @@ export const ptBR: Record<string, string> = {
     "options.uiStyleHint": "Clássico traz de volta a barra lateral, as abas e o cabeçalho de antes da 1.3. Os dois estilos acompanham a alça da barra lateral e o ajuste de altura do cabeçalho.",
     "options.uiStyle.reforged": "Reforged",
     "options.uiStyle.classic": "Clássico",
+    // claude:2026-10-25T18:09:00+01:00 — Knopf-Stile Seitenleiste/Kopfleiste (navSkin.ts)
+    "options.navSkin": "Estilo dos botões",
+    "options.navSkinHint": "Aparência dos botões da barra lateral e da barra superior. Vale só para o estilo de interface Reforged.",
+    "options.navSkin.wood": "Madeira",
+    "options.navSkin.moss": "Musgo e madeira",
+    "options.navSkin.basalt": "Basalto e ferro",
+    "options.navSkin.leather": "Couro e engaste",
     // claude:2026-10-19T11:45:00+02:00 — für die Classic-Kopfzeile (1.2.3) zurückgeholt.
     "header.stopCombat": "Encerrar Luta",
     "skill.doing": "Em andamento",

@@ -378,6 +378,13 @@ export const zh: Record<string, string> = {
     "options.uiStyleHint": "经典风格恢复 1.3 之前的侧边栏、标签栏和顶栏。两种风格都会随侧边栏拖柄和顶栏高度调节一起缩放。",
     "options.uiStyle.reforged": "重铸",
     "options.uiStyle.classic": "经典",
+    // claude:2026-10-25T18:09:00+01:00 — Knopf-Stile Seitenleiste/Kopfleiste (navSkin.ts)
+    "options.navSkin": "按钮样式",
+    "options.navSkinHint": "侧边栏和顶栏按钮的外观。仅在 Reforged 界面样式下生效。",
+    "options.navSkin.wood": "木纹",
+    "options.navSkin.moss": "苔藓与木框",
+    "options.navSkin.basalt": "玄武岩与铁框",
+    "options.navSkin.leather": "皮革与镶框",
     // claude:2026-10-19T11:45:00+02:00 — für die Classic-Kopfzeile (1.2.3) zurückgeholt.
     "header.stopCombat": "结束战斗",
     "skill.doing": "进行中",
