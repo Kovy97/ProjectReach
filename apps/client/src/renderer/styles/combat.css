@@ -6400,6 +6400,38 @@
   color: #8bd1df;
 }
 
+/* claude:2026-10-25T10:32:00+01:00 — K6 (1.4.1): Trefferchancen in der Kopfzeile, Farben wie auf der Monsterkarte
+   (rötlich = du triffst, bläulich = trifft dich). */
+.battle-hud-metric--hit-you > strong {
+  color: #e2a08d;
+}
+
+.battle-hud-metric--hit-enemy > strong {
+  color: #91bad1;
+}
+
+/* claude:2026-10-25T11:01:00+01:00 — Beide Trefferchancen als Paar: wird die Zeile zu eng, wandern sie gemeinsam in eine zweite Zeile. */
+.battle-hud-metric-pair {
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+/* claude:2026-10-25T11:01:00+01:00 — K5 (1.4.1): „Beute x/y" in der Kopfzeile ist ein Knopf in der Optik des Details-Knopfs
+   daneben (`.battle-hud-ribbon-toggle`), Gold-Schrift als Hinweis aufs Fenster. Er sitzt in einer
+   eigenen Spalte vor „Details", außerhalb der Kennzahlen (die dürfen umbrechen, der Knopf nie). */
+.battle-hud-ribbon-action {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+.battle-hud-ribbon-action .battle-hud-loot-btn {
+  min-width: 0;
+  margin: 5px 0 5px 5px;
+  color: var(--gold);
+}
+
 .battle-hud-ribbon-toggle {
   flex: 0 0 auto;
   min-width: clamp(70px, 5vw, 94px);
@@ -6567,8 +6599,12 @@
 
 /* codex:2026-08-31T23:59:00+02:00 — Unterhalb der brauchbaren Zwei-Spalten-Breite werden die
    Kontextbänder nicht zusammengestaucht, sondern als zwei vollbreite RPG-Zeilen angeordnet.
-   Der Loot bleibt dauerhaft sichtbar; nur die räumliche Hierarchie ändert sich. */
-@container battle-arena (max-width: 980px) {
+   Der Loot bleibt dauerhaft sichtbar; nur die räumliche Hierarchie ändert sich.
+   claude:2026-10-25T11:01:00+01:00 — K6 (1.4.1): Grenze 980 → 1720 px. Das Gegnerband trägt jetzt vier
+   Kennzahlen plus Beute- und Details-Knopf; nebeneinander bekäme es erst ab ~1700 px Arenabreite genug
+   Platz (gemessen 2560×1440: „LE…/BESI…/DU T…/TRIFF…", das Spielerband kürzte schon vorher „MA…/ABWE…"
+   bei 1920 mit eingeklapptem Dock). Darunter stehen beide Bänder vollbreit untereinander. */
+@container battle-arena (max-width: 1720px) {
   .battle-arena-hud {
     grid-template-columns: minmax(0, 1fr);
     gap: 4px;
@@ -6611,6 +6647,37 @@
   .battle-hud-ribbon-toggle {
     min-width: 78px;
     margin: 3px 4px;
+    padding-inline: 7px;
+  }
+
+  /* claude:2026-10-25T11:01:00+01:00 — K5/K6 (1.4.1): das Gegnerband trägt jetzt Level, Besiegt, beide Trefferchancen und den
+     Beute-Knopf. Knapper gesetzt, damit es in DE/EN bei 1366 px in eine Zeile passt; reicht der Platz
+     in langen Sprachen trotzdem nicht, bricht die Kennzahlen-Zeile um, statt dass sich Kennzahlen und
+     Knöpfe überdecken. Die Knöpfe bleiben dabei mittig statt mitzuwachsen. */
+  .battle-hud-ribbon-summary {
+    flex-wrap: wrap;
+  }
+
+  .battle-hud-ribbon--enemy .battle-hud-metric {
+    gap: 5px;
+    padding-inline: clamp(5px, 0.9cqw, 10px);
+  }
+
+  .battle-hud-ribbon--enemy .battle-hud-metric > span {
+    letter-spacing: 0.04em;
+  }
+
+  .battle-hud-ribbon-toggle,
+  .battle-hud-ribbon-action {
+    align-self: center;
+  }
+
+  .battle-hud-metric-pair {
+    flex: 1 0 auto;
+  }
+
+  .battle-hud-ribbon-action .battle-hud-loot-btn {
+    margin: 3px 0 3px 4px;
     padding-inline: 7px;
   }
 

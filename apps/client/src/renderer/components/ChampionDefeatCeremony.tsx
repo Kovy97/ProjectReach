@@ -5,6 +5,8 @@ import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getEliteMonsterSrc } from "../monsters";
 import { getUiIcon } from "../uiIcons";
+import { getSkillIcon } from "../skillIcons";
+import { getSidebarIcon } from "../sidebarIcons";
 import { ItemCell } from "./ItemCell";
 import { registerEscCloser } from "../util/escStack";
 import { playSfx } from "../util/audio";
@@ -108,6 +110,7 @@ export function ChampionDefeatCeremony(): JSX.Element {
   const championArt = getEliteMonsterSrc(ceremony.variantId, variant?.baseMonsterId ?? null);
   const uniqueItem = ceremony.uniqueItemId ? content.items[ceremony.uniqueItemId] : undefined;
   const tokenIcon = getUiIcon("icon_quest_token");
+  const slayerIcon = getSkillIcon("slayer") ?? getSidebarIcon("slayer");
   const fxLevel = effectiveFxLevel();
 
   return (
@@ -171,6 +174,18 @@ export function ChampionDefeatCeremony(): JSX.Element {
                 ? <img loading="lazy" decoding="async" src={tokenIcon} alt="" className="chdef-bounty-icon" />
                 : <span aria-hidden="true">🎟️</span>}
               +{formatNum(ceremony.bountyTokens)}
+            </span>
+          </div>
+        )}
+
+        {/* claude:2026-10-25T10:59:00+01:00 — 1.4.1 S4: Slayer-Punkte je Champion-Kill (engine elites.ts onEliteKilled, Breadcrumb optional) */}
+        {(ceremony.slayerPoints ?? 0) > 0 && (
+          <div className="chdef-bounty chdef-slayer">
+            <span className="chdef-bounty-amount">
+              {slayerIcon
+                ? <img loading="lazy" decoding="async" src={slayerIcon} alt="" className="chdef-bounty-icon" />
+                : <span aria-hidden="true">⚔</span>}
+              {t("elite.victory.slayerPoints").replace("{n}", formatNum(ceremony.slayerPoints ?? 0))}
             </span>
           </div>
         )}

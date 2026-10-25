@@ -29,7 +29,7 @@ import { tavernGuestDef, tavernRefresh } from "../tavernApi";
 import { getEliteMonsterSrc } from "../monsters";
 import { getSkillIcon } from "../skillIcons";
 import { getSidebarIcon } from "../sidebarIcons";
-import { jumpToMonster } from "../util/monsterJump";
+import { jumpToElite } from "../util/monsterJump";
 import { countFenceItems } from "../util/fence";
 import { registerUiToastSink } from "../util/toastBus";
 import {
@@ -533,7 +533,7 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
         iconUrl: getEliteMonsterSrc(spawn.variantId, variant.baseMonsterId),
         title: t("toast.elite.title"),
         detail: reachable ? detail : `${detail} ${t("toast.elite.sealed")}`,
-        onClick: reachable ? () => jumpToMonster(variant.baseMonsterId) : undefined,
+        onClick: reachable ? () => jumpToElite(spawn.zoneId) : undefined, // claude:2026-10-25T11:03:00+01:00 — 1.4.1 B1: zur Champion-Karte, nicht zum Grundmonster
       },
       9000,
     );

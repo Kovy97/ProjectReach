@@ -7,7 +7,7 @@ import { useGameSelector, tupleEquals } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getEliteMonsterSrc } from "../monsters";
 import { formatMmSs } from "../util/format";
-import { jumpToMonster } from "../util/monsterJump";
+import { jumpToElite } from "../util/monsterJump";
 import {
   getEliteMiniCollapsed,
   getEliteMiniPos,
@@ -249,7 +249,9 @@ export function EliteMiniWindow(): JSX.Element | null {
               <button
                 type="button"
                 className="shop-citadel-btn shop-citadel-btn--sm emw-jump"
-                onClick={() => jumpToMonster(variant.baseMonsterId)}
+                // claude:2026-10-25T10:32:00+01:00 — B1 (1.4.1): zur Champion-Karte der Zone springen, nicht
+                // zur normalen Karte des Grundmonsters (Spieler kämpfte sonst gegen den falschen Gegner).
+                onClick={() => jumpToElite(zone.id)}
               >
                 {t("slayer.task.goToMonster")}
               </button>

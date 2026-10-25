@@ -271,12 +271,30 @@
   font-variant-numeric: lining-nums tabular-nums;
 }
 
+/* claude:2026-10-25T10:32:00+01:00 — K6 (1.4.1): beschriftete Trefferchancen („Du triffst 97%"). Lange Sprachen brechen
+   den Wert sauber unter die Beschriftung statt abzuschneiden. */
 #root .mc-prognosis-chance {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  column-gap: 5px;
+  row-gap: 1px;
   min-width: 0;
+  line-height: 1.1;
+  text-align: center;
+  white-space: normal;
+}
+
+#root .mc-prognosis-label {
+  min-width: 0;
+  font-size: clamp(var(--fs-xs), 4.27cqw, var(--fs-xs));
+  letter-spacing: 0.02em;
+  opacity: 0.88;
+}
+
+#root .mc-prognosis-value {
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -323,6 +341,73 @@
   width: clamp(28px, 8.6cqw, 38px);
   height: clamp(28px, 8.6cqw, 38px);
   object-fit: contain;
+}
+
+/* claude:2026-10-25T10:32:00+01:00 — K5 (1.4.1): „Beute x/y" als Knopf (Sekundär-Knopf `.shop-citadel-btn`, Holzrahmen)
+   statt der losen Symbol-Leiste. Links der Zähler, rechts bis zu vier Vorschau-Symbole (Silhouette,
+   solange unentdeckt) und ein Pfeil; ein Klick öffnet die volle Liste (MonsterLoot.tsx). */
+#root .monster-card-footer .mc-loot-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(6px, 2cqw, 10px);
+  width: 100%;
+  min-width: 0;
+  min-height: clamp(40px, 11.5cqw, 50px);
+  flex: 0 0 auto;
+  padding: 4px clamp(10px, 3.2cqw, 15px);
+  text-align: left;
+}
+
+#root .mc-loot-btn-label {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: clamp(var(--fs-xs), 4.6cqw, var(--fs-sm));
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+#root .mc-loot-preview {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(3px, 1.2cqw, 6px);
+  overflow: hidden;
+}
+
+#root .mc-loot-preview-icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(24px, 8cqw, 32px);
+  height: clamp(24px, 8cqw, 32px);
+  font-size: var(--fs-md);
+  color: var(--muted);
+}
+
+#root .mc-loot-preview-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+#root .mc-loot-preview-more {
+  flex: 0 0 auto;
+  font-family: var(--font-info);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+
+#root .mc-loot-btn-chevron {
+  flex: 0 0 auto;
+  font-size: var(--fs-lg);
+  line-height: 1;
+  color: var(--gold);
 }
 
 /* codex:2026-08-03T14:52:00+02:00 — Bestehende Gravewood-Aktionen bleiben unverändert funktional, erhalten aber feste Frontline-Abstände. */

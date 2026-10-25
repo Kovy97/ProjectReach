@@ -1,0 +1,292 @@
+/* claude:2026-10-25T10:32:00+01:00 — K5 (1.4.1): Beute-Liste + Beute-Fenster (components/MonsterLoot.tsx).
+   Die .bjw-loot*-Regeln standen bisher in bestiary.css und sind unverändert hierher gezogen, weil jetzt
+   auch die Kampfseite (Monsterkarte, Champion-Karte, Kampf-Kopfzeile) dieselbe Liste in einem Fenster
+   zeigt. Das Fenster hängt als Portal an document.body: keine Regel hier trägt ein #root-Präfix. */
+
+/* ─── Beute: gruppierte, sortierte Liste (Chef-Vorgabe "Loot geordnet") ──────────────────────
+   Vorbild ist die Dungeon-Karte (CombatPage.tsx `DungeonLootPreview`): Chip mit Bild, Typ-Text
+   ("Hals"/"Großschwert") und Prozent — hier als volle Zeile (Bild · Name · Prozent) je Eintrag,
+   in drei Gruppen (Ausrüstung/Uniques → Materialien → Sonstiges, je absteigend nach Chance
+   sortiert, s. groupLootRolls in components/MonsterLoot.tsx). */
+.bjw-loot {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(216, 192, 106, 0.2);
+}
+
+.bjw-loot-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.bjw-loot-group-title {
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.bjw-loot-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* claude:2026-10-18T11:30:00+02:00 — R2: Beute-Zeile ohne Vollrahmen (vorher 4. Ebene .bjw-zone > .bjw-card > .bjw-loot > Zeile).
+   Trennlinie unten; die Seltenheit zeigt ein 3-px-Streifen links statt eines Rahmens. */
+.bjw-loot-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 4px 8px;
+  background: transparent;
+  border: 0;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.12);
+  cursor: pointer;
+}
+.bjw-loot-list > .bjw-loot-row:last-child { border-bottom-color: transparent; }
+
+.bjw-loot-row.undiscovered {
+  cursor: default;
+  opacity: 0.62;
+}
+
+.bjw-loot-row:not(.undiscovered):hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* Rarity nur als Streifen links (`rarityClass`, items.ts — dieselbe Klasse/Farbformel wie
+   `ItemCell`/components.css `.item-cell.rarity-*`), hier auf die eigene `.bjw-loot-row` statt auf
+   `.item-cell` selbst angewendet (kein ItemCell-Reuse nötig — die Zeile braucht eigenes
+   Klick-/Layout-Verhalten, s. LootRow in BestiaryPage.tsx). */
+.bjw-loot-row.rarity-magic { border-left-color: var(--rar-magic); }
+.bjw-loot-row.rarity-rare { border-left-color: var(--rar-rare); }
+.bjw-loot-row.rarity-superRare { border-left-color: var(--rar-superRare); }
+.bjw-loot-row.rarity-epic { border-left-color: var(--rar-epic); }
+.bjw-loot-row.rarity-legendary { border-left-color: var(--rar-legendary); }
+.bjw-loot-row.rarity-godly { border-left-color: var(--rar-godly); }
+.bjw-loot-row.rarity-heroic { border-left-color: var(--rar-heroic); }
+.bjw-loot-row.rarity-mythic { border-left-color: var(--rar-mythic); }
+
+.bjw-loot-icon {
+  position: relative;
+  flex: 0 0 auto;
+  display: inline-flex;
+}
+
+/* Bild 28-32px (Chef-Vorgabe) — `.item-chip-img`/`.item-chip-emoji` (components.css) sind
+   generische, seitenübergreifende Item-Icon-Klassen, hier unter der eigenen `.bjw-loot-icon`-
+   Ahnenklasse skaliert. */
+.bjw-loot-icon .item-chip-img,
+.bjw-loot-icon .item-chip-emoji {
+  width: 30px;
+  height: 30px;
+  font-size: var(--fs-xl);
+  object-fit: contain;
+}
+
+.bjw-loot-icon-flip {
+  width: 30px;
+  height: 30px;
+}
+
+.bjw-loot-check {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  background: #3a7a3a;
+  border-radius: 50%;
+  width: 11px;
+  height: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.7);
+}
+
+.bjw-loot-mystery {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.bjw-loot-silhouette {
+  filter: brightness(0);
+}
+
+.bjw-loot-mystery-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.bjw-loot-mystery-mark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--muted);
+  text-shadow: 0 1px 2px #000;
+  pointer-events: none;
+}
+
+.bjw-loot-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* Name max. 2 Zeilen, NIE Clip (Umbruch statt Abschneiden — Chef-Gesetz). */
+.bjw-loot-name {
+  font-size: var(--fs-xs);
+  line-height: 1.25;
+  color: #e8dcc0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.bjw-loot-type {
+  font-size: var(--fs-xs);
+  letter-spacing: 0.02em;
+}
+
+.bjw-loot-pct {
+  flex: 0 0 auto;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--gold, #d8b870);
+  white-space: nowrap;
+}
+
+/* claude:2026-10-25T10:32:00+01:00 — Rechte Spalte im Fenster: Chance oben, Menge je Fund darunter. */
+.bjw-loot-figures {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.bjw-loot-qty {
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* ─── Beute-Fenster ─────────────────────────────────────────────────────────────────────────
+   Basis-Modal (modals.css: Holz-9-Slice + bg_black) mit fester Kopfzeile; nur die Liste scrollt.
+   Zwei Klassen (`.modal.loot-modal`) wie `.modal.iwk-modal`, damit `.modal { max-width: 480px }`
+   die Breite nicht zurückholt. max-height hält den Rahmen bei 1366×768 vollständig im Bild. */
+.modal-overlay.loot-modal-overlay {
+  padding: 16px;
+}
+
+.modal.loot-modal {
+  width: min(620px, calc(100vw - 32px));
+  max-width: min(620px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.loot-modal-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 22px 12px;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.22);
+}
+
+.modal.loot-modal .modal-close {
+  position: static;
+  flex: 0 0 auto;
+}
+
+.loot-modal-titles {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.loot-modal-kicker {
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.loot-modal-name {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: var(--fs-xl);
+  line-height: 1.15;
+  color: #ead8a0;
+  overflow-wrap: anywhere;
+}
+
+.loot-modal-meta {
+  font-size: var(--fs-xs);
+  line-height: 1.3;
+}
+
+.loot-modal-body.bjw-loot {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0;
+  padding: 12px 22px 18px;
+  border-top: 0;
+  gap: 14px;
+}
+
+.loot-modal .bjw-loot-group-title {
+  color: var(--gold);
+  opacity: 0.85;
+}
+
+.loot-modal .bjw-loot-row {
+  min-height: 50px;
+  gap: 10px;
+  padding: 5px 10px;
+}
+
+.loot-modal .bjw-loot-icon .item-chip-img,
+.loot-modal .bjw-loot-icon .item-chip-emoji,
+.loot-modal .bjw-loot-icon-flip,
+.loot-modal .bjw-loot-mystery {
+  width: 38px;
+  height: 38px;
+}
+
+.loot-modal .bjw-loot-name,
+.loot-modal .bjw-loot-pct {
+  font-size: var(--fs-sm);
+}

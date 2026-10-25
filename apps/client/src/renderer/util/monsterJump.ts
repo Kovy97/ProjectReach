@@ -18,6 +18,8 @@ interface MonsterJumpNav {
 
 let navRequest: MonsterJumpNav | null = null;
 let pendingMonsterId: string | null = null;
+/** claude:2026-10-25T10:32:00+01:00 — B1 (1.4.1): Ziel-Zone eines Champion-Sprungs (s. jumpToElite). */
+let pendingEliteZoneId: string | null = null;
 let navNonce = 0;
 const listeners = new Set<() => void>();
 
@@ -34,8 +36,31 @@ function emit(): void {
 export function jumpToMonster(monsterId: string): void {
   if (!content.monsters[monsterId]) return;
   pendingMonsterId = monsterId;
+  pendingEliteZoneId = null; // claude:2026-10-25T10:32:00+01:00 — der jüngste Sprung gewinnt
   navRequest = { pageId: "combat", nonce: ++navNonce };
   emit();
+}
+
+/**
+ * claude:2026-10-25T10:32:00+01:00 — B1 (1.4.1, Spieler-Report „Champion-Fenster springt zum falschen Gegner"): Sprung zur
+ * Champion-Karte einer Zone. `jumpToMonster(variant.baseMonsterId)` hob die normale Karte des
+ * Grundmonsters hervor, der Spieler kämpfte dann gegen den gewöhnlichen Gegner. CombatPage öffnet
+ * hier die Zone und scrollt zur Champion-Karte (`#elitecard-<zoneId>`); ist der Champion inzwischen
+ * verschwunden, fällt sie auf die Karte des Grundmonsters zurück. No-op bei unbekannter Zone.
+ */
+export function jumpToElite(zoneId: string): void {
+  if (!content.zones.some((z) => z.id === zoneId)) return;
+  pendingEliteZoneId = zoneId;
+  pendingMonsterId = null;
+  navRequest = { pageId: "combat", nonce: ++navNonce };
+  emit();
+}
+
+/** claude:2026-10-25T10:32:00+01:00 — Liest UND löscht die ausstehende Champion-Ziel-Zone (Muster consumeMonsterJumpTarget). */
+export function consumeEliteJumpTarget(): string | null {
+  const id = pendingEliteZoneId;
+  pendingEliteZoneId = null;
+  return id;
 }
 
 /** `useSyncExternalStore`-Subscribe für MainLayout (App.tsx). */

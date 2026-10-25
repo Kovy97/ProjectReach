@@ -132,6 +132,8 @@
 }
 .rlc-skip .rlc-rar-mythic::after { animation: none; }
 .rlc-footer { display: flex; gap: 12px; justify-content: center; margin-top: 14px; }
+/* claude:2026-10-25T10:59:00+01:00 — 1.4.1 S4: Slayer-Punkte-Zeile unter der Beute */
+.rlc-slayer-points { margin: 10px 0 0; text-align: center; font-family: var(--font-display, Cinzel, serif); font-size: var(--fs-md); color: var(--ink-gold, #d8b870); letter-spacing: .04em; }
 @keyframes rlc-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes rlc-shake {
   0%, 100% { transform: translate(0, 0) rotate(0); }

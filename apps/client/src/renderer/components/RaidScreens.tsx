@@ -14,7 +14,7 @@ import {
   raidStateOf,
   restartRaidRoom,
 } from "@hearthforge/engine";
-import { RARITY_LABEL, type RaidRun } from "@hearthforge/shared";
+import { RARITY_LABEL, SLAYER_POINTS_PER_RAID_BOSS, type RaidRun } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { ItemCell } from "./ItemCell";
@@ -122,6 +122,10 @@ function LootCeremony({ c, onClose }: { c: Ceremony; onClose: () => void }): JSX
             })}
           </div>
         </div>
+        {/* claude:2026-10-25T10:59:00+01:00 — 1.4.1 S4: Slayer-Punkte je Hallen-Boss (engine raid.ts onRaidRoomCleared, flach je Stufe) */}
+        {(SLAYER_POINTS_PER_RAID_BOSS[c.difficulty] ?? 0) > 0 && (
+          <p className="rlc-slayer-points">{t("raid.boss.slayerPoints").replace("{n}", formatNum(SLAYER_POINTS_PER_RAID_BOSS[c.difficulty] ?? 0))}</p>
+        )}
         <div className="rlc-footer">
           {!done && !skip && (
             <button type="button" className="shop-citadel-btn" onClick={() => setSkip(true)}>{t("raid.loot.skip")}</button>

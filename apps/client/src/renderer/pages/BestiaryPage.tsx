@@ -2,23 +2,21 @@ import { memo, useCallback, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { content } from "@hearthforge/content";
 import { isDungeonUnlocked, isItemDiscovered, isZoneUnlocked, monsterKills, slayerRequirementMet, startCombat } from "@hearthforge/engine";
-import { EQUIP_SLOT_LABELS } from "@hearthforge/shared";
-import type { DungeonDef, EliteVariantDef, GameState, ItemDef, LocalizedString, LootRoll, MonsterDef, QuestDef } from "@hearthforge/shared";
+import type { DungeonDef, EliteVariantDef, GameState, ItemDef, LocalizedString, MonsterDef, QuestDef } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { getEliteMonsterSrc, getMonsterSrc } from "../monsters";
 import { getZoneBackgroundCard } from "../zoneBackgrounds";
-import { getItemImage, rarityClass } from "../items";
 import { useI18n } from "../i18n";
 import { inflictHintFor } from "../util/inflictHint";
 import { monsterHomeDungeon } from "../util/chronicle";
-import { openItemWikiModal } from "../components/ItemWikiModal";
 import { DefenseTypeBadge } from "../components/DefenseTypeBadge";
 import { FlipReveal } from "../components/FlipReveal";
+import { LootGroup, monsterLootGroups } from "../components/MonsterLoot";
 import { StatLineImmune } from "../components/StatLine";
 import { renderEffectIcon, statIcon } from "../statIcons";
 import { getUiIcon } from "../uiIcons";
 import { effectiveFxLevel } from "../util/fxLevel";
-import { formatDropPct, formatMmSs, formatNum } from "../util/format";
+import { formatMmSs, formatNum } from "../util/format";
 import "../styles/bestiary.css";
 
 /**
@@ -94,44 +92,8 @@ const BESTIARY_LOOT_ITEM_IDS: Set<string> = (() => {
   return ids;
 })();
 
-/**
- * Beute-Gruppierung (Chef-Glowup 26.08.2026, "Loot zu ungeordnet"): jede Monster-Loot-Tabelle
- * einmal beim Modul-Laden in "Ausrüstung/Uniques" (item.type === "equipment", trägt den Typ-Text +
- * Rarity-Rahmen, s. LootRow unten) / "Materialien" (item.type === "material", oder ein unbekannter
- * Katalog-Eintrag als sicherer Default) / "Sonstiges" (Rest: consumable/tool) sortiert, INNERHALB
- * jeder Gruppe absteigend nach Drop-Chance — Muster KILL_LADDER_INDEX oben (statischer Katalog,
- * ändert sich nie zur Laufzeit, also einmalig statt pro Render/Tick berechnet).
- */
-const MONSTER_LOOT_GROUPS_INDEX: Record<string, { equipment: LootRoll[]; material: LootRoll[]; other: LootRoll[] }> = (() => {
-  const idx: Record<string, { equipment: LootRoll[]; material: LootRoll[]; other: LootRoll[] }> = {};
-  const byChanceDesc = (a: LootRoll, b: LootRoll) => b.chance - a.chance;
-  for (const m of Object.values(content.monsters) as MonsterDef[]) {
-    const equipment: LootRoll[] = [];
-    const material: LootRoll[] = [];
-    const other: LootRoll[] = [];
-    for (const roll of m.loot) {
-      const item = content.items[roll.itemId];
-      if (item?.type === "equipment") equipment.push(roll);
-      else if (!item || item.type === "material") material.push(roll);
-      else other.push(roll);
-    }
-    equipment.sort(byChanceDesc);
-    material.sort(byChanceDesc);
-    other.sort(byChanceDesc);
-    idx[m.id] = { equipment, material, other };
-  }
-  return idx;
-})();
-
-/** Item-Typ als Kurztext am Beute-Eintrag — dasselbe Format wie die Dungeon-Karte
- *  (CombatPage.tsx `dropTypeLabel`, hier eine eigene, gleich kurze Kopie statt eines Imports aus
- *  einer fremden Seite): Waffenart, sonst Ausrüstungs-Slot. */
-function dropTypeLabel(item: ItemDef | undefined, t: (k: string) => string, tr: (v: LocalizedString) => string): string {
-  if (!item || item.type !== "equipment") return "";
-  if (item.weaponType) return t(`item.weaponType.${item.weaponType}`);
-  if (item.slot && EQUIP_SLOT_LABELS[item.slot]) return tr(EQUIP_SLOT_LABELS[item.slot]);
-  return "";
-}
+// claude:2026-10-25T10:32:00+01:00 — K5 (1.4.1): Beute-Gruppierung (`monsterLootGroups`), `LootGroup` und
+// `LootRow` sind nach components/MonsterLoot.tsx gezogen; die Kampfseite zeigt dieselbe Liste im Beute-Fenster.
 
 export function BestiaryPage({ onNavigate }: { onNavigate?: (id: string) => void }): JSX.Element {
   const state = useGameState();
@@ -500,131 +462,6 @@ interface BestiaryMonsterCardProps {
 }
 
 /**
- * Eine Beute-Gruppe ("Ausrüstung", "Materialien", "Sonstiges") auf der Monsterkarte (Chef-Glowup
- * 26.08.2026, "Loot zu ungeordnet") — rendert nichts, wenn die Gruppe leer ist (Muster
- * `DungeonLootPreview` in CombatPage.tsx, dort die "Boss-Beute"-Zeile).
- */
-function LootGroup({
-  titleKey,
-  rolls,
-  state,
-  t,
-  tr,
-  flippingItems,
-}: {
-  titleKey: string;
-  rolls: LootRoll[];
-  state: GameState;
-  t: (key: string) => string;
-  tr: (value: LocalizedString) => string;
-  flippingItems: Set<string>;
-}): JSX.Element | null {
-  if (rolls.length === 0) return null;
-  return (
-    <div className="bjw-loot-group">
-      <div className="bjw-loot-group-title muted">{t(titleKey)}</div>
-      <div className="bjw-loot-list">
-        {/* Index mit im Key (statt nur `roll.itemId`): manche Monster droppen dieselbe Item-ID über
-            zwei getrennte Loot-Rollen (z.B. Basis- + Bonus-Rate) — dieselbe Konstellation gab es
-            schon in der vorherigen Fassung (React-Warnung bei doppeltem Key), hier robust behoben. */}
-        {rolls.map((roll, idx) => (
-          <LootRow key={`${roll.itemId}-${idx}`} roll={roll} state={state} t={t} tr={tr} flipping={flippingItems.has(roll.itemId)} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/**
- * Eine Beute-Zeile: Bild (28-32px) · Name (2-Zeilen-Umbruch, nie Clip) · Prozent rechts — Vorbild
- * ist der Dungeon-Karten-Beute-Chip (CombatPage.tsx `DungeonLootPreview`, Typ-Text wie "Hals"/
- * "Großschwert"), hier zusätzlich mit Rarity-Zellenrahmen (`rarityClass`, wie `ItemCell`). Unentdeckt
- * bleibt die bekannte Silhouette+„?"-Maskierung; Klick auf eine entdeckte Zeile öffnet das
- * Item-Wiki-Modal (`openItemWikiModal`).
- */
-function LootRow({
-  roll,
-  state,
-  t,
-  tr,
-  flipping,
-}: {
-  roll: LootRoll;
-  state: GameState;
-  t: (key: string) => string;
-  tr: (value: LocalizedString) => string;
-  flipping: boolean;
-}): JSX.Element {
-  const discovered = isItemDiscovered(state, roll.itemId);
-  const item = content.items[roll.itemId];
-  const img = getItemImage(roll.itemId);
-  const pct = formatDropPct(roll.chance);
-
-  const mysteryFace = img ? (
-    <span className="bjw-loot-icon bjw-loot-mystery-wrap">
-      <img loading="lazy" decoding="async" src={img} alt="" className="item-chip-img bjw-loot-silhouette pixelart" />
-      <span className="bjw-loot-mystery-mark" aria-hidden="true">?</span>
-    </span>
-  ) : (
-    <span className="bjw-loot-icon bjw-loot-mystery" aria-hidden="true">?</span>
-  );
-
-  if (!discovered) {
-    return (
-      <div className="bjw-loot-row undiscovered" title={t("combat.undiscovered")}>
-        {mysteryFace}
-        <span className="bjw-loot-text">
-          <span className="bjw-loot-name muted">???</span>
-        </span>
-        <span className="bjw-loot-pct muted">{pct}</span>
-      </div>
-    );
-  }
-
-  const typ = dropTypeLabel(item, t, tr);
-  const revealedFace = (
-    <span className="bjw-loot-icon">
-      {img ? (
-        <img loading="lazy" decoding="async" src={img} alt="" className="item-chip-img pixelart" />
-      ) : item?.icon ? (
-        <span className="item-chip-emoji">{item.icon}</span>
-      ) : GENERIC_DROP_ICON_URL ? (
-        <img loading="lazy" decoding="async" src={GENERIC_DROP_ICON_URL} alt="" className="item-chip-img" />
-      ) : (
-        <span className="item-chip-emoji">▪</span>
-      )}
-      <span className="bjw-loot-check" aria-hidden="true">✓</span>
-    </span>
-  );
-
-  return (
-    <div
-      className={`bjw-loot-row ${rarityClass(item?.rarity)}`}
-      title={item ? tr(item.name) : roll.itemId}
-      role="button"
-      tabIndex={0}
-      onClick={() => openItemWikiModal(roll.itemId)}
-      onKeyDown={(e) => {
-        if (e.key !== "Enter" && e.key !== " ") return;
-        e.preventDefault();
-        openItemWikiModal(roll.itemId);
-      }}
-    >
-      {flipping ? (
-        <FlipReveal className="bjw-loot-icon-flip" flipping frontContent={mysteryFace} backContent={revealedFace} />
-      ) : (
-        revealedFace
-      )}
-      <span className="bjw-loot-text">
-        <span className="bjw-loot-name">{item ? tr(item.name) : roll.itemId}</span>
-        {typ && <span className="bjw-loot-type muted">{typ}</span>}
-      </span>
-      <span className="bjw-loot-pct">{pct}</span>
-    </div>
-  );
-}
-
-/**
  * Eine Monster-Karte des Bestiariums (Perf-Welle 2026-07-22, weiterhin gültig nach dem Glowup
  * 26.08.2026). `memo()` + primitive Props (kills/known/reqMet/zoneLocked/dungeonUnlocked/
  * lootDiscoveredCount/…) lassen memo()s flachen Props-Vergleich echte Änderungen erkennen (state
@@ -652,7 +489,7 @@ const BestiaryMonsterCard = memo(function BestiaryMonsterCard({
   showFightButton,
 }: BestiaryMonsterCardProps): JSX.Element {
   const art = known ? getMonsterSrc(m.id) : null;
-  const lootGroups = MONSTER_LOOT_GROUPS_INDEX[m.id] ?? { equipment: [], material: [], other: [] };
+  const lootGroups = monsterLootGroups(m.id);
   // Chef 26.08.2026: „Im Bestiarium sollten die Monsterkarten ihren Zonen-Background haben." →
   // Zonen-Kulisse (Card-Variante) hinter dem Porträt; Dungeon-Monster nehmen die Zone ihres Dungeons.
   const zoneArt = getZoneBackgroundCard(m.zone ?? owningDungeon?.zone);
@@ -806,7 +643,7 @@ const BestiaryMonsterCard = memo(function BestiaryMonsterCard({
             )}
 
             {/* Chef-Glowup 26.08.2026 ("Loot zu ungeordnet"): eine sortierte Liste je Gruppe
-                (Ausrüstung/Uniques → Materialien → Sonstiges, s. MONSTER_LOOT_GROUPS_INDEX oben)
+                (Ausrüstung/Uniques → Materialien → Sonstiges, s. groupLootRolls in components/MonsterLoot.tsx)
                 statt eines ungeordneten Icon-Rasters — Vorbild ist die Dungeon-Karte
                 (CombatPage.tsx `DungeonLootPreview`). */}
             {(lootGroups.equipment.length > 0 || lootGroups.material.length > 0 || lootGroups.other.length > 0) && (

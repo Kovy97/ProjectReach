@@ -32,7 +32,6 @@ import {
   enqueueFightAtFront,
   equippedPet,
   getActiveTask,
-  hasDropSeen,
   isDungeonUnlocked,
   isHealPotion,
   isItemDiscovered,
@@ -47,7 +46,6 @@ import {
   raidStateOf,
   paragonFloorPreview,
   paragonStatus,
-  seenDropCount,
   selectFood,
   selectHealPotion,
   setAutoPotionThreshold,
@@ -66,7 +64,7 @@ import {
 } from "@hearthforge/engine";
 import type { ParagonFloorPreview, ParagonStatus } from "@hearthforge/engine";
 import type { ActiveBuff, BossPhase, CombatEvent, CombatStyle, RangedStance, DerivedStats, DungeonDef, ElementalSideCounters, EliteVariantDef, LootRoll, MagicStance, GameState, ItemDef, LastKillSummary, LocalizedString, MonsterDef, PetAbilityKind, SlayerTowerFloor, StatusEffect, StatusType } from "@hearthforge/shared";
-import { autoEatHealMult, effectiveAutoEatThreshold, effectiveWeaponEffects, isStatusEffectType, EQUIP_SLOT_LABELS, AUTO_EAT_MAX_TIER, AUTO_POTION_COOLDOWN_MS, AUTO_REBUFF_UNLOCK_COST, COMBAT_SKILL_IDS, CRAFT_TARGET_PRESETS, CRIT_CHANCE_CAP, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, ELITE_UNIQUE_DROP_CHANCE_DEFAULT, combatXpLevelMult, consumableHeal, FROST_FREEZE_STACKS, KILL_COOLDOWN_MS, PARAGON_BOSS_INTERVAL, PARAGON_DUNGEON_ID, POISON_MAX_STACKS, PRE_BOSS_BREATHER_MS, QUIVER_CAPACITY, SHOCK_DELAY_CAP_MS } from "@hearthforge/shared";
+import { autoEatHealMult, effectiveAutoEatThreshold, effectiveWeaponEffects, isStatusEffectType, EQUIP_SLOT_LABELS, AUTO_EAT_MAX_TIER, AUTO_POTION_COOLDOWN_MS, AUTO_REBUFF_UNLOCK_COST, COMBAT_SKILL_IDS, CRAFT_TARGET_PRESETS, CRIT_CHANCE_CAP, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, combatXpLevelMult, consumableHeal, FROST_FREEZE_STACKS, KILL_COOLDOWN_MS, PARAGON_BOSS_INTERVAL, PARAGON_DUNGEON_ID, POISON_MAX_STACKS, PRE_BOSS_BREATHER_MS, QUIVER_CAPACITY, SHOCK_DELAY_CAP_MS } from "@hearthforge/shared";
 import { getEliteMonsterSrc, getMonsterSrc } from "../monsters";
 import { AreaTourGuide } from "../components/AreaTourGuide";
 import { ActiveBuffsBar } from "../components/ActiveBuffs";
@@ -113,7 +111,8 @@ import { getZoneBackground, getZoneBackgroundCard } from "../zoneBackgrounds";
 import { getDungeonBackground, getDungeonBackgroundCard } from "../dungeonBackgrounds";
 import { getItemImage } from "../items";
 import { getZoneMap } from "../zoneMaps";
-import { consumeMonsterJumpTarget, getMonsterJumpNav, subscribeMonsterJump } from "../util/monsterJump";
+import { consumeEliteJumpTarget, consumeMonsterJumpTarget, getMonsterJumpNav, subscribeMonsterJump } from "../util/monsterJump";
+import { MonsterLootButton } from "../components/MonsterLoot";
 import { useItemTooltip } from "../components/ItemTooltip";
 import { CitadelTip, HoverTip, useCitadelTip } from "../components/CitadelTip";
 import { CombatStatsPanelGrouped, EquipmentDoll } from "../components/EquipmentOverview";
@@ -161,7 +160,7 @@ import {
 } from "../util/uiPrefs";
 import { createZoneParticleField, getZoneParticleTheme } from "../util/particles";
 import { renderEffectIcon, statIcon } from "../statIcons";
-import { formatDamage, formatDropPct, formatMmSs, formatNum, formatSeconds1, formatStat } from "../util/format";
+import { formatDamage, formatDropPct, formatGain, formatMmSs, formatNum, formatSeconds1, formatStat } from "../util/format";
 import { hasFreshTracks } from "../util/eliteBoard";
 // UI-Brainstorm A8: dasselbe Sucheingabe-Idiom wie SkillPage/Bank/Shop — direkt importiert statt
 // über styles/index.css (Kollisions-Schutz-Muster, s. dortiger Kommentar), da parallele Agenten an
@@ -620,11 +619,11 @@ function eventText(
       const skill = e.skill ? content.skills[e.skill] : undefined;
       const name = skill ? tr(skill.name) : (e.skill ?? "");
       return t("combat.logXp")
-        .replace("{xp}", String(e.amount))
+        .replace("{xp}", formatGain(e.amount)) // claude:2026-10-25T11:03:00+01:00 — 1.4.1 B2: XP mit Multiplikatoren ungerundet
         .replace("{skill}", name);
     }
     case "gold":
-      return t("combat.logGold").replace("{gold}", String(e.amount));
+      return t("combat.logGold").replace("{gold}", formatGain(e.amount)); // claude:2026-10-25T11:03:00+01:00 — 1.4.1 B2
     case "hit": {
       // claude:2026-10-25T10:00:00+02:00 — Raid-Set-Einlösungen (1.4.0 R7): eigene Zeile je Set.
       if (e.by === "player" && (e.hitKind === "fireCollection" || e.hitKind === "outbreak" || e.hitKind === "bloodToll")) {
@@ -1055,122 +1054,9 @@ function buildStripKeyframes(count: number): Keyframe[][] {
  *  Geschoss ≈28 %" — Blut/Pet/Wischer sind dort nicht beziffert, eigene UI-Ermessens-Werte). */
 const SPRITE_SIZE_RATIO = { impact: 0.55, slash: 0.7, blood: 0.42, pet: 0.45, miss: 0.5 } as const;
 
-/** Ein Drop-Icon im Collection-Log-Stil: `???` bis entdeckt, danach klickbar → Item-Info-Tooltip. */
-function DropIcon({
-  monsterId,
-  roll,
-}: {
-  monsterId: string;
-  roll: { itemId: string; chance: number; min: number; max: number };
-}): JSX.Element {
-  const state = useGameState();
-  const { t, tr } = useI18n();
-  const tooltip = useItemTooltip();
-  const seen = hasDropSeen(state, monsterId, roll.itemId);
-  const img = getItemImage(roll.itemId);
-  if (!seen) {
-    // Task #248: keine „???"-Textmaske mehr, sondern die echte Item-Form als schwarze
-    // Silhouette (brightness(0) auf das echte Bild) — Form erahnbar, Details verborgen.
-    // Nicht klickbar, kein Tooltip. Fallback auf „?" nur wenn kein Bild existiert.
-    return (
-      <span className="drop-icon undiscovered" title={t("combat.undiscovered")}>
-        {img ? (
-          <img
-            loading="lazy"
-            decoding="async"
-            src={img}
-            alt=""
-            className="drop-icon-img drop-icon-silhouette pixelart"
-          />
-        ) : (
-          "?"
-        )}
-      </span>
-    );
-  }
-  const item = content.items[roll.itemId];
-  // Sweep-Fund #353 (Drop-Bot): Math.round machte jede Chance <0,5% zu „0%" — 11 der 19 neuen
-  // Beikost-Rows lasen sich als „gibt's nicht". formatDropPct wie im Bestiarium/Dungeon-Preview.
-  return (
-    <span
-      className="drop-icon clickable"
-      title={`${item ? tr(item.name) : roll.itemId} · ${formatDropPct(roll.chance)}`}
-      role="button"
-      tabIndex={0}
-      onClick={(e) => {
-        e.stopPropagation();
-        tooltip.pin(roll.itemId, e.clientX, e.clientY, []);
-      }}
-      onKeyDown={(e) => {
-        if (e.key !== "Enter" && e.key !== " ") return;
-        e.preventDefault();
-        e.stopPropagation();
-        const rect = e.currentTarget.getBoundingClientRect();
-        tooltip.pin(roll.itemId, rect.left + rect.width / 2, rect.top + rect.height / 2, []);
-      }}
-    >
-      {img ? <img loading="lazy" decoding="async" src={img} alt="" className="drop-icon-img pixelart" /> : item?.icon ?? "▪"}
-    </span>
-  );
-}
-
-/**
- * Drop-Box im Fighter-Header (Chef-Fix 2026-07-05, Bild #32): EIN DOM-Grid für beide Breakpoints —
- * bei breiten Fighter-Panels bleibt es das gewohnte Label+Icon-Grid inline sichtbar (CSS, s.
- * `.fighter-sub-drops-grid` in combat.css); wird das Panel schmal genug, dass es mit der Name/
- * Level/Status-Zeile konkurrieren würde, schaltet eine `@container`-Regel auf `.fighter` das Grid
- * per CSS zu einem Popover um, das nur bei `.open` sichtbar ist. React steuert ausschließlich die
- * `open`-Klasse (Klick auf den Toggle-Button) — im breiten Modus hat das Umschalten keinen
- * sichtbaren Effekt (Grid ist dort per CSS immer `display:flex`).
- */
-function DropsBox({
-  monster,
-  dropCounts,
-}: {
-  monster: MonsterDef;
-  dropCounts: { seen: number; total: number };
-}): JSX.Element {
-  const { t } = useI18n();
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLSpanElement | null>(null);
-
-  // Schließen bei Klick außerhalb der Box (nur relevant im collapsed/Popover-Modus — im breiten
-  // Modus ist `open` visuell wirkungslos). Im nächsten Tick registriert, damit der öffnende Klick
-  // selbst den Listener nicht sofort wieder auslöst.
-  useEffect(() => {
-    if (!open) return;
-    const onOutside = (e: MouseEvent): void => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent): void => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    const id = window.setTimeout(() => window.addEventListener("mousedown", onOutside), 0);
-    window.addEventListener("keydown", onKey);
-    return () => {
-      window.clearTimeout(id);
-      window.removeEventListener("mousedown", onOutside);
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
-
-  return (
-    <span
-      ref={ref}
-      className={`fighter-sub-drops${open ? " open" : ""}`}
-      onMouseLeave={() => setOpen(false)}
-    >
-      <button type="button" className="fighter-sub-drops-toggle" onClick={() => setOpen((o) => !o)}>
-        {t("combat.drops")} {dropCounts.seen}/{dropCounts.total}
-      </button>
-      <span className="fighter-sub-drops-grid">
-        {monster.loot.map((roll) => (
-          <DropIcon key={roll.itemId} monsterId={monster.id} roll={roll} />
-        ))}
-      </span>
-    </span>
-  );
-}
+// claude:2026-10-25T10:32:00+01:00 — K5 (1.4.1): `DropIcon` (Symbol-Leiste) und `DropsBox` (Kopfzeilen-Popover) sind durch
+// `MonsterLootButton` (components/MonsterLoot.tsx) ersetzt: „Beute x/y" ist jetzt ein Knopf, der die volle
+// Liste mit Name, Chance und Menge in einem Fenster zeigt (Steam-Rezension: Beute vom Interface verdeckt).
 
 interface FighterProps {
   name: string;
@@ -1665,10 +1551,14 @@ function BattleHudRibbon({
   side,
   summary,
   details,
+  action,
 }: {
   side: "player" | "enemy";
   summary: JSX.Element;
   details: JSX.Element;
+  /** claude:2026-10-25T11:01:00+01:00 — K5: zusätzlicher Knopf vor „Details" (Beute-Fenster); sitzt außerhalb der Kennzahlen,
+   *  damit er nie über eine Kennzahl rutscht, wenn die Zeile eng wird. */
+  action?: JSX.Element;
 }): JSX.Element {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
@@ -1676,6 +1566,7 @@ function BattleHudRibbon({
   return (
     <section className={`battle-hud-ribbon battle-hud-ribbon--${side}${open ? " is-open" : ""}`}>
       <div className="battle-hud-ribbon-summary">{summary}</div>
+      {action && <div className="battle-hud-ribbon-action">{action}</div>}
       <button
         type="button"
         className="battle-hud-ribbon-toggle"
@@ -3570,14 +3461,18 @@ function Battle({
       ]}
     />
   );
-  const dropCounts = seenDropCount(state, monster);
-  // Fix #260c: eigener 2-zeiliger Citadel-Kasten (Label-Zeile + Icon-Grid-Zeile) statt einer
-  // freien Inline-Reihe — konsistent zur Drop-Box auf der Monster-Auswahl-Karte. Chef-Fix
-  // 2026-07-05 (Bild #32): jetzt `DropsBox` — derselbe Kasten, aber responsive (Popover statt
-  // Inline-Grid bei schmalem Fighter-Panel, s. DropsBox-Kommentar oben).
-  const enemyDropsSub = monster.loot.length > 0 ? (
-    <DropsBox monster={monster} dropCounts={dropCounts} />
-  ) : undefined;
+  // claude:2026-10-25T10:32:00+01:00 — K5 (1.4.1): „Beute x/y" ist ein Knopf und öffnet die volle Liste (MonsterLoot.tsx);
+  // vorher eine Leiste kleiner Symbole ohne Namen und Chancen. Im Champion-Kampf stehen Unikat +
+  // extraLoot oben, darunter die Zonen-Tabelle, die beim Champion-Sieg ebenfalls fällt.
+  const fightChampion = cs.eliteVariantId ? content.elites?.[cs.eliteVariantId] : undefined;
+  const enemyLootButton = (
+    <MonsterLootButton
+      monster={monster}
+      champion={fightChampion}
+      displayName={fightChampion ? tr(fightChampion.name) : tr(monster.name)}
+      look="hud"
+    />
+  );
   const enemyDetails = (
     <StatLine
       className="fighter-stats battle-hud-stat-grid"
@@ -3640,7 +3535,18 @@ function Battle({
         <span>{t("combat.hud.kills")}</span>
         <strong>{cs.kills}</strong>
       </span>
-      {enemyDropsSub && <span className="battle-hud-drop-summary">{enemyDropsSub}</span>}
+      {/* claude:2026-10-25T10:32:00+01:00 — K6 (1.4.1): beide Trefferchancen sichtbar neben Level/Besiegt (vorher nur im
+          Details-Ausklapper). Kurzbeschriftung wie auf der Monsterkarte, Langtext im title. */}
+      <span className="battle-hud-metric-pair">
+        <span className="battle-hud-metric battle-hud-metric--hit-you" title={t("combat.prognosis.hitYou")}>
+          <span>{t("combat.prognosis.youHit")}</span>
+          <strong>{Math.round(prognosis.playerHit * 100)}%</strong>
+        </span>
+        <span className="battle-hud-metric battle-hud-metric--hit-enemy" title={t("combat.prognosis.hitEnemy")}>
+          <span>{t("combat.prognosis.hitsYou")}</span>
+          <strong>{Math.round(prognosis.enemyHit * 100)}%</strong>
+        </span>
+      </span>
     </>
   );
 
@@ -3968,7 +3874,7 @@ function Battle({
               Kampfwerte; Namen und Ressourcen bleiben direkt ueber den Figuren. */}
           <div className="battle-arena-hud">
             <BattleHudRibbon side="player" summary={playerHudSummary} details={playerDetails} />
-            <BattleHudRibbon side="enemy" summary={enemyHudSummary} details={enemyDetails} />
+            <BattleHudRibbon side="enemy" summary={enemyHudSummary} details={enemyDetails} action={enemyLootButton} />
           </div>
           {/* ── ARENA25D MOUNT SWITCH (Task #330) — der EINE Umschaltpunkt außerhalb von
               components/arena25d/. `arena25dActive` false (Flag aus/anderer Zone/Dungeon/Prod-
@@ -4599,12 +4505,16 @@ function MonsterCard({
         {/* Task #305 — Kampf-Transparenz: deine Chance · seine Chance + Verdikt-Badge, EINE
             kompakte Zeile (kein eigener Kasten, sprengt die Karte nicht höher). */}
         <div className="monster-card-prognosis">
+          {/* claude:2026-10-25T10:32:00+01:00 — K6 (1.4.1, Steam-Rezension „Es fehlt die Trefferchance"): beide Werte beschriftet
+              statt nur Symbol + Zahl. */}
           <span className="mc-prognosis-chance" title={t("combat.prognosis.hitYou")}>
-            {statIcon("atk")} {Math.round(prognosis.playerHit * 100)}%
+            <span className="mc-prognosis-label">{statIcon("atk")} {t("combat.prognosis.youHit")}</span>
+            <strong className="mc-prognosis-value">{Math.round(prognosis.playerHit * 100)}%</strong>
           </span>
           <span className="mc-prognosis-sep">·</span>
           <span className="mc-prognosis-chance" title={t("combat.prognosis.hitEnemy")}>
-            {statIcon("def")} {Math.round(prognosis.enemyHit * 100)}%
+            <span className="mc-prognosis-label">{statIcon("def")} {t("combat.prognosis.hitsYou")}</span>
+            <strong className="mc-prognosis-value">{Math.round(prognosis.enemyHit * 100)}%</strong>
           </span>
           {/* Verdikt-Wort lebt seit der Vereinheitlichung oben im Level-Chip — hier nur die zwei Chancen. */}
         </div>
@@ -4615,13 +4525,8 @@ function MonsterCard({
           </div>
         )}
 
-        {m.loot.length > 0 && (
-          <div className="monster-card-drops">
-            {m.loot.map((roll) => (
-              <DropIcon key={roll.itemId} monsterId={m.id} roll={roll} />
-            ))}
-          </div>
-        )}
+        {/* claude:2026-10-25T10:32:00+01:00 — K5: „Beute x/y" als Knopf, öffnet die volle Liste (MonsterLoot.tsx). */}
+        <MonsterLootButton monster={m} displayName={tr(m.name)} look="card" />
 
         {/* Task #315 — Kampf-Queue-Mengen-Grid: dasselbe 1×/25×/50×/∞-Preset-Set wie die Sammel-/
             Craft-Karten (CRAFT_TARGET_PRESETS), plus die freie Mengeneingabe des geteilten
@@ -4707,17 +4612,16 @@ function formatEliteCountdown(ms: number): string {
  * `eliteScaledMonster`) behält bewusst den Basis-Namen für die Kill-Credit-Konsistenz (s. dortiges
  * JSDoc), `variant.name` trägt den eigentlichen Titel. Countdown „Verschwindet in {m:ss}" tickt
  * automatisch mit (der Aufrufer re-rendert diese Seite jeden Tick, `remainingMs` kommt frisch aus
- * `state.eliteZones`). Drop-Vorschau (Chef-Fix 2026-07-22, Teil 2): KEINE hervorgehobene Unique-
- * Vorschau mehr — stattdessen dieselbe `.monster-card-drops`-Leiste + `DropIcon`-Silhouetten-
- * Discovery wie bei einer normalen `MonsterCard`, gespeist aus `variant.uniqueItemId` +
- * `variant.extraLoot`. Discovery-Quelle ist `m.id` (die Basis-Monster-Id): `onEliteKilled`
- * (engine/elites.ts) markiert beide Drop-Kategorien exakt darüber via `markDropSeen(state,
- * monster.id, …)`, wobei `monster` dort dieselbe formel-skalierte Instanz mit Basis-Id ist wie `m`
- * hier — ein gefundener Unique erscheint also sofort aufgedeckt.
+ * `state.eliteZones`). Beute (claude:2026-10-25T11:01:00+01:00, K5 1.4.1): derselbe „Beute x/y"-Knopf
+ * wie auf der normalen `MonsterCard` (MonsterLoot.tsx); das Fenster zeigt oben Unikat + `extraLoot`,
+ * darunter die Zonen-Tabelle des Grundmonsters, die beim Champion-Sieg ebenfalls fällt. Aufgedeckt
+ * wird nach der Bestiariums-Regel (`isItemDiscovered`). `id="elitecard-<zoneId>"` ist das Ziel des
+ * Champion-Sprungs (EliteMiniWindow → jumpToElite, B1).
  */
 function EliteMonsterCard({
   m,
   variant,
+  zoneId,
   cardBg,
   remainingMs,
   offenseLevel,
@@ -4727,6 +4631,8 @@ function EliteMonsterCard({
 }: {
   m: MonsterDef;
   variant: EliteVariantDef;
+  /** claude:2026-10-25T10:32:00+01:00 — B1: stabile Sprung-ID `elitecard-<zoneId>` (EliteMiniWindow → jumpToElite). */
+  zoneId: string;
   cardBg: string | null;
   remainingMs: number;
   offenseLevel: number;
@@ -4739,12 +4645,11 @@ function EliteMonsterCard({
   const xpIsZero = combatXpLevelMult(offenseLevel, m.level) === 0;
   const prognosis = combatPrognosis(stats, m);
   const diffTier = verdictFrameTier(prognosis.verdict);
-  const uniqueItem = content.items[variant.uniqueItemId];
   const countdownLabel = t("combat.elite.countdown").replace("{time}", formatEliteCountdown(remainingMs));
-  const extraLoot = variant.extraLoot ?? [];
 
   return (
     <div
+      id={`elitecard-${zoneId}`}
       className={`monster-card elite-monster-card diff-${diffTier}${cardBg ? " has-bg" : ""}`}
     >
       {/* Chef-Fix 25.07.: BG am Artwork-Fenster statt an der Karte — s. MonsterCard-Kommentar. */}
@@ -4787,33 +4692,22 @@ function EliteMonsterCard({
         />
 
         <div className="monster-card-prognosis">
+          {/* claude:2026-10-25T10:32:00+01:00 — K6 (1.4.1, Steam-Rezension „Es fehlt die Trefferchance"): beide Werte beschriftet
+              statt nur Symbol + Zahl. */}
           <span className="mc-prognosis-chance" title={t("combat.prognosis.hitYou")}>
-            {statIcon("atk")} {Math.round(prognosis.playerHit * 100)}%
+            <span className="mc-prognosis-label">{statIcon("atk")} {t("combat.prognosis.youHit")}</span>
+            <strong className="mc-prognosis-value">{Math.round(prognosis.playerHit * 100)}%</strong>
           </span>
           <span className="mc-prognosis-sep">·</span>
           <span className="mc-prognosis-chance" title={t("combat.prognosis.hitEnemy")}>
-            {statIcon("def")} {Math.round(prognosis.enemyHit * 100)}%
+            <span className="mc-prognosis-label">{statIcon("def")} {t("combat.prognosis.hitsYou")}</span>
+            <strong className="mc-prognosis-value">{Math.round(prognosis.enemyHit * 100)}%</strong>
           </span>
         </div>
 
-        {(uniqueItem || extraLoot.length > 0) && (
-          <div className="monster-card-drops">
-            {uniqueItem && (
-              <DropIcon
-                monsterId={m.id}
-                roll={{
-                  itemId: variant.uniqueItemId,
-                  chance: variant.uniqueDropChance ?? ELITE_UNIQUE_DROP_CHANCE_DEFAULT,
-                  min: 1,
-                  max: 1,
-                }}
-              />
-            )}
-            {extraLoot.map((roll) => (
-              <DropIcon key={roll.itemId} monsterId={m.id} roll={roll} />
-            ))}
-          </div>
-        )}
+        {/* claude:2026-10-25T10:32:00+01:00 — K5: Champion-Beute (Unikat + extraLoot) oben im Fenster, darunter die Zonen-Tabelle
+            des Grundmonsters, die beim Champion-Sieg ebenfalls fällt (combat.ts Kill-Pfad). */}
+        <MonsterLootButton monster={m} champion={variant} displayName={tr(variant.name)} look="card" />
 
         {/* 1.1.0 (Chef-Fund): Dieser Knopf hiess "mc-fight-btn" — eine Klasse, fuer die es
             NIRGENDS eine Regel gibt. Er fiel damit auf den nackten Grundknopf zurueck und sah
@@ -5359,8 +5253,27 @@ function MonsterSelectImpl(): JSX.Element {
   // auf der Kampf-Seite steht (setActivePageId in App.tsx wäre dann ein No-op, MonsterSelect würde
   // nicht neu mounten). Läuft immer VOR den frühen Returns unten (Hook-Reihenfolge).
   const monsterJumpNav = useSyncExternalStore(subscribeMonsterJump, getMonsterJumpNav);
-  const [jumpTargetMonsterId, setJumpTargetMonsterId] = useState<string | null>(null);
+  // claude:2026-10-25T10:32:00+01:00 — B1 (1.4.1): Sprungziel ist jetzt eine DOM-ID samt Rückfall, damit der Champion-Sprung
+  // (jumpToElite) die Champion-Karte trifft statt der normalen Karte des Grundmonsters.
+  const [jumpTarget, setJumpTarget] = useState<{ id: string; fallbackId: string | null } | null>(null);
   useEffect(() => {
+    // claude:2026-10-25T10:32:00+01:00 — Champion-Sprung aus dem Champion-Fenster: Zone öffnen, Ziel = `#elitecard-<zoneId>`.
+    // Rückfall auf die Karte des Grundmonsters, falls das Champion-Fenster inzwischen abgelaufen ist.
+    const eliteZoneId = consumeEliteJumpTarget();
+    if (eliteZoneId) {
+      const eliteGroup = byZone.find((g) => g.zone.id === eliteZoneId);
+      if (!eliteGroup || !isZoneUnlocked(state, content, eliteZoneId)) return;
+      const entry = state.eliteZones?.[eliteZoneId];
+      const activeVariant = entry && "variantId" in entry ? content.elites?.[entry.variantId] : undefined;
+      setTowerFloor(null);
+      lastZoneId = eliteZoneId;
+      setZoneId(eliteZoneId);
+      setJumpTarget({
+        id: `elitecard-${eliteZoneId}`,
+        fallbackId: activeVariant ? `monstercard-${activeVariant.baseMonsterId}` : null,
+      });
+      return;
+    }
     const targetId = consumeMonsterJumpTarget();
     if (!targetId) return;
     // Zone finden, in der das Ziel-Monster als Karte auftaucht (byZone schließt dg_-/dungeonOnly-
@@ -5380,7 +5293,7 @@ function MonsterSelectImpl(): JSX.Element {
     setTowerFloor(null); // ein evtl. offener Turm-Etagen-Drill-down würde sonst die Zonen-Ansicht verdecken
     lastZoneId = targetGroup.zone.id;
     setZoneId(targetGroup.zone.id);
-    setJumpTargetMonsterId(targetId);
+    setJumpTarget({ id: `monstercard-${targetId}`, fallbackId: null });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [monsterJumpNav?.nonce]);
 
@@ -5391,17 +5304,20 @@ function MonsterSelectImpl(): JSX.Element {
   // die Karte nicht im DOM (z.B. noch im Turm-Etagen-Drill-down, s. Effect oben), passiert nichts
   // weiter außer dem Reset — kein Absturz.
   useEffect(() => {
-    if (!jumpTargetMonsterId) return;
+    if (!jumpTarget) return;
     let raf2 = 0;
     const raf1 = requestAnimationFrame(() => {
       raf2 = requestAnimationFrame(() => {
-        const el = document.getElementById(`monstercard-${jumpTargetMonsterId}`);
+        // claude:2026-10-25T10:32:00+01:00 — B1: erst das eigentliche Ziel (Champion- oder Monsterkarte), sonst der Rückfall.
+        const el =
+          document.getElementById(jumpTarget.id) ??
+          (jumpTarget.fallbackId ? document.getElementById(jumpTarget.fallbackId) : null);
         if (el) {
           el.scrollIntoView({ behavior: "smooth", block: "center" });
           el.classList.add("monster-card-jump-highlight");
           setTimeout(() => el.classList.remove("monster-card-jump-highlight"), 1800);
         }
-        setJumpTargetMonsterId(null);
+        setJumpTarget(null);
       });
     });
     return () => {
@@ -5409,7 +5325,7 @@ function MonsterSelectImpl(): JSX.Element {
       cancelAnimationFrame(raf2);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jumpTargetMonsterId]);
+  }, [jumpTarget]);
 
   // Perf-Welle (2026-07-22): Kampf-Backdrop VORDEKODIEREN, sobald die Monster-Auswahl einer Zone
   // angezeigt wird — `Battle` (weiter unten) berechnet beim tatsächlichen Kampfstart denselben
@@ -5914,6 +5830,7 @@ function MonsterSelectImpl(): JSX.Element {
             <EliteMonsterCard
               m={eliteScaled}
               variant={eliteVariant2}
+              zoneId={zoneId}
               cardBg={getBattleScreenCard(zoneId) ?? getZoneBackgroundCard(zoneId)}
               remainingMs={zoneEliteActive2.remainingMs}
               offenseLevel={offenseLevel}
