@@ -2229,7 +2229,8 @@ function NewHavenListView({
   return (
     <section className="nh-list-shell">
       <div className="nh-list-main">
-        <aside className="nh-list-register">
+        {/* claude:2026-10-25T19:27:00+01:00 — Chef 25.10.: Gebäude-Karten im Basalt-Knopf-Stil (Profil „basalt“ aus styles/chrome.css), Holz weg. */}
+        <aside className="nh-list-register" data-nav-skin="basalt">
           <div className="nh-list-register-scroll" role="list">
             {BUILDINGS.map((def, index) => {
               const rowCore = campCardCore(state, def, job, debugFreeBuild);
