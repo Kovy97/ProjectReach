@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Grim Reach Store Panels 1.4.0</title>
+<!-- claude:2026-10-25T10:19:00+01:00 - erzeugt von build_panels.py, nicht von Hand bearbeiten -->
+<style>
+@font-face { font-family: "GR Num"; src: url("file:///G:/GameDev/apps/client/src/renderer/fonts/Cinzel-Regular.ttf") format("truetype"); unicode-range: U+0025, U+002B-003A, U+00D7, U+2013, U+2212, U+221E; }
+@font-face { font-family: "Cinzel"; src: url("file:///G:/GameDev/apps/client/src/renderer/fonts/Cinzel-Regular.ttf") format("truetype"); }
+@font-face { font-family: "IM Fell English SC"; src: url("file:///G:/GameDev/apps/client/src/renderer/fonts/IMFellEnglishSC-Regular.woff2") format("woff2"); }
+@font-face { font-family: "Alegreya"; src: url("file:///G:/GameDev/apps/client/src/renderer/fonts/Alegreya-Variable.woff2") format("woff2"); font-weight: 400 900; }
+:root { --ink: #eadcbc; --ink-dim: #c2ae88; --gold: #e2c47a; --gold-bright: #f3e2a8; --bronze: #d8904a; }
+html, body { margin: 0; background: transparent; }
+body { display: flex; flex-direction: column; gap: 24px; padding: 12px; }
+.panel { position: relative; width: 1170px; height: 570px; overflow: hidden; background: #120c08; color: var(--ink);
+  font-family: Alegreya, Georgia, serif; }
+.panel::before { content: ""; position: absolute; inset: 0; z-index: 18; pointer-events: none;
+  box-shadow: inset 0 0 0 15px rgba(0,0,0,.0), inset 0 0 46px 16px rgba(6,4,2,.62); }
+.panel::after { content: ""; position: absolute; inset: 0; z-index: 20; pointer-events: none; border: 28px solid transparent;
+  border-image: url("file:///G:/GameDev/apps/client/src/renderer/assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 round; }
+.bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.grade { position: absolute; inset: 0; z-index: 1; }
+.cut { position: absolute; filter: drop-shadow(0 10px 14px rgba(0,0,0,.70)); }
+.logo { position: absolute; z-index: 3; filter: drop-shadow(0 12px 26px rgba(0,0,0,.75)); }
+.plaque { position: absolute; z-index: 10; box-sizing: border-box; padding: 34px 38px 36px;
+  background: linear-gradient(rgba(26,16,9,.42), rgba(16,10,6,.62)), url("file:///G:/GameDev/apps/client/src/renderer/assets/ui/gravewood/textures/texture-leather.webp") center / 560px repeat;
+  box-shadow: 0 16px 36px rgba(0,0,0,.62), inset 0 0 30px rgba(0,0,0,.45); }
+.plaque::after { content: ""; position: absolute; inset: 0; pointer-events: none; border: 28px solid transparent;
+  border-image: url("file:///G:/GameDev/apps/client/src/renderer/assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 round; }
+.eyebrow { font-family: "GR Num", "IM Fell English SC", Georgia, serif; font-size: 25px; letter-spacing: .07em; color: var(--bronze);
+  text-transform: uppercase; margin: 0 0 6px; text-shadow: 0 1px 3px rgba(0,0,0,.9); }
+h2 { font-family: "GR Num", "IM Fell English SC", Georgia, serif; font-weight: 400; font-size: 50px; line-height: 1.04; margin: 0;
+  color: var(--gold-bright); text-shadow: 0 2px 8px rgba(0,0,0,.85); }
+h2.big { font-size: 62px; }
+.rule { height: 2px; width: 140px; margin: 16px 0 16px; background: linear-gradient(90deg, var(--bronze), rgba(216,144,74,0)); }
+p { font-size: 27px; line-height: 1.3; margin: 0; color: var(--ink); text-shadow: 0 1px 4px rgba(0,0,0,.9); font-weight: 500; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px 10px; margin-top: 4px; }
+p + .chips { margin-top: 18px; }
+.chip { display: inline-flex; align-items: baseline; gap: 9px; padding: 6px 14px 8px; white-space: nowrap;
+  font-family: "GR Num", Alegreya, Georgia, serif; font-size: 25px; font-weight: 600; color: var(--ink);
+  background: linear-gradient(rgba(12,8,5,.30), rgba(12,8,5,.50)), url("file:///G:/GameDev/apps/client/src/renderer/assets/ui/gravewood/textures/texture-nav-wood2.webp") 0 0 / 300px repeat;
+  border: 1px solid rgba(226,196,122,.40); box-shadow: inset 0 1px 0 rgba(255,232,180,.10), 0 3px 8px rgba(0,0,0,.55);
+  text-shadow: 0 1px 3px rgba(0,0,0,.9); }
+.chip b { font-family: "GR Num", Cinzel, serif; font-weight: 400; font-size: 27px; color: var(--gold-bright); }
+.chips.two { display: grid; grid-template-columns: 1fr 1fr; }
+.chip.diff { font-family: "IM Fell English SC", Georgia, serif; font-weight: 400; color: var(--c); border-color: var(--c); font-size: 27px; padding: 6px 18px 8px; }
+.tag { position: absolute; z-index: 9; bottom: 34px; transform: translateX(-50%); font-family: "IM Fell English SC", Georgia, serif;
+  font-size: 27px; letter-spacing: .06em; color: var(--gold-bright); padding: 5px 20px 7px; white-space: nowrap;
+  background: linear-gradient(rgba(12,8,5,.30), rgba(12,8,5,.55)), url("file:///G:/GameDev/apps/client/src/renderer/assets/ui/gravewood/textures/texture-nav-wood2.webp") 0 0 / 300px repeat;
+  border: 1px solid rgba(226,196,122,.45); box-shadow: 0 4px 10px rgba(0,0,0,.6); text-shadow: 0 1px 3px rgba(0,0,0,.9); }
+.head { position: absolute; z-index: 10; }
+.board { position: absolute; z-index: 2;
+  background: linear-gradient(rgba(22,14,8,.40), rgba(14,9,5,.58)), url("file:///G:/GameDev/apps/client/src/renderer/assets/ui/gravewood/textures/texture-leather.webp") center / 560px repeat;
+  box-shadow: 0 16px 36px rgba(0,0,0,.6), inset 0 0 30px rgba(0,0,0,.45); }
+.board::after { content: ""; position: absolute; inset: 0; pointer-events: none; border: 28px solid transparent;
+  border-image: url("file:///G:/GameDev/apps/client/src/renderer/assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 round; }
+.srow { position: absolute; z-index: 5; left: 88px; display: flex; align-items: center; gap: 14px; }
+.glabel { width: 182px; display: flex; align-items: baseline; gap: 12px; font-family: "IM Fell English SC", Georgia, serif;
+  font-size: 30px; color: var(--ink); text-shadow: 0 1px 4px rgba(0,0,0,.9); }
+.glabel b { font-family: Cinzel, serif; font-weight: 400; font-size: 40px; color: var(--gold-bright); min-width: 30px; }
+.slot { width: 88px; height: 88px; box-sizing: border-box; display: grid; place-items: center;
+  background: radial-gradient(ellipse at 50% 40%, rgba(70,48,28,.55), rgba(10,7,5,.85) 80%);
+  border: 8px solid transparent; border-image: url("file:///G:/GameDev/apps/client/src/renderer/assets/ui/gravewood/v3/frames/slot-frame.webp") 48 / 8px; }
+.slot img { width: 70px; height: 70px; object-fit: contain; filter: drop-shadow(0 3px 4px rgba(0,0,0,.8)); }
+</style>
+</head>
+<body>
+
+<section class="panel" id="p1">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/skill-backgrounds/bowcraft.webp" style="object-position:50% 50%;">
+  <div class="grade" style="background:radial-gradient(ellipse 620px 170px at 330px 100px,rgba(10,6,3,.55),rgba(10,6,3,0) 100%),linear-gradient(rgba(16,10,6,.30) 0%,rgba(14,9,5,.50) 30%,rgba(12,8,5,.70) 100%)"></div>
+  <div class="head" style="left:84px;top:50px">
+    <div class="eyebrow">750+ recipes · every skill to 99</div>
+    <h2 class="big">23 skills, one queue.</h2>
+  </div>
+  <div class="board" style="left:60px;top:176px;width:1050px;height:340px"></div>
+  <div class="srow" style="top:202px"><div class="glabel"><b>7</b><span>Gathering</span></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_woodcutting.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_mining.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_fishing.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_farming.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_foraging.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_thieving.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_hunting.webp"></div></div>
+  <div class="srow" style="top:304px"><div class="glabel"><b>8</b><span>Crafting</span></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_smithing.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_cooking.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_leatherworking.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_tailoring.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_bowcraft.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_jewelcrafting.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_runecrafting.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_herblore.webp"></div></div>
+  <div class="srow" style="top:406px"><div class="glabel"><b>8</b><span>Combat</span></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/skills/attack.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/skills/power.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/skills/defence.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/skills/ranged.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/skills/magic.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/skills/warding.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/skills/vitality.webp"></div><div class="slot"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/skills/slayer.webp"></div></div>
+</section>
+
+<section class="panel" id="p2">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/battlescreens/borderlands.webp" style="object-position:50% 62%;">
+  <div class="grade" style="background:linear-gradient(90deg,rgba(14,9,5,.10) 0%,rgba(14,9,5,.18) 46%,rgba(12,8,5,.62) 66%,rgba(12,8,5,.74) 100%),linear-gradient(rgba(0,0,0,0) 60%,rgba(10,7,4,.55) 100%)"></div>
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/portraits/human_warrior_m.webp" style="left:-4.3px;top:64.7px;width:341.0px;height:454.6px;z-index:3;">
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/portraits/goblin_ranger_f.webp" style="left:208.7px;top:151.4px;width:272.4px;height:363.1px;z-index:3;">
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/portraits/elf_frost_mage_f.webp" style="left:346.4px;top:51.9px;width:351.2px;height:468.3px;z-index:3;">
+  <div class="tag" style="left:150px">Melee</div>
+  <div class="tag" style="left:345px">Ranged</div>
+  <div class="tag" style="left:522px">Magic</div>
+  <div class="plaque" style="right:46px;width:470px;top:50%;transform:translateY(-50%);"><div class="eyebrow">3 styles · auto-battle</div><h2>Your weapon picks the fight.</h2><div class="rule"></div><div class="chips "><span class="chip"><b>850+</b>gear pieces</span><span class="chip"><b>42</b>gear sets</span><span class="chip"><b>26</b>enchantments</span><span class="chip"><b>29</b>random suffixes</span></div></div>
+</section>
+
+<section class="panel" id="p3">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/battlescreens/highlands.webp" style="object-position:50% 55%;">
+  <div class="grade" style="background:linear-gradient(270deg,rgba(14,9,5,.05) 0%,rgba(14,9,5,.15) 45%,rgba(12,8,5,.62) 64%,rgba(12,8,5,.74) 100%),linear-gradient(rgba(0,0,0,0) 62%,rgba(10,7,4,.45) 100%)"></div>
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/monsters/elite_slag_ember.webp" style="left:453.2px;top:215.6px;width:299.8px;height:299.8px;z-index:3;">
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/monsters/elite_high_wyvern.webp" style="left:606.2px;top:145.5px;width:385.7px;height:385.7px;z-index:4;">
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/monsters/elite_crypt_icemage.webp" style="left:859.6px;top:233.8px;width:276.6px;height:276.6px;z-index:3;">
+  <div class="plaque" style="left:46px;width:460px;top:50%;transform:translateY(-50%);"><div class="eyebrow">11 zones · 9 dungeons</div><h2>120 monsters, 29&nbsp;Champions.</h2><div class="rule"></div><div class="chips "><span class="chip"><b>125</b>quests</span><span class="chip"><b>8</b>Slayer floors</span><span class="chip"><b>5,000</b>Paragon floors</span></div></div>
+</section>
+
+<section class="panel" id="p4">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/battlescreens/wildwood.webp" style="object-position:50% 60%;">
+  <div class="grade" style="background:linear-gradient(90deg,rgba(14,9,5,.10) 0%,rgba(14,9,5,.18) 48%,rgba(12,8,5,.62) 66%,rgba(12,8,5,.74) 100%),linear-gradient(rgba(0,0,0,0) 62%,rgba(10,7,4,.5) 100%)"></div>
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/pets/hoarspite.webp" style="left:18.4px;top:253.4px;width:252.7px;height:252.7px;z-index:3;">
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/pets/pyreling.webp" style="left:177.5px;top:220.9px;width:295.4px;height:295.4px;z-index:4;">
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/pets/glyphmaw.webp" style="left:381.9px;top:243.2px;width:277.3px;height:277.3px;z-index:3;">
+  <div class="plaque" style="right:46px;width:470px;top:50%;transform:translateY(-50%);"><div class="eyebrow">23 companions</div><h2>Every companion has two jobs.</h2><div class="rule"></div><p>A bonus for its own skill and a real move in combat.</p><div class="chips "><span class="chip">Control</span><span class="chip">Protection</span><span class="chip">Damage</span><span class="chip">Loot</span><span class="chip">Support</span></div></div>
+</section>
+
+<section class="panel" id="p5">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/battlescreens/gk_room_5.webp" style="object-position:50% 55%;">
+  <div class="grade" style="background:linear-gradient(270deg,rgba(14,9,5,.05) 0%,rgba(14,9,5,.15) 45%,rgba(12,8,5,.62) 64%,rgba(12,8,5,.76) 100%),linear-gradient(rgba(0,0,0,0) 62%,rgba(10,7,4,.5) 100%)"></div>
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/monsters/gk_felmagus.webp" style="left:480.1px;top:168.6px;width:353.2px;height:353.2px;z-index:3;">
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/monsters/gk_warking.webp" style="left:599.4px;top:94.1px;width:440.5px;height:440.5px;z-index:4;">
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/monsters/gk_crownguard.webp" style="left:848.0px;top:208.5px;width:313.5px;height:313.5px;z-index:3;">
+  <div class="plaque" style="left:46px;width:480px;top:50%;transform:translateY(-50%);"><div class="eyebrow">Raid · 5 halls · 31 pieces</div><h2>Halls of Gobkha&#8217;raz</h2><div class="rule"></div><p>Four waves and a boss in every hall. Runs in the queue and offline.</p><div class="chips"><span class="chip diff" style="--c:#ffd700">Normal</span><span class="chip diff" style="--c:#3fd6c8">Heroic</span><span class="chip diff" style="--c:#ff5fb4">Mythic</span></div></div>
+</section>
+
+<section class="panel" id="p6">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/battlescreens/pastures.webp" style="object-position:50% 60%;">
+  <div class="grade" style="background:linear-gradient(90deg,rgba(14,9,5,.12) 0%,rgba(14,9,5,.22) 50%,rgba(12,8,5,.62) 66%,rgba(12,8,5,.74) 100%),linear-gradient(rgba(0,0,0,0) 60%,rgba(10,7,4,.5) 100%)"></div>
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/portraits/human_paladin_m.webp" style="left:-31.7px;top:60.1px;width:353.4px;height:471.2px;z-index:3;">
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/portraits/elf_shadow_mage_f.webp" style="left:108.9px;top:55.6px;width:354.6px;height:472.8px;z-index:4;">
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/portraits/orc_berserker_m.webp" style="left:265.5px;top:50.2px;width:360.0px;height:480.0px;z-index:5;">
+  <img class="cut" src="file:///G:/GameDev/apps/client/src/renderer/assets/portraits/goblin_rogue_m.webp" style="left:451.3px;top:148.4px;width:281.4px;height:375.2px;z-index:6;">
+  <div class="plaque" style="right:46px;width:450px;top:50%;transform:translateY(-50%);"><div class="eyebrow">4 races · 240 portraits</div><h2>Human, Elf, Orc, Goblin.</h2><div class="rule"></div><p>Every race can learn every skill and every style.</p><div class="chips "><span class="chip"><b>2</b>talent trees</span><span class="chip">Prestige reset</span><span class="chip"><b>350+</b>achievements</span></div></div>
+</section>
+
+<section class="panel" id="p7">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_highlands_1920.webp" style="object-position:50% 40%;">
+  <div class="grade" style="background:linear-gradient(270deg,rgba(14,9,5,0) 0%,rgba(14,9,5,.10) 38%,rgba(12,8,5,.60) 56%,rgba(12,8,5,.72) 100%)"></div>
+  <img class="logo" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_logo_painterly.webp" style="left:646px;top:122px;width:470px">
+  <div class="plaque" style="left:46px;width:548px;top:50%;transform:translateY(-50%);"><div class="eyebrow">Made for idle time</div><h2>It keeps working while you&#8217;re away.</h2><div class="rule"></div><div class="chips "><span class="chip">Up to 8 hours offline</span><span class="chip"><b>15</b>town buildings</span><span class="chip">One queue for everything</span><span class="chip"><b>7</b>languages</span><span class="chip">No microtransactions</span></div></div>
+</section>
+</body>
+</html>
