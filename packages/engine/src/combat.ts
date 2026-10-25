@@ -150,7 +150,7 @@ import {
 // Etagen-Abschluss in onEnemyDefeated, Tod-Reset in onPlayerDefeated + Aufräum-Zeilen in
 // stopCombat/trackStalemate). Die gesamte Turm-Logik lebt in paragon.ts.
 import { onParagonFloorCleared, paragonCombatMonster, resetParagonOnDeath } from "./paragon";
-import { canFightMonster, recordKillForSlayer } from "./slayer";
+import { applySlayerAutoSwitch, canFightMonster, recordKillForSlayer } from "./slayer"; // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S1 Auto-Auftrag
 import { tryCraftSuffix } from "./suffix";
 // Elite-/World-Spawns-Andockstellen (design/elite-spawns-concept.md, Phase 1 — logic-dev-Modul mit
 // EXPLIZITEM GRANT für die vier minimalen Aufrufstellen hier: Monster-Auflösung in combatStep,
@@ -1672,7 +1672,9 @@ function onEnemyDefeated(
   // Slayer-XP läuft über einen EIGENEN Vergabe-Pfad (grantSlayerXp, nicht unser addXp) → für die
   // Kill-Summary per Vorher/Nachher-Differenz erfassen (robust inkl. Task-Abschluss-Bonus).
   const slayerXpBefore = state.skills.slayer?.xp ?? 0;
-  recordKillForSlayer(state, content, creditId);
+  // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S1: Abschluss merken (mit `slayerAutoTask` ist der nächste Auftrag dann
+  // schon vergeben); der Kampfwechsel passiert unten NUR im Respawn-Zweig normaler Kämpfe.
+  const slayerTaskDone = recordKillForSlayer(state, content, creditId);
   const slayerXpGained = (state.skills.slayer?.xp ?? 0) - slayerXpBefore;
   if (slayerXpGained > 0) {
     const acc = (cs.encounterXp ??= {});
@@ -1993,11 +1995,16 @@ function onEnemyDefeated(
   // Normaler Kampf: gleicher Gegner respawnt → durchgehendes Farmen, bis der Spieler stoppt.
   // Der Respawn steht sofort im State (UI zeigt ihn samt Countdown), der Kampf ruht aber für
   // KILL_COOLDOWN_MS (beginKillCooldown) — erst danach laufen Angriffe/Timer/Effekte weiter.
-  cs.enemyHp = monster.maxHp;
+  // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S1: hat dieser Kill den Auftrag abgeschlossen und „Aufträge automatisch fortsetzen“
+  // den nächsten vergeben, steht statt des Respawns das NEUE Auftragsmonster da (slayer.ts applySlayerAutoSwitch: Gate,
+  // Queue-Laufzeit, nicht bekämpfbar ⇒ kein Wechsel). Sonst exakt der alte Respawn. `lastKill` meldet weiter den Getöteten.
+  const respawn = (slayerTaskDone ? applySlayerAutoSwitch(state, content, creditId) : null) ?? monster;
+  if (respawn !== monster) cs.monsterId = respawn.id;
+  cs.enemyHp = respawn.maxHp;
   // Gegner-Ward (Combat-Depth §3.2): frischer Voll-Pool je Respawn (KEIN Regen, kein Teil-Refill wie
   // beim Spieler-Ward unten) — anders als der farm-erodierende Spieler-Ward startet der Gegner-Schild
   // jede Begegnung voll. wardCapacity 0/undefined (Melee/Range) ⇒ 0 ⇒ Ward-Schritt bleibt No-op.
-  cs.enemyWard = monster.wardCapacity ?? 0;
+  cs.enemyWard = respawn.wardCapacity ?? 0;
   cs.enemyTimerMs = 0;
   cs.enemyEffects = [];
   resetEnemyElemental(cs); // Respawn = frische Frost-/Schock-/Gift-Zähler (vor applyCarryToNewEnemy)
@@ -2012,8 +2019,8 @@ function onEnemyDefeated(
   );
   resetEnemyPetDebuffs(cs);
   resetStalemate(cs); // Respawn = neue Begegnung
-  resetBossPhase(cs, monster); // claude:2026-10-25T05:50:00+02:00 — Respawn startet in der Basis
-  applyCarryToNewEnemy(state, monster, combatMods(state, content)); // overkillCarry/plaguebearer treffen den Respawn
+  resetBossPhase(cs, respawn); // claude:2026-10-25T05:50:00+01:00 — Respawn startet in der Basis (claude:2026-10-25T10:32:00+01:00 — ggf. neues Auftragsmonster)
+  applyCarryToNewEnemy(state, respawn, combatMods(state, content)); // overkillCarry/plaguebearer treffen den Respawn
   beginKillCooldown(cs, monster.id, gold, lootSummary, cooldownMs, bloodMoonProc);
 }
 

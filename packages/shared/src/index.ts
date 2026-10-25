@@ -750,7 +750,12 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 // 95: QA-Runde 2, Chef-Entscheid Werkstatt B2 (claude:2026-10-24T16:03:31+02:00): `stats.producedBySkill` (erzeugte Stücke je Skill und Item); Arbeits-
 //     aufträge zählen nur Ware aus Aktionen ihres Skills. Migration < 95: {} und je offenem Auftrag mit `producedById[item]` vorbelegt
 //     (Fortschritt bleibt). 1.4.0-Zwischenversionen 89–95 sind nie live.
-export const SAVE_VERSION = 95;
+// 96: Slayer-Punkte (1.4.1, Chef-Freigabe 25.10.2026; claude:2026-10-25T10:32:00+01:00): neues Feld `slayerAutoTask` (Aufträge
+//     automatisch fortsetzen, Standard aus) und optional `EliteKillSummary.slayerPoints` (Champion-Kill +20, Breadcrumb).
+//     Einmalige Gutschrift der Migration < 96: Jägerkodex-Kosten und die drei Punkte-Unikate wurden halbiert; je gekauftem
+//     Rang die Differenz alter minus neuer Preis und je besessenem Exemplar von Schließerring/Vorgänger-Mantel/Gastrecht
+//     (Inventar, Instanzen, Bank, Gear-Vault, Ausrüstung, inaktive Kits, Postfach) 750/1.250/2.000 Punkte. Keine ID-Änderung.
+export const SAVE_VERSION = 96;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -4786,6 +4791,12 @@ export interface EliteKillSummary {
   suffixRolled: boolean;
   /** Gezahltes Kopfgeld dieses Kills (`ELITE_BOUNTY_TOKENS` zum Kill-Zeitpunkt). */
   bountyTokens: number;
+  /**
+   * claude:2026-10-25T10:32:00+01:00 — 1.4.1 S4: gutgeschriebene Slayer-Punkte dieses Kills
+   * (`SLAYER_POINTS_PER_CHAMPION_KILL` zum Kill-Zeitpunkt). Optional: Breadcrumbs aus Saves vor v96 tragen es
+   * nicht (die UI zeigt dann nichts). sanitizeState übernimmt nur eine endliche ganze Zahl ≥ 0.
+   */
+  slayerPoints?: number;
   /** = `eliteKillSeq` zum Kill-Zeitpunkt (Muster `lastEliteSpawn.seq`). */
   seq: number;
 }
@@ -4840,6 +4851,22 @@ export const SLAYER_STREAK_POINT_INTERVAL = 10;
  * immer derselben 1–3 Monster. Implementierung: `stretchLevelWindow` (engine/slayer.ts).
  */
 export const SLAYER_MIN_TASK_POOL = 4;
+
+/**
+ * claude:2026-10-25T10:32:00+01:00 — 1.4.1 S4 (Chef-Freigabe „Slayer-Punkte“): weitere Punktequellen neben den Aufträgen.
+ * Spieler-Feedback (322 h, Slayer 99): Punkte kamen nur aus Aufträgen, im Endgame 43–72 Pkt/h. Champion- und
+ * Raid-Boss-Kills sind Jagd im Sinne Brennas und zahlen deshalb FLACH (ohne Meisterring, Trophäenwand, Jagdtempo,
+ * Streak, ohne Slayer-Level-Gate) auf `GameState.slayerPoints`. Vergabe-Stellen: engine/elites.ts `onEliteKilled`
+ * (je Champion-Kill, Breadcrumb `EliteKillSummary.slayerPoints`) und engine/raid.ts `onRaidRoomCleared` (je
+ * Hallen-Boss, Höhe nach Stufe; die UI kann den Betrag aus Stufe × Konstante ableiten).
+ */
+export const SLAYER_POINTS_PER_CHAMPION_KILL = 20;
+/** claude:2026-10-25T10:32:00+01:00 — 1.4.1 S4: Slayer-Punkte je Hallen-Boss-Kill im Raid, nach Stufe (flach, s. oben). */
+export const SLAYER_POINTS_PER_RAID_BOSS: Readonly<Record<RaidDifficulty, number>> = {
+  normal: 10,
+  heroic: 25,
+  mythic: 50,
+};
 
 // ───────────────────────────────────────────────────────────────────────────
 // Talentbäume (1.3.0 Säule 0 „Das Jagdbuch“, Chef 17.10.2026: „Slayer-Buch als richtiges
@@ -7678,6 +7705,14 @@ export interface GameState {
    * (kostet 0 Punkte, erhält die Streak — Präzedenz SLAYER_SKIP_FREE_BELOW_LEVEL). Alt-Saves: 0.
    */
   slayerFreeSkipDay: number;
+  /**
+   * claude:2026-10-25T10:32:00+01:00 — Slayer-Aufträge automatisch fortsetzen (1.4.1 S1, SAVE_VERSION 96). true ⇒ schließt ein Kill
+   * den laufenden Auftrag ab, vergibt die Engine sofort den nächsten beim selben Meister (engine/slayer.ts `recordKillForSlayer`
+   * → `assignTask`, deterministisch über `state.rng`) und wechselt einen normalen Zonen-/Turmkampf gegen das alte
+   * Auftragsmonster auf das neue (combat.ts Respawn-Zweig, slayer.ts `applySlayerAutoSwitch`). Dungeon-, Raid-, Champion- und
+   * Paragon-Kämpfe wechseln nie. Setter: `setSlayerAutoTask`. Spieler-Vorliebe ⇒ bleibt beim Aufstieg. Alt-Saves: false.
+   */
+  slayerAutoTask: boolean;
   /**
    * claude:2026-10-18T00:30:00+02:00 — Gekaufte Talentränge: Baum-Id → Knoten-Id → Rang (≥ 1; Rang 0
    * steht nicht drin). Sanitize verwirft unbekannte Bäume/Knoten und kappt auf `maxRank`;

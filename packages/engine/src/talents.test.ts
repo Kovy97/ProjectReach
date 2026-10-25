@@ -65,16 +65,17 @@ describe("Talentbaum generisch: Kauf, Voraussetzungen, Max-Rang", () => {
     slayerLevel(s, 84);
     expect(canBuyTalent(s, content, TREE, "tracking")).toEqual({ ok: false, reason: "locked" });
     slayerLevel(s, 85);
-    expect(buyTalent(s, content, TREE, "tracking")).toEqual({ ok: true, cost: 250 });
-    expect(buyTalent(s, content, TREE, "tracking").cost).toBe(500);
+    // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S2: Preise halbiert (war 250/500, Summe 750).
+    expect(buyTalent(s, content, TREE, "tracking")).toEqual({ ok: true, cost: 125 });
+    expect(buyTalent(s, content, TREE, "tracking").cost).toBe(250);
     expect(talentRank(s, TREE, "tracking")).toBe(2);
-    expect(s.slayerPoints).toBe(100_000 - 750);
+    expect(s.slayerPoints).toBe(100_000 - 375);
   });
 
-  it("J1 kostet zusammen 5.050; danach maxed", () => {
+  it("J1 kostet zusammen 2.525 (1.4.1 S2, war 5.050); danach maxed", () => { // claude:2026-10-25T10:32:00+01:00
     const s = game();
     slayerLevel(s, 99);
-    s.slayerPoints = 5_050;
+    s.slayerPoints = 2_525;
     for (let i = 0; i < 5; i++) expect(buyTalent(s, content, TREE, "tracking").ok).toBe(true);
     expect(s.slayerPoints).toBe(0);
     s.slayerPoints = 99_999;
@@ -88,13 +89,14 @@ describe("Talentbaum generisch: Kauf, Voraussetzungen, Max-Rang", () => {
     s.slayerPoints = 1_000_000;
     expect(canBuyTalent(s, content, TREE, "trail").reason).toBe("requires");
     ranks(s, { tracking: 1 });
-    expect(canBuyTalent(s, content, TREE, "trail")).toEqual({ ok: true, cost: 650 });
+    expect(canBuyTalent(s, content, TREE, "trail")).toEqual({ ok: true, cost: 325 }); // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S2 (war 650)
     expect(canBuyTalent(s, content, TREE, "collar").reason).toBe("requires");
     ranks(s, { tracking: 5 });
-    expect(canBuyTalent(s, content, TREE, "collar")).toEqual({ ok: true, cost: 3_000 });
-    s.slayerPoints = 2_999;
-    expect(buyTalent(s, content, TREE, "collar")).toEqual({ ok: false, reason: "not_enough_currency", cost: 3_000 });
-    expect(s.slayerPoints).toBe(2_999);
+    // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S2: Halsband 1.500 (war 3.000).
+    expect(canBuyTalent(s, content, TREE, "collar")).toEqual({ ok: true, cost: 1_500 });
+    s.slayerPoints = 1_499;
+    expect(buyTalent(s, content, TREE, "collar")).toEqual({ ok: false, reason: "not_enough_currency", cost: 1_500 });
+    expect(s.slayerPoints).toBe(1_499);
     expect(canBuyTalent(s, content, "nope", "tracking").reason).toBe("not_found");
     expect(canBuyTalent(s, content, TREE, "nope").reason).toBe("not_found");
   });

@@ -42,7 +42,9 @@ describe("qa2 ui images: Raid-Beute (Welle 4) und Teil-1-Bilder", () => {
   // Offen (keine Fehler der Welle, Restlieferung liegt laut design/1.4.0-assets-final.md im Staging, Einbau steht aus):
   // Gruppe F (3 Grundpfeile Titan–Götteisen, 12 Effektpfeile, 12 Pfeilspitzen), Gruppe K (5 Werkstattkisten),
   // Gruppe B (15 Raid-Gegner), Gruppe A (gk_room_5, Raid-Karte), Gruppe H (inspiration). Bis dahin Emoji-/Rückfall-Anzeige.
-  it.fails("OFFEN: Restlieferung 1.4.0 (Pfeile/Spitzen, Werkstattkisten, Raid-Gegner, Raum 5, Ereigniskarte „Eingebung“) noch nicht eingebaut", () => {
+  // claude:2026-10-25T10:32:00+01:00 — Restlieferung ist seit dem 1.4.0-Release eingebaut (it.fails lief deshalb rot: „Expect test to fail“).
+  // Aus der Offen-Markierung wird ein normaler Guard; Inhalt der Prüfung unverändert.
+  it("ERLEDIGT: Restlieferung 1.4.0 (Pfeile/Spitzen, Werkstattkisten, Raid-Gegner, Raum 5, Ereigniskarte „Eingebung“) eingebaut", () => {
     const openItems = Object.keys(content.items).filter((id) => !hasItemImage(id));
     const openRaidMonsters = Object.keys(content.monsters).filter((id) => id.startsWith("gk_") && !monsterImgs.has(id));
     expect(openItems.filter((id) => /arrow|work_crate/.test(id))).toEqual([]);

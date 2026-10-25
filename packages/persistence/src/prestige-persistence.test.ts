@@ -193,6 +193,9 @@ describe("v88-Vault-Fixture (nach einem echten Aufstieg gepinnt)", () => {
     Object.assign(erwartet.state.settings, { raidAutoContinue: false, raidAutoBuyRestart: false });
     erwartet.state.stats.harvestedById = {}; // claude:2026-10-24T15:21:04+02:00 — SAVE 94 (Beet-Ernte-Zähler, alte Saves starten bei 0)
     erwartet.state.stats.producedBySkill = {}; // claude:2026-10-24T16:03:31+02:00 — SAVE 95 (Erzeugt je Skill, ohne offene Aufträge leer)
+    erwartet.state.slayerAutoTask = false; // claude:2026-10-25T10:32:00+01:00 — SAVE 96 (1.4.1): Auto-Auftrag aus
+    // claude:2026-10-25T10:32:00+01:00 — SAVE 96 Gutschrift der halbierten Kodex-Ränge (tracking 5 = 2.525, collar 1 = 1.500, lore 2 = 575).
+    erwartet.state.slayerPoints += 2525 + 1500 + 575;
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
@@ -201,7 +204,7 @@ describe("v88-Vault-Fixture (nach einem echten Aufstieg gepinnt)", () => {
     const stateKeys = Object.keys(raw.state);
     expect(stateKeys.filter((k) => !(k in PRESTIGE_STATE_FIELDS))).toEqual([]);
     // claude:2026-10-24T17:05:00+02:00 — Felder späterer Versionen fehlen im v88-Pin naturgemäß (SAVE 90: lockedItems).
-    const SPAETER = ["lockedItems", "eventRng", "skillEvents", "workOrders", "raid"]; // SAVE 90/92/93
+    const SPAETER = ["lockedItems", "eventRng", "skillEvents", "workOrders", "raid", "slayerAutoTask"]; // SAVE 90/92/93/96 (claude:2026-10-25T10:32:00+01:00)
     expect(Object.keys(PRESTIGE_STATE_FIELDS).filter((k) => !stateKeys.includes(k) && !SPAETER.includes(k))).toEqual([]);
     const charKeys = Object.keys(raw.state.character);
     expect(charKeys.filter((k) => !(k in PRESTIGE_CHARACTER_FIELDS))).toEqual([]);

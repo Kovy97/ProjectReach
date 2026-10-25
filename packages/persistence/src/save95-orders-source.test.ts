@@ -37,7 +37,7 @@ describe("SAVE 95: stats.producedBySkill", () => {
     const savedAt = (JSON.parse(raw) as SaveShape).savedAt;
     const s = deserialize(raw, content, savedAt)!.state;
     expect(s.version).toBe(SAVE_VERSION);
-    expect(SAVE_VERSION).toBe(95);
+    expect(SAVE_VERSION).toBeGreaterThanOrEqual(95); // claude:2026-10-25T10:32:00+01:00 — seit 1.4.1 v96 (Slayer-Punkte), der v95-Vertrag gilt weiter
     expect(s.workOrders?.open).toHaveLength(1);
     expect(workOrderProgress(s, s.workOrders!.open[0]!).done).toBe(0);
     expect(s.stats.producedBySkill).toEqual({});

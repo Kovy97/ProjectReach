@@ -21588,9 +21588,11 @@ export const content: ContentDB = {
     // (design/slayer-tower-rework-balance.md §4.4, kalkuliert mit 35–40 Pkt/h ≈ 40/67/110 h): seit
     // dem Endgame-Zuschlag (engine/slayer.ts TOWER_FLOOR_POINTS_MULT) zahlt ein Etage-6–8-Auftrag
     // pro Stunde etwa so viel wie einer auf Etage 5, der Rabatt aus der ersten E3-Fassung entfällt.
-    { itemId: "slayer_turnkey_ring",       cost: 1500, slayerLevelRequired: 85 },
-    { itemId: "slayer_predecessor_mantle", cost: 2500, slayerLevelRequired: 90 },
-    { itemId: "slayer_guest_right",        cost: 4000, slayerLevelRequired: 95 },
+    // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S2 (Chef-Freigabe 25.10.): halbiert auf 750/1.250/2.000 (Spieler-Feedback: gemessen
+    // 43–72 Pkt/h im Endgame, also 20–90 h je Stück). Besitzer bekommen die Differenz je Exemplar einmalig in der Migration 95→96.
+    { itemId: "slayer_turnkey_ring",       cost: 750,  slayerLevelRequired: 85 },
+    { itemId: "slayer_predecessor_mantle", cost: 1250, slayerLevelRequired: 90 },
+    { itemId: "slayer_guest_right",        cost: 2000, slayerLevelRequired: 95 },
     // ── Tränke (wiederkehrende Senke) ────────────────────────────────────────
     // Keine maxPurchases → unbegrenzt kaufbar. Stufenleiter 12→28→110 Pkt (war 50→120→500, ÷~4,3),
     // klar differenziert (echte Buff-Werte, s. Item-Defs — P3-3 Text-Fix):

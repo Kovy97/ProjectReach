@@ -35,6 +35,8 @@ import { prestigeSkillXpMult } from "./prestige-effects"; // claude:2026-10-18T1
 // ───────────────────────────────────────────────────────────────────────────
 // Slayer (Monsterjäger) — reine, deterministische Engine-Logik.
 // RNG ausschließlich über state.rng und nur in assignTask (spieler-getriggert, wie Thieving/Loot).
+// claude:2026-10-25T10:32:00+01:00 — seit 1.4.1 S1 auch kill-getriggert: mit `slayerAutoTask` vergibt recordKillForSlayer den
+// nächsten Auftrag selbst (derselbe assignTask-Pfad, online wie offline im Tick).
 // computeStats/Combat bleiben unberührt; Slayer ist additiv.
 // ───────────────────────────────────────────────────────────────────────────
 
@@ -320,6 +322,53 @@ export function towerTaskPointsMult(content: ContentDB, monsterId: MonsterId, is
 }
 
 /**
+ * claude:2026-10-25T10:32:00+01:00 — 1.4.1 S3 „Welt-Aufträge nach Aufwand bezahlen“ (Chef-Freigabe 25.10.2026).
+ *
+ * Befund: Welt-Aufträge zahlten flach 4–6 Punkte (scaledTaskPoints), egal ob 40 Hasen in 3 Minuten oder 40
+ * Schreckenswölfe in 27 Minuten. Grundlage jetzt der AUFWAND über die Monsterwerte: effektive Lebenspunkte
+ * je Kill = `maxHp + wardCapacity` (der Ward liegt vor den HP und muss genauso abgetragen werden), mal Auftragsgröße,
+ * geteilt durch diese Referenz. Warum HP+Ward und nicht Level oder XP: gemessen mit dem Kapitel-20-Craft-Loadout
+ * (Nahkampf/Magie, je 12 Kills) liegt der Schadensdurchsatz gegen ALLE Welt-Monster des Endgame-Pools in einem engen
+ * Band (≈ 13–26 HP/s Nahkampf, ≈ 8–18 HP/s Magie, Ausweichen 3–27 macht dort kaum Unterschied), die Zeit je Kill folgt
+ * also den effektiven HP. Eine Level-Staffel überbezahlte dagegen Schnell-Monster gleichen Levels (L90: Waldhase
+ * 36 HP ≈ 4 s/Kill neben Eisenwächter 130 HP und Nekromant 281+84 Ward), Monster-XP ebenso (Eisenwächter und
+ * Schreckenswolf tragen beide 700 XP, brauchen aber 9 s bzw. 28 s je Kill). Bewusst OHNE Anteil je Kill: die feste
+ * Kill-Pause (KILL_COOLDOWN_MS) macht Schnell-Monster pro Minute ohnehin schon ertragreich, sie bekommen nur den Boden.
+ *
+ * Referenz 1.000 effektive HP je Punkt: im Endgame-Pool (Kampflevel 99) ≈ 1,2 Pkt/Kampfminute Nahkampf und ≈ 0,9 Magie,
+ * also etwa 1 Punkt pro Minute wie verlangt (Turm Etage 6–8: ≈ 0,9–1,5). Früh- und Midgame bleiben am Boden: dort
+ * haben die Fenster-Monster selten über 150 effektive HP (32 × 150 / 1.000 ≈ 5), es greift `scaledTaskPoints` wie
+ * bisher. Nie weniger als heute (Maximum mit dem Boden). Turm-Aufträge sind nicht betroffen.
+ */
+export const WORLD_TASK_EHP_PER_POINT = 1000;
+
+/** Aufwands-Punkte eines Welt-Auftrags: round(required × (maxHp + wardCapacity) / WORLD_TASK_EHP_PER_POINT). Rein, kein RNG. */
+export function worldTaskEffortPoints(content: ContentDB, monsterId: MonsterId, required: number): number {
+  const m = content.monsters[monsterId];
+  if (!m || !(required > 0)) return 0;
+  const hp = Number.isFinite(m.maxHp) ? Math.max(0, m.maxHp) : 0;
+  const ward = Number.isFinite(m.wardCapacity ?? 0) ? Math.max(0, m.wardCapacity ?? 0) : 0;
+  return Math.round((required * (hp + ward)) / WORLD_TASK_EHP_PER_POINT);
+}
+
+/**
+ * claude:2026-10-25T10:32:00+01:00 — Punkte-Belohnung eines Auftrags beim Assign (EINE Formel für assignTask und Tests).
+ * Turm: wie bisher `scaledTaskPoints × towerTaskPointsMult` (bit-identisch). Welt (1.4.1 S3): das Maximum aus dem Boden
+ * `scaledTaskPoints` und den Aufwands-Punkten `worldTaskEffortPoints`. Fixiert im Auftrag, laufende Aufträge behalten ihren Wert.
+ */
+export function taskPointReward(
+  content: ContentDB,
+  master: SlayerMasterDef,
+  monsterId: MonsterId,
+  isTower: boolean,
+  required: number,
+): number {
+  const base = scaledTaskPoints(master, required);
+  if (isTower) return Math.max(1, Math.round(base * towerTaskPointsMult(content, monsterId, true)));
+  return Math.max(base, worldTaskEffortPoints(content, monsterId, required));
+}
+
+/**
  * Vergibt einen neuen Slayer-Task beim gegebenen Master. Nur wenn aktuell KEIN Task aktiv ist und
  * der Master freigeschaltet ist; sonst null. Deterministisch über state.rng (rückt RNG vor).
  *
@@ -332,7 +381,8 @@ export function towerTaskPointsMult(content: ContentDB, monsterId: MonsterId, is
  *     Typ; geht beides nicht → null.
  *  3. N = nextInt(min, max).
  *  4. Belohnung beim Assign fix: xpReward = round(monster.xp * SLAYER_XP_KILL_FACTOR * N),
- *     pointReward = scaledTaskPoints(master, N) — skaliert sanft mit der Task-Größe (V1).
+ *     pointReward = taskPointReward(…) — Turm: scaledTaskPoints(master, N) × Etagen-Zuschlag; Welt (1.4.1 S3,
+ *     claude:2026-10-25T10:32:00+01:00): max(scaledTaskPoints, Aufwands-Punkte aus N × (maxHp + Ward)).
  *
  * `master.taskPool` wird vom dynamischen Algorithmus ERSETZT und nicht mehr gelesen (Feld bleibt
  * im Typ gültig, Content lässt es leer).
@@ -449,7 +499,8 @@ export function assignTask(
     xpReward,
     // V1 (Welle GG): Punkte skalieren sanft mit der Task-Größe (am Spannen-Mittel = basePoints).
     // codex:2026-10-17T14:00:00+02:00 — ×Endgame-Zuschlag Etage 6–8 (towerTaskPointsMult, sonst ×1).
-    pointReward: Math.max(1, Math.round(scaledTaskPoints(master, required) * towerTaskPointsMult(content, monsterId, isTower))),
+    // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S3: Welt-Aufträge mindestens nach Aufwand (taskPointReward, Turm unverändert).
+    pointReward: taskPointReward(content, master, monsterId, isTower, required),
   };
   state.slayerTask = task;
   return task;
@@ -471,7 +522,8 @@ function perKillSlayerXp(content: ContentDB, monsterId: MonsterId): number {
 }
 
 /**
- * Verbucht einen Kill für den aktiven Slayer-Task. Pur & deterministisch (kein RNG).
+ * Verbucht einen Kill für den aktiven Slayer-Task. Pur & deterministisch (kein RNG — außer mit `slayerAutoTask`:
+ * dann zieht die automatische Neuvergabe beim Abschluss über assignTask aus state.rng; claude:2026-10-25T10:32:00+01:00).
  * combat.ts ruft das in onEnemyDefeated NACH dem Kill-Zähler auf. No-op, wenn kein Task,
  * falsches Monster oder die Item-Anforderung nicht erfüllt ist (zählt dann nicht).
  *
@@ -523,9 +575,54 @@ export function recordKillForSlayer(
         seq: state.slayerStreakSeq,
       };
     }
+    // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S1: Aufträge automatisch fortsetzen. Sofort der nächste Auftrag beim
+    // SELBEN Meister über den regulären Vergabe-Pfad (assignTask, state.rng — online wie offline derselbe Tick-Pfad).
+    // Ohne Schalter kein Aufruf, also kein RNG-Zug: Alt-Verhalten bit-identisch. Den Kampfwechsel entscheidet
+    // `applySlayerAutoSwitch` (nur normale Zonen-/Turmkämpfe, combat.ts Respawn-Zweig).
+    if (state.slayerAutoTask === true) assignTask(state, content, task.masterId);
     return true;
   }
   return false;
+}
+
+/** claude:2026-10-25T10:32:00+01:00 — 1.4.1 S1: Schalter „Aufträge automatisch fortsetzen“ (die UI ruft genau diese Funktion). Kein RNG. */
+export function setSlayerAutoTask(state: GameState, on: boolean): void {
+  state.slayerAutoTask = on === true;
+}
+
+/**
+ * claude:2026-10-25T10:32:00+01:00 — 1.4.1 S1 Kampfwechsel nach automatisch fortgesetztem Auftrag. combat.ts ruft das im
+ * Respawn-Zweig eines NORMALEN Kampfs (nach dem Kill, der den Auftrag abschloss), also nie in Dungeon-, Raid-, Champion-
+ * oder Paragon-Kämpfen (die kehren vorher zurück; hier zusätzlich defensiv geprüft).
+ *
+ * Voraussetzungen: Schalter an, ein neuer Auftrag ist vergeben, der laufende Kampf galt dem alten Auftragsmonster
+ * (`completedMonsterId` = Kill-Credit-Id des abschließenden Kills).
+ *  - Warteschlange: Ist der laufende Kampf ein Queue-Kampf (`queueFight` gegen genau diesen Gegner), wird seine Laufzeit
+ *    durch das NEUE Auftragsmonster mit der neuen Auftragsgröße als Rest ersetzt (neues Objekt, damit die Kill-Zählung im
+ *    Tick den abschließenden Kill nicht noch auf den neuen Rest bucht). Das alte Monster kehrt nicht in die Queue zurück,
+ *    andere Einträge bleiben unberührt. Gilt auch, wenn der neue Auftrag zufällig dasselbe Monster trifft.
+ *  - Nicht bekämpfbares neues Ziel (`canFightMonster` false, unbekannt, Dungeon-only): kein Wechsel, auch die Queue bleibt;
+ *    der Auftrag bleibt vergeben.
+ * Rückgabe: das Content-Monster, auf das der Kampf wechseln soll, oder null (weiter wie bisher). Kein RNG.
+ */
+export function applySlayerAutoSwitch(
+  state: GameState,
+  content: ContentDB,
+  completedMonsterId: MonsterId,
+): MonsterDef | null {
+  if (state.slayerAutoTask !== true) return null;
+  const task = state.slayerTask;
+  if (!task || task.progress !== 0) return null;
+  const cs = state.combat;
+  if (cs.monsterId === null || cs.dungeonId !== null || cs.paragonFloor || cs.eliteVariantId) return null;
+  // Nur ein Kampf gegen das ALTE Auftragsmonster (auch als dg_-Zwilling, Kill-Credit-Alias combat.ts) wird übernommen.
+  if (cs.monsterId !== completedMonsterId && cs.monsterId !== DUNGEON_VARIANT_PREFIX + completedMonsterId) return null;
+  const next = content.monsters[task.monsterId];
+  if (!next || next.dungeonOnly || !canFightMonster(state, content, next.id)) return null;
+  const qf = state.queueFight;
+  if (qf && qf.monsterId === cs.monsterId) state.queueFight = { monsterId: next.id, remaining: task.required };
+  // Gleiches Monster ⇒ der Respawn läuft ohnehin weiter, nur die Queue-Laufzeit (oben) wurde neu gesetzt.
+  return next.id === cs.monsterId ? null : next;
 }
 
 /**

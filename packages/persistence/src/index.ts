@@ -1569,6 +1569,11 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
         bountyTokens: Math.floor(finiteNonNeg(rawKill.bountyTokens, 0)),
         seq: Math.floor(finiteNonNeg(rawKill.seq, 0)),
       };
+      // claude:2026-10-25T10:32:00+01:00 — Slayer-Punkte des Champion-Kills (SAVE 96, optional): nur eine endliche Zahl ≥ 0, ganzzahlig;
+      // fehlt sie (Breadcrumb aus Saves vor v96) oder ist sie kaputt, bleibt das Feld weg (die UI zeigt dann nichts).
+      if (typeof rawKill.slayerPoints === "number" && Number.isFinite(rawKill.slayerPoints) && rawKill.slayerPoints >= 0) {
+        cleanKill.slayerPoints = Math.min(GOLD_HARD_CAP, Math.floor(rawKill.slayerPoints));
+      }
     }
     state.lastEliteKill = cleanKill;
     state.eliteKillSeq = Math.max(
@@ -1706,6 +1711,8 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   // — Slayer: Punkte/Completed clampen; Task gegen aktuellen Content validieren —
   state.slayerPoints = clampFinite(state.slayerPoints, 0, GOLD_HARD_CAP, 0);
   state.slayerTasksCompleted = finiteNonNeg(state.slayerTasksCompleted, 0);
+  // claude:2026-10-25T10:32:00+01:00 — Aufträge automatisch fortsetzen (SAVE 96): strikt boolean, nur exakt `true` schaltet ein.
+  state.slayerAutoTask = state.slayerAutoTask === true;
   const task = state.slayerTask;
   if (
     task &&
@@ -3906,6 +3913,21 @@ function migrateState(state: GameState, content: ContentDB): GameState {
     state.stats.producedBySkill = seeded;
   }
 
+  // ── Slayer-Punkte (SAVE_VERSION 95 → 96, 1.4.1, Chef-Freigabe 25.10.2026) ──────────────────────────────────────────────
+  // claude:2026-10-25T10:32:00+01:00 — neues Feld `slayerAutoTask` (Aufträge automatisch fortsetzen, Standard aus) und die EINMALIGE
+  // Gutschrift für die Halbierung von Jägerkodex und Punkte-Unikaten (S2): je gekauftem Rang die Differenz alter minus neuer
+  // Preis, je besessenem Exemplar der drei Unikate die Differenz (Käufe werden nicht protokolliert, also zählt der Besitz an
+  // allen Orten, s. `slayerRefundV96`). Ganzzahlig, nie negativ. Idempotent: nur solange das neue Feld fehlt (ein schon auf
+  // v96 gehobener Stand trägt es immer), so zahlt auch ein erneut als Alt-Version geladener Stand nicht doppelt.
+  if ((state.version ?? 0) < 96 && typeof (state as Partial<GameState>).slayerAutoTask !== "boolean") {
+    const refund = slayerRefundV96(state);
+    if (refund > 0) {
+      const before = typeof state.slayerPoints === "number" && Number.isFinite(state.slayerPoints) ? Math.max(0, state.slayerPoints) : 0;
+      state.slayerPoints = before + refund;
+    }
+    state.slayerAutoTask = false;
+  }
+
   // State auf die aktuelle Version heben (macht versions-abhängige Migrationen idempotent).
   state.version = SAVE_VERSION;
 
@@ -3913,6 +3935,111 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   // korrigieren, ohne legitime Saves zu verändern. Läuft NACH allen Rename-/Default-Migrationen,
   // damit Referenzen erst umbenannt und dann gegen den aktuellen Content geprüft werden.
   return sanitizeState(state, content);
+}
+
+/**
+ * claude:2026-10-25T10:32:00+01:00 — 1.4.1 S2: EINGEFRORENE Jägerkodex-Preise (Baum `slayer`) vor und nach der Halbierung, je Rang.
+ * Bewusst NICHT aus dem Content gelesen: der trägt nach dem Update nur noch die neuen Preise, die Gutschrift braucht beide Stände.
+ * Nie ändern (Muster RING_MASTER_RENAME); eine spätere Preisänderung bekommt ihre eigene Tabelle und Migration.
+ */
+export const SLAYER_TALENT_COSTS_V95: Readonly<Record<string, readonly number[]>> = {
+  tracking: [250, 500, 900, 1400, 2000],
+  trail: [650],
+  collar: [3000],
+  pace: [250, 500, 900],
+  spoils: [400, 750, 1250],
+  lore: [400, 750, 1250],
+};
+export const SLAYER_TALENT_COSTS_V96: Readonly<Record<string, readonly number[]>> = {
+  tracking: [125, 250, 450, 700, 1000],
+  trail: [325],
+  collar: [1500],
+  pace: [125, 250, 450],
+  spoils: [200, 375, 625],
+  lore: [200, 375, 625],
+};
+/** claude:2026-10-25T10:32:00+01:00 — 1.4.1 S2: Gutschrift je besessenem Exemplar (Punkte-Shop alt minus neu: 1.500→750, 2.500→1.250, 4.000→2.000). */
+export const SLAYER_UNIQUE_REFUND_V96: Readonly<Record<string, number>> = {
+  slayer_turnkey_ring: 750,
+  slayer_predecessor_mantle: 1250,
+  slayer_guest_right: 2000,
+};
+
+/**
+ * claude:2026-10-25T10:32:00+01:00 — Einmalige Slayer-Punkte-Gutschrift der Migration 95→96 (S2). Läuft VOR sanitizeState auf dem
+ * rohen State, daher durchgehend defensiv (kaputte Werte zählen 0). Ganzzahlig, nie negativ.
+ *
+ * Talente: je Knoten aus `talents.slayer` Σ (alt − neu) über die gekauften Ränge 1..rank (Rang ganzzahlig, auf die Tabelle geklemmt).
+ * Unikate: jedes Exemplar an jedem Ort, an dem Items leben (gefunden über die Rename-/Sanitize-Pfade dieser Datei):
+ *  - Inventar: Stapel-Plätze (`slots[].itemId × qty`; ein Alt-Platz mit `instance` zählt dessen baseItemId einmal) und die
+ *    Instanz-Tasche `inventory.instances`,
+ *  - Bank (`bank[id]`, Materiallager liegt im selben Record) und Gear-Vault `bankInstances`,
+ *  - angelegte Ausrüstung `character.equipment` (eine angelegte Instanz steht dort mit ihrer baseItemId; `equippedInstances`
+ *    ist nur ihr Begleiter und wird nicht doppelt gezählt),
+ *  - INAKTIVE Ausrüstungs-Kits (`equipKits[k].equipment`, k ≠ activeKit; das aktive Kit ist nur der Spiegel des Charakters),
+ *  - Postfach `mailbox[].items`/`instances` (jede Sorte, auch gesperrte Prestige-Post und Rabenfracht).
+ * NICHT gezählt: der Rückkauf (`buyBack`, verkauft = nicht besessen, der Spieler hat Gold dafür bekommen). Varianten dieser drei
+ * Items gibt es nicht (Raid-Varianten-Suffixe betreffen nur Raid-Teile).
+ */
+function slayerRefundV96(state: GameState): number {
+  const intOf = (v: unknown): number => (typeof v === "number" && Number.isFinite(v) && v > 0 ? Math.floor(v) : 0);
+  let refund = 0;
+
+  const ranks = (state.talents as Record<string, unknown> | undefined)?.slayer;
+  if (ranks && typeof ranks === "object") {
+    for (const [node, rawRank] of Object.entries(ranks as Record<string, unknown>)) {
+      const before = SLAYER_TALENT_COSTS_V95[node];
+      const after = SLAYER_TALENT_COSTS_V96[node];
+      if (!before || !after) continue;
+      const rank = Math.min(intOf(rawRank), before.length);
+      for (let r = 0; r < rank; r++) refund += Math.max(0, (before[r] ?? 0) - (after[r] ?? 0));
+    }
+  }
+
+  const owned = new Map<string, number>();
+  const add = (id: unknown, qty: number): void => {
+    if (typeof id !== "string" || !(id in SLAYER_UNIQUE_REFUND_V96) || !(qty > 0)) return;
+    owned.set(id, (owned.get(id) ?? 0) + qty);
+  };
+  const addInstances = (list: unknown): void => {
+    if (!Array.isArray(list)) return;
+    for (const inst of list) if (inst && typeof inst === "object") add((inst as ItemInstance).baseItemId, 1);
+  };
+  const addEquipment = (eq: unknown): void => {
+    if (!eq || typeof eq !== "object") return;
+    for (const id of Object.values(eq as Record<string, unknown>)) add(id, 1);
+  };
+
+  const inv = state.inventory as Partial<GameState["inventory"]> | undefined;
+  if (Array.isArray(inv?.slots)) {
+    for (const slot of inv!.slots) {
+      if (!slot || typeof slot !== "object") continue;
+      if (slot.instance && typeof slot.instance === "object") add(slot.instance.baseItemId, 1);
+      else add(slot.itemId, intOf(slot.qty));
+    }
+  }
+  addInstances(inv?.instances);
+  if (state.bank && typeof state.bank === "object") {
+    for (const [id, qty] of Object.entries(state.bank)) add(id, intOf(qty));
+  }
+  addInstances(state.bankInstances);
+  addEquipment(state.character?.equipment);
+  if (Array.isArray(state.equipKits)) {
+    const active = typeof state.activeKit === "number" ? state.activeKit : 0;
+    state.equipKits.forEach((kit, k) => {
+      if (k !== active && kit && typeof kit === "object") addEquipment(kit.equipment);
+    });
+  }
+  if (Array.isArray(state.mailbox)) {
+    for (const mail of state.mailbox) {
+      if (!mail || typeof mail !== "object") continue;
+      if (Array.isArray(mail.items)) for (const att of mail.items) if (att && typeof att === "object") add(att.itemId, intOf(att.qty));
+      addInstances(mail.instances);
+    }
+  }
+
+  for (const [id, n] of owned) refund += n * (SLAYER_UNIQUE_REFUND_V96[id] ?? 0);
+  return Math.max(0, Math.floor(refund));
 }
 
 // claude:2026-10-24T23:55:00+02:00 — Härtung der Ereignis- und Auftragsdaten (SAVE 92, 1.4.0 Welle 3). Alles, was nicht passt, fällt auf

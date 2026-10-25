@@ -140,6 +140,7 @@ export const PRESTIGE_STATE_FIELDS: Readonly<Record<keyof GameState, PrestigeFie
   slayerStreakSeq: "keep",
   lastSlayerStreakBonus: "reset",
   slayerFreeSkipDay: "reset", // hängt am Lager (Trophäenwand), das zurückgesetzt wird
+  slayerAutoTask: "keep", // claude:2026-10-25T10:32:00+01:00 — Spieler-Vorliebe (1.4.1 S1, Muster thievingRisk)
   talents: "keep", // alle Bäume inkl. Jägerkodex (wirkt erst wieder ab Slayer 85) und Narbenbuch
   petPity: "keep",
   bankInstances: "reset",

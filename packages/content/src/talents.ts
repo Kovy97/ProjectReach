@@ -13,6 +13,9 @@ import type { TalentTreeDef } from "@hearthforge/shared";
  * Zweiter Baum (claude:2026-10-18T12:00:00+02:00): das Narbenbuch (Prestige, Baum-ID `prestige`), unten.
  */
 // claude:2026-10-18T01:20:00+02:00 — Kosten ÷8 (Chef-Ziel: Rang 1 an wenigen Abenden, voller Baum ~200 h bei ~75 Punkten/h auf Etage 6–8; vorher ~1.200 h).
+// claude:2026-10-25T10:32:00+01:00 — 1.4.1 S2 (Chef-Freigabe 25.10., Spieler-Feedback 322 h/Slayer 99: „viel zu langsam“): Jägerkodex-Kosten
+// nochmals halbiert, Summe 15.150 → 7.575 Punkte (Fährtenkunde 2.525 + Spur 325 + Halsband 1.500 + Jagdtempo 825 + Beute 1.200 + Wissen 1.200).
+// Bereits gekaufte Ränge erstattet die Migration 95→96 einmalig (persistence `SLAYER_TALENT_COSTS_V95`/`SLAYER_TALENT_COSTS_V96`). Das Narbenbuch bleibt unverändert.
 export const TALENT_TREES: TalentTreeDef[] = [
   {
     id: "slayer",
@@ -43,7 +46,7 @@ export const TALENT_TREES: TalentTreeDef[] = [
         branch: "companions",
         row: 0,
         maxRank: 5,
-        costPerRank: [250, 500, 900, 1400, 2000],
+        costPerRank: [125, 250, 450, 700, 1000], // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S2 halbiert (war 250/500/900/1400/2000)
         effect: { kind: "petChanceMult", perRank: [0.2, 0.4, 0.6, 0.8, 1.0] },
       },
       {
@@ -56,7 +59,7 @@ export const TALENT_TREES: TalentTreeDef[] = [
         branch: "companions",
         row: 1,
         maxRank: 1,
-        costPerRank: [650],
+        costPerRank: [325], // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S2 halbiert (war 650)
         requires: [{ node: "tracking", rank: 1 }],
         effect: { kind: "petPity", perRank: [2] },
       },
@@ -70,7 +73,7 @@ export const TALENT_TREES: TalentTreeDef[] = [
         branch: "companions",
         row: 2,
         maxRank: 1,
-        costPerRank: [3000],
+        costPerRank: [1500], // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S2 halbiert (war 3000)
         requires: [{ node: "tracking", rank: 5 }],
         effect: { kind: "secondPetSlot", perRank: [1] },
       },
@@ -84,7 +87,7 @@ export const TALENT_TREES: TalentTreeDef[] = [
         branch: "hunt",
         row: 0,
         maxRank: 3,
-        costPerRank: [250, 500, 900],
+        costPerRank: [125, 250, 450], // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S2 halbiert (war 250/500/900)
         effect: { kind: "slayerPointsMult", perRank: [0.1, 0.2, 0.3] },
       },
       {
@@ -97,7 +100,7 @@ export const TALENT_TREES: TalentTreeDef[] = [
         branch: "hunt",
         row: 1,
         maxRank: 3,
-        costPerRank: [400, 750, 1250],
+        costPerRank: [200, 375, 625], // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S2 halbiert (war 400/750/1250)
         effect: { kind: "slayerTaskRareMult", perRank: [0.1, 0.2, 0.3] },
       },
       {
@@ -110,7 +113,7 @@ export const TALENT_TREES: TalentTreeDef[] = [
         branch: "lore",
         row: 0,
         maxRank: 3,
-        costPerRank: [400, 750, 1250],
+        costPerRank: [200, 375, 625], // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S2 halbiert (war 400/750/1250)
         effect: { kind: "familyDamage", perRank: [0.02, 0.04, 0.06] },
       },
     ],

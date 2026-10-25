@@ -17,6 +17,7 @@ import {
   ELITE_UNIQUE_DROP_CHANCE_DEFAULT,
   ELITE_WILDHUNT_COOLDOWN_SPEED_MULT,
   ELITE_WINDOW_MS,
+  SLAYER_POINTS_PER_CHAMPION_KILL, // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S4
   TICK_MS,
   createPetAbilityRuntime,
   eliteZoneCooldownBand, makeFightQueueEntry, makeDungeonQueueEntry } from "@hearthforge/shared";
@@ -548,6 +549,9 @@ export function startEliteCombat(state: GameState, content: ContentDB, zoneId: s
  *     KEIN zusätzlicher RNG-Zug, KEINE Reihenfolge-Änderung; ein offline zu Ende gekämpfter
  *     Elite-Kill schreibt identisch (letzter Kill gewinnt). Vertrag s. `EliteKillSummary` (shared).
  *  5. Zone zurück in Ruhe mit frischem Cooldown.
+ *  claude:2026-10-25T10:32:00+01:00 — 1.4.1 S4: zu 2. gehört seitdem eine flache Slayer-Punkte-Gutschrift
+ *     (`SLAYER_POINTS_PER_CHAMPION_KILL`, ohne Multiplikatoren, ohne Level-Gate), mitgeschrieben im Breadcrumb
+ *     (`EliteKillSummary.slayerPoints`). Kein RNG, keine Reihenfolge-Änderung der Würfe.
  * ALLE Würfe hier über `state.eliteRng` — KEIN zusätzlicher `state.rng`-Zug (Determinismus-Gesetz).
  * `nowMs` (optional, Muster `combatStep`) treibt AUSSCHLIESSLICH den bloodmoon-Bonus — ohne `nowMs`
  * bit-identisch zum Vorher-Zustand. Ein bereits verwaister Kampf (Variante aus dem Content entfernt,
@@ -582,6 +586,8 @@ export function onEliteKilled(state: GameState, content: ContentDB, monster: Mon
     codex.fastestKillMs = codex.fastestKillMs === null ? durationMs : Math.min(codex.fastestKillMs, durationMs);
   }
   state.character.questTokens += ELITE_BOUNTY_TOKENS;
+  // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S4: jeder Champion-Kill zahlt flach Slayer-Punkte (s. Funktionsdoku, Nachtrag 1.4.1 S4).
+  state.slayerPoints += SLAYER_POINTS_PER_CHAMPION_KILL;
   if (isFirstChampionKillEver) {
     sendLetter(state, "brenna", "mail.letter.brenna.firstChampion", [{ itemId: "cooked_trout", qty: 5 }]);
   }
@@ -666,6 +672,7 @@ export function onEliteKilled(state: GameState, content: ContentDB, monster: Mon
     uniqueItemId: uniqueDroppedItemId,
     suffixRolled: uniqueSuffixRolled,
     bountyTokens: ELITE_BOUNTY_TOKENS,
+    slayerPoints: SLAYER_POINTS_PER_CHAMPION_KILL, // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S4 (Toast-Breadcrumb)
     seq: state.eliteKillSeq,
   };
 

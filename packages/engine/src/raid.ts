@@ -10,7 +10,7 @@ import type {
   RaidState,
   RaidWeeklyModifierId,
 } from "@hearthforge/shared";
-import { RAID_REST_AUTO_MS, RAID_VARIANT_SUFFIX, RAID_WEEKLY_MODIFIERS, RELIC_DUST_ITEM_ID, defaultRaidState } from "@hearthforge/shared";
+import { RAID_REST_AUTO_MS, RAID_VARIANT_SUFFIX, RAID_WEEKLY_MODIFIERS, RELIC_DUST_ITEM_ID, SLAYER_POINTS_PER_RAID_BOSS, defaultRaidState } from "@hearthforge/shared"; // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S4
 import { computeStats } from "./character";
 import { stopCombat } from "./combat-stop"; // claude:2026-10-26T00:50:00+02:00 — Aufgeben räumt den Kampf vollständig (QA-Raid #6)
 import { beginDungeonRun } from "./dungeon";
@@ -393,6 +393,9 @@ export function onRaidRoomCleared(state: GameState, content: ContentDB, nowMs?: 
   const rs = raidStateOf(state);
   const key = raidChestKey(room.bossId, run.difficulty);
   rs.bossKills[key] = (rs.bossKills[key] ?? 0) + 1;
+  // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S4: jeder Hallen-Boss zahlt flach Slayer-Punkte nach Stufe (10/25/50), ohne Multiplikatoren
+  // und ohne RNG. Kein eigenes Breadcrumb: die UI leitet den Betrag aus `run.difficulty` × SLAYER_POINTS_PER_RAID_BOSS ab (`run.bossSeq` zählt die Bosse).
+  state.slayerPoints += SLAYER_POINTS_PER_RAID_BOSS[run.difficulty] ?? 0;
   // claude:2026-10-26T00:50:00+02:00 — Boss-Teile mit der Stufe des skalierten Bosses wie die Trash-Teile (QA-Raid #7).
   const ilvl = (content.monsters[room.bossId]?.level ?? 100) + (def.scaling[run.difficulty]?.levelAdd ?? 0);
   const got: { itemId: ItemId; qty: number }[] = [];

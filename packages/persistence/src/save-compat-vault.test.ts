@@ -141,6 +141,12 @@ function ohneWerkzeuge<T extends object>(equipment: T): T {
  * hat keinen Fortschritt, also keine Vorbelegung) → `advance` 10 min (Bergbau Kupfer samt Nebenfund, Beet erntet) → serialize,
  * Fixpunkt geprüft. Trägt `producedBySkill.mining` > 0 neben dem offenen Lieferauftrag. Detailprüfungen in
  * save95-orders-source.test.ts. Generator war ein Einmal-Test, danach gelöscht; v93 und v94 bleiben.
+ *
+ * claude:2026-10-25T10:32:00+01:00 — SAVE 96 (1.4.1 Slayer-Punkte, Chef-Freigabe 25.10.2026; v95 war der 1.4.0-Live-Stand):
+ * `v96-synthetic-1.4.1.json` ist SYNTHETISCH über die REALE KETTE: v95-Fixture → Laden (Migration auf 96: `slayerAutoTask` false,
+ * einmalige Gutschrift der halbierten Jägerkodex-Ränge tracking 5/collar 1/lore 2 = 4.600 Punkte) → `setSlayerAutoTask(true)` →
+ * `assignTask` bei Brenna (laufender Auftrag) → serialize beim v95-savedAt, Fixpunkt geprüft. Detailprüfungen (Gutschrift an
+ * allen Besitz-Orten, Idempotenz, Sanitizing) in save96-slayer-points.test.ts. Generator war ein Einmal-Test, danach gelöscht.
  */
 const VAULT_DIR = join(__dirname, "..", "fixtures", "save-compat");
 
@@ -442,6 +448,9 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     Object.assign(erwartet.state.settings, { raidAutoContinue: false, raidAutoBuyRestart: false });
     erwartet.state.stats.harvestedById = {}; // claude:2026-10-24T15:21:04+02:00 — SAVE 94 (Beet-Ernte-Zähler, alte Saves starten bei 0)
     erwartet.state.stats.producedBySkill = {}; // claude:2026-10-24T16:03:31+02:00 — SAVE 95 (Erzeugt je Skill, ohne offene Aufträge leer)
+    // claude:2026-10-25T10:32:00+01:00 — SAVE 96 (1.4.1 Slayer-Punkte): Auto-Auftrag aus; der v80-Save hat weder Kodex-Ränge noch
+    // Punkte-Unikate, die Gutschrift ist also 0 und `slayerPoints` bleibt byte-gleich.
+    erwartet.state.slayerAutoTask = false;
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(result!.state, raw.savedAt))).toEqual(erwartet);
   });
