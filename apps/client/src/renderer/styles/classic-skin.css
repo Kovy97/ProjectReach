@@ -1100,10 +1100,7 @@
   background-repeat: no-repeat, no-repeat, repeat;
   background-origin: border-box;
   background-clip: border-box;
-  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(16px * 2.125);
-}
-:root[data-ui-style="classic"] #root .itip-compare-wrap .item-tooltip.itip-panel .it-actions {
-  background: linear-gradient(rgba(10, 12, 15, 0.94), rgba(10, 12, 15, 0.94)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(8px * 2.125);
 }
 :root[data-ui-style="classic"] .modal {
   background: linear-gradient(rgba(10, 12, 15, 0.55), rgba(10, 12, 15, 0.55)), url("../assets/classic/bg_black.webp") repeat;

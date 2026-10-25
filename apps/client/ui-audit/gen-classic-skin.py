@@ -47,6 +47,10 @@ SIZE_FACTOR = {
     'bg_tileable_stone_dark.webp': 512.0 / 450.0,
 }
 # Sonderfall wood-frame-strip: Slice 47 -> 28 (Slice des 1.2.3-Holzatlas)
+# claude:2026-10-25T14:47:00+01:00 - Regeln, deren Rahmenbreite (border-Breite + border-image-width) seit 1.2.3 bewusst verkleinert wurde:
+# Classic nimmt hier Bild und Slice aus 1.2.3, die Breite hinter dem "/" aber aus dem aktuellen Stand, sonst zeichnet
+# der alte 34-px-Rahmen in den neuen 8-px-Rand hinein (Chef 25.10.: Item-Karten-Knöpfe "viel zu fett").
+KEEP_CURRENT_BI_WIDTH = {'#root .item-tooltip.itip-panel .it-action-btn'}
 STRIP = 'ui/gravewood/frames/wood-frame-strip.webp'
 
 # ───────────────────────────── CSS-Parser (tolerant, nur was wir brauchen) ─────────────────────────────
@@ -503,6 +507,19 @@ def main():
                 if o_fam:
                     stats['matched'] += 1
                     res = [(k, rewrite_old_urls(v), i or important) for k, v, i in o_fam]
+                    if fam == 'bi' and sel in KEEP_CURRENT_BI_WIDTH:
+                        # claude:2026-10-25T14:47:00+01:00 - nur der Breitenteil des Kurzschreibers kommt aus dem aktuellen Stand
+                        def bi_split(v):
+                            # Breite steht hinter dem "/" NACH der url(...)-Klammer (der Pfad selbst enthaelt "/")
+                            m = re.search(r'url\([^)]*\)', v)
+                            j = m.end() if m else 0
+                            head, tail = v[:j], v[j:]
+                            return (head + tail.split('/', 1)[0].rstrip(), tail.split('/', 1)[1].strip()) if '/' in tail else (v, None)
+                        cur_bi = [v for k, v, _i in cd if k == 'border-image']
+                        cur_w = bi_split(cur_bi[-1])[1] if cur_bi else None
+                        if cur_w:
+                            res = [(k, bi_split(v)[0] + ' / ' + cur_w if k == 'border-image' and bi_split(v)[1] else v, i)
+                                   for k, v, i in res]
                     has_short = any(k in ('background', 'border-image') for k, _v, _i in o_fam)
                     old_props = {k for k, _v, _i in o_fam}
                     if not has_short:

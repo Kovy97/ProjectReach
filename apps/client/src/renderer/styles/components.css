@@ -2385,11 +2385,13 @@ body .item-cell.rarity-mythic {
 }
 
 #root .item-tooltip.itip-panel .it-action-btn {
-  min-height: 48px;
+  min-height: 42px;
   height: auto;
-  padding: 7px 16px;
-  border: 16px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(16px * 2.125);
+  padding: 6px 14px;
+  /* claude:2026-10-25T14:46:00+01:00 — Chef 25.10.: Rahmen der Item-Karten-Knöpfe zu fett. Gleiche Stärke wie der Standardknopf .btn-iron
+     (8 px statt 16 px, Bildbreite 17 px statt 34 px). */
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(8px * 2.125);
   background-color: #101315;
   background-image:
     radial-gradient(ellipse at 50% 0%, rgba(164, 112, 55, 0.13), transparent 72%),
@@ -3216,9 +3218,10 @@ body .item-cell.rarity-mythic {
   z-index: 3;
   padding: 6px;
   gap: 6px;
-  background: linear-gradient(rgba(10, 12, 15, 0.94), rgba(10, 12, 15, 0.94)), url("../assets/bg_black.webp") repeat;
-  /* claude:2026-10-24T17:47:00+02:00 — keine 1-px-Linie mehr um die Leiste (wirkte blau neben den Eisenrahmen, Chef 24.10.) */
-  box-shadow: 0 -6px 12px rgba(0, 0, 0, 0.55);
+  /* claude:2026-10-25T14:46:00+01:00 — Chef 25.10.: der dunkle Kasten hinter der Knopfleiste kommt weg (vorher fast deckendes Schwarz
+     plus Schatten). Seit der kompakten Karte (1.4.1 K2) scrollt die Karte kaum noch, die Leiste braucht keine eigene Fläche. */
+  background: none;
+  box-shadow: none;
 }
 #root .item-tooltip.itip-panel .it-actions .it-action-btn {
   flex: 1 1 auto;
