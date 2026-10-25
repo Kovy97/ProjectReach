@@ -147,6 +147,12 @@ function ohneWerkzeuge<T extends object>(equipment: T): T {
  * einmalige Gutschrift der halbierten Jägerkodex-Ränge tracking 5/collar 1/lore 2 = 4.600 Punkte) → `setSlayerAutoTask(true)` →
  * `assignTask` bei Brenna (laufender Auftrag) → serialize beim v95-savedAt, Fixpunkt geprüft. Detailprüfungen (Gutschrift an
  * allen Besitz-Orten, Idempotenz, Sanitizing) in save96-slayer-points.test.ts. Generator war ein Einmal-Test, danach gelöscht.
+ *
+ * claude:2026-10-25T19:23:00+01:00 — SAVE 98 (1.4.1-Release; v97 gestufte Aufträge und v98 feste Variantenzellen waren nie einzeln live):
+ * `v98-synthetic-1.4.1.json` ist SYNTHETISCH über die REALE KETTE: v96-Fixture → Laden (Migration 97: offener 1.4.0-Auftrag wird
+ * Stufe 2, Stufen-Uhren auf Mittelwerten; Migration 98: Variantenzelle gk_tally_ring auf Fach 8 wie der alte Client) →
+ * Variantenzelle per `moveInventorySlot` auf Fach 12 → kleiner Auftrag (Stufe 1) angeboten und angenommen, Großauftrag (Stufe 3)
+ * als offenes Angebot, Stufen-Uhren gesetzt → serialize beim v96-savedAt, Fixpunkt geprüft. Generator war ein Einmal-Test.
  */
 const VAULT_DIR = join(__dirname, "..", "fixtures", "save-compat");
 
@@ -658,3 +664,18 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     expect(s.skills.leatherworking).toBeUndefined();
   });
 });
+
+// claude:2026-10-25T19:23:00+01:00 — 1.4.1-Release: das ausgelieferte v98-Format behält Variantenfach und Auftragsstufen über Laden und Speichern.
+describe("Save-Kompat-Vault v98 (1.4.1): Variantenfach und Auftragsstufen bleiben", () => {
+  it("v98-synthetic-1.4.1.json: gk_tally_ring auf Fach 12, Aufträge Stufe 2 und 1, Angebot Stufe 3, Uhren erhalten", () => {
+    const raw = readFileSync(join(VAULT_DIR, "v98-synthetic-1.4.1.json"), "utf-8");
+    const savedAt = (JSON.parse(raw) as { savedAt: number }).savedAt;
+    const s = deserialize(raw, content, savedAt)!.state;
+    expect(s.inventory.variantCells.gk_tally_ring).toBe(12);
+    expect(s.inventory.slots[12]).toBeNull();
+    expect(s.workOrders!.open.map((o) => o.tier)).toEqual([2, 1]);
+    expect(s.workOrders!.offer?.tier).toBe(3);
+    expect(s.workOrders!.tierMs).toEqual({ 1: 1_234_000, 2: 9_876_000, 3: 31_000_000 });
+  });
+});
+

@@ -1,7 +1,7 @@
 "appbuild"
 {
 	"appid"	"4915450"
-	"desc"	"Grim Reach 1.4.0 Feder und Stahl (Raid Gobkharaz, Bognerei, Fernkampf-Rework, Lager, Bergung, Ereignisse und Auftraege, UI-Ueberarbeitung, Textpass 7 Sprachen)"
+	"desc"	"Grim Reach 1.4.1 The Hunt Goes On (Slayer-Punkte und Turm, gestufte Auftraege, Verzauberungsseite, Nahkampf-Effekte, Sammelverkauf, Knopf-Stile, Inventar- und Warteschlangen-Fixes)"
 	"buildoutput"	"G:\GameDev\steam\output\"
 	"contentroot"	"G:\GameDev\apps\client\release\win-unpacked\"
 	"setlive"	""
