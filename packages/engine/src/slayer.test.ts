@@ -284,20 +284,23 @@ describe("slayer — Endgame-Pool-Streckung (Welle GG V3, stretchLevelWindow)", 
   });
 
   it("Turm-Pfad: Kappe streckt sich hoch, wenn < 4 bekämpfbare Turm-Kandidaten drunter liegen", () => {
-    // CL 10 → Basis-Kappe 18: sl_t1 (5) liegt drunter, sl_t2 (25) drüber — nur 1 Kandidat < 4.
-    // Streckung hebt die Kappe bis 25 → BEIDE Etagen-Mobs sind zuweisbar (Task-Vielfalt).
+    // CL 10 → Basis-Kappe 18: sl_t2 (25) liegt drüber — die Streckung hebt die Kappe bis 25, sl_t2 ist zuweisbar.
+    // claude:2026-10-25T14:58:00+01:00 — 1.4.1 Slayer A: sl_t1 (L5) liegt unter CL − 3 und kam bisher nur über das Auffüllen nach
+    // unten in den Pool. Das gibt es mit Welt-Aufträgen nicht mehr; sl_t2 teilt sich stattdessen den Topf mit dem Welt-Pool.
     const s = createGame({ name: "X" }, content, 21);
     setSlayerLevel(s, 25); // beide Etagen frei
     setCombatLevel(s, 10);
     const seen = new Set<string>();
+    let welt = 0;
     for (let i = 0; i < 80; i++) {
       const t = assignTask(s, tc, "tower_master")!;
-      expect(t.isTower).toBe(true);
-      seen.add(t.monsterId);
+      if (t.isTower) seen.add(t.monsterId);
+      else welt++;
       s.slayerTask = null;
     }
-    expect(seen.has("sl_t1")).toBe(true);
     expect(seen.has("sl_t2")).toBe(true);
+    expect(seen.has("sl_t1"), "kein Turm-Auftrag unter CL − 3, solange die Welt Aufträge hat").toBe(false);
+    expect(welt).toBeGreaterThan(0);
   });
 });
 
@@ -623,11 +626,15 @@ describe("slayer — assignTask Tower (Typ-Split, Etagen-Gate)", () => {
     // Floor 2 frei → über viele Assigns beide Mobs (gleichverteilt über Etagen).
     // [Sweep6 W2-T4-P2-2] Turm-Pfad hat jetzt ein CL-Fenster (level ≤ CL+8) wie der Welt-Pfad;
     // CL hoch, damit sl_t2 (Level 25) überhaupt zuweisbar ist — sonst filtert die Plausibilität es raus.
+    // claude:2026-10-25T14:58:00+01:00 — 1.4.1 Slayer A: CL 8 statt 25, damit sl_t1 (L5) noch auf Niveau liegt (≥ CL − 3); bei CL 25 wäre
+    // es ein Trivial-Ziel und fiele seit 1.4.1 aus dem Turm-Pool. sl_t2 (L25) erreicht die Streckung (Pool erschöpft).
     setSlayerLevel(s, 25);
-    setCombatLevel(s, 25);
+    setCombatLevel(s, 8);
     const seen = new Set<string>();
     for (let i = 0; i < 80; i++) {
-      seen.add(assignTask(s, tc, "tower_master")!.monsterId);
+      const t = assignTask(s, tc, "tower_master")!;
+      expect(t.isTower).toBe(true);
+      seen.add(t.monsterId);
       s.slayerTask = null;
     }
     expect(seen.has("sl_t1")).toBe(true);
@@ -1066,10 +1073,11 @@ describe("slayer — rerollTask (Auftragsmarke, Chef-GO 26.08.2026)", () => {
 
 // codex:2026-10-17T14:00:00+02:00 — 1.3.0 E3-Nachbesserung: Endgame-Zuschlag der Turm-Etagen 6–8.
 describe("Slayer-Punkte: Endgame-Zuschlag Etage 6–8", () => {
-  it("Etage 1–5 und Welt-Aufträge bleiben ×1, Etage 6–8 tragen den Tabellen-Faktor", () => {
-    expect(towerTaskPointsMult(content, "abyssal_devourer", true)).toBe(1);
+  // claude:2026-10-25T15:41:00+01:00 — 1.4.1 Slayer B: Etage 1–5 tragen jetzt ×2 (härtere Turm-Gegner, längere Aufträge); Welt bleibt ×1.
+  it("Welt-Aufträge bleiben ×1, Etage 1–8 tragen den Tabellen-Faktor", () => {
+    expect(towerTaskPointsMult(content, "abyssal_devourer", true)).toBe(2);
     expect(towerTaskPointsMult(content, "tower_charred_doomknight", false)).toBe(1);
-    for (const f of [6, 7, 8]) {
+    for (const f of [1, 2, 3, 4, 5, 6, 7, 8]) {
       const floor = content.slayerTower?.find((x) => x.floor === f);
       expect(floor, `Etage ${f} fehlt`).toBeDefined();
       for (const id of floor!.monsters) expect(towerTaskPointsMult(content, id, true), id).toBe(TOWER_FLOOR_POINTS_MULT[f]);

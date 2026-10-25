@@ -155,7 +155,8 @@ export const WORLD_TASK_LEVEL_MAX_OVER = 8;
  * (freigeschaltete Etagen unter dem eigenen Niveau sind gewollt), aber keine Trivial-Böden mehr:
  * CL 96 ⇒ Fenster [76..104] = die reale Etage-4/5-Spitze. Charaktere mit CL ≤ 20 haben weiterhin
  * Unterkante 0 (bit-identisches Alt-Verhalten). Fällt der Pool unter SLAYER_MIN_TASK_POOL, streckt
- * `stretchLevelWindow` die Unterkante notfalls wieder runter (Pool-Mindestgröße geht vor Härte).
+ * `stretchLevelWindow` die Unterkante notfalls wieder runter (Pool-Mindestgröße geht vor Härte), seit 1.4.1 nur noch ohne
+ * Welt-Aufträge; sonst teilen sich die Turm-Kandidaten auf Niveau einen Topf mit dem Welt-Pool (assignTask).
  */
 /*
  * Chef-Test 25.08.2026 (design/slayer-auftraege-1.1.0.md §2, Alternative 1 als Sofort-Fix): "bin nun
@@ -307,12 +308,16 @@ export function scaledTaskPoints(master: SlayerMasterDef, required: number): num
  * der Auftragsgröße (scaledTaskPoints), ein Kill dauert auf Etage 6–8 aber ein Vielfaches: gemessen
  * mit dem Kapitel-20-Craft-Loadout (paragon-corridor.test.ts, Nahkampf/Magie gemittelt) Etage 5
  * ≈ 9 s/Kill, Etage 6 ≈ 107 s, Etage 7 ≈ 201 s, Etage 8 ≈ 230 s. Der Faktor gleicht genau dieses
- * Verhältnis aus (gerundet). Etagen ohne Eintrag (1–5) und Welt-Aufträge bleiben ×1, also
- * bit-identisch zum Altstand. Kein Content-Feld, weil SlayerTowerFloor (shared) keins trägt; wandert
+ * Verhältnis aus (gerundet). Welt-Aufträge bleiben ×1 (Etage 1–5 bis 1.4.0 ebenfalls, seit 1.4.1 ×2, s. u.).
+ * Kein Content-Feld, weil SlayerTowerFloor (shared) keins trägt; wandert
  * bei Bedarf als `pointsMult` in die Etagen-Daten (logic-dev). Reine Vergabe-Logik, kein neuer State:
  * der Faktor steckt im beim Assign fixierten `pointReward` (laufende Aufträge bleiben unberührt).
  */
-export const TOWER_FLOOR_POINTS_MULT: Readonly<Record<number, number>> = { 6: 12, 7: 22, 8: 25 };
+// claude:2026-10-25T15:41:00+01:00 — 1.4.1 Slayer B: Etage 1–5 ×2. Die Turm-Gegner dort tragen seit 1.4.1 Welt-Werte plus Slayer-Zuschlag
+// (design/slayer-turm-1.4.1.md); ein Auftrag mit Ø 32 Kills dauert gemessen 1,8–2,4× so lang (Etage 1–5: 2,2 / 1,8 / 2,4 /
+// 2,2 / 1,8). Ohne Ausgleich fielen die Turm-Punkte pro Stunde auf ~50 %. Etage 6–8 bleiben auf das alte Etage-5-Einkommen
+// geeicht, das ×2 auf Etage 5 näherungsweise wiederherstellt.
+export const TOWER_FLOOR_POINTS_MULT: Readonly<Record<number, number>> = { 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 12, 7: 22, 8: 25 };
 
 /** Punkte-Faktor eines Auftrags: Turm-Etagen laut Tabelle oben, sonst 1. Rein, kein RNG. */
 export function towerTaskPointsMult(content: ContentDB, monsterId: MonsterId, isTower: boolean): number {
@@ -438,11 +443,17 @@ export function assignTask(
       }
     }
     const win = stretchLevelWindow(candidateLevels, baseLo, baseHi, SLAYER_MIN_TASK_POOL);
+    // claude:2026-10-25T14:56:00+01:00 — 1.4.1 Slayer A (Chef-GO 25.10.2026, „Ich dachte wir kriegen richtige Herausforderungen“):
+    // Die Pool-Mindestgröße darf die Unterkante nur noch senken, wenn es KEINE Welt-Aufträge gibt (Soft-Lock-Schutz).
+    // Sonst bleibt der Turm bei CL − 3, und zu wenige Turm-Kandidaten auf Niveau landen unten in einem gemeinsamen
+    // Topf mit dem Welt-Pool, statt mit Monstern bis zu 12 Level unter dem Spieler aufgefüllt zu werden.
+    const mixWithWorld = worldPossible && win.lo < baseLo;
+    const lo = mixWithWorld ? baseLo : win.lo;
     const taskable = (m: MonsterId): boolean => {
       if (!slayerRequirementMet(state, content, m)) return false;
       const lvl = content.monsters[m]?.level;
       // Monster ohne endliches Level bleiben (wie bisher via `?? Infinity ≤ hi`) ausgeschlossen.
-      return typeof lvl === "number" && Number.isFinite(lvl) && lvl >= win.lo && lvl <= win.hi;
+      return typeof lvl === "number" && Number.isFinite(lvl) && lvl >= lo && lvl <= win.hi;
     };
     const usable = floors
       .map((f) => f.monsters.filter(taskable))
@@ -458,6 +469,13 @@ export function assignTask(
       if (!worldPossible) return null;
       isTower = false;
       monsterId = worldPool[nextInt(state.rng, 0, worldPool.length - 1)]!;
+    } else if (mixWithWorld) {
+      // claude:2026-10-25T14:56:00+01:00 — 1.4.1 Slayer A: gemeinsamer Topf, flaches Los über Turm-Kandidaten auf Niveau + Welt-Pool
+      // (EINE Ziehung). Die Auftragsart folgt dem gezogenen Monster, damit Punkte und Turm-Gate stimmen.
+      const towerMons = usable.flat();
+      const roll = nextInt(state.rng, 0, towerMons.length + worldPool.length - 1);
+      isTower = roll < towerMons.length;
+      monsterId = isTower ? towerMons[roll]! : worldPool[roll - towerMons.length]!;
     } else {
       // Etagen-Los GEWICHTET nach Kandidatenzahl (Welle NN, Fun-Sweep R3 slayer-vesna): vorher
       // fiel das Los GLEICHVERTEILT über brauchbare Etagen — eine Etage mit nur 1 Fenster-

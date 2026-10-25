@@ -16436,8 +16436,8 @@ export const content: ContentDB = {
       id: "rot_rat", family: "beast", zone: "slayer_tower",
       name: { en: "Rot Rat", de: "Seuchenkratte" },
       slayerFloor: 1,
-      level: 3, maxHp: 3, damage: 3, accuracy: 4, evasion: 3, defense: 2, defenseType: "evasion",
-      attackIntervalMs: 2800, xp: 2, gold: 0,
+      level: 3, maxHp: 12, damage: 3, accuracy: 4, evasion: 3, defense: 2, defenseType: "evasion", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 3→12, DMG 3→3, ACC 4→4 (Welt-Referenz Lv3 + Slayer-Zuschlag, sim-kalibriert)
+      attackIntervalMs: 2800, xp: 9, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 2→9 (XP je eff. LP im Welt-Band Lv3 x1,25)
       inflict: { type: "poison", chance: 0.30, magnitude: 1, durationMs: 4000 },
       loot: [
         { itemId: "blighted_bone", chance: 0.30, min: 1, max: 1 },
@@ -16449,8 +16449,8 @@ export const content: ContentDB = {
       id: "plague_grub", family: "beast", zone: "slayer_tower",
       name: { en: "Plague Grub", de: "Pestmade" },
       slayerFloor: 1,
-      level: 7, maxHp: 5, damage: 4, accuracy: 6, evasion: 4, defense: 4, defenseType: "evasion",
-      attackIntervalMs: 3200, xp: 6, gold: 0,
+      level: 7, maxHp: 16, damage: 4, accuracy: 6, evasion: 4, defense: 4, defenseType: "evasion", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 5→16, DMG 4→4, ACC 6→6 (Welt-Referenz Lv7 + Slayer-Zuschlag, sim-kalibriert)
+      attackIntervalMs: 3200, xp: 13, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 6→13 (XP je eff. LP im Welt-Band Lv7 x1,25)
       inflict: { type: "poison", chance: 0.35, magnitude: 1, durationMs: 5000 },
       loot: [
         { itemId: "blighted_bone", chance: 0.30, min: 1, max: 1 },
@@ -16461,8 +16461,8 @@ export const content: ContentDB = {
       id: "shambling_carcass", family: "undead", zone: "slayer_tower",
       name: { en: "Shambling Carcass", de: "Taumelnde Leiche" },
       slayerFloor: 1, slayerRequirement: "plague_mask",
-      level: 12, maxHp: 9, damage: 6, accuracy: 6, evasion: 0, defense: 10, defenseType: "armor",
-      attackIntervalMs: 3400, xp: 11, gold: 0,
+      level: 12, maxHp: 34, damage: 6, accuracy: 7, evasion: 0, defense: 10, defenseType: "armor", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 9→34, DMG 6→6, ACC 6→7 (Welt-Referenz Lv12 + Slayer-Zuschlag, sim-kalibriert)
+      attackIntervalMs: 3400, xp: 60, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 11→60 (XP je eff. LP im Welt-Band Lv12 x1,25)
       resist: ["poison"],
       loot: [
         { itemId: "blighted_bone", chance: 0.35, min: 1, max: 2 },
@@ -16474,8 +16474,8 @@ export const content: ContentDB = {
       id: "hollow_marrow", family: "undead", zone: "slayer_tower",
       name: { en: "Hollow Marrow", de: "Hohles Mark" },
       slayerFloor: 1, slayerRequirement: "plague_mask",
-      level: 16, maxHp: 11, damage: 7, accuracy: 7, evasion: 1, defense: 10, defenseType: "armor",
-      attackIntervalMs: 3200, xp: 14, gold: 0,
+      level: 16, maxHp: 41, damage: 8, accuracy: 8, evasion: 1, defense: 10, defenseType: "armor", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 11→41, DMG 7→8, ACC 7→8 (Welt-Referenz Lv16 + Slayer-Zuschlag, sim-kalibriert)
+      attackIntervalMs: 3200, xp: 66, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 14→66 (XP je eff. LP im Welt-Band Lv16 x1,25)
       resist: ["poison"],
       loot: [
         { itemId: "blighted_bone", chance: 0.40, min: 1, max: 2 },
@@ -16490,8 +16490,8 @@ export const content: ContentDB = {
       id: "gaze_basilisk", family: "beast", zone: "slayer_tower",
       name: { en: "Gaze Basilisk", de: "Blick-Basilisk" },
       slayerFloor: 2, slayerRequirement: "mirror_ward",
-      level: 22, maxHp: 15, damage: 9, accuracy: 8, evasion: 7, defense: 11, defenseType: "evasion",
-      attackIntervalMs: 3000, xp: 22, gold: 0,
+      level: 22, maxHp: 38, damage: 11, accuracy: 9, evasion: 7, defense: 11, defenseType: "evasion", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 15→38, DMG 9→11, ACC 8→9 (Welt-Referenz Lv22 + Slayer-Zuschlag, sim-kalibriert)
+      attackIntervalMs: 3000, xp: 76, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 22→76 (XP je eff. LP im Welt-Band Lv22 x1,25)
       inflict: { type: "frost", chance: 0.30, magnitude: 1, durationMs: 5000 },
       loot: [
         { itemId: "basilisk_scale", chance: 0.40, min: 1, max: 1 },
@@ -16504,8 +16504,8 @@ export const content: ContentDB = {
       id: "wailing_shade", family: "undead", zone: "slayer_tower",
       name: { en: "Wailing Shade", de: "Klagender Schatten" },
       slayerFloor: 2, slayerRequirement: "ear_plugs",
-      level: 28, maxHp: 18, damage: 12, accuracy: 8, evasion: 2, defense: 14, defenseType: "ward", wardCapacity: 5,
-      attackIntervalMs: 2800, xp: 35, gold: 0,
+      level: 28, maxHp: 44, damage: 14, accuracy: 9, evasion: 2, defense: 14, defenseType: "ward", wardCapacity: 12, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 23→56 (Ward 5→12), DMG 12→14, ACC 8→9 (Welt-Referenz Lv28 + Slayer-Zuschlag, sim-kalibriert)
+      attackIntervalMs: 2800, xp: 124, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 35→124 (XP je eff. LP im Welt-Band Lv28 x1,25)
       inflict: { type: "shock", chance: 0.25, magnitude: 0.25, durationMs: 4000 },
       loot: [
         { itemId: "shade_wisp", chance: 0.25, min: 1, max: 1 },
@@ -16528,8 +16528,8 @@ export const content: ContentDB = {
       id: "bone_stalker", family: "undead", zone: "slayer_tower",
       name: { en: "Bone Stalker", de: "Knochenschleicher" },
       slayerFloor: 2,
-      level: 34, maxHp: 24, damage: 13, accuracy: 9, evasion: 1, defense: 20, defenseType: "armor",
-      attackIntervalMs: 3000, xp: 58, gold: 0,
+      level: 34, maxHp: 53, damage: 15, accuracy: 10, evasion: 1, defense: 20, defenseType: "armor", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 24→53, DMG 13→15, ACC 9→10 (Welt-Referenz Lv34 + Slayer-Zuschlag, sim-kalibriert)
+      attackIntervalMs: 3000, xp: 122, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 58→122 (XP je eff. LP im Welt-Band Lv34 x1,25)
       resist: ["poison", "bleed"],
       loot: [
         { itemId: "crude_bone", chance: 1, min: 2, max: 4 },
@@ -16541,8 +16541,8 @@ export const content: ContentDB = {
       id: "ashfield_wraith", family: "undead", zone: "slayer_tower",
       name: { en: "Ashfield Wraith", de: "Aschefeld-Wraith" },
       slayerFloor: 2,
-      level: 38, maxHp: 29, damage: 16, accuracy: 9, evasion: 2, defense: 20, defenseType: "ward", wardCapacity: 9,
-      attackIntervalMs: 2800, xp: 78, gold: 0,
+      level: 38, maxHp: 53, damage: 21, accuracy: 10, evasion: 2, defense: 20, defenseType: "ward", wardCapacity: 16, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 38→69 (Ward 9→16), DMG 16→21, ACC 9→10 (Welt-Referenz Lv38 + Slayer-Zuschlag, sim-kalibriert)
+      attackIntervalMs: 2800, xp: 197, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 78→197 (XP je eff. LP im Welt-Band Lv38 x1,25)
       resist: ["bleed", "poison"],
       inflict: { type: "burn", chance: 0.25, magnitude: 1, durationMs: 5000 },
       loot: [
@@ -16559,8 +16559,8 @@ export const content: ContentDB = {
       id: "slag_abomination", family: "construct", zone: "slayer_tower",
       name: { en: "Slag Abomination", de: "Schlacken-Abomination" },
       slayerFloor: 3,
-      level: 44, maxHp: 24, damage: 25, accuracy: 9, evasion: 1, defense: 22, defenseType: "armor", // Combat-Feel-v2 #0: 15→25 (naked Zufluss 3.02%→5.04%/s)
-      attackIntervalMs: 3200, xp: 88, gold: 0,
+      level: 44, maxHp: 68, damage: 25, accuracy: 10, evasion: 1, defense: 22, defenseType: "armor", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 24→68, DMG 25→25, ACC 9→10 (Welt-Referenz Lv44 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel-v2 #0: 15→25 (naked Zufluss 3.02%→5.04%/s)
+      attackIntervalMs: 3200, xp: 208, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 88→208 (XP je eff. LP im Welt-Band Lv44 x1,25)
       resist: ["burn"],
       inflict: { type: "burn", chance: 0.30, magnitude: 1, durationMs: 6000 },
       loot: [
@@ -16573,8 +16573,8 @@ export const content: ContentDB = {
       id: "cinder_wretch", zone: "slayer_tower",
       name: { en: "Cinder Wretch", de: "Aschenelend" },
       slayerFloor: 3,
-      level: 48, maxHp: 25, damage: 24, accuracy: 9, evasion: 2, defense: 24, defenseType: "armor", // Combat-Feel-v2 #0: 18→24 (naked Zufluss 3.79%→5.05%/s)
-      attackIntervalMs: 2800, xp: 110, gold: 0,
+      level: 48, maxHp: 97, damage: 26, accuracy: 11, evasion: 2, defense: 24, defenseType: "armor", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 25→97, DMG 24→26, ACC 9→11 (Welt-Referenz Lv48 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel-v2 #0: 18→24 (naked Zufluss 3.79%→5.05%/s)
+      attackIntervalMs: 2800, xp: 340, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 110→340 (XP je eff. LP im Welt-Band Lv48 x1,25)
       regen: 0.2,
       inflict: { type: "bleed", chance: 0.30, magnitude: 1, durationMs: 5000 },
       loot: [
@@ -16589,8 +16589,8 @@ export const content: ContentDB = {
       id: "forge_demon", family: "demon", zone: "slayer_tower",
       name: { en: "Forge Demon", de: "Schmiededämon" },
       slayerFloor: 3, slayerRequirement: "soul_veil",
-      level: 54, maxHp: 32, damage: 29, accuracy: 9, evasion: 2, defense: 30, defenseType: "ward", wardCapacity: 10, // Combat-Feel-v2 #0: 19→29 (naked Zufluss 3.32%→5.07%/s)
-      attackIntervalMs: 3000, xp: 165, gold: 0,
+      level: 54, maxHp: 88, damage: 29, accuracy: 11, evasion: 2, defense: 30, defenseType: "ward", wardCapacity: 29, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 42→117 (Ward 10→29), DMG 29→29, ACC 9→11 (Welt-Referenz Lv54 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel-v2 #0: 19→29 (naked Zufluss 3.32%→5.07%/s)
+      attackIntervalMs: 3000, xp: 423, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 165→423 (XP je eff. LP im Welt-Band Lv54 x1,25)
       resist: ["burn", "bleed"],
       inflict: { type: "burn", chance: 0.35, magnitude: 1, durationMs: 6000 },
       loot: [
@@ -16606,8 +16606,8 @@ export const content: ContentDB = {
       id: "dreadfang", zone: "slayer_tower",
       name: { en: "Dreadfang", de: "Schreckenzahn" },
       slayerFloor: 4,
-      level: 62, maxHp: 32, damage: 29, accuracy: 9, evasion: 16, defense: 31, defenseType: "evasion", // Combat-Feel-v2 #0: 22→29 (naked Zufluss 3.80%→5.01%/s)
-      attackIntervalMs: 2600, xp: 258, gold: 0,
+      level: 62, maxHp: 106, damage: 34, accuracy: 12, evasion: 16, defense: 31, defenseType: "evasion", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 32→106, DMG 29→34, ACC 9→12 (Welt-Referenz Lv62 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel-v2 #0: 22→29 (naked Zufluss 3.80%→5.01%/s)
+      attackIntervalMs: 2600, xp: 404, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 258→404 (XP je eff. LP im Welt-Band Lv62 x1,25)
       inflict: { type: "bleed", chance: 0.35, magnitude: 1, durationMs: 5000 },
       loot: [
         { itemId: "dread_fang_shard", chance: 0.35, min: 1, max: 1 },
@@ -16620,8 +16620,8 @@ export const content: ContentDB = {
       id: "void_stalker", zone: "slayer_tower",
       name: { en: "Void Stalker", de: "Leerenjäger" },
       slayerFloor: 4, slayerRequirement: "void_anchor",
-      level: 66, maxHp: 35, damage: 34, accuracy: 10, evasion: 17, defense: 33, defenseType: "evasion", // Combat-Feel-v2 #0: 23→34 (naked Zufluss 3.34%→4.94%/s)
-      attackIntervalMs: 3000, xp: 315, gold: 0,
+      level: 66, maxHp: 111, damage: 38, accuracy: 12, evasion: 17, defense: 33, defenseType: "evasion", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 35→111, DMG 34→38, ACC 10→12 (Welt-Referenz Lv66 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel-v2 #0: 23→34 (naked Zufluss 3.34%→4.94%/s)
+      attackIntervalMs: 3000, xp: 386, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 315→386 (XP je eff. LP im Welt-Band Lv66 x1,25)
       resist: ["poison"],
       inflict: { type: "shock", chance: 0.30, magnitude: 0.30, durationMs: 4000 },
       loot: [
@@ -16634,7 +16634,7 @@ export const content: ContentDB = {
       id: "sorrow_wraith", family: "undead", zone: "slayer_tower",
       name: { en: "Sorrow Wraith", de: "Kummer-Wraith" },
       slayerFloor: 4, slayerRequirement: "soul_veil",
-      level: 72, maxHp: 50, damage: 36, accuracy: 10, evasion: 3, defense: 40, defenseType: "ward", wardCapacity: 15, // Combat-Feel-v2 #0: 28→36 (naked Zufluss 3.91%→5.02%/s)
+      level: 72, maxHp: 132, damage: 41, accuracy: 12, evasion: 3, defense: 40, defenseType: "ward", wardCapacity: 39, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 65→171 (Ward 15→39), DMG 36→41, ACC 10→12 (Welt-Referenz Lv72 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel-v2 #0: 28→36 (naked Zufluss 3.91%→5.02%/s)
       attackIntervalMs: 2800, xp: 680, gold: 0,
       resist: ["bleed", "poison"],
       inflict: { type: "burn", chance: 0.25, magnitude: 1, durationMs: 6000 },
@@ -16648,7 +16648,7 @@ export const content: ContentDB = {
       id: "bone_colossus", family: "undead", zone: "slayer_tower",
       name: { en: "Bone Colossus", de: "Knochenkoloss" },
       slayerFloor: 4,
-      level: 76, maxHp: 62, damage: 45, accuracy: 11, evasion: 2, defense: 66, defenseType: "armor", // Combat-Feel v2 #4: def 40→66 (armorPen-Crossover-Sichtbarkeit); #0: dmg 24→45 (naked Zufluss 2.69%→5.05%/s)
+      level: 76, maxHp: 146, damage: 45, accuracy: 13, evasion: 2, defense: 66, defenseType: "armor", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 62→146, DMG 45→45, ACC 11→13 (Welt-Referenz Lv76 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel v2 #4: def 40→66 (armorPen-Crossover-Sichtbarkeit); #0: dmg 24→45 (naked Zufluss 2.69%→5.05%/s)
       attackIntervalMs: 3400, xp: 920, gold: 0,
       regen: 0.5,
       enrage: { belowHpPct: 0.30, damageMult: 1.70 },
@@ -16666,7 +16666,7 @@ export const content: ContentDB = {
       id: "dread_knight", family: "undead", zone: "slayer_tower",
       name: { en: "Dread Knight", de: "Schreckensritter" },
       slayerFloor: 5,
-      level: 82, maxHp: 78, damage: 43, accuracy: 11, evasion: 2, defense: 70, defenseType: "armor", // Combat-Feel v2 #4: def 41→70 (armorPen-Crossover-Sichtbarkeit); #0: dmg 28→43 (naked Zufluss 3.28%→5.03%/s)
+      level: 82, maxHp: 175, damage: 46, accuracy: 13, evasion: 2, defense: 70, defenseType: "armor", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 78→175, DMG 43→46, ACC 11→13 (Welt-Referenz Lv82 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel v2 #4: def 41→70 (armorPen-Crossover-Sichtbarkeit); #0: dmg 28→43 (naked Zufluss 3.28%→5.03%/s)
       attackIntervalMs: 3000, xp: 1080, gold: 0,
       regen: 0.4,
       resist: ["frost", "poison"],
@@ -16680,7 +16680,7 @@ export const content: ContentDB = {
       id: "soul_flayer", zone: "slayer_tower",
       name: { en: "Soul Flayer", de: "Seelenschinder" },
       slayerFloor: 5, slayerRequirement: "soul_veil",
-      level: 86, maxHp: 88, damage: 41, accuracy: 12, evasion: 2, defense: 43, defenseType: "ward", wardCapacity: 26, // Combat-Feel-v2 #0: 30→41 (naked Zufluss 3.68%→5.03%/s)
+      level: 86, maxHp: 180, damage: 46, accuracy: 13, evasion: 2, defense: 43, defenseType: "ward", wardCapacity: 53, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 114→233 (Ward 26→53), DMG 41→46, ACC 12→13 (Welt-Referenz Lv86 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel-v2 #0: 30→41 (naked Zufluss 3.68%→5.03%/s)
       attackIntervalMs: 2800, xp: 1320, gold: 0,
       resist: ["bleed"],
       inflict: { type: "burn", chance: 0.30, magnitude: 1, durationMs: 6000 },
@@ -16695,7 +16695,7 @@ export const content: ContentDB = {
       id: "void_herald", zone: "slayer_tower",
       name: { en: "Void Herald", de: "Leeren-Herold" },
       slayerFloor: 5, slayerRequirement: "void_anchor",
-      level: 90, maxHp: 98, damage: 43, accuracy: 12, evasion: 3, defense: 50, defenseType: "ward", wardCapacity: 29, // Combat-Feel-v2 #0: 35→43 (naked Zufluss 4.06%→4.99%/s)
+      level: 90, maxHp: 195, damage: 49, accuracy: 14, evasion: 3, defense: 50, defenseType: "ward", wardCapacity: 58, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 127→253 (Ward 29→58), DMG 43→49, ACC 12→14 (Welt-Referenz Lv90 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel-v2 #0: 35→43 (naked Zufluss 4.06%→4.99%/s)
       attackIntervalMs: 2800, regen: 0.3, xp: 1650, gold: 0,
       resist: ["burn", "frost"],
       inflict: { type: "shock", chance: 0.35, magnitude: 0.40, durationMs: 5000 },
@@ -16710,7 +16710,7 @@ export const content: ContentDB = {
       id: "abyssal_devourer", zone: "slayer_tower",
       name: { en: "Abyssal Devourer", de: "Abyssaler Verschlinger" },
       slayerFloor: 5, slayerRequirement: "void_anchor",
-      level: 96, maxHp: 120, damage: 49, accuracy: 13, evasion: 2, defense: 78, defenseType: "armor", // Combat-Feel v2 #4: def 50→78 (armorPen-Crossover-Sichtbarkeit); #0: dmg 33→49 (naked Zufluss 3.39%→5.04%/s)
+      level: 96, maxHp: 224, damage: 50, accuracy: 14, evasion: 2, defense: 78, defenseType: "armor", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 120→224, DMG 49→50, ACC 13→14 (Welt-Referenz Lv96 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel v2 #4: def 50→78 (armorPen-Crossover-Sichtbarkeit); #0: dmg 33→49 (naked Zufluss 3.39%→5.04%/s)
       attackIntervalMs: 3000, xp: 2300, gold: 0,
       regen: 0.8,
       // Spieler-Report 31.08.2026 („Shock works, but Ice and Poison don't"): Diese Liste ist die
@@ -16734,8 +16734,8 @@ export const content: ContentDB = {
       id: "tower_goblin", family: "humanoid", zone: "slayer_tower",
       name: { en: "Goblin", de: "Goblin" },
       slayerFloor: 1,
-      level: 15, maxHp: 15, damage: 7, accuracy: 7, evasion: 1, defense: 10, defenseType: "armor", attackIntervalMs: 3000,
-      xp: 24, gold: 0,
+      level: 15, maxHp: 40, damage: 8, accuracy: 8, evasion: 1, defense: 10, defenseType: "armor", attackIntervalMs: 3000, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 15→40, DMG 7→8, ACC 7→8 (Welt-Referenz Lv15 + Slayer-Zuschlag, sim-kalibriert)
+      xp: 64, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 24→64 (XP je eff. LP im Welt-Band Lv15 x1,25)
       loot: [
         { itemId: "goblin_ear", chance: 0.5, min: 1, max: 1 },
         { itemId: "crude_bone", chance: 0.25, min: 1, max: 1 },
@@ -16753,8 +16753,8 @@ export const content: ContentDB = {
       id: "tower_goblin_rogue", family: "humanoid", zone: "slayer_tower",
       name: { en: "Goblin Rogue", de: "Goblin-Schurke" },
       slayerFloor: 1,
-      level: 19, maxHp: 18, damage: 8, accuracy: 8, evasion: 6, defense: 10, defenseType: "evasion", attackIntervalMs: 2600,
-      xp: 38, gold: 0,
+      level: 19, maxHp: 35, damage: 10, accuracy: 8, evasion: 6, defense: 10, defenseType: "evasion", attackIntervalMs: 2600, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 18→35, DMG 8→10, ACC 8→8 (Welt-Referenz Lv19 + Slayer-Zuschlag, sim-kalibriert)
+      xp: 67, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 38→67 (XP je eff. LP im Welt-Band Lv19 x1,25)
       loot: [
         { itemId: "goblin_ear", chance: 0.6, min: 1, max: 2 },
         { itemId: "stolen_coinpurse", chance: 0.15, min: 1, max: 1 },
@@ -16767,8 +16767,8 @@ export const content: ContentDB = {
       id: "tower_skeleton_warrior", family: "undead", zone: "slayer_tower",
       name: { en: "Skeleton Warrior", de: "Skelettkrieger" },
       slayerFloor: 2,
-      level: 36, maxHp: 28, damage: 14, accuracy: 9, evasion: 1, defense: 20, defenseType: "armor", attackIntervalMs: 3200, // balance-pass2 2026-07-01: Tower-Etage-2-Band-Fix
-      resist: ["poison"], xp: 68, gold: 0,
+      level: 36, maxHp: 56, damage: 17, accuracy: 10, evasion: 1, defense: 20, defenseType: "armor", attackIntervalMs: 3200, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 28→56, DMG 14→17, ACC 9→10 (Welt-Referenz Lv36 + Slayer-Zuschlag, sim-kalibriert) | alt: balance-pass2 2026-07-01: Tower-Etage-2-Band-Fix
+      resist: ["poison"], xp: 143, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 68→143 (XP je eff. LP im Welt-Band Lv36 x1,25)
       loot: [
         { itemId: "crude_bone", chance: 0.9, min: 1, max: 3 },
         { itemId: "iron_ore", chance: 0.2, min: 1, max: 1 },
@@ -16785,8 +16785,8 @@ export const content: ContentDB = {
       id: "tower_skeleton_archer", family: "undead", zone: "slayer_tower",
       name: { en: "Skeleton Archer", de: "Skelett-Bogenschütze" },
       slayerFloor: 2,
-      level: 38, maxHp: 26, damage: 16, accuracy: 9, evasion: 10, defense: 20, defenseType: "evasion", attackIntervalMs: 2800, // balance-pass2 2026-07-01: Tower-Etage-2-Band-Fix
-      resist: ["poison"], xp: 78, gold: 0,
+      level: 38, maxHp: 54, damage: 21, accuracy: 10, evasion: 10, defense: 20, defenseType: "evasion", attackIntervalMs: 2800, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 26→54, DMG 16→21, ACC 9→10 (Welt-Referenz Lv38 + Slayer-Zuschlag, sim-kalibriert) | alt: balance-pass2 2026-07-01: Tower-Etage-2-Band-Fix
+      resist: ["poison"], xp: 154, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 78→154 (XP je eff. LP im Welt-Band Lv38 x1,25)
       loot: [
         { itemId: "crude_bone", chance: 0.9, min: 1, max: 2 },
         { itemId: "feather", chance: 0.5, min: 2, max: 4 /* claude:2026-10-23T23:45:00+02:00 — 1.4.0 FK §4: war 0.3 × 1–2 */ },
@@ -16799,8 +16799,8 @@ export const content: ContentDB = {
       name: { en: "Ember Elemental", de: "Glutelementar" },
       slayerFloor: 3,
       resist: ["burn"],
-      level: 50, maxHp: 28, damage: 26, accuracy: 9, evasion: 2, defense: 30, defenseType: "ward", wardCapacity: 8, attackIntervalMs: 3000, // balance-pass2 2026-07-01: Tower-Etage-3-Band-Fix; Combat-Feel-v2 #0: 18→26 (naked Zufluss 3.42%→4.94%/s)
-      xp: 130, gold: 0,
+      level: 50, maxHp: 79, damage: 27, accuracy: 11, evasion: 2, defense: 30, defenseType: "ward", wardCapacity: 26, attackIntervalMs: 3000, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 36→105 (Ward 8→26), DMG 26→27, ACC 9→11 (Welt-Referenz Lv50 + Slayer-Zuschlag, sim-kalibriert) | alt: balance-pass2 2026-07-01: Tower-Etage-3-Band-Fix; Combat-Feel-v2 #0: 18→26 (naked Zufluss 3.42%→4.94%/s)
+      xp: 373, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 130→373 (XP je eff. LP im Welt-Band Lv50 x1,25)
       loot: [
         { itemId: "frost_essence", chance: 0.4, min: 1, max: 2 },
         { itemId: "ashen_dust", chance: 0.5, min: 1, max: 3 },
@@ -16819,8 +16819,8 @@ export const content: ContentDB = {
       name: { en: "Iron Revenant", de: "Eisenrevenant" },
       slayerFloor: 3,
       resist: ["burn", "bleed"],
-      level: 56, maxHp: 36, damage: 34, accuracy: 9, evasion: 1, defense: 30, defenseType: "armor", attackIntervalMs: 3400, // balance-pass2 2026-07-01: Tower-Etage-3-Band-Fix; Combat-Feel-v2 #0: 18→34 (naked Zufluss 2.64%→4.99%/s)
-      regen: 0.3, xp: 180, gold: 0,
+      level: 56, maxHp: 123, damage: 34, accuracy: 11, evasion: 1, defense: 30, defenseType: "armor", attackIntervalMs: 3400, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 36→123, DMG 34→34, ACC 9→11 (Welt-Referenz Lv56 + Slayer-Zuschlag, sim-kalibriert) | alt: balance-pass2 2026-07-01: Tower-Etage-3-Band-Fix; Combat-Feel-v2 #0: 18→34 (naked Zufluss 2.64%→4.99%/s)
+      regen: 0.3, xp: 457, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 180→457 (XP je eff. LP im Welt-Band Lv56 x1,25)
       loot: [
         { itemId: "steel_bar", chance: 0.35, min: 1, max: 2 },
         { itemId: "frost_rune", chance: 0.3, min: 1, max: 3 },
@@ -16833,7 +16833,7 @@ export const content: ContentDB = {
       name: { en: "Frost Hound", de: "Frosthund" },
       slayerFloor: 4,
       resist: ["frost"],
-      level: 74, maxHp: 56, damage: 37, accuracy: 10, evasion: 18, defense: 40, defenseType: "evasion", attackIntervalMs: 2800, // balance-pass2 2026-07-01: Tower-Etage-4-Band-Fix; Combat-Feel-v2 #0: 26→37 (naked Zufluss 3.54%→5.04%/s)
+      level: 74, maxHp: 123, damage: 43, accuracy: 13, evasion: 18, defense: 40, defenseType: "evasion", attackIntervalMs: 2800, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 56→123, DMG 37→43, ACC 10→13 (Welt-Referenz Lv74 + Slayer-Zuschlag, sim-kalibriert) | alt: balance-pass2 2026-07-01: Tower-Etage-4-Band-Fix; Combat-Feel-v2 #0: 26→37 (naked Zufluss 3.54%→5.04%/s)
       regen: 0.4, xp: 820, gold: 0,
       loot: [
         { itemId: "frost_pelt", chance: 0.5, min: 1, max: 2 },
@@ -16847,7 +16847,7 @@ export const content: ContentDB = {
       id: "tower_roc_void", family: "beast", zone: "slayer_tower",
       name: { en: "Void Roc", de: "Leerenroc" },
       slayerFloor: 5,
-      level: 94, maxHp: 112, damage: 40, accuracy: 12, evasion: 23, defense: 50, defenseType: "evasion", attackIntervalMs: 2450, // balance-pass2 2026-07-01: Tower-Etage-5-Band-Fix; Combat-Feel-v2 #0: 32→40 (naked Zufluss 4.03%→5.03%/s)
+      level: 94, maxHp: 194, damage: 50, accuracy: 14, evasion: 23, defense: 50, defenseType: "evasion", attackIntervalMs: 2450, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 112→194, DMG 40→50, ACC 12→14 (Welt-Referenz Lv94 + Slayer-Zuschlag, sim-kalibriert) | alt: balance-pass2 2026-07-01: Tower-Etage-5-Band-Fix; Combat-Feel-v2 #0: 32→40 (naked Zufluss 4.03%→5.03%/s)
       resist: ["shock"],
       inflict: { type: "burn", chance: 0.25, magnitude: 1, durationMs: 6000 },
       enrage: { belowHpPct: 0.30, damageMult: 1.7 },

@@ -29,7 +29,16 @@ const ACTION = "cut_normal_tree";
 function hunter(seed: number): GameState {
   const s = createGame({ name: "Auto", baseAttributes: { str: 80, dex: 80, con: 80 }, createdAt: 1 }, content, seed);
   for (const id of ["attack", "power", "defence", "vitality", "ranged", "magic", "warding"]) s.skills[id] = { xp: xpForLevel(30) };
-  s.character.equipment.mainhand = "copper_sword";
+  // claude:2026-10-25T15:49:00+01:00 — 1.4.1 Slayer B: Turm-Etagen 1–5 tragen jetzt Welt-Werte plus Zuschlag. Der nackte Held mit Kupferschwert
+  // starb in der 8-h-Nacht einmal auf Etage 3 (Tod beendet den Kampf). Der Test prüft die Auftragskette, nicht das Überleben,
+  // darum trägt der Kampflevel-30-Held jetzt die passende Stahl-Stufe (Anforderung 20).
+  s.character.equipment.mainhand = "steel_sword";
+  s.character.equipment.offhand = "steel_kiteshield";
+  s.character.equipment.helmet = "steel_fullhelm";
+  s.character.equipment.body = "steel_platebody";
+  s.character.equipment.legs = "steel_platelegs";
+  s.character.equipment.gloves = "steel_gauntlets";
+  s.character.equipment.boots = "steel_sabatons";
   addItem(s.inventory, content, "cooked_trout", 2000);
   s.character.food = "cooked_trout";
   s.character.autoEatTier = 3;
@@ -252,7 +261,7 @@ describe("S1 offline (derselbe Tick-Pfad)", () => {
 
   it("8 h offline: mit Auto mehrere Aufträge samt Punkten, ohne Auto höchstens einer", () => {
     const on = offline(true, 21, 8);
-    // Gemessen (Seed 21): 147 Aufträge, 819 Punkte mit Auto; ohne Auto 1 Auftrag, 4 Punkte. Schwellen bewusst tolerant.
+    // Gemessen (Seed 21, vor 1.4.1 B mit Kupferschwert): 147 Aufträge, 819 Punkte mit Auto; ohne Auto 1 Auftrag, 4 Punkte. Schwellen bewusst tolerant.
     expect(on.slayerTasksCompleted).toBeGreaterThanOrEqual(20);
     expect(on.slayerPoints).toBeGreaterThanOrEqual(20 * 4);
     expect(on.stats.deaths).toBe(0);

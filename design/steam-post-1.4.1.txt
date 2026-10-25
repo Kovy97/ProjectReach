@@ -19,6 +19,12 @@ SLAYER POINTS, MUCH FASTER
   much per minute as the tower.
 - Every Champion kill gives 20 Slayer points.
 - Every raid boss gives Slayer points: 10 on Normal, 25 on Heroic, 50 on Mythic.
+- The first five floors of the Slayer tower are a real fight now. Their monsters had fallen far behind the
+  world monsters of the same level and often died in one hit. They now have more health and hit harder, and
+  floors 1 to 3 give more XP per kill. Tasks there take longer, so tower tasks on floors 1 to 5 now give
+  double Slayer points.
+- Tower tasks no longer fill up with monsters far below your level. If the tower has too few targets at
+  your level, Brenna mixes in world tasks instead.
 
 SELL GEAR IN BULK
 
