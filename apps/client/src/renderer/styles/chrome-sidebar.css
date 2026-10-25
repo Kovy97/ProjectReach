@@ -363,7 +363,10 @@
   font-size: calc(var(--fs-sm) * var(--sb-scale-eff));
   line-height: 1.2;
   color: var(--chrome-gold);
-  overflow-wrap: normal;
+  /* claude:2026-10-25T13:11:00+01:00 — war overflow-wrap:normal: ab Textgröße 125 % lief „Сосредоточение“ (RU, 1366 und 1920)
+     über den Knopfrand hinaus. Jetzt Silbentrennung nach html[lang], roher Umbruch nur als Notbremse. */
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 #root .layout--reforged .sidebar .sb-combat-style-chevron {
   font-size: calc(var(--fs-xl) * var(--sb-scale-eff));

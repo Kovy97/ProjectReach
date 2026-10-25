@@ -51,6 +51,13 @@ import "../styles/inv-filter.css";
 
 const LOCKED_ICON_URL = getUiIcon("icon_locked");
 const INV_ICON_URL = getUiIcon("icon_inventory");
+// claude:2026-10-25T13:11:00+01:00 — Painterly-Bestandsaufnahme: gemalte Icons statt ★/🔨 (Meisterschaft, Tempo-Marker der
+// Meisterschaft, „Herstellbar“). Emoji bleibt der Rückfall, falls die Datei fehlt; ⛏ (Werkzeug-Tempo) hat noch kein Icon.
+const MASTERY_STAR_ICON_URL = getUiIcon("icon_mastery_star");
+const CRAFTING_ICON_URL = getUiIcon("icon_crafting");
+function inlineUiIcon(url: string | null, emoji: string): JSX.Element | string {
+  return url ? <img loading="lazy" decoding="async" src={url} alt="" className="ui-icon" /> : emoji;
+}
 
 /** Stabiler 0..999-Hash einer Aktions-ID — reine Entzerrung des 1-Hz-Raten-Caches (s.
  *  rateCacheRef in SkillPage), kein Spielwert, keine Zufallszahl (deterministisch je ID). */
@@ -780,7 +787,7 @@ const ActionCard = memo(function ActionCard({
     : null;
 
   // Stat-Kacheln je nach Aktionsart.
-  const tiles: Array<{ label: string; value: string; cls?: string; tooltip?: JSX.Element }> = isThief
+  const tiles: Array<{ label: string; value: string | JSX.Element; cls?: string; tooltip?: JSX.Element }> = isThief
     ? [
         { label: t("skill.t.success"), value: `${Math.round(rate.successChance * 100)}%`, cls: "acc", tooltip: successTip ?? undefined },
         { label: t("skill.t.gold"), value: action.gold ? `${Math.round(action.gold.min * rate.rewardMult)}–${Math.round(action.gold.max * rate.rewardMult)}` : "—", cls: "gold" },
@@ -800,7 +807,13 @@ const ActionCard = memo(function ActionCard({
         { label: t("skill.t.rate"), value: formatCompactK(Math.round(rate.xpPerHour)) },
         {
           label: t("skill.t.time"),
-          value: `${formatSeconds1((action.durationMs / 1000) * effSpeed)}s${toolSpeed < 1 ? " ⛏" : ""}${mSpeed < 1 ? " ★" : ""}`,
+          // claude:2026-10-25T13:11:00+01:00 — Meisterschafts-Tempo-Marker als gemaltes Stern-Icon (⛏ bleibt Emoji, kein Icon vorhanden).
+          value: (
+            <>
+              {`${formatSeconds1((action.durationMs / 1000) * effSpeed)}s${toolSpeed < 1 ? " ⛏" : ""}`}
+              {mSpeed < 1 && <> {inlineUiIcon(MASTERY_STAR_ICON_URL, "★")}</>}
+            </>
+          ),
           cls: effSpeed < 1 ? "acc" : undefined,
           tooltip: timeTip ?? undefined,
         },
@@ -1274,11 +1287,12 @@ const ActionCard = memo(function ActionCard({
                 </span>
               }
             >
-              🔨 {t("skill.craftableProjected").replace("{n}", String(craftable)).replace("{m}", fmtRuns(projectedRuns))}
+              {inlineUiIcon(CRAFTING_ICON_URL, "🔨")}{"\u00a0"}{t("skill.craftableProjected").replace("{n}", String(craftable)).replace("{m}", fmtRuns(projectedRuns))}
             </HoverTip>
           ) : isCraft ? (
             <span className={`craftable${craftable > 0 ? "" : " none"}`}>
-              🔨 {t("skill.craftable").replace("{n}", String(craftable))}
+              {/* claude:2026-10-25T13:11:00+01:00 — Icon statt 🔨; geschütztes Leerzeichen, weil die Platte ein Flex-Container ist. */}
+              {inlineUiIcon(CRAFTING_ICON_URL, "🔨")}{"\u00a0"}{t("skill.craftable").replace("{n}", String(craftable))}
             </span>
           ) : (
             <span className="skillcard-state-label" aria-hidden="true">&nbsp;</span>
@@ -1378,7 +1392,7 @@ const ActionCard = memo(function ActionCard({
             .replace("{spd}", formatPct1(1 - mSpeed))}
         >
           <span className={`mastery-label${mRankTier ? ` mastery-label--${mRankTier}` : ""}`}>
-            ★ {t("skill.mastery")} {mLvl}
+            {inlineUiIcon(MASTERY_STAR_ICON_URL, "★")} {t("skill.mastery")} {mLvl} {/* claude:2026-10-25T13:11:00+01:00 — gemalter Stern */}
           </span>
           {/* Welle OO Moment 3+5: "near-complete" ist ein reiner Zustand (<5% bis zum nächsten
               Mastery-Level, s. mProg-Check) — IMMER sichtbar, nicht fx-gated (wie die Rang-Farben

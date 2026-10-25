@@ -34,6 +34,8 @@ import "../styles/bestiary.css";
  */
 
 const LOCK_ICON_URL = getUiIcon("icon_locked");
+/** claude:2026-10-25T13:11:00+01:00 — Painterly-Bestandsaufnahme: Kill-Zähler mit dem gemalten Kill-Symbol der Kampfseite statt ⚔. */
+const KILL_ICON_URL = getUiIcon("icon_combat_status_kill");
 /** Generisches Emblem für Drop-Chips ohne Bild UND ohne eigenes Item-Icon (Muster ItemWikiModal
  *  GENERIC_ICON_URL) — ersetzt den alten "▪"-Platzhalter-Charakter. */
 const GENERIC_DROP_ICON_URL = getUiIcon("icon_ach_star");
@@ -545,7 +547,10 @@ const BestiaryMonsterCard = memo(function BestiaryMonsterCard({
           className={`bjw-kills${kills > 0 ? "" : " dim"}`}
           title={t("combat.kills").replace("{n}", String(kills))}
         >
-          <span aria-hidden="true">⚔</span> {kills > 0 ? formatNum(kills) : "—"}
+          {KILL_ICON_URL
+            ? <img loading="lazy" decoding="async" src={KILL_ICON_URL} alt="" className="ui-icon" />
+            : <span aria-hidden="true">⚔</span>}{" "}
+          {kills > 0 ? formatNum(kills) : "—"}
         </div>
 
         {/* Kill-Leiter-Häkchen (Fun-Sweep FF, Pip P3b): die echten 10/100/1000-

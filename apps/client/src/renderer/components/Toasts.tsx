@@ -533,7 +533,9 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
         iconUrl: getEliteMonsterSrc(spawn.variantId, variant.baseMonsterId),
         title: t("toast.elite.title"),
         detail: reachable ? detail : `${detail} ${t("toast.elite.sealed")}`,
-        onClick: reachable ? () => jumpToElite(spawn.zoneId) : undefined, // claude:2026-10-25T11:03:00+01:00 — 1.4.1 B1: zur Champion-Karte, nicht zum Grundmonster
+        // claude:2026-10-25T11:03:00+01:00 — 1.4.1 B1: zur Champion-Karte, nicht zum Grundmonster (claude:2026-10-25T13:11:00+01:00 — das
+        // Grundmonster nur noch als Rückfall, falls der Champion beim Klick schon verschwunden ist).
+        onClick: reachable ? () => jumpToElite(spawn.zoneId, variant.baseMonsterId) : undefined,
       },
       9000,
     );

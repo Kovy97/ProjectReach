@@ -251,7 +251,7 @@ export function EliteMiniWindow(): JSX.Element | null {
                 className="shop-citadel-btn shop-citadel-btn--sm emw-jump"
                 // claude:2026-10-25T10:32:00+01:00 — B1 (1.4.1): zur Champion-Karte der Zone springen, nicht
                 // zur normalen Karte des Grundmonsters (Spieler kämpfte sonst gegen den falschen Gegner).
-                onClick={() => jumpToElite(zone.id)}
+                onClick={() => jumpToElite(zone.id, variant.baseMonsterId)} // claude:2026-10-25T13:11:00+01:00 — Grundmonster als Rückfall
               >
                 {t("slayer.task.goToMonster")}
               </button>

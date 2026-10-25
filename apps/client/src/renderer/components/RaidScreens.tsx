@@ -187,7 +187,12 @@ export function RaidOverlays(): JSX.Element {
         const boss = content.monsters[room.bossId];
         if (state.raid?.queue) {
           // Warteschlange: nichts blockieren, nur ein leiser Hinweis.
-          pushUiToast({ icon: "⚔", title: t("raid.loot.title").replace("{boss}", boss ? tr(boss.name) : room.bossId), detail: d ? tr(d.name) : "" });
+          // claude:2026-10-25T13:11:00+01:00 — 1.4.1 S4: auch in der Warteschlange (kein Beutedialog) die Slayer-Punkte des Bosses nennen.
+          const slayerPts = SLAYER_POINTS_PER_RAID_BOSS[r.difficulty] ?? 0;
+          const detail = [d ? tr(d.name) : "", slayerPts > 0 ? t("raid.boss.slayerPoints").replace("{n}", formatNum(slayerPts)) : ""]
+            .filter(Boolean)
+            .join(" · ");
+          pushUiToast({ icon: "⚔", title: t("raid.loot.title").replace("{boss}", boss ? tr(boss.name) : room.bossId), detail });
         } else {
           setCeremony({ seq: r.bossSeq, bossId: room.bossId, roomDungeonId: room.dungeonId, difficulty: r.difficulty, loot: r.lastLoot.map((l) => ({ ...l })) });
         }

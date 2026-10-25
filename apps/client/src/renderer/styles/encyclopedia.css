@@ -191,6 +191,12 @@
   height: 20px;
   font-size: var(--fs-sm);
 }
+/* claude:2026-10-25T13:11:00+01:00 — gemalte Kategorie-Icons füllen das 20-px-Feld wie zuvor das Emoji. */
+.encp-cat-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 
 .encp-cat-count {
   color: #87939a;

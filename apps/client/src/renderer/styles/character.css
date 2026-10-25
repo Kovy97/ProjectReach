@@ -3199,6 +3199,34 @@
   }
 }
 
+/* claude:2026-10-25T13:11:00+01:00 — Attributnamen nie mitten im Wort brechen (1.4.1, Textgröße bis 140 %): bei 1920 px brachen
+   „KONSTITUTION“/„INTELLIGENZ“ ab 130 % und „ТЕЛОСЛОЖЕНИЕ“ schon bei 100 % roh um („KONSTITUTI ON“). Die Schrift wächst weiter mit
+   --fs-sm, aber höchstens so groß, dass das längste Wort in die Namensspalte passt. Namensspalte = Zellbreite (cs-attrs-Breite
+   geteilt durch die Spaltenzahl) minus Innenabstand, Rand, Symbol und Lücke (≈ 68 px). Längstes Wort gemessen in allen 7 Sprachen:
+   6,5 em („Konstitution“/„Constitution“), RU 8,65 em („Телосложение“). Untergrenze 13 px wie die kleinste Schrift im Spiel. */
+.cs-col-left .cs-attr-card-name {
+  font-size: clamp(13px, calc((33.333cqi - 68px) / 6.9), var(--fs-sm));
+}
+:root:lang(ru) .cs-col-left .cs-attr-card-name {
+  font-size: clamp(13px, calc((33.333cqi - 68px) / 8.9), var(--fs-sm));
+}
+@container cs-attrs (max-width: 520px) {
+  .cs-col-left .cs-attr-card-name {
+    font-size: clamp(13px, calc((50cqi - 68px) / 6.9), var(--fs-sm));
+  }
+  :root:lang(ru) .cs-col-left .cs-attr-card-name {
+    font-size: clamp(13px, calc((50cqi - 68px) / 8.9), var(--fs-sm));
+  }
+}
+@container cs-page (min-width: 1240px) and (max-width: 1499px) {
+  .cs-col-left .cs-attr-card-name {
+    font-size: clamp(13px, calc((50cqi - 68px) / 6.9), var(--fs-sm));
+  }
+  :root:lang(ru) .cs-col-left .cs-attr-card-name {
+    font-size: clamp(13px, calc((50cqi - 68px) / 8.9), var(--fs-sm));
+  }
+}
+
 /* claude:2026-10-19T10:00:00+02:00 — Bandansicht (Porträt links, Rest rechts): die Attribute füllen die Restspalte,
    statt dass unter ihnen leere Fläche bleibt. */
 @container cs-page (max-width: 1239px) {

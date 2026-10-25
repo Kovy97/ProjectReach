@@ -68,6 +68,17 @@ const KATEGORIE_ICON: Record<Exclude<FilterCategory, "all">, string> = {
   materials: "🪵",
 };
 
+/** claude:2026-10-25T13:11:00+01:00 — Painterly-Bestandsaufnahme: gemalte UI-Icons je Kategorie (vorhandener Bestand in
+ *  assets/icons), Emoji oben nur noch als Rückfall, falls eine Datei fehlt. */
+const KATEGORIE_ICON_URL: Record<Exclude<FilterCategory, "all">, string | null> = {
+  weapons: getUiIcon("icon_attack"),
+  armor: getUiIcon("icon_defence"),
+  tools: getUiIcon("icon_skilling"),
+  food: getUiIcon("icon_food"),
+  potions: getUiIcon("icon_potion"),
+  materials: getUiIcon("icon_gathering"),
+};
+
 // ── Store: von überall öffenbar, ohne Kontext-Kette (Muster ItemWikiModal) ──────────────────
 let offen = false;
 const listeners = new Set<() => void>();
@@ -221,7 +232,11 @@ function EncyclopediaBody(): JSX.Element {
                 onClick={() => setKategorie(cat)}
               >
                 <span className="encp-cat-icon" aria-hidden="true">
-                  {cat === "all" ? "◆" : KATEGORIE_ICON[cat]}
+                  {cat === "all"
+                    ? "◆"
+                    : KATEGORIE_ICON_URL[cat]
+                      ? <img loading="lazy" decoding="async" src={KATEGORIE_ICON_URL[cat]!} alt="" />
+                      : KATEGORIE_ICON[cat]}
                 </span>
                 <span className="encp-cat-label">{t(`inv.filter.${cat}`)}</span>
                 <span className="encp-cat-count">{zahlen[cat] ?? 0}</span>

@@ -111,7 +111,7 @@ import { getZoneBackground, getZoneBackgroundCard } from "../zoneBackgrounds";
 import { getDungeonBackground, getDungeonBackgroundCard } from "../dungeonBackgrounds";
 import { getItemImage } from "../items";
 import { getZoneMap } from "../zoneMaps";
-import { consumeEliteJumpTarget, consumeMonsterJumpTarget, getMonsterJumpNav, subscribeMonsterJump } from "../util/monsterJump";
+import { consumeEliteJumpFallback, consumeEliteJumpTarget, consumeMonsterJumpTarget, getMonsterJumpNav, subscribeMonsterJump } from "../util/monsterJump";
 import { MonsterLootButton } from "../components/MonsterLoot";
 import { useItemTooltip } from "../components/ItemTooltip";
 import { CitadelTip, HoverTip, useCitadelTip } from "../components/CitadelTip";
@@ -5260,17 +5260,21 @@ function MonsterSelectImpl(): JSX.Element {
     // claude:2026-10-25T10:32:00+01:00 — Champion-Sprung aus dem Champion-Fenster: Zone öffnen, Ziel = `#elitecard-<zoneId>`.
     // Rückfall auf die Karte des Grundmonsters, falls das Champion-Fenster inzwischen abgelaufen ist.
     const eliteZoneId = consumeEliteJumpTarget();
+    const eliteFallbackMonsterId = consumeEliteJumpFallback(); // claude:2026-10-25T13:11:00+01:00 — immer mitlesen, auch wenn unten abgebrochen wird
     if (eliteZoneId) {
       const eliteGroup = byZone.find((g) => g.zone.id === eliteZoneId);
       if (!eliteGroup || !isZoneUnlocked(state, content, eliteZoneId)) return;
       const entry = state.eliteZones?.[eliteZoneId];
       const activeVariant = entry && "variantId" in entry ? content.elites?.[entry.variantId] : undefined;
+      // claude:2026-10-25T13:11:00+01:00 — Rückfall auch, wenn der Champion schon weg ist (dann kennt der Spielstand die Variante
+      // nicht mehr; das Grundmonster kommt vom Aufrufer).
+      const fallbackMonsterId = activeVariant?.baseMonsterId ?? eliteFallbackMonsterId;
       setTowerFloor(null);
       lastZoneId = eliteZoneId;
       setZoneId(eliteZoneId);
       setJumpTarget({
         id: `elitecard-${eliteZoneId}`,
-        fallbackId: activeVariant ? `monstercard-${activeVariant.baseMonsterId}` : null,
+        fallbackId: fallbackMonsterId ? `monstercard-${fallbackMonsterId}` : null,
       });
       return;
     }

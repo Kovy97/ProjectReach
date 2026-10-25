@@ -46,7 +46,7 @@ const STAT_ICON_KEYS: Record<string, string> = {
   // liefert auf ein arkanes Kristall-Emoji zurück (bewusst NICHT 🛡, das ist schon "def").
   ward: "icon_attribute_ward",
   // Zauberreserve (28.08.2026): löst den früheren Mana-Balken ab, gleiches Icon.
-  mana: "icon_attribute_mana",
+  mana: "icon_mana", // claude:2026-10-25T13:11:00+01:00 — „icon_attribute_mana“ gibt es nicht (Emoji-Rückfall), das Zauberreserve-Icon heißt icon_mana
 };
 const STAT_ICON_FALLBACK: Record<string, string> = {
   hp: "❤", atk: "⚔", def: "🛡", acc: "🎯", eva: "💨", spd: "⏱", gold: "🪙", ward: "🔷", mana: "✦",

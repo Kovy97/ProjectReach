@@ -3243,13 +3243,13 @@ const en = {
     "equipSell.noBuyBack": "A batch sale does not go to buy-back.",
     "equipSell.kindLabel": "Type:",
     "equipSell.upTo": "Up to and including:",
-    "equipSell.count": "{n} items",
+    "equipSell.count": "×{n}",
     "equipSell.total": "Total",
-    "equipSell.skipped": "{n} matching items are protected and stay.",
+    "equipSell.skipped": "Protected and kept: {n}",
     "equipSell.nothing": "Nothing to sell for this type and rarity.",
     "equipSell.moreKinds": "+ {n} more item types",
     "equipSell.confirm": "Sell {n} for {gold} Gold",
-    "equipSell.resultDetail": "{n} items sold for {gold} Gold",
+    "equipSell.resultDetail": "Sold: {n} for {gold} Gold",
 };
 
 /** Schlüssel-Parität-Guard: jeder fehlende/zusätzliche Key gegenüber `en` ist ein tsc-Fehler. */
@@ -6324,13 +6324,13 @@ const de: Record<keyof typeof en, string> = {
     "equipSell.noBuyBack": "Ein Sammelverkauf landet nicht im Rückkauf.",
     "equipSell.kindLabel": "Art:",
     "equipSell.upTo": "Bis einschließlich:",
-    "equipSell.count": "{n} Items",
+    "equipSell.count": "×{n}",
     "equipSell.total": "Gesamt",
-    "equipSell.skipped": "{n} passende Items sind geschützt und bleiben.",
+    "equipSell.skipped": "Geschützt, bleibt liegen: {n}",
     "equipSell.nothing": "Für diese Art und Seltenheit gibt es nichts zu verkaufen.",
     "equipSell.moreKinds": "+ {n} weitere Item-Arten",
     "equipSell.confirm": "{n} für {gold} Gold verkaufen",
-    "equipSell.resultDetail": "{n} Items für {gold} Gold verkauft",
+    "equipSell.resultDetail": "Verkauft: {n} für {gold} Gold",
 };
 
 // `en` ist Pflicht (Referenz-/Fallback-Sprache, s. `useI18n().t`); die übrigen 5 Locales

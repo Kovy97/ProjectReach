@@ -134,6 +134,8 @@ const STATUS_UI: Record<string, string> = {
 };
 
 /** Stat-Icon: neues PNG (falls vorhanden), sonst Emoji-Fallback. */
+// claude:2026-10-25T13:11:00+01:00 — Painterly-Bestandsaufnahme: zwei Aufrufe nannten Dateien, die es nie gab („icon_attribute_lck“,
+// „icon_attribute_mana“) und zeigten deshalb immer das Emoji. Richtig sind icon_attribute_luck und icon_mana (Zauberreserve).
 function statIcon(uiName: string, emoji: string): string | JSX.Element {
   const url = uiName ? getUiIcon(uiName) : null;
   return url ? <img loading="lazy" decoding="async" src={url} alt="" className="ui-icon" /> : emoji;
@@ -909,7 +911,7 @@ function DefenseGroup({
     // #304: formatDamage (≤1 Dezimale) statt formatStat (0 Dezimalen) — s. affixEffectParts oben.
     rows.push(<StatRow key="hregen" icon={statIcon("icon_attribute_hp", "💚")} label={t("stat.hpRegen")} value={`+${formatDamage(b.hpRegenPerSec)}/s`} delta={deltaTagFor(deltaMap, "hpRegenPerSec", b.hpRegenPerSec)} />);
   if (b?.maxMana)
-    rows.push(<StatRow key="mana" icon={statIcon("icon_attribute_mana", "✦")} label={t("stat.maxMana")} value={fmtBonus(b.maxMana)} delta={deltaTagFor(deltaMap, "maxMana", b.maxMana)} />);
+    rows.push(<StatRow key="mana" icon={statIcon("icon_mana", "✦")} label={t("stat.maxMana")} value={fmtBonus(b.maxMana)} delta={deltaTagFor(deltaMap, "maxMana", b.maxMana)} />);
 
   // ── Rüstungs-Trinität: je Klassen-Schicht NUR zeigen, wenn das Feld > 0 (Chef-Vorgabe) ──
   if (item.armorRating) {
@@ -1148,7 +1150,7 @@ function MiscRows({
     if (bb.hpRegenPerSec) rows.push(<StatRow key="bhregen" icon={statIcon("icon_attribute_hp", "💚")} label={t("stat.hpRegen")} value={`+${formatDamage(bb.hpRegenPerSec)}/s`} />);
     if (bb.critChance) rows.push(<StatRow key="bcc" icon={statIcon("icon_attribute_crit_chance", "🎲")} label={t("stat.critChance")} value={`+${Math.round(bb.critChance * 100)}%`} />);
     if (bb.critDamage) rows.push(<StatRow key="bcd" icon={statIcon("icon_attribute_critdamage", "💥")} label={t("stat.critDamage")} value={`+${Math.round(bb.critDamage * 100)}%`} />);
-    if (bb.maxMana) rows.push(<StatRow key="bmana" icon={statIcon("icon_attribute_mana", "✦")} label={t("stat.maxMana")} value={fmtBonus(bb.maxMana)} />);
+    if (bb.maxMana) rows.push(<StatRow key="bmana" icon={statIcon("icon_mana", "✦")} label={t("stat.maxMana")} value={fmtBonus(bb.maxMana)} />);
     if (bb.attackIntervalMs) {
       const v = bb.attackIntervalMs;
       const sign = v > 0 ? "+" : "";
@@ -1190,7 +1192,8 @@ function MiscRows({
     }
     if (bb.gatherXpMult && bb.gatherXpMult !== 1) {
       const pct = Math.round((bb.gatherXpMult - 1) * 100);
-      rows.push(<StatRow key="bgxp" icon="✨" label={t("stat.gatherXpMult")} value={`+${pct}%`} />);
+      // claude:2026-10-25T13:11:00+01:00 — dasselbe gemalte Icon wie die gleichnamige Zeile der Suffix-Boni (statt nacktem ✨).
+      rows.push(<StatRow key="bgxp" icon={statIcon("icon_attribute_luck", "✨")} label={t("stat.gatherXpMult")} value={`+${pct}%`} />);
     }
     if (bb.gatherYieldMult) {
       rows.push(<StatRow key="bgyield" icon="🎁" label={t("stat.gatherYieldMult")} value={`+${Math.round(bb.gatherYieldMult * 100)}%`} />);
@@ -1241,7 +1244,7 @@ function SuffixGroup({
     // #304: formatDamage (≤1 Dezimale) statt formatStat — s. affixEffectParts oben.
     rows.push(<StatRow key="shregen" tone={tone} icon={statIcon("icon_attribute_hp", "💚")} label={t("stat.hpRegen")} value={`+${formatDamage(bonus.hpRegenPerSec)}/s`} />);
   if (bonus.maxMana)
-    rows.push(<StatRow key="smana" tone={tone} icon={statIcon("icon_attribute_mana", "✦")} label={t("stat.maxMana")} value={fmtBonus(bonus.maxMana)} />);
+    rows.push(<StatRow key="smana" tone={tone} icon={statIcon("icon_mana", "✦")} label={t("stat.maxMana")} value={fmtBonus(bonus.maxMana)} />);
   if (bonus.critChance)
     rows.push(<StatRow key="scc" tone={tone} icon={statIcon("icon_attribute_crit_chance", "🎲")} label={t("stat.critChance")} value={`+${Math.round(bonus.critChance * 100)}%`} />);
   if (bonus.critDamage)
@@ -1251,9 +1254,9 @@ function SuffixGroup({
   if (bonus.lifesteal)
     rows.push(<StatRow key="sls" tone={tone} icon={statIcon("icon_attribute_hp", "🩸")} label={t("stat.lifesteal")} value={`+${Math.round(bonus.lifesteal * 100)}%`} />);
   if (bonus.gatherXpMult && bonus.gatherXpMult !== 1)
-    rows.push(<StatRow key="sgx" tone={tone} icon={statIcon("icon_attribute_lck", "✨")} label={t("stat.gatherXpMult")} value={`+${Math.round((bonus.gatherXpMult - 1) * 100)}%`} />);
+    rows.push(<StatRow key="sgx" tone={tone} icon={statIcon("icon_attribute_luck", "✨")} label={t("stat.gatherXpMult")} value={`+${Math.round((bonus.gatherXpMult - 1) * 100)}%`} />);
   if (bonus.gatherYieldMult)
-    rows.push(<StatRow key="sgy" tone={tone} icon={statIcon("icon_attribute_lck", "✨")} label={t("stat.gatherYieldMult")} value={`+${Math.round(bonus.gatherYieldMult * 100)}%`} />);
+    rows.push(<StatRow key="sgy" tone={tone} icon={statIcon("icon_attribute_luck", "✨")} label={t("stat.gatherYieldMult")} value={`+${Math.round(bonus.gatherYieldMult * 100)}%`} />);
   if (bonus.attackIntervalMs) {
     const v = bonus.attackIntervalMs;
     const sign = v > 0 ? "+" : "";

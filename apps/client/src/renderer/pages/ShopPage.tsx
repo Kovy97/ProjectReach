@@ -534,6 +534,9 @@ function BuyTab(): JSX.Element {
 // Container"). Schlichte Stacks bleiben wie bisher; hat ein Basis-Item verzauberte Varianten in der
 // Instanz-Tasche, wird sein Eintrag zur Container-Zelle (Stern + Pouch-Modal statt Mengen-Auswahl).
 // Modul-Ebene (statt lokal in SellTab), damit MassSellCell (Task #323) denselben Typ nutzen kann.
+/** claude:2026-10-25T13:29:00+01:00 — mit Slayer-Punkten gekaufte Teile (für „Alle auswählen“ im Massenverkauf geschützt). */
+const SLAYER_SHOP_IDS: ReadonlySet<string> = new Set((content.slayerShop ?? []).map((entry) => entry.itemId));
+
 type SellEntry =
   | { key: string; kind: "stack"; itemId: string; qty: number }
   | { key: string; kind: "container"; itemId: string; qty: number; instances: ItemInstance[] };
@@ -724,10 +727,14 @@ function SellTab(): JSX.Element {
   // claude:2026-10-25T10:53:00+01:00 — 1.4.1: Seit 1.4.0 gibt es das Schloss (Bergung, salvage.ts). „Alle auswählen“ und der
   // Shift-Bereich lassen gesperrte Items aus: gesperrte Basis = Eintrag fällt weg, gesperrte Einzelstücke =
   // Einzelwahl ohne sie. Ein bewusster Einzelklick bleibt möglich (wie beim Sammelverkauf K1 nur für Sammelwege).
+  // claude:2026-10-25T13:29:00+01:00 — wie der Sammelverkauf (shop.ts equipmentSellPlan): Meisterringe, Werkzeuge (Äxte),
+  // Slayer-Shop-Teile und Einzelstücke mit Runen nimmt „Alle auswählen“ nicht mit; ein Einzelklick bleibt möglich.
   const bulkSelectionFor = (e: SellEntry): MassSellSelection | null => {
     if (isSalvageLocked(state, e.itemId)) return null;
+    const def = content.items[e.itemId];
+    if (e.itemId.startsWith("ring_master_") || def?.tool || SLAYER_SHOP_IDS.has(e.itemId)) return null;
     if (e.kind === "container") {
-      const free = e.instances.filter((inst) => !isSalvageLocked(state, inst.instanceId));
+      const free = e.instances.filter((inst) => !isSalvageLocked(state, inst.instanceId) && (inst.affixes?.length ?? 0) === 0);
       if (free.length < e.instances.length) {
         return { kind: "container", mode: "single", baseQty: e.qty, instanceIds: new Set(free.map((inst) => inst.instanceId)) };
       }

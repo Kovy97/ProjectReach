@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { content } from "@hearthforge/content";
 import { meetsRequirements, itemTier } from "@hearthforge/engine";
 import type { ItemInstance } from "@hearthforge/shared";
@@ -93,6 +93,22 @@ export function ItemCell({
   const state = useGameStateMaybe();
   const timerRef = useRef<number | null>(null);
   const posRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  // claude:2026-10-25T13:11:00+01:00 — Hängende Hover-Karte: verschwand die Zelle unter dem Mauszeiger (Dialog zu, Item verkauft
+  // oder verbraucht, Slot geleert), kam kein mouseleave mehr. Ein noch laufender 0,5-s-Timer öffnete die Karte dann sogar NACH dem
+  // Abbau, und nichts schloss sie wieder (Esc und Klick schließen nur die festgehaltene Karte). Beim Abbau jetzt Timer stoppen und
+  // die eigene Hover-Karte schließen; `hoverShownRef` merkt, ob die aktuelle Hover-Karte von DIESER Zelle stammt.
+  const hoverShownRef = useRef(false);
+  const tooltipRef = useRef(tooltip);
+  tooltipRef.current = tooltip;
+  useEffect(
+    () => () => {
+      if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+      timerRef.current = null;
+      if (hoverShownRef.current) tooltipRef.current.hide();
+      hoverShownRef.current = false;
+    },
+    [],
+  );
   // Einmaliges kurzes Funkeln beim ersten Erscheinen dieser Zelle in „NEU"-Zustand (danach nur
   // noch der statische Punkt) — s. util/discoveryBadge.ts `consumeSparkleOnce` (Session-Flag,
   // wie Toasts.tsx' `hasFiredFenceToast`). Lazy-Init: läuft genau einmal pro Mount.
@@ -143,6 +159,8 @@ export function ItemCell({
           // `showCompare = shift && …`) SOFORT; normaler Hover mit kurzem Delay (≤1s).
           const delay = e.shiftKey ? 0 : HOVER_DELAY_MS;
           timerRef.current = window.setTimeout(() => {
+            timerRef.current = null;
+            hoverShownRef.current = true; // claude:2026-10-25T13:11:00+01:00
             tooltip.show(itemId, posRef.current.x, posRef.current.y, actions, instance);
           }, delay);
         }
@@ -152,6 +170,7 @@ export function ItemCell({
       }}
       onMouseLeave={() => {
         clearTimer();
+        hoverShownRef.current = false; // claude:2026-10-25T13:11:00+01:00
         tooltip.hide();
       }}
       onClick={(e) => {

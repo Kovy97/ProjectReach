@@ -359,8 +359,12 @@
   text-align: left;
 }
 
+/* claude:2026-10-25T13:11:00+01:00 — Zähler zuerst: der Text („Beute: 2/12“) schrumpft nicht mehr mit, sonst kürzte die
+   Champion-Karte bei 1366 px in RU auf „ДОБЫЧА: 2/…“. Platz geben zuerst die Vorschau-Symbole ab (overflow:hidden dort);
+   die Ellipse bleibt nur Notbremse, falls der Text allein breiter als der Knopf wäre. */
 #root .mc-loot-btn-label {
-  flex: 0 1 auto;
+  flex: 0 0 auto;
+  max-width: calc(100% - 1.5em);
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;

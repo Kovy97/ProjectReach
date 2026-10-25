@@ -57,5 +57,10 @@ FIXES
 - Hovering an item name on a skill card no longer makes a horizontal scrollbar appear.
 - The top bar adjusts immediately when you change the text size.
 - A tooltip on skill cards was only in German.
+- Item cards no longer stay stuck on screen when the item under the cursor disappears.
+- Long attribute names and the combat style in the sidebar no longer break in the middle of a word.
+- The Champion button falls back to the normal monster if the Champion has already left.
+- Raid runs in the queue now show the Slayer points of each boss.
+- Several small symbols are now proper icons instead of emojis, for example luck and spell reserve on item cards.
 
 More music is on the way. Until then: thank you for playing, and keep the reports coming.

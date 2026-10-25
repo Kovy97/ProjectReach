@@ -121,7 +121,7 @@ export const COMBAT_STAT_ICON: Record<string, string | null> = {
   precision:        getUiIcon("icon_attribute_precision"),
   wardBreak:        getUiIcon("icon_attribute_wardbreak"),
   // Zauberreserve (28.08.2026): löst den früheren Mana-Vital-Balken ab, jetzt eine Stat-Zeile.
-  mana:             getUiIcon("icon_attribute_mana"),
+  mana:             getUiIcon("icon_mana"), // claude:2026-10-25T13:11:00+01:00 — war „icon_attribute_mana“ (Datei existiert nicht)
 };
 
 /** Paperdoll-Slot-Reihenfolge (matcht das CSS-Grid `.cs-slot.<slot>` in character.css). */

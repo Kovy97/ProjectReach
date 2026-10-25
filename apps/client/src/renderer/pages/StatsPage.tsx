@@ -110,7 +110,8 @@ export function StatsPage(): JSX.Element {
   return (
     <div className="stx-page">
       <div className="stx-grid">
-        <StxSection icon="⚔" title={t("stats.section.combat")}>
+        {/* claude:2026-10-25T13:11:00+01:00 — Painterly-Bestandsaufnahme: gemaltes Kill-Symbol statt ⚔ (Muster der übrigen Sektionen). */}
+        <StxSection icon={sectionIcon(getUiIcon("icon_combat_status_kill"), "⚔")} title={t("stats.section.combat")}>
           <div className="stx-medallion-row">
             <StatMedallion
               iconSrc={getSidebarIcon("combat")}

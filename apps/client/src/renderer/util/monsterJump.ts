@@ -20,6 +20,8 @@ let navRequest: MonsterJumpNav | null = null;
 let pendingMonsterId: string | null = null;
 /** claude:2026-10-25T10:32:00+01:00 — B1 (1.4.1): Ziel-Zone eines Champion-Sprungs (s. jumpToElite). */
 let pendingEliteZoneId: string | null = null;
+/** claude:2026-10-25T13:11:00+01:00 — Grundmonster des Champions als Rückfall-Ziel, falls er beim Sprung schon verschwunden ist. */
+let pendingEliteFallbackMonsterId: string | null = null;
 let navNonce = 0;
 const listeners = new Set<() => void>();
 
@@ -37,6 +39,7 @@ export function jumpToMonster(monsterId: string): void {
   if (!content.monsters[monsterId]) return;
   pendingMonsterId = monsterId;
   pendingEliteZoneId = null; // claude:2026-10-25T10:32:00+01:00 — der jüngste Sprung gewinnt
+  pendingEliteFallbackMonsterId = null; // claude:2026-10-25T13:11:00+01:00
   navRequest = { pageId: "combat", nonce: ++navNonce };
   emit();
 }
@@ -48,9 +51,12 @@ export function jumpToMonster(monsterId: string): void {
  * hier die Zone und scrollt zur Champion-Karte (`#elitecard-<zoneId>`); ist der Champion inzwischen
  * verschwunden, fällt sie auf die Karte des Grundmonsters zurück. No-op bei unbekannter Zone.
  */
-export function jumpToElite(zoneId: string): void {
+export function jumpToElite(zoneId: string, fallbackMonsterId?: string): void {
   if (!content.zones.some((z) => z.id === zoneId)) return;
   pendingEliteZoneId = zoneId;
+  // claude:2026-10-25T13:11:00+01:00 — Der Rückfall braucht das Grundmonster vom Aufrufer: ist der Champion weg, kennt der
+  // Spielstand seine Variante nicht mehr (vorher blieb der versprochene Rückfall deshalb immer aus, z. B. beim späten Toast-Klick).
+  pendingEliteFallbackMonsterId = fallbackMonsterId && content.monsters[fallbackMonsterId] ? fallbackMonsterId : null;
   pendingMonsterId = null;
   navRequest = { pageId: "combat", nonce: ++navNonce };
   emit();
@@ -60,6 +66,13 @@ export function jumpToElite(zoneId: string): void {
 export function consumeEliteJumpTarget(): string | null {
   const id = pendingEliteZoneId;
   pendingEliteZoneId = null;
+  return id;
+}
+
+/** claude:2026-10-25T13:11:00+01:00 — Liest UND löscht das Rückfall-Monster des letzten Champion-Sprungs (s. jumpToElite). */
+export function consumeEliteJumpFallback(): string | null {
+  const id = pendingEliteFallbackMonsterId;
+  pendingEliteFallbackMonsterId = null;
   return id;
 }
 
