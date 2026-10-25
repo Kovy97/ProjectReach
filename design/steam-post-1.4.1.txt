@@ -30,6 +30,7 @@ SELL GEAR IN BULK
 
 ITEM CARDS
 
+- The buttons on the item card have slimmer frames, and the dark box behind them is gone.
 - The item card is smaller and no longer grows that much with the text size.
 - Click an item to pin its card, then drag the card by its title bar to wherever you like. Esc or the cross
   closes it.
@@ -38,6 +39,11 @@ ITEM CARDS
 
 COMBAT
 
+- Melee attacks finally look like the weapon you swing. All ten melee weapon types have their own swing and
+  impact: quick cross cuts for daggers, thrusts with a shock ring for spears, wide sweeps for two-handers and
+  ground-cracking blows for maces and mauls. Every type has two variants and its own critical hit.
+- Weapons with fire, frost, lightning, poison, bleed or void effects show them in the swing, with an extra
+  burst when the effect triggers. Your hero moves differently depending on the weapon, too.
 - The hit chance is now labelled on the monster cards ("You hit 97%", "Hits you 48%") and shown in the fight
   header.
 - The loot count on monster cards and in the fight opens the full loot list with names, chances and amounts,
