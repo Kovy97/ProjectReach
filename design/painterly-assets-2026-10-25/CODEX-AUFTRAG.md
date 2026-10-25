@@ -472,6 +472,8 @@ I1-I3) Drei Icons für Emoji-Lücken (neue IDs, keine Ersetzung)
 ----------------------------------------------------------------------------------------------------
 
 S1-S3) Skill-Kulissen im Painterly-Stil (Pilot; die übrigen zehn erst nach Chef-Abnahme)
+   <!-- claude:2026-10-25T16:40:00+01:00 --> **CHEF-ENTSCHEID 25.10. abends: abgelehnt** („also neue Skill Hintergründe will ich keine“).
+   Pilot S1–S3 wird nicht eingebaut, die übrigen zehn werden NICHT produziert. Bestehende Skill-Hintergründe bleiben.
    Format: 2172 x 724, RGB, deckend (3:1). Die Kartenfassung 880 x 293 erzeugen wir selbst.
    Ersatznamen: <id>_painterly.png -> später assets/skill-backgrounds/<id>.webp, Altbild wird archiviert,
    nicht gelöscht.
