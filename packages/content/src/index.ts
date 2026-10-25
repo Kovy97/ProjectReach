@@ -6103,7 +6103,8 @@ export const content: ContentDB = {
       // Itemization 2.5: accuracy → critChance gefaltet; evasion → hpRegenPerSec.
       // Task #238: critChance 0.09→0.10 (glatte 10%); hpRegenPerSec 0.1→1 (ganzzahlig).
       // red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 1→0.1 — tooltip-rounding workaround, not a real buff.
-      buff: { category: "offense", durationMs: 120_000, bonus: { critChance: 0.10, hpRegenPerSec: 0.1 } },
+      // claude:2026-10-25T18:57:00+01:00 — Chef 25.10.: kein Regenerations-Trank, nur Angriffs-Buff → LP-Regeneration 0,1/s gestrichen (12 LP je Trank, wirkungslos).
+      buff: { category: "offense", durationMs: 120_000, bonus: { critChance: 0.10 } },
     },
     salve_gravensap: {
       id: "salve_gravensap", name: { en: "Gravensap Salve", de: "Grabharz-Salbe" },
@@ -6118,7 +6119,8 @@ export const content: ContentDB = {
       // Task #238: attackIntervalMs -120→-450 (mid-superRare-Tempo-Tier), critChance 0.02→0.05, hpRegenPerSec 0.2→2.
       // red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 2→0.2 — tooltip-rounding workaround, not a
       // real buff (attackIntervalMs/critChance are deliberate Task #238 balance values and stay).
-      buff: { category: "offense", durationMs: 180_000, bonus: { attackIntervalMs: -450, critChance: 0.05, hpRegenPerSec: 0.2 } },
+      // claude:2026-10-25T18:57:00+01:00 — Chef 25.10.: kein Regenerations-Trank, nur Angriffs-Buff → LP-Regeneration 0,2/s gestrichen (36 LP je Trank, wirkungslos).
+      buff: { category: "offense", durationMs: 180_000, bonus: { attackIntervalMs: -450, critChance: 0.05 } },
     },
     elixir_grave_lily: {
       id: "elixir_grave_lily", name: { en: "Grave Lily Elixir", de: "Grableimkraut-Elixier" },
@@ -16607,7 +16609,7 @@ export const content: ContentDB = {
       name: { en: "Dreadfang", de: "Schreckenzahn" },
       slayerFloor: 4,
       level: 62, maxHp: 106, damage: 34, accuracy: 12, evasion: 16, defense: 31, defenseType: "evasion", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 32→106, DMG 29→34, ACC 9→12 (Welt-Referenz Lv62 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel-v2 #0: 22→29 (naked Zufluss 3.80%→5.01%/s)
-      attackIntervalMs: 2600, xp: 404, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 258→404 (XP je eff. LP im Welt-Band Lv62 x1,25)
+      attackIntervalMs: 2600, xp: 664, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 258→404 (XP je eff. LP im Welt-Band Lv62 x1,25) // claude:2026-10-25T18:57:00+01:00 — 1.4.1 Chef „Etage 5 ausgleichen“: XP 404→664 = alte XP 258 × Zeit je Kill 26.5/10.3 s, Kampf-XP/h wie vor der Härtung
       inflict: { type: "bleed", chance: 0.35, magnitude: 1, durationMs: 5000 },
       loot: [
         { itemId: "dread_fang_shard", chance: 0.35, min: 1, max: 1 },
@@ -16621,7 +16623,7 @@ export const content: ContentDB = {
       name: { en: "Void Stalker", de: "Leerenjäger" },
       slayerFloor: 4, slayerRequirement: "void_anchor",
       level: 66, maxHp: 111, damage: 38, accuracy: 12, evasion: 17, defense: 33, defenseType: "evasion", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 35→111, DMG 34→38, ACC 10→12 (Welt-Referenz Lv66 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel-v2 #0: 23→34 (naked Zufluss 3.34%→4.94%/s)
-      attackIntervalMs: 3000, xp: 386, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 315→386 (XP je eff. LP im Welt-Band Lv66 x1,25)
+      attackIntervalMs: 3000, xp: 793, gold: 0, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: XP 315→386 (XP je eff. LP im Welt-Band Lv66 x1,25) // claude:2026-10-25T18:57:00+01:00 — 1.4.1 Chef „Etage 5 ausgleichen“: XP 386→793 = alte XP 315 × Zeit je Kill 26.7/10.6 s, Kampf-XP/h wie vor der Härtung
       resist: ["poison"],
       inflict: { type: "shock", chance: 0.30, magnitude: 0.30, durationMs: 4000 },
       loot: [
@@ -16635,7 +16637,7 @@ export const content: ContentDB = {
       name: { en: "Sorrow Wraith", de: "Kummer-Wraith" },
       slayerFloor: 4, slayerRequirement: "soul_veil",
       level: 72, maxHp: 132, damage: 41, accuracy: 12, evasion: 3, defense: 40, defenseType: "ward", wardCapacity: 39, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 65→171 (Ward 15→39), DMG 36→41, ACC 10→12 (Welt-Referenz Lv72 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel-v2 #0: 28→36 (naked Zufluss 3.91%→5.02%/s)
-      attackIntervalMs: 2800, xp: 680, gold: 0,
+      attackIntervalMs: 2800, xp: 1521, gold: 0, // claude:2026-10-25T18:57:00+01:00 — 1.4.1 Chef „Etage 5 ausgleichen“: XP 680→1521 = alte XP 680 × Zeit je Kill 26.4/11.8 s, Kampf-XP/h wie vor der Härtung
       resist: ["bleed", "poison"],
       inflict: { type: "burn", chance: 0.25, magnitude: 1, durationMs: 6000 },
       loot: [
@@ -16649,7 +16651,7 @@ export const content: ContentDB = {
       name: { en: "Bone Colossus", de: "Knochenkoloss" },
       slayerFloor: 4,
       level: 76, maxHp: 146, damage: 45, accuracy: 13, evasion: 2, defense: 66, defenseType: "armor", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 62→146, DMG 45→45, ACC 11→13 (Welt-Referenz Lv76 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel v2 #4: def 40→66 (armorPen-Crossover-Sichtbarkeit); #0: dmg 24→45 (naked Zufluss 2.69%→5.05%/s)
-      attackIntervalMs: 3400, xp: 920, gold: 0,
+      attackIntervalMs: 3400, xp: 1868, gold: 0, // claude:2026-10-25T18:57:00+01:00 — 1.4.1 Chef „Etage 5 ausgleichen“: XP 920→1868 = alte XP 920 × Zeit je Kill 26.4/13.0 s, Kampf-XP/h wie vor der Härtung
       regen: 0.5,
       enrage: { belowHpPct: 0.30, damageMult: 1.70 },
       loot: [
@@ -16667,7 +16669,7 @@ export const content: ContentDB = {
       name: { en: "Dread Knight", de: "Schreckensritter" },
       slayerFloor: 5,
       level: 82, maxHp: 175, damage: 46, accuracy: 13, evasion: 2, defense: 70, defenseType: "armor", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 78→175, DMG 43→46, ACC 11→13 (Welt-Referenz Lv82 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel v2 #4: def 41→70 (armorPen-Crossover-Sichtbarkeit); #0: dmg 28→43 (naked Zufluss 3.28%→5.03%/s)
-      attackIntervalMs: 3000, xp: 1080, gold: 0,
+      attackIntervalMs: 3000, xp: 2100, gold: 0, // claude:2026-10-25T18:57:00+01:00 — 1.4.1 Chef „Etage 5 ausgleichen“: XP 1080→2100 = alte XP 1080 × Zeit je Kill 28.2/14.5 s, Kampf-XP/h wie vor der Härtung
       regen: 0.4,
       resist: ["frost", "poison"],
       inflict: { type: "bleed", chance: 0.30, magnitude: 1, durationMs: 6000 },
@@ -16681,7 +16683,7 @@ export const content: ContentDB = {
       name: { en: "Soul Flayer", de: "Seelenschinder" },
       slayerFloor: 5, slayerRequirement: "soul_veil",
       level: 86, maxHp: 180, damage: 46, accuracy: 13, evasion: 2, defense: 43, defenseType: "ward", wardCapacity: 53, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 114→233 (Ward 26→53), DMG 41→46, ACC 12→13 (Welt-Referenz Lv86 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel-v2 #0: 30→41 (naked Zufluss 3.68%→5.03%/s)
-      attackIntervalMs: 2800, xp: 1320, gold: 0,
+      attackIntervalMs: 2800, xp: 2412, gold: 0, // claude:2026-10-25T18:57:00+01:00 — 1.4.1 Chef „Etage 5 ausgleichen“: XP 1320→2412 = alte XP 1320 × Zeit je Kill 28.5/15.6 s, Kampf-XP/h wie vor der Härtung
       resist: ["bleed"],
       inflict: { type: "burn", chance: 0.30, magnitude: 1, durationMs: 6000 },
       loot: [
@@ -16696,7 +16698,7 @@ export const content: ContentDB = {
       name: { en: "Void Herald", de: "Leeren-Herold" },
       slayerFloor: 5, slayerRequirement: "void_anchor",
       level: 90, maxHp: 195, damage: 49, accuracy: 14, evasion: 3, defense: 50, defenseType: "ward", wardCapacity: 58, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 127→253 (Ward 29→58), DMG 43→49, ACC 12→14 (Welt-Referenz Lv90 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel-v2 #0: 35→43 (naked Zufluss 4.06%→4.99%/s)
-      attackIntervalMs: 2800, regen: 0.3, xp: 1650, gold: 0,
+      attackIntervalMs: 2800, regen: 0.3, xp: 2954, gold: 0, // claude:2026-10-25T18:57:00+01:00 — 1.4.1 Chef „Etage 5 ausgleichen“: XP 1650→2954 = alte XP 1650 × Zeit je Kill 29.0/16.2 s, Kampf-XP/h wie vor der Härtung
       resist: ["burn", "frost"],
       inflict: { type: "shock", chance: 0.35, magnitude: 0.40, durationMs: 5000 },
       loot: [
@@ -16711,7 +16713,7 @@ export const content: ContentDB = {
       name: { en: "Abyssal Devourer", de: "Abyssaler Verschlinger" },
       slayerFloor: 5, slayerRequirement: "void_anchor",
       level: 96, maxHp: 224, damage: 50, accuracy: 14, evasion: 2, defense: 78, defenseType: "armor", // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 120→224, DMG 49→50, ACC 13→14 (Welt-Referenz Lv96 + Slayer-Zuschlag, sim-kalibriert) | alt: Combat-Feel v2 #4: def 50→78 (armorPen-Crossover-Sichtbarkeit); #0: dmg 33→49 (naked Zufluss 3.39%→5.04%/s)
-      attackIntervalMs: 3000, xp: 2300, gold: 0,
+      attackIntervalMs: 3000, xp: 3829, gold: 0, // claude:2026-10-25T18:57:00+01:00 — 1.4.1 Chef „Etage 5 ausgleichen“: XP 2300→3829 = alte XP 2300 × Zeit je Kill 28.8/17.3 s, Kampf-XP/h wie vor der Härtung
       regen: 0.8,
       // Spieler-Report 31.08.2026 („Shock works, but Ice and Poison don't"): Diese Liste ist die
       // einzige im Katalog, die ALLE damals bekannten Statuseffekte abdeckt — sie meint erkennbar
@@ -16834,7 +16836,7 @@ export const content: ContentDB = {
       slayerFloor: 4,
       resist: ["frost"],
       level: 74, maxHp: 123, damage: 43, accuracy: 13, evasion: 18, defense: 40, defenseType: "evasion", attackIntervalMs: 2800, // claude:2026-10-25T15:22:00+01:00 — 1.4.1 Slayer B: eff. LP 56→123, DMG 37→43, ACC 10→13 (Welt-Referenz Lv74 + Slayer-Zuschlag, sim-kalibriert) | alt: balance-pass2 2026-07-01: Tower-Etage-4-Band-Fix; Combat-Feel-v2 #0: 26→37 (naked Zufluss 3.54%→5.04%/s)
-      regen: 0.4, xp: 820, gold: 0,
+      regen: 0.4, xp: 1594, gold: 0, // claude:2026-10-25T18:57:00+01:00 — 1.4.1 Chef „Etage 5 ausgleichen“: XP 820→1594 = alte XP 820 × Zeit je Kill 28.0/14.4 s, Kampf-XP/h wie vor der Härtung
       loot: [
         { itemId: "frost_pelt", chance: 0.5, min: 1, max: 2 },
         { itemId: "scarred_hide", chance: 0.4, min: 1, max: 2 },
@@ -16851,7 +16853,7 @@ export const content: ContentDB = {
       resist: ["shock"],
       inflict: { type: "burn", chance: 0.25, magnitude: 1, durationMs: 6000 },
       enrage: { belowHpPct: 0.30, damageMult: 1.7 },
-      regen: 0.5, xp: 2150, gold: 0,
+      regen: 0.5, xp: 3530, gold: 0, // claude:2026-10-25T18:57:00+01:00 — 1.4.1 Chef „Etage 5 ausgleichen“: XP 2150→3530 = alte XP 2150 × Zeit je Kill 30.7/18.7 s, Kampf-XP/h wie vor der Härtung
       // tower-monsters.test.ts-Klon-Guard: loot MUSS NICHT MEHR 1:1 mit roc_void übereinstimmen —
       // #354 Paket 3.3 hat roc_void in LOOT_PARITY_EXCEPTIONS aufgenommen (roc_void bekam eine
       // eigene on-band-Row, dieser Turm-Zwilling bleibt bewusst unverändert). Dungeon-Rework §5.5-

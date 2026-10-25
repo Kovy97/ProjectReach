@@ -117,3 +117,24 @@ Alle Stile tragen das Plattenset der Stufe (Rüstungs-Trinität nicht nachgestel
   wurde nicht gesenkt). Ausgleich nur über höhere XP je Kill, Chef-Entscheid.
 - Prüfungen: Engine 2143 grün (24 übersprungen), Persistence 575, Client 300, Typecheck 5/5, Build grün, Sim AUFFÄLLIGKEITEN 0.
 
+## Ausgleich Etage 4–5 (Chef 25.10. abends: „Etage 5 ausgleichen“)
+
+<!-- claude:2026-10-25T19:10:00+01:00 -->
+
+Kampf-XP/h war auf Etage 4 auf ×0,50 und auf Etage 5 auf ×0,58 gefallen. Jetzt je Monster XP = alte XP (vor 1.4.1) × Zeit je Kill
+neu / alt aus der Sim-Tabelle oben, nie unter dem bisherigen Wert. Damit liegt die XP/h wieder auf dem Stand vor der Härtung.
+Etage 4 ist mit ausgeglichen, weil sie denselben Einbruch hatte.
+
+| Monster | XP vor 1.4.1 | XP nach Härtung | XP jetzt |
+|---|---|---|---|
+| dreadfang | 258 | 404 | 664 |
+| void_stalker | 315 | 386 | 793 |
+| sorrow_wraith | 680 | 680 | 1.521 |
+| tower_frost_hound | 820 | 820 | 1.594 |
+| bone_colossus | 920 | 920 | 1.868 |
+| dread_knight | 1.080 | 1.080 | 2.100 |
+| soul_flayer | 1.320 | 1.320 | 2.412 |
+| void_herald | 1.650 | 1.650 | 2.954 |
+| tower_roc_void | 2.150 | 2.150 | 3.530 |
+| abyssal_devourer | 2.300 | 2.300 | 3.829 |
+

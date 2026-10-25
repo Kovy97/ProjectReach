@@ -127,12 +127,14 @@ describe("auto-potion", () => {
     // (#244/#303, Guard content-integrity.test.ts §4.4) zählen als „HoT läuft, nicht nachtrinken".
     const { s, maxHp } = combatSetup();
     addItem(s.inventory, content, "emberroot_tonic", 1); // category "regeneration", 120 s
-    addItem(s.inventory, content, "tonic_witchlight", 1); // category "offense" mit Neben-Regen, 120 s
+    // claude:2026-10-25T19:04:00+01:00 — Irrlicht-Tonikum trägt seit 1.4.1 keine Regeneration mehr (Chef 25.10.); zweiter kategorisierter
+    // Buff mit Regeneration ist jetzt das Sternkappen-Risotto (category "food", hpRegenPerSec 1, 300 s).
+    addItem(s.inventory, content, "risotto_starcap", 1);
     expect(useConsumable(s, content, "emberroot_tonic")).toBe(true);
-    expect(useConsumable(s, content, "tonic_witchlight")).toBe(true);
+    expect(useConsumable(s, content, "risotto_starcap")).toBe(true);
     // Fixture-Ehrlichkeit: beide tragen real hpRegenPerSec > 0 UND eine Kategorie — sonst prüft
     // dieser Test nichts mehr (Content-Drift-Detektor, Content ist content-devs Revier).
-    for (const id of ["emberroot_tonic", "tonic_witchlight"]) {
+    for (const id of ["emberroot_tonic", "risotto_starcap"]) {
       expect(content.items[id]?.buff?.category).toBeTruthy();
       expect(content.items[id]?.buff?.bonus?.hpRegenPerSec ?? 0).toBeGreaterThan(0);
       expect(s.character.buffs.some((b) => b.itemId === id)).toBe(true);

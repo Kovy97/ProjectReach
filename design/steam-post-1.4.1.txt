@@ -3,8 +3,9 @@ Grim Reach 1.4.1 - The Hunt Goes On
 Hunters,
 
 thank you for all the reports and reviews since 1.4.0. This update is built from them: Slayer points come
-much faster, a lot of small annoyances are gone, and you can finally sell a mountain of gear in one go.
-Saves stay compatible as always.
+much faster and the Slayer tower finally fights back, work orders show up far more often, enchanting has a new
+page, melee attacks got their own effects, and you can sell a mountain of gear in one go. Saves stay
+compatible as always.
 
 SLAYER POINTS, MUCH FASTER
 
@@ -20,9 +21,9 @@ SLAYER POINTS, MUCH FASTER
 - Every Champion kill gives 20 Slayer points.
 - Every raid boss gives Slayer points: 10 on Normal, 25 on Heroic, 50 on Mythic.
 - The first five floors of the Slayer tower are a real fight now. Their monsters had fallen far behind the
-  world monsters of the same level and often died in one hit. They now have more health and hit harder, and
-  floors 1 to 3 give more XP per kill. Tasks there take longer, so tower tasks on floors 1 to 5 now give
-  double Slayer points.
+  world monsters of the same level and often died in one hit. They now have more health and hit harder.
+- To make up for the longer fights, every monster on floors 1 to 5 gives more XP per kill, so your XP per
+  hour there stays at least where it was. Tower tasks on floors 1 to 5 also give double Slayer points.
 - Tower tasks no longer fill up with monsters far below your level. If the tower has too few targets at
   your level, Brenna mixes in world tasks instead.
 
@@ -33,6 +34,15 @@ SELL GEAR IN BULK
 - Locked items, equipped gear, kit pieces, pieces with runes, axes, master rings, gear bought with Slayer
   points and items an open work order still needs are never sold.
 - "Select all" in the existing multi-sell mode now skips locked items too.
+
+ENCHANTING
+
+- The enchanting page is rebuilt. Pick an item and it stands on an altar with one socket per rune slot, its
+  stats shown before and after the rune you are looking at.
+- Runes are laid out as a grimoire with search and filters. Runes that fit come first, the others tell you
+  why they don't.
+- Everything from the old page is still there: removing runes, runes from the storage, groups.
+- The page is the first to use our new painted frames. More pages will follow.
 
 ITEM CARDS
 
@@ -66,6 +76,11 @@ WORK ORDERS, MORE OFTEN
   every 12 hours of skilling.
 - Orders you already accepted keep their reward.
 
+BALANCE
+
+- Witchlight Tonic and Gloomspore Tincture are attack buffs. Their tiny health regeneration (12 and 36 health
+  over the whole duration) did next to nothing and is gone, the text now says what they really do.
+
 OPTIONS AND SOUND
 
 - New option "Button style" with previews: wood, moss & wood, basalt & iron or leather & setting for the sidebar,
@@ -88,6 +103,7 @@ FIXES
 - Long attribute names and the combat style in the sidebar no longer break in the middle of a word.
 - The Champion button falls back to the normal monster if the Champion has already left.
 - Raid runs in the queue now show the Slayer points of each boss.
+- Enchanting no longer picks the wrong rune when the rune list changes while you choose.
 - Several small symbols are now proper icons instead of emojis, for example luck and spell reserve on item cards.
 
 More music is on the way. Until then: thank you for playing, and keep the reports coming.
