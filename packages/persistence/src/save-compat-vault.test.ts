@@ -451,6 +451,7 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     // claude:2026-10-25T10:32:00+01:00 — SAVE 96 (1.4.1 Slayer-Punkte): Auto-Auftrag aus; der v80-Save hat weder Kodex-Ränge noch
     // Punkte-Unikate, die Gutschrift ist also 0 und `slayerPoints` bleibt byte-gleich.
     erwartet.state.slayerAutoTask = false;
+    erwartet.state.inventory.variantCells = {}; // claude:2026-10-25T18:11:00+01:00 — SAVE 98: neues Feld, das Fixture hat keine reinen Variantengruppen
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(result!.state, raw.savedAt))).toEqual(erwartet);
   });

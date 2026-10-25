@@ -104,6 +104,8 @@ import {
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot, HuntCatch, HuntTrap } from "@hearthforge/shared";
 import type { HuntCatchTally } from "@hearthforge/engine";
+import { legacyVariantCellLayout, syncVariantCells } from "@hearthforge/engine"; // claude:2026-10-25T18:02:00+01:00 — feste Fächer der Variantenzellen (SAVE 98)
+import type { InventoryState } from "@hearthforge/shared"; // claude:2026-10-25T18:02:00+01:00
 import { actionLevelMet, MAX_STACK, deriveEventRngSeed, isQuiverItem, offhandFitsMain, storagePredicate, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isHealPotion, resolveLeftRaidFight, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotOwned, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
 
 /**
@@ -441,6 +443,11 @@ const RING_MASTER_IDS: ReadonlySet<string> = new Set(Object.values(RING_MASTER_R
 function sanitizeState(state: GameState, content: ContentDB): GameState {
   const known = (id: ItemId | null | undefined): boolean =>
     !!id && content.items[id as ItemId] !== undefined;
+  // claude:2026-10-25T18:02:00+01:00 — SAVE 98: die gespeicherten Fächer der Variantenzellen ROH festhalten, bevor irgendein Sanitize-Schritt über
+  // addItem/addInstance (`syncVariantCells`) das Feld neu schreibt. Fehlt es (jeder Stand < 98, s. migrateState), gilt die alte
+  // Anzeige-Logik als Vorbelegung (`legacyVariantCellLayout`, unten am Ende).
+  const rawVariantCells: unknown = (state.inventory as Partial<InventoryState> | undefined)?.variantCells;
+  const variantCellsMissing = !rawVariantCells || typeof rawVariantCells !== "object" || Array.isArray(rawVariantCells);
 
   // — RNG: defensiv defaulten/validieren (Fix run5 #4). `state.rng` wurde bisher nie gehärtet, und
   //   `advance()` läuft in deserialize NACH migrate/sanitize, aber AUSSERHALB des migrate-try/catch.
@@ -940,6 +947,7 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   // — Inventar: unbekannte/leere itemIds verwerfen, qty clampen, Länge auf Kapazität trimmen —
   const inv = state.inventory;
   if (!Array.isArray(inv.instances)) inv.instances = [];
+  const zelleAm = new Map<number, ItemId>(); // claude:2026-10-25T18:02:00+01:00 — SAVE 98: Fachindex → Basis der Variantenzelle
   if (Array.isArray(inv.slots)) {
     for (let i = 0; i < inv.slots.length; i++) {
       const s = inv.slots[i];
@@ -958,17 +966,57 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
       const qty = clampFinite(s.qty, 0, QTY_HARD_CAP, 0);
       inv.slots[i] = qty > 0 ? { itemId: s.itemId, qty } : null;
     }
+    // claude:2026-10-25T18:02:00+01:00 — SAVE 98: Reservierungen strukturell prüfen (bekannte ID, ganzzahliger Index im Bereich, Fach nach der Säuberung
+    // leer, je Fach nur eine Zelle). Ob die Gruppe wirklich „rein“ ist, entscheidet `syncVariantCells` am Ende (die Instanz-Tasche
+    // wird erst unten gesäubert).
+    if (!variantCellsMissing) {
+      const rec = rawVariantCells as Record<string, unknown>;
+      for (const id of Object.keys(rec).slice(0, ARRAY_HARD_CAP)) {
+        const idx = rec[id];
+        if (id === "__proto__" || !known(id as ItemId)) continue;
+        if (typeof idx !== "number" || !Number.isInteger(idx) || idx < 0 || idx >= inv.slots.length) continue;
+        if (inv.slots[idx] || zelleAm.has(idx)) continue;
+        zelleAm.set(idx, id as ItemId);
+      }
+    }
     // Auf effektive Kapazität trimmen (belegte zuerst), damit ein überlanges slots-Array nicht
     // bis zum nächsten Kapazitäts-Event hängen bleibt (DoS gegen sich selbst).
     const cap = effectiveCapacity(inv, content);
     if (inv.slots.length > cap) {
       const filled = inv.slots.filter((s) => s !== null);
-      const next: typeof inv.slots = new Array(Math.max(cap, filled.length)).fill(null);
-      filled.forEach((s, i) => (next[i] = s));
+      // claude:2026-10-25T18:02:00+01:00 — SAVE 98: Variantenzellen rücken wie belegte Fächer mit nach vorne (sonst zeigten ihre Reservierungen nach dem
+      // Kompaktieren auf fremde Fächer). Stapel haben Vorrang: passt nicht alles in max(cap, Stapel), fallen die hintersten
+      // Reservierungen weg (die Gruppe steht dann fachlos hinten wie bisher, `syncVariantCells` vergibt ihr später ein Fach).
+      const laenge = Math.max(cap, filled.length);
+      const eintraege: Array<{ slot: InventorySlot } | { zelle: ItemId }> = [];
+      for (let i = 0; i < inv.slots.length; i++) {
+        const s = inv.slots[i];
+        if (s) eintraege.push({ slot: s });
+        else if (zelleAm.has(i)) eintraege.push({ zelle: zelleAm.get(i)! });
+      }
+      let ueber = eintraege.length - laenge;
+      for (let k = eintraege.length - 1; k >= 0 && ueber > 0; k--) {
+        if ("zelle" in eintraege[k]!) {
+          eintraege.splice(k, 1);
+          ueber--;
+        }
+      }
+      const next: typeof inv.slots = new Array(laenge).fill(null);
+      zelleAm.clear();
+      eintraege.forEach((e, i) => {
+        if ("slot" in e) next[i] = e.slot;
+        else zelleAm.set(i, e.zelle);
+      });
       inv.slots = next;
     }
   } else {
     inv.slots = [];
+  }
+  // claude:2026-10-25T18:02:00+01:00 — SAVE 98: geprüfte Reservierungen setzen, damit spätere Sanitize-Schritte (Beute über addItem) sie respektieren.
+  {
+    const cells: Record<ItemId, number> = {};
+    for (const [idx, id] of zelleAm) if (!Object.prototype.hasOwnProperty.call(cells, id)) cells[id] = idx;
+    inv.variantCells = cells;
   }
   // Instanz-Tasche (v53) validieren — analog `bankInstances`: unbekannte baseItemId raus, jede Instanz
   // strukturell säubern; eine modifikationslose Instanz zerfällt zum plain Bank-Stack (die Tasche hält
@@ -2402,6 +2450,13 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   //   `["paragon_key"]`, der zweite `[null]`, weil der Schluessel erst danach eingezogen wurde.
   //   Selbstheilend: leert Faecher verschwundener Items, entfernt Doppelte, haengt Fehlende an. —
   syncBankOrder(state, undefined, storagePredicate(content)); // claude:2026-10-23T22:00:00+02:00 — Lagerware hat kein Bankfach (1.4.0 ML)
+
+  // — claude:2026-10-25T18:02:00+01:00 — Feste Fächer der Variantenzellen (SAVE 98): ALLERLETZTER Inventar-Schritt (nach Instanz-Säuberung, Paragon-
+  //   Sweep, Ausrüstungs-Rückgaben). Stand < 98 (Feld fehlt): die Zellen genau dort vorbelegen, wo der alte Client sie zeichnete
+  //   (`legacyVariantCellLayout`), damit beim ersten Laden nichts springt. Danach räumt `syncVariantCells` Ungültiges weg (keine
+  //   reine Gruppe mehr, Fach belegt, doppelt) und vergibt fehlenden reinen Gruppen ein Fach. Idempotent. —
+  if (variantCellsMissing) state.inventory.variantCells = legacyVariantCellLayout(state.inventory);
+  syncVariantCells(state.inventory);
 
   syncActiveKit(state);
 
@@ -3945,6 +4000,15 @@ function migrateState(state: GameState, content: ContentDB): GameState {
     if (wo.tierMs === undefined) wo.tierMs = defaultWorkOrderTierClocks();
   }
 
+  // ── Feste Fächer der Variantenzellen (SAVE_VERSION 97 → 98, 1.4.1, Chef-Report 25.10.2026 „Items verschieben sich nach Restart“) ──
+  // claude:2026-10-25T18:02:00+01:00 — Neues Feld `inventory.variantCells`. Ein Stand < 98 kann es nicht tragen; falls eine der Migrationen oben über
+  // addItem/addInstance (`syncVariantCells`) schon eines angelegt hat, wird es hier verworfen. Die eigentliche Vorbelegung macht
+  // sanitizeState am Ende (alte Anzeige-Logik `legacyVariantCellLayout` auf dem fertig gesäuberten Inventar), damit die Zellen beim
+  // ersten Laden exakt dort stehen, wo der alte Client sie zeichnete. Idempotent: ein schon gehobener Stand trägt das Feld.
+  if ((state.version ?? 0) < 98 && state.inventory && typeof state.inventory === "object") {
+    delete (state.inventory as Partial<InventoryState>).variantCells;
+  }
+
   // State auf die aktuelle Version heben (macht versions-abhängige Migrationen idempotent).
   state.version = SAVE_VERSION;
 
@@ -4601,6 +4665,9 @@ export function deserialize(
   //   `["bait_worm"]`, beim zweiten `[null]` — der Round-Trip war also nicht idempotent, und der
   //   Kompat-Vault hat genau das aufgedeckt. Hier steht er nach allem, was `bank` anfasst. —
   syncBankOrder(state, undefined, storagePredicate(content)); // claude:2026-10-23T22:00:00+02:00 — ohne Lagerware (1.4.0 ML)
+  // claude:2026-10-25T18:02:00+01:00 — dasselbe für die Variantenzellen (SAVE 98): der Nachhol-Tick kann Fächer verändert haben; advance() synct nur,
+  // wenn wirklich Ticks liefen. Idempotent.
+  syncVariantCells(state.inventory);
 
   return { state, offlineMs, offlineTicks, offline };
 }

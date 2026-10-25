@@ -762,7 +762,14 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //     Angebot bekommen Stufe 2 (entsprechen dem 1.4.0-Auftrag, der feste Lohn bleibt unverändert), Countdowns auf die
 //     Mittelwerte. Sanitize (jede Version): Stufe außerhalb 1–3 → 2, Countdown nicht endlich/negativ → Mittelwert, gedeckelt
 //     auf 1,25 × Mittel; Angebots-Restzeit auf die Laufzeit seiner Stufe. Keine ID-Änderung, nichts geht verloren.
-export const SAVE_VERSION = 97;
+// 98: Feste Fächer für Variantenzellen (1.4.1, Chef-Report 25.10.2026 „Items verschieben sich nach Restart von selbst“;
+//     claude:2026-10-25T17:56:00+01:00): `inventory.variantCells` (Basis-Item → Fachindex) für reine Variantengruppen (nur
+//     verzauberte/gesuffixte Instanzen, kein Grundstapel). Bisher setzte der Client diese Zellen bei jedem Rendern hinter das
+//     letzte belegte Fach; jetzt haben sie ein gespeichertes Fach, sind ziehbar und springen nicht mehr. Migration < 98: Felder
+//     so vorbelegen, wie der alte Client sie zeichnete (engine `legacyVariantCellLayout`), damit beim ersten Laden nichts
+//     springt. Sanitize (jede Version): ungültige Einträge raus, Lade-Trim auf Kapazität führt Reservierungen mit, danach
+//     `syncVariantCells`. Kein Bestand ändert sich, keine ID-Änderung.
+export const SAVE_VERSION = 98;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -6826,6 +6833,14 @@ export interface InventoryState {
    * Container-Zelle (`groupInstancesByBase`).
    */
   instances: ItemInstance[];
+  /**
+   * claude:2026-10-25T17:56:00+01:00 — Feste Fächer der Variantenzellen (SAVE_VERSION 98, Chef-Report 25.10.2026 „Items verschieben
+   * sich nach Restart von selbst“): Basis-Item → Fachindex in `slots` für jede REINE Variantengruppe (Instanzen in `instances`,
+   * aber kein Fach dieser Basis in `slots`). Das reservierte Fach bleibt in `slots` `null`, gilt aber als belegt: `addItem` legt
+   * dort nichts Fremdes ab, Ziehen/Kompaktieren/Sortieren führen die Reservierung mit. Gepflegt ausschließlich über
+   * `syncVariantCells` (engine/inventory.ts); eine Gruppe ohne freies Fach (übervolles Inventar) hat keinen Eintrag.
+   */
+  variantCells: Record<ItemId, number>;
 }
 
 /** Start-Slots des Basis-Inventars. */

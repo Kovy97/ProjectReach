@@ -29,6 +29,7 @@ export function createInventory(baseCapacity: number): InventoryState {
     bagSlots: [],
     slots: new Array<InventorySlot | null>(baseCapacity).fill(null),
     instances: [],
+    variantCells: {}, // claude:2026-10-25T18:00:00+01:00 — feste Fächer der Variantenzellen (SAVE 98)
   };
 }
 
@@ -56,12 +57,222 @@ function syncSlots(inv: InventoryState, content: ContentDB): void {
     return;
   }
 
-  const items = inv.slots.filter((s): s is InventorySlot => s !== null);
-  const next: Array<InventorySlot | null> = new Array(Math.max(target, items.length)).fill(null);
-  items.forEach((item, i) => {
-    next[i] = item;
+  // claude:2026-10-25T18:00:00+01:00 — SAVE 98: Variantenzellen rücken beim Kompaktieren wie belegte Fächer mit (sonst zeigten
+  // ihre Reservierungen nach dem Kürzen auf fremde Fächer).
+  kompaktiereMitZellen(inv, target);
+}
+
+// ── Feste Fächer für Variantenzellen (SAVE_VERSION 98) ─────────────────────────────────────────────────────────────────
+// claude:2026-10-25T18:00:00+01:00 — Chef-Report 25.10.2026: „Items verschieben sich nach Restart von selbst. Habe vom letzten Slot
+// ein Item weggezogen, dann ist ein anderes Item hineingesprungen, was nicht mehr draggable ist.“ Reine Variantengruppen
+// (verzaubert/gesuffixt, kein Grundstapel in `slots`) hatten kein eigenes Fach; der Client setzte sie bei jedem Rendern hinter das
+// letzte belegte Fach. Zog man das letzte Item nach vorne, rückte eine Variantenzelle in die Lücke, und jede Belegungsänderung
+// (Beute, Neustart mit Offline-Fortschritt) verschob sie. Jetzt hat jede reine Gruppe ein gespeichertes Fach
+// (`inventory.variantCells`); das Fach bleibt in `slots` `null`, gilt aber als belegt. Alles hier ist deterministisch (kein RNG).
+
+/** Ist das Fach leer (`null`/Loch)? */
+function fachLeer(inv: InventoryState, i: number): boolean {
+  return !inv.slots[i];
+}
+
+/**
+ * Basis-IDs aller REINEN Variantengruppen: Instanzen in `inv.instances`, aber kein Fach dieser Basis in `slots` (gleiche Definition
+ * wie `instanceCellCount` und CharacterPage `orphanInstanceGroups`). Reihenfolge = erstes Auftreten in `inv.instances`
+ * (= `groupInstancesByBase`). Rein lesend.
+ */
+export function pureVariantBases(inv: InventoryState): ItemId[] {
+  const list = Array.isArray(inv.instances) ? inv.instances : [];
+  if (list.length === 0) return [];
+  const inSlots = new Set<ItemId>();
+  for (const s of inv.slots) if (s) inSlots.add(s.itemId);
+  const seen = new Set<ItemId>();
+  const out: ItemId[] = [];
+  for (const inst of list) {
+    const id = inst?.baseItemId;
+    if (typeof id !== "string" || seen.has(id)) continue;
+    seen.add(id);
+    if (!inSlots.has(id)) out.push(id);
+  }
+  return out;
+}
+
+interface VariantCellPlan {
+  /** Basis → Fach, gültig und eindeutig. */
+  cells: Record<ItemId, number>;
+  /** Belegte Reservierungs-Fächer. */
+  reserved: Set<number>;
+  /** Reine Gruppen ohne freies Fach (übervolles Inventar). */
+  fachlos: ItemId[];
+}
+
+/**
+ * Berechnet, was `syncVariantCells` schreiben würde, ohne den State anzufassen (Lesepfade wie `canHold`/`freeSlots` sollen nicht
+ * mutieren). Regeln:
+ *  1. Bestehende Einträge bleiben, wenn die Basis eine reine Gruppe ist, der Index ganzzahlig im Bereich liegt, das Fach leer ist
+ *     und kein früherer Eintrag dasselbe Fach hält (Schlüsselreihenfolge entscheidet).
+ *  2. Reine Gruppen ohne Eintrag (Reihenfolge s. `pureVariantBases`): zuerst ein gültiger `hint` (das gerade frei gewordene Fach
+ *     ihres letzten Grundstapels, s. `removeItem`), sonst das erste freie, nicht reservierte Fach HINTER dem letzten belegten oder
+ *     reservierten Fach, sonst das erste freie davor. Kein Platz: kein Eintrag (Zelle steht fachlos hinten).
+ */
+function planVariantCells(inv: InventoryState, hints?: ReadonlyMap<ItemId, number>): VariantCellPlan {
+  const pure = pureVariantBases(inv);
+  const cells: Record<ItemId, number> = {};
+  const reserved = new Set<number>();
+  const fachlos: ItemId[] = [];
+  if (pure.length === 0) return { cells, reserved, fachlos };
+  const pureSet = new Set(pure);
+  const n = inv.slots.length;
+  const gueltig = (idx: unknown): idx is number =>
+    typeof idx === "number" && Number.isInteger(idx) && idx >= 0 && idx < n && fachLeer(inv, idx) && !reserved.has(idx);
+  const raw = inv.variantCells as unknown;
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+    const rec = raw as Record<string, unknown>;
+    for (const id of Object.keys(rec)) {
+      if (id === "__proto__" || !pureSet.has(id)) continue;
+      const idx = rec[id];
+      if (!gueltig(idx)) continue;
+      cells[id] = idx;
+      reserved.add(idx);
+    }
+  }
+  let letztes = -1;
+  for (let i = n - 1; i >= 0; i--) {
+    if (!fachLeer(inv, i) || reserved.has(i)) {
+      letztes = i;
+      break;
+    }
+  }
+  for (const id of pure) {
+    if (Object.prototype.hasOwnProperty.call(cells, id)) continue;
+    let idx = -1;
+    const hint = hints?.get(id);
+    if (gueltig(hint)) idx = hint;
+    if (idx === -1) {
+      for (let i = letztes + 1; i < n; i++) if (fachLeer(inv, i) && !reserved.has(i)) { idx = i; break; }
+    }
+    if (idx === -1) {
+      for (let i = 0; i < n; i++) if (fachLeer(inv, i) && !reserved.has(i)) { idx = i; break; }
+    }
+    if (idx === -1) {
+      fachlos.push(id);
+      continue;
+    }
+    cells[id] = idx;
+    reserved.add(idx);
+    if (idx > letztes) letztes = idx;
+  }
+  return { cells, reserved, fachlos };
+}
+
+/**
+ * Hält `inv.variantCells` mit Fächern und Instanz-Tasche im Einklang (SAVE 98). Idempotent, deterministisch, verliert nie Bestand
+ * (es ordnet nur Zellen zu). Entfernt Einträge ohne reine Gruppe (keine Instanzen mehr oder ein Fach derselben Basis liegt in
+ * `slots`), außerhalb des Bereichs, auf belegtem Fach oder doppelt; vergibt neuen reinen Gruppen ein Fach (Regeln s.
+ * `planVariantCells`). Läuft nach jeder Inventar-Änderung dieser Datei und einmal pro `advance()` (tick.ts), das fängt auch
+ * Stellen ab, die Fächer direkt leeren (enchant/farming/mail/shop). Gibt zurück, ob sich etwas geändert hat.
+ */
+export function syncVariantCells(inv: InventoryState, hints?: ReadonlyMap<ItemId, number>): boolean {
+  const plan = planVariantCells(inv, hints);
+  const alt = inv.variantCells as unknown;
+  const altRec = alt && typeof alt === "object" && !Array.isArray(alt) ? (alt as Record<string, unknown>) : null;
+  const neuKeys = Object.keys(plan.cells);
+  let gleich = altRec !== null && Object.keys(altRec).length === neuKeys.length;
+  if (gleich) {
+    for (const id of neuKeys) {
+      if (altRec![id] !== plan.cells[id]) { gleich = false; break; }
+    }
+  }
+  if (gleich) return false;
+  // Immer ein NEUES Objekt: Aufrufer (Persistenz) dürfen den rohen Altwert als Referenz behalten.
+  inv.variantCells = plan.cells;
+  return true;
+}
+
+/**
+ * Fächer, die eine Variantenzelle zeigen (gültig nach `planVariantCells`, ohne zu schreiben): Fachindex → Basis. Für die UI und
+ * Prüfungen; reine Gruppen ohne Fach fehlen hier (s. `pureVariantBases`).
+ */
+export function variantCellIndex(inv: InventoryState): Map<number, ItemId> {
+  const out = new Map<number, ItemId>();
+  for (const [id, idx] of Object.entries(planVariantCells(inv).cells)) out.set(idx, id as ItemId);
+  return out;
+}
+
+/**
+ * Alte Anzeige-Logik (bis SAVE 97, Client `inventarRaster` vom 24.10.2026) als Vorbelegung für die Migration < 98: Variantengruppen
+ * nahmen die ersten freien Fächer HINTER dem letzten belegten Fach, reichte das nicht, die LETZTEN freien davor; ohne freies Fach
+ * blieben sie fachlos. Exakt nachgebaut, damit beim ersten Laden mit SAVE 98 keine Zelle springt. Nicht für neue Vergaben nutzen
+ * (dafür gilt `syncVariantCells`).
+ */
+export function legacyVariantCellLayout(inv: InventoryState): Record<ItemId, number> {
+  const gruppen = pureVariantBases(inv);
+  const out: Record<ItemId, number> = {};
+  if (gruppen.length === 0) return out;
+  const frei: number[] = [];
+  let letztesBelegt = -1;
+  inv.slots.forEach((sl, i) => {
+    if (sl === null || sl === undefined) frei.push(i);
+    else letztesBelegt = i;
   });
-  inv.slots = next;
+  const dahinter = frei.filter((i) => i > letztesBelegt);
+  const fehlen = Math.max(0, gruppen.length - dahinter.length);
+  const davor = fehlen > 0 ? frei.filter((i) => i < letztesBelegt).slice(-fehlen) : [];
+  const plaetze = [...davor, ...dahinter];
+  gruppen.forEach((id, k) => {
+    const fach = plaetze[k];
+    if (fach !== undefined) out[id] = fach;
+  });
+  return out;
+}
+
+/**
+ * Kompaktiert Stapel UND Variantenzellen gemeinsam nach vorne (Reihenfolge erhalten, optional neu sortiert) auf die Länge
+ * `max(ziel, Einträge)`. Gemeinsamer Kern von `syncSlots`-Schrumpfen, `compactInventory` und `sortInventory`.
+ */
+function kompaktiereMitZellen(
+  inv: InventoryState,
+  zielLaenge: number,
+  vergleich?: (a: ItemId, b: ItemId) => number,
+): boolean {
+  const zellen = variantCellIndex(inv);
+  type Eintrag = { id: ItemId; slot: InventorySlot | null };
+  const eintraege: Eintrag[] = [];
+  for (let i = 0; i < inv.slots.length; i++) {
+    const s = inv.slots[i];
+    if (s) eintraege.push({ id: s.itemId, slot: s });
+    else if (zellen.has(i)) eintraege.push({ id: zellen.get(i)!, slot: null });
+  }
+  // Kürzen (nur `syncSlots`): Stapel gehen nie verloren; passen nicht alle Zellen dazu, fallen die hintersten Reservierungen weg
+  // (ihre Gruppen stehen dann fachlos hinten, bis ein Fach frei wird). Beim Kompaktieren/Sortieren in voller Länge passt immer alles.
+  const stapel = eintraege.filter((e) => e.slot !== null).length;
+  const laenge = Math.max(zielLaenge, stapel);
+  let ueber = eintraege.length - laenge;
+  for (let k = eintraege.length - 1; k >= 0 && ueber > 0; k--) {
+    if (eintraege[k]!.slot === null) {
+      eintraege.splice(k, 1);
+      ueber--;
+    }
+  }
+  if (vergleich) eintraege.sort((a, b) => vergleich(a.id, b.id)); // stabil: gleiche Schlüssel behalten ihre Reihenfolge
+  const next: Array<InventorySlot | null> = new Array(laenge).fill(null);
+  const cells: Record<ItemId, number> = {};
+  eintraege.forEach((e, i) => {
+    if (e.slot) next[i] = e.slot;
+    else cells[e.id] = i;
+  });
+  let veraendert = next.length !== inv.slots.length;
+  for (let i = 0; i < next.length && !veraendert; i++) if ((inv.slots[i] ?? null) !== next[i]) veraendert = true;
+  const altZellen = planVariantCells(inv).cells;
+  if (Object.keys(altZellen).length !== Object.keys(cells).length) veraendert = true;
+  for (const [id, idx] of Object.entries(cells)) if (altZellen[id] !== idx) veraendert = true;
+  if (inv.slots.length === laenge) {
+    for (let i = 0; i < laenge; i++) inv.slots[i] = next[i]!;
+  } else {
+    inv.slots = next;
+  }
+  inv.variantCells = cells;
+  syncVariantCells(inv);
+  return veraendert;
 }
 
 export function itemCount(inv: InventoryState, itemId: ItemId): number {
@@ -80,12 +291,31 @@ export function usedSlots(inv: InventoryState): number {
 }
 
 export function isFull(inv: InventoryState): boolean {
-  return usedSlots(inv) >= inv.slots.length;
+  return freeSlots(inv) <= 0; // claude:2026-10-25T18:00:00+01:00 — reservierte Fächer (SAVE 98) zählen als belegt
 }
 
-/** Anzahl freier (leerer) Inventar-Slots. Für Kapazitäts-Vorprüfungen (z.B. Equip-Tausch). */
+/**
+ * Anzahl freier Inventar-Slots, in die `addItem` einen NEUEN Stapel legen kann. Für Kapazitäts-Vorprüfungen (z.B. Equip-Tausch,
+ * Quest-Belohnung). claude:2026-10-25T18:00:00+01:00 — SAVE 98: Fächer mit Variantenzelle sind nicht frei (vorher zählten sie
+ * mit, und eine Quest-Belohnung passte rechnerisch, obwohl `addItem` sie dort nicht ablegt). Reine Gruppen, die noch kein Fach
+ * haben, verbrauchen zuerst ein freies Fach (wie `syncVariantCells` es vergeben würde).
+ */
 export function freeSlots(inv: InventoryState): number {
-  return inv.slots.length - usedSlots(inv);
+  const plan = planVariantCells(inv);
+  return Math.max(0, inv.slots.length - usedSlots(inv) - plan.reserved.size);
+}
+
+/**
+ * Wie viele Fächer für neue Stapel frei werden, wenn die Instanz `instanceId` die Tasche verlässt: 1, wenn sie die letzte ihrer
+ * reinen Variantengruppe ist und diese Gruppe ein Fach hält, sonst 0. Ergänzt `freeSlots` bei Vorprüfungen, die zuerst eine Instanz
+ * entnehmen (`equipInstance`: verzaubertes Teil aus vollem Inventar anlegen, das getragene schlichte Teil nimmt ihr Fach).
+ * claude:2026-10-25T18:00:00+01:00 — SAVE 98.
+ */
+export function slotsFreedByInstanceRemoval(inv: InventoryState, instanceId: string): number {
+  const inst = inv.instances.find((i) => i.instanceId === instanceId);
+  if (!inst) return 0;
+  if (inv.instances.some((i) => i !== inst && i.baseItemId === inst.baseItemId)) return 0;
+  return Object.prototype.hasOwnProperty.call(planVariantCells(inv).cells, inst.baseItemId) ? 1 : 0;
 }
 
 /**
@@ -97,7 +327,11 @@ export function canHold(inv: InventoryState, content: ContentDB, itemId: ItemId)
   void content; // Signatur-Stabilität (Aufrufer übergeben content; seit #286 gilt einheitlich MAX_STACK)
   // Alle Items stapeln (bis MAX_STACK) → ein vorhandener (plain) Stack mit Platz braucht keinen freien Slot.
   if (inv.slots.some((s) => s !== null && s.itemId === itemId && !s.instance && s.qty < MAX_STACK)) return true;
-  return inv.slots.some((s) => s === null);
+  // claude:2026-10-25T18:00:00+01:00 — SAVE 98, deckungsgleich mit `addItem`: die eigene Variantenzelle nimmt den Grundstapel auf,
+  // fremde Variantenzellen sind belegt.
+  const plan = planVariantCells(inv);
+  if (Object.prototype.hasOwnProperty.call(plan.cells, itemId)) return true;
+  return inv.slots.some((s, i) => !s && !plan.reserved.has(i));
 }
 
 export function addItem(
@@ -134,13 +368,27 @@ export function addItem(
   // die Reihe weiter hinten weiterlief. Neu: Beute haengt sich HINTEN an die belegte Reihe an.
   // Erst wenn dahinter nichts mehr frei ist, fuellt sie die Luecken davor — sonst ginge sie bei
   // fast vollem Inventar verloren, und der Ueberlauf ins Lager/Postfach wuerde faelschlich greifen.
+  //
+  // claude:2026-10-25T18:00:00+01:00 — SAVE 98 (Chef-Report 25.10.2026): Fächer mit Variantenzelle gelten als belegt, Beute
+  // überspringt sie (auch beim Ermitteln des letzten belegten Fachs). Ausnahme: die EIGENE Variantenzelle des Items nimmt den
+  // ersten neuen Grundstapel auf, so bleibt die Zelle an ihrem Platz (danach ist die Gruppe nicht mehr „rein“, die Reservierung
+  // entfällt). Vorher einmal synchronisieren, damit Gruppen ohne Fach zuerst ihres bekommen und nicht von Beute verdrängt werden.
+  syncVariantCells(inv);
+  const zellen = inv.variantCells ?? {};
+  const reserviert = new Set<number>(Object.values(zellen));
+  let eigenesFach = Object.prototype.hasOwnProperty.call(zellen, itemId) ? zellen[itemId]! : -1;
   let letzterBelegt = -1;
   for (let i = inv.slots.length - 1; i >= 0; i--) {
-    if (inv.slots[i] !== null) { letzterBelegt = i; break; }
+    if (inv.slots[i] !== null || reserviert.has(i)) { letzterBelegt = i; break; }
   }
   const naechsterFreier = (): number => {
-    for (let i = letzterBelegt + 1; i < inv.slots.length; i++) if (inv.slots[i] === null) return i;
-    return inv.slots.findIndex((s) => s === null); // Rueckfall: Luecke davor
+    if (eigenesFach >= 0 && inv.slots[eigenesFach] === null) {
+      const f = eigenesFach;
+      eigenesFach = -1;
+      return f;
+    }
+    for (let i = letzterBelegt + 1; i < inv.slots.length; i++) if (inv.slots[i] === null && !reserviert.has(i)) return i;
+    return inv.slots.findIndex((s, i) => s === null && !reserviert.has(i)); // Rueckfall: Luecke davor
   };
   while (remaining > 0) {
     const idx = naechsterFreier();
@@ -150,6 +398,7 @@ export function addItem(
     inv.slots[idx] = { itemId, qty: add };
     remaining -= add;
   }
+  syncVariantCells(inv); // claude:2026-10-25T18:00:00+01:00 — Reservierung der eigenen Zelle aufräumen
   return qty - remaining;
 }
 
@@ -283,6 +532,7 @@ export function discoverPossessedItems(state: GameState): void {
  */
 export function addInstance(inv: InventoryState, instance: ItemInstance): boolean {
   inv.instances.push(instance);
+  syncVariantCells(inv); // claude:2026-10-25T18:00:00+01:00 — neue reine Variantengruppe bekommt ihr festes Fach (SAVE 98)
   return true;
 }
 
@@ -380,7 +630,9 @@ export function addInstanceOrBank(
 export function removeInstance(inv: InventoryState, instanceId: string): ItemInstance | null {
   const idx = inv.instances.findIndex((i) => i.instanceId === instanceId);
   if (idx === -1) return null;
-  return inv.instances.splice(idx, 1)[0]!;
+  const removed = inv.instances.splice(idx, 1)[0]!;
+  syncVariantCells(inv); // claude:2026-10-25T18:00:00+01:00 — leere Gruppe gibt ihr Fach frei (SAVE 98)
+  return removed;
 }
 
 /** Liest die Instanz `instanceId` aus der Tasche (ohne sie zu entfernen). */
@@ -407,6 +659,7 @@ export function groupInstancesByBase(list: ItemInstance[]): Map<ItemId, ItemInst
 export function removeItem(inv: InventoryState, itemId: ItemId, qty: number): number {
   if (qty <= 0) return 0;
   let remaining = qty;
+  let freiGeworden = -1; // claude:2026-10-25T18:00:00+01:00 — erstes geleertes Fach (SAVE 98, s. unten)
   for (let i = 0; i < inv.slots.length && remaining > 0; i++) {
     const slot = inv.slots[i];
     // Instanz-Slots überspringen — Instanzen werden NUR über die Instanz-API entfernt (nie als
@@ -415,16 +668,17 @@ export function removeItem(inv: InventoryState, itemId: ItemId, qty: number): nu
     const take = Math.min(slot.qty, remaining);
     slot.qty -= take;
     remaining -= take;
-    if (slot.qty <= 0) inv.slots[i] = null;
+    if (slot.qty <= 0) {
+      inv.slots[i] = null;
+      if (freiGeworden === -1) freiGeworden = i;
+    }
   }
+  // claude:2026-10-25T18:00:00+01:00 — SAVE 98: War das der letzte Grundstapel eines Items mit Varianten in der Tasche, wird die
+  // Gruppe „rein“ und behält genau dieses Fach (die Zelle bleibt stehen, statt nach hinten zu springen).
+  syncVariantCells(inv, freiGeworden >= 0 ? new Map([[itemId, freiGeworden]]) : undefined);
   return qty - remaining;
 }
 
-/**
- * Vertauscht zwei Inventar-Slots (manuelles Umsortieren per Drag & Drop). Tauscht den Inhalt von
- * `fromIdx` und `toIdx` — funktioniert für besetzt↔besetzt (Swap) wie besetzt↔leer (Verschieben).
- * No-op bei gleichen/ungültigen Indizes. Reine Umordnung; verändert keine Mengen/Items.
- */
 /**
  * Raeumt das Inventar auf: alle belegten Faecher rutschen in ihrer bisherigen Reihenfolge nach
  * vorne, die Luecken sammeln sich hinten. Aendert NICHTS am Bestand, nur an der Platzierung.
@@ -440,22 +694,43 @@ export function removeItem(inv: InventoryState, itemId: ItemId, qty: number): nu
  * Danach gehoeren die Luecken dem Spieler: Wer sein Erz aus Fach 3 nimmt, behaelt Fach 3 leer.
  */
 export function compactInventory(inv: InventoryState): boolean {
-  const belegt = inv.slots.filter((s) => s !== null);
-  let veraendert = false;
-  for (let i = 0; i < inv.slots.length; i++) {
-    const neuWert = i < belegt.length ? belegt[i]! : null;
-    if (inv.slots[i] !== neuWert) veraendert = true;
-    inv.slots[i] = neuWert;
-  }
-  return veraendert;
+  // claude:2026-10-25T18:00:00+01:00 — SAVE 98: Variantenzellen zählen als belegte Fächer und rücken in ihrer Reihenfolge mit.
+  return kompaktiereMitZellen(inv, inv.slots.length);
 }
 
+/**
+ * Sortier-AKTION des Inventars (Knopf „Sortieren“, Chef 31.08.2026: einmaliges Verschieben, kein Zustand). Stapel UND
+ * Variantenzellen rücken nach vorne, Lücken sammeln sich hinten. Ohne `vergleich` bleibt die bisherige Reihenfolge
+ * (= `compactInventory`); mit `vergleich` werden Variantenzellen nach ihrer Basis-Item-ID einsortiert wie Stapel (stabil).
+ * claude:2026-10-25T18:00:00+01:00 — aus CharacterPage `sortiereJetzt` in die Engine gezogen, damit Reservierungen mitwandern.
+ */
+export function sortInventory(inv: InventoryState, vergleich?: (a: ItemId, b: ItemId) => number): boolean {
+  return kompaktiereMitZellen(inv, inv.slots.length, vergleich);
+}
+
+/**
+ * Tauscht zwei Fächer (Drag & Drop). Ein Fach ist ein Stapel, eine Variantenzelle (SAVE 98) oder leer; der Inhalt beider Fächer
+ * wird getauscht, Reservierungen wandern mit: Zelle → leeres Fach zieht um, Zelle ↔ Stapel und Zelle ↔ Zelle tauschen,
+ * Stapel → Zellenfach tauscht. No-op bei gleichen/ungültigen Indizes. Reine Umordnung; verändert keine Mengen/Items.
+ */
 export function moveInventorySlot(inv: InventoryState, fromIdx: number, toIdx: number): boolean {
   const n = inv.slots.length;
   if (fromIdx === toIdx || fromIdx < 0 || toIdx < 0 || fromIdx >= n || toIdx >= n) return false;
+  // claude:2026-10-25T18:00:00+01:00 — SAVE 98: Reservierungen erst bereinigen, dann mit den Fächern tauschen.
+  syncVariantCells(inv);
+  const zellen = variantCellIndex(inv);
+  const zelleVon = zellen.get(fromIdx);
+  const zelleNach = zellen.get(toIdx);
   const tmp = inv.slots[fromIdx] ?? null;
   inv.slots[fromIdx] = inv.slots[toIdx] ?? null;
   inv.slots[toIdx] = tmp;
+  if (zelleVon !== undefined || zelleNach !== undefined) {
+    const cells: Record<ItemId, number> = { ...(inv.variantCells ?? {}) };
+    if (zelleVon !== undefined) cells[zelleVon] = toIdx;
+    if (zelleNach !== undefined) cells[zelleNach] = fromIdx;
+    inv.variantCells = cells;
+  }
+  syncVariantCells(inv);
   return true;
 }
 

@@ -21,7 +21,7 @@ import { buffGatherXpMult, buffGatherYieldBonus, tickBuffs } from "./consumable"
 import { campBoostCached, campShrineBonus, tickCampCrew } from "./camp";
 import { tickCampRefine } from "./refine";
 import { checkAchievements } from "./achievements";
-import { itemCount, removeItem } from "./inventory";
+import { itemCount, removeItem, syncVariantCells } from "./inventory"; // claude:2026-10-25T18:00:00+01:00 — SAVE 98
 import { grantLoot } from "./mail";
 import { bestToolSpeed } from "./tools";
 import { bankCount } from "./bank";
@@ -866,6 +866,9 @@ export function advance(
     // Selbstheilend und idempotent; hier am selben Choke-Point wie die Erfolge, also einmal pro
     // advance-Runde statt pro Tick.
     syncBankOrder(state, effectiveBankCapacity(state, content), storagePredicate(content)); // claude:2026-10-17T21:00:00+02:00 (claude:2026-10-23T21:50:00+02:00: ohne Lagerware)
+    // claude:2026-10-25T18:00:00+01:00 — Feste Fächer der Variantenzellen (SAVE 98) nachziehen, selber Choke-Point: fängt Stellen ab,
+    // die Grundstapel direkt leeren (enchant/farming/mail/shop) und so eine Gruppe „rein“ machen. Idempotent, kein RNG.
+    syncVariantCells(state.inventory);
 
     // Meilensteine prüfen (Gesamtlevel, Kills, gesammelte Items, Gold).
     checkAchievements(state, content);

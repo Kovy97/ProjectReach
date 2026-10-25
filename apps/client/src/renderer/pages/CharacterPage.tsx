@@ -15,6 +15,7 @@ import {
   groupInstancesByBase,
   isItemDiscovered,
   moveInventorySlot,
+  sortInventory, // claude:2026-10-25T18:03:00+01:00 — Sortier-Aktion mit Variantenzellen (SAVE 98)
   sellInstance,
   sellItem,
   buffChargeInfo, itemCount, useConsumable, useConsumableMany,
@@ -146,19 +147,29 @@ export function CharacterPage(): JSX.Element {
   // `dragInvIdx` beim Ablegen auf ein anderes (oder leeres) Fach und tauschte das Falsche. Deshalb wird das gezogene Item
   // mitgemerkt und beim Ablegen gegengeprüft.
   const dragInvItemRef = useRef<string | null>(null);
+  // claude:2026-10-25T18:03:00+01:00 — Chef-Report 25.10. („… ein anderes Item hineingesprungen, was nicht mehr draggable ist“): Variantenzellen
+  // haben seit SAVE 98 ein festes Fach und sind ziehbar. Merkt, ob der laufende Zug eine Variantenzelle ist (dann zählt bei der
+  // Gegenprüfung ihr gespeichertes Fach `inventory.variantCells`, nicht der Stapel im Fach).
+  const dragInvVarianteRef = useRef(false);
   const zugBeenden = (): void => {
     setDragInvIdx(null);
     setDragItem(null);
     dragInvItemRef.current = null;
+    dragInvVarianteRef.current = false;
   };
   const ablegenAuf = (toIdx: number): void => {
     if (dragInvIdx === null) return;
     let from = dragInvIdx;
     const erwartet = dragInvItemRef.current;
-    if (erwartet !== null && state.inventory.slots[from]?.itemId !== erwartet) {
+    if (erwartet !== null && dragInvVarianteRef.current) {
+      // claude:2026-10-25T18:03:00+01:00 — Variantenzelle: lief zwischendurch ein Tick, gilt ihr aktuelles Fach; ist die Gruppe nicht mehr rein
+      // (kein Fach mehr), passiert nichts.
+      const fach = state.inventory.variantCells?.[erwartet];
+      from = typeof fach === "number" && !state.inventory.slots[fach] ? fach : -1;
+    } else if (erwartet !== null && state.inventory.slots[from]?.itemId !== erwartet) {
       from = state.inventory.slots.findIndex((sl) => sl !== null && sl.itemId === erwartet);
     }
-    if (from >= 0) moveInventorySlot(state.inventory, from, toIdx);
+    if (from >= 0 && from !== toIdx) moveInventorySlot(state.inventory, from, toIdx);
     zugBeenden();
   };
 
@@ -175,12 +186,11 @@ export function CharacterPage(): JSX.Element {
    * gelassen hat, verliert sie, aber genau darum ist es ein Knopf und kein Automatismus.
    */
   const sortiereJetzt = (): void => {
-    const inv = state.inventory;
-    const belegt = inv.slots.filter((sl): sl is NonNullable<typeof sl> => sl !== null);
-    if (sortMode !== "newest") {
-      belegt.sort((a, b) => compareItemsBy(sortMode, a.itemId, b.itemId, content, tr));
-    }
-    for (let i = 0; i < inv.slots.length; i++) inv.slots[i] = i < belegt.length ? belegt[i]! : null;
+    // claude:2026-10-25T18:03:00+01:00 — Engine-Aktion (SAVE 98): Variantenzellen rücken mit und werden nach ihrer Basis-ID einsortiert wie Stapel.
+    sortInventory(
+      state.inventory,
+      sortMode === "newest" ? undefined : (a, b) => compareItemsBy(sortMode, a, b, content, tr),
+    );
     setDragItem(null);
     bumpCrate((n) => n + 1);
   };
@@ -449,9 +459,12 @@ export function CharacterPage(): JSX.Element {
   // Die Chef-Regel vom 06.07. (Bild #43) bleibt: Variantenzellen stehen direkt HINTER dem letzten belegten Fach, vor
   // den Leerfächern. Sie nehmen dafür die ersten freien Fächer dahinter ein (reicht das nicht, die letzten freien davor),
   // statt Zusatzzellen einzuschieben, die alles Folgende verschieben.
+  // claude:2026-10-25T18:03:00+01:00 — Chef-Report 25.10.2026 („Items verschieben sich nach Restart von selbst“): die Lage kommt jetzt aus dem
+  // gespeicherten Fach der Gruppe (`inventory.variantCells`, SAVE 98), nicht mehr aus einer Neuberechnung bei jedem Rendern.
   const { variantenImFach, variantenFachlos, leereSichtbar } = inventarRaster(
     inv.slots,
     orphanInstanceGroups,
+    ([itemId]) => inv.variantCells?.[itemId],
     Math.max(0, invCapacity - invUsedUnits),
   );
   // Chef 31.08.2026: Die Anzeige folgt IMMER der echten Fachreihenfolge — Sortieren ist jetzt eine
@@ -465,10 +478,15 @@ export function CharacterPage(): JSX.Element {
   // Grundversion tragen den Stern schon an ihrem Slot (kein Doppel-Eintrag).
   // claude:2026-10-24T19:55:00+02:00 — seit dem Bugreport 24.10. belegt die Zelle dabei ein echtes freies Fach (`variantenImFach`)
   // und ist Ablageziel für dieses Fach; nur bei übervollem Inventar steht sie fachlos hinten (`fach === null`).
+  // claude:2026-10-25T18:03:00+01:00 — SAVE 98: Zellen mit festem Fach sind ziehbar wie Stapel (Start merkt Fach + Basis-ID für die Gegenprüfung
+  // in `ablegenAuf`). Kein `onDragItem`: eine Variantengruppe lässt sich nicht per Ziehen auf die Puppe anlegen (das liefe über
+  // `equipItem` mit der Basis-ID und bräuchte einen Grundstapel); Anlegen geht wie bisher über die Varianten-Tasche per Klick.
   const variantenZelle = ([itemId, group]: (typeof orphanInstanceGroups)[number], fach: number | null): ReactElement => (
     <div
       key={`orphan-${itemId}`}
-      className={`cs-inv-slot-wrap${fach !== null && dragInvIdx !== null ? " inv-drop-target" : ""}${invFilterActive && !itemMatchesInvFilter(itemId) ? " invf-dim" : ""}`}
+      className={`cs-inv-slot-wrap${fach !== null && dragInvIdx !== null && dragInvIdx !== fach ? " inv-drop-target" : ""}${invFilterActive && !itemMatchesInvFilter(itemId) ? " invf-dim" : ""}`}
+      onDragStart={fach !== null ? () => { setDragInvIdx(fach); dragInvItemRef.current = itemId; dragInvVarianteRef.current = true; } : undefined}
+      onDragEnd={fach !== null ? zugBeenden : undefined}
       onDragOver={fach !== null && dragInvIdx !== null ? (e) => e.preventDefault() : undefined}
       onDrop={fach !== null && dragInvIdx !== null ? (e) => { e.preventDefault(); ablegenAuf(fach); } : undefined}
     >
@@ -477,6 +495,7 @@ export function CharacterPage(): JSX.Element {
         instances={group}
         plainActions={invActions(itemId)}
         variantActionsFor={pouchVariantActions}
+        draggable={fach !== null}
         className="inv-slot filled"
         newBadge={isNewItemBadge(itemId)}
         onNewBadgeSeen={() => markNewItemBadgeSeen(state, itemId)}
@@ -796,7 +815,7 @@ export function CharacterPage(): JSX.Element {
                 className={`cs-inv-slot-wrap${dragInvIdx !== null && dragInvIdx !== originalIdx ? " inv-drop-target" : ""}${invFilterActive && !itemMatchesInvFilter(slot.itemId) ? " invf-dim" : ""}`}
                 /* Quell-Slot IMMER merken (für Equip-per-Drag / Quick-Sell von Instanzen); das
                    Umsortier-Drop selbst bleibt aber auf "newest" begrenzt (sonst falsche Slot-Zuordnung). */
-                onDragStart={() => { setDragInvIdx(originalIdx); dragInvItemRef.current = slot.itemId; }}
+                onDragStart={() => { setDragInvIdx(originalIdx); dragInvItemRef.current = slot.itemId; dragInvVarianteRef.current = false; }}
                 onDragEnd={zugBeenden}
                 onDragOver={dragInvIdx !== null ? (e) => e.preventDefault() : undefined}
                 onDrop={

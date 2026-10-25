@@ -219,6 +219,7 @@ describe("v86-Fixture: Round-Trip mit geteiltem Handwerk", () => {
     erwartet.state.stats.harvestedById = {}; // claude:2026-10-24T15:21:04+02:00 — SAVE 94 (Beet-Ernte-Zähler, alte Saves starten bei 0)
     erwartet.state.stats.producedBySkill = {}; // claude:2026-10-24T16:03:31+02:00 — SAVE 95 (Erzeugt je Skill, ohne offene Aufträge leer)
     erwartet.state.slayerAutoTask = false; // claude:2026-10-25T10:32:00+01:00 — SAVE 96 (1.4.1): Auto-Auftrag aus
+    erwartet.state.inventory.variantCells = {}; // claude:2026-10-25T18:11:00+01:00 — SAVE 98: neues Feld, das Fixture hat keine reinen Variantengruppen
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });

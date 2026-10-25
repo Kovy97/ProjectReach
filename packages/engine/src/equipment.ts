@@ -1,7 +1,7 @@
 import type { ContentDB, EquipSlot, GameState, ItemDef, ItemId } from "@hearthforge/shared";
 import { TOOL_SLOTS } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
-import { addInstance, addItem, freeSlots, getInstance, isFull, removeInstance, removeItem, hasInstanceRoom, usedCapacityUnits, effectiveCapacity } from "./inventory";
+import { addInstance, addItem, freeSlots, getInstance, isFull, removeInstance, removeItem, hasInstanceRoom, usedCapacityUnits, effectiveCapacity, slotsFreedByInstanceRemoval } from "./inventory";
 import { isBowItem, isQuiverItem, syncQuiverLoad } from "./quiver"; // claude:2026-10-24T18:30:00+02:00 — Köcher-Regel (1.4.0 FK)
 
 /**
@@ -253,7 +253,9 @@ export function equipInstance(
   const offhandPlain = displacesOffhand && plainOccupied(state, "offhand");
   const mainPlain = displacesMain && plainOccupied(state, "mainhand");
   const plainStows = (targetPlain ? 1 : 0) + (offhandPlain ? 1 : 0) + (mainPlain ? 1 : 0);
-  if (freeSlots(state.inventory) < plainStows) {
+  // claude:2026-10-25T18:00:00+01:00 — SAVE 98: das Fach ihrer Variantenzelle wird frei, wenn sie die letzte ihrer Gruppe ist
+  // (`freeSlots` zählt reservierte Fächer nicht mehr als frei; ohne diesen Ausgleich scheiterte der Tausch bei vollem Inventar).
+  if (freeSlots(state.inventory) + slotsFreedByInstanceRemoval(state.inventory, instanceId) < plainStows) {
     return { ok: false, reason: "Inventar voll" };
   }
   // Quell-Instanz aus der Tasche nehmen (das Slot-Gitter bleibt unberührt).

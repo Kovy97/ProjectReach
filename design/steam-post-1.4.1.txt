@@ -68,12 +68,16 @@ WORK ORDERS, MORE OFTEN
 
 OPTIONS AND SOUND
 
+- New option "Button style" with previews: wood, moss & wood, basalt & iron or leather & setting for the sidebar,
+  top bar and category bars.
 - Text size is now a slider from 90 to 140%, with quick buttons for 100, 110 and 125%. Your old setting
   carries over.
 - New option "Mute in background": music and sounds pause while the game is minimized or in the background.
 
 FIXES
 
+- Enchanted or suffixed gear you only own as variants now keeps its own inventory slot. It no longer jumps into
+  a slot you just emptied, it can be dragged like any other item, and it stays where you put it after a restart.
 - Dragging entries in the action queue is precise now. Moving an entry up used to drop it one place too high,
   and the list scrolled very fast at the edges while dragging.
 - XP popups on skill cards no longer show numbers like +8.400000000000091.
