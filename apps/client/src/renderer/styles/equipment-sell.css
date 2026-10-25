@@ -1,0 +1,111 @@
+/* claude:2026-10-25T10:32:00+01:00 — Sammelverkauf von Ausrüstung (1.4.1 K1). Direkt von components/EquipmentSellModal.tsx
+   importiert. Baut auf den Bergungs-Bausteinen auf (.salvage-modal/.salvage-rarity-row/.salvage-plan/.salvage-actions in
+   storage.css, global geladen) und ergänzt nur Vorschau-Tabelle, Zeilenspalten und Höhenführung. */
+
+/* Höhe an den Bildschirm binden: bei 1366×768 muss der Knopf sichtbar bleiben, gescrollt wird nur die Liste. */
+.equip-sell-modal {
+  max-height: calc(100vh - 40px);
+}
+
+.equip-sell-label {
+  min-width: 7.5em;
+}
+
+/* Art-Knöpfe tragen keine Raritätsfarbe, sondern die Textfarbe; aktiv in Gold wie die Laden-Chips. */
+.equip-sell-kind-btn {
+  color: var(--text);
+}
+.equip-sell-kind-btn.active {
+  color: var(--gold);
+}
+
+/* Vorschau je Art: drei Spalten (Art | Stück | Gold), Summe abgesetzt. */
+.equip-sell-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  column-gap: 18px;
+  row-gap: 4px;
+  padding: 8px 12px;
+  border: 1px solid rgba(216, 192, 106, 0.22);
+  background: rgba(14, 12, 10, 0.55);
+  font-variant-numeric: tabular-nums;
+}
+.equip-sell-summary-row {
+  display: contents;
+}
+.equip-sell-summary-kind {
+  font-family: var(--font-head);
+  font-size: var(--fs-sm);
+}
+.equip-sell-summary-count {
+  text-align: right;
+  color: var(--text);
+}
+.equip-sell-summary-gold {
+  text-align: right;
+  color: var(--gold);
+}
+.equip-sell-summary-row--total > span {
+  padding-top: 5px;
+  border-top: 1px solid rgba(216, 192, 106, 0.22);
+  font-weight: 700;
+}
+
+.equip-sell-skipped,
+.equip-sell-empty,
+.equip-sell-note {
+  margin: 0;
+}
+.equip-sell-note {
+  font-size: var(--fs-xs);
+}
+
+/* Liste: wächst bis zur verfügbaren Höhe, scrollt danach selbst (statt des ganzen Dialogs). Zellen etwas kleiner als
+   im Bergungsdialog, damit bei 1366×768 mit allen drei Arten noch drei Zeilen sichtbar bleiben. */
+.equip-sell-plan {
+  flex: 1 1 auto;
+  gap: 4px;
+  min-height: 96px;
+  max-height: 40vh;
+}
+.equip-sell-plan .equip-sell-row .item-cell {
+  width: 42px;
+  height: 42px;
+}
+.equip-sell-row-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--font-head);
+  font-size: var(--fs-sm);
+  overflow-wrap: anywhere;
+}
+.equip-sell-row-qty {
+  flex: none;
+  min-width: 4.5em;
+  text-align: right;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.equip-sell-row-gold {
+  flex: none;
+  min-width: 8.5em;
+  text-align: right;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+.equip-sell-more {
+  margin: 2px 0 0;
+}
+
+/* Niedrige Fenster (1366×768, 1600×900): engere Abstände statt kleinerer Schrift. */
+@media (max-height: 860px) {
+  .equip-sell-modal {
+    gap: 7px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+  .equip-sell-summary {
+    row-gap: 1px;
+    padding: 5px 12px;
+  }
+}

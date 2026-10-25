@@ -12,6 +12,7 @@ import {
   canHold,
   effectiveSellPrice,
   groupInstancesByBase,
+  isSalvageLocked,
   itemCount,
   masterRingShopEntries,
   nextBankSlotCost,
@@ -37,6 +38,7 @@ import {
   StackQtyPopup,
   VariantListPopup,
 } from "../components/MassSellPopups";
+import { EquipmentSellModal } from "../components/EquipmentSellModal"; // claude:2026-10-25T10:32:00+01:00 — Sammelverkauf (1.4.1 K1)
 import { NpcGreeting } from "../components/NpcGreeting";
 import { activeEliteZoneName, resolveNpcVoiceKey } from "../util/npcVoice";
 import { QTY_PRESETS, QuantityPicker } from "../components/QuantityPicker";
@@ -660,7 +662,9 @@ function SellTab(): JSX.Element {
   // Rückfrage vor dem Massenverkauf (1.0.1) — s. `askMassSell` weiter unten.
   const [pendingMassSell, setPendingMassSell] = useState<ConfirmRequest | null>(null);
   const [massPopup, setMassPopup] = useState<MassSellPopupState | null>(null);
-  const [massResult, setMassResult] = useState<{ count: number; gold: number } | null>(null);
+  const [massResult, setMassResult] = useState<{ count: number; gold: number; detailKey?: string } | null>(null);
+  // claude:2026-10-25T10:32:00+01:00 — Sammelverkauf von Ausrüstung (1.4.1 K1): Dialog „Ausrüstung verkaufen …“, Quelle Inventar.
+  const [equipSellOpen, setEquipSellOpen] = useState(false);
   // 1.0.1: letzte angeklickte Grid-Position — Basis für den Shift-Klick-Bereich unten
   // (Datei-Explorer-Konvention: Shift+Klick markiert von hier bis zur neuen Position).
   const [lastClickedIndex, setLastClickedIndex] = useState<number | null>(null);
@@ -715,15 +719,31 @@ function SellTab(): JSX.Element {
   // die vollständige aktuell sichtbare Liste. Jeder Eintrag bekommt seine "volle" Default-Auswahl
   // (dieselbe, die "Ganzer Stapel" manuell erzeugen würde) — kein Datenverlust möglich: angelegte
   // Ausrüstung taucht strukturell nie in `sellEntries` auf (equipInstance/equipItem ziehen die
-  // Instanz/den Stack aus `inventory` heraus, s. equipment.ts), ein Favoriten-/Sperrsystem gibt es
-  // im Spiel nicht (keins erfunden — Chef-Vorgabe). Bestätigungs-Dialog vor dem echten Verkauf
-  // (s. executeMassSell) bleibt das Sicherheitsnetz gegen einen Fehlklick.
-  const allEntriesSelected = sellEntries.length > 0 && sellEntries.every((e) => massSelection.has(e.key));
+  // Instanz/den Stack aus `inventory` heraus, s. equipment.ts). Bestätigungs-Dialog vor dem echten
+  // Verkauf (s. executeMassSell) bleibt das Sicherheitsnetz gegen einen Fehlklick.
+  // claude:2026-10-25T10:53:00+01:00 — 1.4.1: Seit 1.4.0 gibt es das Schloss (Bergung, salvage.ts). „Alle auswählen“ und der
+  // Shift-Bereich lassen gesperrte Items aus: gesperrte Basis = Eintrag fällt weg, gesperrte Einzelstücke =
+  // Einzelwahl ohne sie. Ein bewusster Einzelklick bleibt möglich (wie beim Sammelverkauf K1 nur für Sammelwege).
+  const bulkSelectionFor = (e: SellEntry): MassSellSelection | null => {
+    if (isSalvageLocked(state, e.itemId)) return null;
+    if (e.kind === "container") {
+      const free = e.instances.filter((inst) => !isSalvageLocked(state, inst.instanceId));
+      if (free.length < e.instances.length) {
+        return { kind: "container", mode: "single", baseQty: e.qty, instanceIds: new Set(free.map((inst) => inst.instanceId)) };
+      }
+    }
+    return defaultSelectionFor(e);
+  };
+  const bulkEntries = sellEntries.filter((e) => bulkSelectionFor(e) !== null);
+  const allEntriesSelected = bulkEntries.length > 0 && bulkEntries.every((e) => massSelection.has(e.key));
   const toggleSelectAll = (): void => {
     setMassSelection(() => {
       if (allEntriesSelected) return new Map();
       const next = new Map<string, MassSellSelection>();
-      for (const e of sellEntries) next.set(e.key, defaultSelectionFor(e));
+      for (const e of sellEntries) {
+        const sel = bulkSelectionFor(e);
+        if (sel) next.set(e.key, sel);
+      }
       return next;
     });
   };
@@ -740,7 +760,8 @@ function SellTab(): JSX.Element {
         const next = new Map(prev);
         for (let i = from; i <= to; i++) {
           const rangeEntry = sellEntries[i];
-          if (rangeEntry) next.set(rangeEntry.key, defaultSelectionFor(rangeEntry));
+          const sel = rangeEntry ? bulkSelectionFor(rangeEntry) : null; // claude:2026-10-25T10:53:00+01:00 — Schloss beachten
+          if (rangeEntry && sel) next.set(rangeEntry.key, sel);
         }
         return next;
       });
@@ -837,8 +858,8 @@ function SellTab(): JSX.Element {
   // Rückfrage mit Anzahl + Gesamterlös. BEWUSST über `ConfirmModal` und NICHT `window.confirm()` —
   // im Vollbild kommt der native Dialog nicht zuverlässig durch (s. ConfirmModal.tsx), der
   // Verkaufen-Knopf sähe für den Spieler dann schlicht tot aus. Angelegte Ausrüstung kann
-  // strukturell nie in `massSelection` landen (s. Kommentar bei `allEntriesSelected`), ein
-  // Favoriten-/Sperrsystem existiert nicht. Bricht der Spieler ab, bleibt die Auswahl stehen.
+  // strukturell nie in `massSelection` landen (s. Kommentar bei `allEntriesSelected`), gesperrte Items
+  // nur per bewusstem Einzelklick. Bricht der Spieler ab, bleibt die Auswahl stehen.
   const askMassSell = (): void => {
     if (massSellSummary.count === 0) return;
     setPendingMassSell({
@@ -866,6 +887,12 @@ function SellTab(): JSX.Element {
           >
             {t("shop.massSell.toggle")}
           </button>
+          {/* claude:2026-10-25T10:32:00+01:00 — Sammelverkauf (1.4.1 K1): neben dem Auswahlmodus, solange der nicht läuft. */}
+          {!massSellMode && (
+            <button className="btn-iron btn-iron--sm mshop-equip-sell-btn" onClick={() => setEquipSellOpen(true)}>
+              {t("equipSell.button")}
+            </button>
+          )}
           {!massSellMode && <p className="shopv2-hint muted mshop-hint-inline">{t("shop.shiftSellHint")}</p>}
         </div>
 
@@ -1140,8 +1167,20 @@ function SellTab(): JSX.Element {
       />
     )}
 
-    {massResult && <MassSellResultBanner count={massResult.count} gold={massResult.gold} />}
+    {massResult && <MassSellResultBanner count={massResult.count} gold={massResult.gold} detailKey={massResult.detailKey} />}
     <ConfirmModal request={pendingMassSell} onClose={() => setPendingMassSell(null)} />
+    {equipSellOpen && (
+      <EquipmentSellModal
+        source="inventory"
+        onClose={() => setEquipSellOpen(false)}
+        onSold={(res) => {
+          // Der Tresen rechts braucht nichts: zeigt seine Auswahl auf ein verkauftes Teil, fällt er von selbst auf den Hinweis zurück.
+          if (res.pieces === 0) return;
+          setMassResult({ count: res.pieces, gold: res.gold, detailKey: "equipSell.resultDetail" });
+          window.setTimeout(() => setMassResult(null), 4000);
+        }}
+      />
+    )}
     </>
   );
 }

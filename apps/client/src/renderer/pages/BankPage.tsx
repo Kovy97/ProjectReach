@@ -46,6 +46,8 @@ import { BANK_TOUR_STEPS } from "../areaTourSteps";
 import { QTY_PRESETS, QuantityPicker } from "../components/QuantityPicker";
 import { VariantContainerCell } from "../components/VariantContainerCell";
 import { SalvageConfirmModal } from "../components/SalvageModals"; // claude:2026-10-26T07:05:00+02:00 — Zerlegen in der Bank (Chef BG1)
+import { EquipmentSellModal } from "../components/EquipmentSellModal"; // claude:2026-10-25T10:32:00+01:00 — Sammelverkauf aus der Bank (1.4.1 K1)
+import { MassSellResultBanner } from "../components/MassSellPopups";
 import { getUiIcon } from "../uiIcons";
 import {
   compareItemsBy,
@@ -293,6 +295,12 @@ export function BankPage(): JSX.Element {
   // Teilmengen-Modal (Task #314 B2) — welches Item/welche Spalte gerade eine Zahl abfragt.
   const [qtyModal, setQtyModal] = useState<{ itemId: string; zone: BankZone } | null>(null);
   const [salvage, setSalvage] = useState<{ itemId: string; instanceId: string | null; qty: number; hasRunes: boolean } | null>(null);
+  // claude:2026-10-25T10:32:00+01:00 — Sammelverkauf von Ausrüstung direkt aus der Bank (1.4.1 K1): Dialog + Ergebnis-Banner.
+  const [equipSellOpen, setEquipSellOpen] = useState(false);
+  const [equipSellResult, setEquipSellResult] = useState<{ count: number; gold: number } | null>(null);
+  const bankHasGear =
+    state.bankInstances.length > 0 ||
+    Object.entries(state.bank).some(([id, qty]) => qty > 0 && content.items[id]?.type === "equipment");
 
   // ── Pointer-basiertes Drag & Drop (Task #314, Chef-Zitat "aktuell fast kein sauberes Drag and
   // Drop möglich"): ersetzt HIER das frühere native HTML5-DnD (draggable/dragstart/dragover/drop —
@@ -724,6 +732,14 @@ export function BankPage(): JSX.Element {
         <section className="shop-panel bank-ledger-panel bank-ledger-panel--storage">
           <div className="bank-col-head">
             <BankColTitle iconSrc={getSidebarIcon("bank")} fallback="🏦" label={t("bank.storage")} />
+            {/* claude:2026-10-25T10:32:00+01:00 — Sammelverkauf (1.4.1 K1): verkauft passende Ausrüstung direkt aus der Bank. */}
+            <button
+              className="shop-citadel-btn shop-citadel-btn--sm"
+              disabled={!bankHasGear}
+              onClick={() => setEquipSellOpen(true)}
+            >
+              {t("equipSell.button")}
+            </button>
             {bankCampSlots > 0 ? (
               <HoverTip
                 as="span"
@@ -895,6 +911,20 @@ export function BankPage(): JSX.Element {
       </div>
       </div>
 
+      {equipSellOpen && (
+        <EquipmentSellModal
+          source="bank"
+          onClose={() => setEquipSellOpen(false)}
+          onSold={(res) => {
+            if (res.pieces === 0) return;
+            setEquipSellResult({ count: res.pieces, gold: res.gold });
+            window.setTimeout(() => setEquipSellResult(null), 4000);
+          }}
+        />
+      )}
+      {equipSellResult && (
+        <MassSellResultBanner count={equipSellResult.count} gold={equipSellResult.gold} detailKey="equipSell.resultDetail" fixed />
+      )}
       {salvage && (
         <SalvageConfirmModal
           itemId={salvage.itemId}

@@ -1,4 +1,4 @@
-import type { BuyBackEntry, ContentDB, GameState, ItemId, ShopEntry } from "@hearthforge/shared";
+import type { BuyBackEntry, ContentDB, GameState, ItemDef, ItemId, ItemInstance, ItemRarity, ShopEntry } from "@hearthforge/shared";
 import {
   AUTO_EAT_MAX_TIER,
   AUTO_EAT_TIERS,
@@ -7,16 +7,20 @@ import {
   BUYBACK_BANNED_ITEM_IDS,
   BUYBACK_MAX_ENTRIES,
   EQUIP_SLOTS,
+  ITEM_RARITIES,
   SELL_BONUS_TOTAL_CAP,
   SELL_FRACTION,
   SLOT_UPGRADE_AMOUNT,
   SLOT_UPGRADE_BASE_COST,
   SLOT_UPGRADE_GROWTH,
+  effectiveBankCapacity,
   masterRingItemId,
+  syncBankOrder,
 } from "@hearthforge/shared";
 import { addInstance, addItem, addItemOrBank, canHold, expandBaseCapacity, isFull, itemCount, markItemDiscovered, removeInstance, removeItem } from "./inventory";
 import { petSellBonus } from "./pets";
 import { campBoost } from "./camp";
+import { storagePredicate } from "./storage"; // claude:2026-10-25T10:32:00+01:00 — Sammelverkauf aus der Bank (1.4.1 K1)
 
 /** Kosten des nächsten Auto-Eat-Upgrades (null = bereits maximale Stufe). */
 export function autoEatUpgradeCost(state: GameState): number | null {
@@ -355,4 +359,251 @@ export function buyMasterRing(state: GameState, content: ContentDB, itemId: Item
     markItemDiscovered(state, itemId);
   }
   return true;
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// claude:2026-10-25T10:32:00+01:00 — Sammelverkauf von Ausrüstung (1.4.1 K1, Chef-Freigabe nach Steam-Wunsch:
+// „Can we have the sell-all button for weapon selling? … when you have thousands of weapon items to sell.“).
+//
+// Vorbild ist der Bergungs-Sammelknopf (salvage.ts `salvagePlan`/`salvageBatch`): erst eine reine Vorschau, dann
+// genau dieser Plan als Ausführung. Der Spieler wählt die Art (Waffen, Rüstung, Schmuck, alles) und die Seltenheit
+// „bis einschließlich X“; Quelle ist das Inventar (Laden) oder die Bank (Bankseite).
+//
+// Nie verkauft werden:
+//  • angelegte Ausrüstung, Teile in Ausrüstungs-Kits und Werkzeuge im Werkzeugplatz: strukturell, sie liegen
+//    weder im Inventar noch in der Bank (equipItem/equipInstance/equipTool ziehen sie heraus);
+//  • gesperrte Items (dasselbe Schloss wie Bergung und Arbeitsaufträge: Item-ID sperrt Stapel UND alle
+//    Einzelstücke dieses Items, Instanz-ID sperrt das Einzelstück);
+//  • Einzelstücke mit Runen (Verzauberungen), wie bei der Bergung eine bewusste Einzel-Entscheidung;
+//  • Werkzeuge mit Ausrüstungsslot (die Äxte): sie wirken auch lose aus dem Inventar (`bestToolSpeed`);
+//  • Meisterringe (Weihe-Belohnung, Wiederkauf kostet den vollen Wert);
+//  • Items, die ein offener Arbeitsauftrag noch verlangt (sonst scheitert die Abgabe am Bestand).
+// Quest-Ziele zählen Kills, Level und Zugänge (gather/craft), nie Besitz; dafür ist kein Ausschluss nötig.
+//
+// Rückkauf: ein Sammelverkauf legt KEINE Einträge ins Rückkaufregal. Das Regal fasst BUYBACK_MAX_ENTRIES (12);
+// tausende Einzelstücke würden es fluten und die echten letzten Einzelverkäufe verdrängen (Präzedenz:
+// bank.ts `sellFromStorage` verkauft ebenfalls ohne Regal-Eintrag). Die Vorschau mit Bestätigung ist das Netz.
+//
+// Leistung: je Quelle EIN Durchlauf über Fächer bzw. Einzelstücke für den Plan und EIN Durchlauf fürs Entfernen
+// (Kompaktieren an Ort und Stelle), kein removeItem/removeInstance je Teil (die wären O(n) je Aufruf ⇒ O(n²)).
+// Preis = `effectiveSellPrice` je Basis-Item, exakt wie sellItem/sellInstance. Kein RNG, keine Uhr.
+// ───────────────────────────────────────────────────────────────────────────
+
+/** Art eines Ausrüstungsteils für den Sammelverkauf. */
+export type EquipmentSellKind = "weapons" | "armor" | "jewelry";
+/** Filter im Dialog: eine Art oder alles. */
+export type EquipmentSellFilter = EquipmentSellKind | "all";
+/** Woraus verkauft wird: Inventar (Laden) oder Bank (Bankseite). */
+export type EquipmentSellSource = "inventory" | "bank";
+
+export const EQUIPMENT_SELL_KINDS: readonly EquipmentSellKind[] = ["weapons", "armor", "jewelry"];
+
+export interface EquipmentSellOptions {
+  kind: EquipmentSellFilter;
+  /** Höchste Seltenheit, die noch verkauft wird (einschließlich). */
+  maxRarity: ItemRarity;
+  source: EquipmentSellSource;
+}
+
+/** Eine Zeile der Vorschau: ein Basis-Item mit ganzem Stapel und/oder Einzelstücken ohne Runen. */
+export interface EquipmentSellPlanEntry {
+  itemId: ItemId;
+  kind: EquipmentSellKind;
+  /** Fungible Menge (der ganze Stapel). */
+  stackQty: number;
+  /** Einzelstücke ohne Runen, die mitverkauft werden. */
+  instanceIds: string[];
+  /** Stückpreis wie beim Einzelverkauf (`effectiveSellPrice`). */
+  unitPrice: number;
+  /** stackQty + instanceIds.length */
+  pieces: number;
+  /** pieces × unitPrice */
+  gold: number;
+}
+
+/** Teile, die Art und Seltenheit erfüllen, aber geschützt bleiben (für den Hinweis im Dialog). */
+export interface EquipmentSellSkipped {
+  locked: number;
+  runes: number;
+  tools: number;
+  masterRings: number;
+  orders: number;
+}
+
+export interface EquipmentSellTotals {
+  pieces: number;
+  gold: number;
+}
+
+export interface EquipmentSellPlan extends EquipmentSellTotals {
+  entries: EquipmentSellPlanEntry[];
+  byKind: Record<EquipmentSellKind, EquipmentSellTotals>;
+  skipped: EquipmentSellSkipped;
+}
+
+export interface EquipmentSellResult extends EquipmentSellTotals {
+  /** Anzahl verkaufter Item-Arten (Basis-Items). */
+  kinds: number;
+  byKind: Record<EquipmentSellKind, EquipmentSellTotals>;
+}
+
+/** Art eines Items für den Sammelverkauf; null = keine Ausrüstung (Material, Werkzeug-Typ, Verbrauchsgut). */
+export function equipmentSellKind(item: ItemDef | undefined): EquipmentSellKind | null {
+  if (!item || item.type !== "equipment" || !item.slot) return null;
+  if (item.slot === "ring1" || item.slot === "ring2" || item.slot === "amulet") return "jewelry";
+  // Wie die Laden-Kategorie (weaponStyle ⇒ Waffe), dazu Haupthand und Foki/Totems mit Waffentyp ohne Stil.
+  if (item.weaponStyle || item.weaponType || item.slot === "mainhand") return "weapons";
+  return "armor";
+}
+
+function sellRarityRank(r: ItemRarity | undefined): number {
+  return ITEM_RARITIES.indexOf(r ?? "common");
+}
+
+function emptyKindTotals(): Record<EquipmentSellKind, EquipmentSellTotals> {
+  return { weapons: { pieces: 0, gold: 0 }, armor: { pieces: 0, gold: 0 }, jewelry: { pieces: 0, gold: 0 } };
+}
+
+/**
+ * Vorschau des Sammelverkaufs: alle passenden, nicht geschützten Ausrüstungsteile der Quelle, je Basis-Item eine
+ * Zeile (ganzer Stapel + Einzelstücke ohne Runen). Reine Lese-Funktion; Reihenfolge deterministisch (Inventar:
+ * Fachreihenfolge, danach reine Einzelstück-Arten; Bank: Einfügereihenfolge des Bestands, danach der Gear-Vault).
+ */
+export function equipmentSellPlan(state: GameState, content: ContentDB, opts: EquipmentSellOptions): EquipmentSellPlan {
+  const maxRank = sellRarityRank(opts.maxRarity);
+  const locked = state.lockedItems ?? {};
+  const orderItems = new Set<ItemId>();
+  for (const o of state.workOrders?.open ?? []) if (o?.itemId) orderItems.add(o.itemId);
+
+  // Bestand der Quelle einsammeln: Stapelmengen und Einzelstücke je Basis-Item (je ein Durchlauf).
+  const stacks = new Map<ItemId, number>();
+  const instances = new Map<ItemId, ItemInstance[]>();
+  if (opts.source === "inventory") {
+    for (const slot of state.inventory.slots) {
+      if (!slot || slot.instance || slot.qty <= 0) continue;
+      stacks.set(slot.itemId, (stacks.get(slot.itemId) ?? 0) + slot.qty);
+    }
+  } else {
+    for (const [id, qty] of Object.entries(state.bank)) {
+      if (typeof qty === "number" && qty > 0) stacks.set(id, qty);
+    }
+  }
+  const instList = opts.source === "inventory" ? state.inventory.instances : state.bankInstances;
+  for (const inst of instList ?? []) {
+    if (!inst?.baseItemId) continue;
+    const arr = instances.get(inst.baseItemId);
+    if (arr) arr.push(inst);
+    else instances.set(inst.baseItemId, [inst]);
+  }
+
+  const ids: ItemId[] = [...stacks.keys()];
+  for (const id of instances.keys()) if (!stacks.has(id)) ids.push(id);
+
+  const entries: EquipmentSellPlanEntry[] = [];
+  const byKind = emptyKindTotals();
+  const skipped: EquipmentSellSkipped = { locked: 0, runes: 0, tools: 0, masterRings: 0, orders: 0 };
+  let pieces = 0;
+  let gold = 0;
+  for (const itemId of ids) {
+    const item = content.items[itemId];
+    const kind = equipmentSellKind(item);
+    if (!item || !kind) continue;
+    if (opts.kind !== "all" && opts.kind !== kind) continue;
+    if (sellRarityRank(item.rarity) > maxRank) continue;
+    const stackQty = stacks.get(itemId) ?? 0;
+    const group = instances.get(itemId) ?? [];
+    const all = stackQty + group.length;
+    // Geschützte Arten: die ganze Gruppe bleibt liegen (Reihenfolge = Vorrang beim Zählen).
+    if (itemId.startsWith("ring_master_")) { skipped.masterRings += all; continue; }
+    if (item.tool) { skipped.tools += all; continue; }
+    if (orderItems.has(itemId)) { skipped.orders += all; continue; }
+    if (locked[itemId] === true) { skipped.locked += all; continue; }
+    const instanceIds: string[] = [];
+    for (const inst of group) {
+      if (locked[inst.instanceId] === true) skipped.locked++;
+      else if ((inst.affixes?.length ?? 0) > 0) skipped.runes++;
+      else instanceIds.push(inst.instanceId);
+    }
+    const n = stackQty + instanceIds.length;
+    if (n <= 0) continue;
+    const unitPrice = effectiveSellPrice(state, content, itemId);
+    const g = n * unitPrice;
+    entries.push({ itemId, kind, stackQty, instanceIds, unitPrice, pieces: n, gold: g });
+    byKind[kind].pieces += n;
+    byKind[kind].gold += g;
+    pieces += n;
+    gold += g;
+  }
+  return { entries, byKind, skipped, pieces, gold };
+}
+
+/**
+ * Führt den Sammelverkauf aus (`equipmentSellPlan` mit denselben Optionen, frisch auf dem aktuellen Stand). Entfernt
+ * Stapel und Einzelstücke in je einem Durchlauf, schreibt das Gold in einer Summe gut und legt bewusst keinen
+ * Rückkauf-Eintrag an (s. Kopf). Bank: geleerte Fächer bleiben leer stehen wie beim Abheben (`syncBankOrder`).
+ */
+export function sellEquipmentBatch(state: GameState, content: ContentDB, opts: EquipmentSellOptions): EquipmentSellResult {
+  const plan = equipmentSellPlan(state, content, opts);
+  const byKind = emptyKindTotals();
+  if (plan.entries.length === 0) return { pieces: 0, gold: 0, kinds: 0, byKind };
+
+  const entryById = new Map<ItemId, EquipmentSellPlanEntry>();
+  const instanceIds = new Set<string>();
+  for (const e of plan.entries) {
+    entryById.set(e.itemId, e);
+    for (const id of e.instanceIds) instanceIds.add(id);
+  }
+  // Tatsächlich entfernte Stückzahl je Basis-Item (das Gold folgt dem Entfernten, nicht nur dem Plan).
+  const sold = new Map<ItemId, number>();
+  const bump = (id: ItemId, n: number): void => {
+    sold.set(id, (sold.get(id) ?? 0) + n);
+  };
+
+  if (opts.source === "inventory") {
+    const slots = state.inventory.slots;
+    for (let i = 0; i < slots.length; i++) {
+      const slot = slots[i];
+      if (!slot || slot.instance || slot.qty <= 0) continue;
+      const e = entryById.get(slot.itemId);
+      if (!e || e.stackQty <= 0) continue;
+      bump(slot.itemId, slot.qty);
+      slots[i] = null;
+    }
+  } else {
+    for (const e of plan.entries) {
+      const have = state.bank[e.itemId] ?? 0;
+      if (e.stackQty <= 0 || have <= 0) continue;
+      bump(e.itemId, have);
+      delete state.bank[e.itemId];
+    }
+  }
+
+  // Einzelstücke an Ort und Stelle kompaktieren (ein Durchlauf, Reihenfolge der übrigen bleibt).
+  const list = opts.source === "inventory" ? state.inventory.instances : state.bankInstances;
+  if (instanceIds.size > 0 && Array.isArray(list)) {
+    let w = 0;
+    for (let r = 0; r < list.length; r++) {
+      const inst = list[r]!;
+      if (inst && instanceIds.has(inst.instanceId)) {
+        bump(inst.baseItemId, 1);
+        continue;
+      }
+      list[w++] = inst;
+    }
+    list.length = w;
+  }
+  if (opts.source === "bank") syncBankOrder(state, effectiveBankCapacity(state, content), storagePredicate(content));
+
+  let pieces = 0;
+  let gold = 0;
+  for (const [id, n] of sold) {
+    const e = entryById.get(id)!;
+    const g = n * e.unitPrice;
+    byKind[e.kind].pieces += n;
+    byKind[e.kind].gold += g;
+    pieces += n;
+    gold += g;
+  }
+  addGold(state, gold);
+  return { pieces, gold, kinds: sold.size, byKind };
 }

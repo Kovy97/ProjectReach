@@ -336,13 +336,25 @@ export function VariantListPopup({
 
 // ─── Ergebnis-Banner ──────────────────────────────────────────────────────────
 
-export function MassSellResultBanner({ count, gold }: { count: number; gold: number }): JSX.Element {
+// claude:2026-10-25T10:32:00+01:00 — Sammelverkauf von Ausrüstung (1.4.1 K1) nutzt dasselbe Banner: `detailKey` zählt dort
+// Stück statt Positionen, `fixed` hängt es an den Bildschirmrand (Bankseite hat keinen positionierten Rahmen wie der Laden).
+export function MassSellResultBanner({
+  count,
+  gold,
+  detailKey = "shop.massSell.resultDetail",
+  fixed = false,
+}: {
+  count: number;
+  gold: number;
+  detailKey?: string;
+  fixed?: boolean;
+}): JSX.Element {
   const { t } = useI18n();
   return (
-    <div className="mshop-result-banner">
+    <div className={`mshop-result-banner${fixed ? " mshop-result-banner--fixed" : ""}`} role="status">
       <span className="mshop-result-title">{t("shop.massSell.resultTitle")}</span>
       <span className="mshop-result-detail">
-        {t("shop.massSell.resultDetail").replace("{n}", String(count)).replace("{gold}", formatNum(gold))}
+        {t(detailKey).replace("{n}", formatNum(count)).replace("{gold}", formatNum(gold))}
       </span>
     </div>
   );

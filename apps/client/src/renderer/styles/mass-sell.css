@@ -348,9 +348,16 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* claude:2026-10-25T10:44:00+01:00 — Mittig unten statt rechts unten (1.4.1 K1): rechts unten stapeln sich die Toasts
+   („Seltener Fund!“, Erfolge), die das Banner nach großen Verkäufen sonst verdecken. Zentriert ohne transform, weil die
+   Einblend-Animation transform belegt. */
 .mshop-result-banner {
   position: absolute;
-  right: 22px;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: max-content;
+  max-width: calc(100% - 44px);
   bottom: 20px;
   z-index: 20;
   display: flex;
@@ -363,6 +370,14 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 14px rgba(216, 184, 112, 0.3);
   animation: mshop-result-fade 0.18s ease-out;
   pointer-events: none;
+}
+
+/* claude:2026-10-25T10:32:00+01:00 — Sammelverkauf (1.4.1 K1): auf der Bankseite fehlt ein positionierter Rahmen, dort
+   sitzt das Banner unten mittig am Fenster (unter den Modals, über der Seite). */
+.mshop-result-banner--fixed {
+  position: fixed;
+  bottom: 28px;
+  z-index: 150;
 }
 
 .mshop-result-title {
