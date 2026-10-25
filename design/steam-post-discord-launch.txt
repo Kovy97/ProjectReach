@@ -1,0 +1,81 @@
+STEAM-EVENT: OFFIZIELLER DISCORD (Ankuendigung, EN)
+Stand 25.10.2026, Entwurf zur Freigabe durch den Chef.
+Event-Typ: "News" bzw. "Announcement". Titel, Untertitel, Zusammenfassung und Text einzeln einfuegen.
+Bilder: design/discord-assets/steam-event/ (Cover 800x450 + Header 1920x622).
+Platzhalter [DISCORD INVITE LINK] kommt im BBCode-Text 2x vor und in der Textfassung unten 1x. Alle ersetzen.
+
+================================================================================
+TITLE:
+The Official Grim Reach Discord Is Open
+
+SUBTITLE:
+A place to talk with other Hunters, and a direct line to me.
+
+SUMMARY:
+Many of you asked for it, so Grim Reach now has an official Discord server. Come say hi and send your feedback, suggestions and bug reports straight to me.
+
+================================================================================
+BODY (BBCode, ab hier alles einfuegen):
+
+Hunters,
+
+some of you have asked for this again and again, and I'm happy to announce that Heartforge Studios has opened an official Discord server for Grim Reach. There is finally a place where we can all talk about the game together.
+
+[h2]Thank you first[/h2]
+Many of you took the time to report bugs and send me ideas, and your reviews told me honestly what works and what doesn't. You stayed patient and friendly even when something was broken. A lot of updates came straight out of that. When you missed the old interface after 1.3.0, 1.3.1 brought the Classic style back, and plenty of fixes began with one of your reports. Thank you for all of it.
+
+[h2]What you'll find there[/h2]
+[list]
+[*][b]#announcements[/b] and [b]#patch-notes[/b] with every update note
+[*][b]#general[/b] and [b]#help[/b] for talk and questions about the game
+[*]Forums for [b]guides and builds[/b], [b]suggestions[/b] and [b]bug reports[/b]. Suggestions get a status tag like Planned or Implemented.
+[*]Channels in [b]Deutsch, Español, Français, Português, Русский and 中文[/b]. The main channels are in English.
+[*][b]#dev-log[/b] with a look at my work, and a stage channel for Q&A sessions with me
+[*]Voice channels to hang out or plan your raids
+[/list]
+
+[h2]How to join[/h2]
+[url=[DISCORD INVITE LINK]][DISCORD INVITE LINK][/url]
+
+You'll see the rules first. Click ✅ under them to get the Hunter role, and the rest of the server opens up.
+
+[h2]Talk to me directly[/h2]
+Feedback, suggestions and bug reports you post on the server land with me, and other players can chime in. The bug report button in the game works just like before. If you sent a report from there, you can follow up on Discord or add details.
+
+See you there!
+
+
+================================================================================
+TEXTFASSUNG OHNE BBCODE (Rueckfall)
+Laut design/steam-patchnotes-template.md (Erkenntnis 25.07.) stellte der neue Steam-Event-Editor eingefuegtes BBCode
+als Rohtext dar. Falls die Tags in der Vorschau sichtbar bleiben: diese Fassung einfuegen und die Ueberschriften
+ueber die Editor-Leiste setzen. Der Link wird dann ueber den Link-Knopf der Leiste gesetzt.
+
+Hunters,
+
+some of you have asked for this again and again, and I'm happy to announce that Heartforge Studios has opened an official Discord server for Grim Reach. There is finally a place where we can all talk about the game together.
+
+THANK YOU FIRST
+
+Many of you took the time to report bugs and send me ideas, and your reviews told me honestly what works and what doesn't. You stayed patient and friendly even when something was broken. A lot of updates came straight out of that. When you missed the old interface after 1.3.0, 1.3.1 brought the Classic style back, and plenty of fixes began with one of your reports. Thank you for all of it.
+
+WHAT YOU'LL FIND THERE
+
+• #announcements and #patch-notes with every update note
+• #general and #help for talk and questions about the game
+• Forums for guides and builds, suggestions and bug reports. Suggestions get a status tag like Planned or Implemented.
+• Channels in Deutsch, Español, Français, Português, Русский and 中文. The main channels are in English.
+• #dev-log with a look at my work, and a stage channel for Q&A sessions with me
+• Voice channels to hang out or plan your raids
+
+HOW TO JOIN
+
+[DISCORD INVITE LINK]
+
+You'll see the rules first. Click ✅ under them to get the Hunter role, and the rest of the server opens up.
+
+TALK TO ME DIRECTLY
+
+Feedback, suggestions and bug reports you post on the server land with me, and other players can chime in. The bug report button in the game works just like before. If you sent a report from there, you can follow up on Discord or add details.
+
+See you there!

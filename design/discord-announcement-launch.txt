@@ -1,0 +1,30 @@
+DISCORD #announcements: BEGRUESSUNG ZUR EROEFFNUNG (EN)
+Stand 25.10.2026, Entwurf zur Freigabe durch den Chef. Eine Nachricht, unter 2.000 Zeichen.
+Nach dem Einfuegen in Discord die Kanalnamen (#general usw.) neu tippen und aus der Liste waehlen, damit sie
+klickbar werden. town-hall, tavern und raid-planning sind Stage-/Sprachkanaele und lassen sich ebenso verlinken.
+Platzhalter [DISCORD INVITE LINK] 1x ersetzen. Discord zeigt darunter die Einladungskarte des Servers.
+
+==================== ab hier kopieren ====================
+# The official Grim Reach Discord is open
+
+Welcome, Hunters! You're among the very first here.
+
+Some of you have asked for a place like this again and again, so here it is. Thank you for all the bug reports and ideas since launch, and for your honest reviews. You stayed patient and friendly even when something was broken, and a lot of what changed in the game started with you.
+
+**What's here**
+- #announcements and #patch-notes: news and every update note
+- #general and #help: chat and questions about the game
+- #guides-and-builds, #suggestions and #bug-reports: forums. Suggestions get tags like *Planned* or *Implemented*
+- #screenshots and #off-topic
+- Language channels: Deutsch, Español, Français, Português, Русский, 中文. English in the main channels
+- #dev-log: a look at what I'm working on
+- **town-hall**: a stage for Q&A sessions with me
+- **tavern** and **raid-planning** for voice chat
+
+**Feedback goes straight to me**
+Post your ideas in #suggestions and anything broken in #bug-reports. The bug report button in the game still works as before. If you sent a report from there, feel free to follow up here or add details.
+
+Know someone who plays? Send them this link: [DISCORD INVITE LINK]
+
+Glad you're here. See you in #general!
+==================== bis hier ====================
