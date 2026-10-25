@@ -1453,13 +1453,15 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
         skill: content.skills[e.skill] ? tr(content.skills[e.skill]!.name) : "",
       });
       const isOffer = e.id === "customer";
+      // claude:2026-10-25T17:05:00+01:00 — Auftragsstufe im Kartentitel (1.4.1 gestufte Aufträge): aus dem Logbuch, sonst vom wartenden Angebot.
+      const tier = isOffer ? e.orderTier ?? offer?.tier ?? null : null;
       push(
         {
           kind: "event",
           priority: "high",
           icon: EVENT_ICON[e.id],
           iconUrl: getEventImage(e.id),
-          title: t(`events.${e.id}.name`),
+          title: tier ? `${t(`events.${e.id}.name`)} · ${t(`orders.tier.${tier}`)}` : t(`events.${e.id}.name`),
           detail: isOffer ? `${detail} ${t("orders.toast.click")}` : detail,
           onClick: isOffer
             ? () => {

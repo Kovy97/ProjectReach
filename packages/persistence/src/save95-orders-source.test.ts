@@ -28,7 +28,7 @@ function fixpoint(s: GameState): void {
   expect(serialize(deserialize(once, content, AT)!.state, AT)).toBe(once);
 }
 function order(o: Partial<WorkOrder> & Pick<WorkOrder, "skill" | "actionId" | "itemId" | "count" | "baseline">): WorkOrder {
-  return { id: 1, kind: "deliver", minutes: 20, band: 1, gold: 100, xp: 1000, customerId: "guild", ...o };
+  return { id: 1, kind: "deliver", tier: 2, minutes: 20, band: 1, gold: 100, xp: 1000, customerId: "guild", ...o }; // claude:2026-10-25T17:05:00+01:00 — Pflichtfeld Stufe seit SAVE 97 (1.4.1 gestufte Aufträge); Stufe 2 = 1.4.0-Auftrag
 }
 
 describe("SAVE 95: stats.producedBySkill", () => {

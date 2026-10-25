@@ -63,7 +63,7 @@ describe("SAVE 96: Migration und Gutschrift", () => {
     expect(parsed.state.talents.slayer).toEqual({ tracking: 5, collar: 1, lore: 2 });
     const s = deserialize(raw, content, parsed.savedAt)!.state;
     expect(s.version).toBe(SAVE_VERSION);
-    expect(SAVE_VERSION).toBe(96);
+    expect(SAVE_VERSION).toBeGreaterThanOrEqual(96); // claude:2026-10-25T17:28:00+01:00 — 1.4.1 gestufte Aufträge heben auf 97
     expect(s.slayerAutoTask).toBe(false);
     // tracking 5 Ränge: 125+250+450+700+1000 = 2.525, collar 1.500, lore 2 Ränge: 200+375 = 575.
     expect(s.slayerPoints).toBe(parsed.state.slayerPoints + 2525 + 1500 + 575);

@@ -28,6 +28,7 @@ function handOrder(s: GameState, o: Partial<WorkOrder> & Pick<WorkOrder, "action
   const order: WorkOrder = {
     id: w.seq, kind: workOrderKindFor(action.skill)!, skill: action.skill, minutes: 20, band: 1, gold: 100, xp: 1_000,
     customerId: "guild", baseline: s.stats.producedBySkill?.[action.skill]?.[o.itemId] ?? 0, ...o, // claude:2026-10-24T16:03:31+02:00 — Zähler je Skill (SAVE 95)
+    tier: o.tier ?? 2, // claude:2026-10-25T17:05:00+01:00 — Pflichtfeld Stufe seit SAVE 97 (1.4.1 gestufte Aufträge)
   };
   w.open.push(order);
   return order;

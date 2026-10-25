@@ -755,7 +755,14 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //     Einmalige Gutschrift der Migration < 96: Jägerkodex-Kosten und die drei Punkte-Unikate wurden halbiert; je gekauftem
 //     Rang die Differenz alter minus neuer Preis und je besessenem Exemplar von Schließerring/Vorgänger-Mantel/Gastrecht
 //     (Inventar, Instanzen, Bank, Gear-Vault, Ausrüstung, inaktive Kits, Postfach) 750/1.250/2.000 Punkte. Keine ID-Änderung.
-export const SAVE_VERSION = 96;
+// 97: Gestufte Arbeitsaufträge (1.4.1, Chef 25.10.2026 „Arbeitsaufträge öfter, getiert 1–2–3“; claude:2026-10-25T17:05:00+01:00;
+//     design/1.4.1-auftraege-gestuft.md): `WorkOrder.tier` (1 | 2 | 3) und `WorkOrderState.tierMs` (Countdown je Stufe in
+//     Online-Skilling-ms). Das Ereignis „Kundschaft“ ist kein Ereignis-Wurf mehr, die Aufträge haben eigene Uhren.
+//     Optional `SkillEventLogEntry.orderTier` (Stufe im Kundschaft-Logbuch). Migration < 97: offene Aufträge und ein offenes
+//     Angebot bekommen Stufe 2 (entsprechen dem 1.4.0-Auftrag, der feste Lohn bleibt unverändert), Countdowns auf die
+//     Mittelwerte. Sanitize (jede Version): Stufe außerhalb 1–3 → 2, Countdown nicht endlich/negativ → Mittelwert, gedeckelt
+//     auf 1,25 × Mittel; Angebots-Restzeit auf die Laufzeit seiner Stufe. Keine ID-Änderung, nichts geht verloren.
+export const SAVE_VERSION = 97;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -2485,6 +2492,8 @@ export interface SkillEventLogEntry {
   atMs: number;
   itemId?: ItemId;
   qty?: number;
+  /** claude:2026-10-25T17:05:00+01:00 — nur bei „customer“ (SAVE 97): Stufe des entstandenen Auftragsangebots. */
+  orderTier?: WorkOrderTier;
 }
 export interface SkillEventState {
   /** Online-Skilling-ms bis zum nächsten Wurf (zählt die effektive Dauer abgeschlossener Online-Aktionen). */
@@ -2508,14 +2517,16 @@ export const EVENT_MAX_CHANCE = 0.25;
 export const EVENT_EXPIRE_MS = 600_000;
 export const EVENT_LOG_MAX = 10;
 export type SkillEventPool = "mining" | "woodcutting" | "fishing" | "foraging" | "thieving" | "craftGear" | "craftOther";
+// claude:2026-10-25T17:05:00+01:00 — „customer“ ist seit 1.4.1 nicht mehr im Topf (Chef 25.10.: Aufträge gestuft mit eigenen Uhren, ORDER_TIERS).
+// Die Wirk-Ereignisse kommen dadurch ~11 % öfter (bewusst akzeptiert). Die Gewichte sind relativ, pickEvent normiert (craftGear 40/30/20).
 export const EVENT_WEIGHTS: Readonly<Record<SkillEventPool, Partial<Record<SkillEventId, number>>>> = {
-  mining: { rich_vein: 90, customer: 10 },
-  woodcutting: { storm_fell: 90, customer: 10 },
-  fishing: { fish_shoal: 90, customer: 10 },
-  foraging: { wild_garden: 90, customer: 10 },
+  mining: { rich_vein: 90 },
+  woodcutting: { storm_fell: 90 },
+  fishing: { fish_shoal: 90 },
+  foraging: { wild_garden: 90 },
   thieving: { guard_change: 100 },
-  craftGear: { thrifty_hand: 40, inspiration: 30, masterpiece: 20, customer: 10 },
-  craftOther: { thrifty_hand: 90, customer: 10 },
+  craftGear: { thrifty_hand: 40, inspiration: 30, masterpiece: 20 },
+  craftOther: { thrifty_hand: 90 },
 };
 /** Die acht Handwerks-Skills mit Ereignissen (Pool craftGear/craftOther nach Haupt-Output der Aktion). */
 export const EVENT_CRAFT_SKILLS: ReadonlySet<SkillId> = new Set([
@@ -2549,6 +2560,11 @@ export type WorkOrderKind = "produce" | "deliver";
 export interface WorkOrder {
   id: number;
   kind: WorkOrderKind;
+  /**
+   * claude:2026-10-25T17:05:00+01:00 — Stufe (SAVE 97, Chef 25.10.2026): 1 = Kleiner Auftrag, 2 = Auftrag, 3 = Großauftrag
+   * (`ORDER_TIERS`). Aufträge aus 1.4.0 laden als Stufe 2.
+   */
+  tier: WorkOrderTier;
   skill: SkillId;
   actionId: ActionId;
   itemId: ItemId;
@@ -2566,18 +2582,62 @@ export interface WorkOrderState {
   offer: WorkOrder | null;
   /** Online-Restzeit des Angebots. */
   offerMsLeft: number;
+  /**
+   * claude:2026-10-25T17:05:00+01:00 — Countdown je Stufe (SAVE 97) in Online-Skilling-ms: zählt die effektive Dauer abgeschlossener
+   * ONLINE-Aktionen von Skills mit Aufträgen (Sammeln + Handwerk). Bei 0 wartet die Stufe auf Platz und einen machbaren Auftrag.
+   */
+  tierMs: WorkOrderTierClocks;
   seq: number;
   delivered: number;
 }
 export function defaultWorkOrderState(): WorkOrderState {
-  return { open: [], offer: null, offerMsLeft: 0, seq: 0, delivered: 0 };
+  return { open: [], offer: null, offerMsLeft: 0, tierMs: defaultWorkOrderTierClocks(), seq: 0, delivered: 0 }; // claude:2026-10-25T17:05:00+01:00 — tierMs (SAVE 97)
 }
-export const ORDER_MINUTES: readonly number[] = [20, 25, 30, 35, 40];
-export const ORDER_XP_MINUTE_FACTOR = 1.5;
+
+// ── Gestufte Arbeitsaufträge (1.4.1, Chef 25.10.2026; design/1.4.1-auftraege-gestuft.md) ────────────────────────────────
+// claude:2026-10-25T17:05:00+01:00 — „Arbeitsaufträge öfter, getiert: 1 gibt weniger EP und ist häufiger, 2 mittel, 3 große Aufträge,
+// viel Anforderung, viel Belohnung, größere Abstände.“ Jede Stufe hat eine eigene Uhr in Online-Skilling-Zeit (orders.ts).
+export type WorkOrderTier = 1 | 2 | 3;
+export const WORK_ORDER_TIERS: readonly WorkOrderTier[] = [1, 2, 3];
+export interface WorkOrderTierDef {
+  /** Minuten echter Arbeit, gleich wahrscheinlich (`eventRng`). Menge = max(1, round(M · 60 000 / effektive Dauer · perRun)). */
+  minutes: readonly number[];
+  /** XP = round(M × xpFactor × beste effektive XP je Minute des Skills). */
+  xpFactor: number;
+  /** Gold = round(ORDER_GOLD_SELL_FACTOR × count × Verkaufswert + TAVERN_GOLD_BY_BAND[band] × Art-Faktor × bandGoldFactor). */
+  bandGoldFactor: number;
+  /** Chance auf eine Werkstattkiste bei der Abgabe. Der Wurf aus `eventRng` wird immer gezogen (auch bei 0 und 1). */
+  crateChance: number;
+  /** Mittlerer Abstand in Online-Skilling-Zeit. Neuwurf gleichverteilt in [(1 − ORDER_INTERVAL_SPREAD), (1 + ORDER_INTERVAL_SPREAD)] × Mittel. */
+  meanIntervalMs: number;
+  /** Online-Laufzeit eines unbeantworteten Angebots dieser Stufe. */
+  offerTtlMs: number;
+}
+export const ORDER_TIERS: Readonly<Record<WorkOrderTier, WorkOrderTierDef>> = {
+  1: { minutes: [5, 6, 7, 8, 9, 10], xpFactor: 0.5, bandGoldFactor: 0.5, crateChance: 0, meanIntervalMs: 40 * 60_000, offerTtlMs: 10 * 60_000 },
+  2: { minutes: [20, 25, 30], xpFactor: 1.0, bandGoldFactor: 1.0, crateChance: 0.1, meanIntervalMs: 4 * 3_600_000, offerTtlMs: 15 * 60_000 },
+  3: { minutes: [45, 60, 75], xpFactor: 1.5, bandGoldFactor: 3.0, crateChance: 1, meanIntervalMs: 12 * 3_600_000, offerTtlMs: 30 * 60_000 },
+};
+/** Neuwurf-Spanne der Stufen-Uhr: ±25 % um das Mittel. */
+export const ORDER_INTERVAL_SPREAD = 0.25;
+/** Stufe der Aufträge aus 1.4.0 (Migration < 97 und Sanitize-Fallback). */
+export const ORDER_LEGACY_TIER: WorkOrderTier = 2;
+export type WorkOrderTierClocks = Record<WorkOrderTier, number>;
+/** Startwerte der Stufen-Uhren (neues Spiel, Aschesturz, Migration < 97): die Mittelwerte, deterministisch. */
+export function defaultWorkOrderTierClocks(): WorkOrderTierClocks {
+  return { 1: ORDER_TIERS[1].meanIntervalMs, 2: ORDER_TIERS[2].meanIntervalMs, 3: ORDER_TIERS[3].meanIntervalMs };
+}
+/** Höchster gültiger Countdown einer Stufe (Sanitize-Deckel = oberes Ende der Neuwurf-Spanne). */
+export function workOrderTierClockMax(tier: WorkOrderTier): number {
+  return Math.ceil(ORDER_TIERS[tier].meanIntervalMs * (1 + ORDER_INTERVAL_SPREAD));
+}
 export const ORDER_GOLD_SELL_FACTOR = 1.2;
 export const ORDER_GOLD_KIND_FACTOR: Readonly<Record<WorkOrderKind, number>> = { deliver: 1.0, produce: 1.2 };
-export const ORDER_CRATE_CHANCE = 0.1;
-export const ORDER_OFFER_TTL_MS = 900_000;
+/**
+ * @deprecated claude:2026-10-25T17:05:00+01:00 — Angebots-Laufzeit des 1.4.0-Auftrags (= Stufe 2). Die Engine liest seit SAVE 97
+ * `ORDER_TIERS[tier].offerTtlMs`; ORDER_MINUTES, ORDER_XP_MINUTE_FACTOR (1,5) und ORDER_CRATE_CHANCE sind in ORDER_TIERS aufgegangen.
+ */
+export const ORDER_OFFER_TTL_MS = ORDER_TIERS[ORDER_LEGACY_TIER].offerTtlMs;
 export const ORDER_MAX_OPEN = 3;
 export const ORDER_TIER_FLOOR_BELOW = 25;
 export const ORDER_TOP_TIER_WEIGHT = 3;

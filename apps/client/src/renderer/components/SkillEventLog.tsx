@@ -28,7 +28,11 @@ export function SkillEventLog(): JSX.Element | null {
           return (
             <li key={e.seq} className="skill-event-log-row">
               {img ? <img src={img} alt="" className="skill-event-log-img" loading="lazy" decoding="async" /> : <span className="skill-event-log-icon" aria-hidden="true">{EVENT_ICON[e.id]}</span>}
-              <span className="skill-event-log-name">{t(`events.${e.id}.name`)}</span>
+              <span className="skill-event-log-name">
+                {t(`events.${e.id}.name`)}
+                {/* claude:2026-10-25T17:34:00+01:00 — 1.4.1 gestufte Aufträge: Kundschaft nennt die Auftragsstufe (SAVE 97, `orderTier`). */}
+                {e.id === "customer" && e.orderTier ? ` · ${t(`orders.tier.${e.orderTier}`)}` : null}
+              </span>
               <span className="muted">
                 {content.skills[e.skill] ? tr(content.skills[e.skill]!.name) : e.skill}
                 {item && e.qty ? ` · ${formatNum(e.qty)} × ${tr(item.name)}` : ""}

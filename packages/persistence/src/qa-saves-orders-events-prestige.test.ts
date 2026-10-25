@@ -25,6 +25,7 @@ function findNonFinite(value: unknown, path: string, out: string[]): void {
 const copperOrder = (baseline: number): WorkOrder => ({
   id: 1,
   kind: "deliver",
+  tier: 2, // claude:2026-10-25T17:05:00+01:00 — Pflichtfeld Stufe seit SAVE 97 (1.4.1 gestufte Aufträge); Stufe 2 = 1.4.0-Auftrag
   skill: "mining",
   actionId: "mine_copper",
   itemId: "copper_ore",

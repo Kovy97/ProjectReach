@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { ActionDef, GameState, WorkOrder } from "@hearthforge/shared";
-import { ORDER_MAX_OPEN, ORDER_OFFER_TTL_MS, PRESTIGE_UNLOCK_QUEST_ID, defaultSkillEventState, defaultWorkOrderState } from "@hearthforge/shared";
+import { ORDER_MAX_OPEN, ORDER_OFFER_TTL_MS, ORDER_TIERS, PRESTIGE_UNLOCK_QUEST_ID, defaultSkillEventState, defaultWorkOrderState } from "@hearthforge/shared";
 import { createTestGame } from "./test-helpers";
 import { createGame } from "./state";
 import { setActiveAction } from "./actions";
@@ -57,6 +57,7 @@ function handOrder(s: GameState, o: Partial<WorkOrder> & Pick<WorkOrder, "action
     customerId: "guild",
     baseline: s.stats.producedById?.[o.itemId] ?? 0,
     ...o,
+    tier: o.tier ?? 2, // claude:2026-10-25T17:05:00+01:00 — Pflichtfeld Stufe seit SAVE 97 (1.4.1 gestufte Aufträge); Stufe 2 = 1.4.0-Auftrag
   };
   w.open.push(order);
   return order;
@@ -171,7 +172,9 @@ describe("Angebot", () => {
       expect(o!.skill).toBe(act.skill);
       expect(content.actions[o!.actionId]!.levelRequired ?? 1).toBeLessThanOrEqual(50);
       expect(o!.count).toBeGreaterThanOrEqual(1);
-      expect(o!.xp).toBeCloseTo(Math.round(o!.minutes * 1.5 * bestEffectiveXpPerMinute(s, content, act.skill, durOf(s))), 0);
+      // claude:2026-10-25T17:05:00+01:00 — XP-Faktor je Stufe statt fest 1,5 (Chef 25.10.2026, gestufte Aufträge); ohne Angabe Stufe 2 = 1,0.
+      expect(o!.tier).toBe(2);
+      expect(o!.xp).toBeCloseTo(Math.round(o!.minutes * ORDER_TIERS[2].xpFactor * bestEffectiveXpPerMinute(s, content, act.skill, durOf(s))), 0);
       expect(o!.band).toBe(3);
     }
   });

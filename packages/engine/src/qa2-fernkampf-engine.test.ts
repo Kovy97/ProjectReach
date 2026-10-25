@@ -238,6 +238,7 @@ describe("Aufträge: Pfeile im Köcher zählen nicht als Bestand", () => {
     const order: WorkOrder = {
       id: w.seq,
       kind: "produce",
+      tier: 2, // claude:2026-10-25T17:05:00+01:00 — Pflichtfeld Stufe seit SAVE 97 (1.4.1 gestufte Aufträge)
       skill: "bowcraft",
       actionId: "fletch_copper_arrow",
       itemId: "copper_arrow",

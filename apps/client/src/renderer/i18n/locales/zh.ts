@@ -2944,6 +2944,14 @@ export const zh: Record<string, string> = {
     "raid.room.4.desc": "边境的门前礼拜堂，曾供奉守门者维尔。她的神像所在之处，如今神铁盆中燃着借来的火。火是苍白的，不冒烟，室内的影子也不随它晃动。黑墙上烙着各氏族的名字，一行又一行，像账目一样。",
     "orders.deliverInstances.title": "交出独立单件？",
     "orders.deliverInstances.body": "普通物品不足。将随订单交出 {n} 件独立单件（带后缀或符文），最弱的优先。已锁定的物品保留。",
+    // claude:2026-10-25T17:05:00+01:00 — 1.4.1 gestufte Arbeitsaufträge (Stufenname, Erklärung, Kurzzeile im Reiter)
+    "orders.tier.1": "小订单",
+    "orders.tier.2": "订单",
+    "orders.tier.3": "大订单",
+    "orders.tier.1.hint": "来得频繁。工作量小，报酬不多。",
+    "orders.tier.2.hint": "工作量中等，报酬可观，有时附赠工坊箱。",
+    "orders.tier.3.hint": "少见且要求高。报酬丰厚，必定附赠工坊箱。",
+    "orders.tiers.lead": "小订单来得频繁，报酬不多。大订单少见，要求高，报酬也高得多。",
     // claude:2026-10-25T11:03:00+01:00 — 1.4.1 Spieler-Feedback
     "elite.victory.slayerPoints": "猎魔点数 +{n}",
     "raid.boss.slayerPoints": "猎魔点数 +{n}",

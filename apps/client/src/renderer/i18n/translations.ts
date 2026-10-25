@@ -3226,6 +3226,14 @@ const en = {
     // claude:2026-10-26T05:15:00+02:00
     "orders.deliverInstances.title": "Hand over individual pieces?",
     "orders.deliverInstances.body": "There are not enough plain pieces. {n} individual pieces (with suffix or runes) go with the order, weakest first. Locked pieces stay.",
+    // claude:2026-10-25T17:05:00+01:00 — 1.4.1 gestufte Arbeitsaufträge (Stufenname, Erklärung, Kurzzeile im Reiter)
+    "orders.tier.1": "Small order",
+    "orders.tier.2": "Order",
+    "orders.tier.3": "Large order",
+    "orders.tier.1.hint": "Comes often. Short work, small reward.",
+    "orders.tier.2.hint": "Medium work, solid reward, sometimes a crate.",
+    "orders.tier.3.hint": "Rare and demanding. Big reward and always a crate.",
+    "orders.tiers.lead": "Small orders come often and pay a little. Large orders are rare, ask for a lot and pay much more.",
     // claude:2026-10-25T11:03:00+01:00 — 1.4.1 Spieler-Feedback
     "elite.victory.slayerPoints": "+{n} Slayer points",
     "raid.boss.slayerPoints": "+{n} Slayer points",
@@ -6315,6 +6323,14 @@ const de: Record<keyof typeof en, string> = {
     // claude:2026-10-26T05:15:00+02:00
     "orders.deliverInstances.title": "Einzelstücke abgeben?",
     "orders.deliverInstances.body": "Es gibt nicht genug einfache Stücke. {n} Einzelstücke (mit Suffix oder Runen) gehen mit, die schwächsten zuerst. Gesperrte Teile bleiben.",
+    // claude:2026-10-25T17:05:00+01:00 — 1.4.1 gestufte Arbeitsaufträge (Stufenname, Erklärung, Kurzzeile im Reiter)
+    "orders.tier.1": "Kleiner Auftrag",
+    "orders.tier.2": "Auftrag",
+    "orders.tier.3": "Großauftrag",
+    "orders.tier.1.hint": "Kommt oft. Kurze Arbeit, kleiner Lohn.",
+    "orders.tier.2.hint": "Mittlere Arbeit, ordentlicher Lohn, manchmal eine Kiste.",
+    "orders.tier.3.hint": "Selten und fordernd. Großer Lohn und immer eine Kiste.",
+    "orders.tiers.lead": "Kleine Aufträge kommen oft und zahlen wenig. Großaufträge sind selten, verlangen viel und zahlen deutlich mehr.",
     // claude:2026-10-25T11:03:00+01:00 — 1.4.1 Spieler-Feedback
     "elite.victory.slayerPoints": "+{n} Slayer-Punkte",
     "raid.boss.slayerPoints": "+{n} Slayer-Punkte",

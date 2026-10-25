@@ -60,6 +60,9 @@ describe("Takt und Strom", () => {
 
   it("im Mittel ein Ereignis je 20–30 min aktiven Skillens (10 h Bergbau)", () => {
     const s = game();
+    // claude:2026-10-25T17:05:00+01:00 — seit 1.4.1 (Chef 25.10.: gestufte Aufträge mit eigenen Uhren) schreiben Auftragsangebote eigene
+    // „customer“-Einträge ins Logbuch, alle 40 min eins der Stufe 1. Hier zählen nur Wirk-Ereignisse, also die Auftrags-Uhren anhalten.
+    s.workOrders!.tierMs = { 1: 1e12, 2: 1e12, 3: 1e12 };
     setActiveAction(s, content, "mine_copper");
     live(s, 10 * 3_600_000, 5_000);
     const n = s.skillEvents!.seq;

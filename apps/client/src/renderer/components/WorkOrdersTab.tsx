@@ -15,8 +15,8 @@ import {
   tavernMainOutput,
   workOrderProgress,
 } from "@hearthforge/engine";
-import type { WorkOrder } from "@hearthforge/shared";
-import { ORDER_MAX_OPEN } from "@hearthforge/shared";
+import type { WorkOrder, WorkOrderTier } from "@hearthforge/shared";
+import { ORDER_LEGACY_TIER, ORDER_MAX_OPEN, WORK_ORDER_TIERS } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { ItemCell } from "./ItemCell";
@@ -28,6 +28,25 @@ import { getPortrait } from "../portraits";
 function mmss(ms: number): string {
   const s = Math.max(0, Math.ceil(ms / 1000));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
+
+/**
+ * claude:2026-10-25T17:05:00+01:00 — Stufen-Kennzeichen (1.4.1 gestufte Aufträge, Chef 25.10.2026): drei Rauten wie die Talent-Ränge
+ * (`.talent-pips`/`.talent-pip.is-on`, Bestand), gefüllt bis zur Stufe, dazu der Stufenname. Kein Glühen, kein Emoji; Tooltip erklärt die Stufe.
+ */
+export function OrderTierMark({ tier, compact = false }: { tier: WorkOrderTier; compact?: boolean }): JSX.Element {
+  const { t } = useI18n();
+  const name = t(`orders.tier.${tier}`);
+  return (
+    <span className={`work-order-tier work-order-tier--${tier}`} title={t(`orders.tier.${tier}.hint`)} aria-label={name}>
+      <span className="talent-pips" aria-hidden="true">
+        {WORK_ORDER_TIERS.map((i) => (
+          <span key={i} className={`talent-pip${i <= tier ? " is-on" : ""}`} />
+        ))}
+      </span>
+      {!compact && <span className="work-order-tier-name">{name}</span>}
+    </span>
+  );
 }
 
 function OrderHead({ order }: { order: WorkOrder }): JSX.Element {
@@ -43,6 +62,7 @@ function OrderHead({ order }: { order: WorkOrder }): JSX.Element {
       {portrait && <img src={portrait} alt="" className="work-order-portrait" loading="lazy" decoding="async" />}
       <ItemCell itemId={order.itemId} qty={order.count} />
       <div className="work-order-text">
+        <OrderTierMark tier={order.tier ?? ORDER_LEGACY_TIER} />{/* claude:2026-10-25T17:05:00+01:00 — Stufe (1.4.1) */}
         <span className="work-order-customer">
           {c.name ? tr(c.name) : t("orders.guild.name")}
           {c.role && <span className="muted"> · {tr(c.role)}</span>}
@@ -71,9 +91,9 @@ export function WorkOrdersTab(): JSX.Element {
   const open = o?.open ?? [];
   return (
     <div className="work-orders">
-      <p className="muted work-orders-lead">{t("orders.lead")}</p>
+      <p className="muted work-orders-lead">{t("orders.lead")} {t("orders.tiers.lead")}</p>{/* claude:2026-10-25T17:05:00+01:00 — Stufen kurz erklärt (1.4.1) */}
       {offer && (
-        <div className="work-order work-order--offer">
+        <div className={`work-order work-order--offer${offer.tier === 3 ? " work-order--tier3" : ""}`}>
           <div className="work-order-badge">
             {t("orders.offer.title")} <span className="muted">· {t("orders.offer.expires").replace("{time}", mmss(o?.offerMsLeft ?? 0))}</span>
           </div>
@@ -95,7 +115,7 @@ export function WorkOrdersTab(): JSX.Element {
         const pct = Math.round((p.done / Math.max(1, p.count)) * 100);
         const canDeliver = p.ready && p.stock >= order.count;
         return (
-          <div key={order.id} className={`work-order${p.ready ? " work-order--ready" : ""}`}>
+          <div key={order.id} className={`work-order${p.ready ? " work-order--ready" : ""}${order.tier === 3 ? " work-order--tier3" : ""}`}>{/* claude:2026-10-25T17:05:00+01:00 — Großauftrag hervorgehoben */}
             <OrderHead order={order} />
             <div className="work-order-progress" aria-label={t("orders.progress")}>
               <div className="work-order-bar">

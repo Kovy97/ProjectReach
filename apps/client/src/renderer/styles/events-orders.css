@@ -195,3 +195,41 @@
 .work-order-bar { height: 10px; }
 .work-order-progress { font-size: var(--fs-sm); }
 .skill-event-log-row { font-size: var(--fs-sm); }
+
+/* claude:2026-10-25T17:05:00+01:00 — Stufen der Arbeitsaufträge (1.4.1, Chef 25.10.2026): Rauten aus dem Talentbaum (.talent-pip, Bestand),
+   Stufenname in Messing. Der Großauftrag bekommt die feste Messingkante der Ereigniskarte (kein Glühen, kein Schein). */
+.work-order-tier {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  font-family: var(--font-head);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.04em;
+  color: #c9ae74;
+  cursor: help;
+}
+.work-order-tier .talent-pips {
+  gap: 4px;
+}
+.work-order-tier .talent-pip {
+  width: 8px;
+  height: 8px;
+}
+.work-order-tier--3 {
+  color: #f0b46a;
+}
+.work-order--tier3 {
+  box-shadow: inset 4px 0 0 #b9924a;
+}
+.skill-event-chip .work-order-tier {
+  font-size: inherit;
+  margin-left: 2px;
+}
+.skill-event-chip .work-order-tier .talent-pip {
+  width: 6px;
+  height: 6px;
+}
+.skill-event-chip--tier3 {
+  border-color: #d6a052;
+}

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { GameState, WorkOrder } from "@hearthforge/shared";
-import { EVENT_COOLDOWN_MS, SAVE_VERSION, defaultSkillEventState, defaultWorkOrderState } from "@hearthforge/shared";
+import { EVENT_COOLDOWN_MS, SAVE_VERSION, defaultSkillEventState, defaultWorkOrderState, defaultWorkOrderTierClocks } from "@hearthforge/shared";
 import { createGame, createRng, deriveEventRngSeed } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
@@ -12,6 +12,7 @@ type SaveShape = { version: number; savedAt: number; state: GameState };
 const order = (id: number, extra: Partial<WorkOrder> = {}): WorkOrder => ({
   id,
   kind: "deliver",
+  tier: 2, // claude:2026-10-25T17:05:00+01:00 — Pflichtfeld Stufe seit SAVE 97 (1.4.1 gestufte Aufträge); Stufe 2 = 1.4.0-Auftrag
   skill: "mining",
   actionId: "mine_copper",
   itemId: "copper_ore",
@@ -55,7 +56,7 @@ describe("Ereignisse und Aufträge über Save/Load", () => {
       log: [{ seq: 3, id: "storm_fell", skill: "woodcutting", atMs: 5000, itemId: "oak_log", qty: 14 }],
       seq: 3,
     };
-    s.workOrders = { open: [order(1), order(2, { kind: "produce", skill: "smithing", actionId: "smelt_copper", itemId: "copper_bar" })], offer: order(3), offerMsLeft: 600_000, seq: 3, delivered: 4 };
+    s.workOrders = { open: [order(1), order(2, { kind: "produce", skill: "smithing", actionId: "smelt_copper", itemId: "copper_bar" })], offer: order(3), offerMsLeft: 600_000, tierMs: defaultWorkOrderTierClocks(), seq: 3, delivered: 4 }; // claude:2026-10-25T17:05:00+01:00 — tierMs (SAVE 97)
     const once = serialize(deserialize(serialize(s, AT), content, AT)!.state, AT);
     const st = (JSON.parse(once) as SaveShape).state;
     expect(st.skillEvents).toEqual(s.skillEvents);

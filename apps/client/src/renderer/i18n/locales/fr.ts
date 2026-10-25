@@ -2948,6 +2948,14 @@ export const fr: Record<string, string> = {
     "raid.room.4.desc": "La chapelle de la porte de la marche, jadis consacrée à Vhel la Gardienne. Là où se dressait son image brûle à présent le feu emprunté, dans une vasque de fer divin. Il est pâle, ne fait pas de fumée, et les ombres de la salle ne bougent pas avec lui. Sur les murs noirs, les noms des clans sont gravés au feu, ligne après ligne, comme des écritures.",
     "orders.deliverInstances.title": "Remettre des pièces uniques ?",
     "orders.deliverInstances.body": "Il manque des pièces ordinaires. {n} pièces uniques (avec suffixe ou runes) partent avec la commande, les plus faibles d'abord. Les pièces verrouillées restent.",
+    // claude:2026-10-25T17:05:00+01:00 — 1.4.1 gestufte Arbeitsaufträge (Stufenname, Erklärung, Kurzzeile im Reiter)
+    "orders.tier.1": "Petite commande",
+    "orders.tier.2": "Commande",
+    "orders.tier.3": "Grande commande",
+    "orders.tier.1.hint": "Arrive souvent. Travail court, petite récompense.",
+    "orders.tier.2.hint": "Travail moyen, bonne récompense, parfois une caisse.",
+    "orders.tier.3.hint": "Rare et exigeante. Grosse récompense et toujours une caisse.",
+    "orders.tiers.lead": "Les petites commandes arrivent souvent et paient peu. Les grandes sont rares, demandent beaucoup et paient bien plus.",
     // claude:2026-10-25T11:03:00+01:00 — 1.4.1 Spieler-Feedback
     "elite.victory.slayerPoints": "+{n} points de Slayer",
     "raid.boss.slayerPoints": "+{n} points de Slayer",

@@ -29,7 +29,9 @@ import type {
 } from "@hearthforge/shared";
 import { defaultRaidState, makeRaidQueueEntry, RAID_WEEKLY_MODIFIERS } from "@hearthforge/shared"; // claude:2026-10-25T04:40:00+02:00 — Raid (SAVE 93)
 import { QUIVER_CAPACITY } from "@hearthforge/shared"; // claude:2026-10-24T15:21:04+02:00 — Köcher-Deckel (QA-Runde 2 Fernkampf B2)
-import { defaultSkillEventState, defaultWorkOrderState, EVENT_COOLDOWN_MS, EVENT_EXPIRE_MS, EVENT_LOG_MAX, ORDER_MAX_OPEN, ORDER_OFFER_TTL_MS, SKILL_EVENT_IDS } from "@hearthforge/shared"; // claude:2026-10-24T23:55:00+02:00 — 1.4.0 Welle 3
+import { defaultSkillEventState, defaultWorkOrderState, EVENT_COOLDOWN_MS, EVENT_EXPIRE_MS, EVENT_LOG_MAX, ORDER_MAX_OPEN, SKILL_EVENT_IDS } from "@hearthforge/shared"; // claude:2026-10-24T23:55:00+02:00 — 1.4.0 Welle 3
+import type { WorkOrderTier, WorkOrderTierClocks } from "@hearthforge/shared";
+import { defaultWorkOrderTierClocks, ORDER_LEGACY_TIER, ORDER_TIERS, WORK_ORDER_TIERS, workOrderTierClockMax } from "@hearthforge/shared"; // claude:2026-10-25T17:05:00+01:00 — SAVE 97 gestufte Aufträge
 import {
   consumableHeal,
   AP_MILESTONE_STEP_PCT,
@@ -3928,6 +3930,21 @@ function migrateState(state: GameState, content: ContentDB): GameState {
     state.slayerAutoTask = false;
   }
 
+  // ── Gestufte Arbeitsaufträge (SAVE_VERSION 96 → 97, 1.4.1, Chef 25.10.2026 „getiert 1–2–3“) ─────────────────────────────────
+  // claude:2026-10-25T17:05:00+01:00 — Neue Pflichtfelder `WorkOrder.tier` und `WorkOrderState.tierMs`. Offene Aufträge und ein offenes Angebot
+  // stammen aus 1.4.0 und entsprechen Stufe 2; ihr beim Angebot festgeschriebener Lohn (Gold, XP, Menge, Minuten) bleibt unverändert, auch
+  // der alte XP-Faktor 1,5 (nichts wird nachträglich gekürzt). Die drei Stufen-Uhren starten deterministisch auf ihren Mittelwerten.
+  // Nur fehlende Werte werden gesetzt (idempotent bei erneutem Laden als Alt-Version). Härtung jeder Version: sanitizeWorkOrders.
+  if ((state.version ?? 0) < 97 && state.workOrders && typeof state.workOrders === "object" && !Array.isArray(state.workOrders)) {
+    const wo = state.workOrders as unknown as Record<string, unknown>;
+    const tag = (o: unknown): void => {
+      if (o && typeof o === "object" && !Array.isArray(o) && (o as Record<string, unknown>).tier === undefined) (o as Record<string, unknown>).tier = ORDER_LEGACY_TIER;
+    };
+    if (Array.isArray(wo.open)) for (const o of wo.open) tag(o);
+    tag(wo.offer);
+    if (wo.tierMs === undefined) wo.tierMs = defaultWorkOrderTierClocks();
+  }
+
   // State auf die aktuelle Version heben (macht versions-abhängige Migrationen idempotent).
   state.version = SAVE_VERSION;
 
@@ -4079,6 +4096,8 @@ function sanitizeSkillEvents(state: GameState, content: ContentDB): void {
       };
       if (typeof e.itemId === "string" && content.items[e.itemId]) entry.itemId = e.itemId;
       if (entry.itemId) entry.qty = finiteInt(e.qty, 0, 1_000_000_000, 0);
+      // claude:2026-10-25T17:05:00+01:00 — Auftragsstufe im Kundschaft-Eintrag (SAVE 97): nur bei „customer“ und nur 1–3, sonst weg.
+      if (entry.id === "customer" && isWorkOrderTier(e.orderTier)) entry.orderTier = e.orderTier;
       log.push(entry);
     }
   }
@@ -4197,6 +4216,26 @@ function sanitizeRaid(state: GameState, content: ContentDB): void {
   };
 }
 
+// claude:2026-10-25T17:05:00+01:00 — SAVE 97 gestufte Aufträge: gültige Stufe 1–3.
+function isWorkOrderTier(v: unknown): v is WorkOrderTier {
+  return v === 1 || v === 2 || v === 3;
+}
+
+/**
+ * claude:2026-10-25T17:05:00+01:00 — Stufen-Uhren härten (SAVE 97): nicht endlich oder negativ → Mittelwert der Stufe; sonst ganzzahlig, gedeckelt auf das
+ * obere Ende der Neuwurf-Spanne (1,25 × Mittel). Fehlt das Feld, starten alle Uhren auf den Mittelwerten.
+ */
+function sanitizeWorkOrderClocks(raw: unknown): WorkOrderTierClocks {
+  const out = defaultWorkOrderTierClocks();
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return out;
+  const r = raw as Record<string, unknown>;
+  for (const t of WORK_ORDER_TIERS) {
+    const v = r[t];
+    if (typeof v === "number" && Number.isFinite(v) && v >= 0) out[t] = Math.min(workOrderTierClockMax(t), Math.floor(v));
+  }
+  return out;
+}
+
 function sanitizeWorkOrder(raw: unknown, content: ContentDB): WorkOrder | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const o = raw as Record<string, unknown>;
@@ -4207,6 +4246,7 @@ function sanitizeWorkOrder(raw: unknown, content: ContentDB): WorkOrder | null {
   return {
     id: finiteInt(o.id, 1, Number.MAX_SAFE_INTEGER, 1),
     kind: o.kind,
+    tier: isWorkOrderTier(o.tier) ? o.tier : ORDER_LEGACY_TIER, // claude:2026-10-25T17:05:00+01:00 — SAVE 97: fehlt/kaputt → Stufe 2 (1.4.0-Auftrag)
     skill: o.skill,
     actionId: o.actionId,
     itemId: o.itemId,
@@ -4238,12 +4278,14 @@ function sanitizeWorkOrders(state: GameState, content: ContentDB): void {
     }
   }
   const offer = sanitizeWorkOrder(r.offer, content);
-  const offerMsLeft = offer ? finiteInt(r.offerMsLeft, 0, ORDER_OFFER_TTL_MS, 0) : 0;
+  // claude:2026-10-25T17:05:00+01:00 — Restzeit höchstens die Laufzeit der Angebots-Stufe (SAVE 97: 10/15/30 min).
+  const offerMsLeft = offer ? finiteInt(r.offerMsLeft, 0, ORDER_TIERS[offer.tier].offerTtlMs, 0) : 0;
   const maxId = Math.max(0, ...open.map((o) => o.id), offer?.id ?? 0);
   state.workOrders = {
     open,
     offer: offer && offerMsLeft > 0 ? offer : null,
     offerMsLeft: offer && offerMsLeft > 0 ? offerMsLeft : 0,
+    tierMs: sanitizeWorkOrderClocks(r.tierMs), // claude:2026-10-25T17:05:00+01:00 — SAVE 97
     seq: Math.max(maxId, finiteInt(r.seq, 0, Number.MAX_SAFE_INTEGER, 0)),
     delivered: finiteInt(r.delivered, 0, Number.MAX_SAFE_INTEGER, 0),
   };

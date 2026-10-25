@@ -2904,6 +2904,14 @@ export const es: Record<string, string> = {
     "raid.room.4.desc": "La capilla de la puerta de la marca, consagrada en otro tiempo a Vhel, la Guardiana de la Puerta. Donde se alzaba su imagen arde ahora el fuego prestado en una pila de hierro divino. Es pálido, no da humo, y las sombras de la sala no se mueven con él. En los muros negros están grabados a fuego los nombres de los clanes, línea a línea, como asientos.",
     "orders.deliverInstances.title": "¿Entregar piezas únicas?",
     "orders.deliverInstances.body": "No hay suficientes piezas normales. Se entregan {n} piezas únicas (con sufijo o runas), primero las más débiles. Las piezas bloqueadas se quedan.",
+    // claude:2026-10-25T17:05:00+01:00 — 1.4.1 gestufte Arbeitsaufträge (Stufenname, Erklärung, Kurzzeile im Reiter)
+    "orders.tier.1": "Encargo pequeño",
+    "orders.tier.2": "Encargo",
+    "orders.tier.3": "Gran encargo",
+    "orders.tier.1.hint": "Llega a menudo. Poco trabajo, pago pequeño.",
+    "orders.tier.2.hint": "Trabajo medio, buen pago y a veces una caja.",
+    "orders.tier.3.hint": "Raro y exigente. Gran pago y siempre una caja.",
+    "orders.tiers.lead": "Los encargos pequeños llegan a menudo y pagan poco. Los grandes son raros, piden mucho y pagan bastante más.",
     // claude:2026-10-25T11:03:00+01:00 — 1.4.1 Spieler-Feedback
     "elite.victory.slayerPoints": "+{n} puntos de Slayer",
     "raid.boss.slayerPoints": "+{n} puntos de Slayer",

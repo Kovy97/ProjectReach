@@ -1,18 +1,18 @@
-import type { ActionDef, ContentDB, GameState, ItemId, ItemInstance, RngState, SkillId, WorkOrder, WorkOrderKind, WorkOrderState } from "@hearthforge/shared";
+import type { ActionDef, ContentDB, GameState, ItemId, ItemInstance, RngState, SkillId, WorkOrder, WorkOrderKind, WorkOrderState, WorkOrderTier } from "@hearthforge/shared";
 import {
   defaultWorkOrderState,
+  defaultWorkOrderTierClocks,
   EVENT_CRAFT_SKILLS,
-  ORDER_CRATE_CHANCE,
   ORDER_GATHER_SKILLS,
   ORDER_GOLD_KIND_FACTOR,
   ORDER_GOLD_SELL_FACTOR,
   ORDER_INPUT_REACH_DEPTH,
+  ORDER_INTERVAL_SPREAD,
+  ORDER_LEGACY_TIER,
   ORDER_MAX_OPEN,
-  ORDER_MINUTES,
-  ORDER_OFFER_TTL_MS,
   ORDER_TIER_FLOOR_BELOW,
+  ORDER_TIERS,
   ORDER_TOP_TIER_WEIGHT,
-  ORDER_XP_MINUTE_FACTOR,
   TAVERN_BANDS,
   TAVERN_GOLD_BY_BAND,
   WORK_CRATE_MATERIAL_KINDS,
@@ -29,7 +29,9 @@ import { tavernBandMaterials, tavernExpectedQty, tavernHashFloat, tavernMainOutp
 
 /**
  * claude:2026-10-24T23:05:00+02:00 — Arbeitsaufträge (1.4.0 „Feder und Stahl“ Welle 3 AU, Chef 23.10.2026; Zahlen
- * design/1.4.0-balance-werkstatt.md §4). Quelle ist das Ereignis „Kundschaft“ beim Arbeiten (events.ts).
+ * design/1.4.0-balance-werkstatt.md §4). claude:2026-10-25T17:05:00+01:00 — seit 1.4.1 gestuft (Chef 25.10.2026, design/1.4.1-auftraege-gestuft.md):
+ * Quelle ist nicht mehr das Ereignis „Kundschaft“, sondern je Stufe eine eigene Uhr in Online-Skilling-Zeit
+ * (`onWorkOrderActionCompleted`, aufgerufen aus events.ts nach jeder Online-Aktion). Zahlen je Stufe in `ORDER_TIERS`.
  *
  * Wiederverwendet die Auftragslogik der Taverne (Haupt-Output, erwartete Menge, Gold-Bänder, Band-Materialien,
  * Hash-Kisten) ohne die Taverne selbst (`TAVERN_ENABLED` bleibt aus). Abweichungen laut Spec:
@@ -39,7 +41,7 @@ import { tavernBandMaterials, tavernExpectedQty, tavernHashFloat, tavernMainOutp
  *   Auftrags-Skills, claude:2026-10-24T16:03:31+02:00, Chef-Entscheid QA-Runde 2 Werkstatt B2), auch beim Liefern. Nie der Bestand,
  *   sonst erfüllte eine volle Bank jeden Lieferauftrag ohne Arbeit (§4.3).
  * - Kein Vorgriff: nur Aktionen mit `levelRequired ≤ Level`; Herstellaufträge nur, wenn die Zutaten erreichbar sind.
- * - Lohn: Gold über dem Verkaufswert, XP-Batzen, 10 % Werkstattkiste (ohne Ausrüstung). Würfe aus `eventRng`.
+ * - Lohn: Gold über dem Verkaufswert, XP-Batzen, Werkstattkiste je Stufe 0/10/100 % (ohne Ausrüstung). Würfe aus `eventRng`.
  */
 
 const RING_MASTER_PREFIX = "ring_master_";
@@ -205,9 +207,11 @@ export function workOrderCustomers(content: ContentDB, skill: SkillId): string[]
 }
 
 /**
- * Würfelt ein Auftragsangebot für die Aktion, die das Ereignis „Kundschaft“ ausgelöst hat. Das Angebot gehört
- * zu deren Skill. null = kein machbarer Auftrag (dann zählt der Wurf als gewöhnliches Ereignis).
+ * Würfelt ein Auftragsangebot der Stufe `tier` für die Aktion, deren Abschluss die Stufen-Uhr fällig gemacht hat. Das Angebot
+ * gehört zu deren Skill. null = kein machbarer Auftrag (leerer Pool) oder kein Platz; dann wartet die Stufe.
  * `durOf` = effektive Dauer einer Aktion (tick.ts `effectiveActionDurationMs`, als Rückruf gegen einen Importzyklus).
+ * claude:2026-10-25T17:05:00+01:00 — `tier` (1.4.1): Minuten, XP-Faktor, Band-Gold-Faktor und Angebots-Laufzeit aus `ORDER_TIERS`.
+ * Ohne Angabe Stufe 2 (= der 1.4.0-Auftrag bis auf den XP-Faktor 1,0 statt 1,5 und die Minuten 20/25/30).
  */
 export function makeWorkOrderOffer(
   state: GameState,
@@ -215,10 +219,12 @@ export function makeWorkOrderOffer(
   action: ActionDef,
   rng: RngState,
   durOf: (a: ActionDef) => number = (a) => a.durationMs,
+  tier: WorkOrderTier = ORDER_LEGACY_TIER,
 ): WorkOrder | null {
   const kind = workOrderKindFor(action.skill);
   if (!kind || workOrdersFull(state)) return null;
-  const minutes = ORDER_MINUTES[Math.min(ORDER_MINUTES.length - 1, Math.floor(nextFloat(rng) * ORDER_MINUTES.length))]!;
+  const def = ORDER_TIERS[tier]; // claude:2026-10-25T17:05:00+01:00
+  const minutes = def.minutes[Math.min(def.minutes.length - 1, Math.floor(nextFloat(rng) * def.minutes.length))]!;
   const pool: { c: WorkOrderCandidate; count: number }[] = [];
   // claude:2026-10-26T01:25:00+02:00 — kein zweiter Auftrag auf ein Item, für das schon einer offen ist (sonst erfüllte dieselbe Arbeit beide, QA-Aufträge P2-2).
   const openItems = new Set((state.workOrders?.open ?? []).map((x) => x.itemId));
@@ -241,10 +247,12 @@ export function makeWorkOrderOffer(
   }
   const level = skillLevel(state, action.skill);
   const band = Math.max(1, Math.min(TAVERN_BANDS, tavernBandForLevel(level)));
+  // claude:2026-10-25T17:05:00+01:00 — Band-Gold × Stufen-Faktor, XP-Faktor je Stufe (ersetzt ORDER_XP_MINUTE_FACTOR 1,5; Chef 25.10.2026).
   const gold = Math.round(
-    ORDER_GOLD_SELL_FACTOR * pick.count * sellPrice(content, pick.c.itemId) + (TAVERN_GOLD_BY_BAND[band] ?? 0) * ORDER_GOLD_KIND_FACTOR[kind],
+    ORDER_GOLD_SELL_FACTOR * pick.count * sellPrice(content, pick.c.itemId) +
+      (TAVERN_GOLD_BY_BAND[band] ?? 0) * ORDER_GOLD_KIND_FACTOR[kind] * def.bandGoldFactor,
   );
-  const xp = Math.round(minutes * ORDER_XP_MINUTE_FACTOR * bestEffectiveXpPerMinute(state, content, action.skill, durOf));
+  const xp = Math.round(minutes * def.xpFactor * bestEffectiveXpPerMinute(state, content, action.skill, durOf));
   const customers = workOrderCustomers(content, action.skill);
   const customerId = customers.length > 0 ? customers[Math.min(customers.length - 1, Math.floor(nextFloat(rng) * customers.length))]! : ORDER_GUILD_CUSTOMER_ID;
   const o = workOrdersOf(state);
@@ -252,6 +260,7 @@ export function makeWorkOrderOffer(
   const order: WorkOrder = {
     id: o.seq,
     kind,
+    tier, // claude:2026-10-25T17:05:00+01:00
     skill: action.skill,
     actionId: pick.c.action.id,
     itemId: pick.c.itemId,
@@ -264,11 +273,55 @@ export function makeWorkOrderOffer(
     baseline: 0,
   };
   o.offer = order;
-  o.offerMsLeft = ORDER_OFFER_TTL_MS;
+  o.offerMsLeft = def.offerTtlMs; // claude:2026-10-25T17:05:00+01:00 — Laufzeit je Stufe
   return order;
 }
 
-/** Online-Uhr: das unbeantwortete Angebot verfällt nach ORDER_OFFER_TTL_MS. */
+/**
+ * claude:2026-10-25T17:05:00+01:00 — Neuwurf einer Stufen-Uhr (1.4.1): gleichverteilt in [(1 − ORDER_INTERVAL_SPREAD), (1 + ORDER_INTERVAL_SPREAD)]
+ * × Mittel, ein Wurf aus dem übergebenen Strom (`eventRng`).
+ */
+export function rollWorkOrderInterval(tier: WorkOrderTier, rng: RngState): number {
+  const mean = ORDER_TIERS[tier].meanIntervalMs;
+  return Math.round(mean * (1 - ORDER_INTERVAL_SPREAD + 2 * ORDER_INTERVAL_SPREAD * nextFloat(rng)));
+}
+
+/** Prüf-Reihenfolge der Stufen-Uhren: höchste Stufe zuerst (claude:2026-10-25T17:05:00+01:00). */
+const WORK_ORDER_TIERS_DESC: readonly WorkOrderTier[] = [3, 2, 1];
+
+/**
+ * claude:2026-10-25T17:05:00+01:00 — Stufen-Uhren der Arbeitsaufträge (1.4.1, Chef 25.10.2026; design/1.4.1-auftraege-gestuft.md).
+ * Nach einer ONLINE abgeschlossenen Aktion (events.ts `onSkillActionCompleted`, nur im Live-Loop): Skills ohne Aufträge
+ * (Diebeskunst, Ländereien, Kampf) zählen nicht. Sonst laufen alle drei Uhren um die effektive Dauer der Aktion herunter
+ * (Boden 0). Ist Platz (kein Angebot, weniger als ORDER_MAX_OPEN offen), bekommt die höchste fällige Stufe ein Angebot für
+ * den Skill dieser Aktion, danach wird ihre Uhr neu gewürfelt. Ohne Platz oder ohne machbaren Auftrag bleibt die Uhr auf 0
+ * und wartet; dann darf die nächstniedrigere fällige Stufe es versuchen. Alle Würfe aus `rng` (= `state.eventRng`).
+ */
+export function onWorkOrderActionCompleted(
+  state: GameState,
+  content: ContentDB,
+  action: ActionDef,
+  effDurMs: number,
+  rng: RngState,
+  durOf: (a: ActionDef) => number = (a) => a.durationMs,
+): WorkOrder | null {
+  if (!workOrderKindFor(action.skill)) return null;
+  const o = workOrdersOf(state);
+  const clocks = (o.tierMs ??= defaultWorkOrderTierClocks());
+  const d = Math.max(0, Number.isFinite(effDurMs) ? effDurMs : 0);
+  for (const t of WORK_ORDER_TIERS_DESC) clocks[t] = Math.max(0, (Number.isFinite(clocks[t]) ? clocks[t] : ORDER_TIERS[t].meanIntervalMs) - d); // fehlend/kaputt → Mittelwert (wie Sanitize)
+  if (workOrdersFull(state)) return null;
+  for (const t of WORK_ORDER_TIERS_DESC) {
+    if (clocks[t] > 0) continue;
+    const offer = makeWorkOrderOffer(state, content, action, rng, durOf, t);
+    if (!offer) continue;
+    clocks[t] = rollWorkOrderInterval(t, rng);
+    return offer;
+  }
+  return null;
+}
+
+/** Online-Uhr: das unbeantwortete Angebot verfällt nach der Laufzeit seiner Stufe (`ORDER_TIERS[tier].offerTtlMs`). */
 export function tickWorkOrders(state: GameState, dtMs: number): void {
   const o = state.workOrders;
   if (!o?.offer) return;
@@ -369,7 +422,7 @@ export function workCrateItemId(band: number): ItemId {
 
 /**
  * Auftrag abgeben (online, ohne Zeitlimit): Arbeit erledigt UND Bestand da. Zieht `count` Stück (Inventar, dann
- * Lager), zahlt Gold (× Goldfund), den XP-Batzen und mit 10 % eine Werkstattkiste des Bands (`eventRng`).
+ * Lager), zahlt Gold (× Goldfund), den XP-Batzen und je nach Stufe eine Werkstattkiste des Bands (`eventRng`).
  */
 export function deliverWorkOrder(
   state: GameState,
@@ -392,7 +445,10 @@ export function deliverWorkOrder(
   entry.xp += xp;
   syncProgression(state, content);
   let crateItemId: ItemId | null = null;
-  if (nextFloat(rng) < ORDER_CRATE_CHANCE) {
+  // claude:2026-10-25T17:05:00+01:00 — Kisten-Chance je Stufe (0 / 10 / 100 %). Der Wurf wird IMMER gezogen, auch bei 0 und 1: so verbraucht jede
+  // Abgabe genau einen `eventRng`-Wurf, unabhängig von der Stufe (deterministisch; nextFloat < 1 gilt immer, Stufe 3 zahlt also sicher).
+  const crateRoll = nextFloat(rng);
+  if (crateRoll < ORDER_TIERS[order.tier ?? ORDER_LEGACY_TIER].crateChance) {
     const crate = workCrateItemId(order.band);
     if (content.items[crate]) {
       grantLoot(state, content, crate, 1);

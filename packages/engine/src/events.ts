@@ -9,6 +9,7 @@ import type {
   SkillEventPool,
   SkillEventState,
   SkillId,
+  WorkOrderTier,
 } from "@hearthforge/shared";
 import {
   defaultSkillEventState,
@@ -34,7 +35,7 @@ import {
 import { createRng, nextFloat } from "./rng";
 import { levelFromXp } from "./leveling";
 import { grantLoot } from "./mail";
-import { makeWorkOrderOffer, workOrdersFull } from "./orders";
+import { onWorkOrderActionCompleted } from "./orders"; // claude:2026-10-25T17:05:00+01:00 — gestufte Aufträge mit eigenen Uhren (1.4.1)
 
 /**
  * claude:2026-10-24T22:50:00+02:00 — Zufallsereignisse (1.4.0 „Feder und Stahl“ Welle 3 EV, Chef 23.10.2026;
@@ -46,6 +47,9 @@ import { makeWorkOrderOffer, workOrdersFull } from "./orders";
  * - Eigener Zufallsstrom `state.eventRng`: Auslöse- und Auswahlwürfe ziehen nie `state.rng`. Ohne aktives
  *   Ereignis bleibt jede `state.rng`-Folge bitgleich.
  * - Höchstens ein Wirk-Ereignis gleichzeitig. Kundschaft (Auftragsangebot) ist kein Wirk-Ereignis.
+ * - claude:2026-10-25T17:05:00+01:00 — seit 1.4.1 ist Kundschaft kein Ereignis-Wurf mehr: die Auftragsstufen haben eigene Uhren
+ *   (orders.ts `onWorkOrderActionCompleted`), unabhängig von Abklingzeit und laufendem Wirk-Ereignis. Ein neues Angebot schreibt
+ *   weiter einen „customer“-Eintrag ins Logbuch (Ereigniskarte und Logbuch bleiben gleich), jetzt mit Stufe.
  */
 
 const EVENT_RNG_SEED_MIX = 0x3c6ef372;
@@ -94,7 +98,7 @@ export function spendEventAction(state: GameState): void {
   if (ev.active.actionsLeft <= 0) ev.active = null;
 }
 
-function pushLog(state: GameState, id: SkillEventId, skill: SkillId, extra?: { itemId?: ItemId; qty?: number }): void {
+function pushLog(state: GameState, id: SkillEventId, skill: SkillId, extra?: { itemId?: ItemId; qty?: number; orderTier?: WorkOrderTier }): void {
   const ev = skillEventsOf(state);
   ev.seq += 1;
   ev.log.unshift({ seq: ev.seq, id, skill, atMs: state.elapsedMs, ...(extra ?? {}) });
@@ -152,8 +156,9 @@ function pickEvent(weights: Partial<Record<SkillEventId, number>>, r: number): S
 }
 
 /**
- * Nach einer ONLINE abgeschlossenen Skilling-Aktion (Diebeskunst auch nach Fehlschlag): Abklingzeit zählen, dann
- * ggf. würfeln und auslösen. `effDurMs` = effektive Dauer dieser Aktion. Gibt das ausgelöste Ereignis zurück.
+ * Nach einer ONLINE abgeschlossenen Skilling-Aktion (Diebeskunst auch nach Fehlschlag): Auftrags-Uhren und Abklingzeit zählen,
+ * dann ggf. würfeln und auslösen. `effDurMs` = effektive Dauer dieser Aktion. Gibt das ausgelöste Wirk-Ereignis zurück,
+ * sonst „customer“, wenn nur ein Auftragsangebot entstand (claude:2026-10-25T17:05:00+01:00).
  */
 export function onSkillActionCompleted(
   state: GameState,
@@ -165,27 +170,20 @@ export function onSkillActionCompleted(
   const pool = eventPoolFor(content, action);
   if (!pool) return null;
   const ev = skillEventsOf(state);
+  // claude:2026-10-25T17:05:00+01:00 — zuerst die Auftrags-Uhren (1.4.1, eigene Stufen-Uhren statt 10 % Kundschaft im Topf). Sie zählen auch,
+  // wenn die Ereignis-Abklingzeit läuft oder ein Wirk-Ereignis aktiv ist. Würfe aus `eventRng`, nie `state.rng`.
+  const offer = onWorkOrderActionCompleted(state, content, action, effDurMs, eventRngOf(state), durOf);
+  if (offer) pushLog(state, "customer", action.skill, { itemId: offer.itemId, qty: offer.count, orderTier: offer.tier });
+  const quiet: SkillEventId | null = offer ? "customer" : null;
   ev.cooldownMs = Math.max(0, ev.cooldownMs - Math.max(0, effDurMs));
-  if (ev.cooldownMs > 0 || ev.active) return null;
+  if (ev.cooldownMs > 0 || ev.active) return quiet;
   const rng = eventRngOf(state);
   const p = Math.min(EVENT_MAX_CHANCE, Math.max(0, effDurMs) / EVENT_HAZARD_MS);
-  if (!(nextFloat(rng) < p)) return null;
+  if (!(nextFloat(rng) < p)) return quiet;
 
-  const weights = { ...EVENT_WEIGHTS[pool] };
-  if (workOrdersFull(state)) delete weights.customer;
-  let id = pickEvent(weights, nextFloat(rng));
-  if (id === "customer") {
-    const offer = makeWorkOrderOffer(state, content, action, rng, durOf);
-    if (offer) {
-      ev.cooldownMs = EVENT_COOLDOWN_MS;
-      pushLog(state, "customer", action.skill, { itemId: offer.itemId, qty: offer.count });
-      return "customer";
-    }
-    // Kein machbarer Auftrag: der Wurf zählt als gewöhnliches Ereignis des Skills (Spec §4.1).
-    delete weights.customer;
-    id = pickEvent(weights, nextFloat(rng));
-  }
-  if (!id) return null;
+  // claude:2026-10-25T17:05:00+01:00 — der Topf enthält keine Kundschaft mehr (EVENT_WEIGHTS, 1.4.1).
+  const id = pickEvent(EVENT_WEIGHTS[pool], nextFloat(rng));
+  if (!id) return quiet;
   ev.cooldownMs = EVENT_COOLDOWN_MS;
   triggerEvent(state, content, id, action, effDurMs);
   return id;

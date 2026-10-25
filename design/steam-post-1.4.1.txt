@@ -57,6 +57,15 @@ COMBAT
 - The "Go to monster" button in the Champion window now takes you to the Champion's card, not to the normal
   monster of the zone.
 
+WORK ORDERS, MORE OFTEN
+
+- Work orders now come in three sizes and show up much more often while you gather or craft.
+- Small orders: 5 to 10 minutes of work, a little XP and gold, about every 40 minutes.
+- Orders: 20 to 30 minutes of work, solid XP, sometimes a workshop crate, about every 4 hours.
+- Large orders: 45 to 75 minutes of work, lots of XP, plenty of gold and a guaranteed workshop crate, about
+  every 12 hours of skilling.
+- Orders you already accepted keep their reward.
+
 OPTIONS AND SOUND
 
 - Text size is now a slider from 90 to 140%, with quick buttons for 100, 110 and 125%. Your old setting

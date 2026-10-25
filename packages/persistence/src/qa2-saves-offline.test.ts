@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { GameState, WorkOrder } from "@hearthforge/shared";
-import { ORDER_OFFER_TTL_MS, defaultRaidState } from "@hearthforge/shared";
+import { ORDER_OFFER_TTL_MS, defaultRaidState, defaultWorkOrderTierClocks } from "@hearthforge/shared";
 import { createGame, selectMeal, setActiveAction, setMealKeep, startCombat, startRaid, startRaidFromQueue, xpForLevel } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
@@ -180,9 +180,9 @@ describe("Aufträge und Angebot über den Offline-Deckel", () => {
   it("24 h weg ⇒ 8 h gutgeschrieben; Lieferauftrag zählt die Offline-Arbeit, das Angebot behält seine Restzeit, Fixpunkt", () => {
     const s = createGame({ name: "QA-Auftrag" }, content, 13);
     const baseline = s.stats.producedById?.copper_ore ?? 0;
-    const order: WorkOrder = { id: 1, kind: "deliver", skill: "mining", actionId: "mine_copper", itemId: "copper_ore", count: 500, minutes: 30, band: 1, gold: 1200, xp: 900, customerId: "guild", baseline };
+    const order: WorkOrder = { id: 1, kind: "deliver", tier: 2, skill: "mining", actionId: "mine_copper", itemId: "copper_ore", count: 500, minutes: 30, band: 1, gold: 1200, xp: 900, customerId: "guild", baseline };
     const offer: WorkOrder = { ...order, id: 2, baseline: 0 };
-    s.workOrders = { open: [order], offer, offerMsLeft: ORDER_OFFER_TTL_MS, seq: 2, delivered: 0 };
+    s.workOrders = { open: [order], offer, offerMsLeft: ORDER_OFFER_TTL_MS, tierMs: defaultWorkOrderTierClocks(), seq: 2, delivered: 0 }; // claude:2026-10-25T17:05:00+01:00 — tier/tierMs (SAVE 97)
     setActiveAction(s, content, "mine_copper");
     const res = deserialize(serialize(s, AT), content, AT + 24 * H1)!;
     expect(res.offlineMs).toBe(H8);

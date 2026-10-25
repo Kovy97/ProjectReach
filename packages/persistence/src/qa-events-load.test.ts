@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { GameState, WorkOrder } from "@hearthforge/shared";
-import { ORDER_OFFER_TTL_MS } from "@hearthforge/shared";
+import { ORDER_OFFER_TTL_MS, defaultWorkOrderTierClocks } from "@hearthforge/shared";
 import { createGame, setActiveAction } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
@@ -15,6 +15,7 @@ type SaveShape = { version: number; savedAt: number; state: GameState };
 const order = (id: number, extra: Partial<WorkOrder> = {}): WorkOrder => ({
   id,
   kind: "deliver",
+  tier: 2, // claude:2026-10-25T17:05:00+01:00 — Pflichtfeld Stufe seit SAVE 97 (1.4.1 gestufte Aufträge); Stufe 2 = 1.4.0-Auftrag
   skill: "mining",
   actionId: "mine_copper",
   itemId: "copper_ore",
@@ -41,7 +42,7 @@ describe("Laden mit Offline-Fenster", () => {
       log: [],
       seq: 0,
     };
-    s.workOrders = { open: [order(1)], offer: order(2), offerMsLeft: ORDER_OFFER_TTL_MS, seq: 2, delivered: 0 };
+    s.workOrders = { open: [order(1)], offer: order(2), offerMsLeft: ORDER_OFFER_TTL_MS, tierMs: defaultWorkOrderTierClocks(), seq: 2, delivered: 0 }; // claude:2026-10-25T17:05:00+01:00 — tierMs (SAVE 97)
     const out = deserialize(serialize(s, AT), content, AT + 3_600_000)!.state;
     const ev = out.skillEvents!;
     const wo = out.workOrders!;
@@ -57,7 +58,7 @@ describe("Laden mit Offline-Fenster", () => {
 
   it("Angebot ohne Restzeit im Save wird beim Laden verworfen (kein Geister-Angebot), offene Aufträge bleiben", () => {
     const s = createGame({ name: "W3" }, content, 4);
-    s.workOrders = { open: [order(1)], offer: order(2), offerMsLeft: 0, seq: 2, delivered: 0 };
+    s.workOrders = { open: [order(1)], offer: order(2), offerMsLeft: 0, tierMs: defaultWorkOrderTierClocks(), seq: 2, delivered: 0 }; // claude:2026-10-25T17:05:00+01:00 — tierMs (SAVE 97)
     const save = JSON.parse(serialize(s, AT)) as SaveShape;
     const wo = deserialize(JSON.stringify(save), content, AT)!.state.workOrders!;
     expect(wo.offer).toBeNull();
