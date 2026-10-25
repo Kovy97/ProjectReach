@@ -37,7 +37,7 @@ import { openQueueAmountModal } from "../components/QueueAmountModal";
 import { effectiveActionXpGain } from "../util/queueLevels";
 import { ItemChip } from "../components/ItemChip";
 import { useItemTooltip } from "../components/ItemTooltip";
-import { formatCompactK, formatPct1, formatSeconds1 } from "../util/format";
+import { formatCompactK, formatGain, formatPct1, formatSeconds1 } from "../util/format";
 import { CampBoostNote } from "../components/CampBoostNote";
 import { computeActionRate, type ActionRate } from "../util/actionRate";
 import { masteryRankTier } from "../util/masteryRank";
@@ -795,7 +795,8 @@ const ActionCard = memo(function ActionCard({
         { label: t("skill.t.time"), value: `${formatSeconds1(action.durationMs / 1000)}s` },
       ]
     : [
-        { label: t("skill.t.xp"), value: `+${action.xp}`, cls: "acc" },
+        // claude:2026-10-25T10:30:00+01:00 — 1.4.1 B2: XP-Kachel über formatGain (keine Float-Krümel, Sprachformat).
+        { label: t("skill.t.xp"), value: `+${formatGain(action.xp)}`, cls: "acc" },
         { label: t("skill.t.rate"), value: formatCompactK(Math.round(rate.xpPerHour)) },
         {
           label: t("skill.t.time"),
@@ -1013,9 +1014,10 @@ const ActionCard = memo(function ActionCard({
             in DIESEM einen Element statt mehrerer gestapelter Floater. */}
         {floater && (
           <div key={floater.key} className="skillcard-xp-floater" aria-hidden="true">
-            +{floater.skillAmt} {t("skill.t.xp")}
+            {/* claude:2026-10-25T10:30:00+01:00 — 1.4.1 B2: Summe gerundet und sprachabhängig (war roh, z. B. +8.400000000000091). */}
+            +{formatGain(floater.skillAmt)} {t("skill.t.xp")}
             {floater.masteryAmt > 0 && (
-              <span className="skillcard-xp-floater-mastery">+{floater.masteryAmt} ★</span>
+              <span className="skillcard-xp-floater-mastery">+{formatGain(floater.masteryAmt)} ★</span>
             )}
           </div>
         )}
@@ -1023,7 +1025,7 @@ const ActionCard = memo(function ActionCard({
         {out && (
           <span
             className="skillcard-invcount"
-            title={outItem ? `${tr(outItem.name)} im Inventar: ${itemCount(state.inventory, out.itemId)}` : undefined}
+            title={outItem ? t("skill.invCountTitle").replace("{item}", tr(outItem.name)).replace("{n}", String(itemCount(state.inventory, out.itemId))) : undefined} /* claude:2026-10-25T10:49:00+01:00 — war fest deutsch */
           >
             {INV_ICON_URL ? <img loading="lazy" decoding="async" src={INV_ICON_URL} alt="" className="skillcard-invcount-icon" /> : "📦"}
             {" "}{itemCount(state.inventory, out.itemId)}×

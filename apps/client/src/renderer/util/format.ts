@@ -33,6 +33,16 @@ export function formatStat(n: number): string {
   return n.toLocaleString(formatLocale, { maximumFractionDigits: 0 });
 }
 
+/**
+ * claude:2026-10-25T10:30:00+01:00 — 1.4.1 B2 (Spieler-Report „massive floating point“ beim Fechten):
+ * Zuwachs-Anzeigen wie die „+XP“-Einblendung der Skill-Karten. XP-Multiplikatoren erzeugen krumme
+ * Floats (+8.400000000000091); unter 10 bleibt höchstens EINE Nachkommastelle, ab 10 ganzzahlig.
+ * Trennzeichen folgt der Spielsprache. Ändert nie den Wert, nur die Anzeige.
+ */
+export function formatGain(n: number): string {
+  return n.toLocaleString(formatLocale, { maximumFractionDigits: Math.abs(n) < 10 ? 1 : 0 });
+}
+
 /** Schadenszahlen (Waffen-Spanne/DPS im Tooltip): bis zu 1 Nachkommastelle — Früh-Waffen (0,5–0,9)
  *  zeigen echte Werte statt „1–1"/„0 DPS" (Chef 2026-07-08: „führen wir wieder Dezimalwerte ein"). */
 export function formatDamage(n: number): string {

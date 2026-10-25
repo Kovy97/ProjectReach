@@ -15,6 +15,7 @@ import {
   slayerTaskPointsPayout,
   itemCount,
   levelFromXp,
+  setSlayerAutoTask,
   skipTask,
   slayerRequirementMet,
   useConsumable,
@@ -243,6 +244,27 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
   // Persönlichkeits-Paket §C.3 (design/lore/waechter-stimme-pack.md): Weltzustand-Vorrangs-Zeile
   // für Brenna — Elite > Spielerzustand (Todeszahl vor Serie) > Segen (bloodmoon/wildhunt).
   const slayerVoiceKey = resolveNpcVoiceKey("slayer", state);
+
+  // claude:2026-10-25T10:33:00+01:00 — 1.4.1 S1-UI: Schalter „Nächsten Auftrag automatisch holen“. Engine-Vertrag: persistiertes
+  // `state.slayerAutoTask: boolean` + `setSlayerAutoTask(state, on)`; die Engine holt nach jedem Abschluss den
+  // nächsten Auftrag (auch im Offline-Fortschritt). Steht auf dem Zettel UND im leeren Zustand, jeweils unten in
+  // der Aktionsspalte. `=== true`, damit ein Stand ohne das Feld sicher als „aus“ gilt.
+  const autoTaskOn = state.slayerAutoTask === true;
+  const autoTaskToggle = (
+    <div className={`slayer-autotask${autoTaskOn ? " is-on" : ""}`}>
+      <span className="slayer-autotask-label">{t("slayer.autoTask.label")}</span>
+      <span className="slayer-autotask-hint muted prose">{t("slayer.autoTask.hint")}</span>
+      <button
+        type="button"
+        className={`btn-iron btn-iron--sm${autoTaskOn ? " is-active" : ""}`}
+        aria-pressed={autoTaskOn}
+        aria-label={t("slayer.autoTask.label")}
+        onClick={() => setSlayerAutoTask(state, !autoTaskOn)}
+      >
+        {autoTaskOn ? t("options.on") : t("options.off")}
+      </button>
+    </div>
+  );
 
   // claude:2026-10-17T19:40:00+02:00 — Serien-Chip als eigener Baustein: steht jetzt auf dem
   // Auftragszettel UND im leeren Zustand (dort motiviert er zum nächsten Auftrag).
@@ -514,6 +536,8 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                   )}
                 </div>
               )}
+
+              {autoTaskToggle}
             </div>
           </>
         ) : (
@@ -532,6 +556,7 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
               >
                 {t("slayer.task.getTask")}
               </button>
+              {autoTaskToggle}
             </div>
           </>
         )}

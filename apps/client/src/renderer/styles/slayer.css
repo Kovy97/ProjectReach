@@ -479,6 +479,51 @@
   margin: 0;
 }
 
+/* claude:2026-10-25T10:33:00+01:00 — 1.4.1 S1-UI: Schalter „Nächsten Auftrag automatisch holen“ unten in der
+   Aktionsspalte (Zettel und leerer Zustand). Dieselbe Familie wie die Gratis-Skip-Zeile: aus = gestrichelt/stumm,
+   an = durchgezogener Goldrand; der Knopf ist der An/Aus-Eisenknopf der Optionen (.btn-iron--sm + .is-active). */
+.slayer-autotask {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  /* Etikett + Knopf oben, Erklärung darunter über die volle Breite: die Spalte ist schmal (250–340 px),
+     neben dem Knopf hätte der Hinweis bei großer Textgröße nur ein Wort pro Zeile. */
+  grid-template-areas: "label toggle" "hint hint";
+  align-items: center;
+  gap: var(--sp-1) var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px dashed var(--ds-border, rgba(50, 36, 20, 0.9));
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.slayer-autotask.is-on {
+  border-style: solid;
+  border-color: var(--ds-border-gold, rgba(216, 184, 112, 0.5));
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.slayer-autotask > .btn-iron {
+  grid-area: toggle;
+}
+
+.slayer-autotask-label {
+  grid-area: label;
+  min-width: 0;
+  font-family: var(--font-head);
+  font-size: var(--fs-sm);
+  line-height: 1.25;
+  color: var(--ds-parch-ink, #e8d8b0);
+}
+
+.slayer-autotask.is-on .slayer-autotask-label {
+  color: var(--ds-gold-bright, #f0dca0);
+}
+
+.slayer-autotask-hint {
+  grid-area: hint;
+  font-size: var(--fs-xs);
+  line-height: 1.3;
+}
+
 /* Seite mittelbreit (1366 + offene Warteschlange): Aktionen unter dem Ziel, volle Breite. */
 @container slayer-page (max-width: 899px) {
   .slayer-page .slayer-task-panel {

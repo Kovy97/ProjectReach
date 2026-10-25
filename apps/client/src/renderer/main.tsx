@@ -13,6 +13,8 @@ import { getSceneBuilderZoneId, SceneBuilderApp } from "./components/arena25d/bu
 import { initFontChoice } from "./fontChoice";
 // claude:2026-10-24T18:20:00+02:00 — Textgröße (Normal/Groß/Sehr groß), s. textScale.ts.
 import { initTextScale } from "./textScale";
+// claude:2026-10-25T10:30:00+01:00 — 1.4.1 A1 „Im Hintergrund stumm“: Fokus-/Sichtbarkeits-Wächter, s. util/backgroundAudio.ts.
+import { initBackgroundAudio } from "./util/backgroundAudio";
 // claude:2026-10-19T10:05:00+02:00 — Oberflächen-Stil (Reforged/Classic) vor dem ersten Render setzen, s. uiStyle.ts.
 import { initUiStyle } from "./uiStyle";
 import "./styles/index.css";
@@ -22,6 +24,7 @@ import "./styles/index.css";
 initFontChoice();
 initTextScale();
 initUiStyle();
+initBackgroundAudio();
 
 const root = document.getElementById("root");
 if (!root) throw new Error("#root nicht gefunden");

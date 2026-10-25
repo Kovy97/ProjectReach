@@ -15,6 +15,9 @@ import popUrl from "../assets/audio/pop_1.wav?url";
 import pageOpenUrl from "../assets/audio/page_open.wav?url";
 import levelUpUrl from "../assets/audio/level_up.wav?url";
 import equipUrl from "../assets/audio/equip_unequip.wav?url";
+// claude:2026-10-25T10:30:00+01:00 — 1.4.1 A1 „Im Hintergrund stumm“: Effekte schweigen, solange das Fenster im
+// Hintergrund ist und die Option an ist (s. backgroundAudio.ts).
+import { isBackgroundSilenced, onBackgroundSilenceChange } from "./backgroundAudio";
 
 // Jagd-Paket Task 5 (Chef-GO, "Spawn-Fanfare"): Elite-Spawn-Horn — Datei liegt beim Auftrag noch
 // NICHT vor (der Chef liefert `assets/audio/elite_horn.mp3` nach). Ein statischer `import … from
@@ -158,7 +161,7 @@ function playAchievementFile(): void {
 const filePools = new Map<string, { pool: HTMLAudioElement[]; idx: number }>();
 
 function playFile(url: string, vol = volume, poolSize = 3): void {
-  if (muted || vol <= 0) return;
+  if (muted || vol <= 0 || isBackgroundSilenced()) return; // claude:2026-10-25T10:30:00+01:00 — A1 (auch verzögerte Kampf-Treffer)
   let entry = filePools.get(url);
   if (!entry) {
     entry = {
@@ -192,7 +195,8 @@ function playFile(url: string, vol = volume, poolSize = 3): void {
 export function playCombatSfx(group: string, delayMs = 0): boolean {
   const set = COMBAT_SETS[group];
   if (!set || set.length === 0) return false;
-  if (muted || volume <= 0) return true; // Gruppe existiert — Aufrufer soll NICHT auf Synth zurückfallen
+  // claude:2026-10-25T10:30:00+01:00 — A1: im Hintergrund wie stumm behandeln (Gruppe existiert, kein Synth-Rückfall).
+  if (muted || volume <= 0 || isBackgroundSilenced()) return true; // Gruppe existiert — Aufrufer soll NICHT auf Synth zurückfallen
   let i = Math.floor(Math.random() * set.length);
   if (set.length > 1 && i === lastVariant[group]) i = (i + 1) % set.length;
   lastVariant[group] = i;
@@ -239,7 +243,7 @@ function blip(
 }
 
 export function playSfx(sfx: Sfx): void {
-  if (muted || volume <= 0) return;
+  if (muted || volume <= 0 || isBackgroundSilenced()) return; // claude:2026-10-25T10:30:00+01:00 — A1
   const now = performance.now();
   if (now - (lastPlay[sfx] ?? 0) < 45) return; // Drossel
   lastPlay[sfx] = now;
@@ -306,6 +310,20 @@ export function playSfx(sfx: Sfx): void {
     // kosten nichts mehr, der "schwache Magier" entfällt — es gibt keinen leeren Zustand mehr.
   }
 }
+
+// claude:2026-10-25T10:30:00+01:00 — 1.4.1 A1: beim Wechsel in den Hintergrund laufende Effekte sofort beenden
+// (Achievement-Fanfare, Kampf-Treffer). Sie sind Einmal-Töne, deshalb kein Fortsetzen bei der Rückkehr;
+// der AudioContext der Synth-Töne wird beim nächsten Ton in getCtx() wieder aufgenommen.
+onBackgroundSilenceChange((silenced) => {
+  if (!silenced) return;
+  const halt = (a: HTMLAudioElement | null): void => {
+    if (a && !a.paused) a.pause();
+  };
+  clickPool.forEach(halt);
+  halt(achievementAudio);
+  for (const entry of filePools.values()) entry.pool.forEach(halt);
+  if (ctx && ctx.state === "running") void ctx.suspend();
+});
 
 export function isMuted(): boolean {
   return muted;

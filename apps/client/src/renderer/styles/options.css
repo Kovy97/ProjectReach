@@ -522,6 +522,15 @@
   opacity: 0.7;
 }
 
+/* claude:2026-10-25T10:30:00+01:00 — 1.4.1 K4: Textgröße = Prozent-Regler oben, Schnellwahl-Knöpfe darunter,
+   rechtsbündig wie die Schriftwahl. */
+.opz-textsize {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
 /* ─── Schriftwahl (Chef-Auftrag 31.08.2026) ──────────────────────────────────────────────────
    Segment-Knoepfe wie bei den Kampfeffekten, darunter eine Erklaerzeile und eine Vorschau, die
    den Beispielsatz bereits in der gewaehlten Schrift zeigt — sonst muesste man raten, wie sich

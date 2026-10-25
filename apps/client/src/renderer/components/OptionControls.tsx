@@ -23,6 +23,8 @@ import {
   setVolume,
 } from "../util/audio";
 import { getMusicVolume, isMusicEnabled, setMusicEnabled, setMusicVolume } from "../util/music";
+// claude:2026-10-25T10:30:00+01:00 — 1.4.1 A1 „Im Hintergrund stumm“, s. util/backgroundAudio.ts.
+import { isMuteInBackground, setMuteInBackground } from "../util/backgroundAudio";
 // codex:2026-08-01T13:30:36+02:00 — Kleine Options-Glyphen sind eigene transparente SVGs statt
 // betriebssystemabhängiger Emoji-Renderings; dadurch bleiben sie bei 16–28 px scharf und stiltreu.
 import iconAmbient from "../assets/ui/system-icons/ambient.svg";
@@ -46,9 +48,15 @@ import {
   setzeFontChoice,
 } from "../fontChoice";
 import type { FontChoice } from "../fontChoice";
-// claude:2026-10-24T18:20:00+02:00 — Textgröße (Normal/Groß/Sehr groß), s. textScale.ts.
-import { TEXT_SCALES, TEXT_SCALE_LABEL_KEY, ladeTextScale, setzeTextScale } from "../textScale";
-import type { TextScale } from "../textScale";
+// claude:2026-10-25T10:30:00+01:00 — 1.4.1 K4: Textgröße als Prozent-Regler (90–140 %) + Schnellwahl, s. textScale.ts.
+import {
+  TEXT_SCALE_MAX,
+  TEXT_SCALE_MIN,
+  TEXT_SCALE_PRESETS,
+  TEXT_SCALE_STEP,
+  ladeTextScale,
+  setzeTextScale,
+} from "../textScale";
 import { UI_STYLES, UI_STYLE_LABEL_KEY, setzeUiStyle, useUiStyle } from "../uiStyle";
 import "../styles/options.css";
 
@@ -135,6 +143,36 @@ export function VolumeSlider({
   );
 }
 
+/** claude:2026-10-25T10:30:00+01:00 — 1.4.1 K4: Textgrößen-Regler (Citadel-Slider wie VolumeSlider),
+ *  90–140 % in 5er-Schritten. Wirkt live beim Ziehen; es gibt nur elf Rasterwerte, also höchstens
+ *  elf Umbrüche pro Zug. */
+export function TextScaleSlider({
+  value,
+  onChange,
+  label,
+}: {
+  value: number;
+  onChange: (pct: number) => void;
+  label: string;
+}): JSX.Element {
+  return (
+    <div className="opz-slider">
+      <input
+        type="range"
+        className="opz-range"
+        min={TEXT_SCALE_MIN}
+        max={TEXT_SCALE_MAX}
+        step={TEXT_SCALE_STEP}
+        value={value}
+        aria-label={label}
+        aria-valuetext={`${value}%`}
+        onChange={(e) => onChange(Number(e.target.value))}
+      />
+      <span className="opz-slider-val">{value}%</span>
+    </div>
+  );
+}
+
 /** 0–100-Regler (Citadel-Slider) OHNE 0..1-Normierung — für die Ambient-Cockpit-Slider (Task #311:
  *  Vignette, Bloom-Stärke/-Schwelle), deren Werte bereits 0–100 sind und direkt in
  *  ambientPrefs.ts persistiert werden. */
@@ -187,7 +225,8 @@ export function DisplayAudioPrefs(): JSX.Element {
   // Schriftwahl (Chef 31.08.2026): reine Anzeige-Einstellung im localStorage, kein SAVE-Bump —
   // dieselbe Mechanik wie die Sprachwahl. Begruendung in renderer/fontChoice.ts.
   const [font, setFontState] = useState<FontChoice>(ladeFontChoice);
-  const [textScale, setTextScaleState] = useState<TextScale>(ladeTextScale);
+  const [textScale, setTextScaleState] = useState<number>(ladeTextScale);
+  const [muteInBackground, setMuteInBackgroundState] = useState(isMuteInBackground());
   // claude:2026-10-19T10:05:00+02:00 — Chef 19.10.: Oberflächen-Stil Reforged/Classic (uiStyle.ts), wirkt sofort.
   const uiStyle = useUiStyle();
 
@@ -217,7 +256,8 @@ export function DisplayAudioPrefs(): JSX.Element {
   const toggleTooltipPopup = (): void => { const next = !tooltipPopup; setTooltipImagePopupEnabled(next); setTooltipPopupState(next); };
   const changeCombatFx = (level: CombatFxLevel): void => { setCombatFxLevel(level); setCombatFxState(level); };
   const changeFont = (wahl: FontChoice): void => { setzeFontChoice(wahl); setFontState(wahl); };
-  const changeTextScale = (stufe: TextScale): void => { setzeTextScale(stufe); setTextScaleState(stufe); };
+  const changeTextScale = (pct: number): void => { setTextScaleState(setzeTextScale(pct)); };
+  const toggleMuteInBackground = (): void => { const next = !muteInBackground; setMuteInBackground(next); setMuteInBackgroundState(next); };
 
   return (
     <>
@@ -298,14 +338,23 @@ export function DisplayAudioPrefs(): JSX.Element {
           </div>
         </OptRow>
 
-        {/* claude:2026-10-24T18:20:00+02:00 — Textgröße: skaliert nur die Schrift (--text-scale), kein Zoom. */}
-        <OptRow label={t("options.textSize")} hint={t("options.textSizeHint")}>
-          <div className="opz-segment">
-            {TEXT_SCALES.map((stufe) => (
-              <button key={stufe} className={optBtnCls(textScale === stufe)} onClick={() => changeTextScale(stufe)}>
-                {t(TEXT_SCALE_LABEL_KEY[stufe])}
-              </button>
-            ))}
+        {/* claude:2026-10-25T10:30:00+01:00 — 1.4.1 K4: Prozent-Regler 90–140 % (skaliert nur die Schrift,
+            --text-scale, kein Zoom); darunter die drei bisherigen Stufen als Schnellwahl 100/110/125. */}
+        <OptRow
+          label={t("options.textSize")}
+          hint={t("options.textSizeHintPct")
+            .replace("{min}", String(TEXT_SCALE_MIN))
+            .replace("{max}", String(TEXT_SCALE_MAX))}
+        >
+          <div className="opz-textsize">
+            <TextScaleSlider value={textScale} onChange={changeTextScale} label={t("options.textSize")} />
+            <div className="opz-segment">
+              {TEXT_SCALE_PRESETS.map((p) => (
+                <button key={p.pct} className={optBtnCls(textScale === p.pct)} onClick={() => changeTextScale(p.pct)}>
+                  {t(p.labelKey)}
+                </button>
+              ))}
+            </div>
           </div>
         </OptRow>
       </OptSection>
@@ -332,6 +381,13 @@ export function DisplayAudioPrefs(): JSX.Element {
         </OptRow>
         <OptRow label={t("options.achievementVolume")} hint={t("options.achievementVolumeHint")}>
           <VolumeSlider value={achievementVol} onChange={changeAchievementVol} />
+        </OptRow>
+        {/* claude:2026-10-25T10:30:00+01:00 — 1.4.1 A1: Musik und Effekte schweigen, solange das Fenster im
+            Hintergrund ist (Alt-Tab, minimiert). Vorgabe aus; derselbe An/Aus-Eisenknopf wie die übrigen Umschalter. */}
+        <OptRow label={t("options.muteInBackground")} hint={t("options.muteInBackgroundHint")}>
+          <button className={optBtnCls(muteInBackground)} aria-pressed={muteInBackground} onClick={toggleMuteInBackground}>
+            {muteInBackground ? t("options.on") : t("options.off")}
+          </button>
         </OptRow>
       </OptSection>
     </>

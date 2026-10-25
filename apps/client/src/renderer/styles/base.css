@@ -139,8 +139,10 @@
      Bei 1366 px (und darunter) gelten die Basiswerte, bei 1920 px etwa +13 %, ab ca. 2000 px gedeckelt (+15 %).
      Basis bei 1366: 13 / 14 / 15 / 17 / 19 / 22 / 26 / 34 px. Kleinster sichtbarer Text = --fs-2xs = 13 px,
      Fließtext mindestens --fs-sm = 15 px. Token-Namen unverändert (ca. 150 Nutzer).
-     --text-scale (1 / 1,12 / 1,25) kommt aus der Option „Textgröße“ (textScale.ts, data-text-scale am Wurzelelement);
-     sie skaliert nur die Schrift, kein Zoom. Neue Tokens-Werte hier ändern, nicht an den Nutzern. */
+     --text-scale kommt aus der Option „Textgröße“ (textScale.ts); sie skaliert nur die Schrift, kein Zoom.
+     claude:2026-10-25T10:30:00+01:00 — 1.4.1 K4: Prozent-Regler 0,90–1,40 als Inline-Variable am Wurzelelement
+     (überschreibt die 1 oben); data-text-scale large/xlarge ist nur noch die abgeleitete Stufe für Layout-Regeln.
+     Neue Tokens-Werte hier ändern, nicht an den Nutzern. */
   --fs-2xs: calc(clamp(13px, 8.83px + 0.305vw, 14.9px) * var(--text-scale));
   --fs-xs: calc(clamp(14px, 9.51px + 0.329vw, 16.1px) * var(--text-scale));
   --fs-sm: calc(clamp(15px, 10.19px + 0.352vw, 17.2px) * var(--text-scale));
@@ -170,9 +172,12 @@
 @media (min-width: 1900px) { :root { --vp-k: 1.13; } }
 @media (min-width: 2100px) { :root { --vp-k: 1.15; } }
 
-/* claude:2026-10-24T18:10:00+02:00 — Textgrößen-Option (textScale.ts): nur Schrift, kein Zoom. Normal = kein Attribut. */
+/* claude:2026-10-25T10:30:00+01:00 — 1.4.1 K4: Den Wert setzt textScale.ts als Inline-Variable `--text-scale` am
+   Wurzelelement (schlägt diese Regeln immer). `data-text-scale` (ab 110 % large, ab 120 % xlarge) bleibt als abgeleitete
+   Stufe für Layout-Regeln wie styles/chronicle.css gesetzt. Die zwei Regeln hier sind nur noch Rückfall für Prüfskripte
+   (ui-audit/*), die allein das Attribut setzen; Werte = Schnellwahl 110 / 125. 100 % = weder Variable noch Attribut. */
 :root[data-text-scale="large"] {
-  --text-scale: 1.12;
+  --text-scale: 1.1;
 }
 :root[data-text-scale="xlarge"] {
   --text-scale: 1.25;

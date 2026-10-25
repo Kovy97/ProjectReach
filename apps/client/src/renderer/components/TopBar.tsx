@@ -60,8 +60,13 @@ export function TopBar({ activePageId, onNavigate }: TopBarProps): JSX.Element {
     const resize = new ResizeObserver(fitDensity);
     resize.observe(nav);
     document.fonts.addEventListener("loadingdone", fitDensity);
+    // claude:2026-10-25T10:49:00+01:00 — Textgrößen-Regler (1.4.1) setzt --text-scale/data-text-scale am Wurzelelement; ohne Beobachter
+    // blieb die Dichte bis zum nächsten Seitenwechsel stehen und „Wiki“ war abgeschnitten (Muster Sidebar.tsx).
+    const rootAttrs = new MutationObserver(fitDensity);
+    rootAttrs.observe(document.documentElement, { attributes: true, attributeFilter: ["style", "data-text-scale"] });
     return () => {
       resize.disconnect();
+      rootAttrs.disconnect();
       document.fonts.removeEventListener("loadingdone", fitDensity);
       cancelAnimationFrame(fitFrame.current);
     };
