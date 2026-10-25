@@ -1,0 +1,47 @@
+{
+  "options.textSizeHintPct": {
+    "en": "Scales all text between {min}% and {max}% without zooming the interface. Saved on this device only.",
+    "de": "Skaliert alle Texte zwischen {min} und {max} %, ohne die Oberfläche zu zoomen. Gilt nur für dieses Gerät.",
+    "zh": "在 {min}% 到 {max}% 之间缩放所有文字，但不缩放界面。仅对本设备生效。",
+    "ru": "Меняет размер всего текста от {min} до {max} %, не масштабируя интерфейс. Действует только на этом устройстве.",
+    "es": "Ajusta todos los textos entre el {min} % y el {max} % sin hacer zoom en la interfaz. Solo se guarda en este dispositivo.",
+    "ptBR": "Ajusta todos os textos entre {min}% e {max}% sem dar zoom na interface. Vale só para este dispositivo.",
+    "fr": "Ajuste tous les textes entre {min} et {max} % sans zoomer sur l'interface. Réglage propre à cet appareil."
+  },
+  "options.muteInBackground": {
+    "en": "Mute in background",
+    "de": "Im Hintergrund stumm",
+    "zh": "后台时静音",
+    "ru": "Без звука в фоне",
+    "es": "Silenciar en segundo plano",
+    "ptBR": "Silenciar em segundo plano",
+    "fr": "Couper le son en arrière-plan"
+  },
+  "options.muteInBackgroundHint": {
+    "en": "Music and sound effects go quiet while the game window is in the background or minimized, and resume when you return.",
+    "de": "Musik und Effekte schweigen, solange das Spielfenster im Hintergrund oder minimiert ist, und laufen weiter, sobald du zurückkehrst.",
+    "zh": "游戏窗口在后台或最小化时，音乐和音效会静音；回到游戏后继续播放。",
+    "ru": "Музыка и звуковые эффекты стихают, пока окно игры в фоне или свёрнуто, и возвращаются, когда ты вернёшься.",
+    "es": "La música y los efectos se silencian mientras la ventana del juego está en segundo plano o minimizada, y vuelven cuando regresas.",
+    "ptBR": "Música e efeitos sonoros ficam em silêncio enquanto a janela do jogo está em segundo plano ou minimizada e voltam quando você retorna.",
+    "fr": "La musique et les effets se taisent tant que la fenêtre du jeu est en arrière-plan ou réduite, puis reprennent à ton retour."
+  },
+  "slayer.autoTask.label": {
+    "en": "Get next task automatically",
+    "de": "Nächsten Auftrag automatisch holen",
+    "zh": "自动领取下一个任务",
+    "ru": "Брать следующее задание автоматически",
+    "es": "Obtener la siguiente tarea automáticamente",
+    "ptBR": "Obter a próxima tarefa automaticamente",
+    "fr": "Obtenir la tâche suivante automatiquement"
+  },
+  "slayer.autoTask.hint": {
+    "en": "When a task is done, the next one is taken right away, even while you are away.",
+    "de": "Ist ein Auftrag erledigt, wird sofort der nächste geholt, auch während du weg bist.",
+    "zh": "完成任务后会立即领取下一个，离开期间也同样有效。",
+    "ru": "Когда задание выполнено, сразу берётся следующее, даже пока тебя нет.",
+    "es": "Al completar una tarea, se toma la siguiente al instante, incluso mientras no estás.",
+    "ptBR": "Ao concluir uma tarefa, a próxima é obtida na hora, mesmo enquanto você está fora.",
+    "fr": "Une fois une tâche terminée, la suivante est prise aussitôt, même pendant ton absence."
+  }
+}

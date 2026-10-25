@@ -1,0 +1,20 @@
+{
+  "elite.victory.slayerPoints": {
+    "en": "+{n} Slayer points",
+    "de": "+{n} Slayer-Punkte",
+    "zh": "猎魔点数 +{n}",
+    "ru": "Очки Slayer: +{n}",
+    "es": "+{n} puntos de Slayer",
+    "ptBR": "+{n} pontos de Slayer",
+    "fr": "+{n} points de Slayer"
+  },
+  "raid.boss.slayerPoints": {
+    "en": "+{n} Slayer points",
+    "de": "+{n} Slayer-Punkte",
+    "zh": "猎魔点数 +{n}",
+    "ru": "Очки Slayer: +{n}",
+    "es": "+{n} puntos de Slayer",
+    "ptBR": "+{n} pontos de Slayer",
+    "fr": "+{n} points de Slayer"
+  }
+}

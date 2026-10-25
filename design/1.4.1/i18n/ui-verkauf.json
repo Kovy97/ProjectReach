@@ -1,0 +1,137 @@
+{
+  "equipSell.button": {
+    "en": "Sell equipment …",
+    "de": "Ausrüstung verkaufen …",
+    "zh": "出售装备…",
+    "ru": "Продать снаряжение…",
+    "es": "Vender equipo…",
+    "ptBR": "Vender equipamento…",
+    "fr": "Vendre l'équipement…"
+  },
+  "equipSell.title": {
+    "en": "Sell equipment",
+    "de": "Ausrüstung verkaufen",
+    "zh": "出售装备",
+    "ru": "Продать снаряжение",
+    "es": "Vender equipo",
+    "ptBR": "Vender equipamento",
+    "fr": "Vendre l'équipement"
+  },
+  "equipSell.leadInventory": {
+    "en": "Sells every matching piece of gear in your inventory at the usual price.",
+    "de": "Verkauft alle passenden Ausrüstungsteile aus deinem Inventar zum üblichen Preis.",
+    "zh": "以常规价格出售背包中所有符合条件的装备。",
+    "ru": "Продаёт всё подходящее снаряжение из инвентаря по обычной цене.",
+    "es": "Vende todo el equipo que coincida de tu inventario al precio habitual.",
+    "ptBR": "Vende todo o equipamento correspondente do seu inventário pelo preço normal.",
+    "fr": "Vend tout l'équipement correspondant de ton inventaire au prix habituel."
+  },
+  "equipSell.leadBank": {
+    "en": "Sells every matching piece of gear straight from your bank at the usual price.",
+    "de": "Verkauft alle passenden Ausrüstungsteile direkt aus deiner Bank zum üblichen Preis.",
+    "zh": "以常规价格直接出售银行中所有符合条件的装备。",
+    "ru": "Продаёт всё подходящее снаряжение прямо из банка по обычной цене.",
+    "es": "Vende todo el equipo que coincida directamente desde tu banco al precio habitual.",
+    "ptBR": "Vende todo o equipamento correspondente direto do seu banco pelo preço normal.",
+    "fr": "Vend tout l'équipement correspondant directement depuis ta banque au prix habituel."
+  },
+  "equipSell.protected": {
+    "en": "Never sold: equipped gear, locked items, items with runes, tools, master rings and anything an open work order still needs.",
+    "de": "Nie verkauft werden angelegte Ausrüstung, gesperrte Items, Items mit Runen, Werkzeuge, Meisterringe und alles, was ein offener Arbeitsauftrag noch braucht.",
+    "zh": "以下物品不会出售：已穿戴的装备、已锁定的物品、带符文的物品、工具、精通戒指，以及未完成的工作订单仍需要的物品。",
+    "ru": "Никогда не продаются: надетое снаряжение, предметы с запретом разбора, предметы с рунами, инструменты, Кольца Мастерства и всё, что ещё нужно для открытого заказа.",
+    "es": "Nunca se venden: el equipo puesto, los objetos bloqueados, los que llevan runas, las herramientas, los Anillos de Maestría ni lo que aún necesite un encargo abierto.",
+    "ptBR": "Nunca são vendidos: equipamento em uso, itens travados, itens com runas, ferramentas, Anéis da Maestria e o que uma encomenda aberta ainda precisar.",
+    "fr": "Jamais vendus : l'équipement porté, les objets verrouillés, les objets avec runes, les outils, les Anneaux de Maîtrise et ce qu'une commande en cours demande encore."
+  },
+  "equipSell.noBuyBack": {
+    "en": "A batch sale does not go to buy-back.",
+    "de": "Ein Sammelverkauf landet nicht im Rückkauf.",
+    "zh": "批量出售的物品不会进入回购。",
+    "ru": "Массовую продажу нельзя выкупить обратно.",
+    "es": "Una venta en lote no pasa a la recompra.",
+    "ptBR": "Uma venda em lote não vai para a recompra.",
+    "fr": "Une vente groupée ne passe pas au rachat."
+  },
+  "equipSell.kindLabel": {
+    "en": "Type:",
+    "de": "Art:",
+    "zh": "类型：",
+    "ru": "Тип:",
+    "es": "Tipo:",
+    "ptBR": "Tipo:",
+    "fr": "Type :"
+  },
+  "equipSell.upTo": {
+    "en": "Up to and including:",
+    "de": "Bis einschließlich:",
+    "zh": "最高至（含）：",
+    "ru": "До (включительно):",
+    "es": "Hasta (incluida):",
+    "ptBR": "Até (inclusive):",
+    "fr": "Jusqu'à (inclus) :"
+  },
+  "equipSell.count": {
+    "en": "{n} items",
+    "de": "{n} Items",
+    "zh": "{n} 件",
+    "ru": "{n} шт.",
+    "es": "{n} objetos",
+    "ptBR": "{n} itens",
+    "fr": "{n} objets"
+  },
+  "equipSell.total": {
+    "en": "Total",
+    "de": "Gesamt",
+    "zh": "合计",
+    "ru": "Итого",
+    "es": "Total",
+    "ptBR": "Total",
+    "fr": "Total"
+  },
+  "equipSell.skipped": {
+    "en": "{n} matching items are protected and stay.",
+    "de": "{n} passende Items sind geschützt und bleiben.",
+    "zh": "{n} 件符合条件的物品受保护，将会保留。",
+    "ru": "Защищено и останется: {n} шт.",
+    "es": "{n} objetos que coinciden están protegidos y se quedan.",
+    "ptBR": "{n} itens correspondentes estão protegidos e ficam.",
+    "fr": "{n} objets correspondants sont protégés et restent."
+  },
+  "equipSell.nothing": {
+    "en": "Nothing to sell for this type and rarity.",
+    "de": "Für diese Art und Seltenheit gibt es nichts zu verkaufen.",
+    "zh": "该类型和稀有度下没有可出售的物品。",
+    "ru": "Для этого типа и редкости продавать нечего.",
+    "es": "No hay nada que vender de este tipo y rareza.",
+    "ptBR": "Nada para vender deste tipo e raridade.",
+    "fr": "Rien à vendre pour ce type et cette rareté."
+  },
+  "equipSell.moreKinds": {
+    "en": "+ {n} more item types",
+    "de": "+ {n} weitere Item-Arten",
+    "zh": "另有 {n} 种物品",
+    "ru": "и ещё видов предметов: {n}",
+    "es": "+ {n} tipos de objeto más",
+    "ptBR": "+ {n} tipos de item a mais",
+    "fr": "+ {n} autres types d'objets"
+  },
+  "equipSell.confirm": {
+    "en": "Sell {n} for {gold} Gold",
+    "de": "{n} für {gold} Gold verkaufen",
+    "zh": "以 {gold} 金币出售 {n} 件",
+    "ru": "Продать {n} шт. за {gold} золота",
+    "es": "Vender {n} por {gold} de oro",
+    "ptBR": "Vender {n} por {gold} de Ouro",
+    "fr": "Vendre {n} pour {gold} or"
+  },
+  "equipSell.resultDetail": {
+    "en": "{n} items sold for {gold} Gold",
+    "de": "{n} Items für {gold} Gold verkauft",
+    "zh": "已出售 {n} 件，获得 {gold} 金币",
+    "ru": "Продано {n} шт. на {gold} золота",
+    "es": "{n} objetos vendidos por {gold} de oro",
+    "ptBR": "{n} itens vendidos por {gold} de Ouro",
+    "fr": "{n} objets vendus pour {gold} or"
+  }
+}

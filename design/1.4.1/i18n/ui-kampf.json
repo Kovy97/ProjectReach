@@ -1,0 +1,47 @@
+{
+  "combat.prognosis.youHit": {
+    "en": "You hit",
+    "de": "Du triffst",
+    "zh": "你命中",
+    "ru": "Попадаешь",
+    "es": "Aciertas",
+    "ptBR": "Você acerta",
+    "fr": "Tu touches"
+  },
+  "combat.prognosis.hitsYou": {
+    "en": "Hits you",
+    "de": "Trifft dich",
+    "zh": "敌命中",
+    "ru": "Враг попадает",
+    "es": "Te acierta",
+    "ptBR": "Acerta você",
+    "fr": "Te touche"
+  },
+  "combat.loot.showAll": {
+    "en": "Show all loot",
+    "de": "Alle Beute anzeigen",
+    "zh": "查看全部战利品",
+    "ru": "Показать всю добычу",
+    "es": "Ver todo el botín",
+    "ptBR": "Ver todo o saque",
+    "fr": "Voir tout le butin"
+  },
+  "combat.loot.championGroup": {
+    "en": "Champion loot",
+    "de": "Champion-Beute",
+    "zh": "王者战利品",
+    "ru": "Добыча чемпиона",
+    "es": "Botín de campeón",
+    "ptBR": "Saque de campeão",
+    "fr": "Butin de champion"
+  },
+  "combat.loot.hint": {
+    "en": "Chance per kill, amount when it drops",
+    "de": "Chance pro Sieg, Menge pro Fund",
+    "zh": "每次击杀的几率，每次掉落的数量",
+    "ru": "Шанс за победу, количество за находку",
+    "es": "Probabilidad por victoria, cantidad por hallazgo",
+    "ptBR": "Chance por vitória, quantidade por achado",
+    "fr": "Chance par victoire, quantité par trouvaille"
+  }
+}

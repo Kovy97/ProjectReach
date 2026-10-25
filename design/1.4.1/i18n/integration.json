@@ -1,0 +1,11 @@
+{
+  "skill.invCountTitle": {
+    "en": "{item} in your inventory: {n}",
+    "de": "{item} im Inventar: {n}",
+    "zh": "背包中的{item}：{n}",
+    "ru": "{item} в инвентаре: {n}",
+    "es": "{item} en el inventario: {n}",
+    "ptBR": "{item} no inventário: {n}",
+    "fr": "{item} dans l'inventaire : {n}"
+  }
+}

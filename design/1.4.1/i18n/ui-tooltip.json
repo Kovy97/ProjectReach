@@ -1,0 +1,29 @@
+{
+  "item.equipAsTool": {
+    "en": "Equip as tool",
+    "de": "Als Werkzeug ausrüsten",
+    "zh": "作为工具装备",
+    "ru": "Надеть как инструмент",
+    "es": "Equipar como herramienta",
+    "ptBR": "Equipar como ferramenta",
+    "fr": "Équiper comme outil"
+  },
+  "item.toolHintDual": {
+    "en": "Weapon and tool in one. “Equip” puts it in your right hand. Into a tool slot: “Equip as tool” or drag it there. As a tool it also works from your inventory.",
+    "de": "Waffe und Werkzeug zugleich. „Ausrüsten“ legt es in die rechte Hand. In einen Werkzeug-Slot: „Als Werkzeug ausrüsten“ oder dorthin ziehen. Als Werkzeug wirkt es auch aus dem Inventar.",
+    "zh": "既是武器也是工具。“装备”会将其放入主手。放入工具栏位：选择“作为工具装备”或直接拖过去。作为工具时，放在背包里同样生效。",
+    "ru": "Оружие и инструмент сразу. «Надеть» кладёт его в правую руку. В слот инструмента: «Надеть как инструмент» или перетащи туда. Как инструмент работает и из инвентаря.",
+    "es": "Arma y herramienta a la vez. \"Equipar\" lo pone en la mano derecha. A una ranura de herramienta: \"Equipar como herramienta\" o arrástralo allí. Como herramienta también funciona desde el inventario.",
+    "ptBR": "Arma e ferramenta ao mesmo tempo. \"Equipar\" coloca na mão direita. Para um espaço de ferramenta: \"Equipar como ferramenta\" ou arraste até lá. Como ferramenta, também funciona direto do inventário.",
+    "fr": "Arme et outil à la fois. « Équiper » le place dans la main droite. Vers un emplacement d'outil : « Équiper comme outil » ou fais-le glisser dessus. En tant qu'outil, il fonctionne aussi depuis ton inventaire."
+  },
+  "itip.dragHint": {
+    "en": "Hold the left mouse button here to move the card.",
+    "de": "Linke Maustaste hier gedrückt halten, um die Karte zu verschieben.",
+    "zh": "在此按住鼠标左键即可移动卡片。",
+    "ru": "Зажми здесь левую кнопку мыши, чтобы переместить карточку.",
+    "es": "Mantén pulsado aquí el botón izquierdo del ratón para mover la ficha.",
+    "ptBR": "Segure o botão esquerdo do mouse aqui para mover a carta.",
+    "fr": "Maintiens le clic gauche ici pour déplacer la fiche."
+  }
+}
