@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties, PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { content } from "@hearthforge/content";
 import { computeStats, countSetPieces, meetsRequirements, spellFocusMult, itemTier } from "@hearthforge/engine";
 import type { AffixDef, ContentDB, EquipBonus, EquipSlot, ItemDef, ItemInstance, LocalizedString, SetDef, SetEffectDef, SetTierDef } from "@hearthforge/shared";
@@ -166,29 +166,61 @@ interface TooltipPayload {
 }
 
 // ── Modul-globaler Mini-Store (kein Context → Hover rendert nicht die ganze App) ──
-let current: TooltipPayload | null = null;
+// claude:2026-10-25T10:33:00+01:00 — 1.4.1 K3: zwei getrennte Plätze statt eines. Vorher ersetzte jedes
+// Hover (0,5 s über einer anderen Zelle) die festgehaltene Karte und ließ sie beim Verlassen verschwinden;
+// eine zur Seite gezogene Karte hätte so den Weg durchs Inventar nicht überlebt. Jetzt bleibt die
+// festgehaltene Karte stehen, die Hover-Karte erscheint wie gewohnt zusätzlich darüber.
+let pinnedPayload: TooltipPayload | null = null;
+let hoverPayload: TooltipPayload | null = null;
 const listeners = new Set<() => void>();
 function emit(): void {
   for (const l of listeners) l();
+}
+function samePayloadItem(a: TooltipPayload, b: TooltipPayload): boolean {
+  return a.itemId === b.itemId && (a.instance?.instanceId ?? null) === (b.instance?.instanceId ?? null);
 }
 const store = {
   subscribe(l: () => void): () => void {
     listeners.add(l);
     return () => listeners.delete(l);
   },
-  get: (): TooltipPayload | null => current,
-  show(p: TooltipPayload): void {
-    current = p;
+  getPinned: (): TooltipPayload | null => pinnedPayload,
+  getHover: (): TooltipPayload | null => hoverPayload,
+  showHover(p: TooltipPayload): void {
+    // Über dem schon festgehaltenen Item keine zweite, gleiche Karte zeigen.
+    if (pinnedPayload && samePayloadItem(pinnedPayload, p)) {
+      store.hideHover();
+      return;
+    }
+    hoverPayload = p;
     emit();
   },
-  hide(): void {
-    if (current) {
-      current = null;
+  hideHover(): void {
+    if (hoverPayload) {
+      hoverPayload = null;
+      emit();
+    }
+  },
+  pin(p: TooltipPayload): void {
+    pinnedPayload = p;
+    hoverPayload = null;
+    emit();
+  },
+  hidePinned(): void {
+    if (pinnedPayload) {
+      pinnedPayload = null;
+      emit();
+    }
+  },
+  hideAll(): void {
+    if (pinnedPayload || hoverPayload) {
+      pinnedPayload = null;
+      hoverPayload = null;
       emit();
     }
   },
   isPinnedFor(itemId: string): boolean {
-    return !!current?.pinned && current.itemId === itemId;
+    return pinnedPayload?.itemId === itemId;
   },
 };
 
@@ -199,14 +231,13 @@ export function useItemTooltip(): {
   hide: () => void;
 } {
   return {
-    show: (itemId, x, y, actions, instance) => store.show({ itemId, instance, x, y, pinned: false, actions }),
+    show: (itemId, x, y, actions, instance) => store.showHover({ itemId, instance, x, y, pinned: false, actions }),
     pin: (itemId, x, y, actions, instance) => {
-      if (store.isPinnedFor(itemId)) store.hide();
-      else store.show({ itemId, instance, x, y, pinned: true, actions });
+      if (store.isPinnedFor(itemId)) store.hidePinned();
+      else store.pin({ itemId, instance, x, y, pinned: true, actions });
     },
-    hide: () => {
-      if (!current?.pinned) store.hide();
-    },
+    // Wie bisher: schließt nur die Hover-Karte, eine festgehaltene bleibt offen.
+    hide: () => store.hideHover(),
   };
 }
 
@@ -219,7 +250,7 @@ export function useItemTooltip(): {
  * Aufgerufen einmal beim Mount von MainLayout (App.tsx).
  */
 export function closeItemTooltip(): void {
-  store.hide();
+  store.hideAll();
 }
 
 // ── Module-level helpers ───────────────────────────────────────────────────────
@@ -1061,7 +1092,10 @@ function MiscRows({
         delta={basePct != null ? <DeltaTag delta={pct - basePct} format={(v) => `${Math.round(v)}%`} eps={0.5} /> : undefined}
       />,
     );
-    rows.push(<div key="toolhint" className="itip-tag itip-tool-hint">{t("item.toolHint")}</div>);
+    // claude:2026-10-25T10:33:00+01:00 — 1.4.1 B3: Waffe UND Werkzeug (Äxte) bekommen einen eigenen Hinweis, wie man
+    // sie in einen Werkzeug-Slot statt in die Waffenhand legt; reine Werkzeuge behalten den alten Satz.
+    const dualUse = item.type === "equipment" && !!item.slot;
+    rows.push(<div key="toolhint" className="itip-tag itip-tool-hint">{t(dualUse ? "item.toolHintDual" : "item.toolHint")}</div>);
   }
 
   // Heal amount — realer Wert via consumableHeal(item, maxHp); Fallback ohne State ist der flache
@@ -1631,10 +1665,20 @@ function ItemTooltipCard({
   deltaAgainst,
   slotFreeHint,
   wikiBtnPulse,
+  onHeaderPointerDown,
+  guideIds = true,
 }: {
   item: ItemDef;
   instance?: ItemInstance;
   actions: ItemAction[];
+  /**
+   * claude:2026-10-25T10:33:00+01:00 — 1.4.1 K3: nur an festgehaltenen Karten gesetzt. Die Kopfleiste
+   * (oberer Rahmen, Name, Typzeile) wird dann zum Ziehgriff wie die Titelleiste eines Fensters.
+   */
+  onHeaderPointerDown?: (e: ReactPointerEvent<HTMLElement>) => void;
+  /** claude:2026-10-25T10:33:00+01:00 — 1.4.1 K3: false an der Hover-Karte, die jetzt neben einer
+   *  festgehaltenen stehen kann (sonst gäbe es dieselbe `data-guide-id` zweimal im DOM). */
+  guideIds?: boolean;
   showCompareHint?: boolean;
   badge?: string;
   /** Shift-Compare (Chef-Feature): aggregierte Stat-Werte der VERGLICHENEN Seite, oder null/undefined
@@ -1737,32 +1781,43 @@ function ItemTooltipCard({
 
   return (
     <div
-      className={`item-tooltip itip-panel itip-card${isSimpleCard ? " itip-card--simple" : ""}${isConsumableCard ? " itip-card--consumable" : ""} ${rarityClass(item.rarity)}`}
+      // claude:2026-10-25T10:54:00+01:00 — 1.4.1 K2: `itip-card--compact` = kompakte Item-Karte (halbes Bildfeld, engere
+      // Abstände, Fließtext bricht um statt die Karte zu verbreitern). Regeln in styles/ui14-inventar.css.
+      className={`item-tooltip itip-panel itip-card itip-card--compact${isSimpleCard ? " itip-card--simple" : ""}${isConsumableCard ? " itip-card--consumable" : ""} ${rarityClass(item.rarity)}`}
       style={{ "--rarity-col": rarityCol } as CSSProperties}
       role="dialog"
+      // claude:2026-10-25T10:33:00+01:00 — 1.4.1 K3: Griff ist alles oberhalb der Unterkante der Kopfleiste,
+      // also auch der obere Holzrahmen und die Lücken neben ?/× (Knöpfe selbst prüft der Drag-Start).
+      onPointerDown={
+        onHeaderPointerDown
+          ? (e) => {
+              const head = e.currentTarget.querySelector(".itip-drag-handle");
+              if (head && e.clientY <= head.getBoundingClientRect().bottom) onHeaderPointerDown(e);
+            }
+          : undefined
+      }
     >
       {/* Ecken-Cluster oben rechts (Task #308): optionales „Angelegt"-Tag + Wiki-„?"-Button, der
           `ItemWikiModal` mit Quelle/Verwendung DIESES Items öffnet — funktioniert zuverlässig nur
           auf gepinnten Karten (s. .itip-wiki-btn-JSDoc in components.css). Schließt die Tooltip-
-          Karte dabei (`store.hide()`, dasselbe unbedingte Muster wie die `.it-action-btn`-
+          Karte dabei (`store.hideAll()`, dasselbe unbedingte Muster wie die `.it-action-btn`-
           Aktionsknöpfe unten), statt sie gepinnt HINTER dem Modal liegen zu lassen — sonst würde
           ein Escape-Druck zuerst nur den (noch registrierten) Tooltip schließen, bevor ein zweiter
           Druck das Modal schließt (escStack.ts-Priorität: Tooltip schlägt Modal). Mit dem Hide hier
           gibt es beim Öffnen des Wikis nur noch EIN offenes Overlay, ein Escape genügt.
           codex:2026-07-31T00:32:37+02:00 — Jede Item-Card erhält daneben einen expliziten Schließen-Knopf. */}
       <div className="itip-card-corner">
-        {badge && <span className="itip-equipped-badge">{badge}</span>}
         <button
           type="button"
           className={`itip-wiki-btn${wikiBtnPulse ? " itip-wiki-btn--pulse" : ""}`}
           aria-label={t("itemwiki.openAria")}
           title={t("itemwiki.openAria")}
-          data-guide-id={badge ? undefined : "itemCard.wikiBtn"}
+          data-guide-id={badge || !guideIds ? undefined : "itemCard.wikiBtn"}
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation();
             openItemWikiModal(item.id, inst);
-            store.hide();
+            store.hideAll();
           }}
         >
           ?
@@ -1775,7 +1830,7 @@ function ItemTooltipCard({
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation();
-            store.hide();
+            store.hideAll();
           }}
         >
           ×
@@ -1788,8 +1843,15 @@ function ItemTooltipCard({
           verändert das bestehende Layout nicht. `badge` markiert die sekundäre „Angelegt"-
           Vergleichskarte (s. ItemTooltipOverlay unten): die bekommt keine Guide-Ziele, sonst gäbe
           es zwei DOM-Knoten mit derselben `data-guide-id` gleichzeitig. */}
-      <div data-guide-id={badge ? undefined : "itemCard.identity"}>
+      <div
+        data-guide-id={badge || !guideIds ? undefined : "itemCard.identity"}
+        className={onHeaderPointerDown ? "itip-drag-handle" : undefined}
+        title={onHeaderPointerDown ? t("itip.dragHint") : undefined}
+      >
         <div className="itip-header-band-1">
+          {/* claude:2026-10-25T10:54:00+01:00 — 1.4.1 K2: „Angelegt“ steht in der schmaleren Karte über dem Namen statt
+              neben ?/× in der Ecke, wo es den zentrierten Namen überdeckt hätte. */}
+          {badge && <div className="itip-equipped-badge itip-equipped-badge--head">{badge}</div>}
           <div className="itip-name">{displayName}</div>
         </div>
         <div className="itip-header-band-2">
@@ -1837,7 +1899,7 @@ function ItemTooltipCard({
           <div className="itip-flavor">{tr(flavor)}</div>
         </div>
 
-        <div className="itip-warbanner-record" data-guide-id={badge ? undefined : "itemCard.stats"}>
+        <div className="itip-warbanner-record" data-guide-id={badge || !guideIds ? undefined : "itemCard.stats"}>
           {/* Stat-Gruppen: auf breiten Karten zweispaltig, damit Informationen nicht gestapelt wachsen. */}
           {(hasStats || hasStatExtras) && (
             <div className="itip-body">
@@ -1890,7 +1952,7 @@ function ItemTooltipCard({
               }}
               onClick={() => {
                 a.onClick();
-                store.hide();
+                store.hideAll();
               }}
             >
               {a.label}
@@ -1906,11 +1968,44 @@ function ItemTooltipCard({
   );
 }
 
+/** claude:2026-10-25T10:33:00+01:00 — 1.4.1 K3: Rand-Abstand der Karte zum Fensterrand (wie die bisherige Klammerung). */
+const ITIP_EDGE = 12;
+
+/**
+ * claude:2026-10-25T10:33:00+01:00 — 1.4.1 K3: Wohin der Spieler die festgehaltene Karte zuletzt gezogen hat.
+ * Nur für diese Sitzung (Chef: nicht speichern). Ist sie gesetzt, öffnet jede neu festgehaltene Karte dort
+ * statt am Klickpunkt, wie ein Fenster, das sich seine Stelle merkt. Hover-Karten folgen weiter dem Cursor.
+ */
+let pinnedSessionPos: { left: number; top: number } | null = null;
+
+function clampToViewport(left: number, top: number, w: number, h: number): { left: number; top: number } {
+  return {
+    left: Math.max(ITIP_EDGE, Math.min(left, window.innerWidth - w - ITIP_EDGE)),
+    top: Math.max(ITIP_EDGE, Math.min(top, window.innerHeight - h - ITIP_EDGE)),
+  };
+}
+
+/**
+ * Einmalig in App montiert. claude:2026-10-25T10:33:00+01:00 — 1.4.1 K3: zwei Ebenen, die festgehaltene Karte
+ * und darüber die Hover-Karte. Shift-Vergleich klappt bei gleichzeitiger Hover-Karte nur dort auf, sonst
+ * stünden vier Karten im Bild.
+ */
 export function ItemTooltipOverlay(): JSX.Element | null {
-  const payload = useSyncExternalStore(store.subscribe, store.get);
+  const pinned = useSyncExternalStore(store.subscribe, store.getPinned);
+  const hover = useSyncExternalStore(store.subscribe, store.getHover);
+  const shift = useShiftHeld();
+  if (!pinned && !hover) return null;
+  return (
+    <>
+      {pinned && <ItemTooltipLayer key="pinned" payload={pinned} shift={shift && !hover} />}
+      {hover && <ItemTooltipLayer key="hover" payload={hover} shift={shift} />}
+    </>
+  );
+}
+
+function ItemTooltipLayer({ payload, shift }: { payload: TooltipPayload; shift: boolean }): JSX.Element | null {
   const { t } = useI18n();
   const state = useGameStateMaybe();
-  const shift = useShiftHeld();
   const ref = useRef<HTMLDivElement | null>(null);
   const [pos, setPos] = useState<{ left: number; top: number }>({ left: 0, top: 0 });
   // Item-Karten-Guide (Chef-Auftrag 2026-08-27): hält die Payload-REFERENZ, für die `pos` zuletzt
@@ -1925,7 +2020,6 @@ export function ItemTooltipOverlay(): JSX.Element | null {
   // Vorher wurde nur bei neuer Payload/Shift geklammert — die Karte konnte aus dem Fenster ragen.
   const [measureTick, setMeasureTick] = useState(0);
   useEffect(() => {
-    if (!payload) return;
     const bump = (): void => setMeasureTick((n) => n + 1);
     window.addEventListener("resize", bump);
     const el = ref.current;
@@ -1937,13 +2031,29 @@ export function ItemTooltipOverlay(): JSX.Element | null {
     };
   }, [payload]);
 
+  // claude:2026-10-25T10:33:00+01:00 — 1.4.1 K3: laufender Zug an der Kopfleiste (Muster EliteMiniWindow:
+  // Window-Listener statt Pointer-Capture, Ende auch bei Fokusverlust).
+  const dragRef = useRef<{ dx: number; dy: number; pointerId: number } | null>(null);
+  const dragCleanupRef = useRef<(() => void) | null>(null);
+  const [dragging, setDragging] = useState(false);
+
   // Position am Viewport-Rand clampen, sobald die echte Größe bekannt ist (inkl. Vergleichskarte).
   useLayoutEffect(() => {
-    if (!payload || !ref.current) return;
+    if (!ref.current) return;
+    // claude:2026-10-25T10:33:00+01:00 — 1.4.1 K3: während des Ziehens bestimmt der Zug die Position.
+    if (dragRef.current) return;
     const el = ref.current;
     const w = el.offsetWidth;
     const h = el.offsetHeight;
-    const margin = 12;
+    // claude:2026-10-25T10:33:00+01:00 — 1.4.1 K3: festgehaltene Karte an der gezogenen Stelle der Sitzung,
+    // nur im Fenster gehalten (Fenster verkleinert, Shift-Vergleich klappt auf).
+    if (payload.pinned && pinnedSessionPos) {
+      const next = clampToViewport(pinnedSessionPos.left, pinnedSessionPos.top, w, h);
+      setPos((prev) => (prev.left === next.left && prev.top === next.top ? prev : next));
+      setPositionedFor(payload);
+      return;
+    }
+    const margin = ITIP_EDGE;
     const offset = 18; // Abstand Cursor-Spitze ↔ Tooltip (Standardfall: oberhalb)
     // 1.0.1-Fix (Spieler-Bugreport „Tooltips unter dem Handcursor, erste Zeile unlesbar"): der
     // custom Cursor (base.css `cursor: url(cusor_default.webp) 0 0`) ist 39×38px groß mit dem
@@ -1988,11 +2098,11 @@ export function ItemTooltipOverlay(): JSX.Element | null {
   // drankommt (Priorität "tooltip" schlägt Modals), statt dass zwei Listener dieselbe Taste
   // unabhängig voneinander auswerten.
   useEffect(() => {
-    if (!payload?.pinned) return;
+    if (!payload.pinned) return;
     const onClick = (e: MouseEvent): void => {
-      if (ref.current && !ref.current.contains(e.target as Node)) store.hide();
+      if (ref.current && !ref.current.contains(e.target as Node)) store.hidePinned();
     };
-    const unregisterEsc = registerEscCloser("tooltip", () => store.hide());
+    const unregisterEsc = registerEscCloser("tooltip", () => store.hidePinned());
     // im nächsten Tick registrieren, damit der öffnende Klick nicht sofort schließt
     const id = window.setTimeout(() => window.addEventListener("mousedown", onClick), 0);
     return () => {
@@ -2000,9 +2110,70 @@ export function ItemTooltipOverlay(): JSX.Element | null {
       window.clearTimeout(id);
       window.removeEventListener("mousedown", onClick);
     };
-  }, [payload?.pinned, payload?.itemId]);
+  }, [payload.pinned, payload.itemId]);
 
-  if (!payload) return null;
+  // Karte schließt mitten im Zug (Esc, Aktion): nur Listener abräumen, keine Position übernehmen.
+  useEffect(() => () => dragCleanupRef.current?.(), []);
+
+  /**
+   * claude:2026-10-25T10:33:00+01:00 — 1.4.1 K3 (Chef: „Linksklick, oben am Rand wie bei einer
+   * Windows-Anwendung“): linke Maustaste auf der Kopfleiste einer festgehaltenen Karte gedrückt halten und
+   * ziehen. Die Karte bleibt dabei ganz im Fenster; die Endposition gilt für den Rest der Sitzung.
+   */
+  const startDrag = (e: ReactPointerEvent<HTMLElement>): void => {
+    if (e.button !== 0 || !payload.pinned) return;
+    if ((e.target as HTMLElement).closest("button")) return; // ?/× bleiben Knöpfe
+    const el = ref.current;
+    if (!el || dragRef.current) return;
+    e.preventDefault(); // keine Textauswahl, kein natives Ziehen
+    const rect = el.getBoundingClientRect();
+    const drag = { dx: e.clientX - rect.left, dy: e.clientY - rect.top, pointerId: e.pointerId };
+    const startX = e.clientX;
+    const startY = e.clientY;
+    let moved = false; // ein bloßer Klick auf die Kopfleiste soll sich keine Stelle merken
+    dragRef.current = drag;
+    setDragging(true);
+
+    const removeListeners = (): void => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onEnd);
+      window.removeEventListener("pointercancel", onEnd);
+      window.removeEventListener("blur", onBlur);
+      dragRef.current = null;
+      dragCleanupRef.current = null;
+    };
+    const commit = (): void => {
+      removeListeners();
+      setDragging(false);
+      if (!moved) return;
+      const r = el.getBoundingClientRect();
+      const next = clampToViewport(r.left, r.top, el.offsetWidth, el.offsetHeight);
+      pinnedSessionPos = next;
+      setPos(next);
+    };
+    const onMove = (ev: PointerEvent): void => {
+      if (ev.pointerId !== drag.pointerId) return;
+      if (!moved && Math.abs(ev.clientX - startX) + Math.abs(ev.clientY - startY) < 4) return;
+      moved = true;
+      const next = clampToViewport(ev.clientX - drag.dx, ev.clientY - drag.dy, el.offsetWidth, el.offsetHeight);
+      el.style.left = `${next.left}px`;
+      el.style.top = `${next.top}px`;
+      // Item-Karten-Guide: SpotlightGuide misst bei scroll (Capture am window) neu, so wandert der Ring mit.
+      el.dispatchEvent(new Event("scroll"));
+    };
+    const onEnd = (ev: PointerEvent): void => {
+      if (ev.pointerId !== drag.pointerId) return;
+      commit();
+    };
+    const onBlur = (): void => commit();
+
+    dragCleanupRef.current = removeListeners;
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onEnd);
+    window.addEventListener("pointercancel", onEnd);
+    window.addEventListener("blur", onBlur);
+  };
+
   const item = content.items[payload.itemId];
   if (!item) return null;
 
@@ -2105,12 +2276,16 @@ export function ItemTooltipOverlay(): JSX.Element | null {
 
   // claude:2026-10-24T18:45:00+02:00 — Hover-Karte nie klickbar (pointer-events:none per Klasse): bei 1366 px deckte die Vergleichsansicht den Cursor, die Zelle bekam mouseleave und die Karte verschwand sofort.
   return (
-    <div ref={ref} className={`itip-compare-wrap ${payload.pinned ? "itip-compare-wrap--pinned" : "itip-compare-wrap--hover"}`} style={{ left: pos.left, top: pos.top }}>
+    <div ref={ref} className={`itip-compare-wrap ${payload.pinned ? "itip-compare-wrap--pinned" : "itip-compare-wrap--hover"}${dragging ? " itip-compare-wrap--dragging" : ""}`} style={{ left: pos.left, top: pos.top }}>
       <ItemTooltipCard
         item={item}
         instance={payload.instance}
-        actions={payload.actions}
-        showCompareHint={hasCompareTarget && !shift}
+        // claude:2026-10-25T10:54:00+01:00 — 1.4.1 K2: Hover-Karte ohne Knöpfe und ohne Shift-Zeile (sie ist nicht
+        // klickbar); beides gibt es nur an der festgehaltenen Karte.
+        actions={payload.pinned ? payload.actions : []}
+        onHeaderPointerDown={payload.pinned ? startDrag : undefined}
+        guideIds={payload.pinned}
+        showCompareHint={payload.pinned && hasCompareTarget && !shift}
         compareMap={equippedCompareMap}
         isEquipped={mainIsEquipped}
         deltaAgainst={deltaAgainst}
@@ -2124,6 +2299,7 @@ export function ItemTooltipOverlay(): JSX.Element | null {
           actions={[]}
           badge={t("itip.equipped")}
           compareMap={hoveredCompareMap}
+          onHeaderPointerDown={payload.pinned ? startDrag : undefined}
           // Diese Karte ist per Definition das Item, das der Charakter GERADE trägt (aus
           // state.character.equipment gelesen) — immer isEquipped, unabhängig von mainIsEquipped.
           isEquipped

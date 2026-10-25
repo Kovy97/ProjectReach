@@ -11,6 +11,7 @@ import {
   effectiveCapacity,
   equipItem,
   equipInstance,
+  equipTool,
   groupInstancesByBase,
   isItemDiscovered,
   moveInventorySlot,
@@ -268,6 +269,19 @@ export function CharacterPage(): JSX.Element {
           else reportEquipFailure(state, content);
         },
       });
+      // claude:2026-10-25T10:33:00+01:00 — 1.4.1 B3 (Spieler-Report „Axt landet immer in der Waffenhand“): Waffe
+      // UND Werkzeug zugleich (Äxte) bekommen einen zweiten Eintrag. „Ausrüsten“ legt sie per item.slot in die
+      // Waffenhand, dieser hier per equipTool in einen Werkzeug-Slot (freier zuerst, sonst der desselben Berufs).
+      if (it.tool) {
+        acts.push({
+          key: "equipTool",
+          label: t("item.equipAsTool"),
+          onClick: () => {
+            if (equipSucceeded(equipTool(state, content, itemId))) playSfx("equip");
+            else reportEquipFailure(state, content);
+          },
+        });
+      }
     }
     if (it?.type === "tool") {
       acts.push({

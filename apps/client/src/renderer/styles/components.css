@@ -756,9 +756,19 @@ body .item-cell.rarity-mythic {
   /* claude:2026-10-24T18:25:00+02:00 — UI-Überarbeitung 1.4: der alte Wert rechnete mit calc(Länge / Länge), das
      Electron 32 (Chromium 128) nicht kennt, und verkleinerte unter 1600 px auf 0,8. Jetzt: --vp-k (stufenweise 1 … 1,15) ×
      --text-scale (Option „Textgröße“). Bei 1366 px = 1, d. h. kleinste Tooltip-Schrift 13 px. */
-  --itip-fs-scale: calc(var(--vp-k) * var(--text-scale));
+  /* claude:2026-10-25T10:33:00+01:00 — 1.4.1 K2 (Spieler kzp, Textgröße „Groß“: Karte zu groß): die Karte wächst nur noch
+     halb so stark mit der Textgröße (1 + (Textgröße − 1) / 2) und höchstens um 12,5 % (der Chef-Deckel „etwa 540 px“
+     bezogen auf die 480-px-Basis). Untergrenze 1: die kleinste Tooltip-Schrift bleibt 13 px, auch bei 90 % Textgröße.
+     Gilt für beliebige --text-scale-Werte (Prozent-Regler 0,9 bis 1,4). Breite der Karte: max-content (weiter unten),
+     sie folgt damit diesem Faktor. */
+  --itip-fs-scale: clamp(1, calc(var(--vp-k) * (1 + (var(--text-scale) - 1) / 2)), 1.125);
   box-sizing: border-box;
-  /* claude:2026-10-24T18:25:00+02:00 — Karte wächst mit Schrift (480 px bei Faktor 1), nie breiter als das Fenster. */
+  /* claude:2026-10-25T10:33:00+01:00 — 1.4.1 K2: Grundschrift der Karte am Kartenfaktor statt an --fs-md (das voll
+     mit der Textgröße wächst); erben alle Zeilen ohne eigene Größe. 17 px = --fs-md bei 1366 px. */
+  font-size: calc(var(--itip-fs-scale) * 17px);
+  /* claude:2026-10-24T18:25:00+02:00 — Karte wächst mit Schrift (480 px bei Faktor 1), nie breiter als das Fenster.
+     claude:2026-10-25T10:33:00+01:00 — Hinweis 1.4.1: diese Breite wird weiter unten von den Warbanner-Regeln
+     (width: max-content, 620–1040 px) überschrieben; maßgeblich für die Größe ist --itip-fs-scale. */
   width: min(calc(480px * var(--itip-fs-scale)), 96vw);
   max-height: 97vh;
   overflow-y: auto;
@@ -937,6 +947,21 @@ body .item-cell.rarity-mythic {
   padding: 8px 24px 9px;
   text-align: center;
   border-bottom: 1px solid rgba(216, 192, 106, 0.14);
+}
+/* claude:2026-10-25T10:33:00+01:00 — 1.4.1 K3: Kopfleiste der FESTGEHALTENEN Karte ist ihr Ziehgriff (Fenster-
+   Titelleiste). Der Spiel-Cursor ist global erzwungen (base.css, `cursor` wirkt hier nicht), deshalb zeigt ein
+   leichter Goldschleier beim Überfahren, dass man hier greifen kann. Kein neues Material, Rahmen bleibt. */
+.itip-drag-handle {
+  touch-action: none;
+  user-select: none;
+  transition: background-color 0.12s;
+}
+.itip-drag-handle:hover,
+.itip-compare-wrap--dragging .itip-drag-handle {
+  background-color: rgba(216, 192, 106, 0.06);
+}
+.itip-compare-wrap--dragging .item-tooltip.itip-panel {
+  box-shadow: var(--sh-6), var(--vg-3), 0 0 0 1px rgba(216, 192, 106, 0.4);
 }
 .itip-type-line {
   position: relative;

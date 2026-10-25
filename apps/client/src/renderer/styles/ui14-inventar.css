@@ -33,7 +33,10 @@
 }
 #root .itip-warbanner-main .itip-flavor::before { font-size: calc(var(--itip-fs-scale) * 13px); }
 #root .item-tooltip.itip-panel .it-hint { font-size: calc(var(--itip-fs-scale) * 15px); font-family: var(--font-body); margin-top: 9px; }
-#root .item-tooltip.itip-panel .it-action-btn { font-size: clamp(var(--fs-sm), 1.05vw, var(--fs-lg)); }
+/* claude:2026-10-25T10:33:00+01:00 — 1.4.1 K2: Knöpfe und Set-Stufenzeilen am Kartenfaktor statt an --fs-* (die voll mit der
+   Textgröße wachsen); gleiche Werte bei 100 %, danach nur noch das halbe Wachstum der Karte. */
+#root .item-tooltip.itip-panel .it-action-btn { font-size: clamp(calc(var(--itip-fs-scale) * 15px), 1.05vw, calc(var(--itip-fs-scale) * 19px)); }
+#root .item-tooltip.itip-panel .itip-set-tier-fx { font-size: calc(var(--itip-fs-scale) * 15px); }
 
 /* claude:2026-10-24T18:45:00+02:00 — Hover-Vergleichskarte fängt keine Mausereignisse (sonst mouseleave an der Zelle, Karte weg). */
 #root .itip-compare-wrap--hover { pointer-events: none; }
@@ -58,3 +61,185 @@
 
 /* claude:2026-10-24T18:48:00+02:00 — Sortieren-/Beute-zerlegen-Knöpfe waren 12 px (Regel steht in pages.css). */
 #root .cs-inv-sortbtn { font-size: var(--fs-xs); padding: 5px 12px; }
+
+/* ═══ claude:2026-10-25T10:54:00+01:00 — 1.4.1 K2 Kompakte Item-Karte (Spieler: „tooltip of item is too big“) ═══════════
+   Gilt für Hover-, festgehaltene und Vergleichskarte (Klasse itip-card--compact, ItemTooltip.tsx). Bildfeld etwa halb so
+   groß, engere Abstände, Fließtextblöcke brechen um statt die Karte zu verbreitern, Breite höchstens 560 px × Kartenfaktor
+   (1366: 560, 1920: 630). Holzrahmen, Texturen und Eisenknöpfe bleiben; nur die Rahmenstärke innen sinkt von 14 auf 10 px.
+   Die Selektoren sind absichtlich lang: die älteren Kartenregeln in components.css tragen bis zu 1 ID + 7 Klassen,
+   diese hier 1 ID + 8 Klassen und gewinnen damit unabhängig von der Ladereihenfolge. Schrift nie unter 13 px. */
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact {
+  width: max-content;
+  min-width: 0;
+  max-width: min(calc(560px * var(--itip-fs-scale)), calc(100vw - 24px));
+  flex: 0 1 auto;
+  padding-bottom: 8px;
+}
+/* Shift-Vergleich: zwei kompakte Karten nebeneinander, jede höchstens halb so breit wie das Fenster. */
+#root .itip-compare-wrap:has(.itip-panel + .itip-panel) .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact {
+  width: max-content;
+  max-width: min(calc(560px * var(--itip-fs-scale)), calc((100vw - 52px) / 2));
+}
+@media (max-width: 1100px) {
+  #root .itip-compare-wrap:has(.itip-panel + .itip-panel) .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact {
+    max-width: min(calc(560px * var(--itip-fs-scale)), calc(100vw - 24px));
+  }
+}
+/* Nie höher als 90 % des Fensters (darüber scrollt die festgehaltene Karte, die Knopfleiste bleibt unten kleben). */
+#root .itip-compare-wrap.itip-compare-wrap {
+  max-height: 90vh;
+}
+
+/* Kopf: Name, Typzeile, Spezialisierung enger; seitlich Platz für ?/× rechts (symmetrisch, damit der Name mittig bleibt). */
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-header-band-1 {
+  padding: 8px 70px 11px;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-name {
+  font-size: calc(var(--itip-fs-scale) * 23px);
+  line-height: 1.2;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-header-band-2 {
+  padding: 2px 20px 5px;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-specialty {
+  padding: 4px 20px 0;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-equipped-badge--head {
+  display: table;
+  margin: 0 auto 5px;
+}
+
+/* Hauptteil: links Bild (halbe Größe) mit Beschreibung darunter, rechts Werte. */
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-warbanner-main {
+  grid-template-columns: calc(170px * var(--itip-fs-scale)) minmax(min-content, max-content);
+  gap: 10px;
+  margin: 6px 12px 0;
+  padding: 8px;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-warbanner-main .itip-stage {
+  height: calc(150px * var(--itip-fs-scale));
+  border-width: 10px;
+  border-image-width: 10px;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-warbanner-main .itip-emoji {
+  font-size: calc(var(--itip-fs-scale) * 80px);
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-warbanner-main .itip-placeholder {
+  font-size: calc(var(--itip-fs-scale) * 64px);
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-warbanner-main .itip-flavor {
+  margin-top: 6px;
+  padding: 7px 4px 2px;
+  font-size: calc(var(--itip-fs-scale) * 15px);
+  line-height: 1.32;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-warbanner-main .itip-flavor::before {
+  margin-right: 6px;
+}
+
+/* Werte-Spalte: so breit wie die Statgruppen (mindestens 250 px × Faktor); Effekt-, Verzauberungs-, Set- und Fußblöcke
+   tragen nichts zur Breite bei (contain: inline-size) und brechen innerhalb der Spalte um. */
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-warbanner-record {
+  min-width: calc(250px * var(--itip-fs-scale));
+  padding-left: 10px;
+  padding-right: 0;
+  gap: 6px;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-warbanner-record > :not(.itip-body) {
+  contain: inline-size;
+}
+/* Statgruppen untereinander statt im Zweispalten-Raster (die alten Raster-Regeln greifen bei display:flex nicht mehr;
+   die Reihenfolge kommt weiter aus `order`). */
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-warbanner-record .itip-body {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* das alte Raster setzte align-items:start, im Flex-Stapel schrumpften die Gruppen sonst auf Inhaltsbreite */
+  padding: 5px 10px 4px;
+  border-width: 10px;
+  border-image-width: 10px;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-warbanner-record .itip-body > .itip-group {
+  padding: 4px 0;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-offense-group .itip-stat-row {
+  min-height: 0;
+  padding: 2px 4px;
+}
+/* Statzeilen: der Wert bekommt zuerst seine volle Breite (Zahlen und Spannen bleiben ganz), die Beschriftung den Rest und
+   bricht an Wortgrenzen um. Nur ein Wert, der selbst länger ist als die Zeile („+0,26 % Schaden je Intelligenz“), bricht an
+   seinen Leerzeichen um; vorher schnitt die Werte-Spalte ihn ab. Keine automatische Silbentrennung (sonst „Zau-ber-fo-kus“). */
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-warbanner-record .itip-stat-row {
+  grid-template-columns: 24px minmax(min-content, 1fr) minmax(min-content, max-content) max-content;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-stat-label {
+  white-space: normal;
+  overflow-wrap: break-word;
+  hyphens: manual;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-warbanner-record .itip-stat-value {
+  min-width: auto;
+  white-space: normal;
+  overflow-wrap: normal;
+  text-align: right;
+}
+/* Runen-/Verzauberungszeile (Name + Stufe): darf umbrechen, sonst schnitt die schmale Werte-Spalte „T3“ ab. */
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-inst-affix-row {
+  flex-wrap: wrap;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-inst-affix-name {
+  flex: 0 1 auto;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-warbanner-record .itip-enchant-slots {
+  margin-top: 4px;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-warbanner-record .itip-effect-block {
+  padding: 7px 10px;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-warbanner-record :is(.itip-set, .itip-footer-block) {
+  padding: 5px 2px 0;
+}
+/* Fußzeile: „Benötigt …“ links, Wert rechts in einer Zeile (bricht bei mehreren Anforderungen um). */
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-footer-block {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 3px 14px;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-footer-block .itip-req-row {
+  flex: 1 1 auto;
+  justify-content: flex-start;
+  gap: 6px;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .itip-footer-block .itip-value-row {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+/* Knopfleiste der festgehaltenen Karte: volle Kartenbreite statt 720-px-Deckel; Eisenknöpfe etwas niedriger und mit
+   kleinerem Innenabstand, damit drei Knöpfe (z. B. Axt: Ausrüsten / Als Werkzeug ausrüsten / Verkaufen) in zwei statt
+   drei Reihen passen. Knopfschrift mindestens 15 px. */
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .it-actions {
+  width: calc(100% - 24px);
+  margin: 8px auto 0;
+  gap: 6px;
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .it-actions .it-action-btn {
+  min-height: 42px;
+  padding: 4px 10px;
+  font-size: clamp(calc(var(--itip-fs-scale) * 15px), 0.9vw, calc(var(--itip-fs-scale) * 17px));
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact .it-hint {
+  margin-top: 5px;
+}
+
+/* Materialien und andere schlichte Items: eine Spalte, Bild oben (halbe Höhe), schmale Karte. */
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact.itip-card--simple {
+  min-width: min(calc(320px * var(--itip-fs-scale)), calc(100vw - 24px));
+  max-width: min(calc(440px * var(--itip-fs-scale)), calc(100vw - 24px));
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact.itip-card--simple .itip-warbanner-main {
+  grid-template-columns: minmax(0, 1fr);
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel.itip-card--compact.itip-card--compact.itip-card--compact.itip-card--simple .itip-warbanner-record {
+  min-width: 0;
+  padding-left: 0;
+}
