@@ -2199,6 +2199,14 @@ const en = {
     "enchant.runeBadge.armor": "Armor Rune",
     "enchant.runeBadge.other": "General Rune",
     "enchant.pickRuneHint": "Choose a rune from the grimoire to preview it here.",
+    // claude:2026-10-25T14:12:00+01:00 — Verzauberungs-Redesign: Suche, Sockel, Entfernen-Hinweis, Runen-Passung, Altar-Moment.
+    "enchant.items.noMatch": "No item matches your search.",
+    "enchant.socket.free": "Free",
+    "enchant.removeNote": "Removing costs gold, and the rune is lost.",
+    "enchant.rune.alreadyOn": "Already on this item. This effect does not stack.",
+    "enchant.runes.onlyFitting": "Fitting only",
+    "enchant.values": "Item values",
+    "enchant.flash": "{rune} bound",
     // Ziel-Panel-Typ-Badge (welcher Grimoire-Sektion das gewählte Item entspricht).
     "enchant.itemType.weapon_melee": "Melee Weapon",
     "enchant.itemType.weapon_ranged": "Ranged Weapon",
@@ -5324,6 +5332,14 @@ const de: Record<keyof typeof en, string> = {
     "enchant.runeBadge.armor": "Rüstungsrune",
     "enchant.runeBadge.other": "Allgemeine Rune",
     "enchant.pickRuneHint": "Wähle eine Rune aus dem Grimoire, um sie hier in der Vorschau zu sehen.",
+    // claude:2026-10-25T14:12:00+01:00 — Verzauberungs-Redesign: Suche, Sockel, Entfernen-Hinweis, Runen-Passung, Altar-Moment.
+    "enchant.items.noMatch": "Kein Item passt zur Suche.",
+    "enchant.socket.free": "Frei",
+    "enchant.removeNote": "Entfernen kostet Gold, die Rune geht dabei verloren.",
+    "enchant.rune.alreadyOn": "Sitzt schon auf dem Item. Diese Wirkung stapelt nicht.",
+    "enchant.runes.onlyFitting": "Nur passende",
+    "enchant.values": "Werte des Items",
+    "enchant.flash": "{rune} gebunden",
     // Ziel-Panel-Typ-Badge (welcher Grimoire-Sektion das gewählte Item entspricht).
     "enchant.itemType.weapon_melee": "Nahkampfwaffe",
     "enchant.itemType.weapon_ranged": "Fernkampfwaffe",

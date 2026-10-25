@@ -2043,8 +2043,47 @@
   background: url("../assets/classic/bg_black.webp") repeat;
   border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
 }
-:root[data-ui-style="classic"] .ench-altar-socket {
-  background: url("../assets/classic/bg_black.webp") repeat;
+:root[data-ui-style="classic"] .ds-frame.ench-panel {
+  background-color: #0d0f11;
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(128, 86, 196, 0.10), transparent 62%), linear-gradient(rgba(6, 9, 11, 0.22), rgba(3, 5, 6, 0.55)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, auto, 224px 224px;
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-origin: border-box;
+}
+:root[data-ui-style="classic"] #root .ench-pedestal .ench-altar-cell {
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * 2.125);
+}
+:root[data-ui-style="classic"] .ench-tablet {
+  background-color: #0c0b0e;
+  background-image: linear-gradient(rgba(10, 8, 14, 0.55), rgba(5, 4, 8, 0.75)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 192px 192px;
+  background-repeat: no-repeat, repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * 2.125);
+}
+:root[data-ui-style="classic"] .ench-rune-card {
+  background: rgba(0, 0, 0, 0.22);
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 stretch;
+}
+:root[data-ui-style="classic"] .ench-rune-card.selected {
+  background: linear-gradient(rgba(60, 36, 92, 0.45), rgba(20, 12, 30, 0.6)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"]:not([data-ui-style="classic"]) .ds-frame.ench-panel {
+  border-image: url("../assets/ui/gravewood/v4/frames/frame-panel-oak.webp") 96 / 18px stretch;
+}
+:root[data-ui-style="classic"]:not([data-ui-style="classic"]) .ench-rune-card {
+  border-image: url("../assets/ui/gravewood/v4/frames/frame-card-oak.webp") 64 / 10px stretch;
+}
+:root[data-ui-style="classic"]:not([data-ui-style="classic"]) .ench-item-row {
+  border-image: url("../assets/ui/gravewood/v4/frames/frame-card-oak.webp") 64 / 10px stretch;
+}
+:root[data-ui-style="classic"]:not([data-ui-style="classic"]) .ench-rune-card.selected {
+  border-image: url("../assets/ui/gravewood/v4/frames/frame-card-oak-selected.webp") 64 / 10px stretch;
+}
+:root[data-ui-style="classic"]:not([data-ui-style="classic"]) .ench-item-row.selected {
+  border-image: url("../assets/ui/gravewood/v4/frames/frame-card-oak-selected.webp") 64 / 10px stretch;
+}
+:root[data-ui-style="classic"]:not([data-ui-style="classic"]) .ench-btn.btn-iron {
+  border-image: url("../assets/ui/gravewood/v4/frames/button-iron-normal.webp") 64 fill / 16px stretch;
 }
 :root[data-ui-style="classic"] .hunt-head {
   background: linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.58)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;

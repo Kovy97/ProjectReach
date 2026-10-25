@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { content } from "@hearthforge/content";
-import { applyEnchant, collectSpecialEffects, disenchant, enchantPreview, trinityGatePasses } from "@hearthforge/engine";
+import { applyEnchant, collectSpecialEffects, disenchant, enchantPreview } from "@hearthforge/engine";
 import type { EnchantPreview, ItemStatView } from "@hearthforge/engine";
 import type {
   AffixDef,
@@ -9,6 +9,7 @@ import type {
   EquipSlot,
   ItemDef,
   ItemInstance,
+  ItemRarity,
   ItemRef,
   ItemTypeTag,
   LocalizedString,
@@ -29,22 +30,22 @@ import {
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { ItemCell } from "../components/ItemCell";
+import { ItemFilterSearch } from "../components/ItemFilterBar";
 import { affixEffectParts, fmtBonus } from "../components/ItemTooltip";
-import { rarityClass } from "../items";
+import { getItemImage, rarityClass } from "../items";
 import { runeFitsHint, runeTargetLabel } from "../runeTargets";
+import { getSkillBackground } from "../skillBackgrounds";
 import { formatSeconds1 } from "../util/format";
 import { weaponEffectProse } from "../util/weaponEffectProse";
+import iconEnchantRune from "../assets/icons/icon_enchant_rune.webp";
 import "../styles/enchanting.css";
 
-// ── Task #275: Enchanting-Altar-Rework ──────────────────────────────────────
-// Der Chef fand die alte Tab-Seite (Bench/Vault/Salvage) "viel zu unspektakulär".
-// Salvage + der redundante Instanz-Vault (BankPage deckt Instanz-Verwaltung
-// längst über bank.ts ab) sind komplett raus — bleibt EIN einziger, dramatischer
-// Altar-Screen: LINKS Item-Wahl, MITTE der Verzauberungs-Altar (Item groß im
-// Fokus + aktuelle Verzauberungen + Vorschau/Anwenden), RECHTS das Runen-
-// Grimoire. Alle Engine-Calls (applyEnchant/disenchant/enchantPreview) und die
-// bestehende Waffen-/Rüstungs-Runen-Trennung + Kompatibilitäts-Logik bleiben
-// 1:1 erhalten — nur Layout/Optik sind neu.
+// claude:2026-10-25T14:12:00+01:00 — Verzauberungs-Redesign (Chef 25.10.: „die ist furchtbar“). Aus der flachen
+// lila Drei-Spalten-Fläche wird ein Ort: links die Item-Wahl mit Suche und Filter, rechts oben die gemalte
+// Altar-Bühne (Runenkunst-Kulisse) mit dem Item groß, seinen Verzauberungsplätzen als Sockel und der Vorher/
+// Nachher-Tafel, darunter das Runen-Grimoire als Kartenraster. Engine-Aufrufe (applyEnchant/disenchant/
+// enchantPreview), Waffen-/Rüstungs-Runen-Trennung, Lager-Runen, K3-Doppeleffekt-Hinweis und Suffix-Hinweis
+// bleiben erhalten; neu sind Sockel mit Runenbild, sichtbare Gründe an unpassenden Runen und der Altar-Moment.
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -52,9 +53,6 @@ import "../styles/enchanting.css";
  * Zeilen für Vorschau/Affix-Liste: flache Boni + Attribut-Mods + Waffeneffekt-Proc (Feuer/Frost/
  * Sturm etc.), damit `affix_flame/frost/shock` hier nicht nur ihren winzigen Flat-Bonus zeigen und
  * den eigentlichen Kaufgrund (den Proc) verschweigen — nutzt dieselbe Quelle wie der Item-Tooltip.
- * Nutzt die Teile direkt (statt den gejointen Summary-String am " · " zu re-splitten), da der
- * Proc-Eintrag ("15% Brand · 4/s") selbst ein inneres " · " enthält und sonst auf zwei Zeilen
- * zerrissen würde.
  */
 function affixLines(
   def: AffixDef,
@@ -65,24 +63,17 @@ function affixLines(
   return affixEffectParts(def, tier, t, tr).filter(Boolean);
 }
 
-/** Stabile Reason-Codes, die die Engine (perspektivisch) direkt liefert — siehe `enchant.reason.*`. */
+/** Stabile Reason-Codes, die die Engine direkt liefert — siehe `enchant.reason.*`. */
 const ENCHANT_REASON_CODES = new Set([
   "not_enough_gold",
   "affix_mismatch",
-  // Trinity-Klassen-Gate (§6.2, applyEnchant): fehlte hier bisher — die Engine kann diesen Reason
-  // schon länger liefern, das Feedback-Banner fiel dann durch LEGACY_REASON_MAP durch und leakte
-  // den rohen Code "class_mismatch" (kein Legacy-Prosa-Match). Gefixt im Zuge von #219.
   "class_mismatch",
-  // Aktiv-Effekt-Runen (Flamme/Frost/Schock) bleiben einmalig, waehrend Stat-Runen stapeln
-  // duerfen (Chef-Nachentscheid 25.08.2026) — s. `affixHasActiveEffect` in engine/enchant.ts.
   "duplicate_effect",
   "no_affix_slots",
   "no_affix",
   "not_enchantable",
   "not_found",
 ]);
-
-// ── Enchant-Preview-Panel (#219): Vorher/Nachher-Item-Stat-Block ────────────────
 
 /** Die vier Rüstungs-Trinität-Keys, dieselbe Reihenfolge wie `enchant.ts` TRINITY_KEYS. */
 const TRINITY_PREVIEW_KEYS = ["armorRating", "evasionRating", "wardCapacity", "blockChance"] as const;
@@ -108,9 +99,6 @@ const PREVIEW_LABEL_KEY: Record<string, string> = {
 };
 /** Werte, die als Prozent (0..1 → %) statt als Rohzahl formatiert werden. */
 const PREVIEW_PCT_KEYS = new Set(["critChance", "critDamage", "blockChance"]);
-/** attackIntervalMs: NIEDRIGER ist besser (schnellerer Angriff) — hier nur für die Formatierung
- *  relevant (Vorzeichen), die Besser/Schlechter-Färbung nutzt EnchantingPage bewusst nicht (die
- *  Delta-Hervorhebung reicht: gold = geändert, s.u.). */
 
 function formatPreviewValue(key: string, v: number): string {
   if (PREVIEW_PCT_KEYS.has(key)) return `${v >= 0 ? "+" : ""}${Math.round(v * 100)}%`;
@@ -142,9 +130,8 @@ interface PreviewRow {
 
 /**
  * Baut die Vorher/Nachher-Zeilen aus einem `EnchantPreview`-Ergebnis: jeder Stat-Key, der in
- * `before` ODER `after` einen Wert ≠ 0 trägt (oder in `changedKeys` steht, z.B. ein Stat, der
- * durch die Rune auf 0 fällt — Rand­fall bei einem künftigen Override-Slot), wird eine Zeile.
- * Reine Anzeige-Ableitung, mutiert nichts — `enchantPreview` selbst ist bereits rein/deterministisch.
+ * `before` ODER `after` einen Wert ≠ 0 trägt (oder in `changedKeys` steht), wird eine Zeile.
+ * Reine Anzeige-Ableitung, mutiert nichts.
  */
 function buildPreviewRows(
   preview: EnchantPreview,
@@ -181,9 +168,8 @@ function buildPreviewRows(
 }
 
 /**
- * Legacy-Fallback: solange `enchant.ts` noch hartkodierte deutsche Prosa statt Reason-Codes liefert,
- * auf denselben i18n-Key mappen — sonst leakt rohes Deutsch ins EN-Locale (Sweep2 F2). Sobald die
- * Engine auf Codes umgestellt ist, greift der erste Zweig in `enchantReasonLabel` direkt.
+ * Legacy-Fallback: alte deutsche Prosa-Gründe auf denselben i18n-Key mappen — sonst leakt rohes
+ * Deutsch ins EN-Locale (Sweep2 F2).
  */
 const LEGACY_REASON_MAP: Record<string, string> = {
   "Nicht genug Gold": "not_enough_gold",
@@ -204,14 +190,7 @@ function enchantReasonLabel(reason: string, t: (k: string) => string): string {
   return code ? t(`enchant.reason.${code}`) : reason;
 }
 
-// ── Runen-Tisch-Redesign: Waffen-/Rüstungs-Split fürs Grimoire ─────────────────
-//
-// Der Chef will die besessenen Runen im Grimoire klar in „Waffen-Runen" (aggressiv, warm) und
-// „Rüstungs-Runen" (defensiv, kühl) getrennt sehen, plus eine kleine Restgruppe für Runen, die
-// weder eindeutig Waffe noch Rüstung sind (aktuell keine im Content, aber `appliesTo` erlaubt z.B.
-// reine Schmuck-Runen oder ein leeres/fehlendes `appliesTo` = überall). `runeCategory` liest NUR
-// die grobe Typ-Familie aus `appliesTo` — das feinere Trinity-Klassen-Gate (Schutz nur auf Platte
-// etc.) bleibt exklusiv bei `enchantPreview`/`applyEnchant`, hier geht's nur ums Grimoire-Layout.
+// ── Waffen-/Rüstungs-Split fürs Grimoire (Chef-Wunsch, bleibt) ────────────────
 
 type RuneCategory = "weapon" | "armor" | "other";
 
@@ -229,21 +208,8 @@ function runeCategory(def: AffixDef): RuneCategory {
 }
 
 /**
- * Passt diese Rune auf das gewählte Ziel? Spiegelt die Prüfkette von `applyEnchant` — erst der
- * Tag-Filter (`appliesTo`), dann das Trinity-Klassen-Gate (§6.2).
- *
- * Spieler-Report 1.0.2: bis hierher prüfte die Karte NUR den Tag. Eine Ward-Rune auf einer
- * Platte sah damit anwendbar aus und scheiterte erst beim Klick mit "class_mismatch" — der
- * Spieler bekam den Grund also erst NACH dem Fehlversuch, und auch nur als Bannertext.
- */
-function runePasst(def: AffixDef, tier: number, ziel: ItemDef): boolean {
-  return affixAppliesToItem(def.appliesTo, ziel) && trinityGatePasses(def, tier, ziel);
-}
-
-/**
- * Warum passt sie nicht? Der Satz landet im Hover-Text der abgeblendeten Karte. Scheitert es am
- * Trinity-Gate, ist die Rüstungsklasse der eigentliche Grund und gehört genannt — "nur für
- * Rüstung" wäre dort schlicht falsch, das Teil IST ja Rüstung.
+ * Warum passt sie nicht? Scheitert es am Trinity-Gate, ist die Rüstungsklasse der eigentliche Grund
+ * und gehört genannt — "nur für Rüstung" wäre dort falsch, das Teil IST ja Rüstung.
  */
 function runeMismatchHint(
   def: AffixDef | null,
@@ -254,16 +220,14 @@ function runeMismatchHint(
 ): string {
   if (def && tier !== null && ziel && affixAppliesToItem(def.appliesTo, ziel)) {
     const hint = runeFitsHint(def, tier, t);
-    if (hint) return hint; // Trinity-Gate: die Klasse ist der Grund, nicht der Item-Typ
+    if (hint) return hint;
   }
   if (category === "weapon") return t("enchant.onlyWeapons");
   if (category === "armor") return t("enchant.onlyArmor");
   return t("enchant.reason.affix_mismatch");
 }
 
-/** Item-Typ-Badge fürs Altar (Mitte): Waffenstil bzw. Rüstung/Schild/Schmuck — dieselbe
- *  Ton-Familie (weapon=warm/rot, armor=kühl/blau, other=neutral) wie das Grimoire, damit auf einen
- *  Blick klar ist, welche Runen-Sektion zum aktuellen Ziel passt. */
+/** Item-Typ-Badge: Waffenstil bzw. Rüstung/Schild/Schmuck — dieselbe Ton-Familie wie das Grimoire. */
 interface ItemTypeBadge {
   labelKey: string;
   tone: RuneCategory;
@@ -280,33 +244,60 @@ function itemTypeBadge(def: ItemDef): ItemTypeBadge {
   return { labelKey: "enchant.itemType.armor", tone: "armor" };
 }
 
-// ── File-level subcomponents (stable references — no remount issues) ─────────
-
-interface SelectRowProps {
-  label: string;
-  sub?: string;
-  selected: boolean;
-  onClick: () => void;
-  itemId: string;
-  instance?: ItemInstance;
+// claude:2026-10-25T14:12:00+01:00 — Stufe als römische Zahl wie in den Runennamen („Rune der Schärfe III“).
+const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
+function roman(n: number): string {
+  return ROMAN[n] ?? String(n);
 }
 
-function SelectRow({ label, sub, selected, onClick, itemId, instance }: SelectRowProps): JSX.Element {
+// claude:2026-10-25T14:12:00+01:00 — Affix+Stufe → Runen-Item (für das Runenbild im belegten Sockel). Einmal
+// aus dem Katalog aufgebaut; fehlt eine Rune, zeigt der Sockel das Runen-Symbol.
+let runeByAffix: Map<string, string> | null = null;
+function runeItemFor(affixId: string, tier: number): string | null {
+  if (!runeByAffix) {
+    runeByAffix = new Map();
+    for (const it of Object.values(content.items)) {
+      if (it.rune) runeByAffix.set(`${it.rune.affixId}|${it.rune.tier}`, it.id);
+    }
+  }
+  return runeByAffix.get(`${affixId}|${tier}`) ?? null;
+}
+
+// ── File-level subcomponents ──────────────────────────────────────────────────
+
+/** Runenbild ohne Zellenrahmen (Sockel, Vorschau-Kopf). Runen dürfen leuchten, das macht die CSS. */
+function RuneGlyph({ runeId, tier, className = "" }: { runeId: string | null; tier: number | null; className?: string }): JSX.Element {
+  const src = runeId ? getItemImage(runeId) : null;
   return (
-    <div
-      className={`ench-item-row${selected ? " selected" : ""}`}
-      onClick={onClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === "Enter" && onClick()}
-    >
-      <ItemCell itemId={itemId} className="shop-cell" instance={instance} />
-      <span className="ench-item-text">
-        <span className="ench-item-name">{label}</span>
-        {sub && <span className="ench-item-sub">{sub}</span>}
-      </span>
-    </div>
+    <span className={`ench-glyph ${className}`}>
+      <img src={src ?? iconEnchantRune} alt="" className="ench-glyph-img" loading="lazy" decoding="async" />
+      {tier !== null && <span className="ench-glyph-tier">{roman(tier)}</span>}
+    </span>
   );
+}
+
+type ItemGroup = "equipped" | "inventory" | "variants";
+
+interface AltarEntry {
+  key: string;
+  ref: ItemRef;
+  itemId: string;
+  instance?: ItemInstance;
+  group: ItemGroup;
+  label: string;
+  sub: string;
+  rarity: ItemRarity;
+  tone: RuneCategory;
+  used: number;
+  max: number;
+}
+
+function sameRef(a: ItemRef | null, b: ItemRef): boolean {
+  if (!a || a.kind !== b.kind) return false;
+  if (a.kind === "equipment" && b.kind === "equipment") return a.slot === b.slot;
+  if (a.kind === "inventory" && b.kind === "inventory") return a.index === b.index;
+  if (a.kind === "inventory_instance" && b.kind === "inventory_instance") return a.instanceId === b.instanceId;
+  return false;
 }
 
 interface RuneCardProps {
@@ -317,7 +308,7 @@ interface RuneCardProps {
   effectLine: string;
   category: RuneCategory;
   selected: boolean;
-  /** null = kein Ziel gewählt (neutral) · true/false = passt/passt-nicht-zum-Ziel (affixAppliesToItem). */
+  /** null = kein Ziel gewählt (neutral) · true/false = passt/passt nicht zum Ziel. */
   compatible: boolean | null;
   mismatchHint: string;
   badgeLabel: string;
@@ -333,31 +324,36 @@ function RuneCard({
   const incompatible = compatible === false;
   return (
     <div
-      className={`ench-rune-card ench-rune-card--${category}${selected ? " selected" : ""}${incompatible ? " incompatible" : ""}`}
+      className={`ench-rune-card ench-rune-card--${category}${selected ? " selected" : ""}${incompatible ? " incompatible" : ""}${compatible === true ? " fits" : ""}`}
       onClick={onClick}
       role="button"
       tabIndex={0}
+      aria-pressed={selected}
       onKeyDown={(e) => e.key === "Enter" && onClick()}
       title={incompatible ? mismatchHint : undefined}
     >
-      <ItemCell itemId={itemId} className="shop-cell ench-rune-cell" />
+      <span className="ench-rune-icon">
+        <ItemCell itemId={itemId} className="shop-cell ench-rune-cell" />
+        {tier !== null && <span className="ench-glyph-tier">{roman(tier)}</span>}
+      </span>
       <div className="ench-rune-card-body">
-        <div className="ench-rune-card-head">
+        <span className="ench-rune-card-head">
           <span className="ench-rune-card-name">{name}</span>
-          {tier !== null && <span className="ench-rune-card-tier muted">T{tier}</span>}
-        </div>
-        {effectLine && <div className="ench-rune-card-effect muted">{effectLine}</div>}
-        <div className="ench-rune-card-foot">
-          <span className={`ench-rune-badge ench-rune-badge--${category}`}>{badgeLabel}</span>
-          <span className="ench-rune-card-qty muted">
-            ×{qty}
-            {storedQty > 0 && (
-              <span className="ench-rune-card-stored">
-                {t("enchant.rune.stored").replace("{n}", String(storedQty))}
-              </span>
-            )}
-          </span>
-        </div>
+          <span className="ench-rune-card-qty">×{qty}</span>
+        </span>
+        {effectLine && <span className="ench-rune-card-effect">{effectLine}</span>}
+        <span className="ench-rune-card-foot">
+          {incompatible ? (
+            <span className="ench-rune-card-why">{mismatchHint}</span>
+          ) : (
+            <span className={`ench-rune-badge ench-rune-badge--${category}`}>{badgeLabel}</span>
+          )}
+          {storedQty > 0 && (
+            <span className="ench-rune-card-stored">
+              {t("enchant.rune.stored").replace("{n}", String(storedQty))}
+            </span>
+          )}
+        </span>
       </div>
     </div>
   );
@@ -369,18 +365,43 @@ export function EnchantingPage(): JSX.Element {
   const state = useGameState();
   const { t, tr, locale } = useI18n();
   const [selectedRef, setSelectedRef] = useState<ItemRef | null>(null);
-  const [selectedRuneListIdx, setSelectedRuneListIdx] = useState<number | null>(null);
-  // Shared enchant/disenchant feedback banner — `feedbackOk` picks the danger/success styling
-  // (F4: manuelles Enchanten/Entzaubern gab bisher gar keine positive Rückmeldung).
+  // claude:2026-10-25T14:12:00+01:00 — Rune per Item-ID statt Listenindex: verbraucht eine Verzauberung die letzte
+  // Rune einer Sorte, verschiebt sich die Liste, und ein Index zeigte dann auf eine fremde Rune.
+  const [selectedRuneId, setSelectedRuneId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [feedbackOk, setFeedbackOk] = useState(false);
+  const [itemSearch, setItemSearch] = useState("");
+  const [itemFilter, setItemFilter] = useState<"all" | RuneCategory>("all");
+  const [onlyFitting, setOnlyFitting] = useState(false);
+  // claude:2026-10-25T14:12:00+01:00 — Altar-Moment nach dem Verzaubern: neuer Sockel leuchtet auf, Runenkreis
+  // läuft einmal, der Name der gebundenen Rune steigt auf. `seq` startet die Animation bei Wiederholung neu.
+  const [flash, setFlash] = useState<{ seq: number; socket: number; runeId: string } | null>(null);
+  const flashSeq = useRef(0);
+  useEffect(() => {
+    if (!flash) return;
+    const id = window.setTimeout(() => setFlash(null), 2000);
+    return () => window.clearTimeout(id);
+  }, [flash]);
+  // claude:2026-10-25T14:24:00+01:00 — Die Bühne klebt beim Scrollen durch das Grimoire nur, solange sie höchstens 60 % der Spalte
+  // belegt. Bei 1366×768 mit 125 % Text wäre sonst kaum eine Runenreihe sichtbar; dann scrollt die Bühne mit.
+  const mainRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLElement>(null);
+  const [stageFloats, setStageFloats] = useState(false);
+  useEffect(() => {
+    const main = mainRef.current;
+    const stage = stageRef.current;
+    if (!main || !stage || typeof ResizeObserver === "undefined") return;
+    const check = (): void => setStageFloats(stage.offsetHeight > main.clientHeight * 0.6);
+    const ro = new ResizeObserver(check);
+    ro.observe(main);
+    ro.observe(stage);
+    check();
+    return () => ro.disconnect();
+  }, []);
 
   // ── Derived ───────────────────────────────────────────────────────────────
 
-  // Runenbestand über die ITEM-ID statt über Inventar-Slots (Spieler-Report 1.0.2: "Allow
-  // Enchantment Runes to be applied from Storage"). `applyEnchant` nimmt die Rune inzwischen aus
-  // Inventar ODER Lager — das Grimoire zeigte aber weiter nur die Tasche, eine eingelagerte Rune
-  // war also anwendbar, aber unsichtbar. Jede Sorte erscheint jetzt EINMAL mit der Gesamtmenge.
+  // Runenbestand über die ITEM-ID aus Inventar UND Lager (Spieler-Report 1.0.2) — jede Sorte einmal.
   const runeSlots: Array<{ itemId: string; qty: number; imLager: number }> = (() => {
     const summe = new Map<string, { itemId: string; qty: number; imLager: number }>();
     const zaehle = (itemId: string, qty: number, ausLager: boolean): void => {
@@ -395,16 +416,45 @@ export function EnchantingPage(): JSX.Element {
     return [...summe.values()];
   })();
 
-  // Plain, stapelbare Equipment-Items im Slot-Gitter → per applyEnchant zur Instanz promotbar.
-  const invEquipSlots = state.inventory.slots
-    .map((slot, idx) => ({ slot, idx }))
-    .filter(({ slot }) => slot != null && content.items[slot.itemId]?.type === "equipment");
+  // Altar-Kandidaten: angelegt, plain im Inventar (per applyEnchant zur Instanz promotbar), Varianten-Tasche.
+  const entries: AltarEntry[] = [];
+  const pushEntry = (
+    key: string, ref: ItemRef, itemId: string, group: ItemGroup, inst: ItemInstance | undefined, slotSub?: string,
+  ): void => {
+    const def = content.items[itemId];
+    if (!def) return;
+    const rarity = getItemRarity(def);
+    const badge = itemTypeBadge(def);
+    const label = inst && (inst.affixes.length > 0 || inst.suffix)
+      ? instanceDisplayName(inst, content, locale)
+      : tr(def.name);
+    entries.push({
+      key, ref, itemId, instance: inst, group, label,
+      sub: slotSub ?? t(badge.labelKey),
+      rarity, tone: badge.tone,
+      used: inst?.affixes.length ?? 0,
+      max: enchantSlotsFor(rarity),
+    });
+  };
+  for (const slot of Object.keys(state.character.equipment) as EquipSlot[]) {
+    const id = state.character.equipment[slot];
+    if (id == null) continue;
+    pushEntry(`eq-${slot}`, { kind: "equipment", slot }, id, "equipped",
+      state.character.equippedInstances[slot] ?? undefined, tr(EQUIP_SLOT_LABELS[slot]));
+  }
+  state.inventory.slots.forEach((slot, idx) => {
+    if (slot && content.items[slot.itemId]?.type === "equipment") {
+      pushEntry(`plain-${idx}`, { kind: "inventory", index: idx }, slot.itemId, "inventory", undefined);
+    }
+  });
+  for (const inst of state.inventory.instances) {
+    pushEntry(inst.instanceId, { kind: "inventory_instance", instanceId: inst.instanceId }, inst.baseItemId, "variants", inst);
+  }
 
-  // Bereits verzauberte/gesuffixte Instanzen aus der Varianten-Tasche (v53) → per instanceId adressiert.
-  const invInstances = state.inventory.instances;
-
-  const equippedSlots = (Object.keys(state.character.equipment) as EquipSlot[]).filter(
-    (slot) => state.character.equipment[slot] != null,
+  const searchNorm = itemSearch.trim().toLowerCase();
+  const visibleEntries = entries.filter((e) =>
+    (itemFilter === "all" || e.tone === itemFilter) &&
+    (!searchNorm || e.label.toLowerCase().includes(searchNorm) || e.itemId.includes(searchNorm) || e.sub.toLowerCase().includes(searchNorm)),
   );
 
   let selectedItemId: string | null = null;
@@ -423,36 +473,31 @@ export function EnchantingPage(): JSX.Element {
     }
   }
 
-  const selectedItemDef = selectedItemId ? content.items[selectedItemId] : null;
+  const selectedItemDef = selectedItemId ? content.items[selectedItemId] ?? null : null;
   const selectedRarity = selectedItemDef ? getItemRarity(selectedItemDef) : "common";
   const maxSlots = enchantSlotsFor(selectedRarity);
   const usedSlots = selectedInstance?.affixes.length ?? 0;
-  // Altar-Badge: Waffenstil bzw. Rüstung/Schild/Schmuck, dieselbe Ton-Familie wie das Grimoire
-  // rechts — macht sofort klar, welche Rune-Sektion zum Ziel passt.
   const selectedItemBadge = selectedItemDef ? itemTypeBadge(selectedItemDef) : null;
+  const previewTarget = selectedInstance ?? selectedItemDef;
 
-  const previewEntry = selectedRuneListIdx !== null ? (runeSlots[selectedRuneListIdx] ?? null) : null;
+  const previewEntry = selectedRuneId ? runeSlots.find((r) => r.itemId === selectedRuneId) ?? null : null;
   const previewRuneId = previewEntry?.itemId ?? null;
   const previewRA = previewRuneId ? runeAffix(content, previewRuneId) : null;
   const previewAffixDef: AffixDef | null =
     previewRA && content.affixes ? (content.affixes[previewRA.affixId] ?? null) : null;
   const previewCost = previewRA && selectedItemDef
     ? enchantGoldCost(previewRA.tier, selectedRarity) : null;
-  const previewBonusLines = previewAffixDef && previewRA
-    ? affixLines(previewAffixDef, previewRA.tier, t, tr) : [];
 
-  // Enchant-Preview-Panel (#219): der kanonische Vorschau-Helfer aus der Engine — ersetzt die
-  // frühere handgerollte `affixMismatch`-Prüfung (die den Trinity-Klassen-Gate-Fall §6.2 GAR NICHT
-  // kannte: ein Ward-Rune-Klick auf Platte war bisher bis zum echten `applyEnchant`-Aufruf aktiv,
-  // scheiterte dann erst mit "class_mismatch"). `canApply`/`blockedReason` decken jetzt Rarity-
-  // Slot-Cap · Klassen-Gate · Typ-Match in EINER Quelle ab (dieselbe Reihenfolge wie applyEnchant).
-  const previewTarget = selectedInstance ?? selectedItemDef;
+  // Kanonische Vorschau aus der Engine (Rarity-Slot-Cap · Klassen-Gate · Typ · Köcher · Doppeleffekt).
   const enchantPreviewResult: EnchantPreview | null =
     previewTarget && previewRuneId ? enchantPreview(content, previewTarget, previewRuneId) : null;
   const previewRows = enchantPreviewResult ? buildPreviewRows(enchantPreviewResult, t, tr) : [];
+  // claude:2026-10-25T14:12:00+01:00 — Aktuelle Werte ohne Rune: dieselbe Engine-Vorschau ohne Kandidat (kein Runen-
+  // Item → before == after), damit die Tafel schon vor der Runenwahl zeigt, was das Item heute kann.
+  const currentRows = previewTarget && !enchantPreviewResult
+    ? buildPreviewRows(enchantPreview(content, previewTarget, ""), t, tr) : [];
 
-  // claude:2026-10-17T20:00:00+02:00 — K3: Hinweis (kein Verbot), wenn der neue Spezialeffekt schon von einem ANDEREN
-  // ausgerüsteten Teil kommt; Kill-Flats summieren sich und bleiben ohne Warnung. Das gewählte Teil wird ausgeblendet.
+  // K3: Hinweis (kein Verbot), wenn der neue Spezialeffekt schon von einem ANDEREN ausgerüsteten Teil kommt.
   let duplicateEffect = false;
   if (enchantPreviewResult && enchantPreviewResult.addedProcs.length > 0) {
     const ownSlot = selectedRef?.kind === "equipment" ? selectedRef.slot : null;
@@ -465,24 +510,25 @@ export function EnchantingPage(): JSX.Element {
     );
   }
 
+  const goldShort = previewCost !== null && state.character.gold < previewCost;
   const canEnchant =
     selectedRef !== null && previewRuneId !== null && previewCost !== null &&
-    !!enchantPreviewResult?.canApply && state.character.gold >= previewCost;
+    !!enchantPreviewResult?.canApply && !goldShort;
+  const slotsFull = !!selectedItemDef && usedSlots >= maxSlots;
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
   function handleEnchant(): void {
     if (!selectedRef || !previewRuneId) return;
-    const r = applyEnchant(state, content, selectedRef, previewRuneId);
+    const runeId = previewRuneId;
+    const r = applyEnchant(state, content, selectedRef, runeId);
     if (r.ok) {
       setFeedback(t("enchant.feedback.enchanted"));
       setFeedbackOk(true);
-      setSelectedRuneListIdx(null);
-      // Sweep-Fund T7 (2026-07-11): beim Verzaubern eines PLAIN-Inventar-Items promotet
-      // resolveOrPromote es zur Instanz und NULLT den Slot (Regelfall: Equipment qty 1) — der
-      // alte inventory-Ref zeigte ins Leere und der Altar wurde nach dem Erfolgs-Banner leer.
-      // Die Auswahl folgt jetzt der (neuen bzw. bestehenden) Instanz; equipment-Refs bleiben
-      // unverändert gültig (der Slot besteht weiter, equippedInstances trägt die Instanz).
+      setSelectedRuneId(null);
+      flashSeq.current += 1;
+      setFlash({ seq: flashSeq.current, socket: (r.instance?.affixes.length ?? 1) - 1, runeId });
+      // Sweep-Fund T7: ein plain Inventar-Item wird beim Verzaubern zur Instanz — die Auswahl folgt ihr.
       if (r.instance && selectedRef.kind !== "equipment") {
         setSelectedRef({ kind: "inventory_instance", instanceId: r.instance.instanceId });
       }
@@ -494,78 +540,108 @@ export function EnchantingPage(): JSX.Element {
 
   function handleDisenchant(affixIndex: number): void {
     if (!selectedRef) return;
+    const baseId = selectedItemId;
     const r = disenchant(state, content, selectedRef, affixIndex);
     if (r.ok) {
       setFeedback(t("enchant.feedback.removed"));
       setFeedbackOk(true);
+      setFlash(null);
+      // claude:2026-10-25T14:12:00+01:00 — Letzte Verzauberung einer Varianten-Instanz entfernt: die Engine legt das
+      // Grund-Item zurück ins Inventar. Die Auswahl folgt ihm, statt den Altar leer zu räumen.
+      if (selectedRef.kind === "inventory_instance" && baseId
+        && !state.inventory.instances.some((i) => i.instanceId === selectedRef.instanceId)) {
+        const idx = state.inventory.slots.findIndex((s) => s?.itemId === baseId);
+        setSelectedRef(idx >= 0 ? { kind: "inventory", index: idx } : null);
+      }
     } else {
       setFeedback(enchantReasonLabel(r.reason ?? "not_found", t));
       setFeedbackOk(false);
     }
   }
 
-  function selectRef(ref: ItemRef): void { setSelectedRef(ref); setFeedback(null); setFeedbackOk(false); }
-  function selectRune(listIdx: number): void {
-    setSelectedRuneListIdx(selectedRuneListIdx === listIdx ? null : listIdx);
+  function selectRef(ref: ItemRef): void {
+    setSelectedRef(ref);
+    setFeedback(null);
+    setFeedbackOk(false);
+    setFlash(null);
+  }
+  function selectRune(runeId: string): void {
+    setSelectedRuneId(selectedRuneId === runeId ? null : runeId);
     setFeedback(null);
     setFeedbackOk(false);
   }
 
-  const hasItems = invEquipSlots.length > 0 || invInstances.length > 0 || equippedSlots.length > 0;
+  const hasItems = entries.length > 0;
   const hasRunes = runeSlots.length > 0;
 
-  // Grimoire-Gruppierung (Runen-Tisch-Redesign): jede besessene Rune einmal in Waffen-/Rüstungs-/
-  // Sonstige-Kategorie einsortiert. `li` bleibt der Index INS ungefilterte `runeSlots`-Array (die
-  // bestehende Auswahl-/Preview-Verdrahtung über `selectedRuneListIdx` adressiert genau darüber).
+  // Grimoire: jede besessene Rune einmal, mit Passung gegen das Altar-Item (Engine-Vorschau).
   interface RuneRow {
-    li: number;
     itemId: string;
     qty: number;
-    /** Wie viele davon im Lager liegen — für den kleinen Vermerk auf der Karte. */
     imLager: number;
     affixDef: AffixDef | null;
     tier: number | null;
     category: RuneCategory;
+    compatible: boolean | null;
+    why: string;
   }
-  const runeRows: RuneRow[] = runeSlots.map(({ itemId, qty, imLager }, li) => {
+  const runeRows: RuneRow[] = runeSlots.map(({ itemId, qty, imLager }) => {
     const ra = runeAffix(content, itemId);
     const affixDef = ra && content.affixes ? (content.affixes[ra.affixId] ?? null) : null;
-    return {
-      li,
-      itemId,
-      qty,
-      imLager,
-      affixDef,
-      tier: ra?.tier ?? null,
-      category: affixDef ? runeCategory(affixDef) : "other",
-    } satisfies RuneRow;
+    const category: RuneCategory = affixDef ? runeCategory(affixDef) : "other";
+    // claude:2026-10-25T14:12:00+01:00 — Passung über dieselbe Engine-Vorschau wie der Knopf (Typ, Klasse, Köcher,
+    // Doppeleffekt). Ein voller Altar macht keine Rune „unpassend“, das sagt der Sockel-Hinweis.
+    let compatible: boolean | null = null;
+    let why = "";
+    if (previewTarget) {
+      const pv = enchantPreview(content, previewTarget, itemId);
+      compatible = pv.canApply || pv.blockedReason === "slot_full";
+      if (!compatible) {
+        why = pv.blockedReason === "duplicate_effect"
+          ? t("enchant.rune.alreadyOn")
+          : runeMismatchHint(affixDef, ra?.tier ?? null, selectedItemDef, category, t);
+      }
+    }
+    return { itemId, qty, imLager, affixDef, tier: ra?.tier ?? null, category, compatible, why };
   });
-  const weaponRuneRows = runeRows.filter((r) => r.category === "weapon");
-  const armorRuneRows = runeRows.filter((r) => r.category === "armor");
-  const otherRuneRows = runeRows.filter((r) => r.category === "other");
+  const fittingCount = runeRows.filter((r) => r.compatible === true).length;
+  const shownRuneRows = runeRows
+    .filter((r) => !(onlyFitting && previewTarget && r.compatible === false))
+    // passende zuerst, sonst Bestandsreihenfolge (stabil)
+    .map((r, i) => ({ r, i }))
+    .sort((a, b) => Number(a.r.compatible === false) - Number(b.r.compatible === false) || a.i - b.i)
+    .map(({ r }) => r);
 
-  /** Rendert eine Grimoire-Sektion (Überschrift + Karten); `null`, wenn die Kategorie leer ist. */
-  function renderRuneSection(rows: RuneRow[], titleKey: string, category: RuneCategory, icon: string): JSX.Element | null {
+  // claude:2026-10-25T14:22:00+01:00 — Abschnitte mit passenden Runen für das Altar-Item stehen oben (sonst
+  // stünden bei einer Rüstung zuerst zwölf ausgegraute Waffenrunen vor den drei passenden).
+  const runeSections = ([
+    ["weapon", "enchant.weaponRunes"],
+    ["armor", "enchant.armorRunes"],
+    ["other", "enchant.otherRunes"],
+  ] as Array<[RuneCategory, string]>)
+    .map((sec, i) => ({ sec, i, fit: runeRows.some((r) => r.category === sec[0] && r.compatible === true) }))
+    .sort((a, b) => Number(b.fit) - Number(a.fit) || a.i - b.i)
+    .map(({ sec }) => sec);
+
+  function renderRuneSection(category: RuneCategory, titleKey: string): JSX.Element | null {
+    const rows = shownRuneRows.filter((r) => r.category === category);
     if (rows.length === 0) return null;
     return (
       <div className="ench-rune-section">
         <div className={`ench-rune-section-head ench-rune-section-head--${category}`}>
-          <span className="ench-rune-section-icon" aria-hidden="true">{icon}</span>
           <span className="ench-rune-section-title">{t(titleKey)}</span>
+          <span className="ench-rune-section-count">{rows.length}</span>
+          <span className="ench-rune-section-line" aria-hidden="true" />
         </div>
         <div className="ench-rune-card-list">
           {rows.map((row) => {
             const itemDef = content.items[row.itemId];
-            const name = row.affixDef ? tr(row.affixDef.prefix) : itemDef ? tr(itemDef.name) : row.itemId;
+            const name = itemDef ? tr(itemDef.name) : row.affixDef ? tr(row.affixDef.prefix) : row.itemId;
             const effectLine = row.affixDef && row.tier !== null
               ? affixLines(row.affixDef, row.tier, t, tr).join(", ") : "";
-            // Kompatibilität nach DERSELBEN Kette wie applyEnchant (Tag + Trinity-Gate), damit
-            // keine Rune anklickbar aussieht, die beim Klick abgewiesen würde.
-            const compatible = selectedItemDef && row.affixDef && row.tier !== null
-              ? runePasst(row.affixDef, row.tier, selectedItemDef) : null;
             return (
               <RuneCard
-                key={row.li}
+                key={row.itemId}
                 itemId={row.itemId}
                 qty={row.qty}
                 storedQty={row.imLager}
@@ -573,15 +649,14 @@ export function EnchantingPage(): JSX.Element {
                 tier={row.tier}
                 effectLine={effectLine}
                 category={row.category}
-                selected={selectedRuneListIdx === row.li}
-                compatible={compatible}
-                mismatchHint={runeMismatchHint(row.affixDef, row.tier, selectedItemDef ?? null, row.category, t)}
-                // Das echte Ziel statt der groben Kategorie: "Stoffrüstung" sagt mehr als
-                // "Rüstung", wenn die Rune nur auf Stoff haftet (Spieler-Report 1.0.2).
+                selected={selectedRuneId === row.itemId}
+                compatible={row.compatible}
+                mismatchHint={row.why}
+                // Das echte Ziel statt der groben Kategorie: "Stoffrüstung" sagt mehr als "Rüstung".
                 badgeLabel={row.affixDef && row.tier !== null
                   ? runeTargetLabel(row.affixDef, row.tier, t)
                   : t(`enchant.runeBadge.${row.category}`)}
-                onClick={() => selectRune(row.li)}
+                onClick={() => selectRune(row.itemId)}
               />
             );
           })}
@@ -590,256 +665,305 @@ export function EnchantingPage(): JSX.Element {
     );
   }
 
+  function renderItemGroup(group: ItemGroup, labelKey: string): JSX.Element | null {
+    const rows = visibleEntries.filter((e) => e.group === group);
+    if (rows.length === 0) return null;
+    return (
+      <>
+        <div className="ench-section-label">{t(labelKey)}</div>
+        {rows.map((e) => {
+          const isSel = sameRef(selectedRef, e.ref);
+          return (
+            <div
+              key={e.key}
+              className={`ench-item-row${isSel ? " selected" : ""}`}
+              onClick={() => selectRef(e.ref)}
+              role="button"
+              tabIndex={0}
+              aria-pressed={isSel}
+              onKeyDown={(ev) => ev.key === "Enter" && selectRef(e.ref)}
+            >
+              <ItemCell itemId={e.itemId} className="shop-cell" instance={e.instance} />
+              <span className="ench-item-text">
+                <span className={`ench-item-name ${rarityClass(e.rarity)}`}>{e.label}</span>
+                <span className="ench-item-subrow">
+                  <span className="ench-item-sub">{e.sub}</span>
+                  <span className="ench-item-pips" title={t("enchant.slots").replace("{used}", String(e.used)).replace("{max}", String(e.max))}>
+                    {Array.from({ length: e.max }, (_, i) => (
+                      <span key={i} className={`ench-slot-pip${i < e.used ? " filled" : ""}`} />
+                    ))}
+                  </span>
+                </span>
+              </span>
+            </div>
+          );
+        })}
+      </>
+    );
+  }
+
+  const altarArt = getSkillBackground("runecrafting");
+  const candidateGhost = enchantPreviewResult?.canApply ? previewRuneId : null;
+  const itemFilters: Array<{ id: "all" | RuneCategory; label: string }> = [
+    { id: "all", label: t("inv.filter.all") },
+    { id: "weapon", label: t("inv.filter.weapons") },
+    { id: "armor", label: t("inv.filter.armor") },
+    { id: "other", label: t("enchant.itemType.jewelry") },
+  ];
+
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <div className="ench-page">
-      <div className="ench-body ds-frame">
-        {/* ═══ LEFT — Item-Wahl ═══ */}
-        <div className="ench-col ench-col-target">
-          <div className="shop-section-head">
-            <span className="shop-section-orn" aria-hidden="true">◆</span>
-            <span className="shop-section-title">{t("enchant.selectItem")}</span>
-            <span className="shop-section-line" aria-hidden="true" />
-          </div>
-          {!hasItems ? (
-            <p className="muted">{t("enchant.noItems")}</p>
-          ) : (
-            <div className="ench-select-list">
-              {equippedSlots.length > 0 && (
-                <>
-                  <div className="ench-section-label muted">{t("enchant.equipped")}</div>
-                  {equippedSlots.map((slot) => {
-                    const id = state.character.equipment[slot]!;
-                    const inst = state.character.equippedInstances[slot];
-                    const ref: ItemRef = { kind: "equipment", slot };
-                    const isel = selectedRef?.kind === "equipment" && selectedRef.slot === slot;
-                    const def = content.items[id];
-                    const label = inst && (inst.affixes.length > 0 || inst.suffix)
-                      ? instanceDisplayName(inst, content, locale)
-                      : def ? tr(def.name) : id;
-                    return (
-                      <SelectRow key={slot} itemId={id} instance={inst} label={label}
-                        sub={tr(EQUIP_SLOT_LABELS[slot])} selected={isel}
-                        onClick={() => selectRef(ref)} />
-                    );
-                  })}
-                </>
-              )}
-              {invEquipSlots.length > 0 && (
-                <>
-                  <div className="ench-section-label muted">{t("enchant.inventory")}</div>
-                  {invEquipSlots.map(({ slot, idx }) => {
-                    if (!slot) return null;
-                    const ref: ItemRef = { kind: "inventory", index: idx };
-                    const isel = selectedRef?.kind === "inventory" && selectedRef.index === idx;
-                    const def = content.items[slot.itemId];
-                    const label = def ? tr(def.name) : slot.itemId;
-                    return (
-                      <SelectRow key={`plain-${idx}`} itemId={slot.itemId} label={label}
-                        selected={isel} onClick={() => selectRef(ref)} />
-                    );
-                  })}
-                </>
-              )}
-              {invInstances.length > 0 && (
-                <>
-                  <div className="ench-section-label muted">{t("enchant.variants")}</div>
-                  {invInstances.map((inst) => {
-                    const ref: ItemRef = { kind: "inventory_instance", instanceId: inst.instanceId };
-                    const isel = selectedRef?.kind === "inventory_instance"
-                      && selectedRef.instanceId === inst.instanceId;
-                    const def = content.items[inst.baseItemId];
-                    const label = inst.affixes.length > 0 || inst.suffix
-                      ? instanceDisplayName(inst, content, locale)
-                      : def ? tr(def.name) : inst.baseItemId;
-                    return (
-                      <SelectRow key={inst.instanceId} itemId={inst.baseItemId} instance={inst} label={label}
-                        selected={isel} onClick={() => selectRef(ref)} />
-                    );
-                  })}
-                </>
-              )}
-            </div>
-          )}
-          <p className="muted ench-suffix-hint">{t("enchant.suffixHint")}</p>
+      {/* ═══ 1 · Item wählen ═══ */}
+      <section className="ench-panel ench-items ds-frame" aria-label={t("enchant.selectItem")}>
+        <div className="shop-section-head" title={t("enchant.suffixHint")}>
+          <span className="ench-step" aria-hidden="true">1</span>
+          <span className="shop-section-title">{t("enchant.selectItem")}</span>
+          <span className="shop-section-line" aria-hidden="true" />
         </div>
+        {hasItems && (
+          <div className="ench-item-tools">
+            <ItemFilterSearch search={itemSearch} onSearchChange={setItemSearch} className="ench-item-search" />
+            <div className="invf-chiprow ench-item-chips">
+              {itemFilters.map((f) => (
+                <button
+                  key={f.id}
+                  type="button"
+                  className={`invf-chip${itemFilter === f.id ? " active" : ""}`}
+                  onClick={() => setItemFilter(f.id)}
+                >
+                  <span className="invf-chip-label">{f.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        {!hasItems ? (
+          <p className="muted">{t("enchant.noItems")}</p>
+        ) : visibleEntries.length === 0 ? (
+          <p className="muted">{t("enchant.items.noMatch")}</p>
+        ) : (
+          <div className="ench-select-list">
+            {renderItemGroup("equipped", "enchant.equipped")}
+            {renderItemGroup("inventory", "enchant.inventory")}
+            {renderItemGroup("variants", "enchant.variants")}
+          </div>
+        )}
+      </section>
 
-        {/* ═══ CENTER — Der Altar: Item groß im Fokus + Verzauberungen + Vorschau ═══ */}
-        <div className="ench-col ench-col-altar">
-          {feedback && (
-            <div className={`ench-feedback ${feedbackOk ? "success" : "danger"}`}>{feedback}</div>
+      <div className="ench-main" ref={mainRef}>
+        {/* ═══ 2 · Der Altar ═══ */}
+        <section ref={stageRef} className={`ench-panel ench-stage ds-frame${flash ? " is-flashing" : ""}${stageFloats ? " is-floating" : ""}`}>
+          {altarArt && (
+            <div className="ench-stage-art" style={{ backgroundImage: `url("${altarArt}")` }} aria-hidden="true" />
           )}
-
           {!selectedItemDef ? (
-            <div className="ench-altar-empty">
-              <div className="ench-altar-socket ench-altar-socket--empty" aria-hidden="true">
-                <span className="ench-altar-empty-glyph">✦</span>
+            <div className="ench-stage-empty">
+              <div className="ench-pedestal ench-pedestal--empty" aria-hidden="true">
+                <img src={iconEnchantRune} alt="" className="ench-pedestal-rune" />
               </div>
-              <p className="muted">{t("enchant.altar.empty")}</p>
+              <p className="ench-stage-empty-title">{t("enchant.altar.empty")}</p>
+              <ol className="ench-steps">
+                <li><span className="ench-step">1</span>{t("enchant.selectItem")}</li>
+                <li><span className="ench-step">2</span>{t("enchant.selectRune")}</li>
+                <li><span className="ench-step">3</span>{t("enchant.doEnchant")}</li>
+              </ol>
+              <p className="ench-stage-note">{t("enchant.suffixHint")}</p>
             </div>
           ) : (
-            <div className="ench-altar">
-              <div className="ench-altar-socket">
-                <ItemCell itemId={selectedItemId!} className="ench-altar-cell"
-                  instance={selectedInstance ?? undefined} />
-              </div>
-
-              <span className={`ench-altar-name ${rarityClass(selectedItemDef.rarity)}`}>
-                {selectedInstance && (selectedInstance.affixes.length > 0 || selectedInstance.suffix)
-                  ? instanceDisplayName(selectedInstance, content, locale)
-                  : tr(selectedItemDef.name)}
-              </span>
-              {selectedItemBadge && (
-                <span className={`ench-altar-badge ench-altar-badge--${selectedItemBadge.tone}`}>
-                  {t(selectedItemBadge.labelKey)}
-                </span>
-              )}
-
-              <div className="ench-altar-slots">
-                <span className="muted ench-altar-slots-label">
-                  {t("enchant.slots")
-                    .replace("{used}", String(usedSlots))
-                    .replace("{max}", String(maxSlots))}
-                </span>
-                <div className="ench-slot-pips" aria-hidden="true">
-                  {Array.from({ length: maxSlots }, (_, i) => (
-                    <span key={i} className={`ench-slot-pip${i < usedSlots ? " filled" : ""}`} />
-                  ))}
+            <div className="ench-stage-grid">
+              {/* Das Item auf dem Altar mit seinen Verzauberungsplätzen */}
+              <div className="ench-altar">
+                <div className="ench-pedestal">
+                  {flash && <span key={flash.seq} className="ench-flash-ring" aria-hidden="true" />}
+                  <ItemCell itemId={selectedItemId!} className="ench-altar-cell" instance={selectedInstance ?? undefined} />
                 </div>
-              </div>
+                <span className={`ench-altar-name ${rarityClass(selectedItemDef.rarity)}`}>
+                  {selectedInstance && (selectedInstance.affixes.length > 0 || selectedInstance.suffix)
+                    ? instanceDisplayName(selectedInstance, content, locale)
+                    : tr(selectedItemDef.name)}
+                </span>
+                <div className="ench-altar-meta">
+                  {selectedItemBadge && (
+                    <span className={`ench-altar-badge ench-altar-badge--${selectedItemBadge.tone}`}>
+                      {t(selectedItemBadge.labelKey)}
+                    </span>
+                  )}
+                  <span className="ench-altar-slots-label">
+                    {t("enchant.slots").replace("{used}", String(usedSlots)).replace("{max}", String(maxSlots))}
+                  </span>
+                </div>
 
-              {/* Aktuelle Verzauberungen */}
-              <div className="ench-current-affixes">
-                {selectedInstance && selectedInstance.affixes.length > 0 ? (
-                  <div className="ench-affix-list">
-                    {selectedInstance.affixes.map((a, i) => {
-                      const affDef2 = content.affixes?.[a.affixId];
-                      const prefixName = affDef2 ? tr(affDef2.prefix) : a.affixId;
-                      const baseDef = selectedItemId ? content.items[selectedItemId] : null;
-                      const rar = baseDef ? getItemRarity(baseDef) : "common";
-                      const remCost = disenchantGoldCost(a.tier, rar);
-                      const bonuses = affDef2 ? affixLines(affDef2, a.tier, t, tr) : [];
+                <div className="ench-sockets">
+                  {Array.from({ length: maxSlots }, (_, i) => {
+                    const a = selectedInstance?.affixes[i];
+                    if (!a) {
+                      const ghost = candidateGhost && i === usedSlots ? candidateGhost : null;
                       return (
-                        <div key={i} className="ench-affix-row">
-                          <span className="ench-affix-gem" aria-hidden="true">✦</span>
-                          <span className="ench-affix-name">{prefixName}</span>
-                          <span className="ench-affix-tier muted">T{a.tier}</span>
-                          {bonuses.length > 0 && (
-                            <span className="ench-affix-bonus muted">{bonuses.join(", ")}</span>
-                          )}
-                          <button className="shop-citadel-btn shop-citadel-btn--sm ench-disenchant-btn"
-                            disabled={state.character.gold < remCost}
-                            onClick={() => handleDisenchant(i)}>
-                            {t("enchant.disenchant").replace("{gold}", String(remCost))}
-                          </button>
+                        <div key={i} className={`ench-socket ench-socket--free${ghost ? " is-candidate" : ""}`}>
+                          <span className="ench-socket-ring">
+                            {ghost ? <RuneGlyph runeId={ghost} tier={previewRA?.tier ?? null} /> : <span className="ench-socket-dot" />}
+                          </span>
+                          <span className="ench-socket-name">{t("enchant.socket.free")}</span>
                         </div>
                       );
-                    })}
-                  </div>
-                ) : (
-                  <p className="muted ench-no-affixes">{t("enchant.noAffixes")}</p>
+                    }
+                    const affDef = content.affixes?.[a.affixId];
+                    const runeId = runeItemFor(a.affixId, a.tier);
+                    const runeDef = runeId ? content.items[runeId] : null;
+                    const name = runeDef ? tr(runeDef.name) : affDef ? `${tr(affDef.prefix)} ${roman(a.tier)}` : a.affixId;
+                    const remCost = disenchantGoldCost(a.tier, selectedRarity);
+                    const bonuses = affDef ? affixLines(affDef, a.tier, t, tr) : [];
+                    const isNew = flash?.socket === i;
+                    return (
+                      <div key={`${i}-${a.affixId}`} className={`ench-socket ench-socket--filled${isNew ? " is-new" : ""}`}>
+                        <span className="ench-socket-ring">
+                          <RuneGlyph runeId={runeId} tier={a.tier} />
+                        </span>
+                        <span className="ench-socket-name">{name}</span>
+                        {bonuses.length > 0 && <span className="ench-socket-effect">{bonuses.join(", ")}</span>}
+                        <button
+                          type="button"
+                          className="shop-citadel-btn shop-citadel-btn--sm ench-disenchant-btn"
+                          disabled={state.character.gold < remCost}
+                          title={state.character.gold < remCost ? t("enchant.reason.not_enough_gold") : t("enchant.removeNote")}
+                          onClick={() => handleDisenchant(i)}
+                        >
+                          {t("enchant.disenchant").replace("{gold}", String(remCost))}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+                {usedSlots > 0 && <p className="ench-stage-note">{t("enchant.removeNote")}</p>}
+                {flash && (
+                  <span key={`t${flash.seq}`} className="ench-flash-text" aria-live="polite">
+                    {t("enchant.flash").replace("{rune}", content.items[flash.runeId] ? tr(content.items[flash.runeId]!.name) : flash.runeId)}
+                  </span>
                 )}
               </div>
 
-              {/* Kandidat: die im Grimoire gewählte Rune × dieses Ziel */}
-              <div className="ench-divider" aria-hidden="true">
-                <span className="ench-divider-line" />
-                <span className="ench-divider-label">{t("enchant.preview")}</span>
-                <span className="ench-divider-line" />
-              </div>
-
-              {previewAffixDef && previewRA && previewCost !== null ? (
-                <div className="ench-candidate">
-                  <div className="ench-candidate-name">
-                    ✦ {tr(previewAffixDef.prefix)}{" "}
-                    <span className="muted">T{previewRA.tier}</span>
-                  </div>
-                  {previewBonusLines.length > 0 && (
-                    <div className="ench-candidate-bonus">
-                      {previewBonusLines.map((line, i) => (
-                        <span key={i} className="ench-bonus-line">{line}</span>
-                      ))}
+              {/* Vorher → Nachher, Kosten, Verzaubern */}
+              <div className="ench-tablet">
+                {feedback && (
+                  <div className={`ench-feedback ${feedbackOk ? "success" : "danger"}`}>{feedback}</div>
+                )}
+                {previewAffixDef && previewRA && previewCost !== null && enchantPreviewResult ? (
+                  <>
+                    <div className="ench-tablet-head">
+                      <RuneGlyph runeId={previewRuneId} tier={previewRA.tier} className="ench-glyph--head" />
+                      <span className="ench-tablet-title">
+                        <span className="ench-tablet-kicker">{t("enchant.preview")}</span>
+                        <span className="ench-candidate-name">
+                          {previewRuneId && content.items[previewRuneId] ? tr(content.items[previewRuneId]!.name) : tr(previewAffixDef.prefix)}
+                        </span>
+                      </span>
                     </div>
-                  )}
-
-                  {/* Vorher/Nachher-Item-Stat-Block (#219): der volle Item-eigene Stat-Block mit und
-                      ohne die Kandidat-Rune, geänderte Zeilen gold hervorgehoben — nutzt `enchantPreview`
-                      1:1 (dieselben Aggregations-Regeln wie ein echtes `applyEnchant`). */}
-                  {enchantPreviewResult && previewRows.length > 0 && (
-                    <div className="ench-statblock">
-                      <div className="ench-statblock-head">
-                        <span />
-                        <span>{t("enchant.preview.before")}</span>
-                        <span />
-                        <span>{t("enchant.preview.after")}</span>
-                      </div>
-                      {previewRows.map((row) => (
-                        <div
-                          key={row.key}
-                          className={`ench-stat-row${row.changed ? " changed" : ""}`}
-                        >
-                          <span className="ench-stat-label">{row.label}</span>
-                          <span className="ench-stat-before">{formatPreviewValue(row.key, row.before)}</span>
-                          <span className="ench-stat-arrow" aria-hidden="true">→</span>
-                          <span className="ench-stat-after">{formatPreviewValue(row.key, row.after)}</span>
+                    {previewRows.length > 0 && (
+                      <div className="ench-statblock">
+                        <div className="ench-statblock-head">
+                          <span />
+                          <span>{t("enchant.preview.before")}</span>
+                          <span />
+                          <span>{t("enchant.preview.after")}</span>
                         </div>
-                      ))}
+                        {previewRows.map((row) => (
+                          <div key={row.key} className={`ench-stat-row${row.changed ? " changed" : ""}`}>
+                            <span className="ench-stat-label">{row.label}</span>
+                            <span className="ench-stat-before">{formatPreviewValue(row.key, row.before)}</span>
+                            <span className="ench-stat-arrow" aria-hidden="true">→</span>
+                            <span className="ench-stat-after">{formatPreviewValue(row.key, row.after)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {enchantPreviewResult.addedProcs.length > 0 && (
+                      <div className="ench-newfx">
+                        <span className="ench-newfx-label">{t("enchant.preview.newEffect")}</span>
+                        {enchantPreviewResult.addedProcs.map((e, i) => (
+                          <div key={i} className="ench-newfx-line">{weaponEffectProse(e, t)}</div>
+                        ))}
+                      </div>
+                    )}
+                    {duplicateEffect && <div className="ench-hint">{t("enchant.preview.duplicateEffect")}</div>}
+                    {!enchantPreviewResult.canApply && enchantPreviewResult.blockedReason && (
+                      <div className="ench-feedback danger">
+                        {t(`enchant.preview.blocked.${enchantPreviewResult.blockedReason}`)}
+                      </div>
+                    )}
+                    {enchantPreviewResult.canApply && goldShort && (
+                      <div className="ench-feedback danger">{t("enchant.reason.not_enough_gold")}</div>
+                    )}
+                    <div className="ench-tablet-foot">
+                      <span className={`ench-cost${goldShort ? " is-short" : ""}`}>
+                        {t("enchant.cost").replace("{gold}", String(previewCost))}
+                      </span>
+                      <button
+                        type="button"
+                        className={`btn-iron ench-btn${canEnchant ? " ready" : ""}`}
+                        disabled={!canEnchant}
+                        onClick={handleEnchant}
+                      >
+                        {t("enchant.doEnchant")}
+                      </button>
                     </div>
-                  )}
-
-                  {/* „Neuer Effekt"-Zeilen: Waffeneffekte/Procs, die NUR durch diese Rune hinzukommen. */}
-                  {enchantPreviewResult && enchantPreviewResult.addedProcs.length > 0 && (
-                    <div className="ench-newfx">
-                      <span className="ench-newfx-label">{t("enchant.preview.newEffect")}</span>
-                      {enchantPreviewResult.addedProcs.map((e, i) => (
-                        <div key={i} className="ench-newfx-line">✦ {weaponEffectProse(e, t)}</div>
-                      ))}
+                  </>
+                ) : (
+                  <>
+                    <div className="ench-tablet-head">
+                      <span className="ench-tablet-title">
+                        <span className="ench-tablet-kicker">{t("enchant.values")}</span>
+                      </span>
                     </div>
-                  )}
-
-                  {duplicateEffect && <div className="ench-cost muted">{t("enchant.preview.duplicateEffect")}</div>}
-
-                  {/* Blockiert-Hinweis: WARUM der Enchant-Button unten deaktiviert ist (Rarity-Slot-Cap ·
-                      Trinity-Klassen-Gate · Item-Typ-Mismatch) — eigene Vokabeln, s. `enchant.preview.blocked.*`. */}
-                  {enchantPreviewResult && !enchantPreviewResult.canApply && enchantPreviewResult.blockedReason && (
-                    <div className="ench-feedback danger">
-                      {t(`enchant.preview.blocked.${enchantPreviewResult.blockedReason}`)}
-                    </div>
-                  )}
-
-                  <div className="ench-cost muted">
-                    {t("enchant.cost").replace("{gold}", String(previewCost))}
-                  </div>
-                  <button className={`shop-citadel-btn ench-btn${canEnchant ? " ready" : ""}`}
-                    disabled={!canEnchant} onClick={handleEnchant}>
-                    {t("enchant.doEnchant")}
-                  </button>
-                </div>
-              ) : (
-                <p className="muted ench-pick-hint">{t("enchant.pickRuneHint")}</p>
-              )}
+                    {currentRows.length > 0 ? (
+                      <div className="ench-statblock ench-statblock--current">
+                        {currentRows.map((row) => (
+                          <div key={row.key} className="ench-stat-row">
+                            <span className="ench-stat-label">{row.label}</span>
+                            <span className="ench-stat-after">{formatPreviewValue(row.key, row.after)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="muted">{t("enchant.noAffixes")}</p>
+                    )}
+                    <p className="ench-pick-hint">
+                      {slotsFull ? t("enchant.reason.no_affix_slots") : t("enchant.pickRuneHint")}
+                    </p>
+                  </>
+                )}
+              </div>
             </div>
           )}
-        </div>
+        </section>
 
-        {/* ═══ RIGHT — Runen-Grimoire: Waffen-Runen (warm) / Rüstungs-Runen (kühl) / Sonstige ═══ */}
-        <div className="ench-col ench-col-grimoire">
+        {/* ═══ 3 · Runen-Grimoire ═══ */}
+        <section className="ench-panel ench-grimoire ds-frame" aria-label={t("enchant.selectRune")}>
           <div className="shop-section-head">
-            <span className="shop-section-orn" aria-hidden="true">◆</span>
+            <span className="ench-step" aria-hidden="true">2</span>
             <span className="shop-section-title">{t("enchant.selectRune")}</span>
             <span className="shop-section-line" aria-hidden="true" />
+            {hasRunes && previewTarget && (
+              <button
+                type="button"
+                className={`invf-chip ench-fit-chip${onlyFitting ? " active" : ""}`}
+                onClick={() => setOnlyFitting(!onlyFitting)}
+                aria-pressed={onlyFitting}
+              >
+                <span className="invf-chip-label">{t("enchant.runes.onlyFitting")}</span>
+                <span className="invf-chip-count">{fittingCount}</span>
+              </button>
+            )}
           </div>
           {!hasRunes ? (
             <p className="muted ench-empty-hint">{t("enchant.noRunes")}</p>
           ) : (
             <div className="ench-rune-groups">
-              {renderRuneSection(weaponRuneRows, "enchant.weaponRunes", "weapon", "⚔")}
-              {renderRuneSection(armorRuneRows, "enchant.armorRunes", "armor", "🛡")}
-              {renderRuneSection(otherRuneRows, "enchant.otherRunes", "other", "✦")}
+              {runeSections.map(([cat, key]) => <div key={cat} className="ench-rune-section-slot">{renderRuneSection(cat, key)}</div>)}
             </div>
           )}
-        </div>
+        </section>
       </div>
     </div>
   );
