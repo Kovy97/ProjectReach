@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Grim Reach Discord Assets</title>
+<!-- claude:2026-10-25T13:40:00+01:00 - erzeugt von build_pages.py, nicht von Hand bearbeiten -->
+<style>
+@font-face { font-family: "Cinzel"; src: url("file:///G:/GameDev/apps/client/src/renderer/fonts/Cinzel-Regular.ttf") format("truetype"); }
+@font-face { font-family: "IM Fell English SC"; src: url("file:///G:/GameDev/apps/client/src/renderer/fonts/IMFellEnglishSC-Regular.woff2") format("woff2"); }
+@font-face { font-family: "Alegreya"; src: url("file:///G:/GameDev/apps/client/src/renderer/fonts/Alegreya-Variable.woff2") format("woff2"); font-weight: 400 900; }
+@font-face { font-family: "Alegreya"; font-style: italic; src: url("file:///G:/GameDev/apps/client/src/renderer/fonts/Alegreya-Italic-Variable.woff2") format("woff2"); font-weight: 400 900; }
+:root { --ink: #eadcbc; --gold: #e2c47a; --gold-bright: #f3e2a8; --bronze: #d8904a; }
+html, body { margin: 0; background: transparent; }
+body { display: flex; flex-direction: column; gap: 20px; padding: 10px; }
+section { position: relative; overflow: hidden; background: #120c08; flex: none; }
+.sq { width: 512px; height: 512px; }
+.banner { width: 960px; height: 540px; }
+.splash { width: 1920px; height: 1080px; }
+.hdr { width: 1200px; height: 300px; color: var(--ink); font-family: Alegreya, Georgia, serif; }
+.bgz { position: absolute; z-index: 0; height: auto; }
+.bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.tex { position: absolute; inset: 0; z-index: 0; background: url("file:///G:/GameDev/apps/client/src/renderer/assets/bg_tileable_stone_dark.webp") 0 0 / 256px repeat; filter: brightness(.55) sepia(.35); }
+.grade { position: absolute; inset: 0; z-index: 1; }
+.free { position: absolute; z-index: 3; filter: drop-shadow(0 10px 18px rgba(0,0,0,.75)); }
+.logo { filter: drop-shadow(0 14px 28px rgba(0,0,0,.80)); }
+.hdr::before { content: ""; position: absolute; inset: 0; z-index: 18; pointer-events: none; box-shadow: inset 0 0 40px 14px rgba(6,4,2,.60); }
+.hdr::after { content: ""; position: absolute; inset: 0; z-index: 20; pointer-events: none; border: 24px solid transparent;
+  border-image: url("file:///G:/GameDev/apps/client/src/renderer/assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 round; }
+.medal { position: absolute; z-index: 6; left: 58px; top: 72px; width: 156px; height: 156px; box-sizing: border-box; display: grid; place-items: center;
+  background: radial-gradient(ellipse at 50% 42%, rgba(86,56,30,.70), rgba(12,8,5,.92) 78%);
+  border: 10px solid transparent; border-image: url("file:///G:/GameDev/apps/client/src/renderer/assets/ui/gravewood/v3/frames/slot-frame.webp") 48 / 10px; box-shadow: 0 8px 18px rgba(0,0,0,.6); }
+.medal img { width: 118px; height: 118px; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,.85)); }
+.txt { position: absolute; z-index: 6; left: 248px; top: 50%; transform: translateY(-50%); }
+.eyebrow { font-family: "IM Fell English SC", Georgia, serif; font-size: 28px; letter-spacing: .10em; color: var(--bronze);
+  text-transform: uppercase; text-shadow: 0 1px 3px rgba(0,0,0,.95); margin: 0 0 2px 3px; }
+h1 { font-family: Cinzel, Georgia, serif; font-weight: 400; font-size: 80px; line-height: 1.0; margin: 0; color: var(--gold-bright);
+  white-space: nowrap; text-shadow: 0 3px 10px rgba(0,0,0,.9), 0 0 2px rgba(0,0,0,.8); }
+.rule { height: 2px; width: 180px; margin: 14px 0 12px 3px; background: linear-gradient(90deg, var(--bronze), rgba(216,144,74,0)); }
+p { margin: 0 0 0 3px; font-size: 32px; font-style: italic; font-weight: 500; color: var(--ink); white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0,0,0,.95); }
+</style>
+</head>
+<body>
+
+<section class="sq" id="icon_crown">
+  <div class="tex"></div>
+  <div class="grade" style="background:radial-gradient(circle at 50% 52%, rgba(176,64,22,.72) 0%, rgba(96,30,12,.50) 30%, rgba(14,8,5,.90) 66%, rgba(6,4,3,1) 100%)"></div>
+  <img class="free" src="file:///G:/GameDev/design/discord-assets/_build/_tmp/crown.png" style="left:50%;top:50%;width:430px;transform:translate(-50%,-46%)">
+</section>
+<section class="sq" id="icon_logo">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu.webp" style="object-position:50% 40%;filter:brightness(.62) saturate(.9)">
+  <div class="grade" style="background:radial-gradient(circle at 50% 50%, rgba(10,6,4,.10) 0%, rgba(10,6,4,.55) 60%, rgba(6,4,3,.92) 100%)"></div>
+  <img class="free" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_logo_painterly.webp" style="left:50%;top:50%;width:448px;transform:translate(-50%,-50%)">
+</section>
+<section class="sq" id="icon_hearth">
+  <div class="tex"></div>
+  <div class="grade" style="background:radial-gradient(circle at 50% 46%, rgba(150,62,20,.50) 0%, rgba(70,26,10,.40) 32%, rgba(10,6,4,.92) 68%, rgba(6,4,3,1) 100%)"></div>
+  <img class="free" src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_newhaven.webp" style="left:50%;top:50%;width:470px;transform:translate(-50%,-49%)">
+</section>
+
+<section class="banner" id="banner_highlands">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_highlands_1920.webp" style="object-position:50% 38%;">
+  <div class="grade" style="background:linear-gradient(rgba(10,7,4,.45) 0%, rgba(10,7,4,.05) 30%, rgba(10,7,4,.05) 62%, rgba(10,7,4,.55) 100%), radial-gradient(ellipse 560px 260px at 50% 58%, rgba(8,5,3,.42), rgba(8,5,3,0) 100%)"></div>
+  <img class="free logo" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_logo_painterly.webp" style="left:50%;top:58%;width:700px;transform:translate(-50%,-50%)">
+</section>
+<section class="banner" id="banner_dusk">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_hero.webp" style="object-position:50% 50%;">
+  <div class="grade" style="background:linear-gradient(rgba(10,7,4,.40) 0%, rgba(10,7,4,.0) 34%, rgba(10,7,4,.0) 62%, rgba(10,7,4,.55) 100%)"></div>
+  <img class="free logo" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_logo_painterly.webp" style="left:50%;top:58%;width:700px;transform:translate(-50%,-50%)">
+</section>
+
+<section class="splash" id="splash_highlands">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_highlands_1920.webp" style="object-position:50% 50%;">
+  <div class="grade" style="background:radial-gradient(ellipse 1300px 760px at 50% 55%, rgba(8,5,3,0) 40%, rgba(8,5,3,.55) 100%), linear-gradient(135deg, rgba(8,5,3,.55) 0%, rgba(8,5,3,0) 38%)"></div>
+  <img class="free logo" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_logo_painterly.webp" style="left:84px;top:64px;width:600px">
+</section>
+<section class="splash" id="splash_war_table">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_war_table.webp" style="object-position:50% 50%;">
+  <div class="grade" style="background:radial-gradient(ellipse 1300px 760px at 50% 55%, rgba(8,5,3,0) 40%, rgba(8,5,3,.55) 100%)"></div>
+  <img class="free logo" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_logo_painterly.webp" style="left:84px;top:64px;width:600px">
+</section>
+
+<section class="hdr" id="hdr_welcome">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/battlescreens/pastures.webp" style="object-position:50% 34%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.90) 0%, rgba(12,8,5,.82) 30%, rgba(12,8,5,.55) 58%, rgba(12,8,5,.12) 80%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_newhaven.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>Welcome</h1>
+    <div class="rule"></div>
+    <p>The official home of Grim Reach</p>
+  </div>
+</section>
+<section class="hdr" id="hdr_rules">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/events/guard_change.webp" style="object-position:50% 38%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.90) 0%, rgba(12,8,5,.82) 30%, rgba(12,8,5,.55) 58%, rgba(12,8,5,.12) 80%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/icons/icon_ach_scroll.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>Rules</h1>
+    <div class="rule"></div>
+    <p>Read these before you post</p>
+  </div>
+</section>
+<section class="hdr" id="hdr_faq">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/skill-backgrounds/inscription.webp" style="object-position:50% 55%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.90) 0%, rgba(12,8,5,.82) 30%, rgba(12,8,5,.55) 58%, rgba(12,8,5,.12) 80%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_save.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>FAQ</h1>
+    <div class="rule"></div>
+    <p>Answers to the questions we hear most</p>
+  </div>
+</section>
+<section class="hdr" id="hdr_announcements">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/events/customer.webp" style="object-position:50% 40%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.90) 0%, rgba(12,8,5,.82) 30%, rgba(12,8,5,.55) 58%, rgba(12,8,5,.12) 80%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/icons/icon_tier_crown.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1 style="font-size:72px">Announcements</h1>
+    <div class="rule"></div>
+    <p>News from Heartforge Studios</p>
+  </div>
+</section>
+<section class="hdr" id="hdr_patch-notes">
+  <img class="bgz" src="file:///G:/GameDev/apps/client/src/renderer/assets/skill-backgrounds/smithing.webp" style="width:1560px;left:-150px;top:-150px">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.90) 0%, rgba(12,8,5,.82) 30%, rgba(12,8,5,.55) 58%, rgba(12,8,5,.12) 80%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_smithing.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1 style="font-size:72px">Patch Notes</h1>
+    <div class="rule"></div>
+    <p>Every update, fresh from the forge</p>
+  </div>
+</section>
+<section class="hdr" id="hdr_dev-log">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/skill-backgrounds/jewelcrafting.webp" style="object-position:50% 45%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.90) 0%, rgba(12,8,5,.82) 30%, rgba(12,8,5,.55) 58%, rgba(12,8,5,.12) 80%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_inscription.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>Dev Log</h1>
+    <div class="rule"></div>
+    <p>A look into the workshop</p>
+  </div>
+</section>
+<section class="hdr" id="hdr_guides-and-builds">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_war_table.webp" style="object-position:50% 78%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.90) 0%, rgba(12,8,5,.82) 30%, rgba(12,8,5,.55) 58%, rgba(12,8,5,.12) 80%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/icons/icon_ach_compass.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1 style="font-size:72px">Guides &amp; Builds</h1>
+    <div class="rule"></div>
+    <p>Routes, builds and hard-won knowledge</p>
+  </div>
+</section>
+<section class="hdr" id="hdr_suggestions">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/events/inspiration.webp" style="object-position:50% 32%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.90) 0%, rgba(12,8,5,.82) 30%, rgba(12,8,5,.55) 58%, rgba(12,8,5,.12) 80%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/icons/icon_quests.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1 style="font-size:72px">Suggestions</h1>
+    <div class="rule"></div>
+    <p>Your ideas for the Reach</p>
+  </div>
+</section>
+<section class="hdr" id="hdr_bug-reports">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/battlescreens/blackthorn.webp" style="object-position:50% 42%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.90) 0%, rgba(12,8,5,.82) 30%, rgba(12,8,5,.55) 58%, rgba(12,8,5,.12) 80%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/pets/silkweaver.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1 style="font-size:72px">Bug Reports</h1>
+    <div class="rule"></div>
+    <p>Found something broken? Tell us here</p>
+  </div>
+</section>
+<section class="hdr" id="hdr_beta-news">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/skill-backgrounds/runecrafting.webp" style="object-position:50% 50%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.90) 0%, rgba(12,8,5,.82) 30%, rgba(12,8,5,.55) 58%, rgba(12,8,5,.12) 80%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_runecrafting.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>Beta News</h1>
+    <div class="rule"></div>
+    <p>Test builds and what comes next</p>
+  </div>
+</section>
+</body>
+</html>

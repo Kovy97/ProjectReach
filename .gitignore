@@ -56,3 +56,6 @@ ASSETS/neuguss-*/fertig/*.zip
 # UI-Vergleichslaeufe (1.1.0): Rohaufnahmen, gehoeren nicht ins Repo
 apps/client/ui-audit/_stilvergleich/
 apps/client/ui-audit/_shadow-1.1.0/
+
+# Belegscreenshots der Painterly-Bestandsaufnahme (183 MB), nur lokal
+design/painterly-assets-2026-10-25/shots/
