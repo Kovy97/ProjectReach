@@ -28,8 +28,9 @@
 }
 
 /* claude:2026-10-25T18:09:00+01:00 — Knopf-Stile (navSkin.ts). Jedes Profil setzt Fläche, Auswahl-Fläche und Rahmen; dieselben Werte gelten für
-   die Vorschau-Muster in den Optionen (.nav-skin-sample[data-nav-skin]). Ohne Attribut gilt Leder (DEFAULT_NAV_SKIN). */
+   die Vorschau-Muster in den Optionen (.nav-skin-sample[data-nav-skin]). Ohne Attribut gilt Holz (DEFAULT_NAV_SKIN, Chef 25.10. claude:2026-10-25T18:14:00+01:00). */
 /* Holz (19.10.–25.10.): texture-nav-wood2, Holzstreifen Schnitt 47 / 5,5 px */
+:root,
 :root[data-nav-skin="wood"],
 [data-nav-skin="wood"] {
   --nav-skin-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(8, 11, 13, .06), rgba(2, 4, 5, .28)), url("../assets/ui/gravewood/textures/texture-nav-wood2.webp") 110px 37px / 304px 304px repeat;
@@ -57,7 +58,6 @@
   --nav-skin-frame-w: 6px;
 }
 /* Leder & Slot (Editor 25.10. 18:06): Leder gebacken, Sättigung 0,49, 180°, Inventar-Slot-Rahmen */
-:root,
 :root[data-nav-skin="leather"],
 [data-nav-skin="leather"] {
   --nav-skin-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(6, 7, 8, .03), rgba(2, 3, 4, .28)), url("../assets/ui/gravewood/textures/texture-nav-leather2.webp") 107px 125px / 304px 304px repeat;

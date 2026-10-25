@@ -11,8 +11,8 @@ import { useSyncExternalStore } from "react";
 export const NAV_SKINS = ["wood", "moss", "basalt", "leather"] as const;
 export type NavSkin = (typeof NAV_SKINS)[number];
 
-/** Vorgabe = zuletzt vom Chef ausprobiertes Profil (Leder mit Slot-Rahmen, 25.10.). */
-export const DEFAULT_NAV_SKIN: NavSkin = "leather";
+/** Vorgabe bleibt Holz (Chef 25.10.: „Wood soll aber Standard bleiben“). claude:2026-10-25T18:14:00+01:00 */
+export const DEFAULT_NAV_SKIN: NavSkin = "wood";
 
 const STORAGE_KEY = "hearthforge:navSkin";
 
