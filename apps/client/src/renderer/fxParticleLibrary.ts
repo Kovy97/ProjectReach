@@ -39,6 +39,11 @@ import {
   type RecipeFn,
   type ThemeColors,
 } from "./fxParticles";
+// claude:2026-10-25T14:48:00+01:00 — Nahkampf 1.4.1: je Waffenart eigene Rezepte (`melee_<weaponType>`) samt
+// Element-Überlagerung liegen in fxParticleMelee.ts; der Seiteneffekt-Import hier hängt sie mit ein, damit
+// CombatPage, Tests und die Demo-Bündelung weiter nur DIESE Datei importieren müssen. Die vier alten Familien
+// unten (`slash_cut/heavy/blunt/thrust`) bleiben als Rückfall und für Gegnerangriffe (ohne Waffendaten).
+import "./fxParticleMelee";
 
 const ARCANE_TH = THEMES.arcane!;
 const FIRE_TH = THEMES.fire!;

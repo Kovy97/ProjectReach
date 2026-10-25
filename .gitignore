@@ -59,5 +59,7 @@ apps/client/ui-audit/_shadow-1.1.0/
 
 # Belegscreenshots der Painterly-Bestandsaufnahme (183 MB), nur lokal
 design/painterly-assets-2026-10-25/shots/
+# claude:2026-10-25T15:17:00+01:00 — Prüfbilder der Nahkampf-Effekte (37 MB, per pruefung-nahkampf-shots.mjs reproduzierbar)
+design/combat-fx/shots-nahkampf/
 # Vorher/Nachher-Screenshots der Verzauberungsseite (139 MB), nur lokal
 design/enchanting-redesign-2026-10-25/

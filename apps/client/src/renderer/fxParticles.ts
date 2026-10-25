@@ -174,6 +174,8 @@ export interface ParticleApi {
   blood(x: number, y: number, vx: number, vy: number, life: number, size: number, rgbTriplet?: string): void;
   bone(x: number, y: number, vx: number, vy: number, life: number, size: number): void;
   splinter(x: number, y: number, vx: number, vy: number, life: number, size: number): void;
+  /** Steinsplitter (Nahkampf 1.4.1, Hammer-/Maul-Bodenriss): dunkelgraue, kantige Brocken. */
+  stone(x: number, y: number, vx: number, vy: number, life: number, size: number): void;
   glass(x: number, y: number, vx: number, vy: number, life: number, size: number): void;
   rime(x: number, y: number, life: number, size: number, theme: ThemeColors): void;
   /** Zieht einen bereits gespawnten Partikel physikalisch zu `at` (Leere-Anziehung/Motes-
@@ -240,6 +242,11 @@ export interface ParticleApi {
   pick<T>(arr: readonly T[]): T;
 }
 
+// claude:2026-10-25T14:48:00+01:00 — Nahkampf 1.4.1: Element-Modifikator einer Nahkampfwaffe (eigener Waffeneffekt oder Rune).
+/** Element-Überlagerung eines Nahkampf-Treffers (fxParticleMelee.ts): die Status-Effekte der
+ *  Mainhand, auf Effekt-Farbwelten abgebildet (burn→fire, frost, shock, poison, bleed, void). */
+export type FxElement = "fire" | "frost" | "shock" | "poison" | "bleed" | "void";
+
 /** Kontext, den `ParticleStage.play`/`startAmbient` einem Rezept übergibt. `from`/`to` sind
  *  bereits Bühnen-Pixel (dieselbe Koordinatenbasis wie `.arena-fx-layer`, s. CombatPage `fxRect`).
  *  `dir` ist die horizontale Angriffsrichtung (+1 = Spieler→Gegner, -1 gespiegelt für
@@ -273,6 +280,13 @@ export interface RecipeContext {
   /** Nur Ambient-Rezepte (Status-Loops): `true`, solange der Status noch aktiv ist — das Rezept
    *  registriert einen `Effect`, dessen `alive()` hieran hängt. */
   isActive?: () => boolean;
+  // claude:2026-10-25T14:48:00+01:00 — Nahkampf 1.4.1: Element-Überlagerung + echter Auslöser in DIESEM Treffer.
+  /** Nur Nahkampf-Rezepte (`melee_<waffenart>`): Elemente der Waffe (max. zwei, Reihenfolge =
+   *  Vorrang) — Spur und Einschlag bekommen je Element eine Überlagerung. Leer/fehlt = reiner Stahl. */
+  elements?: readonly FxElement[];
+  /** Nur Nahkampf-Rezepte: Elemente, deren Status in DIESEM Schlag laut Kampflog wirklich ausgelöst
+   *  hat (`kind:"status"` vor dem Treffer) — das Rezept setzt dafür einen deutlicheren Moment. */
+  procs?: readonly FxElement[];
 }
 
 export type RecipeFn = (ctx: RecipeContext) => void;
@@ -334,7 +348,8 @@ export function selectRecipe(
 
 // ─── Partikel-Pool (intern) ──────────────────────────────────────────────────────────────────
 
-type ParticleKind = "ember" | "spark" | "smoke" | "ash" | "mote" | "shard" | "bubble" | "drop" | "feather" | "dust" | "blood" | "bone" | "splinter" | "glass" | "rime";
+// claude:2026-10-25T14:48:00+01:00 — Nahkampf 1.4.1: "stone" (Steinsplitter) ergänzt.
+type ParticleKind = "ember" | "spark" | "smoke" | "ash" | "mote" | "shard" | "bubble" | "drop" | "feather" | "dust" | "blood" | "bone" | "splinter" | "stone" | "glass" | "rime";
 
 interface Particle {
   x: number;
@@ -351,8 +366,8 @@ interface Particle {
   smokeRgb?: string; // smoke
   smokeAlpha?: number; // smoke Grund-Deckkraft (Demo-Default 0.28/0.34 je Aufrufer)
   bloodRgb?: string; // blood
-  rot?: number; // shard/bone/splinter/glass/feather/rime
-  spin?: number; // shard/bone/splinter/glass (rot animiert per spin)
+  rot?: number; // shard/bone/splinter/stone/glass/feather/rime
+  spin?: number; // shard/bone/splinter/stone/glass (rot animiert per spin)
   ph?: number; // mote-Twinkle-/Feather-Schwenk-Phase
   ax?: number; // ash-Ankerpunkt X
   th?: ThemeColors; // feather (drawFeather), rime (drawCrystal)
@@ -966,6 +981,18 @@ function drawBoneSplinterGlassParticle(ctx: CanvasRenderingContext2D, p: Particl
   } else if (p.kind === "splinter") {
     ctx.fillStyle = `rgba(150,115,70,${0.9 * a})`;
     ctx.fillRect(-p.size, -p.size * 0.22, p.size * 2, p.size * 0.44);
+  } else if (p.kind === "stone") {
+    // claude:2026-10-25T14:48:00+01:00 — Steinsplitter: kantiges Viereck, dunkles Grau mit hellerer Bruchkante.
+    ctx.fillStyle = `rgba(88,82,74,${0.95 * a})`;
+    ctx.beginPath();
+    ctx.moveTo(-p.size, -p.size * 0.5);
+    ctx.lineTo(p.size * 0.7, -p.size * 0.7);
+    ctx.lineTo(p.size, p.size * 0.4);
+    ctx.lineTo(-p.size * 0.5, p.size * 0.7);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = `rgba(160,150,135,${0.7 * a})`;
+    ctx.fillRect(-p.size * 0.6, -p.size * 0.55, p.size * 1.1, p.size * 0.25);
   } else {
     ctx.strokeStyle = `rgba(210,235,240,${0.8 * a})`;
     ctx.lineWidth = 1;
@@ -1053,7 +1080,8 @@ export class ParticleStage {
   /** Spielt das Rezept unter `key` (falls eines registriert ist) als EINMALIGEN Effekt. `false` =
    *  kein Rezept (oder Level "off"/`FX_PARTICLES=false`) — der Aufrufer fällt dann auf den
    *  Sprite-Pfad zurück. */
-  play(key: string, opts: { from: Point; to: Point; crit?: boolean; dir?: 1 | -1; durationMs?: number; onArrive?: () => void; box?: Rect; feet?: Point; petPos?: Point }): boolean {
+  // claude:2026-10-25T14:48:00+01:00 — Nahkampf 1.4.1: `elements`/`procs` werden ans Rezept durchgereicht.
+  play(key: string, opts: { from: Point; to: Point; crit?: boolean; dir?: 1 | -1; durationMs?: number; onArrive?: () => void; box?: Rect; feet?: Point; petPos?: Point; elements?: readonly FxElement[]; procs?: readonly FxElement[] }): boolean {
     if (!FX_PARTICLES || this.level === "off" || !this.ctx) return false;
     const picked = selectRecipe(key, !!opts.crit, this.lastVariant);
     if (!picked) return false;
@@ -1071,6 +1099,8 @@ export class ParticleStage {
       box: opts.box,
       feet: opts.feet,
       petPos: opts.petPos,
+      elements: opts.elements,
+      procs: opts.procs,
     });
     this.ensureRunning();
     return true;
@@ -1168,6 +1198,7 @@ export class ParticleStage {
       blood: (x, y, vx, vy, life, size, rgbTriplet = "150,22,28") => void this.spawnParticle({ x, y, vx, vy, age: 0, life, size, kind: "blood", bloodRgb: rgbTriplet, grav: 420, drag: 0.985 }),
       bone: (x, y, vx, vy, life, size) => void this.spawnParticle({ x, y, vx, vy, age: 0, life, size, kind: "bone", grav: 380, drag: 0.985, rot: rand(0, 6), spin: rand(-9, 9) }),
       splinter: (x, y, vx, vy, life, size) => void this.spawnParticle({ x, y, vx, vy, age: 0, life, size, kind: "splinter", grav: 380, drag: 0.985, rot: rand(0, 6), spin: rand(-12, 12) }),
+      stone: (x, y, vx, vy, life, size) => void this.spawnParticle({ x, y, vx, vy, age: 0, life, size, kind: "stone", grav: 520, drag: 0.985, rot: rand(0, 6), spin: rand(-7, 7) }),
       glass: (x, y, vx, vy, life, size) => void this.spawnParticle({ x, y, vx, vy, age: 0, life, size, kind: "glass", grav: 400, drag: 0.985, rot: rand(0, 6), spin: rand(-10, 10) }),
       rime: (x, y, life, size, theme) => void this.spawnParticle({ x, y, vx: 0, vy: 0, age: 0, life, size, kind: "rime", grav: 0, drag: 1, rot: rand(0, 6), th: theme }),
       pull: (handle, at, force) => {
@@ -1309,7 +1340,7 @@ export class ParticleStage {
       else if (p.kind === "dust") drawDustParticle(ctx, p);
       else if (p.kind === "ash") drawAshParticle(ctx, p);
       else if (p.kind === "blood") drawBloodParticle(ctx, p);
-      else if (p.kind === "bone" || p.kind === "splinter" || p.kind === "glass") drawBoneSplinterGlassParticle(ctx, p);
+      else if (p.kind === "bone" || p.kind === "splinter" || p.kind === "stone" || p.kind === "glass") drawBoneSplinterGlassParticle(ctx, p);
     }
 
     // Zweite Lage: "lighter" (additiv) — Glut/Funken/Motes/Splitter/Rime/Blasen/Tropfen/Federn,

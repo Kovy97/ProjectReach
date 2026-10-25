@@ -64,7 +64,7 @@ import {
 } from "@hearthforge/engine";
 import type { ParagonFloorPreview, ParagonStatus } from "@hearthforge/engine";
 import type { ActiveBuff, BossPhase, CombatEvent, CombatStyle, RangedStance, DerivedStats, DungeonDef, ElementalSideCounters, EliteVariantDef, LootRoll, MagicStance, GameState, ItemDef, LastKillSummary, LocalizedString, MonsterDef, PetAbilityKind, SlayerTowerFloor, StatusEffect, StatusType } from "@hearthforge/shared";
-import { autoEatHealMult, effectiveAutoEatThreshold, effectiveWeaponEffects, isStatusEffectType, EQUIP_SLOT_LABELS, AUTO_EAT_MAX_TIER, AUTO_POTION_COOLDOWN_MS, AUTO_REBUFF_UNLOCK_COST, COMBAT_SKILL_IDS, CRAFT_TARGET_PRESETS, CRIT_CHANCE_CAP, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, combatXpLevelMult, consumableHeal, FROST_FREEZE_STACKS, KILL_COOLDOWN_MS, PARAGON_BOSS_INTERVAL, PARAGON_DUNGEON_ID, POISON_MAX_STACKS, PRE_BOSS_BREATHER_MS, QUIVER_CAPACITY, SHOCK_DELAY_CAP_MS } from "@hearthforge/shared";
+import { autoEatHealMult, effectiveAutoEatThreshold, effectiveInstanceWeaponEffects, effectiveWeaponEffects, isStatusEffectType, EQUIP_SLOT_LABELS, AUTO_EAT_MAX_TIER, AUTO_POTION_COOLDOWN_MS, AUTO_REBUFF_UNLOCK_COST, COMBAT_SKILL_IDS, CRAFT_TARGET_PRESETS, CRIT_CHANCE_CAP, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, combatXpLevelMult, consumableHeal, FROST_FREEZE_STACKS, KILL_COOLDOWN_MS, PARAGON_BOSS_INTERVAL, PARAGON_DUNGEON_ID, POISON_MAX_STACKS, PRE_BOSS_BREATHER_MS, QUIVER_CAPACITY, SHOCK_DELAY_CAP_MS } from "@hearthforge/shared";
 import { getEliteMonsterSrc, getMonsterSrc } from "../monsters";
 import { AreaTourGuide } from "../components/AreaTourGuide";
 import { ActiveBuffsBar } from "../components/ActiveBuffs";
@@ -94,7 +94,9 @@ import {
   type PetFxTheme,
   type SlashFamily,
 } from "../combatFx";
-import { hasRecipe as hasParticleRecipe, ParticleStage, type Rect } from "../fxParticles";
+import { hasRecipe as hasParticleRecipe, ParticleStage, type FxElement, type Rect } from "../fxParticles";
+// claude:2026-10-25T14:48:00+01:00 — Nahkampf 1.4.1: je Waffenart eigenes Rezept + Element-Überlagerung + Kurzbewegung.
+import { MELEE_MOTION_KEYFRAMES, meleeElementForStatus, meleeElementsFor, meleeMotionFor, meleeRecipeKeyFor, type MeleeMotion } from "../fxParticleMelee";
 // Seiteneffekt-Import (Chef-Entscheid 28.08.2026 "alle implementieren, für alle Waffen"): hängt
 // beim Modul-Laden ALLE Partikel-Rezepte (Feuer/Blitz/Frost/Gift/Arkan/Leere/Aether, Nahkampf,
 // Pfeil, Trefferreaktionen, Begleiter, Status-Körpereffekte) in die Registry ein — nichts davon
@@ -1089,6 +1091,10 @@ interface FighterProps {
   attackNonce?: number;
   /** When true, player attacks use the arcane cast animation instead of the physical lunge. */
   isCasting?: boolean;
+  // claude:2026-10-25T14:48:00+01:00 — Nahkampf 1.4.1: Kurzbewegung je Waffenklasse (fxParticleMelee.ts MELEE_MOTION_KEYFRAMES).
+  /** Nur Spieler im Nahkampf: Stich (Dolch/Speer), Schnitt, weiter Schwung (Zweihänder), Überkopf
+   *  (Streitkolben/Maul). Fehlt = bisherige Lunge. */
+  meleeMotion?: MeleeMotion;
   /** Optional battle-sprite overlay shown next to the fighter figure (used for equipped pet). */
   companionSprite?: JSX.Element;
   /**
@@ -1264,10 +1270,14 @@ function Fighter(props: FighterProps): JSX.Element {
     if (!el || typeof el.animate !== "function") return;
     if (!props.enemy && props.isCasting) {
       el.animate(CAST_KEYFRAMES, { duration: 480, easing: "ease-in-out" });
+    } else if (!props.enemy && props.meleeMotion) {
+      // claude:2026-10-25T14:48:00+01:00 — Nahkampf 1.4.1: waffenklassen-eigene Kurzbewegung (reine Transforms auf figureRef wie die Lunge).
+      const m = MELEE_MOTION_KEYFRAMES[props.meleeMotion];
+      el.animate(m.frames, { duration: m.duration, easing: m.easing });
     } else {
       el.animate(props.enemy ? LUNGE_LEFT : LUNGE_RIGHT, { duration: 400, easing: "ease-out" });
     }
-  }, [props.attackNonce, props.enemy, props.isCasting, fxMotion]);
+  }, [props.attackNonce, props.enemy, props.isCasting, props.meleeMotion, fxMotion]);
 
   // Task #296 P0 §1.1/§1.2 — Treffer-Feedback am GETROFFENEN: Flash (Opacity-Overlay, immer
   // transform-frei) + Recoil (Translate auf `artRef`, NICHT `figureRef`, s. Ref-Kommentar oben).
@@ -2831,6 +2841,42 @@ function Battle({
     });
   };
 
+  // claude:2026-10-25T14:48:00+01:00 — Nahkampf 1.4.1: waffenarteigenes Rezept (`melee_<weaponType>`, fxParticleMelee.ts).
+  /** Spieler-Nahkampf je Waffenart: dieselben Anker wie `playParticleSlash`, zusätzlich die
+   *  Element-Überlagerung der Waffe (`elements`) und die in DIESEM Schlag geloggten Auslöser
+   *  (`procs`). `false` = kein Rezept/Anker/Level "off" — Aufrufer fällt auf `playParticleSlash`
+   *  (alte Familie) bzw. `playSlashFx` (Sprite) zurück. */
+  const playParticleMelee = (target: "player" | "enemy", key: string, crit: boolean, elements: readonly FxElement[], procs: readonly FxElement[]): boolean => {
+    const stage = particleStageRef.current;
+    if (!stage || !hasParticleRecipe(key)) return false;
+    const attacker: "player" | "enemy" = target === "enemy" ? "player" : "enemy";
+    const fromBox = fxRect(`.arena-side-${attacker} .fighter-figure-art`);
+    const toAnchor = particleAnchor(target);
+    if (!fromBox || !toAnchor) return false;
+    return stage.play(key, {
+      from: { x: fromBox.x + fromBox.w * 0.55, y: fromBox.y + fromBox.h * 0.32 },
+      to: toAnchor.center,
+      dir: target === "enemy" ? 1 : -1,
+      crit,
+      box: toAnchor.box,
+      feet: toAnchor.feet,
+      elements,
+      procs,
+    });
+  };
+
+  /** Element-Überlagerung der Spieler-Mainhand: dieselbe Effektliste, die die Engine je Treffer
+   *  würfelt (combat.ts `mainhandStatusEffects`: Basis-Waffe + Runen der ausgerüsteten Instanz,
+   *  nur wenn die Instanz zur Mainhand-ID passt), auf Effekt-Elemente abgebildet. Bewusst erst beim
+   *  Treffer gelesen statt per useMemo — Verzaubern ändert die Instanz, nicht die Mainhand-ID. */
+  const playerMeleeElements = (): FxElement[] => {
+    const id = c.equipment.mainhand;
+    const weapon = id ? content.items[id] : undefined;
+    const inst = c.equippedInstances?.mainhand;
+    const effects = inst && inst.baseItemId === id ? effectiveInstanceWeaponEffects(inst, weapon, content) : effectiveWeaponEffects(weapon);
+    return meleeElementsFor(effects);
+  };
+
   /** Blut-/Ichor-/Knochenstaub-Gegenstück zu `playBloodFx`. */
   const playParticleBlood = (side: "player" | "enemy", variant: BloodVariant, crit: boolean): boolean => {
     const stage = particleStageRef.current;
@@ -2983,9 +3029,19 @@ function Battle({
     lastSeqRef.current = cs.eventCount;
 
     const spawned: Floater[] = [];
+    // claude:2026-10-25T14:48:00+01:00 — Nahkampf 1.4.1: Status, die der Spieler in diesem Schlag gelegt hat. Die Engine loggt
+    // `kind:"status"` VOR dem zugehörigen Treffer (combat.ts strikeEnemy → applyWeaponEffects → pushLog hit),
+    // der nächste Spieler-Nahkampftreffer verbraucht sie als Auslöser-Moment (fxParticleMelee.ts `procs`).
+    let meleeProcs: FxElement[] = [];
     for (const e of cs.log) {
       // seq des ersten neuen Events == vorheriger eventCount → mit "<" einschließen (sonst wird jedes Einzel-Event verworfen).
       if (e.seq < last) continue;
+      if (e.kind === "status" && e.by === "player") {
+        const el = meleeElementForStatus(e.status);
+        if (el && !meleeProcs.includes(el)) meleeProcs.push(el);
+      } else if ((e.kind === "miss" || e.kind === "block") && e.by === "player") {
+        meleeProcs = [];
+      }
       // Angriffsbewegung der angreifenden Seite (auch bei Fehlschlag).
       if (e.kind === "hit" || e.kind === "crit" || e.kind === "miss") {
         triggerLunge(e.by === "player" ? "player" : "enemy");
@@ -3068,8 +3124,15 @@ function Battle({
           } else if (attacker === "player") {
             // Nahkampf: Slash direkt am Ziel, kein Geschoss. Existiert ein Partikel-Rezept für
             // `slash_<familie>`, ersetzt es playSlashFx komplett (Chef-Entscheid 28.08.2026).
+            // claude:2026-10-25T14:48:00+01:00 — Nahkampf 1.4.1: zuerst das waffenarteigene Rezept (`melee_<weaponType>`) mit
+            // Element-Überlagerung + Auslöser; ohne Rezept (unbekannte Waffenart/Faust) die alte Familie.
             const family = slashFamilyFor(mainhandWeapon?.weaponType);
-            if (!playParticleSlash("player", target, family, crit)) {
+            const meleeKey = meleeRecipeKeyFor(mainhandWeapon?.weaponType);
+            const elements = meleeKey ? playerMeleeElements() : [];
+            const procs = meleeProcs.filter((el) => elements.includes(el));
+            meleeProcs = [];
+            const meleePlayed = !!meleeKey && playParticleMelee(target, meleeKey, crit, elements, procs);
+            if (!meleePlayed && !playParticleSlash("player", target, family, crit)) {
               playSlashFx(target, family, crit, false);
             }
             if (allowMissileAndBlood && !playParticleBlood(target, bloodVariant, crit)) playBloodFx(target, bloodVariant, crit);
@@ -3971,6 +4034,7 @@ function Battle({
                 floaters={floaters.filter((f) => f.target === "player")}
                 attackNonce={lunge.player}
                 isCasting={stats.style === "magic"}
+                meleeMotion={stats.style === "melee" ? meleeMotionFor(mainhandWeapon?.weaponType) : undefined}
                 buffChips={<BuffChipsOverlay buffs={c.buffs} />}
                 hitNonce={hitFx.player.n}
                 hitCrit={hitFx.player.crit}
