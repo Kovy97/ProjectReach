@@ -12,8 +12,13 @@
   --chrome-nav-shell: linear-gradient(rgba(15, 10, 7, .18), rgba(8, 7, 6, .36)), url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 800px repeat;
   /* claude:2026-10-18T22:00:00+02:00 — Chef 18.10.: Sidebar- und Topbar-Knöpfe aus dem neuen Holz statt Basalt. Eigene Knopf-
      Fassung `texture-wood-nav` (Maserung quer gedreht, Helligkeit wie die alte Basalt-Fläche ⇒ Goldschrift gleich lesbar). */
-  --chrome-nav-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(8, 11, 13, .06), rgba(2, 4, 5, .28)), url("../assets/ui/gravewood/textures/texture-nav-wood2.webp") 110px 37px / 304px 304px repeat;
-  --chrome-nav-selected: radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%), linear-gradient(rgba(33, 23, 12, .16), rgba(16, 11, 6, .22)), url("../assets/ui/gravewood/textures/texture-nav-wood2.webp") 110px 37px / 304px 304px repeat;
+  /* claude:2026-10-25T17:58:00+01:00 — Chef 25.10. Knopf-Editor „sidebar-moos-holz“ (Moos statt Holz auf der Holzwand): texture-moss-nav mit
+     Helligkeit 1,08 / Kontrast 1,07 / Sättigung 1,67 / Tönung #3a2a14 26 % eingebacken und um 270° gedreht
+     (design/ui-fundament/bake-nav-moss2.py; 278° aus dem Editor auf 270° gerundet, nur Vielfache von 90° kacheln nahtlos).
+     Kachel 304 px, Phase wie die Editor-Vorschau des Seitenleisten-Knopfs; Abdunklung oben 3 %, unten 28 %, Goldschein 17 %.
+     Alt: texture-nav-wood2.webp 110px 37px (bleibt im Bestand). */
+  --chrome-nav-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(6, 7, 8, .03), rgba(2, 3, 4, .28)), url("../assets/ui/gravewood/textures/texture-nav-moss2.webp") 145px 246px / 304px 304px repeat;
+  --chrome-nav-selected: radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%), linear-gradient(rgba(33, 23, 12, .16), rgba(16, 11, 6, .22)), url("../assets/ui/gravewood/textures/texture-nav-moss2.webp") 145px 246px / 304px 304px repeat;
   /* claude:2026-10-17T12:00:00+02:00 — Vertiefte Basalt-Mulde der Statuszellen (Quiet-Citadel-Material). */
   --chrome-well: linear-gradient(rgba(58, 31, 19, .36), rgba(9, 12, 14, .72)), url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 480px repeat;
 }
@@ -73,7 +78,7 @@
   border: calc(3px * var(--tb-k)) solid transparent; /* claude:2026-10-19T18:40:00+02:00 — Chef 19.10.: Rahmen der Reforged-Knöpfe 50 % dünner (11 → 5,5 px Bild, 6 → 3 px Rand). */
   /* claude:2026-10-19T02:30:00+02:00 — Chef 19.10. Knopf-Editor „knopf-sidebar-moos-holz“: Wood 2 (Kachel 304, Versatz 110/37,
      Tönung #3a2a14 26 % eingebacken) + Original-Holzstreifen (Slice 47, 11 px, round). */
-  border-image: url("../assets/ui/gravewood/frames/wood-frame-strip.webp") 47 / calc(5.5px * var(--tb-k)) round;
+  border-image: url("../assets/ui/gravewood/frames/wood-frame-strip.webp") 42 / calc(6px * var(--tb-k)) round; /* claude:2026-10-25T17:58:00+01:00 — Chef-Knopf 25.10.: Schnitt 42, Breite 6 */
   border-radius: 0;
   background: var(--chrome-nav-surface);
   color: #e4cc83;

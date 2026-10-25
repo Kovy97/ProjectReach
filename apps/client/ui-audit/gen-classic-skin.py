@@ -36,6 +36,7 @@ for p in CLASSIC_DIR.rglob('*'):
 NEW_ONLY = {
     'bg_tileable_stone_dark.webp': 'bg_tileable_stone.webp',
     'ui/gravewood/textures/texture-nav-wood2.webp': 'classic/ui/gravewood/v3/textures/texture-basalt.webp',
+    'ui/gravewood/textures/texture-nav-moss2.webp': 'classic/ui/gravewood/v3/textures/texture-basalt.webp',  # claude:2026-10-25T17:58:00+01:00 — Chef-Knopf 25.10.
     'ui/gravewood/textures/texture-wood-nav.webp': 'classic/ui/gravewood/textures/texture-leather.webp',
     'ui/gravewood/textures/texture-moss-nav.webp': 'classic/ui/gravewood/v3/textures/texture-basalt.webp',
     'ui/gravewood/frames/wood-frame-strip.webp': 'classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp',
