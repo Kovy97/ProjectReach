@@ -1,5 +1,5 @@
 # Grim Reach Discord-Grafiken: Server-Symbole, Banner, Einladungs-Hintergrund und Kanal-Kopfbilder als HTML.
-# claude:2026-10-25T13:40:00+01:00 - Chef-Auftrag 25.10. (Discord-Server Heartforge Studios), Vorbild
+# claude:2026-10-25T13:17:00+01:00 - Chef-Auftrag 25.10. (Discord-Server Heartforge Studios), Vorbild
 # design/steam-store-panels-1.4.0. Aufruf: python -I build_icons.py; python -I build_pages.py; node render_pages.mjs
 import os, sys
 
@@ -111,6 +111,25 @@ for hid, title, sub, rel, pos in HEADERS:
   </div>
 </section>''')
 
+# claude:2026-10-25T13:15:00+01:00 - Chef 25.10.: Kopfbilder in Discord zu klein. Discord zeigt Bildanhaenge hoechstens etwa 550 px breit,
+# ein 4:1-Bild wird dadurch nur rund 140 px hoch. 2:1-Fassung (1600 x 800) mit grosser Schrift = doppelte Flaeche.
+heads2 = []
+for hid, title, sub, rel, pos in HEADERS:
+    icon = HEADER_ICONS[hid]
+    layer = bg(rel, "50% 42%" if pos.startswith("zoom:") else pos)
+    heads2.append(f'''
+<section class="hdr hdr2" id="hdr2_{hid}">
+  {layer}
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.92) 0%, rgba(12,8,5,.84) 34%, rgba(12,8,5,.55) 62%, rgba(12,8,5,.15) 84%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="{SRC(icon)}"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>{title}</h1>
+    <div class="rule"></div>
+    <p>{sub}</p>
+  </div>
+</section>''')
+
 CSS = f'''
 @font-face {{ font-family: "Cinzel"; src: url("file:///{F}Cinzel-Regular.ttf") format("truetype"); }}
 @font-face {{ font-family: "IM Fell English SC"; src: url("file:///{F}IMFellEnglishSC-Regular.woff2") format("woff2"); }}
@@ -145,6 +164,16 @@ h1 {{ font-family: Cinzel, Georgia, serif; font-weight: 400; font-size: 80px; li
 .rule {{ height: 2px; width: 180px; margin: 14px 0 12px 3px; background: linear-gradient(90deg, var(--bronze), rgba(216,144,74,0)); }}
 p {{ margin: 0 0 0 3px; font-size: 32px; font-style: italic; font-weight: 500; color: var(--ink); white-space: nowrap;
   text-shadow: 0 1px 4px rgba(0,0,0,.95); }}
+.hdr2 {{ width: 1600px; height: 800px; }}
+.hdr2::before {{ box-shadow: inset 0 0 70px 24px rgba(6,4,2,.62); }}
+.hdr2::after {{ border-width: 38px; }}
+.hdr2 .medal {{ left: 100px; top: 50%; transform: translateY(-50%); width: 270px; height: 270px; border-width: 16px; border-image-width: 16px; }}
+.hdr2 .medal img {{ width: 206px; height: 206px; }}
+.hdr2 .txt {{ left: 420px; right: 70px; }}
+.hdr2 .eyebrow {{ font-size: 48px; margin: 0 0 6px 5px; }}
+.hdr2 h1 {{ font-size: 150px; text-shadow: 0 5px 16px rgba(0,0,0,.92), 0 0 3px rgba(0,0,0,.85); }}
+.hdr2 .rule {{ height: 3px; width: 300px; margin: 24px 0 20px 5px; }}
+.hdr2 p {{ font-size: 54px; white-space: normal; max-width: 1050px; line-height: 1.2; }}
 '''
 
 html = f'''<!doctype html>
@@ -152,7 +181,7 @@ html = f'''<!doctype html>
 <head>
 <meta charset="utf-8">
 <title>Grim Reach Discord Assets</title>
-<!-- claude:2026-10-25T13:40:00+01:00 - erzeugt von build_pages.py, nicht von Hand bearbeiten -->
+<!-- claude:2026-10-25T13:17:00+01:00 - erzeugt von build_pages.py, nicht von Hand bearbeiten -->
 <style>{CSS}</style>
 </head>
 <body>
@@ -160,6 +189,18 @@ html = f'''<!doctype html>
 {banners}
 {splashes}
 {"".join(heads)}
+{"".join(heads2)}
+<script>
+// Titel der 2:1-Kopfbilder auf die verfuegbare Breite einpassen (lange Namen wie "Announcements").
+// Erst nach dem Laden der Schriften messen, sonst misst der Browser mit der schmaleren Ersatzschrift.
+window.__fitDone = document.fonts.ready.then(() => {{
+  for (const h of document.querySelectorAll(".hdr2 h1")) {{
+    let fs = 150;
+    h.style.fontSize = fs + "px";
+    while (h.scrollWidth > h.clientWidth + 1 && fs > 70) {{ fs -= 4; h.style.fontSize = fs + "px"; }}
+  }}
+}});
+</script>
 </body>
 </html>
 '''

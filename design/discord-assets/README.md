@@ -15,7 +15,7 @@ Stand 25.10.2026. Alles aus vorhandenen gemalten Spielbildern gebaut, Alpha je Q
 | `roles/role_*.png` (8 Rollen) | 64×64, Alpha | Rollen → Anzeige → Rollensymbol (Boost-Stufe 2) |
 | `emojis/gr_*.png` (30) | 128×128, Alpha | Emoji, Dateiname = Emoji-Name |
 | `stickers/sticker_gg.png`, `sticker_loot.png`, `sticker_afk.png` | 320×320 | Sticker |
-| `headers/header_<kanal>.png` (10) | 1200×300 | als erste Nachricht im Kanal posten und anheften; in Foren in einen angehefteten Beitrag „Read me first“ |
+| `headers/header_<kanal>.png` (10) | 1600×800 (2:1) | als erste Nachricht im Kanal posten und anheften; in Foren in einen angehefteten Beitrag „Read me first“. Discord zeigt Bildanhänge höchstens etwa 550 px breit, deshalb 2:1 statt 4:1: gleiche Breite, doppelte Höhe. Die alten 4:1-Fassungen liegen in `headers/alt-4x1/`. |
 
 Die englischen Unterzeilen der Kopfbilder sind Vorschläge und brauchen die Freigabe des Chefs.
 

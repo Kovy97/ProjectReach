@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Grim Reach Discord Assets</title>
-<!-- claude:2026-10-25T13:40:00+01:00 - erzeugt von build_pages.py, nicht von Hand bearbeiten -->
+<!-- claude:2026-10-25T13:17:00+01:00 - erzeugt von build_pages.py, nicht von Hand bearbeiten -->
 <style>
 @font-face { font-family: "Cinzel"; src: url("file:///G:/GameDev/apps/client/src/renderer/fonts/Cinzel-Regular.ttf") format("truetype"); }
 @font-face { font-family: "IM Fell English SC"; src: url("file:///G:/GameDev/apps/client/src/renderer/fonts/IMFellEnglishSC-Regular.woff2") format("woff2"); }
@@ -38,6 +38,16 @@ h1 { font-family: Cinzel, Georgia, serif; font-weight: 400; font-size: 80px; lin
 .rule { height: 2px; width: 180px; margin: 14px 0 12px 3px; background: linear-gradient(90deg, var(--bronze), rgba(216,144,74,0)); }
 p { margin: 0 0 0 3px; font-size: 32px; font-style: italic; font-weight: 500; color: var(--ink); white-space: nowrap;
   text-shadow: 0 1px 4px rgba(0,0,0,.95); }
+.hdr2 { width: 1600px; height: 800px; }
+.hdr2::before { box-shadow: inset 0 0 70px 24px rgba(6,4,2,.62); }
+.hdr2::after { border-width: 38px; }
+.hdr2 .medal { left: 100px; top: 50%; transform: translateY(-50%); width: 270px; height: 270px; border-width: 16px; border-image-width: 16px; }
+.hdr2 .medal img { width: 206px; height: 206px; }
+.hdr2 .txt { left: 420px; right: 70px; }
+.hdr2 .eyebrow { font-size: 48px; margin: 0 0 6px 5px; }
+.hdr2 h1 { font-size: 150px; text-shadow: 0 5px 16px rgba(0,0,0,.92), 0 0 3px rgba(0,0,0,.85); }
+.hdr2 .rule { height: 3px; width: 300px; margin: 24px 0 20px 5px; }
+.hdr2 p { font-size: 54px; white-space: normal; max-width: 1050px; line-height: 1.2; }
 </style>
 </head>
 <body>
@@ -190,5 +200,127 @@ p { margin: 0 0 0 3px; font-size: 32px; font-style: italic; font-weight: 500; co
     <p>Test builds and what comes next</p>
   </div>
 </section>
+
+<section class="hdr hdr2" id="hdr2_welcome">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/battlescreens/pastures.webp" style="object-position:50% 34%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.92) 0%, rgba(12,8,5,.84) 34%, rgba(12,8,5,.55) 62%, rgba(12,8,5,.15) 84%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_newhaven.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>Welcome</h1>
+    <div class="rule"></div>
+    <p>The official home of Grim Reach</p>
+  </div>
+</section>
+<section class="hdr hdr2" id="hdr2_rules">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/events/guard_change.webp" style="object-position:50% 38%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.92) 0%, rgba(12,8,5,.84) 34%, rgba(12,8,5,.55) 62%, rgba(12,8,5,.15) 84%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/icons/icon_ach_scroll.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>Rules</h1>
+    <div class="rule"></div>
+    <p>Read these before you post</p>
+  </div>
+</section>
+<section class="hdr hdr2" id="hdr2_faq">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/skill-backgrounds/inscription.webp" style="object-position:50% 55%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.92) 0%, rgba(12,8,5,.84) 34%, rgba(12,8,5,.55) 62%, rgba(12,8,5,.15) 84%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_save.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>FAQ</h1>
+    <div class="rule"></div>
+    <p>Answers to the questions we hear most</p>
+  </div>
+</section>
+<section class="hdr hdr2" id="hdr2_announcements">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/events/customer.webp" style="object-position:50% 40%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.92) 0%, rgba(12,8,5,.84) 34%, rgba(12,8,5,.55) 62%, rgba(12,8,5,.15) 84%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/icons/icon_tier_crown.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>Announcements</h1>
+    <div class="rule"></div>
+    <p>News from Heartforge Studios</p>
+  </div>
+</section>
+<section class="hdr hdr2" id="hdr2_patch-notes">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/skill-backgrounds/smithing.webp" style="object-position:50% 42%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.92) 0%, rgba(12,8,5,.84) 34%, rgba(12,8,5,.55) 62%, rgba(12,8,5,.15) 84%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_smithing.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>Patch Notes</h1>
+    <div class="rule"></div>
+    <p>Every update, fresh from the forge</p>
+  </div>
+</section>
+<section class="hdr hdr2" id="hdr2_dev-log">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/skill-backgrounds/jewelcrafting.webp" style="object-position:50% 45%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.92) 0%, rgba(12,8,5,.84) 34%, rgba(12,8,5,.55) 62%, rgba(12,8,5,.15) 84%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_inscription.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>Dev Log</h1>
+    <div class="rule"></div>
+    <p>A look into the workshop</p>
+  </div>
+</section>
+<section class="hdr hdr2" id="hdr2_guides-and-builds">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_war_table.webp" style="object-position:50% 78%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.92) 0%, rgba(12,8,5,.84) 34%, rgba(12,8,5,.55) 62%, rgba(12,8,5,.15) 84%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/icons/icon_ach_compass.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>Guides &amp; Builds</h1>
+    <div class="rule"></div>
+    <p>Routes, builds and hard-won knowledge</p>
+  </div>
+</section>
+<section class="hdr hdr2" id="hdr2_suggestions">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/events/inspiration.webp" style="object-position:50% 32%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.92) 0%, rgba(12,8,5,.84) 34%, rgba(12,8,5,.55) 62%, rgba(12,8,5,.15) 84%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/icons/icon_quests.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>Suggestions</h1>
+    <div class="rule"></div>
+    <p>Your ideas for the Reach</p>
+  </div>
+</section>
+<section class="hdr hdr2" id="hdr2_bug-reports">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/battlescreens/blackthorn.webp" style="object-position:50% 42%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.92) 0%, rgba(12,8,5,.84) 34%, rgba(12,8,5,.55) 62%, rgba(12,8,5,.15) 84%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/pets/silkweaver.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>Bug Reports</h1>
+    <div class="rule"></div>
+    <p>Found something broken? Tell us here</p>
+  </div>
+</section>
+<section class="hdr hdr2" id="hdr2_beta-news">
+  <img class="bg" src="file:///G:/GameDev/apps/client/src/renderer/assets/skill-backgrounds/runecrafting.webp" style="object-position:50% 50%;">
+  <div class="grade" style="background:linear-gradient(90deg, rgba(12,8,5,.92) 0%, rgba(12,8,5,.84) 34%, rgba(12,8,5,.55) 62%, rgba(12,8,5,.15) 84%, rgba(12,8,5,0) 100%)"></div>
+  <div class="medal"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_runecrafting.webp"></div>
+  <div class="txt">
+    <div class="eyebrow">Grim Reach</div>
+    <h1>Beta News</h1>
+    <div class="rule"></div>
+    <p>Test builds and what comes next</p>
+  </div>
+</section>
+<script>
+// Titel der 2:1-Kopfbilder auf die verfuegbare Breite einpassen (lange Namen wie "Announcements").
+// Erst nach dem Laden der Schriften messen, sonst misst der Browser mit der schmaleren Ersatzschrift.
+window.__fitDone = document.fonts.ready.then(() => {
+  for (const h of document.querySelectorAll(".hdr2 h1")) {
+    let fs = 150;
+    h.style.fontSize = fs + "px";
+    while (h.scrollWidth > h.clientWidth + 1 && fs > 70) { fs -= 4; h.style.fontSize = fs + "px"; }
+  }
+});
+</script>
 </body>
 </html>

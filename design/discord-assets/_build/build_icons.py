@@ -1,6 +1,6 @@
 # Grim Reach Discord-Grafiken: Emojis (128), Rollen-Symbole (64), Sticker (320) und die Kronen-Freistellung
 # fuer das Server-Symbol. Nur Bestandsbilder, Spiel-Assets werden nur gelesen.
-# claude:2026-10-25T13:30:00+01:00 - Chef-Auftrag 25.10. (Discord-Server Heartforge Studios).
+# claude:2026-10-25T13:17:00+01:00 - Chef-Auftrag 25.10. (Discord-Server Heartforge Studios).
 # Aufruf: python -I build_icons.py   (danach build_pages.py + render_pages.mjs fuer die HTML-Teile)
 import os, sys
 import numpy as np

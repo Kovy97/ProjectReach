@@ -1,5 +1,5 @@
 # Kontaktbogen aller Discord-Grafiken auf Discord-Dunkel (#313338) und Discord-Hell (#ffffff).
-# claude:2026-10-25T14:05:00+01:00 - Chef-Auftrag 25.10. Aufruf: python -I contact_sheet.py -> ../_contact.jpg
+# claude:2026-10-25T13:17:00+01:00 - Chef-Auftrag 25.10. Aufruf: python -I contact_sheet.py -> ../_contact.jpg
 import glob, os, sys
 from PIL import Image, ImageDraw, ImageFont
 

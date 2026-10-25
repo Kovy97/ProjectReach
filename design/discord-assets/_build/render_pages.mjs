@@ -1,4 +1,4 @@
-// claude:2026-10-25T13:42:00+01:00 - Discord-Grafiken rendern (headless Chromium, file://, kein Server/Port noetig).
+// claude:2026-10-25T13:17:00+01:00 - Discord-Grafiken rendern (headless Chromium, file://, kein Server/Port noetig).
 // Aufruf: node design/discord-assets/_build/render_pages.mjs [id ...]   (ohne Argumente: alle Abschnitte)
 // Playwright kommt aus apps/client/node_modules (kein eigenes Paket im design-Ordner).
 import { chromium } from "file:///G:/GameDev/apps/client/node_modules/@playwright/test/index.mjs";
@@ -14,7 +14,8 @@ const OUT = {
   splash_war_table: "server/invite-background_war-table.png",
 };
 for (const h of ["welcome", "rules", "faq", "announcements", "patch-notes", "dev-log", "guides-and-builds", "suggestions", "bug-reports", "beta-news"]) {
-  OUT["hdr_" + h] = `headers/header_${h}.png`;
+  OUT["hdr_" + h] = `headers/alt-4x1/header_${h}.png`;
+  OUT["hdr2_" + h] = `headers/header_${h}.png`; // claude:2026-10-25T13:15:00+01:00 - 2:1-Fassung ist die Hauptfassung
 }
 const want = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(OUT);
 
@@ -24,6 +25,7 @@ p.on("pageerror", (e) => console.log("PAGEERROR", e.message));
 p.on("requestfailed", (r) => console.log("REQFAIL", r.url()));
 await p.goto("file:///" + ROOT + "_build/pages.html");
 await p.evaluate(() => document.fonts.ready);
+await p.evaluate(() => window.__fitDone); // 2:1-Titel eingepasst
 await p.waitForTimeout(600);
 for (const id of want) {
   await p.evaluate((sid) => {
@@ -40,6 +42,7 @@ for (const id of want) {
       const r = el.getBoundingClientRect();
       if (r.left < sec.left + 30 || r.right > sec.right - 30 || r.top < sec.top + 26 || r.bottom > sec.bottom - 26) bad.push(el.className || el.tagName);
     });
+    document.querySelectorAll(`#${sid} h1`).forEach((h) => { if (h.scrollWidth > h.clientWidth + 1) bad.push("h1-ueberlauf"); });
     const t = document.querySelector(`#${sid} .txt`);
     return { bad, right: t ? Math.round(t.getBoundingClientRect().right - sec.left) : null };
   }, id);
