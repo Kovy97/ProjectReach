@@ -1,0 +1,61 @@
+Grim Reach 1.4.1 - The Hunt Goes On
+
+Hunters,
+
+thank you for all the reports and reviews since 1.4.0. This update is built from them: Slayer points come
+much faster, a lot of small annoyances are gone, and you can finally sell a mountain of gear in one go.
+Saves stay compatible as always.
+
+SLAYER POINTS, MUCH FASTER
+
+- New switch on the Slayer page: "Get next task automatically". When a task is done, Brenna hands you
+  the next one right away and your fight moves on to the new target, offline too. Before, a night offline
+  counted at most one task. Anything else waiting in your queue still goes first.
+- The Slayer's Book now costs half: 7,575 points for the whole tree instead of 15,150.
+- The three Slayer tower uniques cost half as well: 750, 1,250 and 2,000 points.
+- Already bought talents or uniques at the old price? The difference is refunded automatically the first
+  time you load your save.
+- World tasks now pay by effort instead of a flat 4 to 6 points. Long tasks on tough monsters are worth as
+  much per minute as the tower.
+- Every Champion kill gives 20 Slayer points.
+- Every raid boss gives Slayer points: 10 on Normal, 25 on Heroic, 50 on Mythic.
+
+SELL GEAR IN BULK
+
+- New button "Sell equipment..." in the shop (Sell tab) and in the bank. Pick weapons, armour, jewelry or all,
+  and a rarity limit. You see how many pieces and how much gold before you confirm.
+- Locked items, equipped gear, kit pieces, pieces with runes, axes, master rings, gear bought with Slayer
+  points and items an open work order still needs are never sold.
+- "Select all" in the existing multi-sell mode now skips locked items too.
+
+ITEM CARDS
+
+- The item card is smaller and no longer grows that much with the text size.
+- Click an item to pin its card, then drag the card by its title bar to wherever you like. Esc or the cross
+  closes it.
+- Axes are weapon and tool at once. Their menu now has "Equip as tool", so they no longer always end up in
+  your weapon hand.
+
+COMBAT
+
+- The hit chance is now labelled on the monster cards ("You hit 97%", "Hits you 48%") and shown in the fight
+  header.
+- The loot count on monster cards and in the fight opens the full loot list with names, chances and amounts,
+  like in the bestiary.
+- The "Go to monster" button in the Champion window now takes you to the Champion's card, not to the normal
+  monster of the zone.
+
+OPTIONS AND SOUND
+
+- Text size is now a slider from 90 to 140%, with quick buttons for 100, 110 and 125%. Your old setting
+  carries over.
+- New option "Mute in background": music and sounds pause while the game is minimized or in the background.
+
+FIXES
+
+- XP popups on skill cards no longer show numbers like +8.400000000000091.
+- Hovering an item name on a skill card no longer makes a horizontal scrollbar appear.
+- The top bar adjusts immediately when you change the text size.
+- A tooltip on skill cards was only in German.
+
+More music is on the way. Until then: thank you for playing, and keep the reports coming.
