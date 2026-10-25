@@ -35,6 +35,11 @@
   .stage.stone { background: linear-gradient(rgba(14,14,16,.6), rgba(14,14,16,.6)), url("../../apps/client/src/renderer/assets/bg_tileable_stone_dark.webp") 0 0 / 512px repeat; }
   .stage.dark { background: #15161a; }
   .stage.light { background: #8b8378; }
+  /* claude:2026-10-25T17:46:00+01:00 — Chef 25.10. („Holz auf Holz“ in der Seitenleiste): Bühnen wie die echte Seitenleisten-Wand
+     (--chrome-nav-shell aus chrome.css) und die neue Codex-Eichenwand, plus eigene Wand-Textur. */
+  .stage.sidebar { background: linear-gradient(rgba(15, 10, 7, .18), rgba(8, 7, 6, .36)), url("../../apps/client/src/renderer/assets/ui/gravewood/textures/texture-gravewood.webp") center / 800px repeat; }
+  .stage.oakwall { background: url("../../CODEX/assets/2026-10-25-painterly-ui/delivery/textures/texture-wall-oak-painterly.png") 0 0 / 512px repeat; }
+  .stage.custom { background-size: 512px; background-repeat: repeat; }
   .item { display: flex; flex-direction: column; gap: 6px; }
   .item small { color: #a99b7c; font-size: 12px; }
   /* Knopf: Hintergrund-Ebene (gedreht/gefiltert) + Schatten + Rahmen oben drauf, alles innerhalb der Box. */
@@ -119,7 +124,8 @@
 <main>
   <div class="stagebar">
     <span style="font-family:'IM Fell English SC',serif;font-size:20px">Vorschau</span>
-    <label>Bühne <select id="stage"><option value="stone">Spiel-Hintergrund</option><option value="dark">Dunkel</option><option value="light">Hell</option></select></label>
+    <label>Bühne <select id="stage"><option value="stone">Spiel-Hintergrund</option><option value="sidebar">Seitenleisten-Wand (heute)</option><option value="oakwall">Eichenwand (Codex, neu)</option><option value="custom">Eigene Wand-Textur …</option><option value="dark">Dunkel</option><option value="light">Hell</option></select></label>
+    <input type="file" id="stageFile" accept="image/*" hidden>
   </div>
   <div class="stage stone" id="stageEl"></div>
 </main>
@@ -132,8 +138,10 @@ const TEXTURES = [
   ["— Im Spiel —", null],
   ["Moos (Navigation)", A + "ui/gravewood/textures/texture-moss-nav.webp"],
   ["Holz quer (Navigation)", A + "ui/gravewood/textures/texture-wood-nav.webp"],
-  ["Basalt", A + "ui/gravewood/v3/textures/texture-basalt.webp"],
+  // claude:2026-10-25T17:46:00+01:00 — Ist-Stand der Seitenleisten-Knöpfe (chrome.css --chrome-nav-surface) und die Seitenleisten-Wand selbst
+  ["Holz quer 2 (Sidebar-Knopf heute)", A + "ui/gravewood/textures/texture-nav-wood2.webp"],
   ["Holz (Gravewood)", A + "ui/gravewood/textures/texture-gravewood.webp"],
+  ["Basalt", A + "ui/gravewood/v3/textures/texture-basalt.webp"],
   ["Holz (Planken-Ersatz)", A + "bg_tileable_wood.webp"],
   ["Leder", A + "ui/gravewood/textures/texture-leather.webp"],
   ["Leder dunkel", A + "bg_tileable_leather.webp"],
@@ -143,6 +151,8 @@ const TEXTURES = [
   ["Stone light (hell)", A + "ui/gravewood/v3/textures/texture-ash-stone.webp"],
   ["Stein dunkel", A + "bg_tileable_stone_dark.webp"],
   ["Pergament", A + "ui/gravewood/textures/texture-parchment.webp"],
+  ["— Neu von Codex (25.10., noch nicht im Spiel) —", null],
+  ["Eichenwand (Codex)", "../../CODEX/assets/2026-10-25-painterly-ui/delivery/textures/texture-wall-oak-painterly.png"],
   ["— Neu, roh (Downloads) —", null],
   ["Wood", D + "texture_new_wood.png"], ["Wood 2", D + "texture_new_wood2.png"], ["Wood 3", D + "texture_new_wood3.png"],
   ["Basalt (roh)", D + "texture_new_basalt.png"], ["Stein dunkel (roh)", D + "GrimReach_Stone_DarkFantasy_Seamless_1024.png"],
@@ -155,6 +165,12 @@ const FRAMES = [
   ["Holz (Spiel)", A + "ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp", 28, 10],
   ["Panel-Rahmen (Gravewood)", A + "ui/gravewood/v3/frames/panel-frame.webp", 48, 11],
   ["Karten-Rahmen (Gravewood)", A + "ui/gravewood/v3/frames/card-frame.webp", 48, 11],
+  // claude:2026-10-25T17:46:00+01:00 — neue Painterly-Rahmen von Codex (v4 im Spiel bisher nur auf der Verzauberungsseite)
+  ["Eisenknopf v4 (Codex)", A + "ui/gravewood/v4/frames/button-iron-normal.webp", 64, 10],
+  ["Eichen-Karte v4 (Codex)", A + "ui/gravewood/v4/frames/frame-card-oak.webp", 64, 12],
+  ["Eichen-Karte ausgewählt v4 (Codex)", A + "ui/gravewood/v4/frames/frame-card-oak-selected.webp", 64, 12],
+  ["Eichen-Panel v4 (Codex)", A + "ui/gravewood/v4/frames/frame-panel-oak.webp", 96, 14],
+  ["Eisen-Tooltip (Codex, neu)", "../../CODEX/assets/2026-10-25-painterly-ui/delivery/frames/frame-tooltip-iron.png", 56, 10],
   ["Slot-Rahmen (Original)", D + "GrimReach_Inventory_Slot_9Slice.png", 60, 12],
   ["Eisen-Streifen (Original)", D + "GrimReach_Iron_Frame_9Slice (1).png", 32, 12],
   ["Holz-Streifen (Original)", D + "GrimReach_Wood_Frame_9Slice.png", 42, 12],
@@ -221,7 +237,18 @@ document.querySelectorAll("aside input:not([type=file]), aside select").forEach(
 $("frame").addEventListener("change", () => { customFrame = null; const o = $("frame").selectedOptions[0]; $("slice").value = o.dataset.slice; $("fw").value = o.dataset.fw; apply(); });
 $("tex").addEventListener("change", () => { customTex = null; apply(); });
 document.querySelectorAll("[data-rot]").forEach((b) => b.addEventListener("click", () => { $("rot").value = b.dataset.rot; apply(); }));
-$("stage").addEventListener("change", () => (stage.className = "stage " + $("stage").value));
+$("stage").addEventListener("change", () => {
+  // claude:2026-10-25T17:46:00+01:00 — „Eigene Wand-Textur …“ fragt eine Datei ab und kachelt sie hinter die Vorschau
+  if ($("stage").value === "custom") { $("stageFile").click(); return; }
+  stage.style.backgroundImage = "";
+  stage.className = "stage " + $("stage").value;
+});
+$("stageFile").addEventListener("change", (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  stage.className = "stage custom";
+  stage.style.backgroundImage = `url("${URL.createObjectURL(f)}")`;
+});
 function readFile(input, cb) { const f = input.files?.[0]; if (!f) return; const rd = new FileReader(); rd.onload = () => cb({ name: f.name, url: rd.result }); rd.readAsDataURL(f); }
 $("texFile").addEventListener("change", () => readFile($("texFile"), (x) => { customTex = x; apply(); }));
 $("frameFile").addEventListener("change", () => readFile($("frameFile"), (x) => { customFrame = x; apply(); }));
