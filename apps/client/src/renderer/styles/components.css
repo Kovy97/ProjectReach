@@ -691,6 +691,19 @@ body .item-cell.rarity-mythic {
   transform: scale(1.15);
   opacity: 0.9;
 }
+/* claude:2026-10-25T11:32:00+01:00 — Spieler-Report 1.4.0: In der Ertrags-/Beutebox der Skill-Karten schob das Hover-scale(1.15)
+   lange Namen („Rune of the Bulwark I“) über den Rand, die scrollende Box zeigte dann einen horizontalen Balken.
+   Dort hebt der Hover nur noch die Helligkeit an, die Box scrollt nie seitlich. */
+.skillcard-produces .item-chip:hover,
+.skillcard-loot .item-chip:hover {
+  transform: none;
+  opacity: 1;
+  filter: brightness(1.2);
+}
+.skillcard-produces,
+.skillcard-loot {
+  overflow-x: hidden;
+}
 .item-chip-img {
   width: 1.6em;
   height: 1.6em;
