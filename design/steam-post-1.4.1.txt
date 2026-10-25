@@ -95,6 +95,8 @@ OPTIONS AND SOUND
 
 FIXES
 
+- The status bar at the top no longer jumps up and down when the activity text changes, a Slayer task starts or a
+  work order shows up. Long texts now end in "..." instead of wrapping, and the bar keeps its height while idle.
 - Enchanted or suffixed gear you only own as variants now keeps its own inventory slot. It no longer jumps into
   a slot you just emptied, it can be dragged like any other item, and it stays where you put it after a restart.
 - Dragging entries in the action queue is precise now. Moving an entry up used to drop it one place too high,

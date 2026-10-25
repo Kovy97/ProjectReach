@@ -552,3 +552,52 @@
   box-shadow: inset 4px 0 0 var(--ds-gold, #d8b870), inset 0 0 15px #b9832b26, 0 3px 5px #0008;
 }
 
+/* claude:2026-10-25T19:46:00+01:00 — Chef 25.10.: „Die Topbar hat oft Textänderungen in der linken Bar, wo das Doing passiert, dadurch ändert
+   sich die Höhe und der ganze Screen zuckt hoch und runter.“ Gemessen (ui-audit, de 1920): Leiste 62 px im Leerlauf, 79 px mit
+   Aktion, 103 px mit Aktion + Slayer-Auftrag. Ursachen: Aktivitäts- und XP-Text brachen um, Raten/ETA rutschten in eine eigene
+   Zeile, im Leerlauf fehlte die Leistenzeile, der Slayer-Text brach um. Jetzt sind Aktivität und XP feste Zwei-Zeilen-Raster:
+   Zeile 1 Text (einzeilig, „…“, voller Text im Titel) | Nebeninfo, Zeile 2 Leiste, Lebensbalken oder Platzhalter in fester Höhe. */
+#root .layout--reforged :is(.hs-act, .hs-xp) {
+  --hs-row2: clamp(10px, calc(12px * var(--tb-k)), 18px);
+  display: grid;
+  grid-template-columns: minmax(min(12em, 55%), 1fr) minmax(0, max-content);
+  grid-template-rows: auto var(--hs-row2);
+  align-items: center;
+  column-gap: calc(10px * var(--tb-k));
+  row-gap: 2px;
+}
+#root .layout--reforged :is(.hs-act, .hs-xp) > .hs-line {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#root .layout--reforged :is(.hs-act, .hs-xp) > :is(.hs-act-meta, .hs-xp-eta) {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  margin-left: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#root .layout--reforged :is(.hs-act, .hs-xp) > :is(.hs-bar, .hs-bar-wrap, .hs-hp, .hs-bar-placeholder) {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  align-self: center;
+}
+#root .layout--reforged .hs-bar-placeholder { display: block; height: 1px; }
+/* Mit Ereignis-Chip bleibt vom Aktionsnamen immer ein Anfang stehen („Dämmerfl…“), statt ganz zu verschwinden. */
+#root .layout--reforged .hs-act-text:has(.skill-event-chip) > .hs-act-name { min-width: min(3em, 20%); }
+/* Chips nicht höher als eine Textzeile (sonst wächst die Zeile, sobald ein Chip erscheint; gemessen +1 bis +2,6 px bei 1366). */
+#root .layout--reforged .hs-act-text .skill-event-chip { line-height: 1.15; padding-block: 0; }
+/* Slayer-Vertrag: einzeilig, kürzt mit „…“ statt umzubrechen (auch in der schmalen Anordnung). */
+#root .layout--reforged .hs-slayer { min-width: 0; }
+#root .layout--reforged .hs-slayer-chip { max-width: 100%; white-space: nowrap; overflow: hidden; padding-block: 0; }
+#root .layout--reforged .hs-slayer-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@container game-content (max-width: 1100px) {
+  #root .layout--reforged .hs-slayer { min-width: 0; }
+}
+

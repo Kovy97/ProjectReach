@@ -635,7 +635,7 @@ function GameStats({
     activity = (
       <span className="hs-line hs-act-text">
         <span className="hs-muted">{t("header.doing")}</span>{" "}
-        <span className="hs-act-name">{a ? tr(a.name) : ""}</span>
+        <span className="hs-act-name" title={a ? tr(a.name) : undefined}>{a ? tr(a.name) : ""}</span>
         {/* claude:2026-10-23T19:10:00+02:00 — 1.4.0 LA: Ländereien als Zusatz („ · Nebenbei: 6 Felder“). */}
         <EstatesNote className="hs-muted" />
         <SkillEventChip /> {/* claude:2026-10-25T01:30:00+02:00 — Ereignis/Angebot (1.4.0 EV/AU) */}
@@ -678,6 +678,9 @@ function GameStats({
       <div className="hs-cell hs-act">
         {activity}
         {!inCombat && actionBar}
+        {/* claude:2026-10-25T19:46:00+01:00 — Chef 25.10. („der ganze Screen zuckt“): ohne laufende Aktion steht ein unsichtbarer Platzhalter in der
+            Leistenzeile, damit die Zelle im Leerlauf genauso hoch ist wie mit Fortschrittsleiste (chrome.css .hs-bar-placeholder). */}
+        {!inCombat && !activeActionId && <span className="hs-bar-placeholder" aria-hidden="true" />}
       </div>
       {/* codex:2026-08-01T18:06:00+02:00 — Slayer-Vertrag als eigener Cluster zwischen Aktivitaet
           und Oekonomie, damit der lange Zieltext nicht mit Slots/Gold um eine Zeile konkurriert. */}
@@ -694,7 +697,8 @@ function GameStats({
               .replace("{done}", String(slayerProgress))
               .replace("{total}", String(slayerRequired))
               .split("{monster}");
-            return <span>{pre}<span className="hs-nowrap">{slayerTaskMonName}</span>{post}</span>;
+            // claude:2026-10-25T19:46:00+01:00 — einzeilig mit „…“ (chrome.css), voller Text im Titel
+            return <span className="hs-slayer-text" title={`${pre}${slayerTaskMonName}${post}`}>{pre}<span className="hs-nowrap">{slayerTaskMonName}</span>{post}</span>;
           })()}
           </span>
         </div>
