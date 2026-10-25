@@ -65,6 +65,8 @@ OPTIONS AND SOUND
 
 FIXES
 
+- Dragging entries in the action queue is precise now. Moving an entry up used to drop it one place too high,
+  and the list scrolled very fast at the edges while dragging.
 - XP popups on skill cards no longer show numbers like +8.400000000000091.
 - Hovering an item name on a skill card no longer makes a horizontal scrollbar appear.
 - The top bar adjusts immediately when you change the text size.

@@ -24,7 +24,7 @@ import { formatClockTime, formatPlaytime } from "../util/format";
 import { computeQueueLevels, projectActionLevel, type QueueLevelEntry } from "../util/queueLevels";
 import { computeQueueTiming, type QueueTimingEntry } from "../util/queueTiming";
 // codex:2026-09-10T10:35:24+02:00 — Share variable-height drop geometry between marker/snap.
-import { queueDropTop } from "../util/queueDrag";
+import { queueDropIndex, queueDropTop } from "../util/queueDrag";
 import { HoverTip } from "./CitadelTip";
 
 // Mira-Set 2026-08-03 (Gap-Sweep Priorität A) — geschlossenes Action-Queue-Micro-Icon-Set löst
@@ -461,21 +461,23 @@ export function ActionQueuePanel(): JSX.Element {
     const scrollDelta = container.scrollTop - meta.startScrollTop;
     draggedEl.style.transform = `translateY(${meta.lastClientY - meta.startClientY + scrollDelta}px)`;
 
-    const contentY = meta.lastClientY - container.getBoundingClientRect().top + container.scrollTop;
-    let overVi = 0;
-    for (let i = 0; i < meta.rowTops.length; i++) {
-      const mid = meta.rowTops[i]! + meta.rowHeights[i]! / 2;
-      if (contentY >= mid) overVi = i;
-    }
-    overVi = Math.max(0, Math.min(meta.rowTops.length - 1, overVi)); // Grenzen geklemmt
+    // claude:2026-10-25T16:48:00+01:00 — Spieler-Report 25.10.: Ziel aus der Mitte der gezogenen Zeile, symmetrisch (util/queueDrag.ts).
+    const overVi = queueDropIndex({
+      fromVi: meta.fromVi,
+      rowTops: meta.rowTops,
+      rowHeights: meta.rowHeights,
+      deltaY: meta.lastClientY - meta.startClientY + scrollDelta,
+    }); // liegt immer in [0, Zeilenzahl − 1]
     if (overVi !== meta.overVi) {
       meta.overVi = overVi;
     }
     applyRowShifts(meta);
   }
 
-  const AUTOSCROLL_EDGE_PX = 36;
-  const AUTOSCROLL_MAX_PX = 14;
+  // claude:2026-10-25T16:48:00+01:00 — Spieler-Report 25.10.: 14 px je Frame (bis 840 px/s, fast acht Zeilen pro Sekunde) machte ein
+  // genaues Ablegen am Listenrand fast unmöglich. 6 px je Frame (bis 360 px/s) bei etwas breiterer Randzone.
+  const AUTOSCROLL_EDGE_PX = 44;
+  const AUTOSCROLL_MAX_PX = 6;
 
   function dragFrame(): void {
     const meta = dragMeta.current;
