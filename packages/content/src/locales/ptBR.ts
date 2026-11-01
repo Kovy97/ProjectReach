@@ -3181,7 +3181,7 @@ export const ptBR: Record<string, string> = {
   "achievements:ach_deaths_1:name": "Cinzas às cinzas",
   "achievements:ach_deaths_1:description": "Caia em combate pela primeira vez.",
   "achievements:ach_deaths_100:name": "Hoje não",
-  "achievements:ach_deaths_100:description": "Vença um combate com 5% de vida ou menos.", // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.: Sieg mit ≤ 5 % Leben
+  "achievements:ach_deaths_100:description": "Vença um combate com 20% de vida ou menos.", // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.: Sieg mit ≤ 5 % Leben
   "achievements:ach_zone_pastures_1:name": "Os Pastos: todas as criaturas",
   "achievements:ach_zone_pastures_100:name": "Os Pastos dominada",
   "achievements:ach_zone_borderlands_1:name": "As Terras da Fronteira: todas as criaturas",

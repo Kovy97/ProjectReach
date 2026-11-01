@@ -3209,7 +3209,7 @@ export const ru: Record<string, string> = {
   "achievements:ach_deaths_1:name": "Прах к праху",
   "achievements:ach_deaths_1:description": "Впервые пади в бою.",
   "achievements:ach_deaths_100:name": "Не сегодня",
-  "achievements:ach_deaths_100:description": "Победи в бою, когда у тебя осталось не больше 5% здоровья.", // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.: Sieg mit ≤ 5 % Leben
+  "achievements:ach_deaths_100:description": "Победи в бою, когда у тебя осталось не больше 20% здоровья.", // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.: Sieg mit ≤ 5 % Leben
   "achievements:ach_zone_pastures_1:name": "Пастбища: все существа",
   "achievements:ach_zone_pastures_100:name": "Пастбища: полное освоение",
   "achievements:ach_zone_borderlands_1:name": "Порубежье: все существа",

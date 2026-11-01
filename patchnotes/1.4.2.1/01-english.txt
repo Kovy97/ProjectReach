@@ -1,0 +1,5 @@
+=== TITEL ===
+Grim Reach 1.4.2.1 - Hotfix
+
+=== TEXT (BBCode) ===
+[p]Hunters,[/p][p]a small hotfix for 1.4.2:[/p][list][*][p][b]"Not Today"[/b] is now much easier to reach: win a fight with [b]20% health or less[/b] instead of 5%. With most hits taking 15 to 20% of your health, 5% was down to pure luck.[/p][/*][/list][p][b]Thank you for every report. Keep them coming.[/b][/p]

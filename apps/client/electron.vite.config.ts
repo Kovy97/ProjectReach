@@ -47,7 +47,8 @@ export default defineConfig({
     plugins: [react()],
     define: {
       // Injected at build time from package.json; typed in src/vite-env.d.ts.
-      __APP_VERSION__: JSON.stringify(pkg.version),
+      // claude:2026-11-01T13:19:35+01:00 — Hotfix 1.4.2.1 (Chef 01.11.): Anzeigeversion darf vierstellig sein; `version` bleibt semver für electron-builder.
+      __APP_VERSION__: JSON.stringify((pkg as { displayVersion?: string }).displayVersion ?? pkg.version),
       __SCENE_BUILDER_BUILD__: JSON.stringify(isSceneBuilderBuild),
       __ASSET_LAB_BUILD__: JSON.stringify(isAssetLabBuild), // claude:2026-10-30T20:20:00+01:00
       __SYNTY_UI_BUILD__: JSON.stringify(isSyntyUiBuild), // claude:2026-10-30T20:58:00+01:00

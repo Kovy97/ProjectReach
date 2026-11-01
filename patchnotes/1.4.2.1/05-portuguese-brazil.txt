@@ -1,0 +1,5 @@
+=== TITEL ===
+Grim Reach 1.4.2.1 - Correção rápida
+
+=== TEXT (BBCode) ===
+[p]Caçadores,[/p][p]uma pequena correção para a 1.4.2:[/p][list][*][p][b]"Hoje não"[/b] agora é bem mais alcançável: vença um combate com [b]20% de vida ou menos[/b] em vez de 5%. Como a maioria dos golpes tira de 15 a 20% da sua vida, 5% era pura sorte.[/p][/*][/list][p][b]Obrigado por cada relato. Continuem mandando.[/b][/p]

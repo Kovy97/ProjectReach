@@ -7370,7 +7370,7 @@ export interface PlayerStats {
   huntCatchesById: Record<MonsterId, number>;
   /**
    * claude:2026-10-31T09:29:00+01:00 — Knappe Siege (SAVE 100, Chef-Entscheid 31.10.2026 „Heute nicht“): Zahl der Kills, bei denen das
-   * eigene Leben nach dem tödlichen Treffer höchstens 5 % des Maximums (`isCloseWin`) betrug. Einziger
+   * eigene Leben nach dem tödlichen Treffer höchstens 20 % des Maximums (`isCloseWin`) betrug (bis 01.11.: 5 %). Einziger
    * Inkrement-Ort: combat.ts `onEnemyDefeated` (gilt damit für Zonen, Champions, Dungeons, Raid und Turm). Quelle für
    * `close_wins`. Migration: 0 (rückwirkend nicht rekonstruierbar).
    */
@@ -7379,9 +7379,9 @@ export interface PlayerStats {
 
 /**
  * claude:2026-10-31T09:29:00+01:00 — Schwelle für einen knappen Sieg (`stats.closeWins`): Leben ≤ 5 % des Maximums nach dem tödlichen
- * Treffer. Geprüft als `hp * CLOSE_WIN_HP_DIVISOR <= maxHp` (ganzzahlig, ohne Gleitkomma-Rand bei genau 5 %).
+ * Treffer. Geprüft als `hp * CLOSE_WIN_HP_DIVISOR <= maxHp` (ganzzahlig, ohne Gleitkomma-Rand). claude:2026-11-01T13:17:00+01:00: Schwelle 20 % statt 5 % (Chef).
  */
-export const CLOSE_WIN_HP_DIVISOR = 20;
+export const CLOSE_WIN_HP_DIVISOR = 5; // claude:2026-11-01T13:17:00+01:00 — Chef 01.11.: 5 % war reines Glück (Treffer 15–20 %, Auto-Essen ab 45 %), jetzt ≤ 20 %
 
 /**
  * claude:2026-10-31T09:29:00+01:00 — Ist der Sieg knapp? Spieler lebt (hp > 0) und hat höchstens 5 % seines Maximallebens. Rein, deterministisch.

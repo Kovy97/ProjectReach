@@ -1,0 +1,5 @@
+=== TITEL ===
+Grim Reach 1.4.2.1 - Corrección rápida
+
+=== TEXT (BBCode) ===
+[p]Cazadores,[/p][p]una pequeña corrección para la 1.4.2:[/p][list][*][p][b]«Hoy no»[/b] ahora es mucho más alcanzable: gana un combate con [b]un 20 % de salud o menos[/b] en lugar de un 5 %. Como la mayoría de los golpes quitan entre un 15 y un 20 % de tu salud, el 5 % era pura suerte.[/p][/*][/list][p][b]Gracias por cada informe. ¡Seguid enviándolos![/b][/p]

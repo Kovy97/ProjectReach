@@ -3176,7 +3176,7 @@ export const es: Record<string, string> = {
   "achievements:ach_deaths_1:name": "Ceniza a la ceniza",
   "achievements:ach_deaths_1:description": "Cae en combate por primera vez.",
   "achievements:ach_deaths_100:name": "Hoy no",
-  "achievements:ach_deaths_100:description": "Gana un combate con un 5% de salud o menos.", // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.: Sieg mit ≤ 5 % Leben
+  "achievements:ach_deaths_100:description": "Gana un combate con un 20% de salud o menos.", // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.: Sieg mit ≤ 5 % Leben
   "achievements:ach_zone_pastures_1:name": "Los Pastos: todas las criaturas",
   "achievements:ach_zone_pastures_100:name": "Los Pastos dominada",
   "achievements:ach_zone_borderlands_1:name": "Las Tierras Fronterizas: todas las criaturas",

@@ -1,0 +1,5 @@
+=== TITEL ===
+Grim Reach 1.4.2.1 - Correctif
+
+=== TEXT (BBCode) ===
+[p]Chasseurs,[/p][p]un petit correctif pour la 1.4.2 :[/p][list][*][p][b]« Pas aujourd'hui »[/b] est désormais bien plus accessible : gagne un combat avec [b]20 % de vie ou moins[/b] au lieu de 5 %. La plupart des coups retirant 15 à 20 % de ta vie, 5 % relevait de la chance pure.[/p][/*][/list][p][b]Merci pour chaque signalement. Continuez comme ça ![/b][/p]

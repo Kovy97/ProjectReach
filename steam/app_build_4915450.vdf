@@ -1,7 +1,7 @@
 "appbuild"
 {
 	"appid"	"4915450"
-	"desc"	"Grim Reach 1.4.2 Cinderfall Reborn (Aschesturz 2.0 mit neuem Narbenbuch und Nachzahlung, Belohnungsladen-Dienste, Tagesaufgaben einreihen, Zerlegen-Reiter, Rezepte anpinnen, Queue-Vorlagen, Painterly-Look)"
+	"desc"	"Grim Reach 1.4.2.1 Hotfix (Heute nicht: Sieg mit hoechstens 20 Prozent Leben statt 5)"
 	"buildoutput"	"G:\GameDev\steam\output\"
 	"contentroot"	"G:\GameDev\apps\client\release\win-unpacked\"
 	"setlive"	""

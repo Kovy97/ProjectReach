@@ -114,7 +114,7 @@ import {
   PET_FROSTBITE_FREEZE_EVERY,
   PET_POISON_SLOW_PCT,
   ARMOR_PEN_CAP, // claude:2026-10-25T05:40:00+02:00 — Offenes Zeughaus (1.4.0 Raid §7): Deckel bleibt
-  isCloseWin, // claude:2026-10-31T09:29:00+01:00 — knapper Sieg (≤ 5 % Leben) für `stats.closeWins`
+  isCloseWin, // claude:2026-10-31T09:29:00+01:00 — knapper Sieg für `stats.closeWins`; claude:2026-11-01T13:17:00+01:00 Schwelle ≤ 20 % (Chef 01.11.)
 } from "@hearthforge/shared";
 import { nextFloat, nextInt } from "./rng";
 import { blessingChance, blessingMult, shrineAmplifiedMult } from "./blessing";

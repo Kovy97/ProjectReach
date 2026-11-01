@@ -17413,7 +17413,7 @@ export const content: ContentDB = {
 
     // -- Combat: Tode (versteckt, Audit § 2.6) --
     { id: "ach_deaths_1", name: { en: "Ash to Ash", de: "Asche zu Asche" }, description: { en: "Fall in battle for the first time.", de: "Falle zum ersten Mal im Kampf." }, category: "combat", rarity: "common", hidden: true, condition: { type: "deaths", count: 1 } },
-    { id: "ach_deaths_100", name: { en: "Not Today", de: "Heute nicht" }, description: { en: "Win a fight with 5% health or less.", de: "Gewinne einen Kampf mit höchstens 5 % Leben." }, category: "combat", rarity: "rare", hidden: true, condition: { type: "close_wins", count: 1 } }, // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.: ein Sieg mit ≤ 5 % Leben statt 100 Tode (ID bleibt, bleibt versteckt)
+    { id: "ach_deaths_100", name: { en: "Not Today", de: "Heute nicht" }, description: { en: "Win a fight with 20% health or less.", de: "Gewinne einen Kampf mit höchstens 20 % Leben." }, category: "combat", rarity: "rare", hidden: true, condition: { type: "close_wins", count: 1 } }, // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.: ein Sieg mit ≤ 5 % Leben statt 100 Tode (ID bleibt, bleibt versteckt) claude:2026-11-01T13:17:00+01:00 — Chef 01.11.: Schwelle 20 %
 
     // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Zonen im Genitiv)
     // -- Exploration: Zonen-Bestiarium (je Zone: jedes Wesen ≥ 1 / ≥ 100; Fortschritt = kleinster Kill-Stand der Zone) --

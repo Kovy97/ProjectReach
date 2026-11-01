@@ -4165,7 +4165,7 @@ export const fr: Record<string, string> = {
   "achievements:ach_dungeon_behind_the_throne_50:description": "Terminer Derrière le Trône 50 fois.",
   "achievements:ach_dungeons_distinct_1:description": "Terminer un donjon pour la première fois.",
   "achievements:ach_deaths_1:description": "Tomber au combat pour la première fois.",
-  "achievements:ach_deaths_100:description": "Gagner un combat avec 5 % de vie ou moins.", // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.: Sieg mit ≤ 5 % Leben
+  "achievements:ach_deaths_100:description": "Gagner un combat avec 20 % de vie ou moins.", // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.: Sieg mit ≤ 5 % Leben
   "achievements:ach_zone_slayer_tower_1:name": "La Tour du Slayer : toutes les créatures",
   "achievements:ach_zone_slayer_tower_100:name": "La Tour du Slayer maîtrisée",
   "achievements:ach_bestiary_25:description": "Vaincre 25 créatures différentes.",

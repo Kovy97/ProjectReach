@@ -1,0 +1,5 @@
+=== TITEL ===
+Grim Reach 1.4.2.1 - Hotfix
+
+=== TEXT (BBCode) ===
+[p]Jäger,[/p][p]ein kleiner Hotfix für 1.4.2:[/p][list][*][p][b]„Heute nicht“[/b] ist jetzt deutlich leichter zu erreichen: Gewinne einen Kampf mit [b]höchstens 20 % Leben[/b] statt 5 %. Da die meisten Treffer 15 bis 20 % deines Lebens kosten, war 5 % reines Glück.[/p][/*][/list][p][b]Danke für jede Meldung. Immer her damit.[/b][/p]

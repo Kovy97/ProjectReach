@@ -3210,7 +3210,7 @@ export const zh: Record<string, string> = {
   "achievements:ach_deaths_1:name": "尘归尘",
   "achievements:ach_deaths_1:description": "首次在战斗中倒下。",
   "achievements:ach_deaths_100:name": "今天不行",
-  "achievements:ach_deaths_100:description": "以不超过 5% 的生命值赢得一场战斗。", // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.: Sieg mit ≤ 5 % Leben
+  "achievements:ach_deaths_100:description": "以不超过 20% 的生命值赢得一场战斗。", // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.: Sieg mit ≤ 5 % Leben
   "achievements:ach_zone_pastures_1:name": "牧野：全部生物",
   "achievements:ach_zone_pastures_100:name": "牧野：完全掌握",
   "achievements:ach_zone_borderlands_1:name": "边境之地：全部生物",

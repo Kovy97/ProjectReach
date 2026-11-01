@@ -35,13 +35,14 @@ function strongGame(seed: number): GameState {
   return createTestGame({ name: "Knapp", baseAttributes: { str: 80, dex: 80, con: 80 } }, content, seed);
 }
 
-describe("isCloseWin (Schwelle 5 %)", () => {
-  it("genau 5 % zählt, knapp darüber nicht, tot oder kaputte Werte nie", () => {
-    expect(CLOSE_WIN_HP_DIVISOR).toBe(20);
-    expect(isCloseWin(5, 100)).toBe(true);
+// claude:2026-11-01T13:17:00+01:00 — Chef 01.11.: Schwelle 20 % statt 5 %.
+describe("isCloseWin (Schwelle 20 %)", () => {
+  it("genau 20 % zählt, knapp darüber nicht, tot oder kaputte Werte nie", () => {
+    expect(CLOSE_WIN_HP_DIVISOR).toBe(5);
+    expect(isCloseWin(20, 100)).toBe(true);
     expect(isCloseWin(1, 100)).toBe(true);
-    expect(isCloseWin(5.01, 100)).toBe(false);
-    expect(isCloseWin(6, 100)).toBe(false);
+    expect(isCloseWin(20.01, 100)).toBe(false);
+    expect(isCloseWin(21, 100)).toBe(false);
     expect(isCloseWin(0, 100)).toBe(false);
     expect(isCloseWin(-3, 100)).toBe(false);
     expect(isCloseWin(5, 0)).toBe(false);
@@ -55,7 +56,7 @@ describe("stats.closeWins im Kill-Pfad", () => {
     expect(strongGame(1).stats.closeWins).toBe(0);
   });
 
-  it("Kill mit höchstens 5 % Leben zählt und schaltet „Heute nicht“ frei", () => {
+  it("Kill mit höchstens 20 % Leben zählt und schaltet „Heute nicht“ frei", () => {
     const s = strongGame(4);
     expect(startCombat(s, content, "chicken")).toBe(true);
     const maxHp = computeStats(s, content).maxHp;
@@ -68,11 +69,11 @@ describe("stats.closeWins im Kill-Pfad", () => {
     expect(s.achievements).toContain("ach_deaths_100");
   });
 
-  it("Kill mit 6 % Leben zählt nicht, „Heute nicht“ bleibt gesperrt", () => {
+  it("Kill mit 21 % Leben zählt nicht, „Heute nicht“ bleibt gesperrt", () => {
     const s = strongGame(4);
     expect(startCombat(s, content, "chicken")).toBe(true);
     const maxHp = computeStats(s, content).maxHp;
-    const hp = Math.ceil(maxHp * 0.06);
+    const hp = Math.ceil(maxHp * 0.21);
     expect(isCloseWin(hp, maxHp)).toBe(false);
     killAtHp(s, hp);
     expect(s.combat.kills).toBe(1);
