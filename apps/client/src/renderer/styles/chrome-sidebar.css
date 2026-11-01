@@ -704,3 +704,11 @@
     transition: none !important;
   }
 }
+
+/* claude:2026-10-31T16:34:28+01:00 — Ideen-Welle 1.4.2: Scherbenaltar vor der Freischaltung, grau und nicht klickbar. */
+.sb-skill-btn--locked,
+#root .sb-skill-btn--locked {
+  filter: grayscale(1) brightness(0.7);
+  opacity: 0.6;
+  cursor: not-allowed;
+}

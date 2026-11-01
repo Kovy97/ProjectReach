@@ -11,7 +11,7 @@ import {
 } from "react";
 import type { ReactNode } from "react";
 import type { GameState, OfflineSummary, SaveSlot } from "@hearthforge/shared";
-import { MAX_OFFLINE_MS } from "@hearthforge/shared";
+import { MAX_OFFLINE_MS, effectiveMaxOfflineMs } from "@hearthforge/shared";
 import { advance, ascend, createGame, prestigeAscendCheck, prestigeRunSummary, transferInventoryItemsToSave } from "@hearthforge/engine";
 import type { PrestigeRunSummary } from "@hearthforge/engine";
 import type {
@@ -25,6 +25,10 @@ import type { CharacterCreation } from "@hearthforge/engine";
 import { deserialize, parseSummary, serialize } from "@hearthforge/persistence";
 import { content } from "@hearthforge/content";
 import { baueDemoOfflineSummary } from "../devOfflineDemo";
+import { CATCHUP_THRESHOLD_MS, buildCatchUpSummary, catchUpSavedAt, extendCatchUp, startCatchUp, stepCatchUp } from "../util/catchUp"; // claude:2026-10-31T16:34:28+01:00
+import type { CatchUpJob } from "../util/catchUp"; // claude:2026-10-31T16:34:28+01:00
+import { CatchUpOverlay } from "../components/CatchUpOverlay"; // claude:2026-10-31T16:34:28+01:00
+import { DesktopNotifier } from "../components/DesktopNotifier"; // claude:2026-10-31T16:34:28+01:00
 import { backupPreAscend, readAllSlots, readSlot, readSlotBackups, removeSlot, writeSlot, writeSlotPair } from "../saves";
 import { buildOfflineTestSummary, fetchFixtureJson, getFixtureParam, getOfflineTestParam } from "./fixtureLoader";
 
@@ -134,6 +138,12 @@ interface GameControl {
   returnToMenu: () => Promise<void>;
   offlineSummary: OfflineSummaryUI | null;
   dismissOffline: () => void;
+  /**
+   * claude:2026-10-31T16:34:28+01:00 — 1.4.2: Fortschritt der Rückkehr aus dem Hintergrund. Solange ein großer Zeitsprung
+   * (> 5 min, z. B. nach Minimieren) in Häppchen nachgeholt wird, steht hier der Stand; sonst `null`. Danach öffnet sich die
+   * Rückkehr-Karte über `offlineSummary` wie nach dem Laden.
+   */
+  catchUp: { doneMs: number; totalMs: number } | null;
   /**
    * Dev-Werkzeug (Chef-Auftrag 31.08.2026): oeffnet die "Waehrend du weg warst"-Buehne mit
    * Demo-Daten in JEDEM Abschnitt, damit man das Layout beurteilen kann, ohne acht Stunden
@@ -254,6 +264,9 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
   const [activeSlotId, setActiveSlotId] = useState<number | null>(null);
   const [tick, setTick] = useState(0);
   const [offlineSummary, setOfflineSummary] = useState<OfflineSummaryUI | null>(null);
+  // claude:2026-10-31T16:34:28+01:00 — Rückkehr in Häppchen (util/catchUp.ts): laufender Auftrag + Anzeigestand.
+  const catchUpRef = useRef<CatchUpJob | null>(null);
+  const [catchUp, setCatchUp] = useState<{ doneMs: number; totalMs: number } | null>(null);
   const [saveRecovery, setSaveRecovery] = useState<{ restoredFromMs: number } | null>(null);
   // Autosave-Vertrauens-Häkchen: s. GameControl.saveTick-Doc.
   const [saveTick, setSaveTick] = useState(0);
@@ -282,6 +295,14 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
   // referenzstabil (s. useMemo-Deps von `control` unten).
   const getState = useCallback((): GameState | null => stateRef.current, []);
 
+  // claude:2026-10-31T16:34:28+01:00 — Speicherstempel des LIVE-States. Solange die Rückkehr in Häppchen noch läuft, trägt der
+  // Stand den Zeitpunkt, bis zu dem er wirklich nachgerechnet ist, NICHT "jetzt": stürzt das Spiel mittendrin ab, holt der
+  // nächste Ladevorgang den Rest nach, statt Stunden zu verlieren.
+  const serializeLive = useCallback((s: GameState): string => {
+    const job = catchUpRef.current;
+    return job && job.state === s ? serialize(s, catchUpSavedAt(job)) : serialize(s);
+  }, []);
+
   // Perf-Welle Block A: Tick-Signal für `useGameSelector` (s. SelectorStore-JSDoc oben). Ein
   // Set statt eines einzelnen Callbacks, weil beliebig viele Selector-Hooks gleichzeitig live
   // sein können (jede migrierte Chrome-Komponente hat ihren eigenen `useSyncExternalStore`-Slot).
@@ -305,7 +326,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
     const s = stateRef.current;
     const slot = activeSlotRef.current;
     if (s && slot !== null) {
-      await writeSlot(slot, serialize(s));
+      await writeSlot(slot, serializeLive(s));
     }
     // Bump AFTER the write (or the no-op skip) — one shared signal for the periodic autosave
     // interval below and the Sidebar's manual "Speichern" button (Sidebar.tsx calls this same
@@ -320,14 +341,14 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
     const s = stateRef.current;
     const slot = activeSlotRef.current;
     if (!s || slot === null) return { ok: false, reason: "no_active_save" };
-    if (transferBusyRef.current) return { ok: false, reason: "busy" };
+    if (transferBusyRef.current || catchUpRef.current) return { ok: false, reason: "busy" }; // claude:2026-10-31T16:34:28+01:00 — nicht mitten in der Nachholung
     const check = prestigeAscendCheck(s, content, choice);
     if (!check.ok) return { ok: false, reason: check.reason ?? "locked" };
     transferBusyRef.current = true;
     try {
       // (1) aktuellen Stand speichern und abwarten.
       try {
-        await writeSlot(slot, serialize(s));
+        await writeSlot(slot, serializeLive(s));
       } catch (error) {
         console.error("Aufstieg: Speichern vor der Sicherung fehlgeschlagen:", error);
         return { ok: false, reason: "write_failed" };
@@ -341,7 +362,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
       const prestige = s.prestige;
       const gained = prestige.history[prestige.history.length - 1]?.points ?? 0;
       try {
-        await writeSlot(slot, serialize(s));
+        await writeSlot(slot, serializeLive(s));
       } catch (error) {
         // Der Neustand lebt im Speicher; das nächste Autosave holt das Schreiben nach, die Sicherung liegt vor.
         console.error("Aufstieg: Speichern des Neustands fehlgeschlagen (Autosave versucht es erneut):", error);
@@ -391,7 +412,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
       );
       if (!moved.ok) return moved;
 
-      const sourceJson = serialize(nextSource);
+      const sourceJson = serializeLive(nextSource);
       // Ziel behält seinen alten savedAt: beim nächsten echten Laden wird die gesamte Abwesenheit
       // weiterhin einmalig nachgeholt; der Itemtransfer selbst erzeugt keine Spielzeit.
       const nextTargetJson = serialize(nextTarget, targetSavedAt);
@@ -432,7 +453,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
 
   const exportSave = useCallback((): string | null => {
     const s = stateRef.current;
-    return s ? serialize(s) : null;
+    return s ? serializeLive(s) : null;
   }, []);
 
   const importSave = useCallback(async (json: string): Promise<boolean> => {
@@ -483,7 +504,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
     activeSlotRef.current = slot;
     setActiveSlotId(slot);
     pendingSlotRef.current = null;
-    await writeSlot(slot, serialize(s));
+    await writeSlot(slot, serializeLive(s));
     // Neuer Charakter ⇒ Spotlight-Guide zeigt sich automatisch: `createGame` setzt
     // `state.onboarding = newGameOnboarding()` (active:true, step:0) bereits selbst — kein
     // localStorage-Flag/Event mehr nötig (das war nur fürs alte, jetzt unbenutzte Onboarding.tsx).
@@ -689,6 +710,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
     let last = performance.now();
     let lastRender = last;
     let simulationAccumulatorMs = 0;
+    let catchUpRealMs = 0; // claude:2026-10-31T16:34:28+01:00 — ungekappter Rückstand des laufenden Auftrags (Cap-Hinweis der Karte)
     // codex:2026-07-31T00:32:37+02:00 — Simulation unabhängig von 60/120/165-Hz-Monitoren auf
     // maximal 30 Hz bündeln. Die gesamte verstrichene Zeit wird weiterhin an `advance` übergeben;
     // Spieltempo/Offline-Ertrag bleiben identisch, nur redundante Engine-Aufrufe entfallen.
@@ -698,10 +720,52 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
       // dt auf den Offline-Cap deckeln: nach OS-Sleep/Suspend liefert performance.now() einen riesigen
       // Sprung → sonst läuft die Aufhol-Sim synchron durch (UI-Freeze) UND umginge den 8h-Offline-Cap
       // des Reload-Pfads (Tester-Sweep2 T27#2). Konsistent mit deserialize.
-      const dt = Math.min(now - last, MAX_OFFLINE_MS);
+      // claude:2026-10-30T19:31:00+01:00 — 1.4.2: Cap = effectiveMaxOfflineMs (Wachturm + Narbenbuch „Lange Nacht“), identisch zum Lade-Pfad.
+      const capMs = stateRef.current ? effectiveMaxOfflineMs(stateRef.current, content) : MAX_OFFLINE_MS;
+      const rawDt = now - last;
+      const dt = Math.min(rawDt, capMs);
       last = now;
-      if (stateRef.current) {
-        simulationAccumulatorMs = Math.min(simulationAccumulatorMs + dt, MAX_OFFLINE_MS);
+      // claude:2026-10-31T16:34:28+01:00 — 1.4.2: Rückkehr aus dem Hintergrund in Häppchen. Ein Auftrag, dessen State nicht mehr
+      // der aktive ist (Menü, Laden, Import), wird verworfen.
+      if (catchUpRef.current && catchUpRef.current.state !== stateRef.current) {
+        catchUpRef.current = null;
+        setCatchUp(null);
+      }
+      if (stateRef.current && !catchUpRef.current && !transferBusyRef.current && dt > CATCHUP_THRESHOLD_MS) {
+        // Der Rückstand ist ab jetzt Sache des Auftrags; der Live-Akkumulator bleibt leer.
+        catchUpRef.current = startCatchUp(stateRef.current, content, dt, Date.now());
+        catchUpRealMs = rawDt;
+        simulationAccumulatorMs = 0;
+        setCatchUp({ doneMs: 0, totalMs: dt });
+      } else if (catchUpRef.current) {
+        extendCatchUp(catchUpRef.current, dt);
+      }
+      const job = catchUpRef.current;
+      if (job && stateRef.current) {
+        // Ein Häppchen je Frame (~10 min Spielzeit), Eingaben und Anzeige bleiben dazwischen bedienbar.
+        const finished = stepCatchUp(job, content);
+        if (finished) {
+          const summary = buildCatchUpSummary(job, content);
+          const hasGains = summary.xp > 0 || summary.gold > 0 || Object.keys(summary.items).length > 0;
+          const wasIdle = job.before.monsterId === null && job.before.dungeonId === null && !(job.before.activeActionId);
+          const emptyReturn = !hasGains && (summary.deaths ?? 0) === 0 && !summary.combatStopped && wasIdle && summary.ms > EMPTY_RETURN_MS;
+          if ((summary.ms > 60_000 && hasGains) || emptyReturn) {
+            setOfflineSummary({ ...summary, realMs: Math.max(catchUpRealMs, summary.ms), emptyReturn });
+          }
+          catchUpRef.current = null;
+          setCatchUp(null);
+          void saveGame();
+          lastRender = now;
+          setTick((t) => (t + 1) % 1_000_000);
+          notifyTick();
+        } else if (now - lastRender >= RENDER_INTERVAL_MS) {
+          lastRender = now;
+          setCatchUp({ doneMs: job.doneMs, totalMs: job.totalMs });
+          setTick((t) => (t + 1) % 1_000_000);
+          notifyTick();
+        }
+      } else if (stateRef.current) {
+        simulationAccumulatorMs = Math.min(simulationAccumulatorMs + dt, capMs);
         // codex:2026-08-31T23:03:00+02:00 — während des Zwei-Slot-Commits bleibt der Quellsave
         // unverändert. Die verstrichene Sim-Zeit wird nur aufgestaut und direkt danach auf den
         // erfolgreich übernommenen Zustand angewandt; so kann der Commit keine Live-Ticks verlieren.
@@ -717,7 +781,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
           // streckt der Faktor das Zeitfenster, das die Engine sieht; das ist exakt der
           // Offline-Aufhol-Pfad, also derselbe deterministische Code. Auf MAX_OFFLINE_MS geklemmt,
           // damit ein hoher Faktor nach einem Frame-Aussetzer nicht doch die Aufhol-Sim sprengt.
-          const simulationDt = Math.min(simulationAccumulatorMs * getDevSpeed(), MAX_OFFLINE_MS);
+          const simulationDt = Math.min(simulationAccumulatorMs * getDevSpeed(), capMs);
           simulationAccumulatorMs = 0;
           advance(stateRef.current, content, simulationDt, { nowMs: Date.now() });
         }
@@ -776,6 +840,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
       returnToMenu,
       offlineSummary,
       dismissOffline,
+      catchUp,
       zeigeDemoOffline,
       saveRecovery,
       dismissSaveRecovery,
@@ -805,6 +870,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
       returnToMenu,
       offlineSummary,
       dismissOffline,
+      catchUp,
       zeigeDemoOffline,
       saveRecovery,
       dismissSaveRecovery,
@@ -831,7 +897,12 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
   return (
     <ControlContext.Provider value={control}>
       <SelectorStoreContext.Provider value={selectorStore}>
-        <LiveContext.Provider value={live}>{children}</LiveContext.Provider>
+        <LiveContext.Provider value={live}>
+          {children}
+          {/* claude:2026-10-31T16:34:28+01:00 — 1.4.2: Rückkehr-Fortschritt und Desktop-Benachrichtigungen hängen direkt am Provider. */}
+          <CatchUpOverlay />
+          <DesktopNotifier />
+        </LiveContext.Provider>
       </SelectorStoreContext.Provider>
     </ControlContext.Provider>
   );

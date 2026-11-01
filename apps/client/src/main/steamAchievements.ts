@@ -80,7 +80,7 @@ export const STEAM_ACHIEVEMENTS: Readonly<Record<string, string>> = {
   "ach_total_level_1980": "TRUE_COMPLETIONIST",
   "ach_deaths_1": "ASH_TO_ASH", // versteckt
   "ach_elite_idol_warden": "THE_NINTH_WARDEN", // versteckt
-  "ach_play_hours_100": "A_HUNDRED_HOURS", // versteckt
+  "ach_play_hours_100": "A_HUNDRED_HOURS", // claude:2026-10-31T09:48:00+01:00 — seit 1.4.2 sichtbar (Chef 31.10.), Steamworks-Häkchen „Hidden“ entfernt der Chef
 };
 
 /** Steam-API-Name einer internen Achievement-ID — null, wenn der Erfolg nicht im Steam-Set liegt. */

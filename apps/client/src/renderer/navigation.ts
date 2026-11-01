@@ -2,6 +2,7 @@ import type { SkillId } from "@hearthforge/shared";
 import { TAVERN_ENABLED } from "@hearthforge/shared";
 
 export type NavView =
+  | "hub" // claude:2026-10-30T20:31:00+01:00 — Hauptmenü-Hub (Startseite, 1.4.2)
   | "character"
   | "combat"
   | "skill"
@@ -57,6 +58,13 @@ export interface NavSection {
  * (Default) → flache Sidebar-Liste, Combat + Skills + Dev Tools.
  */
 export const navigation: NavSection[] = [
+  // claude:2026-10-30T20:31:00+01:00 — Hauptmenü-Hub (Chef 30.10.2026): oberster Sidebar-Eintrag und Startseite nach dem Laden.
+  // Eigene Sektion vor „hero“, damit er in der flachen Sidebar-Liste ganz oben steht (Ziffern-Hotkeys rücken dadurch um 1).
+  {
+    id: "hub",
+    label: "hub.nav",
+    pages: [{ id: "hub", label: "hub.nav", icon: "🏠", view: "hub" }],
+  },
   {
     id: "hero",
     label: "nav.section.hero",
@@ -242,5 +250,18 @@ export function requestQuestsTab(tab: QuestNavTab): void {
 export function consumeRequestedQuestsTab(): QuestNavTab | null {
   const tab = pendingQuestsTab;
   pendingQuestsTab = null;
+  return tab;
+}
+
+// claude:2026-10-31T11:27:12+01:00 — Sprung auf einen Laden-Reiter (z. B. „Beute zerlegen …“ der Charakterseite → Reiter Zerlegen).
+// Gleiches Ein-Mal-Bus-Muster wie `requestQuestsTab`: der Klick setzt den Reiter direkt vor `onNavigate("shop")`, ShopPage liest ihn einmalig.
+export type ShopNavTab = "buy" | "sell" | "salvage";
+let pendingShopTab: ShopNavTab | null = null;
+export function requestShopTab(tab: ShopNavTab): void {
+  pendingShopTab = tab;
+}
+export function consumeRequestedShopTab(): ShopNavTab | null {
+  const tab = pendingShopTab;
+  pendingShopTab = null;
   return tab;
 }

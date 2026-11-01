@@ -364,7 +364,7 @@ function SaveDossier({ slot, onContinue, onStartNew }: SaveDossierProps): JSX.El
           </div>
           <div>
             <dt>{t("menu.playtime")}</dt>
-            <dd>{formatPlaytime(summary.activePlayMs ?? summary.elapsedMs)}</dd>
+            <dd>{formatPlaytime(summary.activePlayMs ?? summary.elapsedMs, t)}</dd>
           </div>
         </dl>
         <button type="button" className="btn-iron continue-card" onClick={onContinue}>

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { content } from "@hearthforge/content";
+import { SLAYER_RETRY_MAX_DEATHS } from "@hearthforge/engine"; // claude:2026-10-31T13:00:41+01:00 — Slayer-Neuversuch
 import { useGameState } from "../game/GameContext";
+import type { GameState } from "@hearthforge/shared"; // claude:2026-10-31T14:12:00+01:00
 import { useI18n } from "../i18n";
 import { getMonsterSrc } from "../monsters";
 import { registerEscCloser } from "../util/escStack";
@@ -60,6 +62,9 @@ export function DeathPopup(): JSX.Element {
   const [diedInParagon, setDiedInParagon] = useState(false);
   const [diedInDungeon, setDiedInDungeon] = useState(false);
   const [deathTotal, setDeathTotal] = useState(0);
+  // claude:2026-10-31T13:00:41+01:00 — 1.4.2 Slayer-Neuversuch: Versuch n (Kampf läuft schon wieder) bzw. Aufgabe nach der Höchstzahl.
+  // claude:2026-10-31T14:12:00+01:00 — Fixwelle: Zeile kommt jetzt aus dem Engine-Hinweis `combat.slayerRetryNote`, keine eigene Ableitung mehr.
+  const [slayerRetry, setSlayerRetry] = useState<NonNullable<GameState["combat"]["slayerRetryNote"]> | null>(null);
   const [visible, setVisible] = useState(false);
   const snap = useRef<{
     deaths: number;
@@ -83,6 +88,9 @@ export function DeathPopup(): JSX.Element {
       setDiedInParagon(!!prev.paragonFloor);
       setDiedInDungeon(!!prev.dungeonId);
       setDeathTotal(deaths);
+      // claude:2026-10-31T13:00:41+01:00 — läuft nach dem Tod schon wieder derselbe Kampf mit Serienzähler, war es ein Neuversuch; ist der Zähler leer,
+      // der Auftrag aber noch auf diesem Gegner, hat das Spiel nach der Höchstzahl aufgegeben (engine/slayer.ts).
+      setSlayerRetry(state.combat.slayerRetryNote ?? null);
       setVisible(true);
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => setVisible(false), 7000);
@@ -155,6 +163,23 @@ export function DeathPopup(): JSX.Element {
         </p>
         {diedInParagon && (
           <p className="death-modal-paragon-hint">🗼 {t("paragon.death.reset")}</p>
+        )}
+        {/* claude:2026-10-31T13:00:41+01:00 — 1.4.2 Slayer-Neuversuch */}
+        {slayerRetry && (
+          <p className="death-modal-paragon-hint">
+            {slayerRetry.kind === "retry"
+              ? t("death.slayerRetry")
+                  .replace("{n}", String(slayerRetry.attempt + 1)) // claude:2026-10-31T14:21:06+01:00 — attempt = Tode bisher; der Neuversuch ist der nächste Versuch
+                  .replace("{max}", String(SLAYER_RETRY_MAX_DEATHS))
+                  .replace("{s}", String(Math.round(slayerRetry.resumeInMs / 1000)))
+              : t(
+                  slayerRetry.reason === "noFood"
+                    ? "death.slayerGiveUp.noFood"
+                    : slayerRetry.reason === "unreachable"
+                      ? "death.slayerGiveUp.unreachable"
+                      : "death.slayerGiveUp",
+                ).replace("{max}", String(SLAYER_RETRY_MAX_DEATHS))}
+          </p>
         )}
         {diedInDungeon && (
           <p className="death-modal-paragon-hint">🚪 {t("dungeon.death.reset")}</p>

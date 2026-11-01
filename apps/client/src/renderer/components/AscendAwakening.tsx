@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { useGameControl } from "../game/GameContext";
+import { content } from "@hearthforge/content";
+import { prestigeRunSummary } from "@hearthforge/engine";
+import type { PrestigeRunSummary } from "@hearthforge/engine";
+import { useGameControl, useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { registerEscCloser } from "../util/escStack";
 import { formatNum } from "../util/format";
@@ -14,6 +17,31 @@ import "../styles/prestige.css";
  * `ascendRun` auslöst; die Asche-Überblendung (ScreenFade) liegt darüber und blendet auf diesen Text auf.
  * Schließen: Knopf oder Escape. Mountet nur, solange ein Erwachen offen ist.
  */
+// claude:2026-11-01T11:14:09+01:00 — NUR Dev-Server: Strg+Umschalt+Alt+C zeigt die Chronik des laufenden Durchgangs als
+// Vorschau (prestigeRunSummary ist rein lesend, kein Aufstieg, kein Speichern). Im Steam-Build fällt der Zweig weg.
+function DevLedgerPreview(): JSX.Element | null {
+  const state = useGameState();
+  const [summary, setSummary] = useState<PrestigeRunSummary | null>(null);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent): void => {
+      if (e.ctrlKey && e.shiftKey && e.altKey && e.code === "KeyC") {
+        e.preventDefault();
+        setSummary((cur) => (cur ? null : prestigeRunSummary(state, content)));
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [state]);
+  if (!summary) return null;
+  return (
+    <div className="modal-overlay prestige-awakening-overlay prestige-bilanz-overlay" role="dialog" aria-modal="true" aria-labelledby="prestige-awakening-title">
+      <div className="modal prestige-bilanz">
+        <AscendLedger key={summary.run + ":" + summary.totalLevel} summary={summary} onContinue={() => setSummary(null)} />
+      </div>
+    </div>
+  );
+}
+
 export function AscendAwakening(): JSX.Element | null {
   const { ascendAwakening, dismissAscendAwakening } = useGameControl();
   const { t } = useI18n();
@@ -31,7 +59,7 @@ export function AscendAwakening(): JSX.Element | null {
     // Escape in der Bilanz-Phase: nur weiter, wenn die Animation durch ist (sonst fängt AscendLedger die Taste ab).
     return registerEscCloser("modal", () => (showLedger ? setAwake(true) : dismissAscendAwakening()));
   }, [open, showLedger, dismissAscendAwakening]);
-  if (!ascendAwakening) return null;
+  if (!ascendAwakening) return import.meta.env.DEV ? <DevLedgerPreview /> : null;
   if (showLedger && ascendAwakening.summary) {
     return (
       <div className="modal-overlay prestige-awakening-overlay prestige-bilanz-overlay" role="dialog" aria-modal="true" aria-labelledby="prestige-awakening-title">

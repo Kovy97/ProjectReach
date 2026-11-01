@@ -68,8 +68,8 @@ function stand(belegt: number[], gruppen: number, opts: { cap?: number } = {}): 
 }
 
 describe("SAVE 98: Migration < 98", () => {
-  it("SAVE_VERSION ist 98", () => {
-    expect(SAVE_VERSION).toBe(98);
+  it("SAVE_VERSION ist mindestens 98", () => { // claude:2026-10-30T19:01:00+01:00 — SAVE 99 (1.4.2) liegt darüber, die Migration < 98 bleibt gültig
+    expect(SAVE_VERSION).toBeGreaterThanOrEqual(98);
   });
 
   it("Alt-Save v97: Zellen stehen genau dort, wo der alte Client sie zeichnete (hinter dem letzten belegten Fach)", () => {

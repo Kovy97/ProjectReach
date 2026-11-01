@@ -1,0 +1,2103 @@
+/* claude:2026-10-30T21:05:00+01:00 - Synty-Stil, Rahmenersatz. GENERIERT von ui-audit/synty/gen-synty-skin.py, NICHT von Hand ändern.
+   Lenkt border-image-source der Reforged-Rahmen auf die Synty-Bausteine (var(--synty-*), gesetzt von synty/loader.ts) um; alle Regeln
+   unter :root[data-ui-style="synty"]. Kein statisches url() hier, damit ohne SYNTY_UI-Build keine Synty-Bilder im Paket landen. */
+:root[data-ui-style="synty"] body {
+  background: linear-gradient(rgba(14, 14, 16, 0.6), rgba(14, 14, 16, 0.6)), linear-gradient(#2a2220, #2a2220) top left repeat scroll, var(--bg);
+}
+:root[data-ui-style="synty"] :root[data-ui-style="reforged"] body {
+  background: radial-gradient(ellipse at 50% 45%, rgba(0, 0, 0, 0) 38%, rgba(0, 0, 0, 0.62) 100%), linear-gradient(rgba(12, 9, 7, 0.5), rgba(12, 9, 7, 0.5)), linear-gradient(#2c211d, #2c211d) top left repeat scroll, var(--bg);
+}
+:root[data-ui-style="synty"] .ds-frame {
+  border-image-source: var(--synty-frame-big);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ds-frame--headed {
+  border-image-source: var(--synty-frame-big);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ds-button::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ds-tooltip {
+  border-image-source: var(--synty-frame-tip);
+  border-image-slice: 64 fill;
+}
+:root[data-ui-style="synty"] .btn-iron {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background-image: linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .btn-iron.is-active {
+  background-image: linear-gradient(rgba(216, 192, 106, 0.2), rgba(3, 5, 6, 0.42)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .btn-iron.is-active {
+  background-image: linear-gradient(rgba(216, 192, 106, 0.44), rgba(122, 92, 44, 0.26)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .content-body-frame::after {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .sidebar {
+  background: linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)), linear-gradient(#1d1614, #1d1614) top left / 782px repeat;
+}
+:root[data-ui-style="synty"] .sidebar::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .sb-blessing-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .sb-skill-btn,
+:root[data-ui-style="synty"] .sb-skill-btn:hover,
+:root[data-ui-style="synty"] .sb-skill-btn.active {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+}
+:root[data-ui-style="synty"] .sb-skill-btn:hover {
+  border-image-source: var(--synty-frame-btn-hover);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .sb-skill-btn.active {
+  border-image-source: var(--synty-frame-btn-press);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .sb-footer-save::before,
+:root[data-ui-style="synty"] .sb-footer-menu::before,
+:root[data-ui-style="synty"] .sb-footer-mail::before,
+:root[data-ui-style="synty"] .sb-footer-options::before,
+:root[data-ui-style="synty"] .sb-footer-quit::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .sb-footer-drawer-tab {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(8, 11, 13, 0.14), rgba(2, 4, 5, 0.34)), linear-gradient(#2a2220, #2a2220) 0 0 / 480px 480px repeat;
+}
+:root[data-ui-style="synty"] .sb-footer-actions {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .menu-panel {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .hf-btn::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .save-dossier {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .active-relic {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(135deg, rgba(20, 19, 17, 0.95), rgba(8, 9, 9, 0.97)), linear-gradient(#2f231e, #2f231e) repeat;
+}
+:root[data-ui-style="synty"] .new-relic-copy {
+  background: linear-gradient(rgba(32, 29, 25, 0.94), rgba(16, 16, 15, 0.98)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .load-dossier-info {
+  background: linear-gradient(135deg, rgba(27, 27, 25, 0.98), rgba(11, 12, 12, 0.98)), linear-gradient(#2f231e, #2f231e) repeat;
+}
+:root[data-ui-style="synty"] .slot-thumb {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(20, 19, 17, 0.68), rgba(8, 9, 9, 0.86)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .creation-portrait-upload-btn {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background-image: linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .creation-form-pane {
+  background: linear-gradient(rgba(13, 14, 14, 0.96), rgba(10, 11, 11, 0.985)), linear-gradient(#2f231e, #2f231e) repeat;
+}
+:root[data-ui-style="synty"] .creation-input {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .creation-style-card {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(145deg, rgba(33, 31, 28, 0.7), rgba(16, 17, 17, 0.86)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .creation-portrait-cell {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .vital-bar {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cs-portrait-wrap {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cs-portrait-settings-btn {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cs-vitals {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cs-attr-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cs-sort-select {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cs-inv-search {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cs-detail-panel::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cs-detail-img-wrap {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cs-detail-meta::after {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cs-tab-btn::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .portrait-gallery-grid .portrait-thumb {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .portrait-gallery-grid .portrait-thumb.active {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .category-header {
+  background: linear-gradient(rgba(16, 10, 5, 0.28), rgba(16, 10, 5, 0.36)), linear-gradient(#2f231f, #2f231f) repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .category-header:hover {
+  background: linear-gradient(rgba(60, 42, 22, 0.2), rgba(60, 42, 22, 0.26)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .skillcard {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skillcard-lvl {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skillcard-invcount {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skillcard-tile {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skillcard-loot {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .mat-chip {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .craftable {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skillcard-cta {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ms2-tabs {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ms2-tab {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ms2-skill-block {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ms2-skill-badge {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ms2-pool-bar {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ms2-action-bar {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skill-head {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skill-level-badge {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skill-active {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skilloverview-page .panel {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skilloverview-card {
+  background: linear-gradient(rgba(28, 17, 9, 0.55), rgba(18, 11, 6, 0.68)), linear-gradient(#2c211d, #2c211d) center / 650px repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skilloverview-icon-wrap {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skilloverview-level {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skilloverview-bar {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skill-head .bar.tall,
+:root[data-ui-style="synty"] .skill-active .bar.tall,
+:root[data-ui-style="synty"] .skillcard-bar,
+:root[data-ui-style="synty"] .mastery-bar {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .farm-info-bar {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .plot-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .plot-bar {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .farm-picker-card {
+  background: linear-gradient(rgba(28, 17, 9, 0.58), rgba(18, 11, 6, 0.7)), linear-gradient(#2c211d, #2c211d) center / 650px repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .farm-catalogue-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .slayer-target-badge {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .zone-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .dungeon-progress {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(8, 5, 2, 0.66), rgba(8, 5, 2, 0.66)), linear-gradient(#2c211d, #2c211d) center / 325px repeat;
+}
+:root[data-ui-style="synty"] .monster-card-level-badge {
+  background: linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)), linear-gradient(#2c211d, #2c211d) center / 325px repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .mc-trait-badge {
+  background: linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)), linear-gradient(#2c211d, #2c211d) center / 325px repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .monster-card-xp-badge {
+  background: linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)), linear-gradient(#2c211d, #2c211d) center / 325px repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .battle {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .battle-arena {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .fighter-sub-drops {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+@container (max-width: 460px) {
+  :root[data-ui-style="synty"] .fighter-sub-drops-grid {
+    border-image-source: var(--synty-frame-panel);
+    border-image-slice: 64;
+  }
+}
+:root[data-ui-style="synty"] .battle-log-tab::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .battle-controls {
+  border-image-source: var(--synty-frame-big);
+  border-image-slice: 64 fill;
+}
+:root[data-ui-style="synty"] .battle-log-panel {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .fighter-nameplate {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .fighter-level-badge {
+  background: linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)), linear-gradient(#2c211d, #2c211d) center / 325px repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cbar.cbar-hp,
+:root[data-ui-style="synty"] .cbar.cbar-enemy-hp,
+:root[data-ui-style="synty"] .cbar.cbar-mana,
+:root[data-ui-style="synty"] .cbar.cbar-ward,
+:root[data-ui-style="synty"] .cbar.cbar-timer {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .combat-quick {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .monster-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .zone-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cl-section {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cl-autoeat-upgrade {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cl-potion-rebuff-unlock {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(8, 8, 8, 0.76), rgba(15, 10, 6, 0.84)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .zone-back {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .monster-card-footer {
+  background: linear-gradient(rgba(28, 17, 9, 0.80), rgba(18, 11, 6, 0.88)), linear-gradient(#2c211d, #2c211d) center / 800px repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .monster-card-stats.stat-line .stat-line-item {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .kill-summary-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .battle-log-settings-btn::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .battle-log-settings-pop {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .combat-select:not(.is-map-mode) {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(8, 8, 8, 0.86), rgba(15, 10, 6, 0.9)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .combat-frontline-dock {
+  background: linear-gradient(rgba(8, 10, 11, 0.76), rgba(10, 7, 4, 0.84)), linear-gradient(#2c221e, #2c221e) repeat;
+}
+:root[data-ui-style="synty"] .cl-dock-tab {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cl-dock-pane-gear .cl-gear-doll,
+:root[data-ui-style="synty"] .cl-dock-pane-gear .cs-stats-scroll {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .battle-loadout-col,
+:root[data-ui-style="synty"] .battle-log-panel,
+:root[data-ui-style="synty"] .battle-arena {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .battle-arena {
+  background: linear-gradient(rgba(8, 9, 10, 0.44), rgba(5, 4, 3, 0.68)), linear-gradient(#2c221e, #2c221e) repeat;
+}
+:root[data-ui-style="synty"] .battle-log-panel {
+  background: linear-gradient(rgba(8, 8, 8, 0.86), rgba(15, 10, 6, 0.9)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .fighter-nameplate {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(7, 8, 9, 0.9), rgba(14, 10, 7, 0.94)), linear-gradient(#33261f, #33261f) repeat;
+}
+:root[data-ui-style="synty"] .battle .combat-stop-btn {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(57, 13, 10, 0.34), rgba(10, 8, 7, 0.86)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .battle .combat-stop-btn:hover {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(96, 24, 17, 0.48), rgba(19, 11, 8, 0.9)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .battle-hud-ribbon {
+  background: linear-gradient(90deg, rgba(7, 8, 8, 0.94), rgba(22, 18, 13, 0.9) 62%, rgba(7, 8, 8, 0.94)), linear-gradient(#33261f, #33261f) repeat;
+}
+:root[data-ui-style="synty"] .battle-hud-ribbon-details {
+  background: linear-gradient(rgba(8, 9, 9, 0.97), rgba(15, 11, 7, 0.98)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] #root .combat-page .zone-back {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background-image: linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .bank-head {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .toast {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .stats-page .panel {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .bestiary-page .panel {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .status-legend {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .bestiary-zone-header {
+  background: linear-gradient(rgba(16, 10, 5, 0.14), rgba(16, 10, 5, 0.2)), linear-gradient(#2f231e, #2f231e) repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .bestiary-zone-header:hover {
+  background: linear-gradient(rgba(60, 42, 22, 0.16), rgba(60, 42, 22, 0.22)), linear-gradient(#2f231e, #2f231e) repeat;
+}
+:root[data-ui-style="synty"] .bestiary-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .bestiary-card-level-badge {
+  background: linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)), linear-gradient(#2c211d, #2c211d) center / 325px repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .bestiary-card-footer {
+  background: linear-gradient(rgba(28, 17, 9, 0.80), rgba(18, 11, 6, 0.88)), linear-gradient(#2c211d, #2c211d) center / 800px repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .bestiary-drops {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .bestiary-fight-btn {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+}
+:root[data-ui-style="synty"] .bestiary-fight-btn:hover:not(:disabled) {
+  border-image-source: var(--synty-frame-btn-hover);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .bestiary-fight-btn:active:not(:disabled) {
+  border-image-source: var(--synty-frame-btn-press);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .options-page .panel {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ach2-page-header {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ach2-stat-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ach2-controls {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ach2-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .pet-gallery-page .panel {
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), linear-gradient(#2c211d, #2c211d) repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .pet-slot-btn::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .pet-select-panel {
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), linear-gradient(#2c211d, #2c211d) repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .pet-card {
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), linear-gradient(#2c211d, #2c211d) repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .pet-card-portrait {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .pet-effect-tag {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .pet-card-btn::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .pet-field-header,
+:root[data-ui-style="synty"] .pet-field-index,
+:root[data-ui-style="synty"] .pet-field-detail,
+:root[data-ui-style="synty"] .pet-field-empty {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(10, 13, 14, 0.84), rgba(8, 10, 11, 0.94)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .pet-field-active {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(12, 14, 15, 0.76), rgba(7, 9, 10, 0.9)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .pet-field-entry {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(13, 16, 17, 0.85), rgba(8, 10, 11, 0.92)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .pet-field-entry.is-selected {
+  background: linear-gradient(rgba(58, 45, 26, 0.72), rgba(20, 19, 16, 0.9)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .pet-field-stage {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: radial-gradient(ellipse at 50% 44%, rgba(55, 68, 69, 0.8), rgba(9, 11, 12, 0.96) 68%), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .pet-field-effects {
+  background: linear-gradient(rgba(10, 13, 14, 0.74), rgba(7, 9, 10, 0.88)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .pet-field-journal .pet-card-btn {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(20, 23, 23, 0.72), rgba(9, 11, 12, 0.9)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .pet-field-journal .pet-card-btn-unequip {
+  background: linear-gradient(rgba(59, 23, 19, 0.52), rgba(22, 12, 11, 0.9)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .enchant-panel {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .enchant-item-row {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .enchant-preview {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .enchant-preview-item {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .enchant-preview-statblock {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .shop-balance {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), linear-gradient(#2c211d, #2c211d) repeat;
+}
+:root[data-ui-style="synty"] .shop-panel {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), linear-gradient(#2c211d, #2c211d) repeat;
+}
+:root[data-ui-style="synty"] .shop-item-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .shop-item-image-area {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .shop-citadel-btn::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .bank-ledger .npc-bubble {
+  background: linear-gradient(rgba(8, 10, 12, 0.82), rgba(12, 10, 8, 0.88)), linear-gradient(#2a2220, #2a2220) center / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] .bank-page .bank-head {
+  border-image-source: var(--synty-frame-card);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(8, 10, 12, 0.72), rgba(8, 10, 12, 0.78)), linear-gradient(#2a2220, #2a2220) center / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] .bank-page .bank-filter-row {
+  background: linear-gradient(rgba(7, 9, 11, 0.72), rgba(7, 9, 11, 0.82)), linear-gradient(#2a2220, #2a2220) center / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] .bank-page .bank-ledger-panel {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(8, 10, 12, 0.7), rgba(7, 8, 10, 0.82)), linear-gradient(#2a2220, #2a2220) center / 800px 800px repeat;
+}
+:root[data-ui-style="synty"] .bank-page .bank-ledger-panel--storage {
+  background: linear-gradient(rgba(16, 12, 8, 0.68), rgba(8, 9, 10, 0.82)), linear-gradient(#2a2220, #2a2220) center / 800px 800px repeat;
+}
+:root[data-ui-style="synty"] .item-tooltip {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ct-tip {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .it-action-btn {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+}
+:root[data-ui-style="synty"] .it-action-btn:hover {
+  border-image-source: var(--synty-frame-btn-hover);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .it-action-btn:active {
+  border-image-source: var(--synty-frame-btn-press);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .it-action-btn:disabled:hover,
+:root[data-ui-style="synty"] .it-action-btn:disabled:active {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .item-tooltip.itip-panel {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .itip-stage {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .itip-body {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .item-tooltip.itip-panel {
+  background: linear-gradient(90deg, rgba(7, 7, 7, 0.94), rgba(27, 19, 12, 0.9) 48%, rgba(8, 8, 8, 0.95)), linear-gradient(#2c211d, #2c211d) 0 0 / 800px 800px repeat;
+}
+:root[data-ui-style="synty"] .itip-warbanner-main {
+  background: linear-gradient(rgba(10, 9, 8, 0.68), rgba(10, 8, 6, 0.82)), linear-gradient(#2c221e, #2c221e) 0 0 / 700px 700px repeat;
+}
+:root[data-ui-style="synty"] .itip-warbanner-main .itip-stage {
+  background: radial-gradient(circle at 50% 46%, color-mix(in srgb, var(--rarity-col, var(--gold)) 14%, transparent), transparent 68%), linear-gradient(rgba(12, 14, 15, 0.56), rgba(7, 8, 9, 0.78)), linear-gradient(#2a2220, #2a2220) 0 0 / 480px 480px repeat;
+}
+:root[data-ui-style="synty"] #root .itip-warbanner-record .itip-special-effect {
+  background: linear-gradient(90deg, rgba(88, 35, 12, 0.34), rgba(24, 15, 10, 0.74)), linear-gradient(#2c221e, #2c221e) 0 0 / 600px 600px repeat;
+}
+:root[data-ui-style="synty"] .cs-detail-affix-tag {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .active-buff-chip {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .itip-warbanner-record .itip-effect-block {
+  background: linear-gradient(90deg, rgba(27, 20, 13, 0.88), rgba(8, 10, 11, 0.9)), linear-gradient(#2c221e, #2c221e) 0 0 / 600px 600px repeat;
+}
+:root[data-ui-style="synty"] #root .item-tooltip.itip-panel .it-action-btn {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(164, 112, 55, 0.13), transparent 72%), linear-gradient(rgba(8, 11, 13, 0.08), rgba(2, 4, 5, 0.34)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .modal {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skillguide-head-icon {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .skillguide-level-badge {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .death-modal-icon {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .quit-confirm-icon {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .slayer-master-tab::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .slayer-balance {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .shop-panel.slayer-shop-panel,
+:root[data-ui-style="synty"] .shop-panel.slayer-talent-panel,
+:root[data-ui-style="synty"] .slayer-task-panel.shop-panel {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background-image: radial-gradient(ellipse at 15% 0%, rgba(140, 86, 39, 0.10), transparent 55%), linear-gradient(rgba(6, 9, 11, 0.32), rgba(4, 6, 8, 0.58)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .slayer-task-art {
+  border-image-source: var(--synty-frame-card);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .slayer-shop-card {
+  border-image-source: var(--synty-frame-card);
+  border-image-slice: 64;
+  background-image: linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .slayer-lower-tab {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(14, 17, 18, 0.86), rgba(7, 9, 10, 0.94)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .slayer-lower-tab.is-active {
+  background: linear-gradient(rgba(75, 53, 25, 0.69), rgba(18, 16, 13, 0.92)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .prestige-scene {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .prestige-balance {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .prestige-pick {
+  border-image-source: var(--synty-frame-card);
+  border-image-slice: 64;
+  background-image: linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .prestige-pick.is-selected {
+  background-image: linear-gradient(rgba(70, 46, 14, 0.42), rgba(5, 8, 10, 0.3)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .modal.prestige-bilanz {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .prestige-src {
+  background: linear-gradient(rgba(8, 10, 11, 0.8), rgba(8, 10, 11, 0.88)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .talent-bar {
+  background: linear-gradient(rgba(8, 10, 11, 0.78), rgba(8, 10, 11, 0.86)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .talent-node {
+  border-image-source: var(--synty-frame-card);
+  border-image-slice: 64;
+  background-image: linear-gradient(rgba(8, 10, 11, 0.8), rgba(8, 10, 11, 0.88)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .talent-node.is-maxed {
+  background-image: linear-gradient(rgba(58, 42, 12, 0.72), rgba(14, 10, 4, 0.9)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .talent-node.is-available {
+  background-image: linear-gradient(rgba(62, 26, 10, 0.55), rgba(10, 8, 7, 0.88)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .talent-node.is-locked {
+  background-image: linear-gradient(rgba(20, 23, 25, 0.9), rgba(20, 23, 25, 0.94)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .modal.pouch-modal {
+  background: linear-gradient(rgba(18, 13, 9, 0.22), rgba(4, 4, 4, 0.5)), linear-gradient(#2f231e, #2f231e) repeat;
+}
+:root[data-ui-style="synty"] .pouch-head {
+  background: linear-gradient(90deg, rgba(27, 18, 12, 0.86), rgba(10, 10, 10, 0.72)), linear-gradient(#2c221e, #2c221e) 0 0 / 640px 640px repeat;
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .pouch-row {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(70, 66, 60, 0.30), rgba(10, 9, 8, 0.55)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .pouch-row.pouch-row-equipped {
+  background: linear-gradient(rgba(216, 192, 106, 0.16), rgba(10, 9, 8, 0.55)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .iwk-panel {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.58)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .iwk-ribbon {
+  background: linear-gradient(rgba(4, 4, 4, 0.5), rgba(20, 13, 8, 0.5)), linear-gradient(#2c221e, #2c221e) repeat;
+}
+:root[data-ui-style="synty"] .encp-rail {
+  background: linear-gradient(90deg, rgba(38, 26, 17, 0.76), rgba(9, 10, 11, 0.82)), linear-gradient(#2f231f, #2f231f) center / 640px repeat;
+}
+:root[data-ui-style="synty"] .encp-grid-wrap {
+  background: linear-gradient(rgba(6, 7, 8, 0.7), rgba(8, 8, 8, 0.78)), linear-gradient(#2a2220, #2a2220) center / 750px repeat;
+}
+:root[data-ui-style="synty"] .encp-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .guide-bubble {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] :root {
+  --gw-nav-surface: linear-gradient(#2c221e, #2c221e);
+}
+:root[data-ui-style="synty"] #root .sb-skill-btn,
+:root[data-ui-style="synty"] #root .sb-skill-btn:hover,
+:root[data-ui-style="synty"] #root .sb-skill-btn.active {
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root .sb-skill-btn:not(:disabled):hover {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .sb-skill-btn.active {
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root .sb-skill-btn:not(:disabled):active {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ) {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root :is( .sb-skill-btn, .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ) {
+  --gw-nav-surface: linear-gradient(#2f231e, #2f231e);
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root :is( .sb-skill-btn, .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ) {
+  --gw-nav-frame: var(--synty-frame-panel);
+  --gw-nav-surface: linear-gradient(#2c221e, #2c221e);
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root .sb-skill-btn:hover {
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root .sb-skill-btn {
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root :is( .sb-skill-btn, .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ),
+:root[data-ui-style="synty"] #root .sb-skill-btn:hover,
+:root[data-ui-style="synty"] #root .sb-skill-btn:active,
+:root[data-ui-style="synty"] #root .sb-skill-btn.active {
+  --gw-nav-surface: linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] #root .sb-skill-btn,
+:root[data-ui-style="synty"] #root .sb-skill-btn:hover,
+:root[data-ui-style="synty"] #root .sb-skill-btn:active,
+:root[data-ui-style="synty"] #root .sb-skill-btn.active {
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root .sb-skill-btn,
+:root[data-ui-style="synty"] #root .sb-skill-btn:hover,
+:root[data-ui-style="synty"] #root .sb-skill-btn:focus-visible,
+:root[data-ui-style="synty"] #root .sb-skill-btn:active,
+:root[data-ui-style="synty"] #root .sb-skill-btn.active {
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+  background-image: linear-gradient(rgba(8, 10, 11, 0.32), rgba(4, 5, 6, 0.48)), linear-gradient(#2a2220, #2a2220) !important;
+}
+:root[data-ui-style="synty"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ),
+:root[data-ui-style="synty"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):hover,
+:root[data-ui-style="synty"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):active {
+  --gw-nav-surface: linear-gradient(#2c221e, #2c221e);
+}
+:root[data-ui-style="synty"] #root .sb-skill-btn,
+:root[data-ui-style="synty"] #root .sb-skill-btn:hover,
+:root[data-ui-style="synty"] #root .sb-skill-btn:focus-visible,
+:root[data-ui-style="synty"] #root .sb-skill-btn:active,
+:root[data-ui-style="synty"] #root .sb-skill-btn.active {
+  --gw-nav-surface: linear-gradient(#2f231e, #2f231e);
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ),
+:root[data-ui-style="synty"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):hover,
+:root[data-ui-style="synty"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):active {
+  --gw-nav-surface: linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] #root .sb-skill-btn,
+:root[data-ui-style="synty"] #root .sb-skill-btn:hover,
+:root[data-ui-style="synty"] #root .sb-skill-btn:focus-visible,
+:root[data-ui-style="synty"] #root .sb-skill-btn:active,
+:root[data-ui-style="synty"] #root .sb-skill-btn.active {
+  --gw-nav-surface: linear-gradient(#2c211d, #2c211d);
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root .sb-skill-btn,
+:root[data-ui-style="synty"] #root .sb-skill-btn:hover,
+:root[data-ui-style="synty"] #root .sb-skill-btn:focus-visible,
+:root[data-ui-style="synty"] #root .sb-skill-btn:active,
+:root[data-ui-style="synty"] #root .sb-skill-btn.active {
+  --gw-nav-surface: linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ),
+:root[data-ui-style="synty"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):hover,
+:root[data-ui-style="synty"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):active {
+  --gw-nav-surface: linear-gradient(#33261f, #33261f);
+}
+:root[data-ui-style="synty"] #root .sb-skill-btn,
+:root[data-ui-style="synty"] #root .sb-skill-btn:hover,
+:root[data-ui-style="synty"] #root .sb-skill-btn:focus-visible,
+:root[data-ui-style="synty"] #root .sb-skill-btn:active,
+:root[data-ui-style="synty"] #root .sb-skill-btn.active {
+  --gw-nav-frame: var(--synty-frame-btn);
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root .sb-skill-btn,
+:root[data-ui-style="synty"] #root .sb-skill-btn:hover,
+:root[data-ui-style="synty"] #root .sb-skill-btn:focus-visible,
+:root[data-ui-style="synty"] #root .sb-skill-btn:active,
+:root[data-ui-style="synty"] #root .sb-skill-btn.active {
+  --gw-nav-surface: linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] #root .sidebar {
+  background-image: linear-gradient(rgba(7, 7, 8, 0.22), rgba(3, 3, 4, 0.42)), linear-gradient(#2c221e, #2c221e);
+}
+:root[data-ui-style="synty"] #root .sidebar::before {
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root .sb-combat-toggle,
+:root[data-ui-style="synty"] #root .sb-combat-toggle:hover,
+:root[data-ui-style="synty"] #root .sb-combat-toggle:focus-visible,
+:root[data-ui-style="synty"] #root .sb-combat-toggle:active,
+:root[data-ui-style="synty"] #root .sb-combat-toggle.open {
+  --gw-nav-frame: var(--synty-frame-btn);
+  --gw-nav-surface: linear-gradient(#2a2220, #2a2220);
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ),
+:root[data-ui-style="synty"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):hover,
+:root[data-ui-style="synty"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):active {
+  --gw-nav-surface: linear-gradient(#2f231e, #2f231e);
+}
+:root[data-ui-style="synty"] :root {
+  --gw-control-surface: linear-gradient(#2c221e, #2c221e);
+}
+:root[data-ui-style="synty"] :root {
+  --gw-offline-leather: linear-gradient(#2f231e, #2f231e);
+}
+:root[data-ui-style="synty"] #root .ofs-collect,
+:root[data-ui-style="synty"] #root .ofs-collect:hover,
+:root[data-ui-style="synty"] #root .ofs-collect:active {
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+  background-image: linear-gradient(#2c221e, #2c221e) !important;
+}
+:root[data-ui-style="synty"] #root .cs-grid > .cs-col-left,
+:root[data-ui-style="synty"] #root .cs-col-mid-stack > .cs-col-tabpanel,
+:root[data-ui-style="synty"] #root .cs-grid > .cs-col-right {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .cs-col-mid-stack > .cs-col-tabpanel {
+  background-image: radial-gradient(ellipse at 50% 10%, rgba(151, 91, 40, 0.13), transparent 58%), linear-gradient(rgba(8, 5, 3, 0.28), rgba(4, 3, 2, 0.5)), linear-gradient(#2f231f, #2f231f);
+}
+:root[data-ui-style="synty"] :root {
+  --gw-action-frame: var(--synty-frame-panel);
+  --gw-action-bronze: linear-gradient(#33261f, #33261f);
+  --gw-action-wood: linear-gradient(#2c221e, #2c221e);
+  --gw-action-leather: linear-gradient(#2f231e, #2f231e);
+  --gw-action-canvas: linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] #root .skillcard-tile {
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root .skillcard-craft-cta .skillcard-cta.qty {
+  border-image-source: var(--synty-frame-btn) !important;
+  border-image-slice: 64 fill !important;
+}
+:root[data-ui-style="synty"] #root .skillcard-output-zone :is(.skillcard-loot, .skillcard-produces) {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .skillcard-resource-rack .mat-chip,
+:root[data-ui-style="synty"] #root .skillcard-resource-empty {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .skillcard-state-slot {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .skillcard-mastery {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .skill-search-bar {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .skill-search-bar .invf-search {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .farm-page .skillcard-cta {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+}
+:root[data-ui-style="synty"] #root .skillcard .skillcard-tile.skillcard-tile.skillcard-tile {
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root .skillcard .skillcard-output-zone .skillcard-produces.skillcard-produces.skillcard-produces,
+:root[data-ui-style="synty"] #root .skillcard .skillcard-output-zone .skillcard-loot.skillcard-loot.skillcard-loot {
+  border-image-source: var(--synty-frame-btn) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root .monster-card {
+  --fc-frame: var(--synty-frame-panel);
+  --fc-surface: linear-gradient(#2a2220, #2a2220);
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .monster-card-xp-badge,
+:root[data-ui-style="synty"] #root .monster-card-level-badge,
+:root[data-ui-style="synty"] #root .mc-trait-badge {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .monster-card.elite-monster-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .combat-frontline-dock {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(8, 8, 8, 0.86), rgba(15, 10, 6, 0.9)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .combat-frontline-dock .cl-dock-toggle {
+  background: linear-gradient(rgba(5, 6, 7, 0.9), rgba(13, 15, 16, 0.94)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .combat-frontline-dock .cl-dock-tab {
+  background: linear-gradient(rgba(26, 30, 31, 0.72), rgba(9, 11, 12, 0.9)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .combat-frontline-dock .cl-dock-tab.active {
+  background: linear-gradient(rgba(69, 48, 24, 0.48), rgba(13, 15, 16, 0.94)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .combat-frontline-dock .cl-section,
+:root[data-ui-style="synty"] .combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll,
+:root[data-ui-style="synty"] .combat-frontline-dock .cl-dock-pane-gear .cs-stats-scroll {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(5, 7, 8, 0.86), rgba(2, 3, 4, 0.92)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll {
+  background: linear-gradient(90deg, transparent 49.55%, rgba(207, 154, 76, 0.3) 49.55% 50.45%, transparent 50.45%), linear-gradient(rgba(3, 4, 5, 0.74), rgba(2, 3, 4, 0.94)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .combat-frontline-dock .cl-skill,
+:root[data-ui-style="synty"] .combat-frontline-dock .cl-stance,
+:root[data-ui-style="synty"] .combat-frontline-dock .cl-food-item,
+:root[data-ui-style="synty"] .combat-frontline-dock .cl-potion-item {
+  background: linear-gradient(90deg, rgba(15, 18, 19, 0.92), rgba(6, 8, 9, 0.82)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .combat-frontline-dock .cl-stance.active {
+  background: linear-gradient(90deg, rgba(104, 64, 23, 0.38), rgba(7, 9, 10, 0.9) 62%), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .combat-frontline-dock .cl-food-slot {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: radial-gradient(circle at 50% 45%, rgba(96, 104, 103, 0.3), rgba(6, 8, 9, 0.94) 72%), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .combat-frontline-dock .cl-food-btn {
+  background: radial-gradient(circle, rgba(63, 70, 70, 0.32), rgba(6, 8, 9, 0.92) 72%), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .combat-frontline-dock .cl-autoeat-upgrade {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(18, 20, 21, 0.78), rgba(5, 7, 8, 0.9)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .combat-frontline-dock.cl-dock--collapsed {
+  background: linear-gradient(90deg, rgba(4, 5, 6, 0.96), rgba(27, 29, 29, 0.94) 50%, rgba(4, 5, 6, 0.96)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] #root .layout--reforged {
+  --chrome-frame: var(--synty-frame-btn);
+  --chrome-shell: linear-gradient(rgba(16, 13, 11, .55), rgba(12, 12, 11, .75)), linear-gradient(#2c221e, #2c221e) center / 640px repeat;
+  --chrome-surface: linear-gradient(rgba(11, 15, 17, .73), rgba(11, 14, 15, .85)), linear-gradient(#2a2220, #2a2220) center / 640px repeat;
+  --chrome-nav-shell: linear-gradient(rgba(15, 10, 7, .18), rgba(8, 7, 6, .36)), linear-gradient(#2c221e, #2c221e) center / 800px repeat;
+  --chrome-well: linear-gradient(rgba(58, 31, 19, .36), rgba(9, 12, 14, .72)), linear-gradient(#2a2220, #2a2220) 0 0 / 480px repeat;
+}
+:root[data-ui-style="synty"] :root:not([data-nav-skin]),
+:root[data-ui-style="synty"] :root[data-nav-skin="wood"],
+:root[data-ui-style="synty"] [data-nav-skin="wood"] {
+  --nav-skin-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(8, 11, 13, .06), rgba(2, 4, 5, .28)), linear-gradient(#2f231f, #2f231f) 110px 37px / 304px 304px repeat;
+  --nav-skin-selected: radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%), linear-gradient(rgba(33, 23, 12, .16), rgba(16, 11, 6, .22)), linear-gradient(#2f231f, #2f231f) 110px 37px / 304px 304px repeat;
+}
+:root[data-ui-style="synty"] :root[data-nav-skin="moss"],
+:root[data-ui-style="synty"] [data-nav-skin="moss"] {
+  --nav-skin-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(6, 7, 8, .03), rgba(2, 3, 4, .28)), linear-gradient(#2f231f, #2f231f) 145px 246px / 304px 304px repeat;
+  --nav-skin-selected: radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%), linear-gradient(rgba(33, 23, 12, .16), rgba(16, 11, 6, .22)), linear-gradient(#2f231f, #2f231f) 145px 246px / 304px 304px repeat;
+}
+:root[data-ui-style="synty"] :root[data-nav-skin="basalt"],
+:root[data-ui-style="synty"] [data-nav-skin="basalt"] {
+  --nav-skin-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(6, 7, 8, .03), rgba(2, 3, 4, .28)), linear-gradient(#2f231f, #2f231f) 107px 125px / 304px 304px repeat;
+  --nav-skin-selected: radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%), linear-gradient(rgba(33, 23, 12, .16), rgba(16, 11, 6, .22)), linear-gradient(#2f231f, #2f231f) 107px 125px / 304px 304px repeat;
+}
+:root[data-ui-style="synty"] :root[data-nav-skin="leather"],
+:root[data-ui-style="synty"] [data-nav-skin="leather"] {
+  --nav-skin-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(6, 7, 8, .03), rgba(2, 3, 4, .28)), linear-gradient(#2f231f, #2f231f) 107px 125px / 304px 304px repeat;
+  --nav-skin-selected: radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%), linear-gradient(rgba(33, 23, 12, .16), rgba(16, 11, 6, .22)), linear-gradient(#2f231f, #2f231f) 107px 125px / 304px 304px repeat;
+}
+:root[data-ui-style="synty"] #root .layout--reforged .hs-strip {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .layout--reforged .sidebar::before {
+  border-image-source: var(--synty-frame-btn) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root .layout--reforged .sidebar .sb-blessing-card {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .layout--reforged .sidebar .sb-footer-drawer-tab {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .layout--reforged .sidebar .sb-footer.is-open .sb-footer-actions {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .layout--reforged .sidebar :is(.sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit) {
+  border-image-source: var(--synty-frame-btn) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] #root .layout--reforged .queue-panel::before {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .layout--reforged .queue-panel-stop,
+:root[data-ui-style="synty"] #root .layout--reforged .queue-panel-clear,
+:root[data-ui-style="synty"] #root .layout--reforged .queue-panel-resume-btn,
+:root[data-ui-style="synty"] #root .layout--reforged .queue-panel-blocked-btn {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(6, 8, 9, 0.34), rgba(2, 3, 4, 0.64)), linear-gradient(#2a2220, #2a2220) 0 0 / 480px 480px repeat;
+}
+:root[data-ui-style="synty"] .storage-shelf {
+  background: linear-gradient(rgba(14, 11, 8, 0.78), rgba(14, 11, 8, 0.86)), linear-gradient(#2c211d, #2c211d) repeat;
+}
+:root[data-ui-style="synty"] .work-order {
+  background: linear-gradient(rgba(14, 11, 8, 0.8), rgba(14, 11, 8, 0.88)), linear-gradient(#2c211d, #2c211d) repeat;
+}
+:root[data-ui-style="synty"] .achv-hero {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .achv-controls {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .achv-filter-group {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .achv-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .queue-panel {
+  background: linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)), linear-gradient(#1d1614, #1d1614) top left / 782px repeat;
+}
+:root[data-ui-style="synty"] .queue-panel::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .queue-panel-header {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .queue-panel-paused {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .queue-panel-resume-btn {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .queue-panel-clear {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .queue-panel-blocked {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .queue-panel-blocked-btn {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .queue-row {
+  background: linear-gradient(rgba(16, 10, 5, 0.45), rgba(16, 10, 5, 0.52)), linear-gradient(#2c211d, #2c211d) repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .queue-row-btn {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .queue-rail-icon-box {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .queue-panel {
+  background: linear-gradient(rgba(6, 8, 10, 0.36), rgba(2, 4, 5, 0.62)), linear-gradient(#2a2220, #2a2220) 0 0 / 480px 480px repeat;
+}
+:root[data-ui-style="synty"] .queue-panel::before {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .queue-panel-toggle {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(15, 18, 19, 0.3), rgba(4, 6, 7, 0.58)), linear-gradient(#2a2220, #2a2220) 0 0 / 480px 480px repeat;
+}
+:root[data-ui-style="synty"] .queue-panel-header {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: radial-gradient(circle at 50% 0%, rgba(160, 108, 52, 0.18), transparent 70%), linear-gradient(rgba(12, 15, 17, 0.38), rgba(3, 5, 6, 0.66)), linear-gradient(#2a2220, #2a2220) 0 0 / 480px 480px repeat;
+}
+:root[data-ui-style="synty"] .queue-panel-active .queue-row {
+  background: linear-gradient(90deg, rgba(79, 38, 18, 0.7), rgba(20, 15, 12, 0.72)), linear-gradient(#33261f, #33261f) 0 0 / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] .queue-row {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(10, 13, 15, 0.36), rgba(3, 5, 6, 0.64)), linear-gradient(#2a2220, #2a2220) 0 0 / 480px 480px repeat;
+}
+:root[data-ui-style="synty"] .queue-row-btn,
+:root[data-ui-style="synty"] .queue-panel-resume-btn,
+:root[data-ui-style="synty"] .queue-panel-clear,
+:root[data-ui-style="synty"] .queue-panel-blocked-btn {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(6, 8, 9, 0.34), rgba(2, 3, 4, 0.64)), linear-gradient(#2a2220, #2a2220) 0 0 / 480px 480px repeat;
+}
+:root[data-ui-style="synty"] .queue-panel-paused,
+:root[data-ui-style="synty"] .queue-panel-blocked {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(52, 25, 13, 0.48), rgba(16, 9, 7, 0.68)), linear-gradient(#33261f, #33261f) 0 0 / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] .bjw-head {
+  border-image-source: var(--synty-frame-big);
+  border-image-slice: 64;
+  background-image: radial-gradient(ellipse at 14% 0%, rgba(141, 78, 31, 0.16), transparent 54%), linear-gradient(rgba(6, 9, 11, 0.2), rgba(3, 5, 6, 0.5)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .bjw-zone {
+  border-image-source: var(--synty-frame-big);
+  border-image-slice: 64;
+  background-image: radial-gradient(ellipse at 14% 0%, rgba(141, 78, 31, 0.16), transparent 54%), linear-gradient(rgba(6, 9, 11, 0.2), rgba(3, 5, 6, 0.5)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .bjw-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(18, 12, 7, 0.5), rgba(8, 5, 3, 0.7)), linear-gradient(#2f231e, #2f231e) repeat;
+}
+:root[data-ui-style="synty"] .bugreport-entry-banner {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .bugreport-entry-banner {
+  border-image-source: var(--synty-frame-big);
+  border-image-slice: 64;
+  background: linear-gradient(90deg, rgba(45, 18, 13, 0.36), rgba(7, 11, 14, 0.7)), linear-gradient(#2a2220, #2a2220) 0 0 / 560px 560px repeat;
+}
+:root[data-ui-style="synty"] #root .bugreport-modal {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background: radial-gradient(ellipse at 18% 0%, rgba(139, 81, 36, 0.14), transparent 48%), linear-gradient(rgba(5, 8, 10, 0.22), rgba(4, 6, 8, 0.46)), linear-gradient(#2a2220, #2a2220) 0 0 / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] #root .bugreport-textarea {
+  border-image-source: var(--synty-frame-card);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .bugreport-dropzone {
+  border-image-source: var(--synty-frame-card);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(8, 12, 14, 0.42), rgba(6, 8, 10, 0.58)), linear-gradient(#2a2220, #2a2220) 0 0 / 560px 560px repeat;
+}
+:root[data-ui-style="synty"] #root .bugreport-auto-block {
+  border-image-source: var(--synty-frame-card);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .bugreport-modal {
+  border-image-source: var(--synty-frame-big);
+  border-image-slice: 64;
+  background-image: radial-gradient(ellipse at 18% 0%, rgba(141, 78, 31, 0.2), transparent 50%), linear-gradient(rgba(3, 5, 6, 0.16), rgba(2, 3, 4, 0.56)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .chdef-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .chronicle-stage {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .chronicle-stage {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(12, 15, 16, 0.82), rgba(6, 8, 9, 0.95)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .chronicle-obj {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(9, 12, 13, 0.78), rgba(5, 7, 8, 0.9)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .chronicle-obj--done {
+  background: linear-gradient(rgba(22, 49, 29, 0.54), rgba(6, 10, 8, 0.91)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .chronicle-history {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(21, 16, 12, 0.8), rgba(7, 9, 10, 0.94)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .chronicle-obj {
+  border-image-source: var(--synty-frame-card);
+  border-image-slice: 64;
+  background-image: linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .quests-contract-wall .chronicle-obj--done {
+  background-image: linear-gradient(rgba(22, 49, 29, 0.5), rgba(6, 10, 8, 0.5)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .dcc-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .emw-panel {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .emw-collapse-btn {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .emw-art {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ds-frame.ench-panel {
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(128, 86, 196, 0.10), transparent 62%), linear-gradient(rgba(6, 9, 11, 0.22), rgba(3, 5, 6, 0.55)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] #root .ench-pedestal .ench-altar-cell {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ench-tablet {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background-image: linear-gradient(rgba(10, 8, 14, 0.55), rgba(5, 4, 8, 0.75)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .ench-rune-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] :root:not([data-ui-style="classic"]) .ds-frame.ench-panel {
+  border-image-source: var(--synty-frame-big);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] :root:not([data-ui-style="classic"]) .ench-rune-card,
+:root[data-ui-style="synty"] :root:not([data-ui-style="classic"]) .ench-item-row {
+  border-image-source: var(--synty-frame-card);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] :root:not([data-ui-style="classic"]) .ench-rune-card.selected,
+:root[data-ui-style="synty"] :root:not([data-ui-style="classic"]) .ench-item-row.selected {
+  border-image-source: var(--synty-frame-card-sel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] :root:not([data-ui-style="classic"]) .ench-btn.btn-iron {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+}
+:root[data-ui-style="synty"] .hub-page {
+  --hub-card-bg: linear-gradient(rgba(9, 11, 13, 0.9), rgba(7, 9, 11, 0.95)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .hub-plate {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .hub-card {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .hunt-head {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.58)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .hunt-head-stat {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(40, 34, 26, 0.22), rgba(4, 4, 4, 0.5)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .hunt-trap-card {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.58)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .hzp-modal {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.72)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .hzp-stat {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(40, 34, 26, 0.22), rgba(4, 4, 4, 0.5)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .hbk-search {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(18, 12, 6, 0.6), rgba(18, 12, 6, 0.6)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .hbk-zone {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(40, 34, 26, 0.22), rgba(4, 4, 4, 0.5)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .hunt-page .category-header {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(40, 34, 26, 0.22), rgba(4, 4, 4, 0.5)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .hunt-page .category-header:hover {
+  background: linear-gradient(rgba(60, 46, 26, 0.2), rgba(4, 4, 4, 0.44)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .invf-chip::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cst-modal {
+  background: linear-gradient(rgba(8, 10, 11, 0.91), rgba(6, 7, 8, 0.96)), linear-gradient(#2c221e, #2c221e) center / 540px repeat;
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .cst-save-card,
+:root[data-ui-style="synty"] .cst-target-card {
+  background: linear-gradient(90deg, rgba(43, 33, 24, 0.68), rgba(12, 14, 15, 0.87)), linear-gradient(#2a2220, #2a2220) center / 900px repeat;
+}
+:root[data-ui-style="synty"] .cst-ledger {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(12, 14, 15, 0.82), rgba(7, 9, 10, 0.93)), linear-gradient(#2a2220, #2a2220) center / 1050px repeat;
+}
+:root[data-ui-style="synty"] .cst-package-row {
+  background: linear-gradient(90deg, rgba(55, 39, 24, 0.32), rgba(6, 8, 9, 0.7)), linear-gradient(#2a2220, #2a2220) center / 800px repeat;
+}
+:root[data-ui-style="synty"] .cst-review-card,
+:root[data-ui-style="synty"] .cst-state-card {
+  background: linear-gradient(rgba(21, 19, 16, 0.94), rgba(8, 10, 11, 0.98)), linear-gradient(#2c221e, #2c221e) center / 500px repeat;
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .mail-page-actions {
+  background: linear-gradient(90deg, rgba(47, 34, 21, 0.46), rgba(7, 9, 10, 0.86)), linear-gradient(#2a2220, #2a2220) center / 1050px repeat;
+}
+:root[data-ui-style="synty"] .mwc-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-view-tab::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-map {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-map-object-tools {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(13, 16, 17, 0.35), rgba(4, 6, 7, 0.72)), linear-gradient(#2a2220, #2a2220) 0 0 / 480px 480px repeat;
+}
+:root[data-ui-style="synty"] .nh-buildmenu {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-popup {
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+}
+:root[data-ui-style="synty"] .nh-popup :is(.nh-costs, .nh-progress, .nh-refine) {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-popup :is(.nh-build-btn, .nh-cancel-btn, .nh-demolish-btn, .nh-refine-btn) {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-buildmenu-item {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-effect {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-build-btn {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-grid > .nh-card {
+  border-image-source: var(--synty-frame-big);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-art {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background: radial-gradient(ellipse at 50% 70%, rgba(70, 82, 88, 0.2), transparent 66%), linear-gradient(rgba(4, 6, 7, 0.62), rgba(3, 4, 5, 0.82)), linear-gradient(#2d2422, #2d2422) center / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] .nh-card-action-slot {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-card-function-slot > .nh-refine {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-popup .nh-art {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-move-btn,
+:root[data-ui-style="synty"] .nh-demolish-btn {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-grid > .nh-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background: radial-gradient(ellipse at 50% 0%, rgba(147, 91, 40, 0.12), transparent 52%), linear-gradient(rgba(10, 9, 8, 0.66), rgba(4, 5, 6, 0.86)), linear-gradient(#2a2220, #2a2220) center / 800px 800px repeat;
+}
+:root[data-ui-style="synty"] .nh-grid > .nh-card.is-built {
+  background: radial-gradient(ellipse at 50% 0%, rgba(184, 112, 43, 0.16), transparent 55%), linear-gradient(rgba(13, 10, 8, 0.6), rgba(4, 5, 6, 0.84)), linear-gradient(#2a2220, #2a2220) center / 800px 800px repeat;
+}
+:root[data-ui-style="synty"] .nh-card .nh-art {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background: radial-gradient(ellipse at 50% 66%, rgba(95, 77, 54, 0.16), transparent 68%), linear-gradient(rgba(10, 12, 13, 0.22), rgba(3, 4, 5, 0.5)), linear-gradient(#2d2422, #2d2422) center / 800px 800px repeat;
+}
+:root[data-ui-style="synty"] .nh-effects {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(10, 13, 15, 0.42), rgba(3, 5, 6, 0.65)), linear-gradient(#2a2220, #2a2220) center / 700px 700px repeat;
+}
+:root[data-ui-style="synty"] .nh-card-action-slot {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(15, 10, 7, 0.64), rgba(6, 5, 4, 0.82)), linear-gradient(#2c221e, #2c221e) center / 700px 700px repeat;
+}
+:root[data-ui-style="synty"] .nh-card .mat-chip {
+  background: linear-gradient(rgba(9, 12, 14, 0.34), rgba(3, 5, 6, 0.52)), linear-gradient(#2a2220, #2a2220) center / 450px 450px repeat !important;
+}
+:root[data-ui-style="synty"] .nh-card .mat-chip.lacking {
+  background: linear-gradient(rgba(72, 18, 15, 0.28), rgba(24, 7, 7, 0.54)), linear-gradient(#2a2220, #2a2220) center / 450px 450px repeat !important;
+}
+:root[data-ui-style="synty"] .nh-card :is(.nh-build-btn, .nh-cancel-btn, .nh-refine-btn),
+:root[data-ui-style="synty"] .nh-popup-actions :is(.nh-move-btn, .nh-demolish-btn) {
+  border-image-source: var(--synty-frame-btn) !important;
+  border-image-slice: 64 !important;
+  background: radial-gradient(ellipse at 50% 0%, rgba(177, 113, 49, 0.13), transparent 68%), linear-gradient(rgba(9, 12, 14, 0.12), rgba(3, 5, 6, 0.4)), linear-gradient(#2a2220, #2a2220) center / 475px 475px repeat !important;
+}
+:root[data-ui-style="synty"] .nh-card-function-slot > .nh-refine {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(9, 12, 14, 0.34), rgba(3, 5, 6, 0.62)), linear-gradient(#2a2220, #2a2220) center / 700px 700px repeat;
+}
+:root[data-ui-style="synty"] .nh-popup {
+  border-image-source: var(--synty-frame-panel) !important;
+  border-image-slice: 64 !important;
+  background: radial-gradient(ellipse at 50% 0%, rgba(153, 92, 39, 0.13), transparent 48%), linear-gradient(rgba(9, 9, 8, 0.7), rgba(3, 4, 5, 0.9)), linear-gradient(#2a2220, #2a2220) center / 900px 900px repeat !important;
+}
+:root[data-ui-style="synty"] .nh-popup-close {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(45, 16, 13, 0.3), rgba(10, 7, 7, 0.5)), linear-gradient(#2a2220, #2a2220) center / 320px 320px repeat;
+}
+:root[data-ui-style="synty"] .nh-popup .nh-effects {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(10, 13, 15, 0.42), rgba(3, 5, 6, 0.65)), linear-gradient(#2a2220, #2a2220) center / 700px 700px repeat;
+}
+:root[data-ui-style="synty"] .nh-popup-actions .nh-demolish-btn {
+  background: linear-gradient(rgba(86, 18, 14, 0.35), rgba(25, 7, 7, 0.58)), linear-gradient(#2a2220, #2a2220) center / 475px 475px repeat !important;
+}
+:root[data-ui-style="synty"] .nh-move-banner {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-popup .nh-effect {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(10, 13, 15, 0.46), rgba(3, 5, 6, 0.68)), linear-gradient(#2a2220, #2a2220) center / 600px 600px repeat;
+}
+:root[data-ui-style="synty"] .nh-view-controls {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(8, 9, 10, 0.62), rgba(3, 4, 5, 0.78)), linear-gradient(#2a2220, #2a2220) center / 750px 750px repeat;
+}
+:root[data-ui-style="synty"] .nh-view-controls .nh-view-tab {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(12, 13, 14, 0.35), rgba(3, 4, 5, 0.62)), linear-gradient(#2f231f, #2f231f) center / 550px 550px repeat;
+}
+:root[data-ui-style="synty"] .nh-view-controls .nh-view-tab:hover:not(:disabled),
+:root[data-ui-style="synty"] .nh-view-controls .nh-view-tab.active {
+  background: linear-gradient(rgba(104, 68, 28, 0.2), rgba(20, 15, 9, 0.48)), linear-gradient(#2f231f, #2f231f) center / 550px 550px repeat;
+}
+:root[data-ui-style="synty"] .nh-map-stage {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(5, 6, 7, 0.54), rgba(2, 3, 4, 0.74)), linear-gradient(#2a2220, #2a2220) center / 800px 800px repeat;
+}
+:root[data-ui-style="synty"] .nh-map {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .nh-buildmenu {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(9, 10, 11, 0.48), rgba(3, 4, 5, 0.72)), linear-gradient(#2a2220, #2a2220) center / 750px 750px repeat;
+}
+:root[data-ui-style="synty"] .nh-buildmenu-item {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(25, 18, 11, 0.32), rgba(5, 6, 7, 0.62)), linear-gradient(#2f231f, #2f231f) center / 575px 575px repeat;
+}
+:root[data-ui-style="synty"] .nh-buildmenu-item:hover:not(.is-locked),
+:root[data-ui-style="synty"] .nh-buildmenu-item.is-active {
+  background: linear-gradient(rgba(92, 57, 23, 0.2), rgba(8, 7, 6, 0.55)), linear-gradient(#2f231f, #2f231f) center / 575px 575px repeat;
+}
+:root[data-ui-style="synty"] .nh-place-banner,
+:root[data-ui-style="synty"] .nh-move-banner {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(26, 17, 9, 0.42), rgba(4, 5, 6, 0.68)), linear-gradient(#2f231f, #2f231f) center / 575px 575px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-register,
+:root[data-ui-style="synty"] .nh-list-detail {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)), linear-gradient(#1d1614, #1d1614) top left / 782px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-row {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(10, 12, 15, 0.30), rgba(10, 12, 15, 0.30)), linear-gradient(#241a17, #241a17) top left / 782px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-row:hover,
+:root[data-ui-style="synty"] .nh-list-row:focus-visible,
+:root[data-ui-style="synty"] .nh-list-row.is-selected {
+  background: linear-gradient(rgba(10, 12, 15, 0.22), rgba(10, 12, 15, 0.22)), linear-gradient(#241a17, #241a17) top left / 782px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-shell > .nh-queue-strip {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)), linear-gradient(#1d1614, #1d1614) top left / 782px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-row-action.is-buildable,
+:root[data-ui-style="synty"] .nh-list-primary.is-buildable {
+  background: linear-gradient(rgba(48, 92, 39, 0.32), rgba(12, 32, 15, 0.42)), linear-gradient(#2a2220, #2a2220) center / 450px 450px repeat !important;
+}
+:root[data-ui-style="synty"] .nh-list-row-action.is-queueable,
+:root[data-ui-style="synty"] .nh-list-primary.is-queueable {
+  background: linear-gradient(rgba(119, 78, 27, 0.3), rgba(39, 26, 11, 0.44)), linear-gradient(#2a2220, #2a2220) center / 450px 450px repeat !important;
+}
+:root[data-ui-style="synty"] .nh-list-row-action.is-unavailable:disabled,
+:root[data-ui-style="synty"] .nh-list-primary.is-unavailable:disabled {
+  background: linear-gradient(rgba(91, 31, 27, 0.25), rgba(30, 11, 10, 0.4)), linear-gradient(#2a2220, #2a2220) center / 450px 450px repeat !important;
+}
+:root[data-ui-style="synty"] .nh-list-row-action.is-building:disabled,
+:root[data-ui-style="synty"] .nh-list-row-action.is-maxed:disabled,
+:root[data-ui-style="synty"] .nh-list-primary.is-maxed:disabled {
+  background: linear-gradient(rgba(41, 51, 57, 0.28), rgba(12, 16, 18, 0.44)), linear-gradient(#2a2220, #2a2220) center / 450px 450px repeat !important;
+}
+:root[data-ui-style="synty"] .modal.nh-refinery-modal {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: radial-gradient(ellipse at 46% 0%, rgba(159, 101, 44, 0.13), transparent 46%), linear-gradient(rgba(8, 9, 9, 0.72), rgba(3, 4, 5, 0.92)), linear-gradient(#2a2220, #2a2220) center / 800px 800px repeat;
+}
+:root[data-ui-style="synty"] .nh-refinery-register,
+:root[data-ui-style="synty"] .nh-refinery-process {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(15, 11, 8, 0.58), rgba(3, 4, 5, 0.78)), linear-gradient(#2a2220, #2a2220) center / 700px 700px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-row:hover,
+:root[data-ui-style="synty"] .nh-list-row:focus-visible,
+:root[data-ui-style="synty"] .nh-list-row.is-selected {
+  background: linear-gradient(rgba(216, 184, 112, 0.12), rgba(216, 184, 112, 0.12)), linear-gradient(rgba(10, 12, 15, 0.22), rgba(10, 12, 15, 0.22)), linear-gradient(#241a17, #241a17) top left / 782px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-register {
+  background: linear-gradient(rgba(8, 10, 12, 0.5), rgba(5, 6, 8, 0.66)), linear-gradient(#2a2220, #2a2220) top left / 700px 700px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-detail {
+  background: linear-gradient(rgba(14, 12, 9, 0.7), rgba(8, 7, 6, 0.8)), linear-gradient(#2d2422, #2d2422) top left / 700px 700px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-row {
+  background: linear-gradient(rgba(10, 7, 4, 0.3), rgba(10, 7, 4, 0.4)), linear-gradient(#2c211d, #2c211d) top left / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-row:hover,
+:root[data-ui-style="synty"] .nh-list-row:focus-visible,
+:root[data-ui-style="synty"] .nh-list-row.is-selected {
+  background: linear-gradient(rgba(216, 184, 112, 0.16), rgba(216, 150, 70, 0.1)), linear-gradient(rgba(10, 7, 4, 0.1), rgba(10, 7, 4, 0.18)), linear-gradient(#2c211d, #2c211d) top left / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-detail-art {
+  background: radial-gradient(ellipse at 50% 72%, rgba(190, 140, 70, 0.2), transparent 68%), linear-gradient(rgba(10, 8, 4, 0.66), rgba(6, 5, 3, 0.8)), linear-gradient(#33261f, #33261f) center / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-effect-flow {
+  background: linear-gradient(rgba(10, 7, 4, 0.55), rgba(6, 4, 3, 0.66)), linear-gradient(#2f231f, #2f231f) center / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-costs {
+  background: linear-gradient(rgba(10, 6, 3, 0.5), rgba(6, 4, 2, 0.62)), linear-gradient(#2f231e, #2f231e) center / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-progress {
+  background: linear-gradient(rgba(6, 5, 4, 0.5), rgba(4, 3, 3, 0.62)), linear-gradient(#2c221e, #2c221e) center / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-shell > .nh-queue-strip {
+  background: linear-gradient(rgba(10, 6, 3, 0.42), rgba(6, 4, 2, 0.56)), linear-gradient(#2f231e, #2f231e) top left / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] .nh-list-row-action.is-maxed:disabled,
+:root[data-ui-style="synty"] .nh-list-primary.is-maxed:disabled {
+  background: linear-gradient(rgba(30, 24, 20, 0.34), rgba(10, 8, 6, 0.46)), linear-gradient(#2f231e, #2f231e) center / 640px 640px repeat !important;
+}
+:root[data-ui-style="synty"] .nh-view-controls {
+  background: linear-gradient(rgba(8, 7, 6, 0.5), rgba(4, 3, 3, 0.66)), linear-gradient(#2c221e, #2c221e) center / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] .nh-buildmenu {
+  background: linear-gradient(rgba(8, 10, 12, 0.5), rgba(5, 6, 8, 0.66)), linear-gradient(#2a2220, #2a2220) center / 700px 700px repeat;
+}
+:root[data-ui-style="synty"] .nh-popup {
+  background: radial-gradient(ellipse at 50% 0%, rgba(153, 92, 39, 0.13), transparent 48%), linear-gradient(rgba(9, 7, 5, 0.6), rgba(3, 3, 3, 0.82)), linear-gradient(#2c211d, #2c211d) center / 800px 800px repeat !important;
+}
+:root[data-ui-style="synty"] .nh-effects,
+:root[data-ui-style="synty"] .nh-popup .nh-effects {
+  background: linear-gradient(rgba(10, 7, 4, 0.5), rgba(6, 4, 3, 0.64)), linear-gradient(#2f231f, #2f231f) center / 640px 640px repeat;
+}
+:root[data-ui-style="synty"] .nh-popup .nh-effect {
+  background: linear-gradient(rgba(10, 7, 4, 0.52), rgba(6, 4, 3, 0.66)), linear-gradient(#2f231f, #2f231f) center / 600px 600px repeat;
+}
+:root[data-ui-style="synty"] .npc-greeting-head {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .offline-stage {
+  --ofs-iron: var(--synty-frame-btn);
+  --ofs-stone: linear-gradient(#2a2220, #2a2220);
+  --ofs-slate: linear-gradient(#2a2220, #2a2220);
+  --ofs-leather: linear-gradient(#2f231e, #2f231e);
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ofs-summary-bar {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ofs-event-ribbon {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ofs-report-column {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ofs-loot-item {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .ofs-empty {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .opz-header {
+  background: radial-gradient(ellipse 90% 140% at 8% 15%, rgba(216, 192, 106, 0.09), transparent 62%), linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), linear-gradient(#2c211d, #2c211d) repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .opz-section {
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), linear-gradient(#2c211d, #2c211d) repeat;
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root :is(.opz-header, .opz-section) {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background-image: radial-gradient(ellipse at 12% 0%, rgba(140, 86, 39, 0.13), transparent 50%), linear-gradient(rgba(6, 9, 11, 0.18), rgba(4, 6, 8, 0.42)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] #root :is(.opz-header, .opz-section) {
+  border-image-source: var(--synty-frame-big);
+  border-image-slice: 64;
+  background-image: radial-gradient(ellipse at 14% 0%, rgba(141, 78, 31, 0.2), transparent 54%), linear-gradient(rgba(3, 5, 6, 0.2), rgba(2, 3, 4, 0.58)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .pet-celebration-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .quest-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .quest-claim-btn {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .quests-tab-btn::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .daily-reset-countdown {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .quest-token-badge {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .quest-shop-panel {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .quest-shop-offer {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .quest-strand {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .quests-command-header,
+:root[data-ui-style="synty"] .quests-contract-wall .quests-content {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(8, 11, 12, 0.86), rgba(5, 7, 8, 0.94)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .quests-command-header {
+  background: linear-gradient(90deg, rgba(9, 12, 13, 0.91), rgba(29, 20, 12, 0.78)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .quests-tab-btn {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(14, 17, 18, 0.86), rgba(7, 9, 10, 0.94)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .quests-tab-btn:hover {
+  background: linear-gradient(rgba(31, 34, 33, 0.72), rgba(9, 11, 12, 0.92)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .quests-tab-btn--active {
+  background: linear-gradient(rgba(75, 53, 25, 0.69), rgba(18, 16, 13, 0.92)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .daily-reset-countdown {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(26, 19, 11, 0.76), rgba(8, 10, 10, 0.93)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .quest-master,
+:root[data-ui-style="synty"] .quests-contract-wall .quest-detail {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(11, 14, 15, 0.82), rgba(6, 8, 9, 0.94)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .quest-strand {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(21, 16, 12, 0.78), rgba(8, 10, 10, 0.94)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .quest-card {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(18, 15, 12, 0.78), rgba(7, 9, 10, 0.94)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .quest-shop-panel {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(12, 15, 16, 0.84), rgba(6, 8, 9, 0.95)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .quest-shop-offer {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(21, 16, 12, 0.76), rgba(7, 9, 10, 0.94)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .quest-claim-btn {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64 fill;
+  background: linear-gradient(rgba(57, 42, 23, 0.72), rgba(12, 13, 12, 0.93)), linear-gradient(#2f231f, #2f231f) repeat;
+}
+:root[data-ui-style="synty"] .quests-contract-wall .quests-content {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background-image: linear-gradient(rgba(6, 9, 11, 0.4), rgba(4, 6, 8, 0.6)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .quests-contract-wall :is(.quest-strand, .quest-card, .quest-shop-offer) {
+  border-image-source: var(--synty-frame-card);
+  border-image-slice: 64;
+  background-image: linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .quests-contract-wall .quest-card--completed {
+  background-image: linear-gradient(rgba(22, 49, 29, 0.42), rgba(5, 8, 10, 0.3)), linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .quests-contract-wall .quests-header .quest-token-badge {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .qam-modal {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+  background: linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.7)), linear-gradient(#2a2220, #2a2220) repeat;
+}
+:root[data-ui-style="synty"] .rlc-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .shopv2-balance {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .shopv2-maintab::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .shopv2-chip::before {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .shopv2-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] #root .shopv2-buy-counter,
+:root[data-ui-style="synty"] #root .shopv2-sell-aside {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background-image: linear-gradient(rgba(9, 12, 14, 0.7), rgba(9, 12, 14, 0.7)), var(--gw-texture-cold-slate, linear-gradient(#2a2220, #2a2220));
+}
+:root[data-ui-style="synty"] #root .shopv2-chip {
+  background-image: linear-gradient(rgba(5, 8, 10, 0.42), rgba(5, 8, 10, 0.42)), var(--gw-texture-cold-slate, linear-gradient(#2a2220, #2a2220));
+}
+:root[data-ui-style="synty"] #root .shopv2-chip:hover {
+  background-image: linear-gradient(rgba(86, 60, 30, 0.18), rgba(20, 23, 23, 0.34)), var(--gw-texture-cold-slate, linear-gradient(#2a2220, #2a2220));
+}
+:root[data-ui-style="synty"] #root .shopv2-chip.active {
+  background-image: linear-gradient(rgba(117, 75, 25, 0.28), rgba(22, 22, 20, 0.4)), var(--gw-texture-cold-slate, linear-gradient(#2a2220, #2a2220));
+}
+:root[data-ui-style="synty"] #root .shopv2-buy-scroll,
+:root[data-ui-style="synty"] #root .shopv2-sell-main {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background-image: linear-gradient(rgba(8, 11, 13, 0.52), rgba(8, 11, 13, 0.52)), var(--gw-texture-basalt, linear-gradient(#2a2220, #2a2220));
+}
+:root[data-ui-style="synty"] #root .shopv2-card {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+  background-image: linear-gradient(180deg, rgba(6, 7, 7, 0.18), rgba(10, 6, 3, 0.58)), var(--gw-texture-gravewood, linear-gradient(#2c221e, #2c221e));
+}
+:root[data-ui-style="synty"] #root .shopv2-counter-item {
+  border-image-source: var(--synty-frame-card);
+  border-image-slice: 64;
+  background-image: linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)), var(--gw-texture-cold-slate, linear-gradient(#2a2220, #2a2220));
+}
+:root[data-ui-style="synty"] #root .shopv2-head > .npc-greeting {
+  background: linear-gradient(90deg, rgba(12, 15, 16, 0.96), rgba(31, 24, 17, 0.84)), var(--gw-texture-basalt, linear-gradient(#2a2220, #2a2220));
+}
+:root[data-ui-style="synty"] #root .shopv2-buy-counter,
+:root[data-ui-style="synty"] #root .shopv2-sell-aside {
+  background-image: linear-gradient(rgba(8, 11, 13, 0.52), rgba(8, 11, 13, 0.52)), var(--gw-texture-basalt, linear-gradient(#2a2220, #2a2220));
+}
+:root[data-ui-style="synty"] #root :is(.shopv2-card, .shopv2-upgrade-card, .shopv2-buyback-row, .shopv2-counter-item) {
+  border-image-source: var(--synty-frame-card);
+  border-image-slice: 64;
+  background-image: linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)), var(--gw-texture-cold-slate, linear-gradient(#2a2220, #2a2220));
+}
+:root[data-ui-style="synty"] #root .shopv2-card.shopv2-card {
+  background-image: linear-gradient(180deg, rgba(168, 112, 58, 0.16), rgba(24, 14, 6, 0.16)), linear-gradient(#2f231e, #2f231e);
+}
+:root[data-ui-style="synty"] #root .shopv2-card.shopv2-card .shopv2-card-image-area {
+  background-image: radial-gradient(ellipse at 50% 45%, rgba(176, 124, 70, 0.30), rgba(18, 10, 4, 0.45)), linear-gradient(#2f231e, #2f231e);
+}
+:root[data-ui-style="synty"] .stx-section {
+  border-image-source: var(--synty-frame-panel);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .achv-page--warden {
+  --achv-ledger-frame: var(--synty-frame-btn);
+  --achv-ledger-cloth: linear-gradient(#2f231f, #2f231f);
+  --achv-ledger-stone: linear-gradient(#2a2220, #2a2220);
+}
+:root[data-ui-style="synty"] .achv-page--warden .achv-hero {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .achv-ledger-shell {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}
+:root[data-ui-style="synty"] .achv-ledger-detail-plaque {
+  border-image-source: var(--synty-frame-btn);
+  border-image-slice: 64;
+}

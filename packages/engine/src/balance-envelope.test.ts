@@ -920,11 +920,14 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     expect(melee / expectedTtk("magic", "drazhan", 99).player, "Parität Magie/Nahkampf").toBeCloseTo(1.05, 2);
   });
 
-  it("Narbenbuch-Macht-Ast voll (Leben +5 %, Schaden +5 %, Gold +5 %) verschiebt TTK höchstens 5 % (Balance § 7)", () => {
+  // claude:2026-10-30T19:14:00+01:00 — 1.4.2 Chef-Entscheid E6 (design/1.4.2-aschesturz-spec.md § 3): Narbenfaust und Narbengewebe +2/4/6/8/10 %
+  // statt +1–5 %. Der Grenztest zieht auf die neue Obergrenze nach (Leben/Schaden ≤ 1,10, Spieler-TTK ≥ 1/1,10, Gegner-TTK
+  // ≤ 1,10); sonst bleibt alles wie in Balance § 7. Kein anderer Balance-Wert ändert sich.
+  it("Narbenbuch-Macht-Ast voll (Leben +10 %, Schaden +10 %, Gold +5 %) verschiebt TTK höchstens 10 % (Spec 1.4.2 E6)", () => {
     // claude:2026-10-18T12:00:00+02:00 — Prestige Welle B2: die Pins oben bleiben die kodexfreie Basis
     // (buildBisCharacter kauft keine Narbenbuch-Ränge). Hier derselbe BiS-Stand mit vollem Macht-Ast im
-    // zweiten Durchgang (Baum freigeschaltet): Quote Leben ≤ 1,05, Schaden ≤ 1,05, Spieler-TTK ≥ 0,952,
-    // Gegner-TTK ≤ 1,05 je Stil, gegen die CL-90-Matrix und die CL-99-Bosse.
+    // zweiten Durchgang (Baum freigeschaltet): Quote Leben ≤ 1,10, Schaden ≤ 1,10, Spieler-TTK ≥ 1/1,10,
+    // Gegner-TTK ≤ 1,10 je Stil, gegen die CL-90-Matrix und die CL-99-Bosse.
     const cases: Array<[WeaponStyle, number, string]> = [];
     for (const style of STYLES) {
       for (const mid of ["idol_warden", "last_idol"]) cases.push([style, 90, mid]);
@@ -938,12 +941,12 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
       const a = computeStats(base, content);
       const b = computeStats(scarred, content);
       const tag = `${style} CL ${lvl} vs ${monsterId}`;
-      expect(b.maxHp / a.maxHp, `Leben ${tag}`).toBeLessThanOrEqual(1.05 + 1e-12);
-      expect(b.attackDamage / a.attackDamage, `Schaden ${tag}`).toBeLessThanOrEqual(1.05 + 1e-12);
+      expect(b.maxHp / a.maxHp, `Leben ${tag}`).toBeLessThanOrEqual(1.1 + 1e-12);
+      expect(b.attackDamage / a.attackDamage, `Schaden ${tag}`).toBeLessThanOrEqual(1.1 + 1e-12);
       const ta = expectedTtkOf(base, monsterId);
       const tb = expectedTtkOf(scarred, monsterId);
-      expect(tb.player / ta.player, `Spieler-TTK ${tag}`).toBeGreaterThanOrEqual(0.952);
-      expect(tb.enemy / ta.enemy, `Gegner-TTK ${tag}`).toBeLessThanOrEqual(1.05 + 1e-12);
+      expect(tb.player / ta.player, `Spieler-TTK ${tag}`).toBeGreaterThanOrEqual(1 / 1.1 - 1e-12);
+      expect(tb.enemy / ta.enemy, `Gegner-TTK ${tag}`).toBeLessThanOrEqual(1.1 + 1e-12);
     }
   });
 

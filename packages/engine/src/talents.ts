@@ -152,23 +152,45 @@ export function talentEffectOwned(state: GameState, content: ContentDB, kind: Ta
   return aggregateTalentEffect(state, content, kind, false);
 }
 
+/**
+ * claude:2026-10-30T19:16:00+01:00 — 1.4.2: Index „Wirkungsart → (Baum, Knoten)“ je Baum-Liste des Contents. Mit 24
+ * Narbenbuch-Knoten lesen jetzt viele Pro-Tick-Pfade (Aktionsdauer, Echo, Beete, Fallen) `talentEffect`; der Index spart
+ * das Durchlaufen aller Knoten. Reihenfolge = Baum- und Knotenreihenfolge wie zuvor ⇒ Summen bit-identisch. Schlüssel
+ * ist das `talentTrees`-Array (Content ist unveränderlich; Tests bauen für eigene Bäume ein neues Array).
+ */
+const nodesByKindCache = new WeakMap<readonly TalentTreeDef[], Map<TalentEffectKind, Array<{ tree: TalentTreeDef; node: TalentNodeDef }>>>();
+const NO_TREES: readonly TalentTreeDef[] = [];
+
+function nodesOfKind(content: ContentDB, kind: TalentEffectKind): ReadonlyArray<{ tree: TalentTreeDef; node: TalentNodeDef }> {
+  const trees = content.talentTrees ?? NO_TREES;
+  let byKind = nodesByKindCache.get(trees);
+  if (!byKind) {
+    byKind = new Map();
+    for (const tree of trees) {
+      for (const node of tree.nodes) {
+        const list = byKind.get(node.effect.kind) ?? [];
+        list.push({ tree, node });
+        byKind.set(node.effect.kind, list);
+      }
+    }
+    nodesByKindCache.set(trees, byKind);
+  }
+  return byKind.get(kind) ?? [];
+}
+
 function aggregateTalentEffect(state: GameState, content: ContentDB, kind: TalentEffectKind, gated: boolean): number {
   const owned = state.talents;
   if (!owned) return 0;
   const mode = TALENT_EFFECT_AGGREGATION[kind];
   let sum = 0;
   let min = Infinity;
-  for (const tree of talentTrees(content)) {
-    const ranks = owned[tree.id];
-    if (!ranks) continue;
-    if (gated && !talentTreeUnlocked(state, tree)) continue;
-    for (const node of tree.nodes) {
-      if (node.effect.kind !== kind) continue;
-      const v = talentValueAtRank(node, talentRank(state, tree.id, node.id));
-      if (v <= 0) continue;
-      sum += v;
-      if (v < min) min = v;
-    }
+  for (const { tree, node } of nodesOfKind(content, kind)) {
+    if (!owned[tree.id]) continue;
+    const v = talentValueAtRank(node, talentRank(state, tree.id, node.id));
+    if (v <= 0) continue;
+    if (gated && !talentTreeUnlocked(state, tree)) continue; // erst nach dem Rang-Check: gesperrte Bäume ohne Rang kosten nichts
+    sum += v;
+    if (v < min) min = v;
   }
   return mode === "sum" ? sum : Number.isFinite(min) ? min : 0;
 }

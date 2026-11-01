@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
-import { ATTRIBUTE_IDS, AUTO_EAT_DEFAULT_THRESHOLD, CAMP_MAX_OFFLINE_BONUS_MS, AUTO_EAT_MAX_THRESHOLD, AUTO_EAT_MAX_TIER, AUTO_EAT_MIN_THRESHOLD, BUYBACK_BANNED_ITEM_IDS, DEFAULT_PORTRAIT, KILL_COOLDOWN_MS, MAX_FARM_PLOTS, MAX_OFFLINE_MS, SAVE_VERSION, SELL_FRACTION, autoEatThreshold, effectiveAutoEatThreshold, effectiveBankCapacity } from "@hearthforge/shared";
+import { ATTRIBUTE_IDS, AUTO_EAT_DEFAULT_THRESHOLD, CAMP_MAX_OFFLINE_BONUS_MS, AUTO_EAT_MAX_THRESHOLD, AUTO_EAT_MAX_TIER, AUTO_EAT_MIN_THRESHOLD, BUYBACK_BANNED_ITEM_IDS, DEFAULT_PORTRAIT, KILL_COOLDOWN_MS, FARM_PLOT_SLOTS, MAX_FARM_PLOTS, MAX_OFFLINE_MS, PRESTIGE_MAX_OFFLINE_BONUS_MS, SAVE_VERSION, SELL_FRACTION, autoEatThreshold, effectiveAutoEatThreshold, effectiveBankCapacity } from "@hearthforge/shared";
 import type { ContentDB, CropDef, ItemDef } from "@hearthforge/shared";
 import { COMPLETION_CAPE_KEY, masterRingItemId } from "@hearthforge/shared";
-import { addItem, addItemOrBank, advance, checkMasteryCapes, computeStats, createGame, equipItem, equipTool, isBankFull, setActiveAction, startCombat, startDungeon, xpForLevel } from "@hearthforge/engine";
+import { SLAYER_RETRY_RECOVERY_MS, addItem, addItemOrBank, advance, checkMasteryCapes, computeStats, createGame, equipItem, equipTool, isBankFull, setActiveAction, startCombat, startDungeon, xpForLevel } from "@hearthforge/engine"; // claude:2026-10-31T14:21:06+01:00 — + SLAYER_RETRY_RECOVERY_MS
 import { deserialize, parseSummary, serialize } from "./index";
 
 /**
@@ -1007,7 +1007,7 @@ describe("persistence", () => {
     // Klemme ist eine Korruptions-Schranke, die nicht mit dem eigenen Baufortschritt schrumpfen
     // darf (s. sanitizeState). Das ECHTE Gutschrift-Fenster des Spielstands klemmt separat
     // `effectiveMaxOfflineMs` in deserialize (Guard: „Wachturm hebt das Offline-Fenster" unten).
-    expect(loaded.accumulatorMs).toBeLessThanOrEqual(MAX_OFFLINE_MS + CAMP_MAX_OFFLINE_BONUS_MS);
+    expect(loaded.accumulatorMs).toBeLessThanOrEqual(MAX_OFFLINE_MS + CAMP_MAX_OFFLINE_BONUS_MS + PRESTIGE_MAX_OFFLINE_BONUS_MS); // claude:2026-10-30T19:01:00+01:00 — SAVE 99: + Lange Nacht
     expect(Number.isFinite(loaded.accumulatorMs)).toBe(true);
     expect(loaded.stunMs).toBe(0); // NaN → 0
     expect(Number.isFinite(loaded.combat.enemyHp)).toBe(true);
@@ -1215,7 +1215,7 @@ describe("persistence", () => {
     const json = serialize(s, 1000);
 
     const { state: loaded } = loadOk(json, content, 1000);
-    expect(loaded.farmPlots).toHaveLength(MAX_FARM_PLOTS);
+    expect(loaded.farmPlots).toHaveLength(FARM_PLOT_SLOTS); // claude:2026-10-30T19:01:00+01:00 — SAVE 99: feste Länge 12
     for (const p of loaded.farmPlots) {
       expect(p.cropId).toBeNull();
       expect(p.plantedAtMs).toBe(0);
@@ -1934,7 +1934,7 @@ function withoutMasterCapes(): ContentDB {
     expect(again.character.gold).toBe(loaded.character.gold);
   });
 
-  it("trimmt überlange farmPlots-Arrays auf die fixe Länge MAX_FARM_PLOTS", () => {
+  it("trimmt überlange farmPlots-Arrays auf die fixe Länge FARM_PLOT_SLOTS", () => { // claude:2026-10-30T19:01:00+01:00 — SAVE 99
     const s = createGame({ name: "X" }, content, 1);
     // 50 Plots (manipuliert/legacy) → auf 9 trimmen.
     s.farmPlots = Array.from({ length: 50 }, () => ({
@@ -1948,7 +1948,7 @@ function withoutMasterCapes(): ContentDB {
     const json = serialize(s, 1000);
 
     const { state: loaded } = loadOk(json, content, 1000);
-    expect(loaded.farmPlots).toHaveLength(MAX_FARM_PLOTS);
+    expect(loaded.farmPlots).toHaveLength(FARM_PLOT_SLOTS); // claude:2026-10-30T19:01:00+01:00 — SAVE 99: feste Länge 12
   });
 
   it("sanitize clampt plantedAtMs ≤ elapsedMs und verwirft unbekannte cropId", () => {
@@ -2043,7 +2043,7 @@ function withoutMasterCapes(): ContentDB {
 
     const { state: loaded } = loadOk(json, c, 1000);
     expect(loaded.version).toBe(SAVE_VERSION);
-    expect(loaded.farmPlots).toHaveLength(MAX_FARM_PLOTS);
+    expect(loaded.farmPlots).toHaveLength(FARM_PLOT_SLOTS); // claude:2026-10-30T19:01:00+01:00 — SAVE 99: feste Länge 12
     for (const p of loaded.farmPlots) {
       expect("nextCropId" in p).toBe(true); // explizit vorhanden, nicht nur „undefined"
       expect(p.nextCropId).toBeNull();
@@ -2662,7 +2662,7 @@ function withoutMasterCapes(): ContentDB {
       g.combat.cooldownRemainingMs = value;
       return loadOk(serialize(g, 1_000), content, 1_000).state.combat.cooldownRemainingMs;
     };
-    expect(edit(999_999_999)).toBe(KILL_COOLDOWN_MS);
+    expect(edit(999_999_999)).toBe(Math.max(KILL_COOLDOWN_MS, SLAYER_RETRY_RECOVERY_MS)); // claude:2026-10-31T14:21:06+01:00 — Cap deckt seit 1.4.2 die Slayer-Erholung (30 s)
     expect(edit(-500)).toBeUndefined(); // ≤0/ungültig ⇒ Feld weg (Engine-Konvention)
     expect(edit(Number.NaN)).toBeUndefined();
   });

@@ -1,0 +1,386 @@
+/* claude:2026-10-31T11:30:30+01:00 — Reiter „Zerlegen“ im Laden (Diablo-3-Schmied, Chef 31.10.2026). Direkt von components/SalvageTab.tsx
+   importiert. Baut auf Bergungs-/Massenverkauf-Bausteinen auf (.salvage-*, .mshop-*, .shop-citadel-btn, .btn-iron). Raritätsfarbe
+   erscheint nur als Text/Rand-Akzent der Knöpfe, nie als Tönung einer Item-Zelle. */
+
+/* ─── Z-Reihenfolge der Bergungs-Dialoge ──────────────────────────────────────
+   Portale am <body>, über der Varianten-Tasche (z 200), unter Item-Karten (500) und Zeremonien (≥ 1500). */
+.modal-overlay.salvage-overlay {
+  z-index: 260;
+}
+.salvage-modal--bulk {
+  max-width: 560px;
+}
+.salvage-warn--high {
+  padding: 6px 10px;
+  border: 1px solid rgba(214, 92, 74, 0.7);
+  background: rgba(90, 24, 18, 0.45);
+  color: #f0a090;
+  font-weight: 700;
+}
+.salvage-qty-popup {
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ─── Rahmen des Reiters ─────────────────────────────────────────────────────── */
+.salv-tab {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2, 8px);
+  /* Bei kleinen Fenstern (1366×768) scrollt der Reiter; die Auswahlleiste klebt unten und bleibt sichtbar. */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.salv-quick {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 14px 10px;
+  border: 1px solid rgba(216, 184, 112, 0.4);
+  border-radius: 3px;
+  background-color: #0d1114;
+  background-image:
+    linear-gradient(rgba(8, 11, 13, 0.5), rgba(8, 11, 13, 0.5)),
+    var(--gw-texture-basalt, url("../assets/ui/gravewood/v3/textures/texture-basalt.webp"));
+  background-size: auto, 800px 800px;
+  box-shadow: inset 0 2px 0 rgba(216, 184, 112, 0.18);
+}
+.salv-quick-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+}
+.salv-quick-title,
+.salv-pane-title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  color: var(--gold, #d8c06a);
+  letter-spacing: 0.5px;
+}
+.salv-seg-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin-left: auto;
+}
+.salv-seg {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.salv-seg-label {
+  font-size: var(--fs-xs);
+}
+.salvage-rarity-btn.salv-seg-btn {
+  color: var(--text);
+}
+.salvage-rarity-btn.salv-seg-btn.active {
+  color: var(--gold);
+}
+
+.salv-rarities {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  min-height: 46px;
+}
+.salv-none {
+  margin: 0;
+}
+.shop-citadel-btn.salv-rar-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding: 4px 12px 4px 10px;
+  border-left: 3px solid var(--salv-rar, var(--gold));
+  text-align: left;
+}
+.salv-rar-name {
+  font-family: var(--font-head);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--salv-rar, var(--text));
+}
+.salv-rar-act {
+  font-size: var(--fs-xs);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.salv-protected {
+  margin-right: 10px;
+  color: var(--text);
+  font-weight: 700;
+}
+.salv-lead {
+  margin: 0;
+  font-size: var(--fs-xs);
+}
+
+/* ─── Zwei Abschnitte: Inventar | Bank ──────────────────────────────────────── */
+.salv-panes {
+  flex: 1 0 250px;
+  min-height: 250px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: var(--sp-2, 8px);
+}
+@container shopv2-pane (max-width: 699px) {
+  .salv-panes {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(210px, 1fr) minmax(210px, 1fr);
+    flex-basis: 440px;
+    min-height: 440px;
+  }
+}
+
+#root .salv-pane {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px 10px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: var(--gw-v3-frame-panel, url("../assets/ui/gravewood/v3/frames/panel-frame.webp")) 48 / 8px;
+  background-color: #0d1114;
+  background-image:
+    linear-gradient(rgba(8, 11, 13, 0.52), rgba(8, 11, 13, 0.52)),
+    var(--gw-texture-basalt, url("../assets/ui/gravewood/v3/textures/texture-basalt.webp"));
+  background-size: auto, 800px 800px;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+.salv-pane-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.salv-pane-count {
+  font-size: var(--fs-xs);
+  margin-right: auto;
+}
+.salv-pane .salv-grid {
+  flex: 1;
+  min-height: 0;
+  padding: 6px 4px 6px 2px;
+}
+.salv-empty {
+  margin: 8px 4px;
+}
+
+/* ─── Zelle: Auswahl, Menge, Schloss ───────────────────────────────────────── */
+.salv-cell {
+  position: relative;
+  cursor: pointer;
+}
+.salv-cell.locked {
+  cursor: default;
+}
+.salv-cell.locked .item-cell {
+  opacity: 0.42;
+  filter: grayscale(0.85);
+}
+.salv-qty-btn {
+  pointer-events: auto;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1.3;
+}
+.salv-qty-btn:hover,
+.salv-qty-btn:focus-visible {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.salv-lock {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  z-index: 5;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(216, 192, 106, 0.5);
+  border-radius: 4px;
+  background: rgba(10, 8, 6, 0.85);
+  color: rgba(216, 192, 106, 0.85);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.salv-cell:hover .salv-lock,
+.salv-lock:focus-visible,
+.salv-lock.on {
+  opacity: 1;
+}
+.salv-lock.on {
+  background: rgba(90, 64, 18, 0.9);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.salv-lock:hover {
+  color: #fff;
+}
+
+/* ─── Ausbeute-Panel ──────────────────────────────────────────────────────── */
+.salv-result {
+  position: relative;
+  flex: 0 0 auto;
+  max-height: 130px;
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  padding: 8px 44px 8px 14px;
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  background: linear-gradient(rgba(20, 14, 6, 0.94), rgba(20, 14, 6, 0.94)), url("../assets/bg_black.webp") repeat;
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.55), 0 0 12px rgba(216, 184, 112, 0.25);
+  animation: salv-result-in 0.22s ease-out;
+}
+.salv-result-title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--ds-gold-bright, #f0dca0);
+}
+.salv-result-pieces {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.salv-result-cells .salvage-yield .item-cell {
+  width: 44px;
+  height: 44px;
+  animation: salv-pop 0.26s ease-out backwards;
+}
+.salv-result-cells .salvage-yield .item-cell:nth-child(2) { animation-delay: 0.05s; }
+.salv-result-cells .salvage-yield .item-cell:nth-child(3) { animation-delay: 0.1s; }
+.salv-result-cells .salvage-yield .item-cell:nth-child(4) { animation-delay: 0.15s; }
+.salv-result-cells .salvage-yield .item-cell:nth-child(n + 5) { animation-delay: 0.2s; }
+.salv-result-note {
+  margin: 0;
+  flex-basis: 100%;
+  color: #e0a15a;
+  font-size: var(--fs-sm);
+}
+.salv-result-note--info {
+  color: var(--text);
+}
+.salv-result-close {
+  top: 6px;
+  right: 6px;
+}
+@keyframes salv-result-in {
+  from { opacity: 0; transform: translateY(-6px); }
+}
+@keyframes salv-pop {
+  from { opacity: 0; transform: scale(0.7); }
+}
+.salv-tab[data-fx="off"] .salv-result,
+.salv-tab[data-fx="off"] .salv-result .item-cell {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .salv-result,
+  .salv-result .item-cell {
+    animation: none;
+  }
+}
+
+/* ─── Feste Auswahlleiste ─────────────────────────────────────────────────── */
+.salv-foot {
+  position: sticky;
+  bottom: 0;
+  z-index: 6;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.salv-bar {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 8px 14px;
+  border: 1px solid rgba(216, 184, 112, 0.5);
+  border-radius: 4px;
+  background: linear-gradient(rgba(40, 28, 8, 0.6), rgba(40, 28, 8, 0.6)), url("../assets/bg_black.webp") repeat;
+}
+.salv-bar-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.salv-bar-count {
+  font-family: var(--font-head);
+  font-variant-numeric: tabular-nums;
+  color: var(--gold);
+}
+.salv-bar .salvage-yield .item-cell {
+  width: 40px;
+  height: 40px;
+}
+.salv-hint {
+  flex: 1 1 16em;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--fs-xs);
+  /* claude:2026-10-31T16:34:28+01:00 — Hinweiszeile bricht auf zwei Zeilen um (RU wurde abgeschnitten) */
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+@container shopv2-pane (max-width: 819px) {
+  .salv-hint {
+    display: none;
+  }
+}
+.salv-bar-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* claude:2026-10-31T15:05:00+01:00 — Schalter „Teile mit Suffix behalten“ */
+.salv-keep {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  align-self: flex-start;
+  cursor: pointer;
+  font-size: var(--fs-sm);
+  color: var(--text);
+}
+.salv-keep input {
+  accent-color: var(--gold);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}

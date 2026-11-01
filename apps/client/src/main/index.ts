@@ -9,6 +9,7 @@ import { enableSteamOverlay, initSteam, registerSteamHandlers } from "./steam";
 import { registerShellHandlers } from "./shell";
 import { registerBugReportHandlers } from "./bugReport";
 import { registerCharacterExportHandlers } from "./characterExport";
+import { registerNotifyHandlers } from "./notify"; // claude:2026-10-31T16:34:28+01:00
 
 // App-Identität MUSS vor `app.whenReady()` gesetzt werden: Electron leitet den `userData`-Pfad aus
 // `app.getName()` ab und friert ihn beim App-Init ein. Stand das setName wie zuvor IN whenReady, war
@@ -181,6 +182,7 @@ app.whenReady().then(() => {
   registerBugReportHandlers();
   // Prompt-Extractor (Chef-Auftrag 28.08.2026): Charakterbogen-Export nach Downloads\Grim Reach Exports\.
   registerCharacterExportHandlers();
+  registerNotifyHandlers(); // claude:2026-10-31T16:34:28+01:00 — Desktop-Benachrichtigungen (Opt-in)
   // Sidebar „Spiel verlassen"-Button (Chef-Wunsch): sauberer App-Exit aus dem Renderer.
   ipcMain.handle("app:quit", () => app.quit());
   createWindow();

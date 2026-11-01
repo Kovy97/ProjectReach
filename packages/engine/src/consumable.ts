@@ -3,6 +3,7 @@ import { openWorkCrate } from "./orders"; // claude:2026-10-24T23:45:00+02:00
 import { consumableHeal } from "@hearthforge/shared";
 import { computeStats } from "./character";
 import { itemCount, removeItem } from "./inventory";
+import { stockCount, takeFromBank } from "./bank"; // claude:2026-10-31T16:08:21+01:00 — Auto-Trank/Auto-Essen aus der Bank (1.4.2)
 import { masterBuffDurationMult } from "./capes";
 import { consumeBlocked, isHealPotion, noteConsumeCooldown } from "./consume-gate";
 import { petFoodHealMult } from "./pets";
@@ -154,6 +155,8 @@ function consumeInternal(state: GameState, content: ContentDB, itemId: ItemId, s
   // bloßen Buff-Refresh ohne Spielerentscheidung. Solche Items sind bewusste Einzel-Entscheidungen.
   const special = item.consumable;
   if (special && source === "rebuff") return false;
+  // claude:2026-10-30T22:28:00+01:00 — Gebührenschein (1.4.2 L4): kein „Benutzen“, er wird nur beim Raid-Start verbraucht (raid.ts `startRaid`).
+  if (special?.kind === "raidFeeWrit") return false;
   if (!heals && !cures && !buffs && !special) return false;
 
   // Abklingzeit VOR dem Verbrauch prüfen: ein geblockter Versuch darf weder Item noch HP anfassen.
@@ -229,7 +232,28 @@ export function isMealItem(content: ContentDB, itemId: ItemId | null | undefined
 
 /** Vorrat einer Mahlzeit über Inventar und Bank (inkl. Lager). claude:2026-10-23T16:30:00+02:00 */
 export function mealStock(state: GameState, itemId: ItemId): number {
-  return itemCount(state.inventory, itemId) + (state.bank[itemId] ?? 0);
+  return stockCount(state, itemId); // claude:2026-10-31T16:08:21+01:00 — gemeinsame Quelle (bank.ts), Wert unverändert
+}
+
+/**
+ * claude:2026-10-31T16:08:21+01:00 — 1.4.2 (Sweep-Idee, Chef-GO 31.10.2026: „Auto-Trank zieht aus der Bank nach“): Verzehr „Inventar,
+ * sonst Lager“ für den Auto-Trank. Liegt das Item im Inventar, läuft exakt `useConsumable` (unverändert). Sonst ein Stück direkt aus der
+ * Bank, mit derselben Wirkung (`applyEatEffects`), demselben Takt-Gate (`consumeBlocked` vorher, `noteConsumeCooldown` nachher) und ohne
+ * Inventarplatz. Items mit Sonder-Wirkung (`item.consumable`) nimmt dieser Weg nie aus der Bank: das sind bewusste Einzel-Entscheidungen
+ * aus dem Inventar. Deterministisch, kein RNG. Rückgabe: ob getrunken/gegessen wurde.
+ */
+export function useConsumableFromStock(state: GameState, content: ContentDB, itemId: ItemId): boolean {
+  if (itemCount(state.inventory, itemId) > 0) return useConsumable(state, content, itemId);
+  const item = content.items[itemId];
+  if (!item || item.type !== "consumable" || item.consumable) return false;
+  const heals = (item.healAmount ?? 0) > 0 || (item.healPct ?? 0) > 0;
+  if (!heals && !item.curesPoison && !item.buff) return false;
+  if ((state.bank[itemId] ?? 0) < 1) return false;
+  if (consumeBlocked(state, content, itemId)) return false;
+  if (takeFromBank(state, content, itemId, 1) < 1) return false;
+  applyEatEffects(state, content, itemId);
+  noteConsumeCooldown(state, content, itemId);
+  return true;
 }
 
 /**
@@ -250,10 +274,8 @@ export function tickMealKeep(state: GameState, content: ContentDB): boolean {
   if (!isMealItem(content, meal)) return false;
   if (ch.buffs.some((b) => content.items[b.itemId]?.buff?.category === "food")) return false;
   if (itemCount(state.inventory, meal) > 0) return useConsumable(state, content, meal, "rebuff");
-  const inBank = state.bank[meal] ?? 0;
-  if (inBank <= 0) return false;
-  if (inBank <= 1) delete state.bank[meal];
-  else state.bank[meal] = inBank - 1;
+  // claude:2026-10-31T16:08:21+01:00 — Bank-Entnahme über den gemeinsamen Helfer (bank.ts `takeFromBank`, wie Auto-Essen/Auto-Trank).
+  if (takeFromBank(state, content, meal, 1) < 1) return false;
   applyEatEffects(state, content, meal);
   return true;
 }
@@ -263,8 +285,9 @@ export function tickMealKeep(state: GameState, content: ContentDB): boolean {
  * deterministisch testbar; die UI rendert daraus ihre Meldung statt eines pauschalen „Cooldown".
  *  - `cooldown`         Konsum-Abklingzeit/Kill-Verschnaufpause im Kampf (`consumeBlocked`).
  *  - `no_slayer_task`   Sonder-Wirkung `slayerReroll`, aber kein aktiver Slayer-Auftrag.
+ *  - `raid_only`        claude:2026-10-30T22:28:00+01:00 — Gebührenschein (`raidFeeWrit`): wird nur beim Raid-Start eingesetzt.
  */
-export type ConsumeFailReason = "cooldown" | "no_slayer_task";
+export type ConsumeFailReason = "cooldown" | "no_slayer_task" | "raid_only";
 
 /**
  * Warum würde `useConsumable` (spieler-ausgelöst) für `itemId` JETZT scheitern? `null` = benutzbar
@@ -280,6 +303,7 @@ export function consumeFailReason(
 ): ConsumeFailReason | null {
   const item = content.items[itemId];
   if (!item || item.type !== "consumable") return null;
+  if (item.consumable?.kind === "raidFeeWrit") return "raid_only"; // claude:2026-10-30T22:28:00+01:00 — vor dem Takt: nie benutzbar
   if (consumeBlocked(state, content, itemId)) return "cooldown";
   if (item.consumable?.kind === "slayerReroll" && !state.slayerTask) return "no_slayer_task";
   return null;

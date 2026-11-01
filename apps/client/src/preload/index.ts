@@ -56,6 +56,11 @@ contextBridge.exposeInMainWorld("hearthforge", {
     setWindowMode: (mode: WindowMode): Promise<boolean> =>
       ipcRenderer.invoke("window:set-window-mode", mode),
   },
+  // claude:2026-10-31T16:34:28+01:00 — Desktop-Benachrichtigungen (main/notify.ts): zeigt nur bei NICHT fokussiertem Fenster.
+  notify: {
+    show: (title: string, body: string): Promise<boolean> => ipcRenderer.invoke("notify:show", title, body),
+    supported: (): Promise<boolean> => ipcRenderer.invoke("notify:supported"),
+  },
   steam: {
     unlockAchievement: (id: string): Promise<void> =>
       ipcRenderer.invoke("steam:achievement-unlock", id),

@@ -1,0 +1,226 @@
+/* claude:2026-10-30T21:20:00+01:00 — Dev-UI-Stil „Synty“ (Chef 30.10.: „zu Legacy und Reforged noch ein neues DEV-UI“), Handschrift.
+   Teil 1 (Rahmen/Texturen aller Reforged-Regeln) erzeugt ui-audit/synty/gen-synty-skin.py → synty-frames.css (VOR dieser Datei).
+   Hier: Farbwelt, Seitenleiste/Kopfleiste, Knöpfe, Modale, Balken, Eingabefelder, Scrollbalken, Mauszeiger, Tooltips, Schmuck.
+   Alle Regeln unter :root[data-ui-style="synty"]; Bilder NUR über var(--synty-<name>) (gesetzt von synty/loader.ts), nie als url().
+   Bausteine + Slice-Maße: ui-audit/synty/build-synty-assets.py → synty/manifest.ts. Basis bleibt Reforged (layout--reforged). */
+
+/* ───────────── Farbwelt: Synty „Dark Fantasy Menus“ = Stahlgrau + dunkles Braunrot, Creme-Schrift, Rot/Gold-Akzente ───────────── */
+:root[data-ui-style="synty"] {
+  --bg: #130e0d;
+  --bg-deep: #0b0807;
+  --bg-sidebar: #0b0807;
+  --panel: #211917;
+  --panel-hover: #2c211e;
+  --slot: #0d0908;
+  --border: #55443f;
+  --border-bright: #8d7a70;
+  --text: #e6dccd;
+  --muted: #9a8c82;
+  --accent: #c8935a;
+  --accent-2: #e0ac72;
+  --accent-dim: #5e3f26;
+  --danger: #c4554b;
+}
+
+/* ───────────── Knopf-Profile (Seitenleiste, Reiterleiste, Kategorie-Leisten, New-Haven-Zeilen): Synty-Basaltknopf ───────────── */
+:root[data-ui-style="synty"][data-nav-skin] {
+  --nav-skin-surface: radial-gradient(ellipse at 50% 0%, rgba(214, 150, 100, 0.1), transparent 75%), linear-gradient(#2a1e1a, #1b1311);
+  --nav-skin-selected: radial-gradient(ellipse at 50% 100%, rgba(226, 130, 48, 0.42), transparent 85%), linear-gradient(#3b2518, #25160e);
+  --nav-skin-frame: var(--synty-frame-btn);
+  --nav-skin-frame-slice: 64;
+  --nav-skin-frame-w: 9px;
+}
+:root[data-ui-style="synty"] #root .layout--reforged {
+  --chrome-frame: var(--synty-frame-btn);
+  --chrome-shell: linear-gradient(#1a1311, #0f0b0a);
+  --chrome-surface: linear-gradient(rgba(36, 27, 24, 0.9), rgba(24, 18, 16, 0.94));
+  --chrome-nav-shell: linear-gradient(#1c1412, #120d0c);
+  --chrome-well: linear-gradient(rgba(54, 30, 22, 0.5), rgba(14, 10, 9, 0.9));
+  --chrome-text: #eadfcf;
+  --chrome-muted: #aa9b90;
+  --chrome-gold: #e8c47a;
+}
+
+/* ───────────── Seitenleisten-/Reiter-Knöpfe: Hover und Auswahl tauschen den Rahmen (Synty färbt per Tint) ───────────── */
+:root[data-ui-style="synty"] #root .layout--reforged .sidebar :is(.sb-skill-btn, .sb-combat-toggle):hover,
+:root[data-ui-style="synty"] #root .layout--reforged .topbar-item:not(:disabled):hover,
+:root[data-ui-style="synty"] #root .layout--reforged :is(.category-header, .bestiary-zone-header):hover {
+  border-image-source: var(--synty-frame-btn-hover) !important;
+}
+:root[data-ui-style="synty"] #root .layout--reforged .sidebar .sb-skill-btn.active,
+:root[data-ui-style="synty"] #root .layout--reforged .topbar-item.active {
+  border-image-source: var(--synty-frame-btn-gold) !important;
+}
+
+/* ───────────── Hauptknopf .btn-iron und Sekundärknopf: Zustände über Rahmen-Tausch statt Helligkeitsfilter ───────────── */
+:root[data-ui-style="synty"] .btn-iron {
+  background-color: #1a1210;
+  color: #ecdcc0;
+  text-shadow: 0 1px 2px #000;
+}
+:root[data-ui-style="synty"] .btn-iron:hover,
+:root[data-ui-style="synty"] .btn-iron:focus-visible {
+  border-image-source: var(--synty-frame-btn-hover);
+  filter: none;
+  color: #fff0cc;
+}
+:root[data-ui-style="synty"] .btn-iron:active {
+  border-image-source: var(--synty-frame-btn-press);
+  filter: none;
+}
+:root[data-ui-style="synty"] .btn-iron.is-active {
+  border-image-source: var(--synty-frame-btn-gold);
+  background-color: #2a1a10;
+  color: #ffe7a8;
+}
+:root[data-ui-style="synty"] .btn-iron[disabled],
+:root[data-ui-style="synty"] .btn-iron.is-disabled {
+  filter: grayscale(0.55) brightness(0.7);
+}
+
+/* ───────────── Mauszeiger (Synty Cursors) ───────────── */
+:root[data-ui-style="synty"] body,
+:root[data-ui-style="synty"] #root {
+  cursor: var(--synty-cursor-pointer) 6 4, default;
+}
+:root[data-ui-style="synty"] :is(button, a, [role="button"], [role="tab"], [role="radio"], summary, select, label, .btn-iron, .shop-citadel-btn):not(:disabled) {
+  cursor: var(--synty-cursor-hand) 12 4, pointer;
+}
+:root[data-ui-style="synty"] :is(button, .btn-iron, .shop-citadel-btn)[disabled] {
+  cursor: var(--synty-cursor-pointer) 6 4, not-allowed;
+}
+
+/* ───────────── Modal (Prefab Popup_01: Frame_Box_Large_11 Links/Rechts, Stahlrand) ───────────── */
+:root[data-ui-style="synty"] .modal {
+  border-width: 30px 36px;
+  border-image: var(--synty-modal) 92 136 92 136 fill / 30px 36px 30px 36px stretch;
+  background: none;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.82);
+}
+:root[data-ui-style="synty"] .modal-overlay {
+  background: radial-gradient(ellipse at 50% 45%, rgba(20, 8, 6, 0.55), rgba(0, 0, 0, 0.86));
+}
+:root[data-ui-style="synty"] .modal::before {
+  content: "";
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  width: 52px;
+  height: 52px;
+  margin-left: -26px;
+  background: var(--synty-greeble-skull) center / contain no-repeat;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ───────────── Fortschrittsbalken ───────────── */
+:root[data-ui-style="synty"] .bar {
+  background: #0c0807;
+  border: 1px solid #6b5548;
+  border-radius: 1px;
+  box-shadow: inset 0 1px 3px #000, 0 0 0 1px #000;
+}
+:root[data-ui-style="synty"] .bar-fill {
+  background: linear-gradient(#f0b25e, #b0691f 55%, #7a4413);
+  box-shadow: inset 0 1px 0 rgba(255, 235, 190, 0.45);
+}
+
+/* ───────────── Scrollbalken ───────────── */
+:root[data-ui-style="synty"] ::-webkit-scrollbar { width: 12px; height: 12px; }
+:root[data-ui-style="synty"] ::-webkit-scrollbar-track { background: #0c0807; border-left: 1px solid #2e211d; }
+:root[data-ui-style="synty"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #6a5348, #3d2d27 60%, #2a1e1a);
+  border: 1px solid #0a0605;
+  border-radius: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 220, 190, 0.18);
+}
+:root[data-ui-style="synty"] ::-webkit-scrollbar-thumb:hover { background: linear-gradient(90deg, #8a6d5c, #54403a 60%, #3a2a24); }
+
+/* ───────────── Mauszeiger: die Reforged-Hand (gravewood-controls.css) setzt `!important` auf `*`; hier dasselbe mit Synty-Zeigern ───────────── */
+:root[data-ui-style="synty"] *,
+:root[data-ui-style="synty"] *::before,
+:root[data-ui-style="synty"] *::after {
+  cursor: var(--synty-cursor-pointer) 6 4, auto !important;
+}
+:root[data-ui-style="synty"] :is(button, a, [role="button"], [role="tab"], [role="radio"], summary, label[for], select, option, .btn-iron, .shop-citadel-btn):not(:disabled),
+:root[data-ui-style="synty"] :is(button, a, [role="button"], [role="tab"], summary, label[for], .btn-iron) *,
+:root[data-ui-style="synty"] body:active,
+:root[data-ui-style="synty"] body:active * {
+  cursor: var(--synty-cursor-hand) 12 4, pointer !important;
+}
+
+/* ───────────── Inventar-/Ausrüstungsfelder: Synty-Feldrahmen statt Bronze-Slot ───────────── */
+:root[data-ui-style="synty"] {
+  --gw-slot-finished: var(--synty-slot);
+}
+
+/* ───────────── Schließen-Knopf (25×25): Stahlrahmen + Synty-Kreuz ───────────── */
+:root[data-ui-style="synty"] .ds-close-button {
+  width: 28px;
+  height: 28px;
+  background: var(--synty-icon-close) center / 64% no-repeat, #1a1210;
+  border: 5px solid transparent;
+  border-image: var(--synty-frame-btn) 64 / 8px stretch;
+  filter: none;
+}
+:root[data-ui-style="synty"] .ds-close-button:hover { background-color: #3a2118; border-image-source: var(--synty-frame-btn-hover); }
+:root[data-ui-style="synty"] .ds-close-button:active { background-color: #0e0807; border-image-source: var(--synty-frame-btn-press); }
+:root[data-ui-style="synty"] .ds-close-button[disabled] { opacity: 0.45; }
+
+/* ───────────── Tooltip / Item-Karte: ornamentierter Rahmen ───────────── */
+:root[data-ui-style="synty"] .item-tooltip {
+  background: linear-gradient(180deg, #231a17, #150f0d);
+  border-width: 9px;
+  border-image: var(--synty-frame-big) 64 / 18px stretch;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.7);
+}
+
+/* ───────────── Eingabefelder, Auswahl, Häkchen, Regler ───────────── */
+:root[data-ui-style="synty"] :is(input[type="text"], input[type="search"], input[type="number"], input[type="password"], input:not([type]), textarea, select) {
+  background-color: #0d0908;
+  color: var(--text);
+  border: 1px solid #6b5548;
+  border-radius: 0;
+  box-shadow: inset 0 2px 5px #000, 0 0 0 1px #000;
+}
+:root[data-ui-style="synty"] :is(input[type="text"], input[type="search"], input[type="number"], input:not([type]), textarea, select):focus {
+  outline: none;
+  border-color: var(--accent-2);
+  box-shadow: inset 0 2px 5px #000, 0 0 0 1px #000, 0 0 8px rgba(224, 172, 114, 0.35);
+}
+:root[data-ui-style="synty"] input[type="checkbox"],
+:root[data-ui-style="synty"] input[type="radio"] { accent-color: #c8935a; }
+:root[data-ui-style="synty"] input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 22px;
+  background: linear-gradient(#0c0807, #0c0807) center / 100% 6px no-repeat;
+  border: 0;
+  box-shadow: none;
+}
+:root[data-ui-style="synty"] input[type="range"]::-webkit-slider-runnable-track { height: 6px; background: linear-gradient(#5a463d, #2a1e1a); border: 1px solid #0a0605; }
+:root[data-ui-style="synty"] input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -9px;
+  background: var(--synty-slider-knob) center / contain no-repeat;
+  border: 0;
+}
+
+/* ───────────── Trenner + Schmuck ───────────── */
+:root[data-ui-style="synty"] hr {
+  height: 14px;
+  border: 0;
+  background: var(--synty-divider) center / auto 100% no-repeat;
+  opacity: 0.85;
+}
+:root[data-ui-style="synty"] .modal :is(h2, h3):first-of-type::after {
+  content: "";
+  display: block;
+  height: 14px;
+  margin: 8px auto 0;
+  background: var(--synty-divider-2) center / auto 100% no-repeat;
+  opacity: 0.8;
+}

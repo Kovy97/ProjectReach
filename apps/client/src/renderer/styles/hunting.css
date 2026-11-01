@@ -191,6 +191,11 @@
   gap: 16px;
 }
 
+/* claude:2026-10-30T19:31:00+01:00 — 1.4.2 Fallensteller: ab 7 Plätzen (bis 8) vier Spalten. */
+.hunt-traps--wide {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, max(240px, calc((100% - 48px) / 4))), 1fr));
+}
+
 /* ─── Fallen-Karte — jetzt eine vollflächige Szene statt Karte-mit-Leerraum (Chef-Kritik Runde 2:
    „die Falle schwebt in schwarzem Nichts"): die Zonen-Kulisse (`.has-bg`, Muster `.pet-card.has-bg`/
    `.monster-card.has-bg`) füllt die GESAMTE Karte als Hintergrund, ein `::before`-Verlauf dunkelt

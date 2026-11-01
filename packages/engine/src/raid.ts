@@ -11,6 +11,8 @@ import type {
   RaidWeeklyModifierId,
 } from "@hearthforge/shared";
 import { RAID_REST_AUTO_MS, RAID_VARIANT_SUFFIX, RAID_WEEKLY_MODIFIERS, RELIC_DUST_ITEM_ID, SLAYER_POINTS_PER_RAID_BOSS, defaultRaidState } from "@hearthforge/shared"; // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S4
+import { RAID_FEE_WRIT_DISCOUNT, RAID_FEE_WRIT_ITEM_ID } from "@hearthforge/shared"; // claude:2026-10-30T22:28:00+01:00 — Gebührenschein (1.4.2 L4)
+import { itemCount, removeItem } from "./inventory"; // claude:2026-10-30T22:28:00+01:00 — Gebührenschein verbrauchen
 import { computeStats } from "./character";
 import { stopCombat } from "./combat-stop"; // claude:2026-10-26T00:50:00+02:00 — Aufgeben räumt den Kampf vollständig (QA-Raid #6)
 import { beginDungeonRun } from "./dungeon";
@@ -148,7 +150,42 @@ export function raidCombatMonster(state: GameState, content: ContentDB): Monster
 
 // ── Lauf ───────────────────────────────────────────────────────────────────────────────────────────
 
-export type RaidStartReason = "ok" | "unknown" | "locked" | "gold" | "busy";
+// claude:2026-10-30T22:28:00+01:00 — "no_writ": Start mit Gebührenschein verlangt, aber keiner im Inventar/Lager (1.4.2 L4).
+export type RaidStartReason = "ok" | "unknown" | "locked" | "gold" | "busy" | "no_writ";
+
+/** claude:2026-10-30T22:28:00+01:00 — Optionen eines Raid-Starts (1.4.2 L4). */
+export interface RaidStartOptions {
+  /** Einen Gebührenschein (`raid_fee_writ`) einsetzen: Gebühr −25 % (`RAID_FEE_WRIT_DISCOUNT`), der Schein wird verbraucht. */
+  useFeeWrit?: boolean;
+}
+
+/** claude:2026-10-30T22:28:00+01:00 — Gebührenscheine im Besitz (Inventar + Lager). */
+export function raidFeeWritCount(state: GameState): number {
+  return itemCount(state.inventory, RAID_FEE_WRIT_ITEM_ID) + Math.max(0, state.bank[RAID_FEE_WRIT_ITEM_ID] ?? 0);
+}
+
+/** claude:2026-10-30T22:28:00+01:00 — Gebühr nach Gebührenschein (−25 %, kaufmännisch gerundet). */
+export function raidFeeWithWrit(fee: number): number {
+  return Math.round(fee * (1 - RAID_FEE_WRIT_DISCOUNT));
+}
+
+/** claude:2026-10-30T22:28:00+01:00 — Einen Schein abziehen, Inventar zuerst, sonst Lager. false = keiner da. */
+function takeFeeWrit(state: GameState): boolean {
+  if (itemCount(state.inventory, RAID_FEE_WRIT_ITEM_ID) > 0) return removeItem(state.inventory, RAID_FEE_WRIT_ITEM_ID, 1) === 1;
+  const inBank = state.bank[RAID_FEE_WRIT_ITEM_ID] ?? 0;
+  if (inBank <= 0) return false;
+  if (inBank > 1) state.bank[RAID_FEE_WRIT_ITEM_ID] = inBank - 1;
+  else delete state.bank[RAID_FEE_WRIT_ITEM_ID];
+  return true;
+}
+
+/**
+ * claude:2026-10-30T22:28:00+01:00 — Automatische Starts (Warteschlange, Folgerunde) setzen einen Schein nur ein, wenn der Spieler es
+ * eingestellt hat (`settings.raidUseFeeWrit`) UND einer da ist; sonst volle Gebühr, nie ein Abbruch wegen fehlendem Schein.
+ */
+function autoStartOptions(state: GameState): RaidStartOptions {
+  return { useFeeWrit: state.settings?.raidUseFeeWrit === true && raidFeeWritCount(state) > 0 };
+}
 
 function ensureRaidWeek(state: GameState, nowMs: number): void {
   const rs = raidStateOf(state);
@@ -199,15 +236,29 @@ function enterRaidRoom(state: GameState, content: ContentDB, run: RaidRun): bool
  * Startet einen Raid-Lauf (R2/R3): Stufe freigeschaltet, Gebühr bezahlbar (Zahltag ×0,80), kein anderer Lauf aktiv.
  * Zieht die Gebühr ab, legt den Wochen-Modifikator fest und betritt Raum 1. Ohne `nowMs` (Sim, Tests) gilt
  * „Stille Hallen“ und keine Wochentruhe.
+ * claude:2026-10-30T22:28:00+01:00 — `opts.useFeeWrit` (1.4.2 L4, Opt-in): verbraucht einen Gebührenschein und senkt die Gebühr dieses
+ * Laufs um 25 % (nach dem Zahltag-Nachlass). Ohne Schein `"no_writ"`, ohne Gold `"gold"`; in beiden Fällen bleibt alles unverändert.
+ * Scheitert der Raumeintritt, kommen Gold UND Schein zurück. Rückgaben bei Tod/Aufgeben rechnen mit der gesenkten Gebühr (`feePaid`).
  */
-export function startRaid(state: GameState, content: ContentDB, raidId: string, difficulty: RaidDifficulty, nowMs?: number): RaidStartReason {
+export function startRaid(
+  state: GameState,
+  content: ContentDB,
+  raidId: string,
+  difficulty: RaidDifficulty,
+  nowMs?: number,
+  opts?: RaidStartOptions,
+): RaidStartReason {
   const def = raidDef(content, raidId);
   if (!def || def.rooms.length === 0) return "unknown";
   if (!raidDifficultyUnlocked(state, content, raidId, difficulty)) return "locked";
   if (raidOccupied(state)) return "busy";
   const modifier: RaidWeeklyModifierId = nowMs !== undefined ? raidWeeklyModifier(nowMs) : "quiet_halls";
-  const fee = raidFee(content, raidId, difficulty, modifier);
+  const useWrit = opts?.useFeeWrit === true; // claude:2026-10-30T22:28:00+01:00
+  if (useWrit && raidFeeWritCount(state) < 1) return "no_writ";
+  const baseFee = raidFee(content, raidId, difficulty, modifier);
+  const fee = useWrit ? raidFeeWithWrit(baseFee) : baseFee;
   if (state.character.gold < fee) return "gold";
+  if (useWrit && !takeFeeWrit(state)) return "no_writ";
   const rs = raidStateOf(state);
   if (nowMs !== undefined) ensureRaidWeek(state, nowMs);
   state.character.gold -= fee;
@@ -230,6 +281,7 @@ export function startRaid(state: GameState, content: ContentDB, raidId: string, 
     state.character.gold += fee;
     rs.feesPaid -= fee;
     rs.run = null;
+    if (useWrit) grantLoot(state, content, RAID_FEE_WRIT_ITEM_ID, 1); // claude:2026-10-30T22:28:00+01:00 — Schein zurück (kein Verlust)
     return "unknown";
   }
   return "ok";
@@ -291,7 +343,7 @@ function finishRun(state: GameState, content: ContentDB, outcome: "complete" | "
     rs.queue = null;
     return;
   }
-  const r = startRaid(state, content, q.raidId, q.difficulty, nowMs);
+  const r = startRaid(state, content, q.raidId, q.difficulty, nowMs, autoStartOptions(state)); // claude:2026-10-30T22:28:00+01:00 — Schein nach Einstellung
   if (r !== "ok") {
     state.lastQueueSkip = { monsterId: "", reason: r === "gold" ? "raid_gold" : r === "locked" ? "raid_locked" : "unknown_raid", raidId: q.raidId };
     rs.queue = null;
@@ -561,7 +613,8 @@ export function resetRaidForPrestige(state: GameState): void {
 
 /** Startet einen Raid aus der Warteschlange (actions.ts). */
 export function startRaidFromQueue(state: GameState, content: ContentDB, raidId: string, difficulty: RaidDifficulty, target: number | null, nowMs?: number): RaidStartReason {
-  const r = startRaid(state, content, raidId, difficulty, nowMs);
+  // claude:2026-10-30T22:28:00+01:00 — Gebührenschein nur nach Einstellung `settings.raidUseFeeWrit` und nur, wenn einer da ist (1.4.2 L4).
+  const r = startRaid(state, content, raidId, difficulty, nowMs, autoStartOptions(state));
   if (r === "ok") raidStateOf(state).queue = { raidId, difficulty, remaining: target, completed: 0 };
   return r;
 }

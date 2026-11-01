@@ -5,7 +5,7 @@ import { tickWorkOrders } from "./orders"; // 1.4.0 AU
 import { FISH_SHOAL_SPEED, GUARD_CHANGE_SUCCESS_BONUS, INSPIRATION_SUFFIX_MULT, MASTERPIECE_ROLL_FLOOR, THRIFTY_HAND_PRESERVE, THRIFTY_HAND_PRESERVE_CAP, WILD_GARDEN_MAX_CHANCE } from "@hearthforge/shared";
 import type { ActionId, ContentDB, GameState, ItemId } from "@hearthforge/shared";
 import {
-  syncBankOrder, effectiveBankCapacity, CAMP_SKILL_SPEED_KIND, CAMP_SPEED_CUT_CAP, DEFAULT_CRAFT_SUFFIX_CHANCE, DEFAULT_STUN_MS, OUT_OF_COMBAT_HP_REGEN_PCT, TICK_MS, actionSuccessChance, masteryDoubleChance, masteryPreserveChance, masterySpeedMult, masteryXpPerCompletion, thievingRiskMods } from "@hearthforge/shared";
+  syncBankOrder, effectiveBankCapacity, makeFightQueueEntry, CAMP_SKILL_SPEED_KIND, CAMP_SPEED_CUT_CAP, DEFAULT_CRAFT_SUFFIX_CHANCE, DEFAULT_STUN_MS, OUT_OF_COMBAT_HP_REGEN_PCT, TICK_MS, actionSuccessChance, masteryDoubleChance, masteryPreserveChance, masterySpeedMult, masteryXpPerCompletion, thievingRiskMods } from "@hearthforge/shared";
 
 const OUT_OF_COMBAT_WARD_REGEN_PCT = 0.05;
 import type { ActionDef } from "@hearthforge/shared";
@@ -21,6 +21,7 @@ import { buffGatherXpMult, buffGatherYieldBonus, tickBuffs } from "./consumable"
 import { campBoostCached, campShrineBonus, tickCampCrew } from "./camp";
 import { tickCampRefine } from "./refine";
 import { checkAchievements } from "./achievements";
+import { slayerRetryAfterDeath } from "./slayer"; // claude:2026-10-31T13:00:41+01:00 — 1.4.2 Slayer-Neuversuch nach dem Tod
 import { itemCount, removeItem, syncVariantCells } from "./inventory"; // claude:2026-10-25T18:00:00+01:00 — SAVE 98
 import { grantLoot } from "./mail";
 import { bestToolSpeed } from "./tools";
@@ -29,7 +30,7 @@ import { evaluateQuests } from "./quests";
 import { tickFarmPlots } from "./farming";
 import { tickHuntTraps, type HuntCatchTally } from "./hunting";
 import { tryCraftSuffix } from "./suffix";
-import { goldFindMult, prestigeSkillXpMult } from "./prestige-effects"; // claude:2026-10-18T12:00:00+02:00 — Narbenbuch
+import { goldFindMult, prestigeSkillXpMult, talentActionDurationMult, talentMasteryXpMult } from "./prestige-effects"; // claude:2026-10-18T12:00:00+02:00 — Narbenbuch; claude:2026-10-30T18:42:00+01:00 — 1.4.2 Geübte Hand + Meisterglut
 import { markActionDropSeen } from "./drops";
 import {
   petBonusFind,
@@ -246,7 +247,10 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
   const mastery = (state.mastery[action.id] ??= { xp: 0 });
   // claude:2026-10-17T19:50:00+02:00 — Mastery-Untergrenze nach Basis-Dauer ab Mastery 50 (shared masteryXpPerCompletion):
   // reine Arithmetik, kein RNG-Draw ⇒ offline==online unberührt.
-  mastery.xp += masteryXpPerCompletion(action, levelFromXp(mastery.xp));
+  // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Meisterglut (`masteryXpPct`): × (1 + Anteil); ohne Rang exakt der Alt-Wert.
+  const masteryGain = masteryXpPerCompletion(action, levelFromXp(mastery.xp));
+  const masteryMult = talentMasteryXpMult(state, content);
+  mastery.xp += masteryMult === 1 ? masteryGain : masteryGain * masteryMult;
 
   if (action.gold) {
     // Gold-Beute zuerst würfeln (RNG-stabil), dann mit dem Risiko-Multiplikator skalieren.
@@ -454,6 +458,9 @@ export function effectiveActionDurationMs(
   // = Material) laufen schneller. Exakt 1 ohne passenden Begleiter ⇒ bit-identisch.
   const prepCut = petPrepSpeed(state, content, action);
   const prepMult = prepCut > 0 ? 1 - prepCut : 1;
+  // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Geübte Hand (`actionSpeedPct`): Sammeln, Handwerk, Diebeskunst −4/−8/−12 % Dauer.
+  // Ohne Rang exakt 1 ⇒ bit-identisch (x · 1 === x).
+  const talentMult = talentActionDurationMult(state, content);
   return Math.max(
     1,
     Math.round(
@@ -462,7 +469,8 @@ export function effectiveActionDurationMs(
         masterySpeed *
         poolSpeed *
         campSpeedMult(state, content, action) *
-        prepMult) /
+        prepMult *
+        talentMult) /
         (speedMult * shoal),
     ),
   );
@@ -551,6 +559,9 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
     // dieses Ticks (0 oder 1). Tod/Patt/Flucht erhöhen den Zähler nie → zählen nie.
     const run = state.queueDungeon;
     const clearsBefore = run !== null ? (state.dungeonsCleared[run.dungeonId] ?? 0) : 0;
+    // claude:2026-10-31T13:00:41+01:00 — 1.4.2 Slayer-Neuversuch: Gegner und Kampfart VOR dem Schritt merken (der Tod nullt die Kampf-Zeiger).
+    const fightBefore = state.combat.monsterId;
+    const plainFightBefore = state.combat.dungeonId === null && !state.combat.paragonFloor && !state.combat.eliteVariantId;
     combatStep(state, content, nowMs);
     if (fight !== null && state.queueFight === fight && creditId !== null) {
       const delta = (state.monsterKills[creditId] ?? 0) - killsBefore;
@@ -582,6 +593,25 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
       // offline). Damit ist Chef-GO #312 („Tod pausiert die Queue") aufgehoben; `queuePaused`
       // bleibt als manuelle Pause (resumeActionQueue/enqueue*) und für Alt-Saves bestehen.
       const skipReason = reason === "defeated" ? "defeated" : reason === "stalemate" ? "stalemate" : null;
+      // claude:2026-10-31T13:00:41+01:00 — 1.4.2 (Chef 31.10.: „Wenn es ein Slayer-Task ist, soll man es einfach nochmal probieren.“): Tod in einem
+      // normalen Kampf gegen das aktuelle Auftragsmonster ⇒ neuer Versuch statt Abbruch. Ein Queue-Kampf geht mit seinem Rest
+      // zurück an die Front, ein manueller Kampf als ∞-Eintrag (wie er lief); die Weiterschaltung unten startet ihn im selben
+      // Tick. Nach SLAYER_RETRY_MAX_DEATHS Toden in Folge ohne Auftrags-Kill gilt wieder das alte Verhalten. Kein RNG.
+      // claude:2026-10-31T13:58:31+01:00 — Befund B1: jeder Tod setzt den Popup-Hinweis neu (slayerRetryAfterDeath); Tode außerhalb
+      // normaler Kämpfe (Dungeon, Turm, Champion) räumen ihn hier, damit kein alter Hinweis an einem fremden Tod hängt.
+      if (reason === "defeated") state.combat.slayerRetryNote = undefined;
+      if (
+        reason === "defeated" &&
+        plainFightBefore &&
+        fightBefore !== null &&
+        slayerRetryAfterDeath(state, content, fightBefore)
+      ) {
+        if (state.queueFight !== null) requeueFightFront(state);
+        else {
+          if (!Array.isArray(state.actionQueue)) state.actionQueue = [];
+          state.actionQueue.unshift(makeFightQueueEntry(fightBefore, null));
+        }
+      }
       if (state.queueFight !== null) {
         if (skipReason !== null) {
           setQueueSkip(state, { monsterId: state.queueFight.monsterId, reason: skipReason });
@@ -617,7 +647,11 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
         Array.isArray(state.actionQueue) &&
         state.actionQueue.length > 0
       ) {
+        // claude:2026-10-31T13:58:31+01:00 — Befund B1: der Neustart (startCombat baut `combat` neu) trägt den Popup-Hinweis des Todes
+        // weiter, auch wenn nach einem Aufgeben der nächste Queue-Kampf startet. Später gestartete Kämpfe beginnen ohne ihn.
+        const retryNote = state.combat.slayerRetryNote;
         advanceActionQueue(state, content, nowMs);
+        if (retryNote !== undefined) state.combat.slayerRetryNote = retryNote;
       }
     }
     return;
@@ -656,6 +690,54 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
       state.character.ward + stats.maxWard * OUT_OF_COMBAT_WARD_REGEN_PCT * (TICK_MS / 1000),
     );
   }
+}
+
+/**
+ * claude:2026-10-31T16:08:21+01:00 — 1.4.2 (Sweep-Idee, Chef-GO 31.10.2026: Offline-Bericht zeigt den Leerlauf). Ab dieser Länge zählt ein
+ * zusammenhängender Leerlauf als „längerer Leerlauf“ und setzt `OfflineSummary.idleFromMs` (kurze Lücken zählen nur in `idleMs`).
+ */
+export const OFFLINE_IDLE_MIN_RUN_MS = 60_000;
+
+/**
+ * claude:2026-10-31T16:08:21+01:00 — Sammler für den Leerlauf im Offline-Fenster (Muster `HuntCatchTally`): reiner Beobachter, den der
+ * Aufrufer an `advance` reicht (persistence `deserialize`). Liegt NIE im GameState, wird nie gespeichert und ändert keinen Tick.
+ *  - `idleMs`      Summe aller Leerlauf-Ticks (× TICK_MS).
+ *  - `idleFromMs`  Versatz ab Fensterbeginn, an dem der erste Leerlauf von mindestens OFFLINE_IDLE_MIN_RUN_MS begann (null = keiner).
+ *  - `runStartMs`/`cursorMs` interne Laufmarken (Beginn des laufenden Leerlaufs, verstrichene Fensterzeit).
+ */
+export interface OfflineIdleTally {
+  idleMs: number;
+  idleFromMs: number | null;
+  runStartMs: number | null;
+  cursorMs: number;
+}
+
+/** claude:2026-10-31T16:08:21+01:00 — Leerer Leerlauf-Sammler für ein neues Fenster. */
+export function createOfflineIdleTally(): OfflineIdleTally {
+  return { idleMs: 0, idleFromMs: null, runStartMs: null, cursorMs: 0 };
+}
+
+/**
+ * claude:2026-10-31T16:08:21+01:00 — Läuft gerade nichts? Keine Aktion, kein Kampf (auch kein Kill-Cooldown: der hält `monsterId`) und
+ * kein belegter Raid (Kampf, Rast, Tod-Dialog, Abschluss). Passive Systeme (Beete, Fallen, Lager-Bau, Veredelung) zählen bewusst nicht als
+ * Beschäftigung des Helden. Rein lesend.
+ */
+export function isHeroIdle(state: GameState): boolean {
+  return state.activeActionId === null && state.combat.monsterId === null && !raidOccupied(state);
+}
+
+/** claude:2026-10-31T16:08:21+01:00 — Einen ausgeführten Tick im Sammler verbuchen (Zustand NACH dem Tick). */
+function noteIdleTick(tally: OfflineIdleTally, idle: boolean): void {
+  if (idle) {
+    tally.idleMs += TICK_MS;
+    if (tally.runStartMs === null) tally.runStartMs = tally.cursorMs;
+    if (tally.idleFromMs === null && tally.cursorMs + TICK_MS - tally.runStartMs >= OFFLINE_IDLE_MIN_RUN_MS) {
+      tally.idleFromMs = tally.runStartMs;
+    }
+  } else {
+    tally.runStartMs = null;
+  }
+  tally.cursorMs += TICK_MS;
 }
 
 /**
@@ -795,7 +877,8 @@ export function advance(
   state: GameState,
   content: ContentDB,
   dtMs: number,
-  opts: { offline?: boolean; nowMs?: number; huntTally?: HuntCatchTally } = {},
+  // claude:2026-10-31T16:08:21+01:00 — `idleTally` (1.4.2): optionaler Leerlauf-Sammler fürs Offline-Fenster, s. OfflineIdleTally.
+  opts: { offline?: boolean; nowMs?: number; huntTally?: HuntCatchTally; idleTally?: OfflineIdleTally } = {},
 ): number {
   const offline = opts.offline ?? false;
   // Nicht-endliches/nicht-positives dt wie ein No-op behandeln: ein NaN würde `accumulatorMs`
@@ -820,6 +903,8 @@ export function advance(
     // camp-audit-334x.test.ts Test 3). Per Tick sehen beide Pfade dieselbe Abfolge ⇒
     // offline==online bit-identisch. KEIN RNG, KEIN XP; ohne Rezept-Slot ein sofortiger No-op.
     tickCampRefine(state, content, TICK_MS);
+    // claude:2026-10-31T16:08:21+01:00 — Leerlauf-Beobachter (1.4.2): liest nur, nach allem, was dieser Tick tut.
+    if (opts.idleTally) noteIdleTick(opts.idleTally, isHeroIdle(state));
     steps++;
   }
   if (steps > 0) {

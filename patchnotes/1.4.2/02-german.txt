@@ -1,0 +1,115 @@
+=== TITEL ===
+Grim Reach 1.4.2 - Der Aschesturz, neu geboren
+
+=== TEXT (BBCode) ===
+[p][img src="{STEAM_CLAN_IMAGE}/46199651/1b9c3fac87b3d39853654e888fdc93c0391c7070.png"][/img][/p][p]Jäger, [/p][p]dieses Update baut den Aschesturz von Grund auf neu, macht den Belohnungsladen zu etwas, wofür sich das Sparen lohnt, gibt dem Spiel eine echte Startseite und behebt eine lange Liste von Dingen, die ihr uns gemeldet habt.   [/p][hr][/hr][p]
+[/p][h1]Änderungen am Aschesturz[/h1][p]
+[/p][h2]Narben-Rückgabe und dein Fortschritt[/h2][p]
+[/p][list][*][p][b]Alle ausgegebenen Narben kommen zurück.[/b] Weil das Narbenbuch neu aufgebaut wurde, bekommst du mit diesem Update jede Narbe zurück, die du bisher ausgegeben hast. Öffne den Scherbenaltar und verteile sie im neuen Baum. Bis du es dir angesehen hast, erinnert dich eine Markierung am Knopf des Scherbenaltars daran.
+[/p][/*][*][p][b]Nachzahlung für frühere Aschestürze.[/b] Du bist schon vor 1.4.2 durch einen Aschesturz gegangen? Dann bekommst du Narben aus den neuen Quellen: das Gold, das du bei dir hattest, die geräumten Dungeons und die erledigten Slayer-Aufträge jedes früheren Durchgangs, dazu deine Begleiter, dein Bestiarium, deine Erfolgspunkte und deine ersten Raid-Abschlüsse. Ausgezahlt wird sofort, nicht erst bei deinem nächsten Aschesturz.
+[/p][/*][*][p][b]New Haven wird nicht mehr zurückgesetzt.[/b] Alles, was du gebaut hast, übersteht jeden Aschesturz.
+[/p][/*][/list][p]
+[/p][h2]Das neue Narbenbuch[/h2][p]
+Das Narbenbuch bietet jetzt [b]24 Gaben in fünf Ästen[/b]. Neu dabei sind:
+
+[/p][list][*][p][b]Lange Nacht:[/b] +2 / 4 / 6 / 8 Stunden Offline-Zeit, mit dem Wachturm bis zu 19 Stunden.
+[/p][/*][*][p][b]Geübte Hand:[/b] Aktionen beim Sammeln, im Handwerk und in der Diebeskunst dauern bis zu 12 % kürzer.
+[/p][/*][*][p][b]Meisterglut:[/b] Bis zu +100 % Meisterschafts-XP.
+[/p][/*][*][p][b]Glutblut:[/b] Essen heilt bis zu 30 % mehr.
+[/p][/*][*][p][b]Scharfer Blick:[/b] Seltene Kampfbeute wird bis zu 15 % wahrscheinlicher.
+[/p][/*][*][p][b]Rabenpost, Fallensteller, Saatkammer und Bauherrin:[/b] Mehr Arbeitsaufträge, zusätzliche Fallenplätze, bis zu drei zusätzliche Beete und schnelleres Bauen in New Haven.
+[/p][/*][*][p][b]Bezahlte Rechnung und Ungebrochene Fährte:[/b] Du behältst Auto-Essen, Auto-Trank und Bankplätze sowie einen Teil deiner Slayer-Punkte und Aufgabenmarken.
+[/p][/*][*][p][b]Echo der Gefährten:[/b] Begleiter, die du nicht ausgerüstet hast, geben mehr von ihrem Bonus weiter.
+[/p][/*][/list][p]
+Auch viele bestehende Gaben sind stärker geworden: mehr Startgold, eine größere Vergrabene Truhe, mehr Teile für das Erbstück, mehr XP aus Lehrjahren und Handgedächtnis sowie mehr Schaden und Leben.
+
+[/p][h2]Mehr Wege zu Narben[/h2][p]
+[/p][list][*][p][b]Mehr als nur Stufen.[/b] Jeder Aschesturz zählt jetzt auch das Gold, das du bei dir trägst, geräumte Dungeons, erledigte Slayer-Aufträge und Raid-Abschlüsse.
+[/p][/*][*][p][b]Einmalige Belohnungen für Sammlungen.[/b] Jeder Begleiter in deinem Besitz, jeder vollständige Bestiarium-Eintrag, je 100 Erfolgspunkte und dein erster Raid-Abschluss auf jedem Schwierigkeitsgrad bringen dir beim nächsten Aschesturz Narben.
+[/p][/*][*][p][b]Ein klarerer Scherbenaltar.[/b] Jede Quelle zeigt jetzt, was du hast, was es wert ist und wie weit es noch bis zur nächsten Narbe ist.
+[/p][/*][*][p][b]Zeichen der Asche.[/b] Jeder Aschesturz, den du hinter dir hast, gibt +2 % Fertigkeits-XP, bis zu +20 %. Dafür brauchst du keine Gabe.
+[/p][/*][*][p][b]Chronik dieses Durchgangs.[/b] Die Übersicht, die dich nach einem Aschesturz empfängt, zeigt deine Taten und erreichten Level jetzt als Karten, deine Fertigkeiten auf 99 ganz vorne.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Belohnungsladen[/h1][p]
+Der Belohnungsladen ist jetzt eine einzige Seite, mit [b]Waren links und Diensten rechts[/b]. Jedes abgeschlossene Kapitel bringt neue Waren, und du siehst schon vorher, was die nächsten Kapitel freischalten.
+
+[/p][h2]Neu für Aufgabenmarken[/h2][p]
+[/p][list][*][p][b]Tagesaufgabe neu würfeln:[/b] Tausche eine Karte gegen eine andere mit gleicher Schwierigkeit und Belohnung. Kostet 2 / 3 / 4 Marken, bis zu dreimal am Tag.
+[/p][/*][*][p][b]Auftrag rufen / Großauftrag rufen:[/b] Nach deiner nächsten Aktion in einem Sammel- oder Handwerksberuf meldet sich der Kunde mit dem nächsten Arbeitsauftrag dieser Stufe. Der Laden zeigt dir außerdem, wie lange die Uhr noch läuft.
+[/p][/*][*][p][b]Lehrstunde:[/b] Erhalte die XP von 30 Minuten in Holzfällen, Bergbau, Angeln, Sammeln oder Diebeskunst.
+[/p][/*][*][p][b]Meisterlehre:[/b] Erhalte die Meisterschafts-XP einer Stunde für eine Aktion deiner Wahl.
+[/p][/*][*][p][b]Begleiter-Fährte:[/b] Bringt dich einem fehlenden Begleiter näher, wenn du das passende Slayer-Talent hast.
+[/p][/*][*][p][b]Gebührenschein:[/b] 25 % Rabatt auf deine nächste Raid-Gebühr. Einmal pro Woche, ab Kapitel 20.
+[/p][/*][/list][p]
+[/p][h2]Freischaltungen und Verfügbarkeit[/h2][p]
+[/p][list][*][p]Die [b]Meisterlehre[/b] öffnet mit Kapitel 4.
+[/p][/*][*][p][b]Großauftrag rufen[/b] öffnet mit Kapitel 9.
+[/p][/*][*][p]Die [b]Auftragsmarke[/b] für Slayer-Aufträge gibt es jetzt von Anfang an statt erst ab Kapitel 20.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Tagesaufgaben in die Warteschlange[/h1][p]
+Auf euren Wunsch: [b]„Alle in die Warteschlange“[/b] reiht jede offene Tagesaufgabe in deine Warteschlange ein. Jede Karte lässt sich auch einzeln einreihen.
+
+Fehlen für eine Handwerksaufgabe noch Materialien, werden die nötigen Sammelschritte automatisch davor eingereiht.
+
+[/p][hr][/hr][p]
+[/p][h1]Zerlegen, neu gedacht[/h1][p]
+Der Laden hat jetzt einen eigenen Reiter [b]„Zerlegen“[/b].
+
+[/p][list][*][p][b]Schnell zerlegen:[/b] Wähle Inventar, Bank oder beides, dann Waffen, Rüstung oder Schmuck, und zerlege alle Gegenstände einer Seltenheit mit einem Klick. Vor dem Bestätigen siehst du genau, was du bekommst.
+[/p][/*][*][p][b]Massenzerlegen:[/b] Inventar und Bank nebeneinander. Markiere, was weg soll, und zerlege alles auf einmal.
+[/p][/*][*][p][b]Schutz für deine Gegenstände:[/b] Gesperrte Gegenstände, angelegte Ausrüstung und Gegenstände mit Runen sind beim Schnell-Zerlegen nie dabei. Gegenstände mit Suffix sind ebenfalls geschützt, außer du schaltest das ab.
+[/p][/*][*][p][b]Klare Ausbeute:[/b] Nach jedem Zerlegen zeigt dir eine Übersicht, was herausgekommen ist und wo es gelandet ist.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Angepinnte Rezepte[/h1][p]
+Jede Rezeptkarte hat jetzt eine [b]Nadel zum Anpinnen[/b]. Angepinnte Rezepte erscheinen in einem kleinen Fenster, das du verschieben und einklappen kannst.
+
+Das Fenster zeigt ihre Zutaten, wie viele du herstellen kannst, und Knöpfe, um [b]die Herstellung zu starten, das Rezept einzureihen oder direkt zu seiner Seite zu springen[/b].
+
+[/p][hr][/hr][p]
+[/p][h1]Slayer[/h1][p]
+[/p][list][*][p][b]Automatische Aufträge bleiben nicht mehr liegen.[/b] Ist „Nächsten Auftrag automatisch holen“ an und kann dein Kampf nicht sofort wechseln, kommt der neue Auftrag in deine Warteschlange. Er steht hinter deinen anderen geplanten Einträgen, aber vor allen endlosen Einträgen. Aufträge, die du in Dungeons, Raids oder gegen Champions abschließt, folgen denselben Regeln.
+[/p][/*][*][p][b]Automatischer Neuversuch nach einer Niederlage.[/b] Fällst du gegen das Monster deines aktuellen Auftrags, versucht es dein Held nach einer kurzen Erholung erneut, solange Essen in deinem Auto-Essen-Platz liegt. Nach drei Niederlagen in Folge ohne einen einzigen Kill hört das Spiel auf, es weiter zu versuchen.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Komfort[/h1][p]
+[/p][list][*][p][b]Auto-Essen und Auto-Trank nutzen deine Bank.[/b] Sobald dein Inventar leer ist, kommen Essen und Tränke aus der Bank. Kein Tod mehr mitten in der Nacht bei voller Speisekammer.
+[/p][/*][*][p][b]Essens-Schätzung vor dem Kampf.[/b] Die Kampfvorbereitung zeigt jetzt, wie lange dein Essen gegen das gewählte Ziel voraussichtlich reicht.
+[/p][/*][*][p][b]Nützlichere Monsterkarten.[/b] Sie zeigen Zeit pro Kill, Kills pro Stunde und XP pro Stunde.
+[/p][/*][*][p][b]Vorlagen für die Warteschlange.[/b] Speichere bis zu drei Warteschlangen und lade sie mit einem Klick wieder.
+[/p][/*][*][p][b]Bessere Offline-Berichte.[/b] Der Bericht zeigt dir jetzt, wann deine Warteschlange leer gelaufen ist und wie viel Zeit ungenutzt blieb.
+[/p][/*][*][p][b]Flüssigere Rückkehr ins minimierte Spiel.[/b] Die Zeit, in der du weg warst, wird jetzt in Schritten mit Fortschrittsbalken nachgeholt, ohne dass das Spiel kurz einfriert. Danach bekommst du denselben Bericht wie nach dem Laden.
+[/p][/*][*][p][b]Aufwertungs-Marker für Ausrüstung.[/b] Ein kleiner Marker zeigt Gegenstände in Inventar und Bank, die besser sind als das, was du in diesem Platz trägst. Du kannst ihn in den Optionen abschalten.
+[/p][/*][*][p][b]Rezeptfilter und Vorschau auf Freischaltungen.[/b] Rezeptseiten können nur herstellbare oder freigeschaltete Rezepte zeigen und sagen dir, was deine nächste Stufe freischaltet. Auch die Meldung beim Levelaufstieg nennt jetzt die neuen Rezepte.
+[/p][/*][*][p][b]Anklickbare Aufgabenziele.[/b] Spring direkt zum passenden Monster oder Rezept.
+[/p][/*][*][p][b]Optionale Desktop-Benachrichtigungen.[/b] Du bekommst eine Meldung, wenn dein Held fällt, deine Warteschlange durch ist oder ein Slayer-Auftrag oder Großauftrag erledigt ist. Standardmäßig aus und nur aktiv, solange das Spiel im Hintergrund läuft.
+[/p][/*][*][p][b]Voraussetzungen für den Scherbenaltar.[/b] Bevor du ihn nutzen kannst, erscheint der Scherbenaltar ausgegraut in der Seitenleiste und zeigt, was du zum Freischalten brauchst.
+[/p][/*][*][p][b]Markierung für Blutmond-Beute.[/b] Kills, bei denen der Blutmond deine Beute verdoppelt hat, sind jetzt markiert.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Eine Startseite[/h1][p]
+[/p][list][*][p][b]Die neue Seite „Hauptmenü“[/b] zeigt dein aktuelles Kapitel der Chronik, was du zuletzt gemacht hast, deine Tagesaufgaben und die wichtigsten Zahlen auf einen Blick.
+[/p][/*][*][p]Der Knopf, der dich zurück zum Titelbildschirm bringt, heißt jetzt [b]„Titelbildschirm“[/b], damit die beiden nicht mehr gleich heißen.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Aufgaben und Erfolge[/h1][p]
+[/p][list][*][p]Die Aufgaben-Seiten haben aufgeräumtere Karten und schlankere Rahmen.
+[/p][/*][*][p]Die Erfolge-Seite ist neu aufgebaut, mit Kategorien links und einem neuen Kartenlayout.
+[/p][/*][*][p]Sieben bisher versteckte Erfolge sind jetzt sichtbar: [b]Überall Federn, Sturkopf, Rattenkönig, Alte Rechnung, Heeresverpfleger, Hundert Stunden im Reach[/b] und [b]Neunfach[/b].
+[/p][/*][*][p][b]„Heute nicht“[/b] verlangt nicht mehr 100 Tode. Gewinne stattdessen einen Kampf mit höchstens 5 % Leben.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Fehlerbehebungen[/h1][p]
+[/p][list][*][p]Ein Aschesturz am selben Tag hat deine Serie bei den Tagesaufgaben zurückgesetzt und einen zweiten Satz Tagesaufgaben verteilt.
+[/p][/*][*][p]„Alle in die Warteschlange“ hat zu wenig eingereiht, wenn zwei Aufgaben dieselbe Aktion brauchten.
+[/p][/*][*][p]Die Bestätigung beim Zerlegen konnte sich hinter einem anderen Fenster öffnen.
+[/p][/*][*][p]Runen der Stufe IV haben ihre fünfte Zutat, den Reliktstaub, nicht angezeigt, und bei Rezepten mit fünf Zutaten wurden die Mengen abgeschnitten.
+[/p][/*][*][p]Die Spur zu einem Begleiter hat nur Kills im Kampfstil dieses Begleiters gezählt. Jetzt zählt jeder Kill, der Begleiter selbst fällt aber weiterhin nur in seinem Stil.
+[/p][/*][*][p]Gekaufte Gegenstände lösen keine Meldung „Seltener Fund“ mehr aus.
+[/p][/*][*][p]Würfelst du eine eingereihte Tagesaufgabe neu, weist dich das Spiel jetzt darauf hin, dass ihre Einträge in der Warteschlange bleiben.
+[/p][/*][*][p]Viele kleinere Korrekturen am Layout bei 1366x768, an Zahlenformaten und an Texten in allen Sprachen.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[b]Danke für jede Meldung. Immer her damit.[/b][/p]

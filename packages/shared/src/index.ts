@@ -769,7 +769,43 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //     so vorbelegen, wie der alte Client sie zeichnete (engine `legacyVariantCellLayout`), damit beim ersten Laden nichts
 //     springt. Sanitize (jede Version): ungültige Einträge raus, Lade-Trim auf Kapazität führt Reservierungen mit, danach
 //     `syncVariantCells`. Kein Bestand ändert sich, keine ID-Änderung.
-export const SAVE_VERSION = 98;
+// 99: Aschesturz 2.0 (1.4.2, Chef-Freigabe 30.10.2026; claude:2026-10-30T18:38:00+01:00; design/1.4.2-aschesturz-spec.md § 5):
+//     `prestige.paid` (Hauptbuch der einmaligen Narbenquellen: Begleiter, Bestiarium, bezahlter AP-Stand, Raid-Erst-
+//     Abschlüsse; Standard leer, E2: der erste Sturz nach dem Update zahlt die bestehende Sammlung einmal) und
+//     `prestige.runStart.raidClears` (Laufanker je Schwierigkeit; Migration < 99 = aktueller `raid.clears`, der laufende
+//     Durchgang zählt Raids ab dem Update). `farmPlots` wächst auf `FARM_PLOT_SLOTS` (12) und `huntTraps` auf
+//     `HUNT_TRAP_SLOTS_TOTAL` (8) leere Plätze (Narbenbuch Saatkammer/Fallensteller). Sanitize (jede Version): Hauptbuch nur
+//     bekannte Ids, ohne Doppel, `ap` ganzzahlig ≥ 0 auf volle 100 abgerundet; Offline-Klemmen auf
+//     `MAX_OFFLINE_MS + CAMP_MAX_OFFLINE_BONUS_MS + PRESTIGE_MAX_OFFLINE_BONUS_MS`. Keine ID-Änderung, nichts geht verloren.
+// 100: Belohnungsladen 1.4.2 (Chef-Entscheide L1–L10 vom 30.10.2026; claude:2026-10-30T22:28:00+01:00; design/1.4.2-belohnungsladen-plan.md
+//     § 4.1/§ 5/§ 7): `tokenShopLedger` (Kaufbuch der Tages-/Wochengrenzen für Dienste und begrenzte Angebote, Tag = YYYYMMDD
+//     aus `stats.lastDailyDay`, Woche ab Montag; plus die heute weggewürfelten Tagesaufgaben) und `settings.raidUseFeeWrit`
+//     (Gebührenschein in der Raid-Warteschlange einsetzen, Standard aus). Migration < 100: leeres Kaufbuch, Schalter aus.
+//     Sanitize (jede Version): Zähler ganzzahlig ≥ 0, unbekannte Dienst-/Angebots-Ids und Null-Zähler raus, Tag/Woche
+//     ganzzahlig ≥ 0, weggewürfelte Karten nur bekannte Tagesaufgaben ohne Doppel. Neues Item `raid_fee_writ` (keine
+//     Umbenennung). Keine ID-Änderung, nichts geht verloren.
+//     Nachtrag 31.10.2026 (Chef-Entscheid versteckte Erfolge; claude:2026-10-31T09:29:00+01:00): `stats.closeWins` (Lebenszeit-Zähler der
+//     Siege mit höchstens 5 % Leben, Quelle für `close_wins`). Noch in derselben unveröffentlichten SAVE 100, kein eigener Bump.
+//     Migration < 100: 0 (rückwirkend nicht rekonstruierbar). Sanitize (jede Version): Ganzzahl ≥ 0, fehlt/kaputt ⇒ 0.
+// 101: Rezepte anpinnen (1.4.2, Chef-Auftrag 25.10./31.10.2026; claude:2026-10-31T11:46:04+01:00): `pinnedRecipes` (Aktions-Ids der
+//     angepinnten Rezepte in Pin-Reihenfolge, höchstens 10; Verben nur über engine/pins.ts). Liegt im Spielstand, damit die Pins per
+//     Steam Cloud mitwandern, und bleibt beim Aschesturz. Migration < 101: leere Liste. Sanitize (jede Version): nur bekannte Aktionen
+//     mit Zutaten, ohne Doppel, auf 10 gekürzt; fehlt/kaputt ⇒ leer. Keine ID-Änderung, nichts geht verloren.
+// 102: Narben-Rückgabe und Nachzahlung zu 1.4.2 (Chef-Auftrag 31.10.2026; claude:2026-10-31T14:58:54+01:00): `prestige.respec142`
+//     (Beleg der einmaligen Rückgabe: zurückgegebene Narben, Nachzahlung je Quelle, ob der Hinweis bestätigt ist; null = nichts zu
+//     melden). Beim ersten Laden eines Stands < 102 (persistence `deserialize`, NACH dem Offline-Nachholen, damit das erste Fenster
+//     noch mit den alten Rängen läuft): alle Ränge im Narbenbuch auf 0, `points += pointsSpent`, `pointsSpent = 0`; nur für Stände
+//     von vor 1.4.2 (Original-Version < 99) mit mindestens einem Sturz zusätzlich die Nachzahlung (gold/dungeons/slayer je früherem
+//     Sturz mit Bilanz nach den neuen Regeln, die Sammlung jetzt statt beim nächsten Sturz, eingetragen ins Hauptbuch `paid`).
+//     Verben: engine/prestige.ts `applyPrestigeRespec142`, `acknowledgePrestigeRespec`. Sanitize (jede Version): Zahlen ganzzahlig
+//     ≥ 0, `total` = Summe der Teile, `acknowledged` strikt boolean; fehlt/kaputt ⇒ null. Bleibt beim Aschesturz. Keine ID-Änderung,
+//     kein Gegenstand und keine Narbe geht verloren.
+// 103: Warteschlangen-Vorlagen (1.4.2, Sweep-Idee mit Chef-GO 31.10.2026; claude:2026-10-31T16:08:21+01:00): `queueTemplates` (genau 3 Plätze,
+//     `null` = leer; Vorlage = Name ≤ 24 Zeichen + bis zu 30 Warteschlangen-Einträge). Verben nur über engine/queueTemplates.ts. Bleibt beim
+//     Aschesturz. Migration < 103: `[null, null, null]`. Sanitize (jede Version): genau 3 Plätze, Name String ohne Steuerzeichen, getrimmt und
+//     gekürzt, Einträge nur mit bekannten Aktions-/Monster-/Dungeon-/Raid-Ids (Muster `actionQueue`), Ziel endliche positive Ganzzahl oder
+//     null, höchstens 30; fehlt/kaputt ⇒ leer. Keine ID-Änderung, nichts geht verloren.
+export const SAVE_VERSION = 103;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -899,7 +935,10 @@ export type BuffCategory =
  * ausgelösten Verzehr — nie über Auto-Eat/Auto-Trank/Auto-Rebuff.
  */
 // claude:2026-10-24T22:40:00+02:00 — "workCrate": Werkstattkiste I–V der Arbeitsaufträge (1.4.0 AU, Spec §4.6 A: ohne Ausrüstung).
-export type ConsumableEffectKind = "slayerReroll" | "blackMarketCrate" | "workCrate";
+// claude:2026-10-30T22:28:00+01:00 — "raidFeeWrit": Gebührenschein (Belohnungsladen 1.4.2, L4). Kein „Benutzen“: der Schein wird nur beim
+// Raid-Start verbraucht (engine/raid.ts `startRaid` mit `useFeeWrit`, Warteschlange über `settings.raidUseFeeWrit`) und senkt die
+// Gebühr um `RAID_FEE_WRIT_DISCOUNT`. `useConsumable` lehnt ihn ohne Verbrauch ab (`consumeFailReason` = "raid_only").
+export type ConsumableEffectKind = "slayerReroll" | "blackMarketCrate" | "workCrate" | "raidFeeWrit";
 export interface ConsumableEffect {
   kind: ConsumableEffectKind;
   /** NUR kind "blackMarketCrate" (Taverne, SAVE 84): Behälter-Stufe 1..5 = Band (design/1.2.0-alive/taverne-spec-technik.md §7). */
@@ -2023,6 +2062,16 @@ export interface OfflineSummary {
   farmHarvests?: { itemId: ItemId; qty: number }[];
   /** claude:2026-10-17T20:00:00+02:00 — K4: übersprungene Queue-Einträge im Offline-Fenster (transient, fehlt bei 0). */
   queueSkips?: number;
+  /**
+   * claude:2026-10-31T16:08:21+01:00 — 1.4.2 (Sweep-Idee, Chef-GO 31.10.2026): Leerlauf im Offline-Fenster in ms, also Zeit, in der weder
+   * eine Aktion noch ein Kampf lief und kein Raid belegt war (engine `isHeroIdle`, Summe über alle Ticks). Fehlt bei 0. Transient.
+   */
+  idleMs?: number;
+  /**
+   * claude:2026-10-31T16:08:21+01:00 — 1.4.2: Versatz ab Offline-Beginn (ms), an dem der erste längere Leerlauf (mindestens engine
+   * `OFFLINE_IDLE_MIN_RUN_MS`, 60 s am Stück) begann. Fehlt, wenn es keinen gab. Uhrzeit für die Anzeige = Speicherzeit + Versatz. Transient.
+   */
+  idleFromMs?: number;
 }
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -3431,7 +3480,7 @@ export const RARITY_LABEL: Record<ItemRarity, LocalizedString> = {
   common: { en: "Common", de: "Gewöhnlich", es: "Común", fr: "Commun", "pt-BR": "Comum", ru: "Обычное", zh: "普通" },
   magic: { en: "Magic", de: "Magisch", es: "Mágico", fr: "Magique", "pt-BR": "Mágico", ru: "Магическое", zh: "魔法" },
   rare: { en: "Rare", de: "Selten", es: "Raro", fr: "Rare", "pt-BR": "Raro", ru: "Редкое", zh: "稀有" },
-  superRare: { en: "Super Rare", de: "Sehr Selten", es: "Muy raro", fr: "Très rare", "pt-BR": "Muito Raro", ru: "Очень редкое", zh: "超稀有" },
+  superRare: { en: "Super Rare", de: "Sehr selten", es: "Muy raro", fr: "Très rare", "pt-BR": "Muito Raro", ru: "Очень редкое", zh: "超稀有" },
   epic: { en: "Epic", de: "Episch", es: "Épico", fr: "Épique", "pt-BR": "Épico", ru: "Эпическое", zh: "史诗" },
   legendary: { en: "Legendary", de: "Legendär", es: "Legendario", fr: "Légendaire", "pt-BR": "Lendário", ru: "Легендарное", zh: "传说" },
   godly: { en: "Godly", de: "Göttlich", es: "Divino", fr: "Divin", "pt-BR": "Divino", ru: "Божественное", zh: "神圣" },
@@ -4969,7 +5018,25 @@ export const SLAYER_POINTS_PER_RAID_BOSS: Readonly<Record<RaidDifficulty, number
  *  - `maxHpPct`                Anteil maximales Leben (computeStats).
  *  - `damagePct`               Anteil Spielerschaden (computeStats-Schadensspanne + eigene DoT-Ticks/Dornen).
  *  - `goldFindPct`             Anteil Gold-Einnahmen (Aktionen, Kills, Dungeons, Quests, Jagd, Taverne), NIE Verkauf.
- *  - `prestigePointsMult`      Anteil zusätzlicher Prestige-Punkte künftiger Aufstiege.
+ *  - `prestigePointsMult`      Anteil zusätzlicher Prestige-Punkte künftiger Aufstiege (seit 1.4.2 NUR auf den
+ *                              „je Sturz“-Teil der Narben, nie auf die einmalige Sammlung).
+ *
+ * claude:2026-10-30T18:38:00+01:00 — 1.4.2 „Aschesturz 2.0“ (design/1.4.2-aschesturz-spec.md § 3): neue Arten.
+ *  - `prestigeKeepPurchases`   > 0: Auto-Essen-Stufe, Auto-Buff-Freischaltung (`autoPotion` ohne Trank-Wahl) und
+ *                              gekaufte Bankplätze überstehen den Aufstieg (engine/prestige.ts `ascend`).
+ *  - `prestigeKeepSlayerPoints` Anteil (0.25 = 25 %) der Slayer-Punkte UND Marken (`questTokens`), der bleibt (abgerundet).
+ *  - `actionSpeedPct`          Anteil kürzere Dauer aller Fertigkeits-Aktionen (engine/tick.ts `effectiveActionDurationMs`).
+ *  - `masteryXpPct`            Anteil zusätzlicher Meisterschafts-XP je Abschluss (engine/tick.ts).
+ *  - `foodHealPct`             Anteil zusätzlicher Heilung durch ESSEN (nie Tränke), additiv zum Begleiter-Anteil
+ *                              (engine/pets.ts `petFoodHealMult`, gelesen von combat.ts Auto-Essen und consumable.ts).
+ *  - `rareDropPct`             Anteil auf die Schwelle von Kampf-Loot-Einträgen mit Basis-Chance ≤
+ *                              TALENT_RARE_DROP_MAX_BASE_CHANCE (derselbe Wurf; engine/prestige-effects.ts `talentRareDropMult`).
+ *  - `offlineHours`            zusätzliche Offline-Stunden (ganzzahlig; shared `effectiveMaxOfflineMs`).
+ *  - `workOrderRatePct`        Anteil schnellerer Arbeitsauftrags-Uhren (Intervall ÷ (1 + Wert); engine/orders.ts).
+ *  - `huntTrapSlots`           zusätzliche Fallenplätze (ganzzahlig; engine/hunting.ts `huntTrapSlots`).
+ *  - `farmPlotSlots`           zusätzliche Beete (ganzzahlig; engine/farming.ts `farmPlotsUnlocked`).
+ *  - `campBuildSpeedPct`       Anteil kürzere Bauzeit neuer New-Haven-Bauten, multiplikativ zum Schreibzelt (engine/camp.ts).
+ *  - `petEchoFactor`           Echo-Gewicht nicht ausgerüsteter Begleiter (ersetzt PET_ECHO_FACTOR, wenn größer; engine/pets.ts).
  */
 export type TalentEffectKind =
   | "petChanceMult"
@@ -4989,7 +5056,20 @@ export type TalentEffectKind =
   | "maxHpPct"
   | "damagePct"
   | "goldFindPct"
-  | "prestigePointsMult";
+  | "prestigePointsMult"
+  // claude:2026-10-30T18:38:00+01:00 — 1.4.2 Narbenbuch (Spec § 3)
+  | "prestigeKeepPurchases"
+  | "prestigeKeepSlayerPoints"
+  | "actionSpeedPct"
+  | "masteryXpPct"
+  | "foodHealPct"
+  | "rareDropPct"
+  | "offlineHours"
+  | "workOrderRatePct"
+  | "huntTrapSlots"
+  | "farmPlotSlots"
+  | "campBuildSpeedPct"
+  | "petEchoFactor";
 
 /** Aggregation je Art über alle gekauften Knoten aller Bäume: Summe, oder kleinster positiver Wert. */
 export const TALENT_EFFECT_AGGREGATION: Readonly<Record<TalentEffectKind, "sum" | "minPositive">> = {
@@ -5012,6 +5092,19 @@ export const TALENT_EFFECT_AGGREGATION: Readonly<Record<TalentEffectKind, "sum" 
   damagePct: "sum",
   goldFindPct: "sum",
   prestigePointsMult: "sum",
+  // claude:2026-10-30T18:38:00+01:00 — 1.4.2: je Art genau ein Knoten, Summe = Rangwert.
+  prestigeKeepPurchases: "sum",
+  prestigeKeepSlayerPoints: "sum",
+  actionSpeedPct: "sum",
+  masteryXpPct: "sum",
+  foodHealPct: "sum",
+  rareDropPct: "sum",
+  offlineHours: "sum",
+  workOrderRatePct: "sum",
+  huntTrapSlots: "sum",
+  farmPlotSlots: "sum",
+  campBuildSpeedPct: "sum",
+  petEchoFactor: "sum",
 };
 
 /**
@@ -5040,6 +5133,19 @@ export const TALENT_EFFECT_FORMAT: Readonly<Record<TalentEffectKind, TalentEffec
   damagePct: "pct",
   goldFindPct: "pct",
   prestigePointsMult: "pct",
+  // claude:2026-10-30T18:38:00+01:00 — 1.4.2 (Stunden, Plätze und Beete als ganze Zahl; die Beschreibung trägt die Einheit).
+  prestigeKeepPurchases: "flag",
+  prestigeKeepSlayerPoints: "pct",
+  actionSpeedPct: "pct",
+  masteryXpPct: "pct",
+  foodHealPct: "pct",
+  rareDropPct: "pct",
+  offlineHours: "int",
+  workOrderRatePct: "pct",
+  huntTrapSlots: "int",
+  farmPlotSlots: "int",
+  campBuildSpeedPct: "pct",
+  petEchoFactor: "pct",
 };
 
 /** `slayerTaskRareMult` wirkt nur auf Loot-Einträge mit Basis-Chance ≤ 1/500 (Chef 17.10.). */
@@ -5056,6 +5162,11 @@ export interface TalentNodeDef {
   name: LocalizedString;
   /** Wirkung in einem Satz; `{value}` wird von der UI durch den formatierten Rangwert ersetzt. */
   description: LocalizedString;
+  /**
+   * claude:2026-10-30T18:38:00+01:00 — 1.4.2 (Spec § 3): optionaler Erzählsatz ohne Wirkung und ohne `{value}`, den die
+   * Detailansicht der Karte zeigt. Content-Overlay-Schlüssel `talentNodes:<baum>.<knoten>:flavor` (locales/apply.ts).
+   */
+  flavor?: LocalizedString;
   /** Ast-Id (eine Spalte in der UI), verweist auf `TalentTreeDef.branches[].id`. */
   branch: string;
   /** Zeile im Ast (0 = oben). */
@@ -5463,8 +5574,16 @@ export interface FarmPlot {
   nextCropId: ItemId | null;
 }
 
-/** Harte Obergrenze der Plot-Anzahl (UI-Grid + Sanitize-Cap + fixe Array-Länge im Save). */
+/**
+ * Obergrenze der Plot-Anzahl über die Farming-Stufe (`PLOT_UNLOCK`, heutiges UI-Grid).
+ * claude:2026-10-30T18:38:00+01:00 — Seit 1.4.2 ist das NICHT mehr die Array-Länge: die Narbenbuch-Saatkammer
+ * (`farmPlotSlots`) gibt bis zu `FARM_PLOTS_TALENT_MAX` Beete dazu, Save-Länge/Sanitize = `FARM_PLOT_SLOTS`.
+ */
 export const MAX_FARM_PLOTS = 9;
+/** claude:2026-10-30T18:38:00+01:00 — 1.4.2 Saatkammer: höchstens so viele Beete aus dem Narbenbuch. */
+export const FARM_PLOTS_TALENT_MAX = 3;
+/** claude:2026-10-30T18:38:00+01:00 — 1.4.2: harte Obergrenze (9 → 12) und fixe Array-Länge von `farmPlots` im Save. */
+export const FARM_PLOT_SLOTS = MAX_FARM_PLOTS + FARM_PLOTS_TALENT_MAX;
 
 /**
  * Anteil der nackten Zielkurve, den EIN Plot passiv liefert (Identitäts-Hebel: die Progression
@@ -5495,9 +5614,9 @@ export function emptyFarmPlot(): FarmPlot {
   return { cropId: null, plantedAtMs: 0, autoReplant: true, readyYield: 0, readyItem: null, nextCropId: null };
 }
 
-/** Frisches Plot-Array fester Länge `MAX_FARM_PLOTS` (leere Beete). */
+/** Frisches Plot-Array fester Länge `FARM_PLOT_SLOTS` (leere Beete). claude:2026-10-30T18:38:00+01:00 — 1.4.2: 9 → 12 */
 export function defaultFarmPlots(): FarmPlot[] {
-  return Array.from({ length: MAX_FARM_PLOTS }, () => emptyFarmPlot());
+  return Array.from({ length: FARM_PLOT_SLOTS }, () => emptyFarmPlot());
 }
 
 /**
@@ -5605,6 +5724,7 @@ export type AchievementCategory =
  * - runes_discovered                   → Anzahl entdeckter Items mit `rune`-Feld (discoveredItems)
  * - farm_plots_planted                 → Anzahl bepflanzter Beete (farmPlots[].cropId ≠ null)
  * - deaths · play_hours                → state.stats.deaths · floor(activePlayMs / 3 600 000)
+ * - close_wins                         → state.stats.closeWins (Siege mit höchstens 5 % Leben, SAVE 100; claude:2026-10-31T09:29:00+01:00)
  */
 export type AchievementConditionType =
   | "skill_level"
@@ -5642,6 +5762,8 @@ export type AchievementConditionType =
   | "farm_plots_planted"
   | "deaths"
   | "play_hours"
+  // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid versteckte Erfolge 31.10.: Siege mit höchstens 5 % Leben (`stats.closeWins`, combat.ts `onEnemyDefeated`).
+  | "close_wins"
   // claude:2026-10-25T03:15:00+02:00 — Raid (1.4.0 R10, interne Erfolge): Boss-Kills je `${bossId}:${difficulty}`, Abschlüsse je
   // Schwierigkeit (target = difficulty), entdeckte Mythisch-Unikate (Raid-Teile ohne Set mit Rarität mythic).
   | "raid_boss_kills"
@@ -6009,7 +6131,188 @@ export interface TokenShopOffer {
    * (isZoneUnlocked-Muster: `quests.claimed` ODER `quests.completed`).
    */
   shelfId?: string;
+  /**
+   * claude:2026-10-30T22:28:00+01:00 — Belohnungsladen 1.4.2 (L2): höchstens so viele Käufe je Kalendertag bzw. Kalenderwoche
+   * (Kaufbuch `GameState.tokenShopLedger`, Tag aus `stats.lastDailyDay`). Fehlt das Feld, ist das Angebot unbegrenzt (alle
+   * bisherigen Angebote). Erstes Angebot mit Grenze: Gebührenschein `ts_raid_writ_1` (1/Woche).
+   */
+  limitPerDay?: number;
+  limitPerWeek?: number;
 }
+
+/**
+ * claude:2026-10-30T22:28:00+01:00 — Dienste des Belohnungsladens (1.4.2, Chef-Entscheide L1–L10 vom 30.10.2026,
+ * design/1.4.2-belohnungsladen-plan.md § 4.1/§ 7). Ein Dienst wirkt SOFORT beim Kauf (Zielwahl im Laden), nichts landet im
+ * Inventar. Getrennt von den Regal-Angeboten (`tokenShop`), damit deren Guards (6 Regale, nur stapelbare Items) unberührt bleiben.
+ *  - "dailyReroll"    eine offene, nicht erfüllte, nicht eingelöste Tagesaufgabe gegen eine andere derselben Schwierigkeit
+ *                     und desselben Markenlohns tauschen (Ziel = Quest-Id der Karte).
+ *  - "orderCall"      Stufen-Uhr `tier` der Arbeitsaufträge auf 0 (kein Ziel); das Angebot kommt über den normalen Pfad.
+ *  - "skillLesson"    Fertigkeits-XP = `minutes` × beste XP/min (inkl. Prestige-XP-Faktor) für eine Fertigkeit aus `skills`.
+ *  - "masteryLesson"  Meisterschafts-XP von `minutes` Minuten der gewählten Aktion (Ziel = Aktions-Id), am Deckel gekappt.
+ *  - "petTrail"       Pech-Schutz eines fehlenden Begleiters um `pct` der Schwelle vorziehen (Ziel = Pet-Id).
+ * Reine Content-Daten; der Verbrauch der Grenzen liegt im Kaufbuch (`GameState.tokenShopLedger`, SAVE 100).
+ */
+export type TokenServiceKind = "dailyReroll" | "orderCall" | "skillLesson" | "masteryLesson" | "petTrail";
+
+export interface TokenServiceDef {
+  /** Eindeutige Dienst-Id (Schlüssel im Kaufbuch, darf keine Angebots-Id aus `tokenShop` doppeln). */
+  id: string;
+  kind: TokenServiceKind;
+  name: LocalizedString;
+  description: LocalizedString;
+  /** Grundpreis in Marken (ohne Staffel der einzige Preis). */
+  tokenCost: number;
+  /**
+   * Preisstaffel: der n-te Kauf im engsten Grenzzeitraum (Tag, falls `limitPerDay` gesetzt, sonst Woche) kostet
+   * `tokenCostSteps[min(n, Länge − 1)]` (n ab 0). Würfeln: [2, 3, 4]. Fehlt sie, gilt immer `tokenCost`.
+   */
+  tokenCostSteps?: number[];
+  /** Höchstens so viele Käufe je Kalendertag (Tag aus `stats.lastDailyDay`). Fehlt = keine Tagesgrenze. */
+  limitPerDay?: number;
+  /** Höchstens so viele Käufe je Kalenderwoche (Montag bis Sonntag). Fehlt = keine Wochengrenze. */
+  limitPerWeek?: number;
+  /** Kapitel-Gate über ein Regal (`TokenShopShelf.id`, Muster `TokenShopOffer.shelfId`). Fehlt = offen. */
+  shelfId?: string;
+  /** Talent-Gate: der Dienst ist nur mit einem aktiven Talentrang dieser Wirkung kaufbar (Begleiter-Fährte: "petPity"). */
+  requiresTalentEffect?: TalentEffectKind;
+  /** NUR "orderCall": welche Stufen-Uhr gerufen wird (2 oder 3). */
+  tier?: WorkOrderTier;
+  /** NUR "skillLesson"/"masteryLesson": Minuten, deren Ertrag gutgeschrieben wird (30 bzw. 60). */
+  minutes?: number;
+  /** NUR "petTrail": Anteil der Pech-Schutz-Schwelle je Kauf (0.05 = 5 %). */
+  pct?: number;
+  /** NUR "skillLesson": erlaubte Fertigkeiten (L3: nur die fünf Sammel-Fertigkeiten). */
+  skills?: SkillId[];
+  /** Anzeige-Sortierung (aufsteigend; fehlend = 0). */
+  sortOrder?: number;
+}
+
+/**
+ * claude:2026-10-30T22:28:00+01:00 — Kaufbuch des Belohnungsladens (SAVE 100, L2). Zählt Käufe von Diensten UND begrenzten
+ * Angeboten je Kalendertag und -woche. Die Engine erzeugt keine Zeit: „heute“ ist `stats.lastDailyDay` (YYYYMMDD vom Client,
+ * dieselbe Quelle wie die Tagesaufgaben, dort schon gegen Uhr-Rückstellen gesichert). Ein Topf wird nur bei einem SPÄTEREN
+ * Tag bzw. einer SPÄTEREN Woche geleert; ein früherer Tag (Uhr zurück) lässt die Zähler stehen.
+ * Bleibt beim Aschesturz (keep), damit ein Sturz keine frischen Grenzen schenkt.
+ */
+export interface TokenShopLedger {
+  /** YYYYMMDD des Tages-Topfs (0 = noch nie gekauft bzw. vor der ersten Tagesauswahl). */
+  day: number;
+  /** Wochenindex des Wochen-Topfs (`calendarWeekIndex`). */
+  week: number;
+  /** Käufe am Tag `day` je Dienst-/Angebots-Id. */
+  byDay: Record<string, number>;
+  /** Käufe in der Woche `week` je Dienst-/Angebots-Id. */
+  byWeek: Record<string, number>;
+  /** Am Tag `day` weggewürfelte Tagesaufgaben: sie kommen am selben Tag nicht wieder, solange es andere Karten gibt. */
+  rerolledDailies: string[];
+}
+
+/** claude:2026-10-30T22:28:00+01:00 — Leeres Kaufbuch (frischer Spielstand, Migration < 100). */
+export function defaultTokenShopLedger(): TokenShopLedger {
+  return { day: 0, week: 0, byDay: {}, byWeek: {}, rerolledDailies: [] };
+}
+
+/**
+ * claude:2026-10-30T22:28:00+01:00 — Tage seit 1970-01-01 für einen YYYYMMDD-Stempel (rein, ohne Date; proleptischer
+ * Gregorianischer Kalender, Algorithmus „days from civil“). Ungültige Stempel (≤ 0, nicht endlich) → 0.
+ */
+export function calendarDayIndex(stamp: number): number {
+  if (!Number.isFinite(stamp) || stamp <= 0) return 0;
+  const s = Math.floor(stamp);
+  let y = Math.floor(s / 10000);
+  const m = Math.floor((s % 10000) / 100);
+  const d = s % 100;
+  y -= m <= 2 ? 1 : 0;
+  const era = Math.floor(y / 400);
+  const yoe = y - era * 400;
+  const mp = (m + 9) % 12;
+  const doy = Math.floor((153 * mp + 2) / 5) + d - 1;
+  const doe = yoe * 365 + Math.floor(yoe / 4) - Math.floor(yoe / 100) + doy;
+  return era * 146097 + doe - 719468;
+}
+
+/**
+ * claude:2026-10-30T22:28:00+01:00 — Kalenderwoche (Montag bis Sonntag) eines YYYYMMDD-Stempels als fortlaufender Index ab
+ * Montag 05.01.1970 (≥ 0). Gleiche Wochengrenzen wie die Raid-Woche (`raidWeekIndex`, Montag). Ungültig → 0.
+ */
+export function calendarWeekIndex(stamp: number): number {
+  if (!Number.isFinite(stamp) || stamp <= 0) return 0;
+  return Math.max(0, Math.floor((calendarDayIndex(stamp) - 4) / 7));
+}
+
+/** claude:2026-10-30T22:28:00+01:00 — Preis des n-ten Kaufs (n ab 0) im Grenzzeitraum: Staffel, sonst Grundpreis. */
+export function tokenServicePriceAt(def: Pick<TokenServiceDef, "tokenCost" | "tokenCostSteps">, n: number): number {
+  const steps = def.tokenCostSteps;
+  if (!steps || steps.length === 0) return def.tokenCost;
+  const i = Math.max(0, Math.min(steps.length - 1, Math.floor(Number.isFinite(n) ? n : 0)));
+  return steps[i]!;
+}
+
+/**
+ * claude:2026-10-30T22:28:00+01:00 — Verbrauch einer Dienst-/Angebots-Id am Tag `today` (YYYYMMDD) laut Kaufbuch, OHNE es zu
+ * verändern: ein späterer Tag bzw. eine spätere Woche als im Kaufbuch zählt als leerer Topf; ein früherer (Uhr zurück) nicht.
+ */
+export function tokenShopLedgerUsage(
+  ledger: TokenShopLedger | undefined,
+  id: string,
+  today: number,
+): { day: number; week: number } {
+  if (!ledger) return { day: 0, week: 0 };
+  const day = today > ledger.day ? 0 : Math.max(0, ledger.byDay[id] ?? 0);
+  const week = calendarWeekIndex(today) > ledger.week ? 0 : Math.max(0, ledger.byWeek[id] ?? 0);
+  return { day, week };
+}
+
+/** claude:2026-10-30T22:28:00+01:00 — Heute weggewürfelte Tagesaufgaben (leer, sobald `today` hinter dem Kaufbuch-Tag liegt). */
+export function tokenShopRerolledToday(ledger: TokenShopLedger | undefined, today: number): readonly string[] {
+  if (!ledger || today > ledger.day) return [];
+  return ledger.rerolledDailies ?? [];
+}
+
+/**
+ * claude:2026-10-30T22:28:00+01:00 — Kaufbuch auf `today` vorrücken: nur VORWÄRTS (späterer Tag leert den Tages-Topf samt
+ * weggewürfelter Karten, spätere Woche den Wochen-Topf). Ein früherer Tag ändert nichts (Uhr-Rückstellen bringt keine Käufe).
+ */
+export function rollTokenShopLedger(ledger: TokenShopLedger, today: number): void {
+  if (today > ledger.day) {
+    ledger.day = today;
+    ledger.byDay = {};
+    ledger.rerolledDailies = [];
+  }
+  const week = calendarWeekIndex(today);
+  if (week > ledger.week) {
+    ledger.week = week;
+    ledger.byWeek = {};
+  }
+}
+
+/** claude:2026-10-30T22:28:00+01:00 — Einen Kauf von `id` am Tag `today` verbuchen (Topf vorher vorrücken). */
+export function recordTokenShopPurchase(ledger: TokenShopLedger, id: string, today: number): void {
+  rollTokenShopLedger(ledger, today);
+  ledger.byDay[id] = (ledger.byDay[id] ?? 0) + 1;
+  ledger.byWeek[id] = (ledger.byWeek[id] ?? 0) + 1;
+}
+
+/**
+ * claude:2026-10-30T22:28:00+01:00 — Restkäufe bis zur engsten Grenze (Tag und/oder Woche); null = unbegrenzt.
+ */
+export function tokenShopLimitRemaining(
+  limits: { limitPerDay?: number; limitPerWeek?: number },
+  usage: { day: number; week: number },
+): number | null {
+  let rest: number | null = null;
+  if (typeof limits.limitPerDay === "number") rest = Math.max(0, limits.limitPerDay - usage.day);
+  if (typeof limits.limitPerWeek === "number") {
+    const w = Math.max(0, limits.limitPerWeek - usage.week);
+    rest = rest === null ? w : Math.min(rest, w);
+  }
+  return rest;
+}
+
+/** claude:2026-10-30T22:28:00+01:00 — Item-Id des Raid-Gebührenscheins (Belohnungsladen 1.4.2, L4). */
+export const RAID_FEE_WRIT_ITEM_ID = "raid_fee_writ";
+/** claude:2026-10-30T22:28:00+01:00 — Nachlass des Gebührenscheins auf EINE Raid-Gebühr (0.25 = −25 %). */
+export const RAID_FEE_WRIT_DISCOUNT = 0.25;
 
 /**
  * Ein Regal im Quest-Token-Belohnungs-Shop (Chef-GO 25.08.2026 (1.1.0),
@@ -6067,6 +6370,11 @@ export interface ContentDB {
    * offenes Regal (Engine/UI defensiv, Muster `tokenShop`); reine Content-Daten, kein Save-Bump.
    */
   tokenShopShelves?: TokenShopShelf[];
+  /**
+   * claude:2026-10-30T22:28:00+01:00 — Dienste des Belohnungsladens (1.4.2, L1). OPTIONAL → Fehlen = keine Dienste (Engine/UI
+   * defensiv, Muster `tokenShop`). Reine Content-Daten; Grenzen-Verbrauch im Kaufbuch `GameState.tokenShopLedger` (SAVE 100).
+   */
+  tokenServices?: TokenServiceDef[];
   /**
    * Begleiter-Pets (Pet-/Companion-System). Ziel: 21 Pets, eins pro Skill —
    * content-dev füllt das Roster. Key = PetId. Jedes Pet hat skillEffect + combatAbility (gedeckelt).
@@ -6566,6 +6874,26 @@ export interface CombatState {
    */
   stopReason?: "stalemate" | "defeated";
   /**
+   * claude:2026-10-31T13:00:41+01:00 — 1.4.2 (Chef 31.10.): Slayer-Neuversuch nach dem Tod (engine/slayer.ts
+   * `slayerRetryAfterDeath`). Tode in Folge gegen das aktuelle Auftragsmonster ohne einen Auftrags-Kill dazwischen.
+   * Transient wie `stopReason`: migrateState baut `combat` ohne das Feld neu auf, startCombat trägt es weiter.
+   */
+  slayerRetryDeaths?: number;
+  /**
+   * claude:2026-10-31T13:58:31+01:00 — 1.4.2 Fix-Welle (Befund B1): Hinweis fürs Todes-Popup, gesetzt beim Tod in einem normalen Kampf
+   * gegen das aktuelle Auftragsmonster (engine/slayer.ts `slayerRetryAfterDeath`).
+   *  - `retry`: der Kampf startet neu; `attempt` = laufende Nummer des Neuversuchs (1 = erster, höchstens
+   *    SLAYER_RETRY_MAX_DEATHS − 1); `resumeInMs` = Erholung vor dem ersten Schlag (SLAYER_RETRY_RECOVERY_MS, Stand beim Tod;
+   *    die laufende Restzeit steht in `cooldownRemainingMs`).
+   *  - `giveUp`: kein Neuversuch; `deaths` = Höchstzahl Tode in Folge erreicht, `noFood` = kein Essen im Auto-Essen-Platz,
+   *    `unreachable` = das Auftragsmonster ist nicht (mehr) bekämpfbar.
+   * Jeder Tod in einem normalen Kampf setzt das Feld neu (ohne passenden Auftrag: weg), ein Auftrags-Kill räumt es. Transient wie
+   * `slayerRetryDeaths`: migrateState baut `combat` ohne das Feld neu auf; der Neustart im selben Tick trägt es weiter (tick.ts).
+   */
+  slayerRetryNote?:
+    | { kind: "retry"; attempt: number; resumeInMs: number }
+    | { kind: "giveUp"; reason: "deaths" | "noFood" | "unreachable" };
+  /**
    * Kill-Cooldown: Rest-ms der Kampf-Pause nach einem Kill (`KILL_COOLDOWN_MS`). >0 ⇒ der nächste
    * Gegner steht zwar schon in `monsterId`/`enemyHp` (voll), aber es finden KEINE Angriffe statt
    * (beide Seiten pausieren; Spieler-DoTs/Auto-Eat/Regen laufen weiter). combatStep zählt pro Tick
@@ -7040,6 +7368,27 @@ export interface PlayerStats {
   huntCatches: number;
   /** Jagen (28.08.2026): Fänge je Monster-Art; 0/fehlend = Erstfang (HUNT_FIRST_CATCH_MULT). Migration: {}. */
   huntCatchesById: Record<MonsterId, number>;
+  /**
+   * claude:2026-10-31T09:29:00+01:00 — Knappe Siege (SAVE 100, Chef-Entscheid 31.10.2026 „Heute nicht“): Zahl der Kills, bei denen das
+   * eigene Leben nach dem tödlichen Treffer höchstens 5 % des Maximums (`isCloseWin`) betrug. Einziger
+   * Inkrement-Ort: combat.ts `onEnemyDefeated` (gilt damit für Zonen, Champions, Dungeons, Raid und Turm). Quelle für
+   * `close_wins`. Migration: 0 (rückwirkend nicht rekonstruierbar).
+   */
+  closeWins: number;
+}
+
+/**
+ * claude:2026-10-31T09:29:00+01:00 — Schwelle für einen knappen Sieg (`stats.closeWins`): Leben ≤ 5 % des Maximums nach dem tödlichen
+ * Treffer. Geprüft als `hp * CLOSE_WIN_HP_DIVISOR <= maxHp` (ganzzahlig, ohne Gleitkomma-Rand bei genau 5 %).
+ */
+export const CLOSE_WIN_HP_DIVISOR = 20;
+
+/**
+ * claude:2026-10-31T09:29:00+01:00 — Ist der Sieg knapp? Spieler lebt (hp > 0) und hat höchstens 5 % seines Maximallebens. Rein, deterministisch.
+ */
+export function isCloseWin(hp: number, maxHp: number): boolean {
+  if (!Number.isFinite(hp) || !Number.isFinite(maxHp) || hp <= 0 || maxHp <= 0) return false;
+  return hp * CLOSE_WIN_HP_DIVISOR <= maxHp;
 }
 
 /**
@@ -7279,9 +7628,58 @@ export const PRESTIGE_RECALL_MAX_CHAPTER = 18;
 /** Erinnerung zahlt diesen Anteil des Kapitel-Golds (abgerundet); keine Marken, keine Gegenstände. */
 export const PRESTIGE_RECALL_GOLD_MULT = 0.5;
 /** Vergrabene Truhe (`prestigeKeepBankStacks`): höchstens so viele Stück je behaltenem Stapel. */
-export const PRESTIGE_STASH_STACK_CAP = 50;
+export const PRESTIGE_STASH_STACK_CAP = 500; // claude:2026-10-30T18:38:00+01:00 — 1.4.2 (Spec § 3): 50 → 500
 /** Erbstück (`prestigeKeepEquipment`): nur Teile mit einer Anforderung von mindestens dieser Stufe. */
 export const PRESTIGE_HEIRLOOM_MIN_REQUIREMENT = 80;
+
+// ───────────────────────────────────────────────────────────────────────────
+// claude:2026-10-30T18:38:00+01:00 — 1.4.2 „Aschesturz 2.0“ (design/1.4.2-aschesturz-spec.md § 2): neue Narbenquellen.
+// „Je Sturz“ (Leistung des Durchgangs, × (1 + prestigePointsMult)) und „einmalig“ (Sammlung über das Hauptbuch
+// `PrestigeState.paid`, ohne Faktor). Logik: engine/prestige.ts `prestigePointsPreview`.
+// ───────────────────────────────────────────────────────────────────────────
+/** `gold`: je so viel Gold, das der Charakter beim Sturz besitzt (`character.gold`) … */
+export const PRESTIGE_GOLD_STEP = 250_000;
+/** … eine Narbe, höchstens so viele. */
+export const PRESTIGE_GOLD_POINTS_CAP = 20;
+/** `dungeons`: je so viele Dungeon-Abschlüsse in diesem Durchgang eine Narbe … */
+export const PRESTIGE_DUNGEON_STEP = 20;
+/** … höchstens so viele. */
+export const PRESTIGE_DUNGEON_POINTS_CAP = 10;
+/** `slayer`: je so viele Slayer-Aufträge in diesem Durchgang eine Narbe … */
+export const PRESTIGE_SLAYER_STEP = 10;
+/** … höchstens so viele. */
+export const PRESTIGE_SLAYER_POINTS_CAP = 10;
+/** `raid`: Narben je Raid-Abschluss in diesem Durchgang, nach Schwierigkeit … */
+export const PRESTIGE_POINTS_PER_RAID_CLEAR: Readonly<Record<RaidDifficulty, number>> = { normal: 2, heroic: 4, mythic: 6 };
+/** … höchstens so viele. */
+export const PRESTIGE_RAID_POINTS_CAP = 12;
+/** `pets` (einmalig): Narben je besessenem Begleiter, der noch nicht im Hauptbuch steht. */
+export const PRESTIGE_POINTS_PER_PET = 4;
+/** `bestiary` (einmalig): Narben je vollständigem Bestiarium-Eintrag, der noch nicht im Hauptbuch steht. */
+export const PRESTIGE_POINTS_PER_BESTIARY_ENTRY = 1;
+/** `achievements` (einmalig): je so viele Erfolgspunkte über dem bezahlten Stand … */
+export const PRESTIGE_AP_STEP = 100;
+/** … eine Narbe. */
+export const PRESTIGE_POINTS_PER_AP_STEP = 1;
+/** `raidFirst` (einmalig): erster Abschluss je Schwierigkeit. */
+export const PRESTIGE_POINTS_RAID_FIRST: Readonly<Record<RaidDifficulty, number>> = { normal: 5, heroic: 10, mythic: 20 };
+
+/** „Zeichen der Asche“ (Spec § 2.3, E3): Fertigkeits-XP je bisherigem Aschesturz (`prestige.count`) … */
+export const PRESTIGE_ASH_SIGN_XP_PER_COUNT = 0.02;
+/** … höchstens so viel. Additiv zu Lehrjahre und Handgedächtnis (engine/prestige-effects.ts `prestigeSkillXpMult`). */
+export const PRESTIGE_ASH_SIGN_XP_CAP = 0.2;
+
+/** Zeichen der Asche: XP-Anteil für `count` Aufstiege (0 ohne Aufstieg, gedeckelt). Reine Funktion. */
+export function prestigeAshSignXp(count: number): number {
+  if (!Number.isFinite(count) || count <= 0) return 0;
+  return Math.min(PRESTIGE_ASH_SIGN_XP_CAP, Math.floor(count) * PRESTIGE_ASH_SIGN_XP_PER_COUNT);
+}
+
+/**
+ * „Lange Nacht“ (`offlineHours`, Spec § 3): höchster Offline-Bonus des Narbenbuchs (Rang 4 = +8 h, 8 h → 16 h).
+ * Persistence klemmt Timer-Felder auf `MAX_OFFLINE_MS + CAMP_MAX_OFFLINE_BONUS_MS + PRESTIGE_MAX_OFFLINE_BONUS_MS`.
+ */
+export const PRESTIGE_MAX_OFFLINE_BONUS_MS = 8 * 3_600_000;
 
 /**
  * Erfolg, der eine Fertigkeit für Handgedächtnis als „schon einmal gemeistert" ausweist (bleibt beim Aufstieg,
@@ -7335,11 +7733,27 @@ export interface PrestigeRunBaseline {
   slayerTasks: number;
   /** `GameState.activePlayMs`. */
   activePlayMs: number;
+  /**
+   * claude:2026-10-30T18:38:00+01:00 — SAVE 99 (1.4.2, Spec § 5): `raid.clears` je Schwierigkeit beim Beginn des laufenden
+   * Durchgangs (Quelle der Narben `raid`). Die Migration < 99 setzt ihn auf den aktuellen Stand (gezählt wird ab dem Update).
+   */
+  raidClears: Record<RaidDifficulty, number>;
 }
+
+/** Zahl-Felder der Baseline (alles außer dem Raid-Objekt). */
+export type PrestigeRunBaselineCounter = Exclude<keyof PrestigeRunBaseline, "raidClears">;
 
 /** Frische Baseline (erster Durchgang, Migration, Sanitize-Default): alles 0 = seit Spielbeginn. */
 export function defaultPrestigeRunBaseline(): PrestigeRunBaseline {
-  return { kills: 0, dungeons: 0, achievements: 0, pets: 0, slayerTasks: 0, activePlayMs: 0 };
+  return {
+    kills: 0,
+    dungeons: 0,
+    achievements: 0,
+    pets: 0,
+    slayerTasks: 0,
+    activePlayMs: 0,
+    raidClears: { normal: 0, heroic: 0, mythic: 0 }, // claude:2026-10-30T18:38:00+01:00 — SAVE 99
+  };
 }
 
 /**
@@ -7371,7 +7785,8 @@ export interface PrestigeRunTally {
 
 // claude:2026-10-18T19:40:00+02:00 — Schlüssel-Listen (= Save-Reihenfolge) für Sanitize und Engine. Die
 // vollständigen Records erzwingen im Typecheck, dass ein neues Feld hier eingetragen wird.
-const PRESTIGE_RUN_BASELINE_FIELDS: Readonly<Record<keyof PrestigeRunBaseline, true>> = {
+// claude:2026-10-30T18:38:00+01:00 — SAVE 99: nur die Zahl-Felder; `raidClears` härtet persistence eigens.
+const PRESTIGE_RUN_BASELINE_FIELDS: Readonly<Record<PrestigeRunBaselineCounter, true>> = {
   kills: true,
   dungeons: true,
   achievements: true,
@@ -7391,8 +7806,8 @@ const PRESTIGE_RUN_TALLY_FIELDS: Readonly<Record<keyof PrestigeRunTally, true>> 
   paragonBest: true,
   gold: true,
 };
-/** Felder von `PrestigeRunBaseline` in Save-Reihenfolge. */
-export const PRESTIGE_RUN_BASELINE_KEYS = Object.keys(PRESTIGE_RUN_BASELINE_FIELDS) as readonly (keyof PrestigeRunBaseline)[];
+/** Zahl-Felder von `PrestigeRunBaseline` in Save-Reihenfolge (ohne `raidClears`, das folgt als letztes Feld). */
+export const PRESTIGE_RUN_BASELINE_KEYS = Object.keys(PRESTIGE_RUN_BASELINE_FIELDS) as readonly PrestigeRunBaselineCounter[];
 /** Felder von `PrestigeRunTally` in Save-Reihenfolge. */
 export const PRESTIGE_RUN_TALLY_KEYS = Object.keys(PRESTIGE_RUN_TALLY_FIELDS) as readonly (keyof PrestigeRunTally)[];
 
@@ -7407,11 +7822,75 @@ export interface PrestigeState {
   /** claude:2026-10-18T19:40:00+02:00 — Welle E1: Zählerstände beim Beginn des laufenden Durchgangs. */
   runStart: PrestigeRunBaseline;
   history: PrestigeRecord[];
+  /**
+   * claude:2026-10-30T18:38:00+01:00 — SAVE 99 (1.4.2, Spec § 2.2/§ 5): Hauptbuch der einmaligen Narbenquellen. Jeder
+   * Aufstieg zahlt nur, was hier noch nicht steht, und trägt es danach ein (nie doppelt). E2: startet für alle Stände leer.
+   */
+  paid: PrestigePaidLedger;
+  /**
+   * claude:2026-10-31T14:58:54+01:00 — SAVE 102 (Chef-Auftrag 31.10.2026): Beleg der einmaligen Narben-Rückgabe und Nachzahlung zu 1.4.2.
+   * null = nichts zurückgegeben und nichts nachgezahlt (oder ein Stand, der erst ab 1.4.2 begann). Treibt den Hinweis am
+   * Scherbenaltar, bis `acknowledged`. Geschrieben nur von engine/prestige.ts `applyPrestigeRespec142`.
+   */
+  respec142: PrestigeRespec142 | null;
+}
+
+/**
+ * claude:2026-10-31T14:58:54+01:00 — SAVE 102: Nachzahlung zu 1.4.2 je Quelle (Narben, ganzzahlig ≥ 0). `gold`/`dungeons`/`slayer`
+ * summieren die früheren Stürze mit Bilanz nach den neuen Regeln (ohne „Der tiefere Schnitt“), `pets`/`bestiary`/`achievements`/
+ * `raidFirst` sind die Sammlung, die sonst erst der nächste Sturz gezahlt hätte. `total` = Summe der sieben Teile.
+ */
+export interface PrestigeRespecRetro {
+  gold: number;
+  dungeons: number;
+  slayer: number;
+  pets: number;
+  bestiary: number;
+  achievements: number;
+  raidFirst: number;
+  total: number;
+}
+
+/** claude:2026-10-31T14:58:54+01:00 — SAVE 102: Beleg der Rückgabe (`PrestigeState.respec142`). */
+export interface PrestigeRespec142 {
+  /** Zurückgegebene Narben (= `pointsSpent` vor der Rückgabe, also genau das tatsächlich Bezahlte). */
+  refunded: number;
+  /** Nachzahlung (alles 0 für Stände, die erst mit 1.4.2 entstanden, oder ohne früheren Sturz). */
+  retro: PrestigeRespecRetro;
+  /** Hat der Spieler den Hinweis am Altar bestätigt (`acknowledgePrestigeRespec`)? Bis dahin zeigt die UI das Band. */
+  acknowledged: boolean;
+}
+
+/** claude:2026-10-31T14:58:54+01:00 — SAVE 102: Schlüssel der Nachzahlung ohne `total` (Save-Reihenfolge, Sanitize und UI-Aufschlüsselung). */
+export const PRESTIGE_RESPEC_RETRO_KEYS = ["gold", "dungeons", "slayer", "pets", "bestiary", "achievements", "raidFirst"] as const satisfies readonly (keyof PrestigeRespecRetro)[];
+
+/** claude:2026-10-31T14:58:54+01:00 — SAVE 102: leere Nachzahlung (alles 0). */
+export function emptyPrestigeRespecRetro(): PrestigeRespecRetro {
+  return { gold: 0, dungeons: 0, slayer: 0, pets: 0, bestiary: 0, achievements: 0, raidFirst: 0, total: 0 };
+}
+
+/** Hauptbuch der einmaligen Narbenquellen (`PrestigeState.paid`, SAVE 99). */
+export interface PrestigePaidLedger {
+  /** Bezahlte Begleiter (`pets`). */
+  pets: PetId[];
+  /** Bezahlte vollständige Bestiarium-Einträge (Basis-Monster-Ids, `bestiary`). */
+  bestiary: MonsterId[];
+  /** Bezahlter Stand der Erfolgspunkte, immer ein Vielfaches von `PRESTIGE_AP_STEP` (`achievements`). */
+  ap: number;
+  /** Bezahlte Erst-Abschlüsse je Raid-Schwierigkeit (`raidFirst`). */
+  raids: RaidDifficulty[];
+}
+
+/** Leeres Hauptbuch (createGame, Migration < 99, Sanitize-Default). */
+export function defaultPrestigePaidLedger(): PrestigePaidLedger {
+  return { pets: [], bestiary: [], ap: 0, raids: [] };
 }
 
 /** Frischer Prestige-Zustand (createGame + Migration v87 → v88). claude:2026-10-18T19:40:00+02:00 — mit `runStart`. */
 export function defaultPrestigeState(): PrestigeState {
-  return { count: 0, points: 0, pointsSpent: 0, runStart: defaultPrestigeRunBaseline(), history: [] };
+  // claude:2026-10-30T18:38:00+01:00 — SAVE 99: mit leerem Hauptbuch.
+  // claude:2026-10-31T14:58:54+01:00 — SAVE 102: ohne Rückgabe-Beleg.
+  return { count: 0, points: 0, pointsSpent: 0, runStart: defaultPrestigeRunBaseline(), history: [], paid: defaultPrestigePaidLedger(), respec142: null };
 }
 
 /**
@@ -7970,6 +8449,44 @@ export interface GameState {
    * GameState-Feld MUSS in engine/prestige.ts als KEEP oder RESET eingestuft werden (Wächtertest).
    */
   prestige: PrestigeState;
+  /**
+   * claude:2026-10-30T22:28:00+01:00 — Kaufbuch des Belohnungsladens (SAVE 100, 1.4.2 L2): Tages-/Wochenzähler je Dienst und
+   * begrenztem Angebot plus die heute weggewürfelten Tagesaufgaben. Verben nur über engine/token-services.ts bzw.
+   * engine/quests.ts `buyTokenShopOffer`. Bleibt beim Aschesturz. Alt-Saves: `defaultTokenShopLedger()`.
+   */
+  tokenShopLedger: TokenShopLedger;
+  /**
+   * claude:2026-10-31T11:46:04+01:00 — Angepinnte Rezepte (SAVE 101, 1.4.2): Aktions-Ids (nur Aktionen mit Zutaten) in Pin-Reihenfolge,
+   * höchstens `MAX_PINNED_RECIPES` (10, engine/pins.ts). Verben nur über engine/pins.ts (`togglePinnedRecipe`/`unpinRecipe`).
+   * Reine Spieler-Vorliebe ohne Spielwirkung, bleibt beim Aschesturz. Alt-Saves: `[]`.
+   */
+  pinnedRecipes: ActionId[];
+  /**
+   * claude:2026-10-31T16:08:21+01:00 — Warteschlangen-Vorlagen (SAVE 103, 1.4.2, Sweep-Idee mit Chef-GO 31.10.2026): genau
+   * `QUEUE_TEMPLATE_SLOTS` (3) Plätze, `null` = leer. Verben nur über engine/queueTemplates.ts (`saveQueueTemplate`, `loadQueueTemplate`,
+   * `clearQueueTemplate`, `renameQueueTemplate`). Spieler-Vorliebe, bleibt beim Aschesturz. Alt-Saves: `[null, null, null]`.
+   */
+  queueTemplates: (QueueTemplate | null)[];
+}
+
+/**
+ * claude:2026-10-31T16:08:21+01:00 — Eine gespeicherte Warteschlangen-Vorlage (SAVE 103): frei wählbarer Name (höchstens
+ * `QUEUE_TEMPLATE_NAME_MAX` Zeichen, leer erlaubt) und die Einträge in Reihenfolge (höchstens `QUEUE_TEMPLATE_MAX_ENTRIES`), in derselben
+ * Form wie `GameState.actionQueue`.
+ */
+export interface QueueTemplate {
+  name: string;
+  entries: QueuedAction[];
+}
+/** claude:2026-10-31T16:08:21+01:00 — Anzahl der Vorlagen-Plätze (feste Array-Länge von `GameState.queueTemplates`). */
+export const QUEUE_TEMPLATE_SLOTS = 3;
+/** claude:2026-10-31T16:08:21+01:00 — Höchstlänge eines Vorlagen-Namens in Zeichen (Unicode-Codepoints). */
+export const QUEUE_TEMPLATE_NAME_MAX = 24;
+/** claude:2026-10-31T16:08:21+01:00 — Höchstzahl der Einträge je Vorlage (längere Warteschlangen werden beim Speichern gekürzt). */
+export const QUEUE_TEMPLATE_MAX_ENTRIES = 30;
+/** claude:2026-10-31T16:08:21+01:00 — Neuzustand: alle Plätze leer. */
+export function emptyQueueTemplates(): (QueueTemplate | null)[] {
+  return Array.from({ length: QUEUE_TEMPLATE_SLOTS }, () => null);
 }
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -7977,7 +8494,12 @@ export interface GameState {
 // Spezifikation design/handwerk-fasern-jagen/spec-technik.md)
 // ───────────────────────────────────────────────────────────────────────────
 
+/** Fallenplätze über die Jagen-Stufe (`HUNT_SLOT_LEVELS`, heutiges UI-Grid). claude:2026-10-30T18:38:00+01:00 — seit 1.4.2 nicht mehr die Array-Länge. */
 export const HUNT_TRAP_SLOTS = 6;
+/** claude:2026-10-30T18:38:00+01:00 — 1.4.2 Fallensteller (`huntTrapSlots`): höchstens so viele Plätze aus dem Narbenbuch. */
+export const HUNT_TRAPS_TALENT_MAX = 2;
+/** claude:2026-10-30T18:38:00+01:00 — 1.4.2: harte Obergrenze (6 → 8) und fixe Array-Länge von `huntTraps` im Save. */
+export const HUNT_TRAP_SLOTS_TOTAL = HUNT_TRAP_SLOTS + HUNT_TRAPS_TALENT_MAX;
 /** Jagen-Stufe, ab der Platz i (0-basiert) offen ist. */
 // Chef 28.08.2026: 1/10/25/45/65/85 war utopisch langsam (zweite Falle erst nach Stunden), deshalb früher.
 export const HUNT_SLOT_LEVELS: readonly number[] = [1, 5, 15, 30, 50, 75];
@@ -8091,7 +8613,7 @@ export function emptyHuntTrap(): HuntTrap {
   return { zoneId: null, remainingMs: 0, autoRebait: true, lastCatch: null, lastMissed: false };
 }
 export function defaultHuntTraps(): HuntTrap[] {
-  return Array.from({ length: HUNT_TRAP_SLOTS }, () => emptyHuntTrap());
+  return Array.from({ length: HUNT_TRAP_SLOTS_TOTAL }, () => emptyHuntTrap()); // claude:2026-10-30T18:38:00+01:00 — 1.4.2: 6 → 8
 }
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -8355,13 +8877,19 @@ export interface GameSettings {
   raidAutoContinue: boolean;
   /** claude:2026-10-25T02:50:00+02:00 — Raid Heroisch: Neustart nach dem Tod in Warteschlange/offline automatisch kaufen (A6, Standard aus). */
   raidAutoBuyRestart: boolean;
+  /**
+   * claude:2026-10-30T22:28:00+01:00 — Raid-Warteschlange: vorhandene Gebührenscheine (`raid_fee_writ`) beim automatischen Start
+   * einsetzen (1.4.2 L4, SAVE 100). Ohne Schein zahlt der Lauf die volle Gebühr. Standard aus.
+   */
+  raidUseFeeWrit: boolean;
 }
 
 /** Default-Einstellungen für frische Spielstände (und Migration alter Saves). */
 export function defaultSettings(): GameSettings {
   // claude:2026-10-23T23:25:00+02:00 — materialsToStorage: Engine-Baseline aus (Sim/Tests). Echte Spieler bekommen es an: neue Charaktere über
   // `starterKit` (engine/state.ts), Alt-Saves über migrateState (fehlendes Feld ⇒ an).
-  return { autoBank: true, autoParagonAscend: false, estateNotifications: true, materialsToStorage: false, quiverAutoRefill: true, raidAutoContinue: false, raidAutoBuyRestart: false };
+  // claude:2026-10-30T22:28:00+01:00 — raidUseFeeWrit (SAVE 100): Standard aus.
+  return { autoBank: true, autoParagonAscend: false, estateNotifications: true, materialsToStorage: false, quiverAutoRefill: true, raidAutoContinue: false, raidAutoBuyRestart: false, raidUseFeeWrit: false };
 }
 
 /** Mastery: gemeinsame Level-Kurve mit Fertigkeiten; höchstes Level. */
@@ -9159,13 +9687,45 @@ export const CAMP_BLESSING_BOOST_CAP = 0.30;
 export const CAMP_MAX_OFFLINE_BONUS_MS = 3 * 3_600_000;
 
 /**
+ * claude:2026-10-30T18:38:00+01:00 — 1.4.2: Wert einer Wirkungsart im NARBENBUCH (Baum `PRESTIGE_TALENT_TREE_ID`), für die
+ * wenigen Leser in shared/persistence ohne Engine (`effectiveMaxOfflineMs`). Spiegelt engine/talents.ts `talentEffect` für
+ * diesen Baum: nur wirksam, wenn seine Freischaltung erfüllt ist (`prestigeCount`; ein Fertigkeits-Gate ist hier nicht
+ * prüfbar und gilt dann als gesperrt), Summe der Rangwerte. Der Gleichlauf mit der Engine ist getestet
+ * (engine/prestige-1-4-2.test.ts). Rein lesend.
+ */
+export function prestigeTalentValue(state: GameState, content: ContentDB, kind: TalentEffectKind): number {
+  const ranks = state.talents?.[PRESTIGE_TALENT_TREE_ID];
+  if (!ranks) return 0;
+  const tree = content.talentTrees?.find((t) => t.id === PRESTIGE_TALENT_TREE_ID);
+  if (!tree || tree.unlock.skill !== undefined) return 0;
+  if ((state.prestige?.count ?? 0) < (tree.unlock.prestigeCount ?? 0)) return 0;
+  let sum = 0;
+  for (const node of tree.nodes) {
+    if (node.effect.kind !== kind) continue;
+    const raw = ranks[node.id] ?? 0;
+    const rank = Number.isFinite(raw) && raw > 0 ? Math.floor(raw) : 0;
+    if (rank <= 0) continue;
+    const v = node.effect.perRank[Math.min(rank, node.effect.perRank.length) - 1];
+    if (typeof v === "number" && Number.isFinite(v) && v > 0) sum += v;
+  }
+  return sum;
+}
+
+/**
  * Effektives Offline-Aufhol-Fenster in ms: `MAX_OFFLINE_MS` (8 h) + gebaute Wachturm-Stufen
  * (je +1 h), defensiv auf `CAMP_MAX_OFFLINE_BONUS_MS` geklemmt. EINZIGE Quelle des Fensters —
  * persistence (deserialize) und UI-Anzeigen leiten sich hieraus ab.
+ * claude:2026-10-30T18:38:00+01:00 — 1.4.2: plus Narbenbuch „Lange Nacht“ (`offlineHours`, Stunden, auf
+ * `PRESTIGE_MAX_OFFLINE_BONUS_MS` geklemmt). Höchstens 8 h + 3 h + 8 h = 19 h.
  */
 export function effectiveMaxOfflineMs(state: GameState, content: ContentDB): number {
   const bonus = campBoostSum(state.camp, content.campBuildings, "offlineCapMs");
-  return MAX_OFFLINE_MS + Math.max(0, Math.min(CAMP_MAX_OFFLINE_BONUS_MS, bonus));
+  const talentMs = prestigeTalentValue(state, content, "offlineHours") * 3_600_000;
+  return (
+    MAX_OFFLINE_MS +
+    Math.max(0, Math.min(CAMP_MAX_OFFLINE_BONUS_MS, bonus)) +
+    Math.max(0, Math.min(PRESTIGE_MAX_OFFLINE_BONUS_MS, talentMs))
+  );
 }
 
 /**

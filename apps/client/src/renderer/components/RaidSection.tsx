@@ -12,6 +12,8 @@ import {
   raidFee,
   raidStateOf,
   raidWeeklyModifier,
+  raidFeeWithWrit,
+  raidFeeWritCount,
   startRaid,
 } from "@hearthforge/engine";
 import { CRAFT_TARGET_PRESETS, RAID_DIFFICULTIES, type RaidDifficulty } from "@hearthforge/shared";
@@ -35,6 +37,7 @@ export function RaidSection(): JSX.Element | null {
   const def = raidDefs(content)[0];
   const [pick, setPick] = useState<RaidDifficulty>("normal");
   const [msg, setMsg] = useState<string | null>(null);
+  const [useWrit, setUseWrit] = useState(false); // claude:2026-10-30T23:10:00+01:00 — Gebührenschein für diesen Start einsetzen (1.4.2 L4)
   const [confirm, setConfirm] = useState<ConfirmRequest | null>(null);
   if (!def) return null;
 
@@ -77,10 +80,15 @@ export function RaidSection(): JSX.Element | null {
   const baseFee = def.fees[diff];
   const run = rs.run;
   const busy = !!run;
-  const poor = state.character.gold < fee;
+  // claude:2026-10-30T23:10:00+01:00 — Gebührenschein: Bestand (Inventar + Lager), Gebühr nach Schein (−25 %, wie die Engine rundet).
+  const writs = raidFeeWritCount(state);
+  const writOn = useWrit && writs > 0;
+  const payFee = writOn ? raidFeeWithWrit(fee) : fee;
+  const poor = state.character.gold < payFee;
   const startReasonText = (r: string): string =>
-    r === "gold" ? t("raid.start.needGold").replace("{gold}", formatNum(fee))
+    r === "gold" ? t("raid.start.needGold").replace("{gold}", formatNum(payFee))
     : r === "busy" ? t("raid.start.busy")
+    : r === "no_writ" ? t("raid.start.noWrit")
     : t("raid.start.locked");
   const deathRule =
     diff === "normal" ? t("raid.deathRule.normal")
@@ -88,7 +96,7 @@ export function RaidSection(): JSX.Element | null {
     : t("raid.deathRule.mythic").replace("{pct}", String(Math.round((1 - def.mythicRefundPct) * 100)));
 
   const onStart = (): void => {
-    const r = startRaid(state, content, def.id, diff, Date.now());
+    const r = startRaid(state, content, def.id, diff, Date.now(), { useFeeWrit: writOn }); // claude:2026-10-30T23:10:00+01:00
     setMsg(r === "ok" ? null : startReasonText(r));
   };
   const onQueue = (qty: number | null): void => {
@@ -150,7 +158,8 @@ export function RaidSection(): JSX.Element | null {
               <span className="raid-label">{t("raid.fee.label")}</span>
               <span className="raid-fee">
                 {modifier === "payday" && <s className="raid-fee-old">{formatNum(baseFee)}</s>}
-                {formatNum(fee)}
+                {writOn && <s className="raid-fee-old">{formatNum(fee)}</s>}
+                {formatNum(payFee)}
                 {GOLD_ICON_URL ? <img loading="lazy" decoding="async" src={GOLD_ICON_URL} alt="" className="ui-icon" /> : null}
               </span>
             </div>
@@ -213,11 +222,17 @@ export function RaidSection(): JSX.Element | null {
             </>
           ) : (
             <>
+              {/* claude:2026-10-30T23:10:00+01:00 — Gebührenschein (1.4.2 L4): Schalter für diesen Start, Bestand sichtbar; ohne Schein ein Hinweis, wo es ihn gibt. */}
+              <label className={`raid-check raid-writ${writs > 0 ? "" : " is-empty"}`}>
+                <input type="checkbox" checked={writOn} disabled={writs < 1} onChange={(e) => setUseWrit(e.target.checked)} />
+                <span>{t("raid.writ.use").replace("{n}", String(writs))}</span>
+              </label>
+              {writs < 1 && <p className="raid-note muted">{t("raid.writ.none")}</p>}
               <button
                 type="button"
                 className="btn-iron dungeon-enter raid-start-btn"
                 disabled={busy || poor}
-                title={poor ? t("raid.start.needGold").replace("{gold}", formatNum(fee)) : undefined}
+                title={poor ? t("raid.start.needGold").replace("{gold}", formatNum(payFee)) : undefined}
                 onClick={onStart}
               >
                 {t("raid.start")}
@@ -233,6 +248,15 @@ export function RaidSection(): JSX.Element | null {
                   onInfinite={() => onQueue(null)}
                 />
                 <span className="raid-note muted">{t("raid.queueHint")}</span>
+                {/* claude:2026-10-30T23:10:00+01:00 — Warteschlange: Schein nur, wenn der Spieler es will (settings.raidUseFeeWrit) und einer da ist. */}
+                <label className="raid-check raid-writ-queue">
+                  <input
+                    type="checkbox"
+                    checked={state.settings.raidUseFeeWrit === true}
+                    onChange={(e) => { state.settings.raidUseFeeWrit = e.target.checked; }}
+                  />
+                  <span>{t("raid.writ.queue")}</span>
+                </label>
               </div>
             </>
           )}

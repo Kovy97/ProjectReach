@@ -31,6 +31,7 @@ import { Toasts } from "./components/Toasts";
 import { DevSpeedPanel } from "./components/DevSpeedPanel";
 import { ActionQueuePanel } from "./components/ActionQueuePanel";
 import { EliteMiniWindow } from "./components/EliteMiniWindow";
+import { PinnedRecipesWindow } from "./components/PinnedRecipesWindow"; // claude:2026-10-31T12:14:27+01:00 — Rezepte anpinnen (1.4.2)
 import { PetCelebration } from "./components/PetCelebration";
 import { MasteryCeremony } from "./components/MasteryCeremony";
 import { DungeonClearCeremony } from "./components/DungeonClearCeremony";
@@ -87,6 +88,8 @@ import { EnchantingPage } from "./pages/EnchantingPage";
 import { MailPage } from "./pages/MailPage";
 import { NewHavenPage } from "./pages/NewHavenPage";
 import { TavernPage } from "./pages/TavernPage";
+import { HubPage } from "./pages/HubPage"; // claude:2026-10-30T20:31:00+01:00 — Hauptmenü-Hub (Startseite)
+import { useRememberLastActivity } from "./util/lastActivity"; // claude:2026-10-30T20:31:00+01:00 — Hub: zuletzt genutzte Tätigkeit
 // claude:2026-10-19T10:05:00+02:00 — Oberflächen-Stil Reforged/Classic (Chef 19.10.).
 import { useUiStyle } from "./uiStyle";
 import { SidebarClassic } from "./components/SidebarClassic";
@@ -113,8 +116,10 @@ function PageContent({
   if (!page) return <PlaceholderPage label="app.unknown" />;
 
   switch (page.view) {
+    case "hub":
+      return <HubPage onNavigate={onNavigate} />; // claude:2026-10-30T20:31:00+01:00
     case "character":
-      return <CharacterPage />;
+      return <CharacterPage onNavigate={onNavigate} />; // claude:2026-10-31T11:30:30+01:00
     case "combat":
       return <CombatPage />;
     case "shop":
@@ -771,6 +776,7 @@ function usePortraitFallback(): void {
 function MainLayout(): JSX.Element {
   const { t } = useI18n();
   usePortraitFallback();
+  useRememberLastActivity(); // claude:2026-10-30T20:31:00+01:00 — Hub: laufende Aktion/Gegner je Spielstand merken
   // Kosmetik-Sweep T1: der Item-Tooltip-Store ist modul-global (ItemTooltip.tsx) und überlebt
   // Screen-Wechsel — nach dem Laden eines Spielstands (Menü → hier) blieb dadurch gelegentlich ein
   // gepinntes Tooltip aus der VORHERIGEN Ansicht sichtbar (Menü-Slot-Karten sind ebenfalls Item-
@@ -779,7 +785,7 @@ function MainLayout(): JSX.Element {
   useEffect(() => {
     closeItemTooltip();
   }, []);
-  const [activePageId, setActivePageId] = useState("character");
+  const [activePageId, setActivePageId] = useState("hub"); // claude:2026-10-30T20:31:00+01:00 — Startseite ist der Hauptmenü-Hub (war "character")
   const uiStyle = useUiStyle();
   const page = findPage(activePageId);
   // Wiki→Rezept-Sprung (util/skillJump.ts): ItemWikiModalOverlay sitzt außerhalb dieses
@@ -899,7 +905,8 @@ function MainLayout(): JSX.Element {
       // Hotkey wechselte sonst unsichtbar die Seite hinter Porträt-Galerie/Death-Popup & Co.
       // (Registry existierte längst, war hier nur nicht angeschlossen.)
       if (hasOpenModal()) return;
-      const page = getSidebarPages()[Number(e.key) - 1];
+      // claude:2026-10-30T20:41:00+01:00 — der Hub (1.4.2) zählt nicht mit: 1–9 behalten ihre gewohnten Seiten.
+      const page = getSidebarPages().filter((p) => p.id !== "hub")[Number(e.key) - 1];
       if (page) setActivePageId(page.id);
     };
     window.addEventListener("keydown", onKeyDown);
@@ -971,7 +978,8 @@ function MainLayout(): JSX.Element {
   return (
     // codex:2026-09-10T10:35:00+02:00 — Lokaler Shell-Scope; andere Panels/Modale behalten ihren Bestandsstil.
     // claude:2026-10-19T10:05:00+02:00 — Chef 19.10.: Stil umschaltbar (Reforged/Classic), s. uiStyle.ts.
-    <div className={`layout layout--${uiStyle}`}>
+    /* claude:2026-10-30T21:00:00+01:00 — Dev-Stil „Synty“ nutzt das Reforged-Layout (Klasse layout--reforged bleibt) */
+    <div className={`layout layout--${uiStyle === "synty" ? "reforged layout--synty" : uiStyle}`}>
       {/* claude:2026-10-19T11:00:00+02:00 — Classic (Look von 1.2.3): eigene Seitenleiste, Reiterleiste und
           Kopfzeile „Quiet Citadel“; Reforged: die 1.3-Chrome. Höhenregler, Inhalt und Fenster sind gemeinsam. */}
       {uiStyle === "classic" ? (
@@ -1051,6 +1059,9 @@ function MainLayout(): JSX.Element {
           gemountet (nicht nur auf der Slayer-Seite), rendert intern `null` solange kein Champion
           aktiv ist. Ersetzt das frühere Inline-Kopfgeld-Brett (BountyBoard.tsx, s. SlayerPage.tsx). */}
       <EliteMiniWindow />
+      {/* claude:2026-10-31T12:14:27+01:00 — Rezepte anpinnen (1.4.2): schwebendes Fenster „Angepinnte Rezepte“, app-weit wie das
+          Elite-Fenster; rendert `null` ohne Pins. */}
+      <PinnedRecipesWindow />
       <OfflinePopup onNavigate={setActivePageId} />
       <Toasts activePageId={activePageId} />
       <GameAlerts />

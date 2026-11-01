@@ -30,6 +30,7 @@ import {
 import { itemCount, removeItem } from "./inventory";
 import { bankCount } from "./bank";
 import { grantLoot } from "./mail";
+import { talentCampBuildMult } from "./prestige-effects"; // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Bauherrin
 
 /**
  * Das Lager (Encampment Phase 1, 0.3.0 — Task #358, SAVE_VERSION 76).
@@ -317,6 +318,18 @@ export function campBuildStartReason(
  * möglich, ein Auto-Platz ist also nie eine Sackgasse, (c) die Karte bleibt strukturell
  * konsistent — JEDES Gebäude auf ihr hat eine Position, ohne Sonderfall „ohne Standort".
  */
+/**
+ * claude:2026-10-30T18:42:00+01:00 — 1.4.2: Bauzeit eines NEU startenden Bau-Jobs aus der Basis-Bauzeit. Schreibzelt
+ * (`buildSpeed`, defensiv auf [0, 0.9] geklemmt; der Katalog liefert max. 0.30) und Narbenbuch „Bauherrin“
+ * (`campBuildSpeedPct`, −15/−30 %) wirken MULTIPLIKATIV; nie unter einen Tick. Ohne Rang exakt der Alt-Wert.
+ * Leser: `startCampBuild` und die Anzeige „Gesamtbauzeit“ der UI (heute eigene Kopie in NewHavenPage.tsx).
+ */
+export function campBuildDurationMs(state: GameState, content: ContentDB, buildMs: number): number {
+  const speedCut = Math.max(0, Math.min(0.9, campBoost(state, content, "buildSpeed")));
+  const talentMult = talentCampBuildMult(state, content);
+  return Math.max(TICK_MS, Math.round(buildMs * (1 - speedCut) * talentMult));
+}
+
 export function startCampBuild(
   state: GameState,
   content: ContentDB,
@@ -339,10 +352,9 @@ export function startCampBuild(
     for (const cost of levelDef.items) consumeCampInput(state, cost.itemId, cost.qty);
   }
 
-  // Schreibzelt-Tempo: NUR hier, beim Start (nie rückwirkend). Defensiv auf [0, 0.9] geklemmt —
-  // der Katalog liefert max. 0.30; die Klemme schützt vor künftigen Content-Fehlern (nie 0 ms).
-  const speedCut = Math.max(0, Math.min(0.9, campBoost(state, content, "buildSpeed")));
-  const remainingMs = Math.max(TICK_MS, Math.round(levelDef.buildMs * (1 - speedCut)));
+  // Schreibzelt-Tempo: NUR hier, beim Start (nie rückwirkend). claude:2026-10-30T18:42:00+01:00 — 1.4.2: Rechnung samt
+  // Narbenbuch „Bauherrin“ in `campBuildDurationMs` (einzige Quelle, auch für die UI-Anzeige).
+  const remainingMs = campBuildDurationMs(state, content, levelDef.buildMs);
   camp.buildJob = { buildingId, targetLevel, remainingMs };
 
   // Karten-Platz eines NEUBAUS sichern (Task #370, s. Funktions-Doku): hat der Aufrufer die

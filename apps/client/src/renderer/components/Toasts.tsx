@@ -1,4 +1,5 @@
 import { EVENT_ICON, getEventImage } from "../eventArt"; // claude:2026-10-25T01:30:00+02:00
+import { unlockNamesText } from "../util/recipeFilter"; // claude:2026-10-31T16:34:28+01:00
 import { stopReasonKey } from "../util/stopReason";
 import { eventCardValues, fillEventText, orderCustomer } from "../ordersApi";
 import { requestQuestsTab } from "../navigation";
@@ -6,7 +7,7 @@ import { jumpToPage } from "../util/monsterJump";
 import type { GameState } from "@hearthforge/shared";
 import { useEffect, useRef, useState } from "react";
 import { content } from "@hearthforge/content";
-import { computeStats, isEliteZoneHuntable, levelFromXp, masteryPoolCapacity, queueBlockReason, slayerTaskPointsPayout } from "@hearthforge/engine";
+import { actionsUnlockedAtLevel, computeStats, isEliteZoneHuntable, levelFromXp, masteryPoolCapacity, queueBlockReason, slayerTaskPointsPayout } from "@hearthforge/engine";
 import type { AchievementDef, SkillId } from "@hearthforge/shared";
 import { achievementPoints, MASTERY_POOL_CHECKPOINTS, ELITE_UNIQUE_DROP_CHANCE_DEFAULT, RELIC_DUST_ITEM_ID, TAVERN_ENABLED } from "@hearthforge/shared";
 import { useGameControl, useGameState } from "../game/GameContext";
@@ -31,7 +32,7 @@ import { getSkillIcon } from "../skillIcons";
 import { getSidebarIcon } from "../sidebarIcons";
 import { jumpToElite } from "../util/monsterJump";
 import { countFenceItems } from "../util/fence";
-import { registerUiToastSink } from "../util/toastBus";
+import { registerUiToastSink, takePurchasedItem } from "../util/toastBus";
 import {
   highestRankCrossed,
   masteryRankKey,
@@ -86,6 +87,8 @@ interface Toast {
   title: string;
   detail: string;
   kind: "level" | "total" | "drop" | "achievement" | "pet" | "rare" | "mastery" | "elite" | "event"; // claude:2026-10-25T01:30:00+02:00 — + Ereigniskarte (1.4.0 EV)
+  /** claude:2026-10-31T15:30:00+01:00 — D16: wie oft dieselbe Meldung gerade zusammengefasst wurde (Anzeige „×n“). */
+  count?: number;
   /** Chef 27.08.2026: kleine Zeile unten rechts im Popup, z. B. die Dropchance eines seltenen Funds. */
   note?: string;
   /** Nur bei kind "rare": Item-Rarity, damit legendary den Jackpot-Look eine Spur kräftiger bekommt. */
@@ -214,6 +217,13 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
   const state = useGameState();
   const { saveRecovery, dismissSaveRecovery, importSuccess, dismissImportSuccess } = useGameControl();
   const { t, tr, locale } = useI18n();
+  // claude:2026-10-31T16:34:28+01:00 — Ideen-Welle 1.4.2: Levelaufstieg-Toast nennt die neu freigeschalteten Rezepte (höchstens 3 Namen + „und n weitere“).
+  const levelUnlockText = (skillId: string, fromLevel: number, toLevel: number): string => {
+    const ids: string[] = [];
+    for (let lvl = fromLevel; lvl <= toLevel && lvl - fromLevel < 12; lvl++) ids.push(...actionsUnlockedAtLevel(content, skillId, lvl));
+    if (ids.length === 0) return "";
+    return ` · ${t("toast.levelUp.unlocks").replace("{names}", unlockNamesText(ids, (id) => (content.actions[id] ? tr(content.actions[id]!.name) : id), t))}`;
+  };
   const [toasts, setToasts] = useState<Toast[]>([]);
   // codex:2026-07-31T00:32:37+02:00 — Der umfassende Besitz-/Achievement-Diff ist für
   // UI-Feedback gedacht, nicht für die 10-Hz-Anzeige. Eine 1-Hz-Abtastung erhält alle
@@ -262,7 +272,13 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
 
   const push = (toast: Omit<Toast, "id">, durationMs: number = TOAST_MS): void => {
     const id = nextId++;
-    setToasts((cur) => evictOverflow([...cur, { ...toast, id }]));
+    // claude:2026-10-31T15:30:00+01:00 — D16: eine gleiche Meldung (Art, Titel, Text) wird zusammengefasst statt gestapelt: Zähler +1, neue id und Laufzeit
+    // (der Timer der alten id läuft damit ins Leere).
+    setToasts((cur) => {
+      const same = cur.find((x) => x.kind === toast.kind && x.title === toast.title && x.detail === toast.detail && !x.onClick);
+      if (same) return cur.map((x) => (x === same ? { ...x, id, count: (x.count ?? 1) + 1 } : x));
+      return evictOverflow([...cur, { ...toast, id }]);
+    });
     setTimeout(() => setToasts((cur) => cur.filter((x) => x.id !== id)), durationMs);
   };
 
@@ -1054,7 +1070,7 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
             icon: "⭐",
             iconUrl: getSkillIcon(id) ?? getSidebarIcon(id),
             title: t("toast.levelUp"),
-            detail: `${skill ? tr(skill.name) : id} ${t("skill.level").replace("{n}", String(levels[id]))}`,
+            detail: `${skill ? tr(skill.name) : id} ${t("skill.level").replace("{n}", String(levels[id]))}${levelUnlockText(id, before + 1, levels[id]!)}`,
           });
           playSfx("levelup");
         }
@@ -1090,7 +1106,9 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
         // Beute findet, bekommt seinen Moment. Und ein gerollter Suffix feiert weiterhin ueber den
         // eigenen Enchant-Pfad weiter unten — genau die Ausnahme, die der Chef genannt hat.
         const geradeGecraftet = (state.stats.craftedById[itemId] ?? 0) > (prev.craftedRares[itemId] ?? 0);
-        if (qty > before && !activeCraftOutputs.has(itemId) && !geradeGecraftet) {
+        // claude:2026-10-31T15:30:00+01:00 — E10: im Belohnungsladen gekaufte Stücke zählen nicht als Fund (Kaufstelle meldet sie über util/toastBus).
+        const gekauft = qty > before ? takePurchasedItem(itemId) : 0;
+        if (qty - before - gekauft > 0 && !activeCraftOutputs.has(itemId) && !geradeGecraftet) {
           const item = content.items[itemId];
           // Chef 27.08.2026: „unten rechts im Popup bei rare und mythical drops soll die Droprate
           // dranstehen" — Tabellenchance des gerade bekämpften Monsters, sonst die beste Quelle
@@ -1237,8 +1255,8 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
           iconUrl: getSkillIcon("slayer") ?? getSidebarIcon("slayer"),
           title: t("toast.slayerTaskDone"),
           detail: t("toast.slayerTaskDoneDetail")
-            .replace("{xp}", String(xp))
-            .replace("{points}", String(pts)),
+            .replace("{xp}", formatNum(xp)) // claude:2026-10-31T15:50:00+01:00 — E7: Tausendertrenner wie überall
+            .replace("{points}", formatNum(pts)),
         });
         playSfx("achievement");
       }
@@ -1513,7 +1531,7 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
             </span>
             {toast.note && <span className="toast-note">{toast.note}</span>}
             <span className="toast-body">
-              <span className="toast-title">{toast.title}</span>
+              <span className="toast-title">{toast.title}{toast.count && toast.count > 1 ? ` ×${toast.count}` : ""}</span>
               <span className="toast-detail">{toast.detail}</span>
             </span>
           </div>

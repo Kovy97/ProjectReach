@@ -1,0 +1,1012 @@
+/* claude:2026-10-30T20:31:00+01:00 — Hauptmenü-Hub (Mockup 3 „Seitenspalten“, Chef-Entscheid 30.10.2026).
+   Hintergrund = Hauptmenü-Bild (Mitte bleibt frei), links/rechts je eine Kartenspalte, in der Mitte oben der Charakter, unten die
+   Chronik-Story mit „Weitermachen“ und „Letzter Kampf“.
+   claude:2026-10-30T21:10:00+01:00 — Überarbeitung („mehr Liebe“): ein Kartensystem (Kopf, Bildband, Fuß mit Aktion), ein Raster
+   (--hub-u = 8-px-Takt), größere Titel/Zahlen, Verläufe an den Rändern, Einblend-Animation (nicht bei reduzierter Bewegung).
+   Karten: dunkle Basaltfläche mit Eisenrahmen (wie Jagen/New Haven), Text mindestens 7:1 (#ece6d6 / #cfcab9 auf ~#0a0c0e).
+   Breite: die Seite ist ein Inline-Container, weil Seitenleiste und Warteschlangen-Spalte den Platz schon vorab nehmen; bei
+   schmalem Inhalt (1366×768) wird daraus ein Zwei-Spalten-Raster. Höhe: die Seite wächst mit ihrem Inhalt und scrollt im
+   `.content-body`, statt Karten abzuschneiden. */
+
+/* Vollflächig: kein 24-px-Innenrand, Seite füllt die Höhe (flex), wächst aber bei Bedarf. */
+.content-body:has(.hub-page) {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.page-transition:has(> .hub-page) {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.hub-page {
+  --hub-card-bg:
+    linear-gradient(rgba(9, 11, 13, 0.9), rgba(7, 9, 11, 0.95)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  --hub-text: #ece6d6;
+  --hub-muted: #cfcab9;
+  --hub-gold: #dcc46e;
+  --hub-line: rgba(220, 196, 110, 0.2);
+  --hub-u: clamp(8px, 0.7cqw, 12px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  min-width: 0;
+  container-type: inline-size;
+  background-color: #0b0c0e;
+  background-image: url("../assets/ui/mainmenu_highlands_1920.webp");
+  background-size: cover;
+  background-position: center;
+  color: var(--hub-text);
+}
+@media (min-width: 2400px) {
+  .hub-page {
+    background-image: url("../assets/ui/mainmenu_highlands_3440.webp");
+  }
+}
+
+/* Ränder und Fuß des Bildes abdunkeln: Karten liegen nie auf hellem Himmel, die Mitte atmet. */
+.hub-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(5, 7, 9, 0.8) 0, rgba(5, 7, 9, 0.4) 22%, rgba(5, 7, 9, 0) 36%, rgba(5, 7, 9, 0) 64%, rgba(5, 7, 9, 0.4) 78%, rgba(5, 7, 9, 0.8) 100%),
+    linear-gradient(180deg, rgba(5, 7, 9, 0.5) 0, rgba(5, 7, 9, 0) 24%, rgba(5, 7, 9, 0) 55%, rgba(5, 7, 9, 0.78) 100%);
+  pointer-events: none;
+}
+
+.hub-layer {
+  position: relative;
+  flex: 1 0 auto;
+  display: grid;
+  grid-template-columns: clamp(250px, 23cqw, 470px) minmax(0, 1fr) clamp(250px, 23cqw, 470px);
+  gap: calc(var(--hub-u) * 1.5);
+  padding: calc(var(--hub-u) * 1.5);
+  align-items: stretch;
+  box-sizing: border-box;
+}
+
+.hub-col {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--hub-u) * 1.5);
+  min-width: 0;
+}
+.hub-col > .hub-card {
+  flex: 1 1 auto;
+}
+
+/* Mitte: Charakter oben, Story + Dock unten, dazwischen freie Sicht aufs Bild. */
+.hub-mid {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: calc(var(--hub-u) * 2);
+  min-width: 0;
+}
+.hub-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--hub-u);
+}
+.hub-stage {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--hub-u) * 1.5);
+  width: 100%;
+  max-width: 940px;
+  margin-inline: auto;
+}
+
+/* ── Einblenden beim Öffnen: gestaffelt über --i, `backwards`, damit Hover-Transforms danach wieder greifen ───────────── */
+@keyframes hub-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes hub-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(120, 181, 100, 0.55); }
+  50% { box-shadow: 0 0 0 5px rgba(120, 181, 100, 0); }
+}
+@keyframes hub-glow {
+  0%, 100% { box-shadow: 0 9px 22px rgba(0, 0, 0, 0.55), 0 0 0 rgba(216, 192, 106, 0); }
+  50% { box-shadow: 0 9px 22px rgba(0, 0, 0, 0.55), 0 0 22px rgba(216, 192, 106, 0.38); }
+}
+.hub-hero,
+.hub-world,
+.hub-story,
+.hub-card {
+  animation: hub-rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 80ms);
+}
+
+/* ── Charakterkopf ────────────────────────────────────────────────────────────────────────── */
+.hub-hero {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--hub-u) * 2);
+  max-width: 100%;
+  padding: calc(var(--hub-u) * 1.5) calc(var(--hub-u) * 4) calc(var(--hub-u) * 1.5) calc(var(--hub-u) * 1.5);
+  background: radial-gradient(ellipse at 50% 50%, rgba(4, 6, 8, 0.78) 0, rgba(4, 6, 8, 0.6) 55%, rgba(4, 6, 8, 0) 100%);
+}
+.hub-portrait {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: clamp(80px, 6.2cqw, 124px);
+  aspect-ratio: 1;
+  padding: 0;
+  overflow: hidden;
+  border: 3px solid #7a6736;
+  background: #0a0b0d;
+  box-shadow: 0 0 0 2px #0a0b0d, 0 8px 20px rgba(0, 0, 0, 0.7), inset 0 0 14px rgba(0, 0, 0, 0.6);
+  font-size: 48px;
+  cursor: pointer;
+  transition: filter 0.15s, transform 0.15s;
+}
+.hub-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+.hub-portrait:hover,
+.hub-portrait:focus-visible {
+  filter: brightness(1.12);
+  transform: translateY(-2px);
+  outline: 2px solid var(--hub-gold);
+  outline-offset: 3px;
+}
+.hub-hero-text {
+  min-width: 0;
+  text-shadow: 0 2px 6px #000, 0 0 2px #000;
+}
+.hub-kicker {
+  display: block;
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hub-gold);
+}
+.hub-hero h2 {
+  margin: 2px 0 6px;
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: var(--fs-3xl);
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  color: #f6ecca;
+  overflow-wrap: anywhere;
+}
+.hub-levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
+.hub-levels span {
+  padding: 2px 10px 3px;
+  background: rgba(8, 10, 12, 0.85);
+  border: 1px solid #4d4532;
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--hub-muted);
+  text-shadow: none;
+  white-space: nowrap;
+}
+.hub-levels b {
+  margin-left: 4px;
+  font-size: var(--fs-md);
+  font-weight: 400;
+  color: #f6ecca;
+}
+.hub-hero-line {
+  margin: 8px 0 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  line-height: 1.3;
+  color: #e9e3d2;
+}
+
+/* ── Weltleiste: Segen, Begleiter, Ereignis ───────────────────────────────────────────────── */
+.hub-world {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.hub-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 3px 14px 3px 4px;
+  box-sizing: border-box;
+  background: rgba(8, 10, 12, 0.86);
+  border: 1px solid #454d56;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  color: var(--hub-text);
+}
+.hub-chip b {
+  font-weight: 700;
+  color: #f6efdc;
+}
+.hub-chip img {
+  height: 26px;
+  width: auto;
+  max-width: 44px;
+  object-fit: cover;
+}
+.hub-chip > span[aria-hidden] {
+  padding-left: 8px;
+}
+.hub-chip--link {
+  cursor: pointer;
+  transition: filter 0.15s, border-color 0.15s;
+}
+.hub-chip--link:hover,
+.hub-chip--link:focus-visible {
+  filter: brightness(1.15);
+  border-color: var(--hub-gold);
+  outline: none;
+}
+.hub-chip--event {
+  border-color: #6b5a2e;
+}
+
+/* ── Chronik-Karte ────────────────────────────────────────────────────────────────────────── */
+.hub-story {
+  position: relative;
+  display: grid;
+  grid-template-columns: clamp(104px, 11cqw, 176px) minmax(0, 1fr);
+  box-sizing: border-box;
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+  background: var(--hub-card-bg);
+  background-size: auto, 520px 520px;
+  box-shadow: 0 9px 22px rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+  transition: filter 0.15s, transform 0.15s;
+}
+.hub-story:hover,
+.hub-story:focus-visible {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  outline: none;
+}
+.hub-story:focus-visible,
+.hub-card:focus-visible {
+  box-shadow: 0 0 0 2px var(--hub-gold), 0 9px 22px rgba(0, 0, 0, 0.55);
+}
+.hub-story--ready {
+  animation: hub-rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) backwards, hub-glow 2.8s ease-in-out 0.8s infinite;
+  animation-delay: calc(var(--i, 0) * 80ms), 0s;
+}
+.hub-story-warden {
+  position: relative;
+  min-height: 100%;
+  overflow: hidden;
+  background: #07090b;
+  border-right: 1px solid var(--hub-line);
+}
+.hub-story-warden img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+.hub-story-warden span {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-size: 48px;
+}
+.hub-story-warden em {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 18px 6px 6px;
+  background: linear-gradient(transparent, rgba(4, 6, 8, 0.92));
+  font-style: normal;
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hub-gold);
+}
+.hub-story-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: calc(var(--hub-u) * 1.25) calc(var(--hub-u) * 2) calc(var(--hub-u) * 1.5);
+}
+.hub-story-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.hub-story-ready {
+  flex: 0 0 auto;
+  padding: 1px 9px;
+  background: #24331d;
+  border: 1px solid #5b8a49;
+  font-style: normal;
+  font-family: var(--font-head);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #cfeec0;
+}
+.hub-story h3 {
+  margin: 2px 0 4px;
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: var(--fs-2xl);
+  line-height: 1.1;
+  letter-spacing: 0.03em;
+  color: #f6efdc;
+  overflow-wrap: anywhere;
+}
+.hub-story p {
+  margin: 0 0 calc(var(--hub-u) * 0.75);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  line-height: 1.35;
+  color: var(--hub-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.hub-goals {
+  display: grid;
+  gap: calc(var(--hub-u) * 0.75);
+  margin-top: auto;
+}
+.hub-goal {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+}
+.hub-goal-label {
+  min-width: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: #f1ead8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hub-goal-count {
+  font-family: var(--font-head);
+  font-size: var(--fs-sm);
+  color: var(--hub-gold);
+  white-space: nowrap;
+}
+.hub-goal .hub-bar {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+.hub-goal--done .hub-goal-count {
+  color: #9fdc8c;
+}
+.hub-story-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--hub-u);
+}
+.hub-story-btn {
+  min-width: 0;
+}
+.hub-story--done .hub-story-main {
+  justify-content: center;
+}
+
+/* ── Dock: „Weitermachen“ und „Letzter Kampf“ ─────────────────────────────────────────────── */
+.hub-dock {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(var(--hub-u) * 1.5);
+}
+/* Dock-Karten liegen quer: Bild links (fast quadratisch, passt zu den quadratischen Kreaturen- und Aktionsbildern), Text rechts.
+   So bleibt in der Mitte mehr vom Hauptmenü-Bild frei. */
+.hub-card--dock .hub-card-body {
+  flex-direction: row;
+  align-items: stretch;
+  gap: calc(var(--hub-u) * 1.5);
+}
+.hub-card--dock .hub-band {
+  flex: 0 0 40%;
+  min-height: 0;
+  margin-bottom: 0;
+}
+.hub-card--dock .hub-card-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.hub-card--dock .hub-note {
+  align-self: center;
+}
+
+/* ── Karte ────────────────────────────────────────────────────────────────────────────────── */
+.hub-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 2px calc(var(--hub-u) * 1.25) calc(var(--hub-u) * 0.75);
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+  background: var(--hub-card-bg);
+  background-size: auto, 520px 520px;
+  box-shadow: 0 9px 22px rgba(0, 0, 0, 0.55);
+  color: var(--hub-text);
+  cursor: pointer;
+  transition: filter 0.15s, transform 0.15s;
+}
+.hub-card:hover,
+.hub-card:focus-visible {
+  filter: brightness(1.12);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.hub-card-hd {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 34px;
+  padding-bottom: calc(var(--hub-u) * 0.75);
+  margin-bottom: calc(var(--hub-u) * 0.75);
+  border-bottom: 1px solid var(--hub-line);
+}
+.hub-card-hd h3 {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--font-head);
+  font-weight: 400;
+  font-size: var(--fs-md);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.15;
+  color: var(--hub-gold);
+  overflow-wrap: break-word; /* lange Titel (ru, fr) brechen um statt abgeschnitten zu werden */
+}
+.hub-card-hd em {
+  flex: 0 0 auto;
+  font-style: normal;
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  color: #f4ecd8;
+  background: #1b1f25;
+  border: 1px solid #454e58;
+  padding: 2px 9px;
+  white-space: nowrap;
+}
+
+.hub-card-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.hub-ico {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px #000);
+}
+.hub-ico--emoji {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  line-height: 1;
+}
+.hub-row .hub-ico {
+  width: 28px;
+  height: 28px;
+}
+.hub-row .hub-ico--emoji {
+  font-size: 18px;
+}
+
+/* Bildband: Freisteller auf dunkler Vitrine bzw. Szene; wächst mit der Karte, damit gleich hohe Spalten keine Lücken zeigen. */
+.hub-band {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: var(--band-min, clamp(80px, 5.6cqw, 120px));
+  margin-bottom: var(--hub-u);
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 70%, #2d2820 0, #0b0c0e 85%);
+  border: 1px solid #353c43;
+}
+.hub-band > img {
+  position: absolute;
+  display: block;
+  max-width: none;
+}
+.hub-band-fade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 60%, rgba(6, 8, 10, 0.78));
+  box-shadow: inset 0 0 26px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+}
+.hub-band-scene {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.6;
+  filter: brightness(0.8);
+}
+.hub-band--item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 55%, rgba(216, 184, 96, 0.3) 0, rgba(216, 184, 96, 0) 62%);
+}
+.hub-band--item .hub-band-img {
+  inset: 0;
+  margin: auto;
+  height: 84%;
+  width: auto;
+  max-width: 84%;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 8px #000);
+}
+.hub-band--creature .hub-band-img {
+  inset: auto 0 -3% 0;
+  width: 100%;
+  height: 112%;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.85));
+}
+.hub-band--scene .hub-band-img {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+/* Camp-Bilder sind 1536×1536 mit kleinem Gebäude am unteren Rand: auf 200 % Bandhöhe holen, Fußpunkt (88 % der Bildhöhe) unten ausrichten. */
+.hub-band--camp {
+  background: radial-gradient(ellipse at 50% 100%, #3b3427 0, #0c0d0f 72%);
+}
+.hub-band--camp .hub-band-img {
+  top: -135%;
+  left: 50%;
+  height: 260%;
+  width: auto;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.8));
+}
+
+.hub-big {
+  font-family: var(--font-head);
+  font-size: var(--fs-xl);
+  line-height: 1.1;
+  color: #f6efdc;
+  overflow-wrap: anywhere;
+}
+.hub-sub {
+  margin-top: 4px;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  line-height: 1.3;
+  color: var(--hub-muted);
+}
+.hub-sub b {
+  color: var(--hub-text);
+  font-weight: 700;
+}
+.hub-sub--warn {
+  color: #f0b4aa;
+}
+.hub-sub--gold {
+  color: var(--hub-gold);
+}
+.hub-note {
+  margin: 4px 0 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  line-height: 1.35;
+  color: var(--hub-muted);
+}
+.hub-empty {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--hub-u) * 1.25);
+  padding: var(--hub-u);
+  text-align: center;
+  background: radial-gradient(ellipse at 50% 45%, rgba(220, 196, 110, 0.09) 0, rgba(220, 196, 110, 0) 70%);
+}
+.hub-empty img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  opacity: 0.6;
+  filter: grayscale(0.35) drop-shadow(0 2px 3px #000);
+}
+.hub-empty span {
+  font-size: 40px;
+  line-height: 1;
+  opacity: 0.6;
+}
+.hub-empty p {
+  margin: 0;
+  max-width: 28ch;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  line-height: 1.35;
+  color: var(--hub-muted);
+}
+.hub-card--dock .hub-empty {
+  flex-direction: row;
+  justify-content: flex-start;
+  text-align: left;
+  background: none;
+}
+.hub-card--dock .hub-empty p {
+  max-width: none;
+}
+.hub-xp {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 10px;
+  margin-top: 5px;
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  color: var(--hub-muted);
+}
+.hub-more {
+  margin-top: 4px;
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  color: var(--hub-muted);
+}
+
+/* Fuß: links eine Zeile (Zustand/Hinweis/Knopf), rechts die Aktion der Karte */
+.hub-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 30px;
+  margin-top: calc(var(--hub-u) * 0.75);
+  padding-top: calc(var(--hub-u) * 0.75);
+  border-top: 1px solid var(--hub-line);
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  color: var(--hub-muted);
+}
+.hub-foot-left {
+  min-width: 0;
+}
+.hub-cta {
+  flex: 0 0 auto;
+  margin-left: auto;
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hub-gold);
+  white-space: nowrap;
+}
+.hub-cta i {
+  display: inline-block;
+  margin-left: 6px;
+  font-style: normal;
+  font-size: 1.25em;
+  line-height: 0.8;
+  transition: transform 0.15s;
+}
+.hub-card:hover .hub-cta i,
+.hub-card:focus-visible .hub-cta i,
+.hub-story:hover .hub-story-btn {
+  transform: translateX(4px);
+}
+.hub-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--hub-muted);
+}
+.hub-state u {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #6d737a;
+}
+.hub-state--on {
+  color: #bfe7ae;
+}
+.hub-state--on u {
+  background: #78b564;
+  animation: hub-pulse 1.8s ease-out infinite;
+}
+
+.hub-bar {
+  height: 11px;
+  margin-top: 8px;
+  background: #05070a;
+  border: 1px solid #454e57;
+}
+.hub-bar s {
+  display: block;
+  height: 100%;
+  background: linear-gradient(#d8b85a, #8a6a28);
+}
+.hub-bar--green s {
+  background: linear-gradient(#78b564, #3f7432);
+}
+.hub-bar--thin {
+  height: 7px;
+  margin-top: 4px;
+}
+
+/* Zeilen (Tagesaufgaben, Warteschlange, Aufträge) */
+.hub-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 5px 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+}
+.hub-row--icon {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.hub-row--icon:last-of-type {
+  border-bottom: 0;
+}
+.hub-row-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hub-row-meta {
+  flex: 0 0 auto;
+  margin-left: auto;
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  color: var(--hub-muted);
+  white-space: nowrap;
+}
+.hub-row-meta--ok {
+  color: #9fdc8c;
+}
+.hub-row--running .hub-row-name {
+  color: #fff3d2;
+  font-weight: 700;
+}
+.hub-item + .hub-item {
+  margin-top: calc(var(--hub-u) * 0.75);
+}
+.hub-item .hub-row {
+  padding-bottom: 0;
+}
+.hub-order-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hub-order-line .hub-bar {
+  flex: 1 1 auto;
+}
+
+/* Tagesaufgaben: ein Streifen je Aufgabe */
+.hub-pips {
+  display: flex;
+  gap: 5px;
+  margin: 0 0 calc(var(--hub-u) * 0.75);
+}
+.hub-pips u {
+  flex: 1 1 0;
+  height: 8px;
+  background: #05070a;
+  border: 1px solid #454e57;
+}
+.hub-pips u.f {
+  background: linear-gradient(#78b564, #3f7432);
+  border-color: #2f5a26;
+}
+
+.hub-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+.hub-btn {
+  align-self: flex-start;
+}
+.hub-msg {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  color: var(--hub-muted);
+}
+
+/* ── Schmaler Inhalt (1366×768 mit Seitenleiste und Warteschlangen-Spalte): Zwei-Spalten-Raster ──────────────────── */
+@container (max-width: 1079px) {
+  .hub-layer {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "mid mid"
+      "left right";
+    align-items: start;
+  }
+  .hub-mid {
+    grid-area: mid;
+    gap: calc(var(--hub-u) * 1.5);
+  }
+  .hub-col--left {
+    grid-area: left;
+  }
+  .hub-col--right {
+    grid-area: right;
+  }
+  .hub-stage {
+    max-width: none;
+  }
+  /* Kopf kompakt nebeneinander: Charakter links, Segen/Begleiter rechts */
+  .hub-top {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: calc(var(--hub-u) * 2);
+    padding-right: calc(var(--hub-u) * 1.5);
+    background: linear-gradient(90deg, rgba(4, 6, 8, 0.72), rgba(4, 6, 8, 0.35) 70%, rgba(4, 6, 8, 0));
+  }
+  .hub-hero {
+    background: none;
+    padding: var(--hub-u);
+  }
+  .hub-hero h2 {
+    font-size: var(--fs-2xl);
+  }
+  .hub-world {
+    flex-direction: column;
+    align-items: flex-end;
+    flex-wrap: nowrap;
+  }
+  .hub-col .hub-band {
+    --band-min: 84px;
+  }
+}
+
+/* Niedrige Fenster: Bildbänder schrumpfen, damit mehr Karten ohne Scrollen sichtbar bleiben. */
+@media (max-height: 860px) {
+  .hub-col .hub-band {
+    --band-min: 72px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-hero,
+  .hub-world,
+  .hub-story,
+  .hub-card,
+  .hub-story--ready {
+    animation: none;
+  }
+  .hub-state--on u {
+    animation: none;
+  }
+  .hub-card,
+  .hub-story,
+  .hub-portrait,
+  .hub-cta i {
+    transition: none;
+  }
+  .hub-card:hover,
+  .hub-card:focus-visible,
+  .hub-story:hover,
+  .hub-story:focus-visible,
+  .hub-portrait:hover,
+  .hub-portrait:focus-visible,
+  .hub-card:hover .hub-cta i,
+  .hub-card:focus-visible .hub-cta i,
+  .hub-story:hover .hub-story-btn {
+    transform: none;
+  }
+}
+
+/* ─── claude:2026-10-31T14:58:54+01:00 — 1.4.2 Narben-Rückgabe (SAVE 102): die Altar-Karte glüht, bis der Hinweis am Altar bestätigt ist,
+   und trägt das Glut-Band samt Narben-Guthaben (HubPage `renderAltar`). Muster `.hub-story--ready`, Glut statt Gold. ─── */
+@keyframes hub-ember {
+  0%, 100% { box-shadow: 0 9px 22px rgba(0, 0, 0, 0.55), 0 0 6px rgba(226, 112, 38, 0.25); }
+  50% { box-shadow: 0 9px 22px rgba(0, 0, 0, 0.55), 0 0 24px rgba(236, 124, 44, 0.6); }
+}
+.hub-card.hub-card--respec {
+  animation: hub-rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) backwards, hub-ember 2.2s ease-in-out 0.8s infinite;
+  animation-delay: calc(var(--i, 0) * 80ms), 0s;
+}
+.hub-card.hub-card--respec.is-still {
+  animation: hub-rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  box-shadow: 0 9px 22px rgba(0, 0, 0, 0.55), 0 0 18px rgba(236, 124, 44, 0.5);
+}
+.hub-respec {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: calc(var(--hub-u) * 0.75);
+  padding: 5px 10px;
+  border: 3px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/iron-frame-strip.webp") 32 / 6px / 0 round;
+  background:
+    radial-gradient(ellipse at 50% 135%, rgba(226, 112, 38, 0.55), rgba(226, 112, 38, 0) 72%),
+    linear-gradient(rgba(10, 8, 7, 0.4), rgba(10, 8, 7, 0.65)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px repeat;
+  text-align: center;
+}
+.hub-respec-band {
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #ffdcaa;
+  text-shadow: 0 1px 2px #000, 0 0 6px rgba(240, 140, 60, 0.6);
+}
+.hub-respec-line {
+  font-size: var(--fs-sm);
+  color: var(--hub-text);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hub-card.hub-card--respec {
+    animation: none;
+    box-shadow: 0 9px 22px rgba(0, 0, 0, 0.55), 0 0 18px rgba(236, 124, 44, 0.5);
+  }
+}
+
+/* claude:2026-11-01T11:49:52+01:00 — Chef 01.11.: Tagesaufgaben zeigen alle offenen Aufgaben in einem Scrollbereich, der den freien
+   Platz der Karte füllt (flex-basis 0, damit die Karte nicht mit der Liste wächst, sondern die Liste scrollt). */
+.hub-card--daily .hub-card-body {
+  min-height: 0;
+}
+.hub-scroll {
+  flex: 1 1 0;
+  min-height: calc(var(--hub-u) * 9);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: #7a6736 rgba(0, 0, 0, 0.35);
+}

@@ -26,7 +26,8 @@ for (const [path, url] of Object.entries(SIDEBAR_IMAGES)) {
  *   thematisch passend (Siedlung) und im Citadel-Stil, statt eines Emoji-Bruchs in der Sidebar.
  *   Legt der Chef `sidebaricon_newhaven.webp` ab, gewinnt es automatisch (Direkt-Treffer zuerst).
  */
-const ALIAS: Record<string, string> = { "skills-overview": "overall", newhaven: "city" };
+// claude:2026-10-30T20:31:00+01:00 — hub → city: Hauptmenü-Eintrag nutzt das Stadt-Symbol, bis ein eigenes `sidebaricon_hub` liegt.
+const ALIAS: Record<string, string> = { "skills-overview": "overall", newhaven: "city", hub: "city" };
 
 /** Bild-URL für eine Nav-Seiten-ID (oder null, falls keins hinterlegt). Direkter Dateiname zuerst,
  *  danach der Alias — so übernimmt ein nachgeliefertes Icon ohne Code-Änderung. */

@@ -1,13 +1,14 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react"; // claude:2026-10-31T14:58:54+01:00 — + Fragment (Narben-Band)
 import { createPortal } from "react-dom";
 import { getSidebarPages } from "../navigation";
 import { SidebarEstates } from "./SidebarEstates";
 import { prestigeNavVisible } from "../util/prestigeNav";
+import { PrestigeRespecGlow, PrestigeRespecRibbon } from "./PrestigeRespecRibbon"; // claude:2026-10-31T14:58:54+01:00 — 1.4.2 Narben-Rückgabe
 import { getSidebarIcon } from "../sidebarIcons";
 import { getSkillIcon } from "../skillIcons";
 import { useGameControl, useGameSelector, useGameState, tupleEquals } from "../game/GameContext";
 import { useI18n } from "../i18n";
-import { computeStats, levelFromXp, xpForLevel, combatLevel } from "@hearthforge/engine";
+import { computeStats, levelFromXp, xpForLevel, combatLevel, prestigeRespecPending, prestigeUnlock } from "@hearthforge/engine"; // claude:2026-10-31T14:58:54+01:00 — + prestigeRespecPending
 import { activeStanceMods, COMBAT_SKILL_IDS } from "@hearthforge/shared";
 import { content } from "@hearthforge/content";
 import { BlessingPanel } from "./BlessingPanel";
@@ -46,7 +47,12 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
   // claude:2026-10-18T14:00:00+02:00 — Scherbenaltar-Eintrag erst sichtbar, wenn das Ziel erreichbar ist
   // (Kapitel 21 eingelöst oder schon ein Aufstieg); Frühspieler sehen ihn nicht.
   const showPrestige = useGameSelector(prestigeNavVisible);
-  const pages = getSidebarPages().filter((p) => p.id !== "prestige" || showPrestige);
+  // claude:2026-10-31T16:34:28+01:00 — Ideen-Welle 1.4.2: Scherbenaltar vor der Freischaltung grau und gesperrt statt unsichtbar (Tooltip nennt die Voraussetzung).
+  const pages = getSidebarPages();
+  const altarSkills99 = useGameSelector((s) => prestigeUnlock(s, content).skills99);
+  const altarRequired = useGameSelector((s) => prestigeUnlock(s, content).required);
+  // claude:2026-10-31T14:58:54+01:00 — 1.4.2 Narben-Rückgabe: Band und Glut am Altar-Knopf, bis „Verstanden“ (Boolean-Selektor, kein Re-Render je Tick).
+  const respecPending = useGameSelector(prestigeRespecPending);
 
   // Local collapse state for combat sub-skills
   const [combatOpen, setCombatOpen] = useState(false);
@@ -378,19 +384,26 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
           // All other sidebar pages: standard skill button
           const skillLevel = page.skillId !== undefined ? skillLevelGate[1 + pageIdx] ?? null : null;
 
+          // claude:2026-10-31T14:58:54+01:00 — 1.4.2 Narben-Rückgabe: über dem Scherbenaltar-Knopf das Glut-Band, im Knopf der Glut-Schein.
+          const altarLocked = page.id === "prestige" && !showPrestige;
+          const lockedText = altarLocked ? t("hub.altar.locked").replace("{a}", String(altarSkills99)).replace("{b}", String(altarRequired)) : "";
+          const respecHere = page.id === "prestige" && respecPending && !altarLocked;
           return (
+            <Fragment key={page.id}>
+            {respecHere && <PrestigeRespecRibbon onNavigate={onNavigate} />}
             <button
-              key={page.id}
               /* codex:2026-09-10T10:23:09+02:00 — Level-less destinations reclaim their
                  entire name slot; accessible labels retain levels/activity in compact mode. */
-              className={`sb-skill-btn ds-button${skillLevel !== null ? " sb-skill-btn--has-level" : ""}${isActive ? " active" : ""}${isRunning ? " sb-skill-btn--running" : ""}`}
-              onClick={() => onNavigate(page.id)}
+              className={`sb-skill-btn ds-button${skillLevel !== null ? " sb-skill-btn--has-level" : ""}${isActive ? " active" : ""}${isRunning ? " sb-skill-btn--running" : ""}${respecHere ? " sb-skill-btn--respec" : ""}${altarLocked ? " sb-skill-btn--locked" : ""}`}
+              onClick={altarLocked ? undefined : () => onNavigate(page.id)}
+              aria-disabled={altarLocked || undefined}
               aria-current={isActive ? "page" : undefined}
-              aria-label={`${t(page.label)}${skillLevel !== null ? `. ${t("sidebar.level")} ${skillLevel}/99` : ""}${isRunning ? `. ${t("sidebar.activityRunning").replace("{skill}", t(page.label))}` : ""}`}
+              aria-label={`${t(page.label)}${skillLevel !== null ? `. ${t("sidebar.level")} ${skillLevel}/99` : ""}${isRunning ? `. ${t("sidebar.activityRunning").replace("{skill}", t(page.label))}` : ""}${respecHere ? `. ${t("prestige.respec.band")}` : ""}${altarLocked ? `. ${lockedText}` : ""}`}
               data-guide-id={`sidebar.${page.id}`}
               /* codex:2026-09-10T10:23:09+02:00 — Levels stay available on hover below 200px. */
-              title={`${t(page.label)}${skillLevel !== null ? ` · ${t("sidebar.level")} ${skillLevel}/99` : ""}`}
+              title={`${t(page.label)}${skillLevel !== null ? ` · ${t("sidebar.level")} ${skillLevel}/99` : ""}${respecHere ? ` · ${t("prestige.respec.band")}` : ""}${altarLocked ? ` · ${lockedText}` : ""}`}
             >
+              {respecHere && <PrestigeRespecGlow />}
               {isRunning && <RunningPip label={t("sidebar.activityRunning").replace("{skill}", t(page.label))} />}
 
               {/* Rundes, gerahmtes Skill-Icon */}
@@ -411,6 +424,7 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
                 </span>
               )}
             </button>
+            </Fragment>
           );
         })}
       </nav>

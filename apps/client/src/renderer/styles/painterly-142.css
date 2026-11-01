@@ -1,0 +1,258 @@
+/*
+ * Painterly-Look 1.4.2 — fest eingebaute Asset-Werkstatt-Gestaltung des Chefs (01.11.2026).
+ *
+ * claude:2026-11-01T12:25:08+01:00 — Chef „Erst Look einbauen, dann deployen“: Die 81 Werkstatt-Einträge (Testprofil, ausgelesen
+ * 01.11. 12:1x) als echtes CSS. Gleiche Gestaltung ist zu gemeinsamen Regeln zusammengefasst; Werkstatt-Einzelelemente mit
+ * Positionspfad sind auf ihre Klasse verallgemeinert (z. B. alle Hauptmenü-Karten, alle Optionen-Abschnitte). Werte 1:1 aus
+ * der Werkstatt (Slice / Breite / Outset), daher wie dort mit !important.
+ *
+ * Bewusst NICHT übernommen:
+ *  - feste Pixelgröße des Offline-Fensters (1500×1168 aus einem frühen Versuch): bräche bei 1366×768.
+ *  - der schwerere Rahmen nur an der ersten Slayer-Ladenkarte: alle Karten bekommen den Kartenrahmen.
+ * Titelbild-Porträt (Chef 01.11.): Rahmen als eigene Ebene ÜBER dem Bild (::before), Wald füllt die ganze Fläche, Vignette bleibt.
+ *
+ * Gilt nur im Oberflächen-Stil Reforged; Seitenleisten-/Kopfleisten-Knöpfe nur im Knopf-Stil „Standard“ (intern wood).
+ * Assets: Rahmen/Hintergründe aus assets/ui/werkstatt/** werden über diese Datei Teil des Spiels (Vite bündelt die url()).
+ */
+
+:root {
+  --p142-frame-dark: url("../assets/ui/werkstatt/rahmen/frame_tooltip_dark.webp");
+  --p142-frame-card: url("../assets/ui/gravewood/frames/frame-card.webp");
+  --p142-frame-iron: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.png");
+  --p142-wood: url("../assets/ui/gravewood/textures/texture-gravewood.webp");
+  --p142-moss: url("../assets/ui/gravewood/textures/texture-moss-nav.webp");
+  --p142-basalt: url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  --p142-felt: url("../assets/ui/werkstatt/hintergruende/bg_dark_felt.webp");
+  --p142-granite: url("../assets/ui/werkstatt/hintergruende/bg_dark_granite.webp");
+  --p142-damask: url("../assets/ui/werkstatt/hintergruende/bg_damask_velvet.webp");
+}
+
+/* ── Hauptmenü (Hub): alle Karten + Chronik-Karte in Holz mit dunklem Rahmen ─────────────────────────── */
+:root[data-ui-style="reforged"] #root :is(.hub-card, .hub-story) {
+  background-image: var(--p142-wood) !important;
+  background-size: 424px auto !important;
+  background-repeat: repeat !important;
+  background-position: 28% 67% !important;
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-dark) !important;
+  border-image-slice: 200 !important;
+  border-image-width: 38px !important;
+  border-image-outset: 13px !important;
+  border-image-repeat: stretch !important;
+}
+:root[data-ui-style="reforged"] #root .hub-story-btn {
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-dark) !important;
+  border-image-slice: 176 176 192 176 !important;
+  border-image-width: 40px !important;
+  border-image-outset: 15px !important;
+  border-image-repeat: stretch !important;
+}
+
+/* ── Titelbildschirm ────────────────────────────────────────────────────────────────────────────── */
+:root[data-ui-style="reforged"] #root :is(.save-dossier, .menu-nav-btn) {
+  background-image: var(--p142-felt) !important;
+  background-size: auto !important;
+  background-repeat: repeat !important;
+  background-position: 0% 0% !important;
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-dark) !important;
+  border-image-slice: 174 !important;
+  border-image-width: 35px !important;
+  border-image-outset: 13px !important;
+  border-image-repeat: stretch !important;
+}
+:root[data-ui-style="reforged"] #root .continue-card {
+  background-image: var(--p142-moss) !important;
+  background-size: auto !important;
+  background-repeat: repeat !important;
+  background-position: 0% 0% !important;
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-dark) !important;
+  border-image-slice: 149 !important;
+  border-image-width: 25px !important;
+  border-image-outset: 10px !important;
+  border-image-repeat: stretch !important;
+}
+/* Porträt (Chef 01.11.): Rahmen sitzt exakt auf der Kante, Wald, Charakter und Vignette exakt in der Innenfläche.
+   claude:2026-11-01T12:37:08+01:00 — frame_tooltip_dark ist 1024² mit durchsichtigem Außenrand: deckend 44–95 px (links/rechts),
+   47–103 (oben), 62–115 (unten), Eck-Ornament bis 104. Maßstab wie in der Werkstatt (43/152 ≈ 0,283): Slice an der deckenden
+   Innenkante, Outset schiebt den durchsichtigen Außenrand aus dem Element, border-width = deckende Rahmenbreite. Damit endet die
+   Innenfläche (padding-box) genau an der Rahmen-Innenkante: overflow:hidden schneidet den Charakter dort ab, der Wald
+   (background-clip/-origin padding-box) und die Vignette (::after inset 0) liegen genau darin. */
+:root[data-ui-style="reforged"] #root .save-portrait {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-width: 16px 15px 14px 15px !important;
+  border-image-source: var(--p142-frame-dark) !important;
+  border-image-slice: 106 100 118 100 !important;
+  border-image-width: 30px 28px 33px 28px !important;
+  border-image-outset: 13px 12px 18px 12px !important;
+  border-image-repeat: stretch !important;
+  background-origin: padding-box !important;
+  background-clip: padding-box !important;
+}
+
+/* ── Offline-Fenster („Während du weg warst“) ───────────────────────────────────────────────────── */
+:root[data-ui-style="reforged"] #root .offline-stage {
+  background-image: var(--p142-moss) !important;
+  background-size: auto !important;
+  background-repeat: repeat !important;
+  background-position: 0% 0% !important;
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-dark) !important;
+  border-image-slice: 197 !important;
+  border-image-width: 53px !important;
+  border-image-outset: 18px !important;
+  border-image-repeat: stretch !important;
+}
+:root[data-ui-style="reforged"] #root :is(.ofs-summary-bar, .ofs-report-column, .ofs-warden, .ofs-collect) {
+  background-image: var(--p142-wood) !important;
+  background-size: 496px auto !important;
+  background-repeat: repeat !important;
+  background-position: 16% 92% !important;
+}
+:root[data-ui-style="reforged"] #root :is(.ofs-summary-bar, .ofs-report-column, .ofs-event-ribbon, .ofs-collect) {
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-dark) !important;
+  border-image-slice: 176 176 192 176 !important;
+  border-image-width: 34px !important;
+  border-image-outset: 12px !important;
+  border-image-repeat: stretch !important;
+}
+:root[data-ui-style="reforged"] #root .ofs-collect {
+  border-image-width: 35px !important;
+  border-image-outset: 10px !important;
+}
+:root[data-ui-style="reforged"] #root .ofs-event-ribbon {
+  background-image: var(--p142-damask) !important;
+  background-size: auto !important;
+  background-repeat: repeat !important;
+  background-position: 0% 0% !important;
+}
+:root[data-ui-style="reforged"] #root .ofs-warden {
+  z-index: 6;
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-dark) !important;
+  border-image-slice: 200 !important;
+  border-image-width: 46px !important;
+  border-image-outset: 7px !important;
+  border-image-repeat: stretch !important;
+}
+:root[data-ui-style="reforged"] #root .ofs-skill-row {
+  background-image: var(--p142-granite) !important;
+  background-size: auto !important;
+  background-repeat: repeat !important;
+  background-position: 0% 0% !important;
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-card) !important;
+  border-image-slice: 115 !important;
+  border-image-width: 32px !important;
+  border-image-outset: 0px !important;
+  border-image-repeat: stretch !important;
+}
+:root[data-ui-style="reforged"] #root .item-cell.rarity-common.ofs-loot-item {
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-card) !important;
+  border-image-slice: 182 !important;
+  border-image-width: 41px !important;
+  border-image-outset: 3px !important;
+  border-image-repeat: stretch !important;
+}
+
+/* ── Optionen: Kopf, Fehlermelde-Banner und alle Abschnitte im Eisenrahmen ─────────────────────────── */
+:root[data-ui-style="reforged"] #root :is(.opz-header, .bugreport-entry-banner, .opz-section) {
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-iron) !important;
+  border-image-slice: 48 !important;
+  border-image-width: 22px !important;
+  border-image-outset: 0 !important;
+  border-image-repeat: stretch !important;
+}
+
+/* ── Seiteninhalt aller Seiten: Moos-Textur ─────────────────────────────────────────────────────── */
+:root[data-ui-style="reforged"] #root .content-body {
+  background-image: var(--p142-moss) !important;
+  background-size: 292px auto !important;
+  background-repeat: repeat !important;
+  background-position: 0% 0% !important;
+}
+
+/* ── Seitenleiste und Kopfleiste (Knopf-Stil „Standard“, intern wood) ─────────────────────────────── */
+:root[data-ui-style="reforged"]:is([data-nav-skin="wood"], :not([data-nav-skin])) #root .sb-skill-btn {
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-dark) !important;
+  border-image-slice: 161 !important;
+  border-image-width: 22px !important;
+  border-image-outset: 9px !important;
+  border-image-repeat: stretch !important;
+}
+:root[data-ui-style="reforged"]:is([data-nav-skin="wood"], :not([data-nav-skin])) #root .sb-skill-level.sb-skill-mastered {
+  margin-right: 4px !important;
+  padding-right: 0px !important;
+}
+:root[data-ui-style="reforged"]:is([data-nav-skin="wood"], :not([data-nav-skin])) #root .topbar-item {
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-dark) !important;
+  border-image-slice: 176 176 192 176 !important;
+  border-image-width: 19px !important;
+  border-image-outset: 6px !important;
+  border-image-repeat: stretch !important;
+}
+
+/* ── Slayer ─────────────────────────────────────────────────────────────────────────────────────── */
+:root[data-ui-style="reforged"] #root .slayer-shop-card {
+  background-image: var(--p142-wood) !important;
+  background-size: 941px auto !important;
+  background-repeat: repeat !important;
+  background-position: 0% 0% !important;
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-card) !important;
+  border-image-slice: 48 !important;
+  border-image-width: 18px !important;
+  border-image-outset: 4px !important;
+  border-image-repeat: stretch !important;
+}
+:root[data-ui-style="reforged"] #root :is(.slayer-shop-panel:not(.prestige-panel), .slayer-task-panel) {
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-dark) !important;
+  border-image-slice: 184 !important;
+  border-image-width: 43px !important;
+  border-image-outset: 17px !important;
+  border-image-repeat: stretch !important;
+}
+:root[data-ui-style="reforged"] #root .slayer-shop-panel:not(.prestige-panel) {
+  margin-bottom: 0px !important;
+}
+:root[data-ui-style="reforged"] #root .slayer-shop-panel:not(.prestige-panel) .slayer-lower-tab {
+  background-image: var(--p142-basalt) !important;
+  background-size: auto !important;
+  background-repeat: repeat !important;
+  background-position: 0% 0% !important;
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-dark) !important;
+  border-image-slice: 186 !important;
+  border-image-width: 33px !important;
+  border-image-outset: 10px !important;
+  border-image-repeat: stretch !important;
+}
+
+/* ── Scherbenaltar: Szene und Panel ─────────────────────────────────────────────────────────────── */
+:root[data-ui-style="reforged"] #root :is(.prestige-panel, .prestige-scene) {
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-dark) !important;
+  border-image-slice: 194 !important;
+  border-image-width: 40px !important;
+  border-image-outset: 15px !important;
+  border-image-repeat: stretch !important;
+}
+
+/* ── Aufgaben: Chronik-Bühne und Reiter ─────────────────────────────────────────────────────────── */
+:root[data-ui-style="reforged"] #root :is(.chronicle-stage, .quests-tab-btn) {
+  border-style: solid !important;
+  border-image-source: var(--p142-frame-dark) !important;
+  border-image-slice: 200 !important;
+  border-image-width: 46px !important;
+  border-image-outset: 7px !important;
+  border-image-repeat: stretch !important;
+}

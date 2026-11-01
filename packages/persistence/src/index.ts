@@ -14,8 +14,12 @@ import type {
   MailMessage,
   OfflineSummary,
   PetId,
+  PrestigePaidLedger, // claude:2026-10-30T18:47:00+01:00 — SAVE 99
+  PrestigeRespec142, // claude:2026-10-31T14:58:54+01:00 — SAVE 102 (Narben-Rückgabe 1.4.2)
   PrestigeRecord,
+  PrestigeRunBaseline,
   PrestigeRunTally,
+  PrestigeState,
   QuiverLoad,
   SkillEventId,
   SkillEventLogEntry,
@@ -26,6 +30,7 @@ import type {
   QueueSkipReason,
   QueuedAction,
   SaveSummary,
+  TokenShopLedger, // claude:2026-10-30T22:28:00+01:00 — SAVE 100
 } from "@hearthforge/shared";
 import { defaultRaidState, makeRaidQueueEntry, RAID_WEEKLY_MODIFIERS } from "@hearthforge/shared"; // claude:2026-10-25T04:40:00+02:00 — Raid (SAVE 93)
 import { QUIVER_CAPACITY } from "@hearthforge/shared"; // claude:2026-10-24T15:21:04+02:00 — Köcher-Deckel (QA-Runde 2 Fernkampf B2)
@@ -67,6 +72,16 @@ import {
   MAX_BANK_SLOTS_PURCHASED,
   syncBankOrder,
   MAX_FARM_PLOTS,
+  FARM_PLOT_SLOTS, // claude:2026-10-30T18:47:00+01:00 — SAVE 99 (Saatkammer)
+  HUNT_TRAP_SLOTS_TOTAL, // claude:2026-10-30T18:47:00+01:00 — SAVE 99 (Fallensteller)
+  PRESTIGE_MAX_OFFLINE_BONUS_MS, // claude:2026-10-30T18:47:00+01:00 — SAVE 99 (Lange Nacht)
+  PRESTIGE_AP_STEP,
+  RAID_DIFFICULTIES,
+  defaultPrestigePaidLedger,
+  emptyPrestigeRespecRetro, // claude:2026-10-31T14:58:54+01:00 — SAVE 102
+  PRESTIGE_RESPEC_RETRO_KEYS, // claude:2026-10-31T14:58:54+01:00 — SAVE 102
+  defaultTokenShopLedger, // claude:2026-10-30T22:28:00+01:00 — SAVE 100 (Kaufbuch des Belohnungsladens)
+  calendarWeekIndex, // claude:2026-10-30T22:28:00+01:00 — SAVE 100
   MAX_OFFLINE_MS,
   CAMP_MAX_OFFLINE_BONUS_MS,
   effectiveMaxOfflineMs,
@@ -77,13 +92,13 @@ import {
   THIEVING_RISKS,
   TICK_MS,
   CAMP_BUILD_QUEUE_MAX,
+  emptyQueueTemplates, // claude:2026-10-31T16:08:21+01:00 — Warteschlangen-Vorlagen (SAVE 103)
   campRepairPositions,
   createPetAbilityRuntime,
   defaultAutoPotion,
   defaultCampState,
   defaultTavernState,
   defaultHuntTraps,
-  HUNT_TRAP_SLOTS,
   emptyHuntTrap,
   LEATHERWORKING_SKILL_ID,
   TAILORING_SKILL_ID,
@@ -104,8 +119,12 @@ import {
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot, HuntCatch, HuntTrap } from "@hearthforge/shared";
 import type { HuntCatchTally } from "@hearthforge/engine";
-import { legacyVariantCellLayout, syncVariantCells } from "@hearthforge/engine"; // claude:2026-10-25T18:02:00+01:00 — feste Fächer der Variantenzellen (SAVE 98)
+import { SLAYER_RETRY_RECOVERY_MS, legacyVariantCellLayout, syncVariantCells } from "@hearthforge/engine"; // claude:2026-10-31T14:21:06+01:00 — + Slayer-Erholung // claude:2026-10-25T18:02:00+01:00 — feste Fächer der Variantenzellen (SAVE 98)
 import type { InventoryState } from "@hearthforge/shared"; // claude:2026-10-25T18:02:00+01:00
+import { cleanPinnedRecipes } from "@hearthforge/engine"; // claude:2026-10-31T11:46:28+01:00 — Rezepte anpinnen (SAVE 101): Lade-Härtung der Pins
+import { cleanQueueTemplates } from "@hearthforge/engine"; // claude:2026-10-31T16:08:21+01:00 — Warteschlangen-Vorlagen (SAVE 103): Lade-Härtung
+import { applyPrestigeRespec142 } from "@hearthforge/engine"; // claude:2026-10-31T14:58:54+01:00 — SAVE 102: Narben-Rückgabe und Nachzahlung 1.4.2
+import { createOfflineIdleTally } from "@hearthforge/engine"; // claude:2026-10-31T16:08:21+01:00 — Offline-Bericht: Leerlauf (1.4.2, transient)
 import { actionLevelMet, MAX_STACK, deriveEventRngSeed, isQuiverItem, offhandFitsMain, storagePredicate, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isHealPotion, resolveLeftRaidFight, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotOwned, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
 
 /**
@@ -113,8 +132,9 @@ import { actionLevelMet, MAX_STACK, deriveEventRngSeed, isQuiverItem, offhandFit
  * für die Timer-Felder in `sanitizeState`. Bewusst das Katalog-Maximum und NICHT das effektive
  * Fenster des konkreten Spielstands (s. Kommentar an der Klemme). Die echte Fenster-Größe beim
  * Laden liefert `effectiveMaxOfflineMs(state, content)` in `deserialize`.
+ * claude:2026-10-30T18:47:00+01:00 — SAVE 99 (1.4.2, Spec § 5): plus Narbenbuch „Lange Nacht“ (+8 h) = 19 h.
  */
-const MAX_POSSIBLE_OFFLINE_MS = MAX_OFFLINE_MS + CAMP_MAX_OFFLINE_BONUS_MS;
+export const MAX_POSSIBLE_OFFLINE_MS = MAX_OFFLINE_MS + CAMP_MAX_OFFLINE_BONUS_MS + PRESTIGE_MAX_OFFLINE_BONUS_MS;
 
 // ───────────────────────────────────────────────────────────────────────────
 // Sanitize: defensiver Validierungs-/Clamp-Pass beim Laden (Security-Härtung r1).
@@ -1258,6 +1278,25 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
       } else if (clean.history.length > 0) {
         clean.runStart.activePlayMs = clean.history[clean.history.length - 1]!.activePlayMs;
       }
+      // claude:2026-10-30T18:47:00+01:00 — SAVE 99 (Spec § 5): Raid-Laufanker je Schwierigkeit, ganzzahlig ≥ 0 und höchstens der aktuelle Stand
+      // (`sanitizeRaid` lief schon). Fehlt er oder ein Wert, gilt der aktuelle Stand (wie die Migration: gezählt wird ab jetzt).
+      const rawRaid = (rs && typeof rs === "object" && !Array.isArray(rs) ? (rs as Record<string, unknown>).raidClears : undefined) as unknown;
+      for (const d of RAID_DIFFICULTIES) {
+        const nowClears = finiteIntNonNeg(state.raid?.clears?.[d], Number.MAX_SAFE_INTEGER, 0);
+        const v = rawRaid && typeof rawRaid === "object" ? (rawRaid as Record<string, unknown>)[d] : undefined;
+        clean.runStart.raidClears[d] = typeof v === "number" ? Math.min(nowClears, finiteIntNonNeg(v, Number.MAX_SAFE_INTEGER, 0)) : nowClears;
+      }
+      // claude:2026-10-30T18:47:00+01:00 — SAVE 99: Hauptbuch der einmaligen Narbenquellen. Nur bekannte Ids (Begleiter, Basis-Monster ohne
+      // `dg_`-Varianten, Raid-Schwierigkeiten), ohne Doppel, Reihenfolge erhalten; `ap` ganzzahlig ≥ 0 auf volle
+      // PRESTIGE_AP_STEP abgerundet. Fehlt es (jeder Stand < 99), ist es leer (E2). Idempotent.
+      clean.paid = sanitizePrestigePaid(r.paid, content);
+      // claude:2026-10-31T14:58:54+01:00 — SAVE 102: Rückgabe-Beleg (Zahlen ganzzahlig ≥ 0, `total` = Summe, `acknowledged` strikt boolean);
+      // fehlt/kaputt ⇒ null. Ob die Rückgabe noch läuft, entscheidet `deserialize` an der Original-Version, nicht dieses Feld.
+      clean.respec142 = sanitizePrestigeRespec142(r.respec142);
+    } else {
+      // claude:2026-10-30T18:47:00+01:00 — SAVE 99: ganz fehlender/kaputter Prestige-Zustand ⇒ Raid-Laufanker = aktueller Stand
+      // (kein Narben-Geschenk für alte Abschlüsse; die gibt einmalig `raidFirst`).
+      for (const d of RAID_DIFFICULTIES) clean.runStart.raidClears[d] = finiteIntNonNeg(state.raid?.clears?.[d], Number.MAX_SAFE_INTEGER, 0);
     }
     state.prestige = clean;
   }
@@ -1355,7 +1394,7 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
 
   // — Timer/Akkumulator: endlich & plausibel (riesiger accumulatorMs = Endlos-Tick-Schleife) —
   //   Klemme seit SAVE 77 (Das Lager/Wachturm, Task #359): auf das MAXIMAL MÖGLICHE Offline-Fenster
-  //   (8 h + 3 h Wachturm-Vollausbau), NICHT auf das des konkreten Spielstands. Warum das Maximum:
+  //   (8 h + 3 h Wachturm-Vollausbau, claude:2026-10-30T18:47:00+01:00 seit SAVE 99 + 8 h Lange Nacht), NICHT auf das des konkreten Spielstands. Warum das Maximum:
   //   die Klemme ist eine Korruptions-Schranke, keine Balance-Regel — würde sie mit dem eigenen
   //   Baufortschritt schrumpfen, verlöre ein Spieler beim Abriss/bei einem Content-Rollback still
   //   legitime Timer-Werte. Die ECHTE Fenster-Größe entscheidet `effectiveMaxOfflineMs` unten in
@@ -1377,7 +1416,7 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   const crops = content.crops ?? {};
   const plots: FarmPlot[] = Array.isArray(state.farmPlots) ? state.farmPlots : [];
   const sanitizedPlots: FarmPlot[] = [];
-  for (let i = 0; i < MAX_FARM_PLOTS; i++) {
+  for (let i = 0; i < FARM_PLOT_SLOTS; i++) { // claude:2026-10-30T18:47:00+01:00 — SAVE 99: fixe Länge 12 (Saatkammer)
     const raw = plots[i];
     const base = emptyFarmPlot();
     if (!raw || typeof raw !== "object") {
@@ -1439,7 +1478,8 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   // ein save-editierter Riesenwert würde den Kampf sonst dauerhaft einfrieren (stopCombat/startCombat
   // übernehmen den Rest bewusst). ≤0/ungültig ⇒ Feld weg (Engine-Konvention „abgelaufen → undefined").
   if (cb.cooldownRemainingMs !== undefined) {
-    const cd = clampFinite(cb.cooldownRemainingMs, 0, KILL_COOLDOWN_MS, 0);
+    // claude:2026-10-31T14:21:06+01:00 — 1.4.2: die Slayer-Erholung (30 s) nutzt dieselbe Kampfpause; Neuladen darf sie nicht auf 2 s kürzen.
+    const cd = clampFinite(cb.cooldownRemainingMs, 0, Math.max(KILL_COOLDOWN_MS, SLAYER_RETRY_RECOVERY_MS), 0);
     cb.cooldownRemainingMs = cd > 0 ? cd : undefined;
   }
   // — Paragonturm (SAVE_VERSION 61, dungeon-rework-spec §7): STRIKT härten. —
@@ -1671,11 +1711,24 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   const st = state.stats;
   st.kills = finiteNonNeg(st.kills, 0);
   st.deaths = finiteNonNeg(st.deaths, 0);
+  // claude:2026-10-31T09:29:00+01:00 — Knappe Siege (SAVE 100, „Heute nicht“): Ganzzahl ≥ 0; fehlt/kaputt/negativ ⇒ 0, Bruch abgerundet.
+  st.closeWins = finiteIntNonNeg(st.closeWins, Number.MAX_SAFE_INTEGER, 0);
   st.itemsGathered = finiteNonNeg(st.itemsGathered, 0);
   st.itemsCrafted = finiteNonNeg(st.itemsCrafted, 0);
   st.goldSpent = finiteNonNeg(st.goldSpent, 0);
   st.dailyStreak = finiteNonNeg(st.dailyStreak, 0);
   st.lastDailyDay = finiteNonNeg(st.lastDailyDay, 0);
+  // — Kaufbuch des Belohnungsladens (SAVE_VERSION 100, 1.4.2 L2): s. sanitizeTokenShopLedger. Läuft nach `lastDailyDay`, weil Tag und
+  //   Woche nie hinter den zuletzt gesehenen Daily-Tag hinausgehen dürfen. claude:2026-10-30T22:28:00+01:00 —
+  state.tokenShopLedger = sanitizeTokenShopLedger(state.tokenShopLedger, content, st.lastDailyDay);
+  // — Angepinnte Rezepte (SAVE_VERSION 101, 1.4.2): nur Strings, nur bekannte Aktionen mit Zutaten, ohne Doppel (der erste gewinnt),
+  //   höchstens 10; fehlt/kaputt ⇒ leer. Reihenfolge bleibt (Pin-Reihenfolge = Fenster-Reihenfolge). Idempotent.
+  //   claude:2026-10-31T11:46:28+01:00 —
+  state.pinnedRecipes = cleanPinnedRecipes((state as Partial<GameState>).pinnedRecipes, content);
+  // — Warteschlangen-Vorlagen (SAVE_VERSION 103, 1.4.2): genau 3 Plätze; je Platz null oder Name (String ohne Steuerzeichen, getrimmt,
+  //   ≤ 24 Zeichen) + Einträge nur mit bekannten Aktions-/Monster-/Dungeon-/Raid-Ids (Muster `actionQueue`), Ziel endliche positive
+  //   Ganzzahl oder null, höchstens 30. Fehlt/kaputt ⇒ alle leer. Idempotent. claude:2026-10-31T16:08:21+01:00 —
+  state.queueTemplates = cleanQueueTemplates((state as Partial<GameState>).queueTemplates, content);
   // — Jagen (SAVE_VERSION 85, spec-technik §3/§5): `huntTraps` STRIKT härten — fixe Länge HUNT_TRAP_SLOTS;
   //   Gebiet nur, wenn es in `content.huntingZones` steht (sonst Platz leer, Köder verfällt — Muster
   //   unbekannte Crop), `remainingMs` endlich in [0, trapMs] (nie „ewig gestellt"), `autoRebait`/
@@ -1687,7 +1740,7 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     const huntZones = Array.isArray(content.huntingZones) ? content.huntingZones : [];
     const rawTraps: unknown[] = Array.isArray(state.huntTraps) ? state.huntTraps : [];
     let maxSeq = 0;
-    state.huntTraps = Array.from({ length: HUNT_TRAP_SLOTS }, (_, i): HuntTrap => {
+    state.huntTraps = Array.from({ length: HUNT_TRAP_SLOTS_TOTAL }, (_, i): HuntTrap => { // claude:2026-10-30T18:47:00+01:00 — SAVE 99: fixe Länge 8 (Fallensteller)
       const t = rawTraps[i] as Partial<Record<keyof HuntTrap, unknown>> | null | undefined;
       if (!t || typeof t !== "object") return emptyHuntTrap();
       const zone = typeof t.zoneId === "string" ? huntZones.find((z) => z.zoneId === t.zoneId) : undefined;
@@ -2703,6 +2756,7 @@ function migrateState(state: GameState, content: ContentDB): GameState {
       producedBySkill: {}, // claude:2026-10-24T16:03:31+02:00 — SAVE 95
       huntCatches: 0,
       huntCatchesById: {},
+      closeWins: 0, // claude:2026-10-31T09:29:00+01:00 — SAVE 100 („Heute nicht“)
     };
   if (typeof state.stats.itemsGathered !== "number") state.stats.itemsGathered = 0;
   // Craft-Zähler (SAVE_VERSION 27): für craft_items-Quests. Alt-Saves starten bei 0 (rückwirkend
@@ -2811,6 +2865,8 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   // claude:2026-10-25T04:40:00+02:00 — Raid (SAVE 93): beide Schalter strikt boolean, Standard aus.
   if (typeof state.settings.raidAutoContinue !== "boolean") state.settings.raidAutoContinue = false;
   if (typeof state.settings.raidAutoBuyRestart !== "boolean") state.settings.raidAutoBuyRestart = false;
+  // claude:2026-10-30T22:28:00+01:00 — Gebührenschein in der Raid-Warteschlange (SAVE 100): strikt boolean, Standard aus (jede Version).
+  if (typeof state.settings.raidUseFeeWrit !== "boolean") state.settings.raidUseFeeWrit = false;
   // Quest-State (SAVE_VERSION 25): leer defaulten. Quests werden beim nächsten advance via
   // evaluateQuests gegen die bestehenden Zähler (Kills etc.) neu ausgewertet.
   if (!state.quests || typeof state.quests !== "object") state.quests = defaultQuestState();
@@ -3187,9 +3243,11 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   // (< 34) haben keine Plots → mit leeren Beeten auf die fixe Länge MAX_FARM_PLOTS auffüllen.
   // Idempotent: bereits migrierte Saves werden nur auf die Soll-Länge getrimmt/aufgefüllt. Die
   // detaillierte Wert-Härtung (cropId-Validierung, plantedAtMs-Clamp etc.) macht sanitizeState.
+  // claude:2026-10-30T18:47:00+01:00 — SAVE 99: Dieser Block läuft für JEDE Version (kein Versions-Gate). Seit 1.4.2 ist die fixe Länge
+  // FARM_PLOT_SLOTS (12, Saatkammer); mit MAX_FARM_PLOTS (9) würde er die Beete 10–12 eines v99-Stands abschneiden.
   if (!Array.isArray(state.farmPlots)) state.farmPlots = [];
-  while (state.farmPlots.length < MAX_FARM_PLOTS) state.farmPlots.push(emptyFarmPlot());
-  state.farmPlots.length = MAX_FARM_PLOTS; // auf fixe Länge trimmen
+  while (state.farmPlots.length < FARM_PLOT_SLOTS) state.farmPlots.push(emptyFarmPlot());
+  state.farmPlots.length = FARM_PLOT_SLOTS; // auf fixe Länge trimmen
 
   // Folgesorte je Beet (SAVE_VERSION 81→82, Chef-GO 25.08.2026 (1.1.0),
   // design/rezension-patch-2026-08-25.html #p12): neues Feld `farmPlots[*].nextCropId`. Alt-Saves
@@ -4009,6 +4067,56 @@ function migrateState(state: GameState, content: ContentDB): GameState {
     delete (state.inventory as Partial<InventoryState>).variantCells;
   }
 
+  // ── Aschesturz 2.0 (SAVE_VERSION 98 → 99, 1.4.2, Chef-Freigabe 30.10.2026, design/1.4.2-aschesturz-spec.md § 5) ──
+  // claude:2026-10-30T18:47:00+01:00 — (a) `prestige.paid`: leeres Hauptbuch (E2: der erste Sturz nach dem Update zahlt die bestehende Sammlung
+  // einmal aus). (b) `prestige.runStart.raidClears` = aktueller `raid.clears`: der laufende Durchgang zählt Raid-Narben erst
+  // ab dem Update, ältere Abschlüsse zahlt einmalig `raidFirst`. (c) Beete 9 → 12 und Fallen 6 → 8 füllt die feste Länge
+  // (Normalisierer oben und sanitizeState) mit leeren Plätzen auf; nichts Bestehendes ändert sich. Idempotent über `version`.
+  if ((state.version ?? 0) < 99 && state.prestige && typeof state.prestige === "object") {
+    const pr = state.prestige as Partial<PrestigeState>;
+    if (!pr.paid || typeof pr.paid !== "object") pr.paid = defaultPrestigePaidLedger();
+    const clears = state.raid?.clears;
+    if (pr.runStart && typeof pr.runStart === "object") {
+      (pr.runStart as Partial<PrestigeRunBaseline>).raidClears = {
+        normal: finiteIntNonNeg(clears?.normal, Number.MAX_SAFE_INTEGER, 0),
+        heroic: finiteIntNonNeg(clears?.heroic, Number.MAX_SAFE_INTEGER, 0),
+        mythic: finiteIntNonNeg(clears?.mythic, Number.MAX_SAFE_INTEGER, 0),
+      };
+    }
+  }
+
+  // ── Belohnungsladen 1.4.2 (SAVE_VERSION 99 → 100, Chef-Entscheide L1–L10 vom 30.10.2026, design/1.4.2-belohnungsladen-plan.md § 5) ──
+  // claude:2026-10-30T22:28:00+01:00 — Neues Feld `tokenShopLedger`: ein Stand < 100 kann noch nichts gekauft haben, also leeres Kaufbuch (keine
+  // Grenze verbraucht). `settings.raidUseFeeWrit` fehlt und wird oben versionsfrei auf false gesetzt. Die Härtung (Zähler, Ids, Tag/Woche)
+  // macht sanitizeState bei jedem Laden. Idempotent: ein gehobener Stand trägt das Feld.
+  if ((state.version ?? 0) < 100 && (typeof (state as Partial<GameState>).tokenShopLedger !== "object" || state.tokenShopLedger === null)) {
+    state.tokenShopLedger = defaultTokenShopLedger();
+  }
+  // claude:2026-10-31T09:29:00+01:00 — Nachtrag SAVE 100 (Chef-Entscheid versteckte Erfolge 31.10.2026, „Heute nicht“): neuer Lebenszeit-Zähler
+  // `stats.closeWins` (Siege mit höchstens 5 % Leben). Ein Stand < 100 hat ihn nie gezählt, also 0 (rückwirkend nicht rekonstruierbar).
+  // Wer „Heute nicht“ schon über die alte 100-Tode-Bedingung hat, behält den Erfolg: `state.achievements` bleibt unberührt, die ID auch.
+  // Härtung (Ganzzahl ≥ 0, auch für einen v100-Dev-Stand ohne Feld) macht sanitizeState. Idempotent über `version`.
+  if ((state.version ?? 0) < 100 && state.stats && typeof state.stats === "object") {
+    state.stats.closeWins = 0;
+  }
+
+  // ── Rezepte anpinnen (SAVE_VERSION 100 → 101, 1.4.2, Chef-Auftrag 25.10./31.10.2026) ──
+  // claude:2026-10-31T11:46:28+01:00 — Neues Feld `pinnedRecipes`: ein Stand < 101 kannte keine Pins, also leere Liste (das frühere
+  // PinnedTracker-Widget lebte nur im localStorage, nie im Spielstand; es gibt nichts zu übernehmen). Die Härtung (bekannte Rezepte,
+  // ohne Doppel, höchstens 10) macht sanitizeState bei jedem Laden. Ein Dev-Stand, der das Feld schon trägt, behält es (nichts geht
+  // verloren, die Härtung räumt es). Idempotent: ein gehobener Stand trägt das Feld.
+  if ((state.version ?? 0) < 101 && !Array.isArray((state as Partial<GameState>).pinnedRecipes)) {
+    state.pinnedRecipes = [];
+  }
+
+  // ── Warteschlangen-Vorlagen (SAVE_VERSION 102 → 103, 1.4.2, Sweep-Idee mit Chef-GO 31.10.2026) ──
+  // claude:2026-10-31T16:08:21+01:00 — Neues Feld `queueTemplates`: ein Stand < 103 kannte keine Vorlagen, also drei leere Plätze. Die
+  // Härtung (Plätze, Namen, bekannte Ids, Längen) macht sanitizeState bei jedem Laden. Ein Dev-Stand, der das Feld schon trägt, behält es.
+  // Idempotent: ein gehobener Stand trägt das Feld.
+  if ((state.version ?? 0) < 103 && !Array.isArray((state as Partial<GameState>).queueTemplates)) {
+    state.queueTemplates = emptyQueueTemplates();
+  }
+
   // State auf die aktuelle Version heben (macht versions-abhängige Migrationen idempotent).
   state.version = SAVE_VERSION;
 
@@ -4177,6 +4285,92 @@ function sanitizeSkillEvents(state: GameState, content: ContentDB): void {
 
 // claude:2026-10-25T04:40:00+02:00 — Raid-Zustand härten (SAVE 93). Freischaltungen/Zähler sind Fortschritt: Zahlen klemmen, nie erfinden.
 const RAID_DIFFS = ["normal", "heroic", "mythic"] as const;
+/** claude:2026-10-30T22:28:00+01:00 — SAVE 100: Obergrenze je Zähler (Korruptions-Deckel; echte Grenzen liegen bei 1–7). */
+const TOKEN_LEDGER_COUNT_CAP = 1_000_000;
+/** claude:2026-10-30T22:28:00+01:00 — SAVE 100: höchstens so viele weggewürfelte Karten je Tag (echt: 3). */
+const TOKEN_LEDGER_REROLLED_CAP = 32;
+
+/**
+ * claude:2026-10-30T22:28:00+01:00 — SAVE 100: Härtung des Kaufbuchs (Belohnungsladen 1.4.2). Fehlt/kaputt ⇒ leer. Tag und Woche ganzzahlig
+ * ≥ 0 und höchstens „heute“ (`lastDailyDay` bzw. dessen Woche): das Kaufbuch übernimmt seinen Tag immer aus `lastDailyDay`, ein späterer
+ * Stempel ist also Manipulation und würde die Grenzen bis zu jenem Tag einfrieren; die Zähler bleiben dabei stehen (kein Geschenk).
+ * Zähler: nur bekannte Dienst- und Angebots-Ids, ganzzahlig ≥ 0, Null-Einträge entfallen. Weggewürfelte Karten: nur bekannte
+ * Tagesaufgaben, ohne Doppel, Reihenfolge erhalten. Idempotent.
+ */
+function sanitizeTokenShopLedger(raw: unknown, content: ContentDB, lastDailyDay: number): TokenShopLedger {
+  const out = defaultTokenShopLedger();
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return out;
+  const r = raw as Record<string, unknown>;
+  const today = Math.floor(finiteNonNeg(lastDailyDay, 0));
+  out.day = Math.min(finiteIntNonNeg(r.day, Number.MAX_SAFE_INTEGER, 0), today);
+  out.week = Math.min(finiteIntNonNeg(r.week, Number.MAX_SAFE_INTEGER, 0), calendarWeekIndex(today));
+  const known = new Set<string>([...(content.tokenServices ?? []).map((s) => s.id), ...(content.tokenShop ?? []).map((o) => o.id)]);
+  const counts = (v: unknown): Record<string, number> => {
+    const res: Record<string, number> = {};
+    if (!v || typeof v !== "object" || Array.isArray(v)) return res;
+    for (const [id, n] of Object.entries(v as Record<string, unknown>)) {
+      if (!known.has(id)) continue;
+      const c = finiteIntNonNeg(n, TOKEN_LEDGER_COUNT_CAP, 0);
+      if (c > 0) res[id] = c;
+    }
+    return res;
+  };
+  out.byDay = counts(r.byDay);
+  out.byWeek = counts(r.byWeek);
+  const dailyIds = new Set(content.quests.filter((q) => q.daily).map((q) => q.id));
+  const seen = new Set<string>();
+  if (Array.isArray(r.rerolledDailies)) {
+    for (const id of r.rerolledDailies) {
+      if (typeof id !== "string" || !dailyIds.has(id) || seen.has(id)) continue;
+      seen.add(id);
+      out.rerolledDailies.push(id);
+      if (out.rerolledDailies.length >= TOKEN_LEDGER_REROLLED_CAP) break;
+    }
+  }
+  return out;
+}
+
+/** claude:2026-10-30T18:47:00+01:00 — SAVE 99: Härtung von `prestige.paid` (s. Kommentar am Aufrufer in sanitizeState). */
+function sanitizePrestigePaid(raw: unknown, content: ContentDB): PrestigePaidLedger {
+  const out = defaultPrestigePaidLedger();
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return out;
+  const r = raw as Record<string, unknown>;
+  const ids = (list: unknown, known: (id: string) => boolean): string[] => {
+    const seen = new Set<string>();
+    const res: string[] = [];
+    if (!Array.isArray(list)) return res;
+    for (const v of list) {
+      if (typeof v !== "string" || seen.has(v) || !known(v)) continue;
+      seen.add(v);
+      res.push(v);
+    }
+    return res;
+  };
+  out.pets = ids(r.pets, (id) => !!content.pets?.[id]);
+  out.bestiary = ids(r.bestiary, (id) => !!content.monsters[id] && !id.startsWith(DUNGEON_VARIANT_PREFIX));
+  out.raids = ids(r.raids, (id) => (RAID_DIFFICULTIES as readonly string[]).includes(id)) as RaidDifficulty[];
+  const ap = finiteIntNonNeg(r.ap, Number.MAX_SAFE_INTEGER, 0);
+  out.ap = Math.floor(ap / PRESTIGE_AP_STEP) * PRESTIGE_AP_STEP;
+  return out;
+}
+
+/**
+ * claude:2026-10-31T14:58:54+01:00 — SAVE 102: Härtung von `prestige.respec142`. Kein Objekt ⇒ null. Sonst `refunded` und jeder Teil der
+ * Nachzahlung ganzzahlig ≥ 0 (kaputt ⇒ 0), `total` neu als Summe der Teile, `acknowledged` nur bei exakt true. Reine Anzeige-Daten:
+ * die Narben stecken längst im Guthaben, darum ändert die Härtung nie `points`. Idempotent (ein gültiger Beleg bleibt byte-gleich).
+ */
+function sanitizePrestigeRespec142(raw: unknown): PrestigeRespec142 | null {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const r = raw as Record<string, unknown>;
+  const rawRetro = r.retro && typeof r.retro === "object" && !Array.isArray(r.retro) ? (r.retro as Record<string, unknown>) : {};
+  const retro = emptyPrestigeRespecRetro();
+  for (const k of PRESTIGE_RESPEC_RETRO_KEYS) {
+    retro[k] = finiteIntNonNeg(rawRetro[k], Number.MAX_SAFE_INTEGER, 0);
+    retro.total += retro[k];
+  }
+  return { refunded: finiteIntNonNeg(r.refunded, Number.MAX_SAFE_INTEGER, 0), retro, acknowledged: r.acknowledged === true };
+}
+
 function sanitizeRaid(state: GameState, content: ContentDB): void {
   const raw = state.raid as unknown;
   const def = defaultRaidState();
@@ -4470,6 +4664,13 @@ export function deserialize(
     return null;
   }
 
+  // claude:2026-10-31T14:58:54+01:00 — SAVE 102 (Narben-Rückgabe 1.4.2): Original-Version und ob der Rohstand schon einen Rückgabe-Beleg trägt,
+  // VOR migrateState gelesen (die Migration hebt `version` an Ort und Stelle auf SAVE_VERSION, die Härtung macht aus „fehlt“ null).
+  const rawVersion = (save.state as { version?: unknown }).version;
+  const originalVersion = typeof rawVersion === "number" && Number.isFinite(rawVersion) ? rawVersion : 0;
+  const rawPrestige = (save.state as { prestige?: unknown }).prestige;
+  const hadRespecRecord = !!rawPrestige && typeof rawPrestige === "object" && "respec142" in (rawPrestige as Record<string, unknown>);
+
   let state: GameState;
   try {
     state = migrateState(save.state, content);
@@ -4538,9 +4739,11 @@ export function deserialize(
   const huntTally: HuntCatchTally = {};
   // claude:2026-10-17T20:00:00+02:00 — K4: übersprungene Queue-Einträge im Fenster zählen (transient, kein Save-Feld)
   const skipTally = beginQueueSkipTally(state);
+  // claude:2026-10-31T16:08:21+01:00 — Offline-Bericht 1.4.2: Leerlauf im Fenster zählen (reiner Beobachter, kein Save-Feld, keine Tick-Änderung).
+  const idleTally = createOfflineIdleTally();
   let offlineTicks: ReturnType<typeof advance>;
   try {
-    offlineTicks = advance(state, content, offlineMs, { offline: true, nowMs: now, huntTally });
+    offlineTicks = advance(state, content, offlineMs, { offline: true, nowMs: now, huntTally, idleTally });
   } finally {
     endQueueSkipTally(state);
   }
@@ -4647,6 +4850,10 @@ export function deserialize(
   if (farmHarvests.length > 0) offline.farmHarvests = farmHarvests;
   // claude:2026-10-17T20:00:00+02:00 — K4: Anzahl übersprungener Queue-Einträge (fehlt bei 0)
   if (skipTally.count > 0) offline.queueSkips = skipTally.count;
+  // claude:2026-10-31T16:08:21+01:00 — Leerlauf (1.4.2): fehlt bei 0 (Muster queueSkips); nie länger als das Fenster selbst.
+  const idleMs = Math.min(idleTally.idleMs, offlineMs);
+  if (idleMs > 0) offline.idleMs = idleMs;
+  if (idleTally.idleFromMs !== null) offline.idleFromMs = idleTally.idleFromMs;
 
   // Offline fertiggestellte Lager-Bauten (SAVE 76, „Die Hände haben gearbeitet"): transient,
   // fehlt (statt leerem Array), wenn nichts fertig wurde — Muster kills/deaths/petDrops.
@@ -4658,6 +4865,16 @@ export function deserialize(
       },
     ];
   }
+
+  // ── Narben-Rückgabe und Nachzahlung (SAVE_VERSION 101 → 102, 1.4.2, Chef-Auftrag 31.10.2026) ──
+  // claude:2026-10-31T14:58:54+01:00 — Die Migration < 102 läuft bewusst HIER, nach dem Offline-Nachholen und nicht in migrateState: das erste
+  // Fenster nach dem Update (bis 8 h + Wachturm + Lange Nacht) rechnet so noch mit den Rängen, die der Spieler beim Speichern hatte (XP,
+  // Gold, Schaden, Leben, Alte Pfade, Zusatzbeete/-fallen, Offline-Fenster); sonst kostete die Rückgabe Fortschritt. Danach: alle Ränge im
+  // Narbenbuch auf 0 und die bezahlten Narben zurück (jeder Stand < 102); Nachzahlung nur für Stände von vor 1.4.2 (Original-Version < 99,
+  // engine `applyPrestigeRespec142` prüft zusätzlich mindestens einen Sturz). Idempotent: ein Stand ab 102 und jeder Rohstand, der den Beleg
+  // schon trägt (z. B. ein gehobener Stand mit verfälschter Version), bleibt unberührt; ein zweites Laden desselben Alt-Stands rechnet aus
+  // denselben Rohdaten dasselbe. Kein Gegenstand, keine Instanz und keine Narbe geht verloren.
+  if (originalVersion < 102 && !hadRespecRecord) applyPrestigeRespec142(state, content, { retro: originalVersion < 99 });
 
   // — Bank-Platzierung (SAVE 87): ALLERLETZTER Schritt des Ladens. `sanitizeState` reicht nicht,
   //   weil DANACH noch der Offline-Nachhol-Tick laeuft und dabei Bank-Bestand verbraucht (im

@@ -3,6 +3,7 @@ import type { PointerEvent as ReactPointerEvent } from "react";
 import { createPortal } from "react-dom";
 import { content } from "@hearthforge/content";
 import {
+  autoConsumeStock,
   autoEatUpgradeCost,
   buyAutoEatUpgrade,
   eligibleMeals,
@@ -64,7 +65,7 @@ import {
 } from "@hearthforge/engine";
 import type { ParagonFloorPreview, ParagonStatus } from "@hearthforge/engine";
 import type { ActiveBuff, BossPhase, CombatEvent, CombatStyle, RangedStance, DerivedStats, DungeonDef, ElementalSideCounters, EliteVariantDef, LootRoll, MagicStance, GameState, ItemDef, LastKillSummary, LocalizedString, MonsterDef, PetAbilityKind, SlayerTowerFloor, StatusEffect, StatusType } from "@hearthforge/shared";
-import { autoEatHealMult, effectiveAutoEatThreshold, effectiveInstanceWeaponEffects, effectiveWeaponEffects, isStatusEffectType, EQUIP_SLOT_LABELS, AUTO_EAT_MAX_TIER, AUTO_POTION_COOLDOWN_MS, AUTO_REBUFF_UNLOCK_COST, COMBAT_SKILL_IDS, CRAFT_TARGET_PRESETS, CRIT_CHANCE_CAP, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, combatXpLevelMult, consumableHeal, FROST_FREEZE_STACKS, KILL_COOLDOWN_MS, PARAGON_BOSS_INTERVAL, PARAGON_DUNGEON_ID, POISON_MAX_STACKS, PRE_BOSS_BREATHER_MS, QUIVER_CAPACITY, SHOCK_DELAY_CAP_MS } from "@hearthforge/shared";
+import { autoEatHealMult, effectiveAutoEatThreshold, effectiveInstanceWeaponEffects, effectiveWeaponEffects, isStatusEffectType, EQUIP_SLOT_LABELS, AUTO_EAT_MAX_TIER, AUTO_POTION_COOLDOWN_MS, AUTO_REBUFF_UNLOCK_COST, COMBAT_SKILL_IDS, CRAFT_TARGET_PRESETS, CRIT_CHANCE_CAP, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, combatXpLevelMult, consumableHeal, MELEE_XP_PER_DAMAGE, VITALITY_XP_PER_DAMAGE, FROST_FREEZE_STACKS, KILL_COOLDOWN_MS, PARAGON_BOSS_INTERVAL, PARAGON_DUNGEON_ID, POISON_MAX_STACKS, PRE_BOSS_BREATHER_MS, QUIVER_CAPACITY, SHOCK_DELAY_CAP_MS } from "@hearthforge/shared";
 import { getEliteMonsterSrc, getMonsterSrc } from "../monsters";
 import { AreaTourGuide } from "../components/AreaTourGuide";
 import { ActiveBuffsBar } from "../components/ActiveBuffs";
@@ -162,7 +163,7 @@ import {
 } from "../util/uiPrefs";
 import { createZoneParticleField, getZoneParticleTheme } from "../util/particles";
 import { renderEffectIcon, statIcon } from "../statIcons";
-import { formatDamage, formatDropPct, formatGain, formatMmSs, formatNum, formatSeconds1, formatStat } from "../util/format";
+import { formatCompactK, formatDamage, formatDropPct, formatGain, formatMmSs, formatNum, formatPlaytime, formatSeconds1, formatStat } from "../util/format";
 import { hasFreshTracks } from "../util/eliteBoard";
 // UI-Brainstorm A8: dasselbe Sucheingabe-Idiom wie SkillPage/Bank/Shop — direkt importiert statt
 // über styles/index.css (Kollisions-Schutz-Muster, s. dortiger Kommentar), da parallele Agenten an
@@ -349,7 +350,7 @@ const RISKY_DANGER_RATIO = 0.35;
  *  die Namensfarbe (Chef-Spec 2026-07-23, s. `RISKY_DANGER_RATIO`) — `verdict` bleibt die alleinige
  *  Quelle für Badge + Karten-Rahmen.
  */
-function combatPrognosis(stats: DerivedStats, monster: MonsterDef): { playerHit: number; enemyHit: number; verdict: CombatVerdict; nameTier: CombatNameTier } {
+function combatPrognosis(stats: DerivedStats, monster: MonsterDef): { playerHit: number; enemyHit: number; playerDPS: number; enemyDPS: number; verdict: CombatVerdict; nameTier: CombatNameTier } {
   const playerHit = contestHitChance(stats.accuracy, monster.evasion * (1 - stats.precision));
   const enemyContest = contestHitChance(enemyEffectiveAccuracy(monster), stats.evasion);
   const enemyHit = enemyContest * (1 - combinedFloorDodge(stats.dodgeChance, enemyContest));
@@ -369,8 +370,36 @@ function combatPrognosis(stats: DerivedStats, monster: MonsterDef): { playerHit:
     nameTier = ratio >= 1.5 ? "easy" : ratio >= 0.7 ? "close" : ratio >= RISKY_DANGER_RATIO ? "caution" : "danger";
   }
 
-  return { playerHit, enemyHit, verdict, nameTier };
+  return { playerHit, enemyHit, playerDPS, enemyDPS, verdict, nameTier };
 }
+
+// claude:2026-10-31T16:34:28+01:00 — Ideen-Welle 1.4.2: Zeit je Kill, Kills/h, XP/h aus der Prognose-DPS (Schätzung, keine Simulation).
+/** Ranged/Magie-Faktor der Engine (combat.ts, dort nicht exportiert): nur für die XP/h-Schätzung gespiegelt. */
+const RATE_STYLE_XP_FACTOR = 1.1;
+interface CombatRates { killSec: number; killsPerHour: number; xpPerHour: number }
+/** Geschätzte Kampfraten gegen EIN Monster: Kill-Dauer inkl. Respawn-Pause, Kills/h und Kampf-XP/h
+ *  (Stil- + Lebenskraft-XP aus dem Schaden = Monster-HP, wie `grantOffenseXp`). null, wenn kein Schaden durchkommt. */
+function combatRates(stats: DerivedStats, monster: MonsterDef, playerDPS: number, offenseLevel: number, vitalityLevel: number): CombatRates | null {
+  if (!(playerDPS > 0) || !Number.isFinite(playerDPS)) return null;
+  const killSec = monster.maxHp / playerDPS + KILL_COOLDOWN_MS / 1000;
+  const styleFactor = stats.style === "ranged" || stats.style === "magic" ? RATE_STYLE_XP_FACTOR : 1;
+  const xpPerKill =
+    monster.maxHp * MELEE_XP_PER_DAMAGE * styleFactor * combatXpLevelMult(offenseLevel, monster.level) +
+    monster.maxHp * VITALITY_XP_PER_DAMAGE * combatXpLevelMult(vitalityLevel, monster.level);
+  const killsPerHour = 3600 / killSec;
+  return { killSec, killsPerHour, xpPerHour: xpPerKill * killsPerHour };
+}
+
+/** Dauer je Kill: unter einer Minute in Sekunden, sonst Minuten (i18n-Einheiten). */
+function killTimeText(sec: number, t: (k: string) => string): string {
+  return sec < 60 ? `${formatSeconds1(sec)}s` : formatPlaytime(sec * 1000, t);
+}
+
+/** Kompakte Rate-Zeile (Monsterkarte + Kampfkopf): „~12 s · 280 Kills/h · 48,2k XP/h“. */
+function rateCompact(n: number): string {
+  return n >= 1000 ? formatCompactK(Math.round(n / 100) * 100) : formatNum(Math.round(n));
+}
+
 
 /** Vollständige Anzeige-Reihenfolge der Namensfarbe: "zero" (kein XP, s. `xpIsZero`) reiht sich VOR
  *  die vier `CombatNameTier`-Stufen ein — zusammen exakt die 5 `diffname-*`-Farben aus combat.css. */
@@ -1631,6 +1660,8 @@ function KillSummaryCard({ lastKill }: { lastKill: LastKillSummary }): JSX.Eleme
       onClick={() => setDismissed(true)}
     >
       <div className="kill-summary-title">{t("combat.kill").replace("{name}", monsterName)}</div>
+      {/* claude:2026-10-31T16:34:28+01:00 — Blutmond-Jackpot: Beute dieses Kills verdoppelt (bloodMoonProc). */}
+      {lastKill.bloodMoonProc && <div className="kill-summary-bloodmoon" title={t("combat.killSummary.bloodMoonHint")}>{t("combat.killSummary.bloodMoon")}</div>}
 
       <div className="kill-summary-body">
         {xpRows.length > 0 && (
@@ -1738,6 +1769,7 @@ function Battle({
   // in beide Kämpfer-Fußzeilen (playerFooter/enemyFooter) gereicht — dezente Ergänzung der
   // bestehenden Stat-Zeile, kein eigener Kasten.
   const prognosis = combatPrognosis(stats, monster);
+  const headRates = combatRates(stats, monster, prognosis.playerDPS, playerOffenseSkillLevel(state), levelFromXp(state.skills.vitality?.xp ?? 0)); // claude:2026-10-31T16:34:28+01:00 — Kills/h im Kampfkopf
   const lvl = (id: string): number => levelFromXp(state.skills[id]?.xp ?? 0);
   const enraged = !!(monster.enrage && cs.enemyHp / monster.maxHp <= monster.enrage.belowHpPct);
   // Verbleibende Zeit bis zum nächsten Schlag je Seite (für den Countdown-Text im Timer-Balken).
@@ -3503,7 +3535,7 @@ function Battle({
         { key: "dodge", icon: statIcon("eva"), label: t("stat.dodge"), value: `${Math.round(stats.dodgeChance * 100)}%` },
         { key: "block", icon: statIcon("def"), label: t("stat.block"), value: `${Math.round(stats.blockChance * 100)}%` },
         { key: "ward", icon: statIcon("ward"), label: t("stat.wardPool"), value: formatStat(stats.maxWard) },
-        { key: "wardRegen", icon: statIcon("ward"), label: t("stat.wardRegen"), value: formatStat(stats.wardRegenPerSec) },
+        { key: "wardRegen", icon: statIcon("ward"), label: t("stat.wardRegen"), value: `${formatStat(stats.wardRegenPerSec)}/s` },
         { key: "reserve", icon: statIcon("mana"), label: t("stat.maxMana"), value: formatStat(stats.maxMana) },
         { key: "acc", icon: statIcon("acc"), label: t("stat.accuracy"), value: formatStat(stats.accuracy) },
         { key: "eva", icon: statIcon("eva"), label: t("stat.evasion"), value: formatStat(stats.evasion) },
@@ -3610,6 +3642,13 @@ function Battle({
           <strong>{Math.round(prognosis.enemyHit * 100)}%</strong>
         </span>
       </span>
+      {/* claude:2026-10-31T16:34:28+01:00 — Ideen-Welle 1.4.2: Kills/h und XP/h (Schätzung) im Kampfkopf. */}
+      {headRates && (
+        <span className="battle-hud-metric" title={t("combat.rate.title")}>
+          <span>{t("combat.rate.perHour")}</span>
+          <strong>{t("combat.rate.killsXp").replace("{k}", rateCompact(headRates.killsPerHour)).replace("{x}", rateCompact(headRates.xpPerHour))}</strong>
+        </span>
+      )}
     </>
   );
 
@@ -4460,9 +4499,11 @@ function MonsterCard({
   onQueue: (target: number | null, atFront: boolean) => void;
 }): JSX.Element {
   const { t, tr } = useI18n();
+  const getGameState = useGetGameState();
   const monsterSrc = getMonsterSrc(m.id);
   const xpIsZero = combatXpLevelMult(offenseLevel, m.level) === 0;
   const prognosis = combatPrognosis(stats, m);
+  const rates = combatRates(stats, m, prognosis.playerDPS, offenseLevel, levelFromXp(getGameState()?.skills.vitality?.xp ?? 0));
   const diffTier = verdictFrameTier(prognosis.verdict);
   const hasResist = !!(m.resist && m.resist.length > 0);
   const hasTraits = !!(m.enrage || m.regen || m.inflict || hasResist);
@@ -4582,6 +4623,17 @@ function MonsterCard({
           </span>
           {/* Verdikt-Wort lebt seit der Vereinheitlichung oben im Level-Chip — hier nur die zwei Chancen. */}
         </div>
+
+        {/* claude:2026-10-31T16:34:28+01:00 — Ideen-Welle 1.4.2: Zeit je Kill · Kills/h · XP/h (Schätzung). */}
+        {rates && (
+          <div className="monster-card-rates" title={t("combat.rate.title")}>
+            <span>~{killTimeText(rates.killSec, t)}</span>
+            <span className="mc-prognosis-sep">·</span>
+            <span>{t("combat.rate.killsH").replace("{n}", rateCompact(rates.killsPerHour))}</span>
+            <span className="mc-prognosis-sep">·</span>
+            <span>{t("combat.rate.xpH").replace("{n}", rateCompact(rates.xpPerHour))}</span>
+          </div>
+        )}
 
         {reqItem && (
           <div className={`monster-card-slayer-req${reqMet ? "" : " missing"}`}>
@@ -5950,11 +6002,13 @@ function CombatFoodAutoEat(): JSX.Element {
 
   // Nur echtes Cooking-Food — Herblore-Heiltränke (isHealPotion) gehören in den separaten
   // Auto-Trank-Slot (CombatAutoPotion) und werden hier bewusst ausgeschlossen (Task #243 Chef).
+  // claude:2026-10-31T16:34:28+01:00 — Vorrat = Inventar + Bank (Auto-Essen zieht aus der Bank nach).
+  const foodSupply_ = (id: string): number => itemCount(state.inventory, id) + (state.bank?.[id] ?? 0);
   const foods = Object.values(content.items).filter(
     (it) =>
       it.type === "consumable" &&
       (it.healAmount ?? 0) > 0 &&
-      itemCount(state.inventory, it.id) > 0 &&
+      foodSupply_(it.id) > 0 &&
       !isHealPotion(content, it.id),
   );
   const tier = c.autoEatTier ?? 0;
@@ -5966,10 +6020,22 @@ function CombatFoodAutoEat(): JSX.Element {
 
   const selFood = c.food ? content.items[c.food] : null;
   const selImg = c.food ? getItemImage(c.food) : null;
-  const selCount = c.food ? itemCount(state.inventory, c.food) : 0;
+  const selCount = c.food ? foodSupply_(c.food) : 0;
   // Task #243 Chef: echter Heilwert (healPct·maxHp via consumableHeal) statt flachem healAmount —
   // gleiches Muster wie ItemTooltip.tsx.
   const effHeal = selFood ? Math.round(consumableHeal(selFood, maxHp) * healMult) : 0;
+  // claude:2026-10-31T16:34:28+01:00 — Ideen-Welle 1.4.2: Essen-Reichweite gegen das aktuelle Ziel (Vorrat = Inventar + Bank, Auto-Essen zieht aus der Bank nach).
+  const reachMonster = state.combat.monsterId ? content.monsters[state.combat.monsterId] : undefined;
+  const foodSupply = selCount;
+  let reach: { unlimited: boolean; sec: number } | null = null;
+  if (selFood && reachMonster && effHeal > 0 && foodSupply > 0) {
+    const prog = combatPrognosis(computeStats(state, content), reachMonster);
+    const killSec = prog.playerDPS > 0 ? reachMonster.maxHp / prog.playerDPS : 0;
+    // Schaden fällt nur an, solange der Gegner lebt (die Respawn-Pause ist schadenfrei).
+    const aliveShare = killSec > 0 ? killSec / (killSec + KILL_COOLDOWN_MS / 1000) : 1;
+    const intake = prog.enemyDPS * aliveShare;
+    reach = intake < 0.01 ? { unlimited: true, sec: 0 } : { unlimited: false, sec: (foodSupply * effHeal) / intake };
+  }
 
   return (
     <div className="cl-food-body">
@@ -5997,6 +6063,17 @@ function CombatFoodAutoEat(): JSX.Element {
         </div>
       </div>
 
+      {reach && reachMonster && (
+        <div
+          className={`cl-food-reach${!reach.unlimited && reach.sec < 3600 ? " low" : ""}`}
+          title={t("combat.foodReach.hint").replace("{n}", String(foodSupply))}
+        >
+          {reach.unlimited
+            ? t("combat.foodReach.unlimited").replace("{name}", tr(reachMonster.name))
+            : t("combat.foodReach.est").replace("{time}", formatPlaytime(reach.sec * 1000, t)).replace("{name}", tr(reachMonster.name))}
+        </div>
+      )}
+
       {/* Essens-Auswahl */}
       <div className="cl-food-choices">
         <button
@@ -6017,7 +6094,7 @@ function CombatFoodAutoEat(): JSX.Element {
               onMouseLeave={() => tooltip.hide()}
             >
               {img ? <img loading="lazy" decoding="async" src={img} alt="" /> : <span>{f.icon ?? (FOOD_ICON_URL ? <img loading="lazy" decoding="async" src={FOOD_ICON_URL} alt="" className="ui-icon" /> : "🍖")}</span>}
-              <span className="cl-food-btn-qty">{itemCount(state.inventory, f.id)}</span>
+              <span className="cl-food-btn-qty">{foodSupply_(f.id)}</span>
             </button>
           );
         })}
@@ -6249,7 +6326,7 @@ function CombatAutoPotion(): JSX.Element {
   const potions = eligibleHealPotions(state, content);
   const selPotion = ap.healPotionId ? content.items[ap.healPotionId] : null;
   const selImg = ap.healPotionId ? getItemImage(ap.healPotionId) : null;
-  const selCount = ap.healPotionId ? itemCount(state.inventory, ap.healPotionId) : 0;
+  const selCount = autoConsumeStock(state, ap.healPotionId); // claude:2026-10-31T16:47:04+01:00 — Auto-Trank zieht seit 1.4.2 aus der Bank nach: Inventar + Bank
   const thresholdPct = Math.round(ap.healThreshold * 100);
   // Task #243 Chef: echter Heilwert (healPct·maxHp via consumableHeal) statt flachem healAmount.
   const selHeal = selPotion ? consumableHeal(selPotion, maxHp) : 0;
@@ -6446,7 +6523,7 @@ function SessionTallyRow(): JSX.Element {
   const totals = useSessionTotals();
   const tooltip = [
     `${t("stats.gold")}: +${formatNum(totals.gold)}`,
-    `${t("skill.t.xp")}: +${formatNum(totals.xp)}`,
+    `${t("skill.t.xp")}: +${formatStat(totals.xp)}`,
     `${t("combat.session.killsShort")}: ${formatNum(totals.kills)}`,
     `${t("combat.session.raresShort")}: ${formatNum(totals.rares)}`,
   ].join("\n");
@@ -6455,7 +6532,7 @@ function SessionTallyRow(): JSX.Element {
       <span className="cl-title">{t("combat.session.label")}</span>
       <div className="cl-session-row" title={tooltip}>
         <span className="cl-session-stat">{statIcon("gold")} +{formatNum(totals.gold)}</span>
-        <span className="cl-session-stat">+{formatNum(totals.xp)} {t("skill.t.xp")}</span>
+        <span className="cl-session-stat">+{formatStat(totals.xp)} {t("skill.t.xp")}</span>{/* claude:2026-10-31T15:20:00+01:00 — D5: Sitzungs-XP ohne Nachkommastellen */}
         <span className="cl-session-stat">{formatNum(totals.kills)} {t("combat.session.killsShort")}</span>
         <span className="cl-session-stat cl-session-rare">{formatNum(totals.rares)} ✦</span>
       </div>

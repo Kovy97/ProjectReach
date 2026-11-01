@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { content } from "@hearthforge/content";
-import { findTalentTree, levelFromXp, prestigeAscendPreview, prestigePointsLedger } from "@hearthforge/engine";
-import type { PrestigeAscendPreview, PrestigeHeirloomCandidate, PrestigeItemRef } from "@hearthforge/engine";
-import { PRESTIGE_SKILL_LEVEL, PRESTIGE_TALENT_TREE_ID, PRESTIGE_UNLOCK_QUEST_ID } from "@hearthforge/shared";
-import type { GameState, ItemId } from "@hearthforge/shared";
+import { acknowledgePrestigeRespec, findTalentTree, levelFromXp, prestigeAscendPreview, prestigeRespecPending } from "@hearthforge/engine"; // claude:2026-10-31T14:58:54+01:00 — + Narben-Rückgabe 1.4.2
+import type { PrestigeAscendPreview, PrestigeHeirloomCandidate, PrestigeItemRef, PrestigePointsBreakdown, PrestigePointsSource } from "@hearthforge/engine";
+import { PRESTIGE_RESPEC_RETRO_KEYS, PRESTIGE_SKILL_LEVEL, PRESTIGE_TALENT_TREE_ID, PRESTIGE_UNLOCK_QUEST_ID, prestigeAshSignXp } from "@hearthforge/shared"; // claude:2026-10-31T14:58:54+01:00 — + PRESTIGE_RESPEC_RETRO_KEYS
+import type { GameState, ItemId, PrestigeRespec142 } from "@hearthforge/shared"; // claude:2026-10-31T14:58:54+01:00 — + PrestigeRespec142
 import { useGameControl, useGameState } from "../game/GameContext";
 import type { AscendRunResult } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getItemImage, rarityClass } from "../items";
 import { getAltarScene, getBookOfScarsArt, getScarCurrencyArt } from "../prestigeArt";
-import { formatNum, formatPlaytime } from "../util/format";
-import { buildLedgerRows } from "../util/prestigeLedger";
+import { getSidebarIcon } from "../sidebarIcons"; // claude:2026-11-01T11:42:05+01:00 — Symbole der Quellen-Karten
+import { raidChestArt } from "../raidArt";
+import { formatNum, formatPct1, formatPlaytime } from "../util/format";
 import { runWithScreenFade } from "../util/screenFade";
 import { NpcSpeechBubble } from "../components/NpcGreeting";
 import { TalentTree } from "../components/TalentTree";
@@ -88,12 +89,137 @@ function PickCard({ itemId, label, sub, selected, disabled, onClick }: PickProps
   );
 }
 
-function BreakdownRow({ label, value, strong, muted }: { label: string; value: number; strong?: boolean; muted?: boolean }): JSX.Element {
+// claude:2026-10-30T19:40:00+01:00 — 1.4.2 Aschesturz 2.0 (Chef 30.10.: „Erklärung jeder Quelle, damit jeder Spieler transparent weiß, was wie viel
+// Punkte gibt“). Ersetzt die frühere Punkte-Aufschlüsselung des Altars: je Quelle Name, Regel in Klartext, aktueller Stand,
+// Narben, Rest bis zur nächsten Narbe und Deckel; alle Zahlen kommen aus `prestigePointsPreview().sources` der Engine.
+// claude:2026-11-01T11:42:05+01:00 — Chef 01.11.: „coolere Karten, die stolz das Erreichte zeigen, statt lebloser Leisten“.
+// Jede Quelle ist eine Karte: Symbol + Name, Narben-Siegel oben rechts, der erreichte Stand groß in der Mitte (Zahl aus der
+// {n}-Vorlage herausgelöst), darunter Rest/Deckel und die Regel klein. Zahlende Quellen im Eisenrahmen, leere gedämpft.
+const SOURCE_ICON: Record<string, string> = {
+  base: "prestige",
+  skills99: "mastery",
+  totalLevel: "overall",
+  chronicle: "quests",
+  paragon: "combat",
+  gold: "bank",
+  dungeons: "city",
+  slayer: "slayer",
+  pets: "companions",
+  bestiary: "bestiary",
+  achievements: "achievements",
+};
+function sourceArt(id: string): string | null {
+  if (id === "raid") return raidChestArt(false);
+  if (id === "raidFirst") return raidChestArt(true);
+  const key = SOURCE_ICON[id];
+  return key ? getSidebarIcon(key) : null;
+}
+
+function SourceRow({ src }: { src: PrestigePointsSource }): JSX.Element {
+  const { t } = useI18n();
+  const once = src.kind === "once";
+  const capHit = src.cap !== null && src.scars >= src.cap && src.id !== "base";
+  const tpl = t(`prestige.src.now.${src.id}`);
+  const [pre, post] = tpl.includes("{n}") ? (tpl.split("{n}") as [string, string]) : [tpl, ""];
+  const art = sourceArt(src.id);
   return (
-    <div className={`prestige-row${strong ? " prestige-row--total" : ""}${muted ? " prestige-row--sub" : ""}`}>
-      <span className="prestige-row-label">{label}</span>
-      <span className="prestige-row-value">{strong ? <ScarGlyph size={18} /> : muted ? "" : "+"} {formatNum(value)}</span>
-    </div>
+    <li className={`prestige-src${capHit ? " is-capped" : ""}${src.scars > 0 ? " is-paying" : " is-idle"}`}>
+      <div className="prestige-src-head">
+        {art && <img loading="lazy" decoding="async" src={art} alt="" className="prestige-src-art" />}
+        <span className="prestige-src-name">{t(`prestige.src.name.${src.id}`)}</span>
+        <span className="prestige-src-scars">
+          <ScarGlyph size={16} />
+          <span>+{formatNum(src.scars)}</span>
+        </span>
+      </div>
+      <div className="prestige-src-now">
+        {tpl.includes("{n}") ? (
+          <>
+            {pre.trim() && <span className="prestige-src-unit">{pre.trim()}</span>}
+            <strong className="prestige-src-amount">{formatNum(src.amount)}</strong>
+            {post.trim() && <span className="prestige-src-unit">{post.trim()}</span>}
+          </>
+        ) : (
+          <strong className="prestige-src-amount prestige-src-amount--text">{tpl}</strong>
+        )}
+      </div>
+      <div className="prestige-src-stand">
+        {capHit && <span className="prestige-src-stamp">{t("prestige.src.capHit")}</span>}
+        {once && src.paid !== undefined && src.total !== undefined && (
+          <span className="prestige-src-meta">
+            {t("prestige.src.paid").replace("{paid}", formatNum(src.paid)).replace("{total}", formatNum(src.total))}
+          </span>
+        )}
+        {src.id !== "base" && !capHit && (src.next !== null || (once && src.amount === 0)) && (
+          <span className="prestige-src-meta prestige-src-next">
+            {src.next !== null ? t("prestige.src.next").replace("{n}", formatNum(src.next)) : t("prestige.src.nothingNew")}
+          </span>
+        )}
+        {src.cap !== null && src.id !== "base" && (
+          <span className="prestige-src-meta">
+            {t(once ? "prestige.src.capOnce" : "prestige.src.cap").replace("{n}", formatNum(src.cap))}
+          </span>
+        )}
+      </div>
+      <p className="prestige-src-rule">{t(`prestige.src.rule.${src.id}`)}</p>
+    </li>
+  );
+}
+
+function SourcesBlock({ points }: { points: PrestigePointsBreakdown }): JSX.Element {
+  const { t } = useI18n();
+  const state = useGameState();
+  const runSources = points.sources.filter((s) => s.kind === "run");
+  const onceSources = points.sources.filter((s) => s.kind === "once");
+  const signPct = prestigeAshSignXp(state.prestige?.count ?? 0);
+  return (
+    <section className="prestige-block prestige-sources">
+      <SectionHead title={t("prestige.src.title")} />
+      <p className="muted prestige-note">{t("prestige.src.intro")}</p>
+
+      <h4 className="prestige-sub-title">{t("prestige.src.group.run")}</h4>
+      <ul className="prestige-src-list">
+        {runSources.map((s) => <SourceRow key={s.id} src={s} />)}
+      </ul>
+
+      <h4 className="prestige-sub-title">{t("prestige.src.group.once")}</h4>
+      <p className="muted prestige-note">{t("prestige.src.group.onceNote")}</p>
+      <ul className="prestige-src-list">
+        {onceSources.map((s) => <SourceRow key={s.id} src={s} />)}
+      </ul>
+
+      <div className="prestige-src-sums">
+        <div className="prestige-row prestige-row--sub">
+          <span className="prestige-row-label">{t("prestige.src.runSubtotal")}</span>
+          <span className="prestige-row-value">{formatNum(points.runSubtotal)}</span>
+        </div>
+        {points.pointsMult > 0 && (
+          <div className="prestige-row">
+            <span className="prestige-row-label">{t("prestige.points.mult").replace("{mult}", formatNum(1 + points.pointsMult))}</span>
+            <span className="prestige-row-value">+ {formatNum(points.runTotal - points.runSubtotal)}</span>
+          </div>
+        )}
+        <div className="prestige-row">
+          <span className="prestige-row-label">{t("prestige.src.runTotal")}</span>
+          <span className="prestige-row-value">{formatNum(points.runTotal)}</span>
+        </div>
+        <div className="prestige-row">
+          <span className="prestige-row-label">{t("prestige.src.onceTotal")}</span>
+          <span className="prestige-row-value">+ {formatNum(points.onceTotal)}</span>
+        </div>
+        <div className="prestige-row prestige-row--total">
+          <span className="prestige-row-label">{t("prestige.points.total")}</span>
+          <span className="prestige-row-value"><ScarGlyph size={18} /> {formatNum(points.total)}</span>
+        </div>
+        <p className="muted prestige-note">{t("prestige.src.factorNote")}</p>
+      </div>
+
+      <div className="prestige-src-ash">
+        <span className="prestige-src-name">{t("prestige.src.ash.name")}</span>
+        <span className="prestige-src-rule">{t("prestige.src.ash.rule")}</span>
+        <span className="prestige-src-ash-now">{t("prestige.src.ash.now").replace("{n}", formatPct1(signPct))}</span>
+      </div>
+    </section>
   );
 }
 
@@ -201,19 +327,11 @@ function AltarTab({ preview }: { preview: PrestigeAscendPreview }): JSX.Element 
         </ul>
       </section>
 
+      {/* ── Narbenquellen (claude:2026-10-30T19:50:00+01:00, 1.4.2): ersetzt die alte Vorschau-Aufschlüsselung; auch vor der Freischaltung sichtbar, damit Spieler planen können ── */}
+      <SourcesBlock points={points} />
+
       {unlock.ok && (
         <>
-          {/* ── Narben-Vorschau ───────────────────────────────────────── */}
-          <section className="prestige-block">
-            <SectionHead title={t("prestige.preview.title")} />
-            <div className="prestige-rows">
-              {/* claude:2026-10-18T20:30:00+02:00 — dieselben Zeilen und Texte wie die Bilanz im Aufstiegs-Fenster (Welle E2). */}
-              {buildLedgerRows(prestigePointsLedger(points), t).map((row) => (
-                <BreakdownRow key={row.key} label={row.label} value={row.value} strong={row.kind === "total"} muted={row.kind === "subtotal"} />
-              ))}
-            </div>
-          </section>
-
           {/* ── Auswahl: Erbstücke und Vergrabene Truhe ────────────────── */}
           <section className="prestige-block">
             <SectionHead title={t("prestige.carry.title")} />
@@ -316,8 +434,14 @@ function AltarTab({ preview }: { preview: PrestigeAscendPreview }): JSX.Element 
                   <li>{t("prestige.stays.pets").replace("{n}", String(preview.summary.stays.pets))}</li>
                   <li>{t("prestige.stays.mastery").replace("{n}", formatNum(preview.summary.stays.masteryActions))}</li>
                   <li>{t("prestige.stays.achievements").replace("{n}", formatNum(preview.summary.stays.achievements))}</li>
+                  {/* claude:2026-10-30T20:20:00+01:00 — K2: was der Sturz durch Knoten behält (Bezahlte Rechnung / Ungebrochene Fährte) */}
+                  {preview.kept.keepPurchases && <li>{t("prestige.stays.keepPurchases")}</li>}
+                  {preview.kept.slayerShare > 0 && (preview.kept.slayerPoints > 0 || preview.kept.questTokens > 0) && (
+                    <li>{t("prestige.stays.keepSlayer").replace("{n}", formatNum(preview.kept.slayerPoints)).replace("{m}", formatNum(preview.kept.questTokens))}</li>
+                  )}
                   {preview.summary.stays.talentRanks > 0 && <li>{t("prestige.stays.talents").replace("{n}", String(preview.summary.stays.talentRanks))}</li>}
                   <li>{t("prestige.stays.records")}</li>
+                  <li>{t("prestige.stays.camp")}</li>{/* claude:2026-10-30T18:32:00+01:00 — 1.4.2: New Haven bleibt */}
                   <li>{t("prestige.stays.identity")}</li>
                   {preview.summary.stays.heldMail > 0 && <li>{t("prestige.stays.mail").replace("{n}", String(preview.summary.stays.heldMail))}</li>}
                   {preview.startingGold > 0 && <li>{t("prestige.stays.startGold").replace("{n}", formatNum(preview.startingGold))}</li>}
@@ -372,7 +496,7 @@ function AltarTab({ preview }: { preview: PrestigeAscendPreview }): JSX.Element 
                   .replace("{points}", formatNum(rec.points))
                   .replace("{level}", formatNum(rec.totalLevel))
                   .replace("{skills}", String(rec.skills99))
-                  .replace("{time}", formatPlaytime(rec.activePlayMs))}
+                  .replace("{time}", formatPlaytime(rec.activePlayMs, t))}
                 {/* claude:2026-10-18T20:30:00+02:00 — Bilanz des Durchgangs, falls gespeichert (Einträge ohne `tally` bleiben wie bisher). */}
                 {rec.tally && (
                   <span className="muted prestige-history-tally">
@@ -392,6 +516,54 @@ function AltarTab({ preview }: { preview: PrestigeAscendPreview }): JSX.Element 
   );
 }
 
+// claude:2026-10-31T14:58:54+01:00 — 1.4.2 Narben-Rückgabe und Nachzahlung (SAVE 102, Chef 31.10.2026): Kasten ganz oben auf der Altar-Seite, solange
+// `prestigeRespecPending`. Zeigt die zurückgegebenen Narben und, falls vorhanden, die Nachzahlung je Quelle (Namen aus den
+// vorhandenen Quellen-Schlüsseln, zwei Gruppen: frühere Stürze / Sammlung). „Zum Narbenbuch“ wechselt den Reiter,
+// „Verstanden“ setzt engine `acknowledgePrestigeRespec`; danach verschwinden Kasten, Band und Hub-Hervorhebung.
+const RESPEC_RUN_PARTS = ["gold", "dungeons", "slayer"] as const;
+function RespecNotice({ respec, onOpenBook, onAcknowledge }: { respec: PrestigeRespec142; onOpenBook: () => void; onAcknowledge: () => void }): JSX.Element {
+  const { t } = useI18n();
+  const runParts = PRESTIGE_RESPEC_RETRO_KEYS.filter((k) => (RESPEC_RUN_PARTS as readonly string[]).includes(k) && respec.retro[k] > 0);
+  const onceParts = PRESTIGE_RESPEC_RETRO_KEYS.filter((k) => !(RESPEC_RUN_PARTS as readonly string[]).includes(k) && respec.retro[k] > 0);
+  const row = (k: (typeof PRESTIGE_RESPEC_RETRO_KEYS)[number]): JSX.Element => (
+    <li key={k}>
+      <span>{t(`prestige.src.name.${k}`)}</span>
+      <b><ScarGlyph size={14} /> +{formatNum(respec.retro[k])}</b>
+    </li>
+  );
+  return (
+    <section className="prestige-respec" role="status" aria-live="polite">
+      <h3 className="prestige-respec-title">{t("prestige.respec.title")}</h3>
+      <p className="prestige-respec-text">
+        {respec.refunded > 0 ? t("prestige.respec.refund").replace("{n}", formatNum(respec.refunded)) : t("prestige.respec.noRefund")}
+      </p>
+      {respec.retro.total > 0 && (
+        <>
+          <p className="prestige-respec-text prestige-respec-retro">{t("prestige.respec.retro").replace("{n}", formatNum(respec.retro.total))}</p>
+          <div className="prestige-respec-groups">
+            {runParts.length > 0 && (
+              <div className="prestige-respec-group">
+                <h4>{t("prestige.respec.groupRuns")}</h4>
+                <ul>{runParts.map(row)}</ul>
+              </div>
+            )}
+            {onceParts.length > 0 && (
+              <div className="prestige-respec-group">
+                <h4>{t("prestige.respec.groupOnce")}</h4>
+                <ul>{onceParts.map(row)}</ul>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+      <div className="prestige-respec-actions">
+        <button type="button" className="btn-iron" onClick={onOpenBook}>{t("prestige.respec.toBook")}</button>
+        <button type="button" className="shop-citadel-btn" onClick={onAcknowledge}>{t("prestige.respec.ok")}</button>
+      </div>
+    </section>
+  );
+}
+
 export function PrestigePage(): JSX.Element {
   const state = useGameState();
   const { t } = useI18n();
@@ -401,9 +573,13 @@ export function PrestigePage(): JSX.Element {
   const book = findTalentTree(content, PRESTIGE_TALENT_TREE_ID);
   const scene = getAltarScene();
   const bookArt = getBookOfScarsArt();
+  const respec = prestigeRespecPending(state) ? state.prestige.respec142 : null; // claude:2026-10-31T14:58:54+01:00 — 1.4.2 Narben-Rückgabe
 
   return (
     <div className="prestige-page">
+      {respec && (
+        <RespecNotice respec={respec} onOpenBook={() => setTab("book")} onAcknowledge={() => acknowledgePrestigeRespec(state)} />
+      )}
       {/* Altar-Szene: Banner mit der Stimme des Wächters (Begrüßung oder Sperrtext) und dem Narben-Stand. Bild
           `assets/ui/prestige/altar_scene.webp`; fehlt es, dient die Hallen-Kulisse als Hintergrund. */}
       <section
@@ -460,6 +636,12 @@ export function PrestigePage(): JSX.Element {
               treeId={PRESTIGE_TALENT_TREE_ID}
               lockedHint={t("prestige.book.locked")}
               currencyIcon={<ScarGlyph size={16} />}
+              headerExtra={
+                <>
+                  {t("talent.nextFall").replace("{n}", "")}
+                  <strong><ScarGlyph size={16} /> {formatNum(preview.points.total)}</strong>
+                </>
+              }
             />
           </>
         )}

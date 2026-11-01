@@ -1,0 +1,36 @@
+=== DISCORD (EN, #announcements) ===
+**Grim Reach 1.4.2 - Cinderfall Reborn is live!**
+
+Hunters,
+
+1.4.2 is out, and it's a big one:
+
+- **Cinderfall rebuilt:** every spent Scar comes back, the Book of Scars now has 24 gifts, and earlier Cinderfalls get back pay. New Haven no longer resets.
+- **Rewards Shop:** new services for Quest Tokens, like rerolling a daily quest or calling a work order.
+- **Queue all dailies:** one click puts every open daily quest into your queue.
+- **Salvage tab:** quick salvage by rarity, or tick items in your inventory and bank and salvage them all at once.
+- **Pinned recipes, queue templates, auto-eat from your bank** and a lot more quality of life.
+- A new **Main Menu** home page and plenty of fixes from your reports.
+
+Full patch notes: [EVENT-LINK]
+
+Thank you for every report. Keep them coming!
+
+
+=== DISCORD (DE, deutscher Kanal) ===
+**Grim Reach 1.4.2 - Der Aschesturz, neu geboren ist da!**
+
+Jäger,
+
+1.4.2 ist erschienen, und es ist ein großes Update:
+
+- **Aschesturz neu gebaut:** Alle ausgegebenen Narben kommen zurück, das Narbenbuch hat jetzt 24 Gaben, und frühere Aschestürze bekommen eine Nachzahlung. New Haven wird nicht mehr zurückgesetzt.
+- **Belohnungsladen:** neue Dienste für Aufgabenmarken, zum Beispiel eine Tagesaufgabe neu würfeln oder einen Auftrag rufen.
+- **Alle in die Warteschlange:** Ein Klick reiht jede offene Tagesaufgabe ein.
+- **Reiter „Zerlegen“:** Schnell nach Seltenheit zerlegen oder Gegenstände in Inventar und Bank ankreuzen und alles auf einmal zerlegen.
+- **Angepinnte Rezepte, Warteschlangen-Vorlagen, Auto-Essen aus der Bank** und viel mehr Komfort.
+- Eine neue Startseite **„Hauptmenü“** und viele Fixes aus euren Meldungen.
+
+Alle Patchnotes: [EVENT-LINK]
+
+Danke für jede Meldung. Immer her damit!

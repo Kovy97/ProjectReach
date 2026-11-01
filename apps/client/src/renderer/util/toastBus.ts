@@ -42,3 +42,19 @@ export function registerUiToastSink(fn: ToastSink): () => void {
 export function pushUiToast(toast: UiToastPayload): void {
   sink?.(toast);
 }
+
+// claude:2026-10-31T15:30:00+01:00 — Fixwelle E10: Käufe (Belohnungsladen) sind kein „Seltener Fund“. Der Toast-Diff sieht nur den
+// Besitz-Zuwachs; die Kaufstelle meldet hier, wie viele Stücke eines Items sie gerade selbst geliefert hat, und der Diff zieht sie ab.
+const purchased = new Map<string, number>();
+
+/** Von der Kaufstelle aufrufen, direkt nach einem erfolgreichen Kauf. */
+export function notePurchasedItem(itemId: string, qty: number): void {
+  if (qty > 0) purchased.set(itemId, (purchased.get(itemId) ?? 0) + qty);
+}
+
+/** Toasts.tsx: liefert die gemeldete Kaufmenge dieses Items und setzt sie zurück. */
+export function takePurchasedItem(itemId: string): number {
+  const n = purchased.get(itemId) ?? 0;
+  if (n > 0) purchased.delete(itemId);
+  return n;
+}

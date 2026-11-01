@@ -115,10 +115,16 @@ export function formatCompactK(n: number): string {
 }
 
 /** Gespielte Zeit kompakt, z.B. "2h 14m" oder "8m". */
-export function formatPlaytime(ms: number): string {
+// claude:2026-10-31T15:40:00+01:00 — E8: mit `t` kommen die Einheiten aus i18n (`skill.eta.hoursMin` / `skill.eta.min`), ohne `t` bleibt „2h 14m“.
+export function formatPlaytime(ms: number, t?: (key: string) => string): string {
   const totalMinutes = Math.floor(ms / 60_000);
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
+  if (t) {
+    return hours > 0
+      ? t("skill.eta.hoursMin").replace("{h}", String(hours)).replace("{m}", String(minutes))
+      : t("skill.eta.min").replace("{m}", String(minutes));
+  }
   if (hours > 0) return `${hours}h ${minutes}m`;
   return `${minutes}m`;
 }

@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { QueueTemplatesMenu } from "./QueueTemplatesMenu"; // claude:2026-10-31T16:34:28+01:00
 import { stopReasonKey } from "../util/stopReason";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { content } from "@hearthforge/content";
@@ -154,7 +155,7 @@ function QueueLevelRow({ entry }: { entry: QueueLevelEntry }): JSX.Element {
 function formatEntryDuration(entry: QueueTimingEntry, t: (key: string) => string): { text: string; warn: boolean } {
   if (entry.infinite) return { text: t("queue.duration.infinite"), warn: false };
   if (entry.unknown) return { text: t("queue.duration.unknown"), warn: false };
-  const time = formatPlaytime(entry.remainingMs ?? 0);
+  const time = formatPlaytime(entry.remainingMs ?? 0, t);
   // Kampf-Einträge sind eine grobe DPS-Schätzung, keine Simulation (s. estimateFightKillMs) —
   // die Tilde macht das auf den ersten Blick sichtbar, ohne einen eigenen i18n-Text zu brauchen.
   const timeText = entry.isEstimate ? `~${time}` : time;
@@ -669,7 +670,7 @@ export function ActionQueuePanel(): JSX.Element {
               className="queue-rail-item queue-rail-item--active"
               content={
                 <span className="ct-tip-desc">
-                  {tr(activeAction.name)} {combinedTarget === null ? t("skill.qty.all") : `×${combinedTarget}`}
+                  {tr(activeAction.name)} {combinedTarget === null ? "∞" : `×${combinedTarget}`}
                   {activeRowDuration ? ` · ${activeRowDuration.text}` : ""} · {t("queue.rightClickEject")}
                 </span>
               }
@@ -704,7 +705,7 @@ export function ActionQueuePanel(): JSX.Element {
             // Zahl von Läufen (oder ∞), nie "alles vom Material, das gerade reicht".
             const qtyLabel = fightEntry || dungeonEntry || raidEntry
               ? entry.target === null ? "∞" : `×${entry.target}`
-              : entry.target === null ? t("skill.qty.all") : `×${entry.target}`;
+              : entry.target === null ? "∞" : `×${entry.target}`;
             const rowTiming = timing.queue[i];
             return (
               <HoverTip
@@ -762,9 +763,9 @@ export function ActionQueuePanel(): JSX.Element {
               <span className={`queue-panel-total-value${timing.hasInfinite ? " queue-panel-total-value--infinite" : ""}`}>
                 {timing.hasInfinite
                   ? timing.finiteMs > 0
-                    ? t("queue.duration.thenInfinite").replace("{time}", formatPlaytime(timing.finiteMs))
+                    ? t("queue.duration.thenInfinite").replace("{time}", formatPlaytime(timing.finiteMs, t))
                     : t("queue.duration.infinite")
-                  : formatPlaytime(timing.totalMs ?? 0)}
+                  : formatPlaytime(timing.totalMs ?? 0, t)}
               </span>
               {!timing.hasInfinite && (timing.totalMs ?? 0) > 0 && (
                 <span className="queue-panel-total-eta">
@@ -920,7 +921,7 @@ export function ActionQueuePanel(): JSX.Element {
                   {activeLevelEntry && <QueueLevelRow entry={activeLevelEntry} />}
                 </div>
                 <span className="queue-row-target">
-                  {combinedTarget === null ? t("skill.qty.all") : `×${combinedTarget}`}
+                  {combinedTarget === null ? "∞" : `×${combinedTarget}`}
                 </span>
               </HoverTip>
             ) : state.lastStop ? (
@@ -966,6 +967,8 @@ export function ActionQueuePanel(): JSX.Element {
                 </HoverTip>
               )}
             </div>
+
+            <QueueTemplatesMenu />{/* claude:2026-10-31T16:34:28+01:00 — Vorlagen (Ideen-Welle 1.4.2) */}
 
             {/* Task #369 — Endlos-Sperre: der Kern des Befunds war die STILLE, nicht das Warten.
                 Steht direkt über den wartenden Zeilen (erklärt genau das, was der Spieler dort
@@ -1113,7 +1116,7 @@ export function ActionQueuePanel(): JSX.Element {
                             <span className="queue-row-target">
                               {fightEntry || dungeonEntry || raidEntry
                                 ? entry.target === null ? "∞" : `×${entry.target}`
-                                : entry.target === null ? t("skill.qty.all") : `×${entry.target}`}
+                                : entry.target === null ? "∞" : `×${entry.target}`}
                             </span>
                             {rowDuration && (
                               <span className={`queue-row-duration${rowDuration.warn ? " queue-row-duration--warn" : ""}`}>

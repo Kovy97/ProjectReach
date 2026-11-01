@@ -426,7 +426,8 @@ def import_order():
     for f in rest:
         if f not in order and f != 'index.css':
             order.append(f)
-    return [f for f in order if not f.startswith('classic-') and f != 'index.css' and (STYLES / f).exists()]
+    # claude:2026-10-30T21:06:00+01:00 - Dev-Stil Synty: synty-*.css (eigener Generator/Handschrift, ui-audit/synty/) nie als Reforged-Quelle einlesen
+    return [f for f in order if not f.startswith('classic-') and not f.startswith('synty-') and f != 'index.css' and (STYLES / f).exists()]
 
 
 def git_old(fname):

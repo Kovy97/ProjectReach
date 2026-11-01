@@ -201,7 +201,7 @@ export function StatsPage(): JSX.Element {
             <StatMedallion
               iconSrc={null}
               fallback="⏳"
-              value={formatPlaytime(state.activePlayMs)}
+              value={formatPlaytime(state.activePlayMs, t)}
               label={t("stats.playtime")}
             />
           </div>

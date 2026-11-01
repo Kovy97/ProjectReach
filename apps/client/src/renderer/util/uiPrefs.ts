@@ -199,10 +199,10 @@ export interface EliteMiniPos {
   y: number;
 }
 
-/** Persistierte Fensterposition, oder `null` wenn noch nie verschoben (Aufrufer errechnet dann
- *  seinen eigenen Default aus der aktuellen Fenstergröße). Korrupte/fremde Werte → `null`. */
-export function getEliteMiniPos(): EliteMiniPos | null {
-  const raw = localStorage.getItem(ELITE_MINI_POS_KEY);
+/** claude:2026-10-31T11:57:41+01:00 — Gemeinsamer Leser für schwebende Fenster (Elite-Mini-Fenster, Angepinnte Rezepte):
+ *  `{x,y}` mit endlichen Zahlen, sonst `null`. Logik unverändert aus `getEliteMiniPos` herausgezogen. */
+function readFloatingPos(key: string): EliteMiniPos | null {
+  const raw = localStorage.getItem(key);
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw) as Partial<EliteMiniPos>;
@@ -213,6 +213,12 @@ export function getEliteMiniPos(): EliteMiniPos | null {
     /* korrupter Wert → Default beim Aufrufer */
   }
   return null;
+}
+
+/** Persistierte Fensterposition, oder `null` wenn noch nie verschoben (Aufrufer errechnet dann
+ *  seinen eigenen Default aus der aktuellen Fenstergröße). Korrupte/fremde Werte → `null`. */
+export function getEliteMiniPos(): EliteMiniPos | null {
+  return readFloatingPos(ELITE_MINI_POS_KEY); // claude:2026-10-31T11:57:41+01:00 — gemeinsamer Leser, Verhalten gleich
 }
 
 /** Persistiert die per Drag gewählte Fensterposition (erst bei pointerup, nicht pro pointermove —
@@ -230,6 +236,34 @@ export function getEliteMiniCollapsed(): boolean {
 /** Persistiert den Ein-/Ausklapp-Zustand des Elite-Mini-Fensters. */
 export function setEliteMiniCollapsed(value: boolean): void {
   localStorage.setItem(ELITE_MINI_COLLAPSED_KEY, value ? "1" : "0");
+}
+
+// ─── Fenster „Angepinnte Rezepte“ (1.4.2, Chef-Auftrag 31.10.2026: „wie der Counter für Champions, auf- und zuklappbar,
+// verschiebbar“) ───
+// claude:2026-10-31T11:57:41+01:00 — Nur Position und Einklappzustand sind Anzeige-Vorlieben (localStorage, pro Gerät). Die Pins
+// selbst liegen im Spielstand (`GameState.pinnedRecipes`, SAVE 101), damit sie per Steam Cloud mitwandern.
+const PINNED_RECIPES_POS_KEY = "gr.pinnedRecipesPos";
+const PINNED_RECIPES_COLLAPSED_KEY = "gr.pinnedRecipesCollapsed";
+
+/** Persistierte Position des Pin-Fensters, `null` = noch nie verschoben (Default errechnet der Aufrufer). */
+export function getPinnedRecipesPos(): EliteMiniPos | null {
+  return readFloatingPos(PINNED_RECIPES_POS_KEY);
+}
+
+/** Persistiert die per Drag gewählte Position (erst am Drag-Ende). */
+export function setPinnedRecipesPos(pos: EliteMiniPos): void {
+  localStorage.setItem(PINNED_RECIPES_POS_KEY, JSON.stringify(pos));
+}
+
+/** Ob das Pin-Fenster eingeklappt ist (Default: AUSGEKLAPPT; es erscheint ohnehin nur mit mindestens einem Pin). */
+export function getPinnedRecipesCollapsed(): boolean {
+  // claude:2026-10-31T14:05:00+01:00 — Standard eingeklappt (nur ein ausdrückliches Aufklappen speichert "0").
+  return localStorage.getItem(PINNED_RECIPES_COLLAPSED_KEY) !== "0";
+}
+
+/** Persistiert den Ein-/Ausklapp-Zustand des Pin-Fensters. */
+export function setPinnedRecipesCollapsed(value: boolean): void {
+  localStorage.setItem(PINNED_RECIPES_COLLAPSED_KEY, value ? "1" : "0");
 }
 
 // ─── Kampf-Loadout-/Log-Panel-Maße + Log-Anzeigefilter (Task #333, Chef-Feature "Kampf-Screen-
@@ -451,4 +485,46 @@ export function getHuntBookCollapsed(): boolean {
 /** Persistiert den Ein-/Ausklapp-Zustand des Jagdbuchs. */
 export function setHuntBookCollapsed(value: boolean): void {
   localStorage.setItem(HUNT_BOOK_COLLAPSED_KEY, value ? "1" : "0");
+}
+
+// ─── Aufwertungs-Marker ▲ und Desktop-Benachrichtigungen (1.4.2) ───
+// claude:2026-10-31T16:34:28+01:00 — Reine Anzeige-Vorlieben im Browser-Speicher, kein Save-Feld.
+const UPGRADE_MARKER_KEY = "gr.upgradeMarker";
+const DESKTOP_NOTIFY_KEY = "gr.desktopNotify";
+
+function readFlag(key: string, fallback: boolean): boolean {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw === null ? fallback : raw === "1";
+  } catch {
+    return fallback;
+  }
+}
+function writeFlag(key: string, value: boolean): void {
+  try {
+    localStorage.setItem(key, value ? "1" : "0");
+  } catch {
+    /* Vorliebe geht verloren, sonst kein Schaden */
+  }
+}
+
+let upgradeMarker = readFlag(UPGRADE_MARKER_KEY, true);
+let desktopNotify = readFlag(DESKTOP_NOTIFY_KEY, false);
+
+/** ▲ auf Ausrüstung, die besser ist als das Angelegte (Standard: an). */
+export function isUpgradeMarkerEnabled(): boolean {
+  return upgradeMarker;
+}
+export function setUpgradeMarkerEnabled(value: boolean): void {
+  upgradeMarker = value;
+  writeFlag(UPGRADE_MARKER_KEY, value);
+}
+
+/** Desktop-Benachrichtigungen bei unfokussiertem Fenster (Opt-in, Standard: aus). */
+export function isDesktopNotifyEnabled(): boolean {
+  return desktopNotify;
+}
+export function setDesktopNotifyEnabled(value: boolean): void {
+  desktopNotify = value;
+  writeFlag(DESKTOP_NOTIFY_KEY, value);
 }

@@ -1,0 +1,484 @@
+{
+  "version": 2,
+  "rule": "Corner motifs remain within the corner slices. Edges stretch; center is omitted. Raster review only.",
+  "frames/frame_iron_hairline": {
+    "sourceSize": [
+      1024,
+      1024
+    ],
+    "slice": {
+      "top": 224,
+      "right": 224,
+      "bottom": 224,
+      "left": 224
+    },
+    "runtimeBorder": {
+      "top": 8,
+      "right": 8,
+      "bottom": 8,
+      "left": 8
+    },
+    "borderImageRepeat": "stretch",
+    "fill": false
+  },
+  "frames/frame_iron_thin_bronze": {
+    "sourceSize": [
+      1024,
+      1024
+    ],
+    "slice": {
+      "top": 192,
+      "right": 192,
+      "bottom": 192,
+      "left": 192
+    },
+    "runtimeBorder": {
+      "top": 12,
+      "right": 12,
+      "bottom": 12,
+      "left": 12
+    },
+    "borderImageRepeat": "stretch",
+    "fill": false
+  },
+  "frames/frame_iron_riveted_heavy": {
+    "sourceSize": [
+      1024,
+      1024
+    ],
+    "slice": {
+      "top": 224,
+      "right": 224,
+      "bottom": 224,
+      "left": 224
+    },
+    "runtimeBorder": {
+      "top": 20,
+      "right": 20,
+      "bottom": 20,
+      "left": 20
+    },
+    "borderImageRepeat": "stretch",
+    "fill": false
+  },
+  "frames/frame_dark_oak_carved": {
+    "sourceSize": [
+      1024,
+      1024
+    ],
+    "slice": {
+      "top": 256,
+      "right": 256,
+      "bottom": 256,
+      "left": 256
+    },
+    "runtimeBorder": {
+      "top": 20,
+      "right": 20,
+      "bottom": 20,
+      "left": 20
+    },
+    "borderImageRepeat": "stretch",
+    "fill": false
+  },
+  "frames/frame_oak_iron_brackets": {
+    "sourceSize": [
+      1024,
+      1024
+    ],
+    "slice": {
+      "top": 224,
+      "right": 224,
+      "bottom": 224,
+      "left": 224
+    },
+    "runtimeBorder": {
+      "top": 18,
+      "right": 18,
+      "bottom": 18,
+      "left": 18
+    },
+    "borderImageRepeat": "stretch",
+    "fill": false
+  },
+  "frames/frame_bronze_filigree": {
+    "sourceSize": [
+      1024,
+      1024
+    ],
+    "slice": {
+      "top": 240,
+      "right": 240,
+      "bottom": 272,
+      "left": 240
+    },
+    "runtimeBorder": {
+      "compact": {
+        "top": 12,
+        "right": 12,
+        "bottom": 12,
+        "left": 12
+      },
+      "normal": {
+        "top": 18,
+        "right": 18,
+        "bottom": 18,
+        "left": 18
+      },
+      "large": {
+        "top": 20,
+        "right": 20,
+        "bottom": 20,
+        "left": 20
+      }
+    },
+    "borderOptions": {
+      "subtle": {
+        "compact": {
+          "top": 12,
+          "right": 12,
+          "bottom": 12,
+          "left": 12
+        },
+        "normal": {
+          "top": 18,
+          "right": 18,
+          "bottom": 18,
+          "left": 18
+        },
+        "large": {
+          "top": 20,
+          "right": 20,
+          "bottom": 20,
+          "left": 20
+        }
+      },
+      "painterly": {
+        "compact": {
+          "top": 20,
+          "right": 20,
+          "bottom": 20,
+          "left": 20
+        },
+        "normal": {
+          "top": 36,
+          "right": 36,
+          "bottom": 36,
+          "left": 36
+        },
+        "large": {
+          "top": 48,
+          "right": 48,
+          "bottom": 48,
+          "left": 48
+        }
+      }
+    },
+    "borderImageRepeat": "stretch",
+    "fill": false
+  },
+  "frames/frame_stone_carved": {
+    "sourceSize": [
+      1024,
+      1024
+    ],
+    "slice": {
+      "top": 224,
+      "right": 224,
+      "bottom": 256,
+      "left": 224
+    },
+    "runtimeBorder": {
+      "compact": {
+        "top": 12,
+        "right": 12,
+        "bottom": 12,
+        "left": 12
+      },
+      "normal": {
+        "top": 18,
+        "right": 18,
+        "bottom": 18,
+        "left": 18
+      },
+      "large": {
+        "top": 20,
+        "right": 20,
+        "bottom": 20,
+        "left": 20
+      }
+    },
+    "borderOptions": {
+      "subtle": {
+        "compact": {
+          "top": 12,
+          "right": 12,
+          "bottom": 12,
+          "left": 12
+        },
+        "normal": {
+          "top": 18,
+          "right": 18,
+          "bottom": 18,
+          "left": 18
+        },
+        "large": {
+          "top": 20,
+          "right": 20,
+          "bottom": 20,
+          "left": 20
+        }
+      },
+      "painterly": {
+        "compact": {
+          "top": 20,
+          "right": 20,
+          "bottom": 20,
+          "left": 20
+        },
+        "normal": {
+          "top": 36,
+          "right": 36,
+          "bottom": 36,
+          "left": 36
+        },
+        "large": {
+          "top": 48,
+          "right": 48,
+          "bottom": 48,
+          "left": 48
+        }
+      }
+    },
+    "borderImageRepeat": "stretch",
+    "fill": false
+  },
+  "frames/frame_leather_stitched": {
+    "sourceSize": [
+      1024,
+      1024
+    ],
+    "slice": {
+      "top": 192,
+      "right": 192,
+      "bottom": 192,
+      "left": 192
+    },
+    "runtimeBorder": {
+      "compact": {
+        "top": 12,
+        "right": 12,
+        "bottom": 12,
+        "left": 12
+      },
+      "normal": {
+        "top": 18,
+        "right": 18,
+        "bottom": 18,
+        "left": 18
+      },
+      "large": {
+        "top": 20,
+        "right": 20,
+        "bottom": 20,
+        "left": 20
+      }
+    },
+    "borderOptions": {
+      "subtle": {
+        "compact": {
+          "top": 12,
+          "right": 12,
+          "bottom": 12,
+          "left": 12
+        },
+        "normal": {
+          "top": 18,
+          "right": 18,
+          "bottom": 18,
+          "left": 18
+        },
+        "large": {
+          "top": 20,
+          "right": 20,
+          "bottom": 20,
+          "left": 20
+        }
+      },
+      "painterly": {
+        "compact": {
+          "top": 20,
+          "right": 20,
+          "bottom": 20,
+          "left": 20
+        },
+        "normal": {
+          "top": 32,
+          "right": 32,
+          "bottom": 32,
+          "left": 32
+        },
+        "large": {
+          "top": 40,
+          "right": 40,
+          "bottom": 40,
+          "left": 40
+        }
+      }
+    },
+    "borderImageRepeat": "stretch",
+    "fill": false
+  },
+  "frames/frame_slot_iron": {
+    "sourceSize": [
+      256,
+      256
+    ],
+    "slice": {
+      "top": 48,
+      "right": 48,
+      "bottom": 48,
+      "left": 48
+    },
+    "runtimeBorder": {
+      "compact": {
+        "top": 8,
+        "right": 8,
+        "bottom": 8,
+        "left": 8
+      },
+      "normal": {
+        "top": 12,
+        "right": 12,
+        "bottom": 12,
+        "left": 12
+      },
+      "large": {
+        "top": 16,
+        "right": 16,
+        "bottom": 16,
+        "left": 16
+      }
+    },
+    "borderOptions": {
+      "subtle": {
+        "compact": {
+          "top": 8,
+          "right": 8,
+          "bottom": 8,
+          "left": 8
+        },
+        "normal": {
+          "top": 12,
+          "right": 12,
+          "bottom": 12,
+          "left": 12
+        },
+        "large": {
+          "top": 16,
+          "right": 16,
+          "bottom": 16,
+          "left": 16
+        }
+      },
+      "painterly": {
+        "compact": {
+          "top": 12,
+          "right": 12,
+          "bottom": 12,
+          "left": 12
+        },
+        "normal": {
+          "top": 20,
+          "right": 20,
+          "bottom": 20,
+          "left": 20
+        },
+        "large": {
+          "top": 24,
+          "right": 24,
+          "bottom": 24,
+          "left": 24
+        }
+      }
+    },
+    "borderImageRepeat": "stretch",
+    "fill": false
+  },
+  "frames/frame_tooltip_dark": {
+    "sourceSize": [
+      1024,
+      1024
+    ],
+    "slice": {
+      "top": 176,
+      "right": 176,
+      "bottom": 192,
+      "left": 176
+    },
+    "runtimeBorder": {
+      "compact": {
+        "top": 8,
+        "right": 8,
+        "bottom": 8,
+        "left": 8
+      },
+      "normal": {
+        "top": 10,
+        "right": 10,
+        "bottom": 10,
+        "left": 10
+      },
+      "large": {
+        "top": 12,
+        "right": 12,
+        "bottom": 12,
+        "left": 12
+      }
+    },
+    "borderOptions": {
+      "subtle": {
+        "compact": {
+          "top": 8,
+          "right": 8,
+          "bottom": 8,
+          "left": 8
+        },
+        "normal": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        },
+        "large": {
+          "top": 12,
+          "right": 12,
+          "bottom": 12,
+          "left": 12
+        }
+      },
+      "painterly": {
+        "compact": {
+          "top": 12,
+          "right": 12,
+          "bottom": 12,
+          "left": 12
+        },
+        "normal": {
+          "top": 20,
+          "right": 20,
+          "bottom": 20,
+          "left": 20
+        },
+        "large": {
+          "top": 24,
+          "right": 24,
+          "bottom": 24,
+          "left": 24
+        }
+      }
+    },
+    "borderImageRepeat": "stretch",
+    "fill": false
+  }
+}

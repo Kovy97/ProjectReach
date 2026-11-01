@@ -166,6 +166,7 @@
 
 /* ─── Skill-Card „Hero" ────────────────────────── */
 .skillcard {
+  scroll-margin-top: 120px; /* claude:2026-10-31T14:05:00+01:00 — Sprung „Zum Rezept“ landet unterhalb der Kopfleiste */
   /* Wooden 9-slice frame matching attribute-cards / ds-frame pattern */
   background:
     linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.72)),
@@ -2107,6 +2108,11 @@ button.skilloverview-card {
   gap: 16px;
 }
 
+/* claude:2026-10-30T19:31:00+01:00 — 1.4.2 Saatkammer: ab 10 Beeten (bis 12) vier Spalten, je >=210px, damit 3x4 statt langer Liste. */
+.farm-plots--wide {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, max(210px, calc((100% - 48px) / 4))), 1fr));
+}
+
 /* ─── Plot card — wooden 9-slice frame + dark texture ────── */
 .plot-card {
   background:
@@ -2938,3 +2944,9 @@ button.skilloverview-card {
   color: #a59c86;
 }
 
+
+/* claude:2026-10-31T16:34:28+01:00 — Ideen-Welle 1.4.2: Filter-Chips neben der Suche, Freischaltungs-Zeile. */
+#root .skill-search-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+#root .skill-search-bar .invf-search { flex: 1 1 220px; min-width: 0; }
+#root .skill-search-bar .skill-filter-chip { flex: 0 0 auto; min-height: 44px; }
+.skill-next-unlock { margin: -8px 0 14px; font-size: var(--fs-sm); }

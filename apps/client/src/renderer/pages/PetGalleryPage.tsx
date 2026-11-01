@@ -1,22 +1,24 @@
 import { useState } from "react";
 import { content } from "@hearthforge/content";
 import {
+  computeStats,
   effectivePetDropChance,
   equipPet,
   equipSecondPet,
   ownedPetCount,
   ownsPet,
   petEchoActive,
+  petEchoFactor,
   petPityProgress,
   secondPetSlotUnlocked,
 } from "@hearthforge/engine";
 import type { PetDef, PetSkillEffect } from "@hearthforge/shared";
-import { PET_ECHO_FACTOR, PET_WHOLE_LEVEL_KINDS } from "@hearthforge/shared";
+import { PET_WHOLE_LEVEL_KINDS } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getPetSrc, PET_ZONE_ID } from "../pets";
 import { getUiIcon } from "../uiIcons";
-import { formatNum, formatPct1, formatSeconds1 } from "../util/format";
+import { formatNum, formatPct1, formatPct2, formatSeconds1 } from "../util/format";
 import { abilityText, passiveText } from "../util/petText";
 import { getZoneBackgroundCard } from "../zoneBackgrounds";
 
@@ -109,7 +111,13 @@ function RoleBadge({ pet, t, compact }: { pet: PetDef; t: TFn; compact?: boolean
 }
 
 /** Echo-Anteil als Prozent-Text (25). */
-const ECHO_PCT = formatPct1(PET_ECHO_FACTOR);
+// claude:2026-10-30T18:06:00+01:00 — unter 1 % zwei Nachkommastellen (min. 0,01 % ab count>0), sonst ganzzahlig abgerundet.
+function formatPityPct(fraction: number): string {
+  if (fraction <= 0) return "0%";
+  if (fraction < 0.01) return `${formatPct2(Math.max(fraction, 0.0001))}%`;
+  return `${Math.floor(fraction * 100)}%`;
+}
+// claude:2026-10-30T19:31:00+01:00 — Echo-Prozent hängt seit 1.4.2 vom Narbenbuch ab (`petEchoFactor`), daher je Render in der Seite berechnet.
 
 export function PetGalleryPage(): JSX.Element {
   const state = useGameState();
@@ -144,7 +152,12 @@ export function PetGalleryPage(): JSX.Element {
   };
 
   const sourceLabel = (pet: PetDef): string => {
-    if (pet.source.kind === "combat") return t("companions.source.combat");
+    // claude:2026-10-30T18:06:00+01:00 — Kampf-Begleiter sind stilgebunden (Engine tryPetDrop): Stil in der Quelle nennen.
+    if (pet.source.kind === "combat") {
+      return pet.source.style
+        ? t("companions.source.combatStyle").replace("{style}", t(`style.${pet.source.style}`))
+        : t("companions.source.combat");
+    }
     const skill = content.skills[pet.source.skill];
     return t("companions.source.skill").replace(
       "{skill}",
@@ -175,7 +188,11 @@ export function PetGalleryPage(): JSX.Element {
   const selectedBg = getZoneBackgroundCard(PET_ZONE_ID[selectedPet.id]);
   const selectedSecond = secondId === selectedPet.id;
   const pity = petPityProgress(state, content, selectedPet);
+  // claude:2026-10-30T18:06:00+01:00 — aktueller Kampfstil (waffenbestimmt) fuer die Pech-Schutz-Zeile.
+  const currentStyle = computeStats(state, content).style;
   // claude:2026-10-18T02:00:00+02:00 — Echo: wirkt der ausgewählte Begleiter gerade mit 25 %? Und wie viele insgesamt?
+  const echoFactor = petEchoFactor(state, content); // claude:2026-10-30T19:31:00+01:00 — 1.4.2 „Echo der Gefährten“ (25/35/50 %)
+  const ECHO_PCT = formatPct1(echoFactor);
   const selectedEcho = selectedOwned && petEchoActive(state, content, selectedPet.id);
   const echoCount = allPets.filter((pet) => petEchoActive(state, content, pet.id)).length;
 
@@ -332,14 +349,24 @@ export function PetGalleryPage(): JSX.Element {
                       .replace("{n}", formatNum(Math.min(pity.count, pity.threshold)))
                       .replace("{max}", formatNum(pity.threshold))}
                   </span>
-                  <span>{Math.floor((Math.min(pity.count, pity.threshold) / pity.threshold) * 100)}%</span>
+                  {/* claude:2026-10-30T18:06:00+01:00 — Prozent mit Genauigkeit (2 Stellen unter 1 %), sonst Balken/Zahl bei Schwellen von ~80.000 starr. */}
+                  <span>{formatPityPct(Math.min(pity.count, pity.threshold) / pity.threshold)}</span>
                 </div>
                 <div className="bar">
                   <div
                     className="bar-fill"
-                    style={{ transform: `scaleX(${Math.min(1, pity.count / pity.threshold)})` }}
+                    style={{ transform: `scaleX(${pity.count > 0 ? Math.max(0.02, Math.min(1, pity.count / pity.threshold)) : 0})` }}
                   />
                 </div>
+                {selectedPet.source.kind === "combat" && selectedPet.source.style && (
+                  <div className="pet-field-pity-note muted">
+                    {/* claude:2026-10-30T18:20:00+01:00 — Spur zaehlt bei jedem Kill; der Begleiter faellt nur im passenden Stil. */}
+                    {t(pity.count >= pity.threshold ? "companions.pity.full" : "companions.pity.grow")
+                      .replace("{style}", t(`style.${selectedPet.source.style}`))}
+                    {selectedPet.source.style !== currentStyle &&
+                      ` ${t("companions.pity.styleMismatch").replace("{cur}", t(`style.${currentStyle}`))}`}
+                  </div>
+                )}
               </div>
             )}
 
@@ -382,7 +409,7 @@ export function PetGalleryPage(): JSX.Element {
                           ? t("companions.echo.active").replace("{pct}", ECHO_PCT)
                           : t("companions.echo.idle")}
                       </small>
-                      <span>{passiveText(selectedPet, tFn, tr, PET_ECHO_FACTOR)}</span>
+                      <span>{passiveText(selectedPet, tFn, tr, echoFactor)}</span>
                     </span>
                   </div>
                 </>

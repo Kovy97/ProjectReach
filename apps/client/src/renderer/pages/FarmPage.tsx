@@ -5,6 +5,7 @@ import {
   bankCount,
   campBoost,
   collectPlot,
+  farmPlotsUnlocked,
   itemCount,
   levelFromXp,
   plantCrop,
@@ -15,7 +16,7 @@ import {
   uprootPlot,
 } from "@hearthforge/engine";
 import type { FarmPlot, GameState } from "@hearthforge/shared";
-import { MAX_FARM_PLOTS, PLOT_UNLOCK, plotsUnlocked } from "@hearthforge/shared";
+import { FARM_PLOT_SLOTS, MAX_FARM_PLOTS, PLOT_UNLOCK, plotsUnlocked } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getUiIcon } from "../uiIcons";
@@ -23,6 +24,7 @@ import { getItemImage } from "../items";
 import { ItemChip } from "../components/ItemChip";
 import { HoverTip } from "../components/CitadelTip";
 import { CampBoostNote } from "../components/CampBoostNote";
+import { formatNum } from "../util/format"; // claude:2026-10-31T15:50:00+01:00
 
 // ─── Crop icon mapping ────────────────────────────────────────────────────────
 // Maps crop IDs to farming icon asset names (assets/icons/icon_farming_*.png).
@@ -149,12 +151,18 @@ function formatMs(ms: number): string {
   return `${s}s`;
 }
 
-/** Minimum farming level required to unlock the plot at the given index. */
-function plotUnlockLevel(plotIndex: number): number {
+/**
+ * Minimum farming level required to unlock the plot at the given index.
+ * claude:2026-10-30T19:31:00+01:00 — 1.4.2 Saatkammer: `talentPlots` Beete kommen aus dem Narbenbuch; das Beet braucht nur noch die Stufe des
+ * (Index − talentPlots)-ten Stufen-Beets. null = nur über weitere Narbenbuch-Ränge erreichbar.
+ */
+function plotUnlockLevel(plotIndex: number, talentPlots = 0): number | null {
+  const idx = plotIndex - talentPlots;
+  if (idx >= MAX_FARM_PLOTS) return null;
   for (const [lv, n] of PLOT_UNLOCK) {
-    if (plotIndex < n) return lv;
+    if (idx < n) return lv;
   }
-  return 99;
+  return null;
 }
 
 /** Total seeds available across inventory and bank. */
@@ -222,7 +230,7 @@ function CropOverview(): JSX.Element {
               <span className="farm-catalogue-meta muted">
                 {t("farm.grow").replace("{time}", formatMs(c.growMs))}
                 {" · "}
-                {t("farm.xpGain").replace("{n}", String(c.xp))}
+                {t("farm.xpGain").replace("{n}", formatNum(c.xp))}
               </span>
 
               <div className="farm-catalogue-yield">
@@ -300,7 +308,7 @@ function CropPicker({
     .filter((c) => c.levelRequired <= farmingLevel)
     .sort((a, b) => a.levelRequired - b.levelRequired);
 
-  const unlockedCount = Math.min(plotsUnlocked(farmingLevel), MAX_FARM_PLOTS);
+  const unlockedCount = farmPlotsUnlocked(state, content); // claude:2026-10-30T19:31:00+01:00 — Stufe + Saatkammer
   // Wie viele Beete wuerde "alle bepflanzen" tatsaechlich treffen? Dieselbe Bedingung wie
   // `plantCrop` in der Engine: freigeschaltet, leer, keine abholbare Ernte darauf. Ohne diese
   // Zahl bleibt "Alle bepflanzen" ein Knopf, dessen Wirkung man erst hinterher sieht.
@@ -389,7 +397,7 @@ function CropPicker({
               ×{c.yieldMin}–{c.yieldMax}
             </span>
             <span className="farm-picker-fact">
-              {t("farm.xpGain").replace("{n}", String(c.xp))}
+              {t("farm.xpGain").replace("{n}", formatNum(c.xp))}
             </span>
           </span>
           <span className={`farm-picker-seeds${!hasSeeds ? " none" : ""}`}>
@@ -594,7 +602,11 @@ export function FarmPage(): JSX.Element {
   // pro Plot), derselbe Engine-Wert, den `plotProgress`/`effectiveGrowMs` intern verrechnen.
   const farmCampBonus = Math.max(0, campBoost(state, content, "farmingSpeed"));
 
-  const unlocked = plotsUnlocked(level);
+  // claude:2026-10-30T19:31:00+01:00 — 1.4.2 Saatkammer: freie Beete = Stufe + Narbenbuch (Engine `farmPlotsUnlocked`); Talent-Beete sind die Differenz.
+  const unlocked = farmPlotsUnlocked(state, content);
+  const talentPlots = Math.max(0, unlocked - plotsUnlocked(level));
+  // Die drei Talent-Plätze zeigen wir erst, wenn das Narbenbuch erreichbar ist (Aschesturz gemacht oder Rang vorhanden).
+  const plotSlotsShown = talentPlots > 0 || (state.prestige?.count ?? 0) > 0 ? FARM_PLOT_SLOTS : MAX_FARM_PLOTS;
   const skill = content.skills["farming"];
   const cropCount = Object.keys(content.crops ?? {}).length;
 
@@ -626,7 +638,7 @@ export function FarmPage(): JSX.Element {
                 <span className="muted">
                   {t("farm.plotsInfo")
                     .replace("{unlocked}", String(unlocked))
-                    .replace("{total}", String(MAX_FARM_PLOTS))}
+                    .replace("{total}", String(plotSlotsShown))}
                 </span>
                 <span className="muted">{t("farm.offlineHint")}</span>
                 {/* Chef 25.08.2026: "Einen Knopf oben haben fuer Plant on all Plots". Er war
@@ -655,9 +667,9 @@ export function FarmPage(): JSX.Element {
                 {t("farm.hint.plots")}
               </p>
 
-              {/* Plot grid (max 3 columns) */}
-              <div className="farm-plots">
-                {Array.from({ length: MAX_FARM_PLOTS }, (_, i) => {
+              {/* Plot grid (max 3 columns; ab 10 Beeten 4 Spalten) — claude:2026-10-30T19:31:00+01:00 */}
+              <div className={`farm-plots${plotSlotsShown > MAX_FARM_PLOTS ? " farm-plots--wide" : ""}`}>
+                {Array.from({ length: plotSlotsShown }, (_, i) => {
                   const prog = plotProgress(state, content, i);
                   const plot = state.farmPlots[i] as
                     | (typeof state.farmPlots)[number]
@@ -684,10 +696,10 @@ export function FarmPage(): JSX.Element {
                         </span>
                         {prog.locked ? (
                           <span className="plot-lv-badge muted">
-                            {t("skill.levelShort").replace(
-                              "{n}",
-                              String(plotUnlockLevel(i)),
-                            )}
+                            {/* claude:2026-10-30T19:31:00+01:00 — Stufe oder (ohne Stufen-Weg) Narbenbuch */}
+                            {plotUnlockLevel(i, talentPlots) === null
+                              ? t("prestige.tab.book")
+                              : t("skill.levelShort").replace("{n}", String(plotUnlockLevel(i, talentPlots)))}
                           </span>
                         ) : cropDef ? (
                           <span className="plot-lv-badge muted">
@@ -854,7 +866,7 @@ export function FarmPage(): JSX.Element {
                                 .replace("{min}", String(cropDef.yieldMin))
                                 .replace("{max}", String(cropDef.yieldMax))}
                               {" · "}
-                              {t("farm.xpGain").replace("{n}", String(cropDef.xp))}
+                              {t("farm.xpGain").replace("{n}", formatNum(cropDef.xp))}
                             </span>
                             {plot && (
                               <label className="plot-autoreplant">

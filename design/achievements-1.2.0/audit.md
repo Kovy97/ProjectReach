@@ -203,6 +203,8 @@ Gesamtaufwand logic-dev: **ein halber Tag** inkl. Tests; ui-dev für `hidden` un
 | Second Volume · Zweiter Band | Kapitel 21 (Paragon-Etage 5) | Story-Ende ohne Spoiler |
 | The True Culprit · Der wahre Schuldige | Kapitel 20 | Twist bleibt bis zum Unlock unsichtbar |
 
+**Nachtrag 31.10.2026 (Chef-Entscheid, Update 1.4.2; claude:2026-10-31T09:29:00+01:00):** Versteckt bleibt nur, was eine echte Überraschung ist. Im Spiel sind jetzt **5** Erfolge versteckt: Der wahre Verursacher (`ach_chapter_20`), Epilog: Der zweite Band (`ach_chapter_21`), Der Neunte Wächter (`ach_elite_idol_warden`), Asche zu Asche (`ach_deaths_1`) und Heute nicht (`ach_deaths_100`). Sichtbar sind die sieben Fleißaufgaben Überall Federn, Sturkopf, Rattenkönig, Alte Rechnung, Heeresverpfleger (`ach_food_10000`, fehlt in der Tabelle oben), Hundert Stunden im Reach und Neunfach. „Heute nicht“ (ID unverändert, rare, kein Steam-Erfolg) verlangt nicht mehr 100 Tode, sondern einen Sieg mit höchstens 5 % Leben (Bedingung `close_wins`, Zähler `stats.closeWins` in SAVE 100). Wer den Erfolg schon hat, behält ihn. „Volles Regal“ aus der Tabelle wurde nie angelegt. Steam: `A_HUNDRED_HOURS` steht in `steam-set.csv` und in der Kopier-Tabelle von `steam-achievements.html` jetzt auf nicht versteckt; den Hidden-Haken in Steamworks nimmt der Chef selbst heraus. Im Steam-Set bleiben CH20, CH21, ASH_TO_ASH und THE_NINTH_WARDEN versteckt.
+
 ### 2.7 Belohnungen (keine Spielstärke)
 
 - **AP-Quoten-Titel** bei 25 / 50 / 75 / 100 %: „Chronicler / Warden's Hand / Keeper of the Reach / Grim Reach Complete" (DE: Chronist / Hand des Wächters / Hüter des Reach / Grim Reach vollendet), anzeigbar unter dem Charakternamen (Charakterbogen, Hauptmenü-Ladeliste). Die Quest-Marken je 5 % bleiben.

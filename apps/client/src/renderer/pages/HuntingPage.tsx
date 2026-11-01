@@ -9,6 +9,7 @@ import {
   HUNT_LOOT_ROLLS,
   HUNT_SLOT_LEVELS,
   HUNT_TRAP_SLOTS,
+  HUNT_TRAP_SLOTS_TOTAL,
   huntCatchXp,
 } from "@hearthforge/shared";
 import type { GameState, HuntTrap, HuntZoneDef, LocalizedString, MonsterDef } from "@hearthforge/shared";
@@ -268,8 +269,12 @@ function HuntHeader({ onNavigate }: { onNavigate: (id: string) => void }): JSX.E
   const xpStart = xpForLevel(level);
   const xpEnd = xpForLevel(level + 1);
   const pct = xpEnd > xpStart ? Math.min(100, Math.max(0, ((xp - xpStart) / (xpEnd - xpStart)) * 100)) : 100;
-  const unlockedSlots = huntTrapSlots(state);
-  const nextSlotLevel = unlockedSlots < HUNT_TRAP_SLOTS ? HUNT_SLOT_LEVELS[unlockedSlots] : null;
+  // claude:2026-10-30T19:31:00+01:00 — 1.4.2 Fallensteller: Plätze = Stufe + Narbenbuch (Engine `huntTrapSlots` mit content). Nächster Platz: Stufe des
+  // (Index − Talentplätze)-ten Stufen-Platzes; null = nur über weitere Narbenbuch-Ränge.
+  const unlockedSlots = huntTrapSlots(state, content);
+  const talentSlots = Math.max(0, unlockedSlots - huntTrapSlots(state));
+  const nextSlotLevel = unlockedSlots < HUNT_TRAP_SLOTS_TOTAL ? HUNT_SLOT_LEVELS[unlockedSlots - talentSlots] ?? null : null;
+  const trapSlotsShown = trapSlotsShownOf(state, unlockedSlots);
 
   // Köder-Stufen (Chef-Nachtrag 28.08.2026): welche Sorten die GESTELLTEN Fallen gerade verlangen,
   // eindeutig gemacht (mehrere Fallen können dieselbe Sorte teilen). Keine gestellte Falle ⇒ die
@@ -362,7 +367,7 @@ function HuntHeader({ onNavigate }: { onNavigate: (id: string) => void }): JSX.E
         <div className="hunt-head-stat">
           <span className="hunt-head-stat-label muted">{t("hunting.head.slotsLabel")}</span>{/* claude:2026-10-24T15:30:00+02:00 — „Plätze“ statt „Fallen“, damit die Zahl nicht der laufenden Zahl im Banner widerspricht (QA2 Klarheit B5) */}
           <span className="hunt-head-stat-value">
-            {unlockedSlots}/{HUNT_TRAP_SLOTS}
+            {unlockedSlots}/{trapSlotsShown}
           </span>
         </div>
 
@@ -707,7 +712,7 @@ function TrapCard({
   onRequestPick,
 }: {
   slot: number;
-  unlockLevel: number;
+  unlockLevel: number | null; // claude:2026-10-30T19:31:00+01:00 — null = nur über das Narbenbuch
   unlocked: boolean;
   /** `content.huntingZones` enthält überhaupt mind. ein Gebiet — sonst bleibt „Falle stellen" tot. */
   hasAnyZone: boolean;
@@ -795,7 +800,7 @@ function TrapCard({
         <div className="hunt-trap-topband-right">
           {!unlocked ? (
             <span className="hunt-trap-badge hunt-trap-badge--locked">
-              {t("hunting.head.nextSlotValue").replace("{n}", String(unlockLevel))}
+              {unlockLevel === null ? t("prestige.tab.book") : t("hunting.head.nextSlotValue").replace("{n}", String(unlockLevel))}
             </span>
           ) : (
             <span className={`hunt-trap-badge hunt-trap-badge--${badge}`}>
@@ -827,7 +832,7 @@ function TrapCard({
               "🔒"
             )}
           </span>
-          <span className="hunt-trap-state-text muted">{t("hunting.lockedHint").replace("{n}", String(unlockLevel))}</span>
+          <span className="hunt-trap-state-text muted">{unlockLevel === null ? t("prestige.tab.book") : t("hunting.lockedHint").replace("{n}", String(unlockLevel))}</span>
         </div>
       ) : (
         <>
@@ -1294,12 +1299,19 @@ function HuntBook({ zones }: { zones: HuntZoneDef[] }): JSX.Element {
   );
 }
 
+/** claude:2026-10-30T19:31:00+01:00 — Talent-Plätze zeigen wir erst, wenn das Narbenbuch erreichbar ist (Aschesturz gemacht oder Rang vorhanden). */
+function trapSlotsShownOf(state: GameState, unlockedSlots: number): number {
+  return unlockedSlots > HUNT_TRAP_SLOTS || (state.prestige?.count ?? 0) > 0 ? HUNT_TRAP_SLOTS_TOTAL : HUNT_TRAP_SLOTS;
+}
+
 export function HuntingPage({ onNavigate }: { onNavigate: (id: string) => void }): JSX.Element {
   const state = useGameState();
   const { t } = useI18n();
   const [pickSlot, setPickSlot] = useState<number | null>(null);
 
-  const unlockedSlots = huntTrapSlots(state);
+  const unlockedSlots = huntTrapSlots(state, content); // claude:2026-10-30T19:31:00+01:00 — 1.4.2 inkl. Fallensteller
+  const talentSlots = Math.max(0, unlockedSlots - huntTrapSlots(state));
+  const trapSlotsShown = trapSlotsShownOf(state, unlockedSlots);
   const allZones = [...(content.huntingZones ?? [])].sort((a, b) => a.levelRequired - b.levelRequired);
   const hasAnyZone = allZones.length > 0;
 
@@ -1311,12 +1323,12 @@ export function HuntingPage({ onNavigate }: { onNavigate: (id: string) => void }
 
       {allZones.length === 0 && <p className="muted">{t("hunting.inert")}</p>}
 
-      <div className="hunt-traps">
-        {Array.from({ length: HUNT_TRAP_SLOTS }, (_, i) => (
+      <div className={`hunt-traps${trapSlotsShown > HUNT_TRAP_SLOTS ? " hunt-traps--wide" : ""}`}>
+        {Array.from({ length: trapSlotsShown }, (_, i) => (
           <TrapCard
             key={i}
             slot={i}
-            unlockLevel={HUNT_SLOT_LEVELS[i] ?? 99}
+            unlockLevel={HUNT_SLOT_LEVELS[i - talentSlots] ?? null}
             unlocked={i < unlockedSlots}
             hasAnyZone={hasAnyZone}
             onRequestPick={setPickSlot}

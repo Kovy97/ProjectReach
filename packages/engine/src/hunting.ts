@@ -12,7 +12,8 @@ import {
   HUNT_CATCH_PER_LEVEL,
   HUNT_LOOT_ROLLS,
   HUNT_LOOT_ROLLS_DOUBLED,
-  HUNT_TRAP_SLOTS,
+  HUNT_TRAPS_TALENT_MAX, // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Fallensteller
+  HUNT_TRAP_SLOTS_TOTAL,
   huntTrapSlotsForLevel, huntCatchXp, HUNT_FIRST_CATCH_MULT,} from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
 import { nextFloat, nextInt } from "./rng";
@@ -26,6 +27,7 @@ import { tryCraftSuffix } from "./suffix";
 import { petHuntDoubleRollsChance, tryPetDrop } from "./pets";
 import { masterDoubleYieldBonus } from "./capes";
 import { goldFindMult, prestigeSkillXpMult } from "./prestige-effects"; // claude:2026-10-18T12:00:00+02:00 — Narbenbuch
+import { talentEffect } from "./talents"; // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Fallensteller
 
 // ───────────────────────────────────────────────────────────────────────────
 // Jagen (1.2.0 „Fasern und Fallen", SAVE_VERSION 85 — design/handwerk-fasern-jagen/spec-technik.md §3,
@@ -96,9 +98,16 @@ function huntingLevel(state: GameState): number {
   return levelFromXp(state.skills[HUNTING_SKILL_ID]?.xp ?? 0);
 }
 
-/** Freigeschaltete Fallenplätze nach Jagen-Stufe (HUNT_SLOT_LEVELS). */
-export function huntTrapSlots(state: GameState): number {
-  return huntTrapSlotsForLevel(huntingLevel(state));
+/**
+ * Freigeschaltete Fallenplätze nach Jagen-Stufe (HUNT_SLOT_LEVELS).
+ * claude:2026-10-30T18:42:00+01:00 — 1.4.2 Fallensteller (`huntTrapSlots`): mit `content` plus Narbenbuch-Plätze, höchstens
+ * HUNT_TRAP_SLOTS_TOTAL. Ohne `content` (Alt-Aufrufer der UI) nur die Stufen-Plätze wie bisher.
+ */
+export function huntTrapSlots(state: GameState, content?: ContentDB): number {
+  const base = huntTrapSlotsForLevel(huntingLevel(state));
+  if (!content || !state.talents) return base;
+  const extra = Math.floor(Math.max(0, Math.min(HUNT_TRAPS_TALENT_MAX, talentEffect(state, content, "huntTrapSlots"))));
+  return Math.min(HUNT_TRAP_SLOTS_TOTAL, base + extra);
 }
 
 /** Gebiets-Eintrag der Jagd oder null (fehlender Katalog ⇒ Jagd inert). */
@@ -214,7 +223,7 @@ export function huntCatchChance(state: GameState, content: ContentDB, zoneId: st
  */
 export function huntSetReason(state: GameState, content: ContentDB, slot: number, zoneId: string): HuntSetReason {
   const trap = trapAt(state, slot);
-  if (!trap || slot >= huntTrapSlots(state)) return "no_slot";
+  if (!trap || slot >= huntTrapSlots(state, content)) return "no_slot"; // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Fallensteller
   if (trap.zoneId !== null) return "busy";
   const zone = huntZoneDef(content, zoneId);
   if (!zone || !isZoneUnlocked(state, content, zoneId)) return "zone_locked";
@@ -407,7 +416,7 @@ export function tickHuntTraps(state: GameState, content: ContentDB, dtMs: number
 
   interface Pending { trap: HuntTrap; zone: HuntZoneDef; trapMs: number; due: number }
   const pending: Pending[] = [];
-  const n = Math.min(HUNT_TRAP_SLOTS, traps.length, huntTrapSlots(state));
+  const n = Math.min(HUNT_TRAP_SLOTS_TOTAL, traps.length, huntTrapSlots(state, content)); // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Fallensteller
   for (let i = 0; i < n; i++) {
     const trap = traps[i];
     if (!trap || trap.zoneId === null) continue;

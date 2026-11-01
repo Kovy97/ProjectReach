@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { content } from "@hearthforge/content";
 import { meetsRequirements, itemTier } from "@hearthforge/engine";
 import type { ItemInstance } from "@hearthforge/shared";
@@ -10,6 +10,9 @@ import { getUiIcon } from "../uiIcons";
 import { consumeSparkleOnce } from "../util/discoveryBadge";
 import { effectiveFxLevel } from "../util/fxLevel";
 import { useItemTooltip, type ItemAction } from "./ItemTooltip";
+import { isUpgradeMarkerEnabled } from "../util/uiPrefs"; // claude:2026-10-31T16:34:28+01:00
+import { isUpgradeOverEquipped } from "../util/upgradeMarker"; // claude:2026-10-31T16:34:28+01:00
+import "../styles/upgrade-marker.css"; // claude:2026-10-31T16:34:28+01:00
 
 // Chef 2026-07-21: Hover-Tooltip snappier (max. ≤1s → 500ms). Shift+Hover = 0ms (sofort), da der
 // Spieler mit Shift bewusst vergleichen will (der WoW-Vergleich im Overlay reagiert ohnehin auf Shift).
@@ -64,6 +67,8 @@ interface ItemCellProps {
    *  Positionierung übernimmt der Aufrufer per eigenem CSS (freie obere-rechte/untere-rechte Ecke,
    *  s. mass-sell.css), ItemCell selbst bleibt dazu agnostisch. */
   overlay?: React.ReactNode;
+  /** claude:2026-10-31T11:27:12+01:00 — Zerlegen-Reiter: Auswahl-Klick (`onCellClick`) UND Hover-Karte zugleich, damit Werte vergleichbar bleiben. */
+  keepHoverTip?: boolean;
 }
 
 /**
@@ -87,6 +92,7 @@ export function ItemCell({
   onCellClick,
   selected = false,
   overlay,
+  keepHoverTip = false,
 }: ItemCellProps): JSX.Element | null {
   const { t, tr } = useI18n();
   const tooltip = useItemTooltip();
@@ -100,6 +106,13 @@ export function ItemCell({
   const hoverShownRef = useRef(false);
   const tooltipRef = useRef(tooltip);
   tooltipRef.current = tooltip;
+  // claude:2026-10-31T16:34:28+01:00 — Aufwertungs-Marker ▲: nur in Inventar und Bank (Zellen im `.cs-inv-slot-wrap`), nicht in Shop,
+  // Beute-Karten oder Zeremonien. Die Lage wird einmal beim Einhängen aus dem DOM gelesen, nicht je Frame.
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [inStorageGrid, setInStorageGrid] = useState(false);
+  useLayoutEffect(() => {
+    setInStorageGrid(!!rootRef.current?.closest(".cs-inv-slot-wrap"));
+  }, []);
   useEffect(
     () => () => {
       if (timerRef.current !== null) window.clearTimeout(timerRef.current);
@@ -125,6 +138,9 @@ export function ItemCell({
   // Anforderungen, und nur mit Spielstand im Kontext (Zeremonien/Vorschauen ohne State: kein Badge).
   const gesperrt = state !== null && item.type === "equipment" && !!item.requirements && !meetsRequirements(state, item);
 
+  const aufwertung =
+    inStorageGrid && state !== null && item.type === "equipment" && isUpgradeMarkerEnabled() && isUpgradeOverEquipped(state, itemId, instance);
+
   const clearTimer = (): void => {
     if (timerRef.current !== null) {
       window.clearTimeout(timerRef.current);
@@ -134,6 +150,7 @@ export function ItemCell({
 
   return (
     <div
+      ref={rootRef}
       className={`item-cell ${rarityClass(item.rarity)}${selected ? " item-cell-selected" : ""} ${className}`.trim()}
       role="button"
       tabIndex={0}
@@ -154,7 +171,7 @@ export function ItemCell({
         clearTimer();
         // Task #323: im Mass-Sell-Auswahlmodus (onCellClick gesetzt) KEIN Hover-Tooltip — würde
         // beim schnellen Durchklicken der Auswahl nur stören.
-        if (!onCellClick) {
+        if (!onCellClick || keepHoverTip) { // claude:2026-10-31T11:27:12+01:00
           // Shift+Hover = bewusster Vergleichs-Wunsch → Tooltip (mit WoW-Vergleich, s. ItemTooltipOverlay
           // `showCompare = shift && …`) SOFORT; normaler Hover mit kurzem Delay (≤1s).
           const delay = e.shiftKey ? 0 : HOVER_DELAY_MS;
@@ -247,6 +264,7 @@ export function ItemCell({
           {t("item.twoHandedShort")}
         </span>
       )}
+      {aufwertung && <span className="item-cell-upgrade-mark" aria-hidden="true" />}
       {newBadge && (
         <span className="item-cell-new-badge" title={t("inv.newBadge.title")}>
           {sparkle && <span className="item-cell-new-sparkle" aria-hidden="true" />}

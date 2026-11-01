@@ -1,0 +1,440 @@
+/* claude:2026-10-31T11:59:22+01:00 — Rezepte anpinnen (1.4.2, Chef-Auftrag 25.10./31.10.2026).
+   ═══════════════════════════════════════════════════════════════════════════
+   FENSTER „ANGEPINNTE REZEPTE“ — schwebend, verschiebbar, einklappbar wie das Elite-Mini-Fenster
+   (styles/elite-mini-window.css: gleicher Holz-9-Slice, bg_black-Textur, Schatten, z-index 900 unter
+   Toasts/Zeremonien). Eigener Namensraum "prw-*", direkt importiert von components/PinnedRecipesWindow.tsx
+   (und pages/SkillPage.tsx für den Stern an der Rezeptkarte, `.skillcard-pin`). Kein Glühen: Zustände nur
+   über Farbe, Textur und 1-px-Goldlinien.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.prw-panel {
+  position: fixed;
+  width: clamp(300px, 19vw, 380px);
+  z-index: 120; /* claude:2026-10-31T13:58:00+01:00 — unter .modal-overlay (200) und Tooltips (500), über Seite und Warteschlangen-Leiste (50) */
+  display: flex;
+  flex-direction: column;
+  /* Lange Listen scrollen im Fenster; der Kopf bleibt stehen. 230 px = Default-Oberkante (190 px unter der TopBar) plus Rand,
+     so passt das Fenster an seiner Startposition auch bei 1366×768 ganz auf den Schirm. */
+  max-height: min(calc(100vh - 230px), 760px);
+  background:
+    linear-gradient(rgba(14, 9, 4, 0.92), rgba(14, 9, 4, 0.92)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
+  border-radius: 0;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
+  animation: ui-fade-in 120ms ease-out;
+}
+
+.prw-panel--collapsed {
+  width: auto;
+}
+
+.prw-panel--dragging {
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(216, 192, 106, 0.4);
+}
+
+/* ─── Kopf (Zieh-Griff) ─── */
+.prw-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 6px 8px 10px;
+  cursor: grab;
+  touch-action: none; /* Touch-Drag statt Browser-Scroll auf dem Griff (Muster .emw-header) */
+  border-bottom: 1px solid rgba(216, 192, 106, 0.18);
+}
+
+.prw-panel--dragging .prw-header {
+  cursor: grabbing;
+}
+
+.prw-header-icon,
+.prw-badge-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prw-pin-icon {
+  width: 26px; /* claude:2026-10-31T12:19:00+01:00 — Sichtprüfung: 22 px war für die schräge Nadel zu dünn */
+  height: 26px;
+  object-fit: contain;
+}
+
+.prw-pin-glyph {
+  font-size: var(--fs-sm);
+  color: var(--gold);
+}
+
+.prw-header-title {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  /* claude:2026-10-31T14:05:00+01:00 — lange Titel (RU) umbrechen statt abzuschneiden */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.2;
+}
+
+.prw-header-count {
+  flex-shrink: 0;
+  font-family: var(--font-head);
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+}
+
+.prw-collapse-btn {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  line-height: 1;
+  color: var(--muted);
+  background: url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 3px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.prw-collapse-btn:hover,
+.prw-collapse-btn:focus-visible {
+  color: var(--gold);
+  outline: none;
+}
+
+/* ─── Liste ─── */
+.prw-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+
+.prw-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 7px 8px 8px;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.42)),
+    url("../assets/bg_black.webp") repeat;
+  border: 1px solid rgba(216, 184, 112, 0.18);
+}
+
+.prw-row.is-active {
+  border-color: rgba(216, 192, 106, 0.55);
+  background:
+    linear-gradient(rgba(54, 42, 14, 0.42), rgba(20, 14, 4, 0.5)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+.prw-row-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.prw-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url("../assets/bg_black.webp") repeat;
+  border: 1px solid rgba(216, 184, 112, 0.28);
+}
+
+.prw-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.prw-row.is-locked .prw-icon img {
+  filter: grayscale(1) brightness(0.6);
+}
+
+.prw-icon-emoji {
+  font-size: var(--fs-md);
+  line-height: 1;
+}
+
+.prw-title {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.prw-name {
+  font-family: var(--font-head);
+  font-size: var(--fs-sm);
+  color: var(--gold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.prw-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.prw-meta.is-locked {
+  color: var(--danger);
+}
+
+.prw-lock-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+
+.prw-unpin {
+  flex-shrink: 0;
+  align-self: flex-start;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-family: var(--font-head);
+  font-size: var(--fs-sm);
+  line-height: 1;
+  color: var(--muted);
+  background: url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 3px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.prw-unpin:hover,
+.prw-unpin:focus-visible {
+  color: var(--danger);
+  outline: none;
+}
+
+/* ─── Zutaten: grün = vorhanden, gelb = kommt aus der Warteschlange, rot = fehlt (Farben wie .mat-chip) ─── */
+.prw-mats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.prw-mat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px 2px 3px;
+  border: 1px solid rgba(143, 191, 143, 0.32);
+  background:
+    linear-gradient(rgba(20, 44, 18, 0.45), rgba(11, 24, 10, 0.52)),
+    url("../assets/bg_black.webp") repeat;
+  cursor: default;
+}
+
+.prw-mat.is-expected {
+  border-color: rgba(216, 192, 106, 0.55);
+  background:
+    linear-gradient(rgba(64, 50, 12, 0.46), rgba(38, 29, 6, 0.56)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+.prw-mat.is-missing {
+  border-color: rgba(214, 92, 72, 0.6);
+  background:
+    linear-gradient(rgba(48, 16, 12, 0.5), rgba(28, 9, 7, 0.58)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+.prw-mat-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.prw-mat-emoji {
+  font-size: var(--fs-sm);
+  line-height: 1;
+}
+
+.prw-mat-count {
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.prw-mat-count b {
+  font-size: var(--fs-xs);
+  color: #8fbf8f;
+}
+
+.prw-mat.is-expected .prw-mat-count b {
+  color: var(--gold, #d8c06a);
+}
+
+.prw-mat.is-missing .prw-mat-count b {
+  color: var(--danger);
+}
+
+/* ─── Fuß: herstellbar + Aktionen ─── */
+.prw-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 8px;
+}
+
+.prw-craftable {
+  font-family: var(--font-head);
+  font-size: var(--fs-2xs);
+  color: #8fbf8f;
+  white-space: nowrap;
+}
+
+.prw-craftable.is-none {
+  color: var(--danger);
+}
+
+.prw-row.is-locked .prw-craftable {
+  color: #9a9384;
+}
+
+.prw-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.prw-btn {
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.prw-btn--start:not(:disabled) {
+  color: var(--gold);
+}
+
+.prw-btn--stop {
+  color: #e8a08a;
+}
+
+/* ─── Eingeklappt: kompaktes Abzeichen (Pin-Symbol + Anzahl) ─── */
+.prw-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 6px 9px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--gold);
+}
+
+.prw-badge-count {
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.prw-badge:hover,
+.prw-badge:focus-visible {
+  color: #f5ecd6;
+  outline: none;
+}
+
+/* ═══ Stern an der Rezeptkarte (pages/SkillPage.tsx, `.skillcard-topright` links neben der Stufe) ═══
+   Flach wie die Banner-Plaketten (gravewood-actioncards.css: 1-px-Goldlinie auf bg_black), nicht angepinnt
+   entsättigt, angepinnt in voller Farbe mit hellerer Linie. */
+.skillcard-pin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px; /* claude:2026-10-31T12:19:00+01:00 — Sichtprüfung: nicht angepinnt war der Stern kaum zu sehen */
+  height: 38px;
+  padding: 1px;
+  border: 1px solid rgba(216, 184, 112, 0.35);
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: filter 0.12s, border-color 0.12s;
+}
+
+.skillcard-pin-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* claude:2026-10-31T12:19:00+01:00 — Nicht angepinnt: gedämpft, aber klar lesbar (war grayscale 1 / brightness 0.62 / 0.8). */
+  filter: grayscale(0.85) brightness(0.95);
+  opacity: 0.9;
+  transform: scale(1.15);
+  transition: filter 0.12s, opacity 0.12s;
+}
+
+.skillcard-pin:hover .skillcard-pin-icon,
+.skillcard-pin:focus-visible .skillcard-pin-icon {
+  filter: grayscale(0.3) brightness(0.9);
+  opacity: 1;
+}
+
+.skillcard-pin:focus-visible {
+  outline: none;
+  border-color: rgba(216, 192, 106, 0.7);
+}
+
+.skillcard-pin.is-pinned {
+  border-color: rgba(216, 192, 106, 0.75);
+  color: var(--gold);
+}
+
+.skillcard-pin.is-pinned .skillcard-pin-icon {
+  filter: none;
+  opacity: 1;
+}
+
+/* Gesperrte Karten dimmen das Banner grau (skills.css `.skillcard.locked .skillcard-banner`); der angepinnte Stern bleibt
+   trotzdem als angepinnt erkennbar, weil die Linie heller bleibt. */

@@ -5,8 +5,12 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { GameState } from "@hearthforge/shared";
-import { TOOL_SLOTS, SAVE_VERSION, defaultHuntTraps, defaultPrestigeState, defaultTavernState, eliteZoneCooldownBand, emptyEquipKit } from "@hearthforge/shared";
+import { FARM_PLOT_SLOTS, HUNT_TRAP_SLOTS_TOTAL, TOOL_SLOTS, SAVE_VERSION, defaultHuntTraps, defaultPrestigeState, defaultTavernState, eliteZoneCooldownBand, emptyEquipKit } from "@hearthforge/shared";
 import { computeStats, storagePredicate } from "@hearthforge/engine";
+import { erwarteSave99Flaechen } from "./save99-test-helper"; // claude:2026-10-30T19:01:00+01:00 — SAVE 99
+import { erwarteSave100Flaechen } from "./save100-test-helper"; // claude:2026-10-30T22:28:00+01:00 — SAVE 100
+import { erwarteSave101Flaechen } from "./save101-test-helper"; // claude:2026-10-31T11:46:28+01:00 — SAVE 101
+import { erwarteSave103Flaechen } from "./save103-test-helper"; // claude:2026-10-31T16:08:21+01:00 — SAVE 103
 import { deserialize, serialize } from "./index";
 
 /**
@@ -153,6 +157,44 @@ function ohneWerkzeuge<T extends object>(equipment: T): T {
  * Stufe 2, Stufen-Uhren auf Mittelwerten; Migration 98: Variantenzelle gk_tally_ring auf Fach 8 wie der alte Client) →
  * Variantenzelle per `moveInventorySlot` auf Fach 12 → kleiner Auftrag (Stufe 1) angeboten und angenommen, Großauftrag (Stufe 3)
  * als offenes Angebot, Stufen-Uhren gesetzt → serialize beim v96-savedAt, Fixpunkt geprüft. Generator war ein Einmal-Test.
+ *
+ * claude:2026-10-30T19:07:00+01:00 — SAVE 99 (1.4.2 „Aschesturz 2.0“, design/1.4.2-aschesturz-spec.md § 5): `v99-synthetic-1.4.2.json` ist SYNTHETISCH über
+ * die REALE KETTE: v98-Fixture → Laden (Migration 99: leeres Hauptbuch, Raid-Laufanker = clears normal 3 / heroisch 1, Beete auf
+ * 12, Fallen auf 8) → mit den 56 Narben der Kette sieben Narbenbuch-Ränge gekauft (`buyTalent`: Grabmünzen, Schwielen,
+ * Bezahlte Rechnung, Lange Nacht, Rabenpost, Fallensteller, Saatkammer) → 4×99 + Kapitel 21 (synthetisch wie v88) → `ascend`
+ * (zweiter Sturz: Hauptbuch zahlt Begleiter rotbark/cragmaw, Raid-Erstabschluss normal/heroisch und 500 AP) → Farming 85
+ * (synthetisch), Beet 10 (Saatkammer-Beet) bepflanzt → serialize beim v98-savedAt, Fixpunkt geprüft. Generator war ein Einmal-Test.
+ * Detailprüfungen (Migration, Sanitizing, Offline-Fenster) in save99-aschesturz.test.ts.
+ *
+ * claude:2026-10-30T22:28:00+01:00 — SAVE 100 (1.4.2 Belohnungsladen, design/1.4.2-belohnungsladen-plan.md § 5/§ 7): `v100-synthetic-1.4.2.json` ist
+ * SYNTHETISCH über die REALE KETTE: v99-Fixture → Laden (Migration 100: leeres Kaufbuch, `raidUseFeeWrit` aus) → Tagesaufgaben für Mo
+ * 02.11.2026 gezogen (`refreshDailyQuests`) → 40 Marken gutgeschrieben (synthetisch) → über `buyTokenService` eine Karte neu gewürfelt
+ * (daily_e_smelt_iron → daily_e_gather_40), eine Lehrstunde Holzfällen und „Auftrag rufen“ (Stufe II) gekauft → Schalter
+ * `raidUseFeeWrit` an, ein Gebührenschein ins Inventar (synthetisch) → serialize beim v99-savedAt, Fixpunkt geprüft. Generator war
+ * ein Einmal-Test. Detailprüfungen (Migration, Sanitizing, Grenzen über Laden) in save100-token-shop.test.ts.
+ * claude:2026-10-31T09:29:00+01:00 — Nachtrag SAVE 100 („Heute nicht“, Chef-Entscheid 31.10.2026): das Fixture trägt jetzt `stats.closeWins: 0` am
+ * Ende von `stats`, genau dort, wo die Migration < 100 das Feld beim Laden des v99-Fixtures anhängt (die Kette bleibt also real). Detailprüfungen
+ * (Migration, Sanitizing, Round-Trip mit Wert > 0) in save100-close-wins.test.ts.
+ *
+ * claude:2026-10-31T11:54:13+01:00 — SAVE 101 (1.4.2 Rezepte anpinnen): `v101-synthetic-1.4.2.json` ist SYNTHETISCH über die REALE KETTE: v100-Fixture →
+ * Laden (Migration 101: leere Pin-Liste) → über `togglePinnedRecipe` drei Rezepte angepinnt (smelt_bronze, forge_copper_axe und das
+ * gesperrte cook_voidray, Reihenfolge = Pin-Reihenfolge) → serialize beim v100-savedAt, Fixpunkt geprüft. Gegenüber dem v100-Fixture
+ * ändern sich nur `version` und das neue Feld. Generator war ein Einmal-Skript. Detailprüfungen (Migration, Sanitizing, Round-Trip)
+ * in save101-pinned-recipes.test.ts.
+ *
+ * claude:2026-10-31T14:58:54+01:00 — SAVE 102 (Narben-Rückgabe und Nachzahlung zu 1.4.2, Chef-Auftrag 31.10.2026): `v102-synthetic-1.4.2.json` ist
+ * SYNTHETISCH über die REALE KETTE: v101-Fixture → Laden (Dev-Stand ≥ 99, also nur die Rückgabe: 54 Narben zurück, alle sieben Ränge im
+ * Narbenbuch weg, Beleg `respec142` mit refunded 54; das Saatkammer-Beet 10 ruht bepflanzt) → über `buyTalent` Lange Nacht, Rabenpost,
+ * Fallensteller und Saatkammer neu gekauft (30 Narben, Beet 10 wieder offen) → `acknowledgePrestigeRespec` → serialize beim
+ * v101-savedAt, Fixpunkt geprüft. Generator war ein Einmal-Test. Detailprüfungen (Rückgabe, Nachzahlung mit Beispiel-Historie,
+ * Hauptbuch ohne Doppelbezug, Dev-Stand nur Rückgabe, Idempotenz, Sanitizing) in save102-respec.test.ts.
+ *
+ * claude:2026-10-31T16:08:21+01:00 — SAVE 103 (1.4.2 Warteschlangen-Vorlagen): `v103-synthetic-1.4.2.json` ist SYNTHETISCH über die REALE KETTE:
+ * v102-Fixture → Laden (Migration 103: drei leere Plätze) → über `enqueueAction`/`enqueueFight` geplant und mit `saveQueueTemplate` in Platz 0
+ * „Morgenrunde“ gelegt (mine_copper 25, chicken 10, cut_normal_tree ∞), Warteschlange geleert → über `enqueueDungeonRuns`/`enqueueRaid`/
+ * `enqueueAction` geplant und in Platz 2 „Nachtschicht ✦“ gelegt (crypt_depths 3 Läufe, gobkharaz normal 2 Läufe, smelt_bronze 50),
+ * Warteschlange wieder geleert → serialize beim v102-savedAt, Fixpunkt geprüft. Gegenüber dem v102-Fixture ändern sich nur `version` und das
+ * neue Feld. Generator war ein Einmal-Test, danach gelöscht. Detailprüfungen (Migration, Sanitizing, Round-Trip) in save103-queue-templates.test.ts.
  */
 const VAULT_DIR = join(__dirname, "..", "fixtures", "save-compat");
 
@@ -332,7 +374,7 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     // Das neue v82-Feld (#p12): auf allen neun Beeten explizit `nextCropId: null` — keine
     // Folgesorte geplant (gab es vorher gar nicht); explizit null statt fehlend, damit die
     // Save-Form fest ist und die Byte-Gegenprobe unten greifen kann.
-    expect(result!.state.farmPlots).toHaveLength(9);
+    expect(result!.state.farmPlots).toHaveLength(FARM_PLOT_SLOTS); // claude:2026-10-30T19:01:00+01:00 — SAVE 99: 9 → 12 (die drei neuen Beete sind leer)
     for (const plot of result!.state.farmPlots) expect(plot.nextCropId).toBeNull();
     // Das neue v83-Feld (Dungeons queuebar, Chef-Auftrag 26.08.2026): kein laufender Queue-
     // Dungeon-Lauf — explizit `queueDungeon: null` (Muster queueFight/v73), die Queue-Einträge
@@ -458,6 +500,10 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     // Punkte-Unikate, die Gutschrift ist also 0 und `slayerPoints` bleibt byte-gleich.
     erwartet.state.slayerAutoTask = false;
     erwartet.state.inventory.variantCells = {}; // claude:2026-10-25T18:11:00+01:00 — SAVE 98: neues Feld, das Fixture hat keine reinen Variantengruppen
+    erwarteSave99Flaechen(erwartet.state); // claude:2026-10-30T19:01:00+01:00 — SAVE 99 (1.4.2): Beete 12, Fallen 8, Raid-Laufanker, leeres Hauptbuch
+    erwarteSave100Flaechen(erwartet.state); // claude:2026-10-30T22:28:00+01:00 — SAVE 100 (1.4.2): leeres Kaufbuch, Gebührenschein-Schalter aus
+    erwarteSave101Flaechen(erwartet.state); // claude:2026-10-31T11:46:28+01:00 — SAVE 101 (1.4.2): keine angepinnten Rezepte
+    erwarteSave103Flaechen(erwartet.state); // claude:2026-10-31T16:08:21+01:00 — SAVE 103 (1.4.2): drei leere Warteschlangen-Vorlagen
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(result!.state, raw.savedAt))).toEqual(erwartet);
   });
@@ -634,7 +680,7 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     //      allen neun Beeten `nextCropId: null` — vor v82 gab es das Feld nicht, es kann also
     //      nichts geplant gewesen sein. Das Feld MUSS im Fixture präsent sein (Byte-Gegenprobe
     //      oben erzwingt den Key je Beet); befüllte Pläne + Sanitize sichert index.test.ts.
-    expect(s.farmPlots).toHaveLength(9);
+    expect(s.farmPlots).toHaveLength(FARM_PLOT_SLOTS); // claude:2026-10-30T19:01:00+01:00 — SAVE 99: 9 → 12
     for (const plot of s.farmPlots) expect(plot.nextCropId).toBeNull();
 
     // (16) v79 AUTO-REBUFF-EINMALKAUF (Codex 2026-08-02): migrierte Alt-Saves ohne bereits aktiven
@@ -679,3 +725,119 @@ describe("Save-Kompat-Vault v98 (1.4.1): Variantenfach und Auftragsstufen bleibe
   });
 });
 
+// claude:2026-10-30T19:07:00+01:00 — 1.4.2: das v99-Format behält Hauptbuch, Raid-Laufanker, Narbenbuch-Ränge und das Saatkammer-Beet über Laden und Speichern.
+describe("Save-Kompat-Vault v99 (1.4.2): Hauptbuch, Laufanker und neue Plätze bleiben", () => {
+  it("v99-synthetic-1.4.2.json: zweiter Sturz gebucht, Beet 10 bepflanzt, 12 Beete / 8 Fallen, Fixpunkt", () => {
+    const raw = readFileSync(join(VAULT_DIR, "v99-synthetic-1.4.2.json"), "utf-8");
+    const parsed = JSON.parse(raw) as { savedAt: number; version: number };
+    expect(parsed.version).toBe(99);
+    const s = deserialize(raw, content, parsed.savedAt)!.state;
+    expect(s.prestige.count).toBe(2);
+    expect(s.prestige.paid).toEqual({ pets: ["rotbark", "cragmaw"], bestiary: [], ap: 500, raids: ["normal", "heroic"] });
+    expect(s.prestige.runStart.raidClears).toEqual({ normal: 3, heroic: 1, mythic: 0 });
+    // claude:2026-10-31T14:58:54+01:00 — SAVE 102: die sieben Ränge (54 Narben) kommen beim ersten Laden zurück; das Saatkammer-Beet 10 bleibt
+    // bepflanzt und ruht nur, bis die Saatkammer neu gekauft ist (nichts geht verloren).
+    expect(s.talents.prestige).toBeUndefined();
+    expect(s.prestige.points).toBe(72 + 54);
+    expect(s.prestige.pointsSpent).toBe(0);
+    expect(s.prestige.respec142).toEqual({ refunded: 54, retro: { gold: 0, dungeons: 0, slayer: 0, pets: 0, bestiary: 0, achievements: 0, raidFirst: 0, total: 0 }, acknowledged: false });
+    expect(s.farmPlots).toHaveLength(FARM_PLOT_SLOTS);
+    expect(s.farmPlots[9]!.cropId).not.toBeNull();
+    expect(s.huntTraps).toHaveLength(HUNT_TRAP_SLOTS_TOTAL);
+    expect(serialize(s, parsed.savedAt)).toBe(serialize(deserialize(serialize(s, parsed.savedAt), content, parsed.savedAt)!.state, parsed.savedAt));
+  });
+});
+
+// claude:2026-10-30T22:28:00+01:00 — 1.4.2: das v100-Format behält Kaufbuch, weggewürfelte Karte, Schein-Schalter und den Schein über Laden und Speichern.
+describe("Save-Kompat-Vault v100 (1.4.2): Kaufbuch und Gebührenschein bleiben", () => {
+  it("v100-synthetic-1.4.2.json: Tag/Woche, Zähler, weggewürfelte Karte, Schalter an, Schein im Inventar, Fixpunkt", () => {
+    const raw = readFileSync(join(VAULT_DIR, "v100-synthetic-1.4.2.json"), "utf-8");
+    const parsed = JSON.parse(raw) as { savedAt: number; version: number };
+    expect(parsed.version).toBe(100);
+    const s = deserialize(raw, content, parsed.savedAt)!.state;
+    expect(s.tokenShopLedger).toEqual({
+      day: 20261102,
+      week: 2965,
+      byDay: { svc_daily_reroll: 1, svc_skill_lesson: 1, svc_order_call_2: 1 },
+      byWeek: { svc_daily_reroll: 1, svc_skill_lesson: 1, svc_order_call_2: 1 },
+      rerolledDailies: ["daily_e_smelt_iron"],
+    });
+    expect(s.quests.daily.quests[0]).toEqual({ questId: "daily_e_gather_40", claimed: false });
+    expect(s.settings.raidUseFeeWrit).toBe(true);
+    expect(s.workOrders!.tierMs![2]).toBe(0);
+    expect(s.inventory.slots.some((sl) => sl?.itemId === "raid_fee_writ" && sl.qty === 1)).toBe(true);
+    expect(s.stats.closeWins).toBe(0); // claude:2026-10-31T09:29:00+01:00 — Nachtrag SAVE 100 („Heute nicht“)
+    // claude:2026-10-31T11:46:28+01:00 — SAVE 101: das v100-Fixture ist nicht mehr der aktuelle Stand (Migration ergänzt `pinnedRecipes: []`), darum
+    // Fixpunkt statt Byte-Gleichheit mit dem Fixture (Muster v99-Block oben); die Byte-Gleichheit prüft jetzt der v101-Block.
+    expect(s.pinnedRecipes).toEqual([]);
+    expect(serialize(s, parsed.savedAt)).toBe(serialize(deserialize(serialize(s, parsed.savedAt), content, parsed.savedAt)!.state, parsed.savedAt));
+  });
+});
+
+// claude:2026-10-31T11:54:13+01:00 — 1.4.2: das v101-Format behält die angepinnten Rezepte samt Reihenfolge über Laden und Speichern.
+describe("Save-Kompat-Vault v101 (1.4.2): angepinnte Rezepte bleiben", () => {
+  it("v101-synthetic-1.4.2.json: drei Pins in Reihenfolge (eins davon gesperrt), sonst der v100-Stand, Fixpunkt", () => {
+    const raw = readFileSync(join(VAULT_DIR, "v101-synthetic-1.4.2.json"), "utf-8");
+    const parsed = JSON.parse(raw) as { savedAt: number; version: number };
+    expect(parsed.version).toBe(101);
+    const s = deserialize(raw, content, parsed.savedAt)!.state;
+    expect(s.pinnedRecipes).toEqual(["smelt_bronze", "forge_copper_axe", "cook_voidray"]);
+    expect(s.tokenShopLedger.rerolledDailies).toEqual(["daily_e_smelt_iron"]); // der v100-Inhalt reist unverändert mit
+    // claude:2026-10-31T14:58:54+01:00 — SAVE 102: das v101-Fixture ist nicht mehr der aktuelle Stand (die Rückgabe räumt das Narbenbuch), darum
+    // Fixpunkt statt Byte-Gleichheit mit dem Fixture; die Byte-Gleichheit prüft jetzt der v102-Block.
+    expect(s.prestige.respec142?.refunded).toBe(54);
+    expect(serialize(s, parsed.savedAt)).toBe(serialize(deserialize(serialize(s, parsed.savedAt), content, parsed.savedAt)!.state, parsed.savedAt));
+  });
+});
+
+// claude:2026-10-31T14:58:54+01:00 — 1.4.2: das v102-Format behält den Rückgabe-Beleg (bestätigt) und die neu gekauften Ränge über Laden und Speichern.
+describe("Save-Kompat-Vault v102 (1.4.2): Rückgabe-Beleg und neu verteilte Narben bleiben", () => {
+  it("v102-synthetic-1.4.2.json: Beleg bestätigt, vier Ränge neu gekauft, Beet 10 wieder offen, byte-gleich", () => {
+    const raw = readFileSync(join(VAULT_DIR, "v102-synthetic-1.4.2.json"), "utf-8");
+    const parsed = JSON.parse(raw) as { savedAt: number; version: number };
+    expect(parsed.version).toBe(102);
+    const s = deserialize(raw, content, parsed.savedAt)!.state;
+    expect(s.prestige.respec142).toEqual({ refunded: 54, retro: { gold: 0, dungeons: 0, slayer: 0, pets: 0, bestiary: 0, achievements: 0, raidFirst: 0, total: 0 }, acknowledged: true });
+    expect(s.talents.prestige).toEqual({ offlineHours: 1, workOrders: 1, huntTraps: 1, farmPlots: 1 });
+    expect(s.prestige.points).toBe(96);
+    expect(s.prestige.pointsSpent).toBe(30);
+    expect(s.farmPlots[9]!.cropId).not.toBeNull();
+    expect(s.pinnedRecipes).toEqual(["smelt_bronze", "forge_copper_axe", "cook_voidray"]); // der v101-Inhalt reist unverändert mit
+    // claude:2026-10-31T16:08:21+01:00 — SAVE 103: das v102-Fixture ist nicht mehr der aktuelle Stand (Migration ergänzt drei leere Vorlagen-Plätze),
+    // darum Fixpunkt statt Byte-Gleichheit mit dem Fixture; die Byte-Gleichheit prüft jetzt der v103-Block.
+    expect(s.queueTemplates).toEqual([null, null, null]);
+    expect(serialize(s, parsed.savedAt)).toBe(serialize(deserialize(serialize(s, parsed.savedAt), content, parsed.savedAt)!.state, parsed.savedAt));
+  });
+});
+
+// claude:2026-10-31T16:08:21+01:00 — 1.4.2: das v103-Format behält die Warteschlangen-Vorlagen (alle vier Eintragsarten, leerer Mittelplatz) über Laden und Speichern.
+describe("Save-Kompat-Vault v103 (1.4.2): Warteschlangen-Vorlagen bleiben", () => {
+  it("v103-synthetic-1.4.2.json: zwei Vorlagen mit Aktion/Kampf/Dungeon/Raid, Platz 1 leer, Warteschlange leer, byte-gleich", () => {
+    const raw = readFileSync(join(VAULT_DIR, "v103-synthetic-1.4.2.json"), "utf-8");
+    const parsed = JSON.parse(raw) as { savedAt: number; version: number };
+    expect(parsed.version).toBe(103);
+    const s = deserialize(raw, content, parsed.savedAt)!.state;
+    expect(s.queueTemplates).toEqual([
+      {
+        name: "Morgenrunde",
+        entries: [
+          { kind: "action", actionId: "mine_copper", target: 25 },
+          { kind: "fight", actionId: "", monsterId: "chicken", target: 10 },
+          { kind: "action", actionId: "cut_normal_tree", target: null },
+        ],
+      },
+      null,
+      {
+        name: "Nachtschicht ✦",
+        entries: [
+          { kind: "dungeon", actionId: "", dungeonId: "crypt_depths", target: 3 },
+          { kind: "raid", actionId: "", raidId: "gobkharaz", raidDifficulty: "normal", target: 2 },
+          { kind: "action", actionId: "smelt_bronze", target: 50 },
+        ],
+      },
+    ]);
+    expect(s.actionQueue).toEqual([]);
+    expect(s.prestige.respec142?.acknowledged).toBe(true); // der v102-Inhalt reist unverändert mit
+    expect(serialize(s, parsed.savedAt)).toBe(raw);
+  });
+});

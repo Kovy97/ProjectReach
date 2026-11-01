@@ -41,7 +41,7 @@ export function SlotThumb({ slot, selected, onClick, showPlaytime }: SlotThumbPr
           </div>
           {showPlaytime && (
             <div className="slot-thumb-sub">
-              {formatPlaytime(slot.summary.activePlayMs ?? slot.summary.elapsedMs)}
+              {formatPlaytime(slot.summary.activePlayMs ?? slot.summary.elapsedMs, t)}
             </div>
           )}
         </div>

@@ -1,0 +1,1198 @@
+frost_scepter :: Frost Scepter / Frost-Zepter :: mainhand magic/scepter :: common :: req magic 25 :: dmg 1.9–2.9 @3000ms, spellFocus 0.0025, wardBreak 0.25 :: FX frost chance 0.35 mag 1 4000ms
+    <- Runenkunst 25 [Enchant Frost Scepter]: Frost Essence/Frostessenz x4, Frost Shard/Frostsplitter x6
+stormcaller_rod :: Stormcaller Rod / Sturmrufer-Rute :: mainhand magic/scepter :: superRare :: req magic 50 :: dmg 3.3–4.9 @3000ms, spellFocus 0.0026, wardBreak 0.25 :: FX shock chance 0.35 mag 0.28 4000ms
+    <- Runenkunst 50 [Enchant Stormcaller Rod]: Aether Shard/Aethersplitter x8, Ruby/Rubin x1, Runite Bar/Runitbarren x1
+frostbone_scepter :: Frostbone Scepter / Frostknochen-Zepter :: mainhand magic/scepter :: superRare :: req magic 70 :: dmg 5.2–7.9 @3000ms, spellFocus 0.0027 :: mod lck 1 :: FX frost chance 0.35 mag 1 3500ms; frostbite mag 0.25
+    <- Skeleton Ice Mage/Skelett-Eismagier (L80; crypt, undead) 1/1429 | Skeleton Ice Mage/Skelett-Eismagier (L80; crypt, undead, nur Dungeon) 1/1429 | Elite: Hoargrim the Lightless/Raugram der Lichtlose (crypt) 1/152
+hoargrim_scepter :: Hoargrim Scepter / Raugram-Szepter :: mainhand magic/scepter :: superRare :: req magic 70 :: dmg 5–6.5 @2640ms, spellFocus 0.0026 :: FX frostbite mag 0.25
+    <- Elite-Unikat: Hoargrim the Lightless/Raugram der Lichtlose (crypt, Basis Skeleton Ice Mage/Skelett-Eismagier)
+idolpriest_censer :: Priest's Censer / Räuchergefäß des Priesters :: mainhand magic/scepter [fire] :: epic :: req magic 95 :: dmg 9.2–11.5 @3000ms, spellFocus 0.0027, wardBreak 0.25 :: mod wis 2 :: FX burn chance 0.35 mag 6 6000ms; wardOnKill mag 3
+    <- Idol Priest/Götzenpriester (L253; idolhall, humanoid) 1/1250
+mourncedar_scepter :: Mourncedar Scepter / Trauerzedern-Zepter :: mainhand magic/scepter [shock] :: epic :: req magic 95 :: dmg 8.2–10.8 @3000ms, spellFocus 0.0026, wardBreak 0.25 :: FX shock chance 0.3 mag 0.3 4000ms
+    <- Runenkunst 95 [Craft Mourncedar Scepter]: Storm Essence/Sturmessenz x6, Storm Shard/Sturmsplitter x6, Aetherium Bar/Aetheriumbarren x1, Mourncedar Log/Trauerzedernholz x3
+copper_staff :: Copper Staff / Kupfer-Stab :: mainhand magic/staff 2H [fire] :: common :: req magic 1 :: dmg 0.4–0.6 @3000ms, spellFocus 0.003, wardBreak 0.3 :: FX burn chance 0.45 mag 1 3500ms
+    <- Runenkunst 1 [Craft Copper Staff]: Dim Essence/Trübessenz x3, Force Shard/Kraftsplitter x2, Copper Bar/Kupferbarren x2
+gnarled_staff :: Gnarled Staff / Knorriger Stab :: mainhand magic/staff 2H [fire] :: common :: req magic 1 :: dmg 0.4–0.6 @3000ms, spellFocus 0.003 :: FX burn chance 0.5 mag 1 4000ms
+    <- Laden 120g
+bronze_staff :: Bronze Staff / Bronze-Stab :: mainhand magic/staff 2H [shock] :: common :: req magic 5 :: dmg 1.25–1.8 @3000ms, spellFocus 0.003, wardBreak 0.3 :: FX shock chance 0.45 mag 0.16 3800ms
+    <- Runenkunst 5 [Craft Bronze Staff]: Dim Essence/Trübessenz x3, Force Shard/Kraftsplitter x2, Bronze Bar/Bronzebarren x2
+iron_staff :: Iron Staff / Eisen-Stab :: mainhand magic/staff 2H [fire] :: rare :: req magic 10 :: dmg 1.4–2 @3000ms, spellFocus 0.003, wardBreak 0.3 :: FX burn chance 0.45 mag 1 4000ms
+    <- Runenkunst 10 [Craft Iron Staff]: Dim Essence/Trübessenz x4, Force Shard/Kraftsplitter x3, Iron Bar/Eisenbarren x2
+steel_staff :: Steel Staff / Stahl-Stab :: mainhand magic/staff 2H [arcane] :: rare :: req magic 20 :: dmg 2.3–3.5 @3000ms, spellFocus 0.003, wardBreak 0.3 :: FX momentum mag 0.02 stacks 10
+    <- Runenkunst 20 [Craft Steel Staff]: Dim Essence/Trübessenz x7, Force Shard/Kraftsplitter x9, Steel Bar/Stahlbarren x2
+warlock_felstaff :: Warlock's Felstaff / Felstab des Hexenmeisters :: mainhand magic/staff 2H :: rare :: req magic 20 :: dmg 2.1–3.2 @3000ms, spellFocus 0.003 :: FX burn chance 0.3 mag 1 5000ms
+    <- Goblin Warlock/Goblin-Hexenmeister (L30; borderlands, humanoid) 1/1000 | The Goblin Warband/Die Goblin-Kriegsbande Abschluss 1/154 | Elite: Vhazrak the Ashtongue/Vhazrak Aschenzunge (borderlands) 2.0%
+blacksteel_staff :: Blacksteel Staff / Schwarzstahl-Stab :: mainhand magic/staff 2H [void] :: rare :: req magic 30 :: dmg 2.5–3.8 @3000ms, spellFocus 0.003, wardBreak 0.3 :: FX execute mag 0.25 thr 0.2; void chance 0.45 mag 0.15 4600ms
+    <- Runenkunst 30 [Craft Blacksteel Staff]: Void Essence/Leerenessenz x1, Void Shard/Leerensplitter x1, Blacksteel Bar/Schwarzstahlbarren x2
+mire_hexstaff :: Mire Hexstaff / Morast-Hexenstab :: mainhand magic/staff 2H :: rare :: req magic 40 :: dmg 3.2–5.1 @3000ms, spellFocus 0.0031 :: FX poison chance 0.3 mag 1 5000ms; antiRegen
+    <- Mire Crawler/Morastkriecher (L38; ashfields, beast) 1/1250 | Elite: Mireclutch the Venomous/Moorgriff der Giftige (ashfields) 1.1%
+mithril_staff :: Mithril Staff / Mithril-Stab :: mainhand magic/staff 2H [frost] :: superRare :: req magic 40 :: dmg 2.7–4.1 @3000ms, spellFocus 0.003, wardBreak 0.3 :: FX frost chance 0.45 mag 1 4900ms
+    <- Runenkunst 40 [Craft Mithril Staff]: Frost Essence/Frostessenz x6, Frost Shard/Frostsplitter x7, Mithril Bar/Mithrilbarren x2
+adamantium_staff :: Adamantium Staff / Adamantium-Stab :: mainhand magic/staff 2H [shock] :: superRare :: req magic 50 :: dmg 3.3–4.9 @3000ms, spellFocus 0.0031, wardBreak 0.3 :: FX shock chance 0.45 mag 0.26 5200ms
+    <- Runenkunst 50 [Craft Adamantium Staff]: Storm Essence/Sturmessenz x3, Storm Shard/Sturmsplitter x3, Adamantium Bar/Adamantiumbarren x2
+runite_staff :: Runite Staff / Runit-Stab :: mainhand magic/staff 2H [poison] :: superRare :: req magic 60 :: dmg 4.2–6.2 @2880ms, spellFocus 0.0031, wardBreak 0.3 :: FX poison chance 0.45 mag 5 5500ms
+    <- Runenkunst 60 [Craft Runite Staff]: Mire Essence/Sumpfessenz x4, Grave Fungus/Grab-Pilz x2, Runite Bar/Runitbarren x2
+voidcaller_staff :: Voidcaller Staff / Leerenrufer-Stab :: mainhand magic/staff 2H [void] :: superRare :: req magic 65 :: dmg 3.8–5.8 @3000ms, spellFocus 0.0031 :: mod lck 1 :: FX shock chance 0.3 mag 0.32 4500ms; void chance 0.3 mag 0.15 4500ms
+    <- Runenkunst 70 [Enchant Voidcaller Staff]: Void Shard/Leerensplitter x8, Ruby/Rubin x2
+bloodiron_staff :: Bloodiron Staff / Bluteisen-Stab :: mainhand magic/staff 2H [fire] :: superRare :: req magic 70 :: dmg 5.2–7.7 @2830ms, spellFocus 0.0031, wardBreak 0.3 :: FX burn chance 0.45 mag 5 5800ms
+    <- Runenkunst 70 [Craft Bloodiron Staff]: Ember Essence/Glutessenz x6, Fire Shard/Feuersplitter x6, Bloodiron Bar/Bluteisenbarren x2
+pyre_staff :: Pyre Staff / Scheiterhaufen-Stab :: mainhand magic/staff 2H :: superRare :: req magic 70 :: dmg 7–10.6 @3000ms, spellFocus 0.0031 :: FX burn chance 0.35 mag 3 5000ms; critBurst mag 4
+    <- Skeleton Pyroclast/Skelett-Pyroklast (L85; crypt, undead) 1/1429 | Elite: Ossuar the Pyrebound/Ossuar der Glutgebundene (crypt) 1/139
+sorrow_staff :: Sorrow Staff / Kummer-Stab :: mainhand magic/staff 2H :: epic :: req magic 72 :: dmg 7.2–10.4 @3000ms, spellFocus 0.0031 :: mod wis 3 :: FX burn chance 0.35 mag 5 5500ms; wardOnKill mag 5
+    <- Sorrow Wraith/Kummer-Wraith (L72; slayer_tower, undead, Turm-Etage 4) 1/2564
+siren_shockstaff :: Siren's Shockstaff / Sirenen-Schockstab :: mainhand magic/staff 2H :: superRare :: req magic 80 :: dmg 4.8–7.3 @3000ms, spellFocus 0.0031 :: mod wis 2 :: FX shock chance 0.25 mag 0.25 4000ms; wardOnKill mag 4
+    <- Tide Siren/Gezeitensirene (L138; coast) 1/1250 | Tide Siren/Gezeitensirene (L103; slayer_tower, Turm-Etage 7) 1/1250 | Elite: Lorelith of the Drowned Choir/Lorelith vom Ertrunkenen Chor (coast) 1.2%
+titanium_staff :: Titanium Staff / Titan-Stab :: mainhand magic/staff 2H [aether] :: epic :: req magic 80 :: dmg 8.8–13.3 @2780ms, spellFocus 0.0031, wardBreak 0.3 :: FX lightblessing mag 0.02
+    <- Runenkunst 80 [Craft Titanium Staff]: Aether Essence/Aetheressenz x5, Aether Shard/Aethersplitter x4, Titanium Bar/Titanbarren x2
+godspark_staff :: Godspark Staff / Götzenfunken-Stab :: mainhand magic/staff 2H [aether] :: epic :: req magic 88 :: dmg 4.8–7.2 @3000ms, spellFocus 0.0031 :: mod int 1, lck 2 :: FX burn chance 0.38 mag 6 6000ms; critBurst mag 10; lightblessing mag 0.02
+    <- Runenkunst 88 [Enchant Godspark Staff]: Void Shard/Leerensplitter x12, Onyx/Onyx x1, Godiron Bar/Götzeneisenbarren x1
+aetherium_staff :: Aetherium Staff / Aetherium-Stab :: mainhand magic/staff 2H [aether] :: epic :: req magic 90 :: dmg 11–16.6 @2730ms, spellFocus 0.0032, wardBreak 0.3 :: mod int 1 :: FX lightblessing mag 0.02
+    <- Runenkunst 90 [Craft Aetherium Staff]: Aether Essence/Aetheressenz x7, Aether Shard/Aethersplitter x6, Aetherium Bar/Aetheriumbarren x2
+stormcrest_staff :: Stormcrest Staff / Sturmkamm-Stab :: mainhand magic/staff 2H :: epic :: req magic 90 :: dmg 11.3–17 @3000ms, spellFocus 0.0032 :: mod wis 3, lck 2 :: FX shock chance 0.3 mag 0.3 4000ms; surplus mag 0.2 thr 0.8
+    <- Storm Roc/Sturm-Roc (L222; highlands, beast, nur Dungeon) 1/5000 | Storm Roc/Sturm-Roc (L104; slayer_tower, beast, Turm-Etage 7) 1/5000 | The Highland Aerie/Der Hochland-Horst Abschluss 1/175
+hollowelm_staff :: Hollowelm Staff / Hohlulmen-Stab :: mainhand magic/staff 2H [frost] :: epic :: req magic 95 :: dmg 12.6–18.9 @2700ms, spellFocus 0.0032, wardBreak 0.3 :: mod int 1, wis 1 :: FX frost chance 0.35 mag 1 4000ms
+    <- Runenkunst 93 [Craft Hollowelm Staff]: Frost Essence/Frostessenz x6, Frost Shard/Frostsplitter x6, Aetherium Bar/Aetheriumbarren x2, Hollow Elm Log/Hohlulmenholz x4
+wreathbound_staff :: Wreathbound Staff / Kranzgebundener Stab :: mainhand magic/staff 2H [shock] :: epic :: req magic 95 :: dmg 13.9–20.6 @2700ms, spellFocus 0.0032, wardBreak 0.3 :: mod int 1, lck 2 :: FX shock chance 0.3 mag 0.3 4000ms; giantSlayer mag 0.15
+    <- Wreath Bearer/Kranzträger (L261; idolhall, construct) 1/1250 | Wreath Bearer/Kranzträger (L261; idolhall, construct, nur Dungeon) 1/1250
+godiron_staff :: Godiron Staff / Götzeneisen-Stab :: mainhand magic/staff 2H [void] :: epic :: req magic 99 :: dmg 13.9–20.6 @2700ms, spellFocus 0.0032, wardBreak 0.3 :: mod int 1, wis 1 :: FX execute mag 0.25 thr 0.2; void chance 0.45 mag 0.15 6400ms
+    <- Runenkunst 95 [Craft Godiron Staff]: Void Essence/Leerenessenz x4, Void Shard/Leerensplitter x4, Godiron Bar/Götzeneisenbarren x2
+copper_wand :: Copper Wand / Kupfer-Zauberstab :: mainhand magic/wand [frost] :: common :: req magic 1 :: dmg 0.4–0.4 @2700ms, spellFocus 0.0025, wardBreak 0.2 :: FX frost chance 0.18 mag 1 3000ms
+    <- Runenkunst 1 [Craft Copper Wand]: Dim Essence/Trübessenz x3, Force Shard/Kraftsplitter x4, Copper Bar/Kupferbarren x1
+bronze_wand :: Bronze Wand / Bronze-Zauberstab :: mainhand magic/wand [poison] :: common :: req magic 5 :: dmg 0.6–0.8 @2700ms, spellFocus 0.0025, wardBreak 0.2 :: FX poison chance 0.2 mag 1 3200ms
+    <- Runenkunst 5 [Craft Bronze Wand]: Dim Essence/Trübessenz x3, Force Shard/Kraftsplitter x4, Bronze Bar/Bronzebarren x1
+hedgewitch_twig :: Hedge-Witch Twig / Heckenhexen-Zweig :: mainhand magic/wand :: common :: req magic 5 :: dmg 1–1.5 @2700ms, spellFocus 0.0025 :: FX wardOnKill mag 3
+    <- Wild Boar/Wildschwein (L10; pastures, beast) 1/625 | Elite: Rustbristle the Famished/Rostborste der Ausgehungerte (pastures) 1.8%
+impbone_wand :: Impbone Wand / Impknochen-Stab :: mainhand magic/wand :: rare :: req magic 8 :: dmg 1.3–1.6 @2700ms, spellFocus 0.0025 :: FX wardOnKill mag 2
+    <- Elite-Unikat: Embergrin the Unbidden/Glutgrinser der Ungebetene (pastures, Basis The Imp/Der Imp)
+iron_wand :: Iron Wand / Eisen-Zauberstab :: mainhand magic/wand [frost] :: rare :: req magic 10 :: dmg 1.1–1.3 @2700ms, spellFocus 0.0025, wardBreak 0.2 :: FX frost chance 0.22 mag 1 3400ms
+    <- Runenkunst 10 [Craft Iron Wand]: Dim Essence/Trübessenz x4, Force Shard/Kraftsplitter x3, Iron Bar/Eisenbarren x1
+steel_wand :: Steel Wand / Stahl-Zauberstab :: mainhand magic/wand [shock] :: rare :: req magic 20 :: dmg 1.3–1.6 @2700ms, spellFocus 0.0025, wardBreak 0.2 :: FX shock chance 0.25 mag 0.2 3600ms
+    <- Runenkunst 20 [Craft Steel Wand]: Storm Essence/Sturmessenz x2, Storm Shard/Sturmsplitter x1, Steel Bar/Stahlbarren x1
+blacksteel_wand :: Blacksteel Wand / Schwarzstahl-Zauberstab :: mainhand magic/wand [poison] :: rare :: req magic 30 :: dmg 1.6–2.1 @2700ms, spellFocus 0.0025, wardBreak 0.2 :: FX poison chance 0.2 mag 2 3500ms
+    <- Runenkunst 30 [Craft Blacksteel Wand]: Mire Essence/Sumpfessenz x2, Pale Fungus/Bleich-Pilz x2, Blacksteel Bar/Schwarzstahlbarren x1
+wailing_wand :: Wailing Wand / Wehklage-Stab :: mainhand magic/wand :: rare :: req magic 30 :: dmg 2–2.6 @2700ms, spellFocus 0.0025 :: FX shock chance 0.25 mag 0.25 3500ms
+    <- Wailing Shade/Klagender Schatten (L28; slayer_tower, undead, Turm-Etage 2) 1/769
+mithril_wand :: Mithril Wand / Mithril-Zauberstab :: mainhand magic/wand [fire] :: superRare :: req magic 40 :: dmg 2–2.6 @2700ms, spellFocus 0.0025, wardBreak 0.2 :: FX burn chance 0.22 mag 2 3800ms
+    <- Runenkunst 40 [Craft Mithril Wand]: Ember Essence/Glutessenz x5, Fire Shard/Feuersplitter x5, Mithril Bar/Mithrilbarren x1
+adamantium_wand :: Adamantium Wand / Adamantium-Zauberstab :: mainhand magic/wand [arcane] :: superRare :: req magic 50 :: dmg 3.1–3.9 @2700ms, spellFocus 0.0026, wardBreak 0.2 :: FX momentum mag 0.02 stacks 10
+    <- Runenkunst 50 [Craft Adamantium Wand]: Dim Essence/Trübessenz x10, Force Shard/Kraftsplitter x15, Adamantium Bar/Adamantiumbarren x1
+witchroot_wand :: Witchroot Wand / Hexenwurz-Stab :: mainhand magic/wand :: rare :: req magic 50 :: dmg 3.2–4.3 @2700ms, spellFocus 0.0026 :: FX frost chance 0.3 mag 1 3500ms; frostbite mag 0.25
+    <- Bramble Witch/Rankenhexe (L60; blackthorn, humanoid) 1/1250 | Elite: Mother Bramble/Mutter Dorn (blackthorn) 1.4%
+runite_wand :: Runite Wand / Runit-Zauberstab :: mainhand magic/wand [void] :: superRare :: req magic 60 :: dmg 3.2–4.1 @2670ms, spellFocus 0.0026, wardBreak 0.2 :: FX execute mag 0.25 thr 0.2; void chance 0.25 mag 0.15 4100ms
+    <- Runenkunst 60 [Craft Runite Wand]: Void Essence/Leerenessenz x1, Void Shard/Leerensplitter x2, Runite Bar/Runitbarren x1
+bloodiron_wand :: Bloodiron Wand / Bluteisen-Zauberstab :: mainhand magic/wand [frost] :: superRare :: req magic 70 :: dmg 4–5.2 @2640ms, spellFocus 0.0026, wardBreak 0.2 :: FX frost chance 0.28 mag 1 4400ms
+    <- Runenkunst 70 [Craft Bloodiron Wand]: Frost Essence/Frostessenz x8, Frost Shard/Frostsplitter x8, Bloodiron Bar/Bluteisenbarren x1
+titanium_wand :: Titanium Wand / Titan-Zauberstab :: mainhand magic/wand [shock] :: epic :: req magic 80 :: dmg 5.1–6.4 @2630ms, spellFocus 0.0026, wardBreak 0.2 :: FX shock chance 0.3 mag 0.32 4600ms
+    <- Runenkunst 80 [Craft Titanium Wand]: Storm Essence/Sturmessenz x5, Storm Shard/Sturmsplitter x4, Titanium Bar/Titanbarren x1
+aetherium_wand :: Aetherium Wand / Aetherium-Zauberstab :: mainhand magic/wand [arcane] :: epic :: req magic 90 :: dmg 6.3–8 @2600ms, spellFocus 0.0027, wardBreak 0.2 :: FX momentum mag 0.02 stacks 10
+    <- Runenkunst 90 [Craft Aetherium Wand]: Dim Essence/Trübessenz x24, Force Shard/Kraftsplitter x30, Aetherium Bar/Aetheriumbarren x1
+frosthex_wand :: Frosthex Wand / Frosthex-Zauberstab :: mainhand magic/wand :: epic :: req magic 90 :: dmg 8.1–10.6 @2700ms, spellFocus 0.0027 :: mod wis 3 :: FX frost chance 0.35 mag 1 4000ms; catalyst 3000ms
+    <- Frost Hexer/Eishexer (L188; slagpit, humanoid) 1/2500 | Frost Hexer/Eishexer (L106; slayer_tower, humanoid, Turm-Etage 8) 1/2500 | Elite: Skalva the Rimebound/Skalva die Frostgebundene (slagpit) 1/204
+hollowelm_wand :: Hollowelm Wand / Hohlulmen-Zauberstab :: mainhand magic/wand [poison] :: epic :: req magic 95 :: dmg 7.2–9.1 @2580ms, spellFocus 0.0027, wardBreak 0.2 :: FX poison chance 0.35 mag 7 5000ms
+    <- Runenkunst 94 [Craft Hollowelm Wand]: Shade Rune/Schattenrune x12, Void Essence/Leerenessenz x2, Aetherium Bar/Aetheriumbarren x1, Hollow Elm Log/Hohlulmenholz x2
+litany_wand :: Litany Wand / Litanei-Zauberstab :: mainhand magic/wand [void] :: epic :: req magic 95 :: dmg 7.9–9.9 @2580ms, spellFocus 0.0027, wardBreak 0.2 :: FX void chance 0.4 mag 0.15 5800ms; everyNth mag 1 stacks 5
+    <- Prayer Eater/Gebetsfresser (L257; idolhall, undead) 1/1250 | Prayer Eater/Gebetsfresser (L257; idolhall, undead, nur Dungeon) 1/1250
+godiron_wand :: Godiron Wand / Götzeneisen-Zauberstab :: mainhand magic/wand [fire] :: epic :: req magic 99 :: dmg 7.9–9.9 @2580ms, spellFocus 0.0027, wardBreak 0.2 :: FX burn chance 0.34 mag 4 5000ms
+    <- Runenkunst 97 [Craft Godiron Wand]: Ember Essence/Glutessenz x14, Fire Shard/Feuersplitter x14, Godiron Bar/Götzeneisenbarren x1
+copper_axe :: Copper Axe / Kupfer-Axt :: mainhand melee/axe :: common :: req attack 1 :: dmg 0.7–1.3 @3100ms
+    <- Schmieden 2 [Forge Copper Axe]: Copper Bar/Kupferbarren x2
+bronze_axe :: Bronze Axe / Bronze-Axt :: mainhand melee/axe :: common :: req attack 5 :: dmg 1.1–2 @3100ms
+    <- Schmieden 6 [Forge Bronze Axe]: Bronze Bar/Bronzebarren x2
+iron_axe :: Iron Axe / Eisen-Axt :: mainhand melee/axe :: rare :: req attack 10 :: dmg 1.9–3.5 @3100ms
+    <- Schmieden 13 [Forge Iron Axe]: Iron Bar/Eisenbarren x2
+crude_waraxe :: Crude Waraxe / Grobe Streitaxt :: mainhand melee/axe :: common :: req attack 20 :: dmg 3.3–4.9 @3000ms :: mod lck 1 :: FX desperation mag 0.3 thr 0.3
+    <- Goblin Spearman/Goblin-Speerträger (L20; borderlands, humanoid) 1/400
+steel_axe :: Steel Axe / Stahl-Axt :: mainhand melee/axe :: rare :: req attack 20 :: dmg 2.4–4.4 @3100ms
+    <- Schmieden 23 [Forge Steel Axe]: Steel Bar/Stahlbarren x2
+blacksteel_axe :: Blacksteel Axe / Schwarzstahl-Axt :: mainhand melee/axe :: rare :: req attack 30 :: dmg 2.9–5.5 @3100ms
+    <- Schmieden 31 [Forge Blacksteel Axe]: Blacksteel Bar/Schwarzstahlbarren x2
+mithril_axe :: Mithril Axe / Mithril-Axt :: mainhand melee/axe :: superRare :: req attack 40 :: dmg 3.7–6.9 @3100ms
+    <- Schmieden 38 [Forge Mithril Axe]: Mithril Bar/Mithrilbarren x2
+adamantium_axe :: Adamantium Axe / Adamantium-Axt :: mainhand melee/axe :: superRare :: req attack 50 :: dmg 4.6–8.6 @3100ms
+    <- Schmieden 48 [Forge Adamantium Axe]: Adamantium Bar/Adamantiumbarren x2
+runite_axe :: Runite Axe / Runit-Axt :: mainhand melee/axe :: superRare :: req attack 60 :: dmg 5.8–10.7 @3100ms
+    <- Schmieden 58 [Forge Runite Axe]: Runite Bar/Runitbarren x2
+bloodiron_axe :: Bloodiron Axe / Bluteisen-Axt :: mainhand melee/axe :: superRare :: req attack 70 :: dmg 7.2–13.3 @3100ms
+    <- Schmieden 68 [Forge Bloodiron Axe]: Bloodiron Bar/Bluteisenbarren x2
+titanium_axe :: Titanium Axe / Titan-Axt :: mainhand melee/axe :: epic :: req attack 80 :: dmg 9–16.8 @3100ms
+    <- Schmieden 78 [Forge Titanium Axe]: Titanium Bar/Titanbarren x2
+aetherium_axe :: Aetherium Axe / Aetherium-Axt :: mainhand melee/axe :: epic :: req attack 90 :: dmg 11.3–21 @3100ms
+    <- Schmieden 88 [Forge Aetherium Axe]: Aetherium Bar/Aetheriumbarren x2
+godiron_axe :: Godiron Axe / Götzeneisen-Axt :: mainhand melee/axe :: epic :: req attack 99 :: dmg 14–26.1 @3100ms
+    <- Schmieden 96 [Forge Godiron Axe]: Godiron Bar/Götzeneisenbarren x2
+copper_battleaxe :: Copper Battleaxe / Kupfer-Kampfaxt :: mainhand melee/battleaxe :: common :: req attack 1 :: dmg 0.8–1.5 @3250ms :: mod lck 1
+    <- Schmieden 3 [Forge Copper Battleaxe]: Copper Bar/Kupferbarren x2
+bronze_battleaxe :: Bronze Battleaxe / Bronze-Kampfaxt :: mainhand melee/battleaxe :: common :: req attack 5 :: dmg 1.3–2.3 @3250ms :: mod lck 1
+    <- Schmieden 7 [Forge Bronze Battleaxe]: Bronze Bar/Bronzebarren x2
+iron_battleaxe :: Iron Battleaxe / Eisen-Kampfaxt :: mainhand melee/battleaxe :: rare :: req attack 10 :: dmg 2.2–4 @3250ms :: mod lck 1
+    <- Schmieden 15 [Forge Iron Battleaxe]: Iron Bar/Eisenbarren x2
+steel_battleaxe :: Steel Battleaxe / Stahl-Kampfaxt :: mainhand melee/battleaxe :: rare :: req attack 20 :: dmg 2.7–5.1 @3250ms :: mod lck 1
+    <- Schmieden 25 [Forge Steel Battleaxe]: Steel Bar/Stahlbarren x2
+blacksteel_battleaxe :: Blacksteel Battleaxe / Schwarzstahl-Kampfaxt :: mainhand melee/battleaxe :: rare :: req attack 30 :: dmg 3.4–6.4 @3250ms :: mod lck 1
+    <- Schmieden 32 [Forge Blacksteel Battleaxe]: Blacksteel Bar/Schwarzstahlbarren x2
+mithril_battleaxe :: Mithril Battleaxe / Mithril-Kampfaxt :: mainhand melee/battleaxe :: superRare :: req attack 40 :: dmg 4.2–7.8 @3250ms :: mod lck 1
+    <- Schmieden 40 [Forge Mithril Battleaxe]: Mithril Bar/Mithrilbarren x2
+adamantium_battleaxe :: Adamantium Battleaxe / Adamantium-Kampfaxt :: mainhand melee/battleaxe :: superRare :: req attack 50 :: dmg 5.3–9.9 @3250ms :: mod lck 1
+    <- Schmieden 50 [Forge Adamantium Battleaxe]: Adamantium Bar/Adamantiumbarren x2
+runite_battleaxe :: Runite Battleaxe / Runit-Kampfaxt :: mainhand melee/battleaxe :: superRare :: req attack 60 :: dmg 6.6–12.3 @3250ms :: mod str 1, lck 1
+    <- Schmieden 60 [Forge Runite Battleaxe]: Runite Bar/Runitbarren x2
+bloodiron_battleaxe :: Bloodiron Battleaxe / Bluteisen-Kampfaxt :: mainhand melee/battleaxe :: superRare :: req attack 70 :: dmg 8.3–15.4 @3250ms :: mod str 1, lck 1
+    <- Schmieden 70 [Forge Bloodiron Battleaxe]: Bloodiron Bar/Bluteisenbarren x2
+titanium_battleaxe :: Titanium Battleaxe / Titan-Kampfaxt :: mainhand melee/battleaxe :: epic :: req attack 80 :: dmg 10.3–19.1 @3250ms :: mod str 1, lck 1
+    <- Schmieden 80 [Forge Titanium Battleaxe]: Titanium Bar/Titanbarren x2
+aetherium_battleaxe :: Aetherium Battleaxe / Aetherium-Kampfaxt :: mainhand melee/battleaxe :: epic :: req attack 90 :: dmg 13–24.1 @3250ms :: mod str 1, lck 1
+    <- Schmieden 90 [Forge Aetherium Battleaxe]: Aetherium Bar/Aetheriumbarren x2
+godiron_battleaxe :: Godiron Battleaxe / Götzeneisen-Kampfaxt :: mainhand melee/battleaxe :: epic :: req attack 99 :: dmg 16.1–30.1 @3250ms :: mod str 1, lck 2
+    <- Schmieden 97 [Forge Godiron Battleaxe]: Godiron Bar/Götzeneisenbarren x2
+copper_dagger :: Copper Dagger / Kupfer-Dolch :: mainhand melee/dagger :: common :: req attack 1 :: dmg 0.4–0.7 @2400ms, precision 0.3
+    <- Schmieden 1 [Forge Copper Dagger]: Copper Bar/Kupferbarren x1
+sickle_shiv :: Sickle Shiv / Sichel-Schiv :: mainhand melee/dagger :: common :: req attack 2 :: dmg 1.8–2.4 @2800ms :: FX execute mag 0.25 thr 0.2
+    <- Cow/Kuh (L5; pastures, beast) 1/435
+bronze_dagger :: Bronze Dagger / Bronze-Dolch :: mainhand melee/dagger :: common :: req attack 5 :: dmg 0.7–1.1 @2400ms, precision 0.3
+    <- Schmieden 5 [Forge Bronze Dagger]: Bronze Bar/Bronzebarren x1
+hungerfang_tusk :: Hungerfang / Hunger-Reißzahn :: mainhand melee/dagger :: rare :: req attack 8 :: dmg 1.7–2.5 @2400ms, precision 0.3 :: FX healOnKill mag 1
+    <- Elite-Unikat: Rustbristle the Famished/Rostborste der Ausgehungerte (pastures, Basis Wild Boar/Wildschwein)
+goblin_shank :: Goblin Shank / Goblin-Stecher :: mainhand melee/dagger :: common :: req attack 10 :: dmg 2.1–2.8 @2750ms :: mod lck 2 :: FX firstStrike mag 1
+    <- Goblin/Goblin (L15; borderlands, humanoid) 1/588 | Goblin/Goblin (L15; slayer_tower, humanoid, Turm-Etage 1) 1/588
+iron_dagger :: Iron Dagger / Eisen-Dolch :: mainhand melee/dagger :: rare :: req attack 10 :: dmg 1.4–2 @2400ms, precision 0.3 :: mod lck 1
+    <- Schmieden 10 [Forge Iron Dagger]: Iron Bar/Eisenbarren x1
+rotfang_dagger :: Rotfang Dagger / Faulzahn-Dolch :: mainhand melee/dagger :: common :: req attack 10 :: dmg 2.3–3.1 @3000ms :: FX poison chance 0.2 mag 1 4000ms; plaguebearer
+    <- Rot Rat/Seuchenkratte (L3; slayer_tower, beast, Turm-Etage 1) 1/556
+steel_dagger :: Steel Dagger / Stahl-Dolch :: mainhand melee/dagger :: rare :: req attack 20 :: dmg 1.7–2.5 @2400ms, precision 0.3 :: mod lck 1
+    <- Schmieden 20 [Forge Steel Dagger]: Steel Bar/Stahlbarren x1
+blacksteel_dagger :: Blacksteel Dagger / Schwarzstahl-Dolch :: mainhand melee/dagger :: rare :: req attack 30 :: dmg 2.1–3.2 @2400ms, precision 0.3 :: mod lck 1
+    <- Schmieden 30 [Forge Blacksteel Dagger]: Blacksteel Bar/Schwarzstahlbarren x1
+mireclutch_fang :: Mireclutch Fang / Moorgriff-Fangzahn :: mainhand melee/dagger :: superRare :: req attack 40 :: dmg 3.2–5.1 @2400ms, precision 0.3 :: FX plaguebearer mag 2 5000ms
+    <- Elite-Unikat: Mireclutch the Venomous/Moorgriff der Giftige (ashfields, Basis Mire Crawler/Morastkriecher)
+mithril_dagger :: Mithril Dagger / Mithril-Dolch :: mainhand melee/dagger :: superRare :: req attack 40 :: dmg 2.6–4 @2400ms, precision 0.3 :: mod lck 1
+    <- Schmieden 35 [Forge Mithril Dagger]: Mithril Bar/Mithrilbarren x1
+adamantium_dagger :: Adamantium Dagger / Adamantium-Dolch :: mainhand melee/dagger :: superRare :: req attack 50 :: dmg 3.3–4.9 @2400ms, precision 0.3 :: mod dex 1
+    <- Schmieden 45 [Forge Adamantium Dagger]: Adamantium Bar/Adamantiumbarren x1
+cinderfang_dagger :: Cinderfang Dagger / Glutzahn-Dolch :: mainhand melee/dagger :: superRare :: req attack 50 :: dmg 5.1–6.5 @2650ms :: mod dex 1, lck 1 :: FX burn chance 0.3 mag 4 5000ms
+    <- Ember Elemental/Glutelementar (L168; slagpit) 1/1075 | Ember Elemental/Glutelementar (L50; slayer_tower, Turm-Etage 3) 1/1075 | Elite: Furnaceheart the Undying/Ofenherz der Unsterbliche (slagpit) 2.3%
+runite_dagger :: Runite Dagger / Runit-Dolch :: mainhand melee/dagger :: superRare :: req attack 60 :: dmg 4.2–6.3 @2400ms, precision 0.3 :: mod dex 1
+    <- Schmieden 55 [Forge Runite Dagger]: Runite Bar/Runitbarren x1
+bloodiron_dagger :: Bloodiron Dagger / Bluteisen-Dolch :: mainhand melee/dagger :: superRare :: req attack 70 :: dmg 5.2–7.8 @2400ms, precision 0.3 :: mod dex 1
+    <- Schmieden 65 [Forge Bloodiron Dagger]: Bloodiron Bar/Bluteisenbarren x1
+coral_shiv :: Coral Shiv / Korallen-Schiv :: mainhand melee/dagger :: common :: req attack 80 :: dmg 9.9–13.3 @2750ms :: FX firstStrike mag 1
+    <- Mud Crab/Schlickkrabbe (L120; coast, beast) 1/1250 | Elite: Shellfather the Unbroken/Schalenvater der Ungebrochene (coast) 1/133
+hunting_knife :: Hunting Knife / Jagdmesser :: mainhand melee/dagger :: common :: req attack 80 :: dmg 10.1–13.5 @2800ms :: mod lck 2 :: FX bounty mag 0.2
+    <- Forest Hare/Waldhase (L90; wildwood, beast) 1/1111
+titanium_dagger :: Titanium Dagger / Titan-Dolch :: mainhand melee/dagger :: epic :: req attack 80 :: dmg 6.5–9.7 @2400ms, precision 0.3 :: mod dex 1, lck 1
+    <- Schmieden 75 [Forge Titanium Dagger]: Titanium Bar/Titanbarren x1
+abyssal_devourer_fang :: Abyssal Devourer's Fang / Reißzahn des Abyssalen Verschlingers :: mainhand melee/dagger :: epic :: req attack 90 :: dmg 9.6–12.3 @2600ms :: mod dex 1, lck 2 :: FX poison chance 0.35 mag 7 5000ms; gutter mag 0.5
+    <- Abyssal Devourer/Abyssaler Verschlinger (L96; slayer_tower, Turm-Etage 5) 1/1667
+aetherium_dagger :: Aetherium Dagger / Aetherium-Dolch :: mainhand melee/dagger :: epic :: req attack 90 :: dmg 8.1–12.1 @2400ms, precision 0.3 :: mod dex 1, lck 1
+    <- Schmieden 85 [Forge Aetherium Dagger]: Aetherium Bar/Aetheriumbarren x1
+talon_dagger :: Talon Dagger / Klauen-Dolch :: mainhand melee/dagger :: rare :: req attack 90 :: dmg 12.7–15.9 @2700ms :: mod lck 2 :: FX bleed chance 0.25 mag 3 4500ms
+    <- Roc Fledgling/Roc-Jungvogel (L200; highlands, beast) 1/2000 | Elite: Ossric the Marrowbound/Ossric der Markgebundene (highlands) 1.3%
+godiron_dagger :: Godiron Dagger / Götzeneisen-Dolch :: mainhand melee/dagger :: epic :: req attack 99 :: dmg 10.2–15.2 @2400ms, precision 0.3 :: mod dex 1, lck 2
+    <- Schmieden 95 [Forge Godiron Dagger]: Godiron Bar/Götzeneisenbarren x1
+copper_greataxe :: Copper Greataxe / Kupfer-Großaxt :: mainhand melee/greataxe 2H :: common :: req attack 1 :: dmg 2–3.6 @3450ms :: mod str 1, lck 1
+    <- Schmieden 4 [Forge Copper Greataxe]: Copper Bar/Kupferbarren x3
+bronze_greataxe :: Bronze Greataxe / Bronze-Großaxt :: mainhand melee/greataxe 2H :: common :: req attack 5 :: dmg 2.7–5.1 @3450ms :: mod str 1, lck 1
+    <- Schmieden 8 [Forge Bronze Greataxe]: Bronze Bar/Bronzebarren x3
+iron_greataxe :: Iron Greataxe / Eisen-Großaxt :: mainhand melee/greataxe 2H :: rare :: req attack 10 :: dmg 4.5–8.5 @3450ms :: mod str 1, lck 1
+    <- Schmieden 17 [Forge Iron Greataxe]: Iron Bar/Eisenbarren x3
+steel_greataxe :: Steel Greataxe / Stahl-Großaxt :: mainhand melee/greataxe 2H :: rare :: req attack 20 :: dmg 6.2–11.6 @3450ms :: mod str 1, lck 1
+    <- Schmieden 27 [Forge Steel Greataxe]: Steel Bar/Stahlbarren x3
+blacksteel_greataxe :: Blacksteel Greataxe / Schwarzstahl-Großaxt :: mainhand melee/greataxe 2H :: rare :: req attack 30 :: dmg 8.1–15.1 @3450ms :: mod str 1, lck 1
+    <- Schmieden 33 [Forge Blacksteel Greataxe]: Blacksteel Bar/Schwarzstahlbarren x3
+mithril_greataxe :: Mithril Greataxe / Mithril-Großaxt :: mainhand melee/greataxe 2H :: superRare :: req attack 40 :: dmg 10.2–19 @3450ms :: mod str 1, lck 1
+    <- Schmieden 42 [Forge Mithril Greataxe]: Mithril Bar/Mithrilbarren x3
+adamantium_greataxe :: Adamantium Greataxe / Adamantium-Großaxt :: mainhand melee/greataxe 2H :: superRare :: req attack 50 :: dmg 12.7–23.5 @3450ms :: mod str 1, lck 1
+    <- Schmieden 52 [Forge Adamantium Greataxe]: Adamantium Bar/Adamantiumbarren x3
+runite_greataxe :: Runite Greataxe / Runit-Großaxt :: mainhand melee/greataxe 2H :: superRare :: req attack 60 :: dmg 15–27.9 @3450ms :: mod str 1, lck 2
+    <- Schmieden 62 [Forge Runite Greataxe]: Runite Bar/Runitbarren x3
+bloodiron_greataxe :: Bloodiron Greataxe / Bluteisen-Großaxt :: mainhand melee/greataxe 2H :: superRare :: req attack 70 :: dmg 17.7–32.7 @3450ms :: mod str 1, lck 2
+    <- Schmieden 72 [Forge Bloodiron Greataxe]: Bloodiron Bar/Bluteisenbarren x3
+marrowcleaver :: Marrowcleaver / Markspalter :: mainhand melee/greataxe 2H :: epic :: req attack 70 :: dmg 21.6–40 @3450ms :: FX execute mag 0.25 thr 0.2
+    <- Elite-Unikat: Marrowcleave the Starving/Markspalter der Darbende (crypt, Basis Skeleton Butcher/Skelett-Schlächter)
+titanium_greataxe :: Titanium Greataxe / Titan-Großaxt :: mainhand melee/greataxe 2H :: epic :: req attack 80 :: dmg 21.5–40 @3450ms :: mod str 1, lck 2
+    <- Schmieden 82 [Forge Titanium Greataxe]: Titanium Bar/Titanbarren x3
+aetherium_greataxe :: Aetherium Greataxe / Aetherium-Großaxt :: mainhand melee/greataxe 2H :: epic :: req attack 90 :: dmg 25.6–47.4 @3450ms :: mod str 1, lck 3
+    <- Schmieden 92 [Forge Aetherium Greataxe]: Aetherium Bar/Aetheriumbarren x3
+godiron_greataxe :: Godiron Greataxe / Götzeneisen-Großaxt :: mainhand melee/greataxe 2H :: epic :: req attack 99 :: dmg 31–57.8 @3450ms :: mod str 1, lck 3
+    <- Schmieden 98 [Forge Godiron Greataxe]: Godiron Bar/Götzeneisenbarren x3
+copper_greatsword :: Copper Greatsword / Kupfer-Großschwert :: mainhand melee/greatsword 2H :: common :: req attack 1 :: dmg 1.7–3.3 @3150ms :: mod lck 1
+    <- Schmieden 5 [Forge Copper Greatsword]: Copper Bar/Kupferbarren x3
+bronze_greatsword :: Bronze Greatsword / Bronze-Großschwert :: mainhand melee/greatsword 2H :: common :: req attack 5 :: dmg 2.4–4.5 @3150ms :: mod lck 1
+    <- Schmieden 9 [Forge Bronze Greatsword]: Bronze Bar/Bronzebarren x3
+iron_greatsword :: Iron Greatsword / Eisen-Großschwert :: mainhand melee/greatsword 2H :: rare :: req attack 10 :: dmg 3.9–7.3 @3150ms :: mod lck 1
+    <- Schmieden 18 [Forge Iron Greatsword]: Iron Bar/Eisenbarren x3
+steel_greatsword :: Steel Greatsword / Stahl-Großschwert :: mainhand melee/greatsword 2H :: rare :: req attack 20 :: dmg 5.3–9.7 @3150ms :: mod lck 1
+    <- Schmieden 28 [Forge Steel Greatsword]: Steel Bar/Stahlbarren x3
+blacksteel_greatsword :: Blacksteel Greatsword / Schwarzstahl-Großschwert :: mainhand melee/greatsword 2H :: rare :: req attack 30 :: dmg 6.6–12.3 @3150ms :: mod str 1, lck 1
+    <- Schmieden 34 [Forge Blacksteel Greatsword]: Blacksteel Bar/Schwarzstahlbarren x3
+mithril_greatsword :: Mithril Greatsword / Mithril-Großschwert :: mainhand melee/greatsword 2H :: superRare :: req attack 40 :: dmg 8.1–15.2 @3150ms :: mod str 1, lck 1
+    <- Schmieden 43 [Forge Mithril Greatsword]: Mithril Bar/Mithrilbarren x3
+adamantium_greatsword :: Adamantium Greatsword / Adamantium-Großschwert :: mainhand melee/greatsword 2H :: superRare :: req attack 50 :: dmg 10.1–18.8 @3150ms :: mod str 1, lck 1
+    <- Schmieden 53 [Forge Adamantium Greatsword]: Adamantium Bar/Adamantiumbarren x3
+runite_greatsword :: Runite Greatsword / Runit-Großschwert :: mainhand melee/greatsword 2H :: superRare :: req attack 60 :: dmg 12–22.4 @3150ms :: mod str 1, lck 1
+    <- Schmieden 63 [Forge Runite Greatsword]: Runite Bar/Runitbarren x3
+bloodiron_greatsword :: Bloodiron Greatsword / Bluteisen-Großschwert :: mainhand melee/greatsword 2H :: superRare :: req attack 70 :: dmg 13.8–25.6 @3150ms :: mod str 1, lck 2
+    <- Schmieden 73 [Forge Bloodiron Greatsword]: Bloodiron Bar/Bluteisenbarren x3
+nekro_reaperblade :: Necromancer's Reaperblade / Sensenklinge des Nekromanten :: mainhand melee/greatsword 2H :: epic :: req attack 70 :: dmg 17–33.1 @3300ms :: mod lck 2 :: bonus lifesteal 0.05 :: FX poison chance 0.3 mag 3 5000ms
+    <- Necromancer Lord/Nekromantenfürst (L90; crypt, undead) 1/5000 | Necromancer Lord/Nekromantenfürst (L90; crypt, undead, nur Dungeon) 1/5000 | Depths of the Crypt/Tiefen der Krypta Abschluss 1/159
+kraken_maw :: Kraken's Maw / Schlund des Kraken :: mainhand melee/greatsword 2H :: epic :: req attack 80 :: dmg 19.2–37.2 @3100ms :: mod lck 2 :: FX bleed chance 0.3 mag 5 6000ms; overkillCarry
+    <- Deep Kraken/Tiefenkrake (L150; coast, beast) 1/1429 | Deep Kraken/Tiefenkrake (L107; slayer_tower, beast, Turm-Etage 8) 1/1429
+titanium_greatsword :: Titanium Greatsword / Titan-Großschwert :: mainhand melee/greatsword 2H :: epic :: req attack 80 :: dmg 16.7–31.1 @3150ms :: mod str 1, lck 2
+    <- Schmieden 83 [Forge Titanium Greatsword]: Titanium Bar/Titanbarren x3
+aetherium_greatsword :: Aetherium Greatsword / Aetherium-Großschwert :: mainhand melee/greatsword 2H :: epic :: req attack 90 :: dmg 20.1–37.1 @3150ms :: mod str 1, lck 2
+    <- Schmieden 93 [Forge Aetherium Greatsword]: Aetherium Bar/Aetheriumbarren x3
+skybreaker_greatsword :: Skybreaker Greatsword / Himmelsbrecher-Großschwert :: mainhand melee/greatsword 2H :: epic :: req attack 90 :: dmg 23.4–45.4 @3200ms :: mod lck 1 :: FX shock chance 0.25 mag 0.25 4000ms; critBurst mag 8
+    <- Roc Elder/Roc-Ältester (L215; highlands, beast) 1/2500 | Roc Elder/Roc-Ältester (L106; slayer_tower, beast, Turm-Etage 8) 1/2500 | Elite: Ossric the Marrowbound/Ossric der Markgebundene (highlands) 1/112
+doomknight_cinderblade :: Doomknight's Cinderblade / Aschklinge des Doom-Ritters :: mainhand melee/greatsword 2H :: legendary :: req attack 99 :: dmg 26.6–51.5 @3600ms :: mod lck 4 :: bonus lifesteal 0.07 :: FX burn chance 0.45 mag 8 7000ms; execute mag 0.25 thr 0.2
+    <- Charred Doomknight/Verkohlter Schicksalsritter (L200; slagpit, undead) 1/7143 | Charred Doomknight/Verkohlter Schicksalsritter (L100; slayer_tower, undead, Turm-Etage 6) 1/7143
+godiron_greatsword :: Godiron Greatsword / Götzeneisen-Großschwert :: mainhand melee/greatsword 2H :: epic :: req attack 99 :: dmg 23.7–44 @3150ms :: mod str 1, lck 3
+    <- Schmieden 99 [Forge Godiron Greatsword]: Godiron Bar/Götzeneisenbarren x3
+copper_mace :: Copper Mace / Kupfer-Streitkolben :: mainhand melee/mace :: common :: req attack 1 :: dmg 0.7–1.2 @3000ms, armorPen 0.25
+    <- Schmieden 2 [Forge Copper Mace]: Copper Bar/Kupferbarren x1
+bronze_mace :: Bronze Mace / Bronze-Streitkolben :: mainhand melee/mace :: common :: req attack 5 :: dmg 1.1–2 @3000ms, armorPen 0.25
+    <- Schmieden 6 [Forge Bronze Mace]: Bronze Bar/Bronzebarren x1
+iron_mace :: Iron Mace / Eisen-Streitkolben :: mainhand melee/mace :: rare :: req attack 10 :: dmg 1.9–3.5 @3000ms, armorPen 0.25
+    <- Schmieden 13 [Forge Iron Mace]: Iron Bar/Eisenbarren x2
+steel_mace :: Steel Mace / Stahl-Streitkolben :: mainhand melee/mace :: rare :: req attack 20 :: dmg 2.4–4.4 @3000ms, armorPen 0.25
+    <- Schmieden 23 [Forge Steel Mace]: Steel Bar/Stahlbarren x2
+blacksteel_mace :: Blacksteel Mace / Schwarzstahl-Streitkolben :: mainhand melee/mace :: rare :: req attack 30 :: dmg 2.9–5.4 @3000ms, armorPen 0.25
+    <- Schmieden 31 [Forge Blacksteel Mace]: Blacksteel Bar/Schwarzstahlbarren x2
+mithril_mace :: Mithril Mace / Mithril-Streitkolben :: mainhand melee/mace :: superRare :: req attack 40 :: dmg 3.7–6.8 @3000ms, armorPen 0.25
+    <- Schmieden 38 [Forge Mithril Mace]: Mithril Bar/Mithrilbarren x2
+adamantium_mace :: Adamantium Mace / Adamantium-Streitkolben :: mainhand melee/mace :: superRare :: req attack 50 :: dmg 4.6–8.5 @3000ms, armorPen 0.25
+    <- Schmieden 48 [Forge Adamantium Mace]: Adamantium Bar/Adamantiumbarren x2
+rootling_club :: Rootling Club / Wurzelkeule :: mainhand melee/mace :: common :: req attack 50 :: dmg 6.6–10 @3000ms :: mod con 1 :: FX momentum mag 0.02 stacks 5
+    <- Rootling/Wurzling (L45; blackthorn) 1/769
+runite_mace :: Runite Mace / Runit-Streitkolben :: mainhand melee/mace :: superRare :: req attack 60 :: dmg 5.8–10.8 @3000ms, armorPen 0.25
+    <- Schmieden 58 [Forge Runite Mace]: Runite Bar/Runitbarren x2
+bloodiron_mace :: Bloodiron Mace / Bluteisen-Streitkolben :: mainhand melee/mace :: superRare :: req attack 70 :: dmg 7.2–13.4 @3000ms, armorPen 0.25
+    <- Schmieden 68 [Forge Bloodiron Mace]: Bloodiron Bar/Bluteisenbarren x2
+titanium_mace :: Titanium Mace / Titan-Streitkolben :: mainhand melee/mace :: epic :: req attack 80 :: dmg 9–16.6 @3000ms, armorPen 0.25
+    <- Schmieden 78 [Forge Titanium Mace]: Titanium Bar/Titanbarren x2
+aetherium_mace :: Aetherium Mace / Aetherium-Streitkolben :: mainhand melee/mace :: epic :: req attack 90 :: dmg 11.2–20.9 @3000ms, armorPen 0.25
+    <- Schmieden 88 [Forge Aetherium Mace]: Aetherium Bar/Aetheriumbarren x2
+godiron_mace :: Godiron Mace / Götzeneisen-Streitkolben :: mainhand melee/mace :: epic :: req attack 99 :: dmg 14.1–26.1 @3000ms, armorPen 0.25
+    <- Schmieden 96 [Forge Godiron Mace]: Godiron Bar/Götzeneisenbarren x2
+cinderwretch_maul :: Cinderwretch Maul / Glutwicht-Keule :: mainhand melee/mace 2H :: superRare :: req attack 50 :: dmg 12–22.6 @3150ms :: FX burn chance 0.3 mag 4 5000ms; everyNth mag 1 stacks 5
+    <- Forge Demon/Schmiededämon (L54; slayer_tower, demon, Turm-Etage 3) 1/1075
+emberforge_hammer :: Emberforge Hammer / Glutschmiede-Hammer :: mainhand melee/mace 2H :: epic :: req attack 52 :: dmg 13.5–25.3 @3150ms :: FX burn chance 0.4 mag 4 5000ms; everyNth mag 1 stacks 5
+    <- Ember Elemental/Glutelementar (L168; slagpit) 1/3125 | Ember Elemental/Glutelementar (L50; slayer_tower, Turm-Etage 3) 1/3125 | Elite: Furnaceheart the Undying/Ofenherz der Unsterbliche (slagpit) 1/125
+direfang_maul :: Direfang Maul / Schreckenzahn-Keule :: mainhand melee/mace 2H :: superRare :: req attack 80 :: dmg 11.1–21.1 @3000ms :: mod lck 2 :: FX bleed chance 0.35 mag 3 5000ms; everyNth mag 1 stacks 5
+    <- Dire Wolf/Schreckenswolf (L112; wildwood, beast) 1/2500 | The Wildwood Hunt/Die Wildwald-Jagd Abschluss 1/132
+copper_maul :: Copper Maul / Kupfer-Hammer :: mainhand melee/maul 2H :: common :: req attack 1 :: dmg 1.8–4 @3700ms, armorPen 0.4 :: mod str 1
+    <- Schmieden 5 [Forge Copper Maul]: Copper Bar/Kupferbarren x3
+bronze_maul :: Bronze Maul / Bronze-Hammer :: mainhand melee/maul 2H :: common :: req attack 5 :: dmg 2.5–5.7 @3700ms, armorPen 0.4 :: mod str 1
+    <- Schmieden 9 [Forge Bronze Maul]: Bronze Bar/Bronzebarren x3
+iron_maul :: Iron Maul / Eisen-Hammer :: mainhand melee/maul 2H :: rare :: req attack 10 :: dmg 3.9–9.1 @3700ms, armorPen 0.4 :: mod str 2
+    <- Schmieden 18 [Forge Iron Maul]: Iron Bar/Eisenbarren x3
+steel_maul :: Steel Maul / Stahl-Hammer :: mainhand melee/maul 2H :: rare :: req attack 20 :: dmg 5.4–12.7 @3700ms, armorPen 0.4 :: mod str 2
+    <- Schmieden 28 [Forge Steel Maul]: Steel Bar/Stahlbarren x3
+blacksteel_maul :: Blacksteel Maul / Schwarzstahl-Hammer :: mainhand melee/maul 2H :: rare :: req attack 30 :: dmg 7.1–16.6 @3700ms, armorPen 0.4 :: mod str 2, con 1
+    <- Schmieden 34 [Forge Blacksteel Maul]: Blacksteel Bar/Schwarzstahlbarren x3
+mithril_maul :: Mithril Maul / Mithril-Hammer :: mainhand melee/maul 2H :: superRare :: req attack 40 :: dmg 9.1–21.3 @3700ms, armorPen 0.4 :: mod str 2, con 1
+    <- Schmieden 43 [Forge Mithril Maul]: Mithril Bar/Mithrilbarren x3
+adamantium_maul :: Adamantium Maul / Adamantium-Hammer :: mainhand melee/maul 2H :: superRare :: req attack 50 :: dmg 11.2–26.2 @3700ms, armorPen 0.4 :: mod str 3, con 1
+    <- Schmieden 53 [Forge Adamantium Maul]: Adamantium Bar/Adamantiumbarren x3
+runite_maul :: Runite Maul / Runit-Hammer :: mainhand melee/maul 2H :: superRare :: req attack 60 :: dmg 13.7–31.9 @3700ms, armorPen 0.4 :: mod str 3, con 1
+    <- Schmieden 63 [Forge Runite Maul]: Runite Bar/Runitbarren x3
+bloodiron_maul :: Bloodiron Maul / Bluteisen-Hammer :: mainhand melee/maul 2H :: superRare :: req attack 70 :: dmg 16–37.6 @3700ms, armorPen 0.4 :: mod str 4, con 1
+    <- Schmieden 73 [Forge Bloodiron Maul]: Bloodiron Bar/Bluteisenbarren x3
+titanium_maul :: Titanium Maul / Titan-Hammer :: mainhand melee/maul 2H :: epic :: req attack 80 :: dmg 19.8–46.4 @3700ms, armorPen 0.4 :: mod str 4, con 1
+    <- Schmieden 83 [Forge Titanium Maul]: Titanium Bar/Titanbarren x3
+aetherium_maul :: Aetherium Maul / Aetherium-Hammer :: mainhand melee/maul 2H :: epic :: req attack 90 :: dmg 24.3–56.4 @3700ms, armorPen 0.4 :: mod str 5, con 1
+    <- Schmieden 93 [Forge Aetherium Maul]: Aetherium Bar/Aetheriumbarren x3
+godiron_maul :: Godiron Maul / Götzeneisen-Hammer :: mainhand melee/maul 2H :: epic :: req attack 99 :: dmg 29.8–69.4 @3700ms, armorPen 0.4 :: mod str 5, con 1
+    <- Schmieden 99 [Forge Godiron Maul]: Godiron Bar/Götzeneisenbarren x3
+copper_scimitar :: Copper Scimitar / Kupfer-Scimitar :: mainhand melee/scimitar :: common :: req attack 1 :: dmg 0.5–0.9 @2650ms, precision 0.15 :: FX momentum mag 0.02 stacks 3
+    <- Schmieden 1 [Forge Copper Scimitar]: Copper Bar/Kupferbarren x2
+bronze_scimitar :: Bronze Scimitar / Bronze-Scimitar :: mainhand melee/scimitar :: common :: req attack 5 :: dmg 0.8–1.5 @2650ms, precision 0.15 :: FX momentum mag 0.02 stacks 3
+    <- Schmieden 5 [Forge Bronze Scimitar]: Bronze Bar/Bronzebarren x2
+iron_scimitar :: Iron Scimitar / Eisen-Scimitar :: mainhand melee/scimitar :: rare :: req attack 10 :: dmg 1.5–2.8 @2650ms, precision 0.15 :: FX momentum mag 0.02 stacks 4
+    <- Schmieden 11 [Forge Iron Scimitar]: Iron Bar/Eisenbarren x2
+steel_scimitar :: Steel Scimitar / Stahl-Scimitar :: mainhand melee/scimitar :: rare :: req attack 20 :: dmg 1.9–3.5 @2650ms, precision 0.15 :: mod lck 1 :: FX momentum mag 0.02 stacks 4
+    <- Schmieden 21 [Forge Steel Scimitar]: Steel Bar/Stahlbarren x2
+blacksteel_scimitar :: Blacksteel Scimitar / Schwarzstahl-Scimitar :: mainhand melee/scimitar :: rare :: req attack 30 :: dmg 2.4–4.4 @2650ms, precision 0.15 :: mod lck 1 :: FX momentum mag 0.02 stacks 5
+    <- Schmieden 30 [Forge Blacksteel Scimitar]: Blacksteel Bar/Schwarzstahlbarren x2
+mithril_scimitar :: Mithril Scimitar / Mithril-Scimitar :: mainhand melee/scimitar :: superRare :: req attack 40 :: dmg 2.9–5.4 @2650ms, precision 0.15 :: mod lck 1 :: FX momentum mag 0.02 stacks 5
+    <- Schmieden 36 [Forge Mithril Scimitar]: Mithril Bar/Mithrilbarren x2
+adamantium_scimitar :: Adamantium Scimitar / Adamantium-Scimitar :: mainhand melee/scimitar :: superRare :: req attack 50 :: dmg 3.7–6.9 @2650ms, precision 0.15 :: mod lck 1 :: FX momentum mag 0.02 stacks 6
+    <- Schmieden 46 [Forge Adamantium Scimitar]: Adamantium Bar/Adamantiumbarren x2
+runite_scimitar :: Runite Scimitar / Runit-Scimitar :: mainhand melee/scimitar :: superRare :: req attack 60 :: dmg 4.6–8.6 @2650ms, precision 0.15 :: mod str 1, lck 1 :: FX momentum mag 0.02 stacks 6
+    <- Schmieden 56 [Forge Runite Scimitar]: Runite Bar/Runitbarren x2
+bloodiron_scimitar :: Bloodiron Scimitar / Bluteisen-Scimitar :: mainhand melee/scimitar :: superRare :: req attack 70 :: dmg 5.7–10.7 @2650ms, precision 0.15 :: mod str 1, lck 1 :: FX momentum mag 0.02 stacks 8
+    <- Schmieden 66 [Forge Bloodiron Scimitar]: Bloodiron Bar/Bluteisenbarren x2
+titanium_scimitar :: Titanium Scimitar / Titan-Scimitar :: mainhand melee/scimitar :: epic :: req attack 80 :: dmg 7.2–13.3 @2650ms, precision 0.15 :: mod str 1, lck 1 :: FX momentum mag 0.02 stacks 8
+    <- Schmieden 76 [Forge Titanium Scimitar]: Titanium Bar/Titanbarren x2
+aetherium_scimitar :: Aetherium Scimitar / Aetherium-Scimitar :: mainhand melee/scimitar :: epic :: req attack 90 :: dmg 9–16.7 @2650ms, precision 0.15 :: mod str 1, lck 2 :: FX momentum mag 0.02 stacks 10
+    <- Schmieden 86 [Forge Aetherium Scimitar]: Aetherium Bar/Aetheriumbarren x2
+saltgrave_cutlass :: Saltgrave Cutlass / Salzgrab-Entermesser :: mainhand melee/scimitar :: epic :: req attack 90 :: dmg 13.6–25.2 @2900ms :: FX bleed chance 0.35 mag 5 6000ms
+    <- Elite-Unikat: Saltgrave the Returned/Salzgrab der Wiedergekehrte (coast, Basis Reef Drowned/Riff-Ertrunkener)
+godiron_scimitar :: Godiron Scimitar / Götzeneisen-Scimitar :: mainhand melee/scimitar :: epic :: req attack 99 :: dmg 11.2–20.9 @2650ms, precision 0.15 :: mod str 1, lck 2 :: FX momentum mag 0.02 stacks 10
+    <- Schmieden 95 [Forge Godiron Scimitar]: Godiron Bar/Götzeneisenbarren x2
+pitchfork_spear :: Pitchfork Spear / Mistgabel :: mainhand melee/spear :: common :: req attack 5 :: dmg 2.7–4.6 @3000ms :: FX giantSlayer mag 0.15
+    <- Cow/Kuh (L5; pastures, beast) 1/769
+cinder_spike :: Cinder Spike / Glut-Spieß :: mainhand melee/spear :: rare :: req attack 40 :: dmg 7.1–12 @3000ms :: FX burn chance 0.2 mag 1 4000ms
+    <- Pitch Beetle/Pechkäfer (L42; ashfields, beast) 1/1000 | Elite: Cinderhusk the Unbowed/Glutpanzer der Ungebeugte (ashfields) 1.2%
+bonewrought_spear :: Bonewrought Spear / Knochengeschmiedeter Speer :: mainhand melee/spear :: rare :: req attack 70 :: dmg 11.3–19.2 @3000ms :: FX firstBlood mag 0.25
+    <- Skeleton Spearman/Skelett-Speerträger (L71; crypt, undead) 1/2000
+wolffang_spear :: Wolf-Fang Spear / Wolfszahn-Speer :: mainhand melee/spear :: rare :: req attack 80 :: dmg 11.8–19.4 @3000ms :: FX bleed chance 0.25 mag 2 4500ms; packLeader mag 0.25
+    <- Gray Wolf/Grauwolf (L97; wildwood, beast) 1/2000 | Elite: Greytooth the Famished/Grauzahn der Ausgehungerte (wildwood) 1/115
+copper_spear :: Copper Spear / Kupfer-Speer :: mainhand melee/spear 2H :: common :: req attack 1 :: dmg 1–1.6 @2900ms, precision 0.2 :: mod dex 1
+    <- Schmieden 3 [Forge Copper Spear]: Copper Bar/Kupferbarren x2
+bronze_spear :: Bronze Spear / Bronze-Speer :: mainhand melee/spear 2H :: common :: req attack 5 :: dmg 1.5–2.5 @2900ms, precision 0.2 :: mod dex 1
+    <- Schmieden 7 [Forge Bronze Spear]: Bronze Bar/Bronzebarren x2
+iron_spear :: Iron Spear / Eisen-Speer :: mainhand melee/spear 2H :: rare :: req attack 10 :: dmg 2.6–4.4 @2900ms, precision 0.2 :: mod dex 1
+    <- Schmieden 15 [Forge Iron Spear]: Iron Bar/Eisenbarren x2
+steel_spear :: Steel Spear / Stahl-Speer :: mainhand melee/spear 2H :: rare :: req attack 20 :: dmg 3.4–5.7 @2900ms, precision 0.2 :: mod dex 2
+    <- Schmieden 25 [Forge Steel Spear]: Steel Bar/Stahlbarren x2
+blacksteel_spear :: Blacksteel Spear / Schwarzstahl-Speer :: mainhand melee/spear 2H :: rare :: req attack 30 :: dmg 4.8–7.9 @2900ms, precision 0.2 :: mod dex 2
+    <- Schmieden 32 [Forge Blacksteel Spear]: Blacksteel Bar/Schwarzstahlbarren x2
+mithril_spear :: Mithril Spear / Mithril-Speer :: mainhand melee/spear 2H :: superRare :: req attack 40 :: dmg 5.5–9.2 @2900ms, precision 0.2 :: mod dex 2
+    <- Schmieden 40 [Forge Mithril Spear]: Mithril Bar/Mithrilbarren x2
+adamantium_spear :: Adamantium Spear / Adamantium-Speer :: mainhand melee/spear 2H :: superRare :: req attack 50 :: dmg 6.9–11.5 @2900ms, precision 0.2 :: mod dex 3
+    <- Schmieden 50 [Forge Adamantium Spear]: Adamantium Bar/Adamantiumbarren x2
+runite_spear :: Runite Spear / Runit-Speer :: mainhand melee/spear 2H :: superRare :: req attack 60 :: dmg 8.1–13.4 @2900ms, precision 0.2 :: mod dex 3
+    <- Schmieden 60 [Forge Runite Spear]: Runite Bar/Runitbarren x2
+bloodiron_spear :: Bloodiron Spear / Bluteisen-Speer :: mainhand melee/spear 2H :: superRare :: req attack 70 :: dmg 9.2–15.4 @2900ms, precision 0.2 :: mod dex 3
+    <- Schmieden 70 [Forge Bloodiron Spear]: Bloodiron Bar/Bluteisenbarren x2
+dreadfang_glaive :: Dreadfang Glaive / Schreckenzahn-Glefe :: mainhand melee/spear 2H :: epic :: req attack 70 :: dmg 9.5–15.9 @3000ms :: mod lck 2 :: FX bleed chance 0.35 mag 5 6000ms; gutter mag 0.5
+    <- Dreadfang/Schreckenzahn (L62; slayer_tower, Turm-Etage 4) 1/2500
+titanium_spear :: Titanium Spear / Titan-Speer :: mainhand melee/spear 2H :: epic :: req attack 80 :: dmg 11–18.4 @2900ms, precision 0.2 :: mod dex 4
+    <- Schmieden 80 [Forge Titanium Spear]: Titanium Bar/Titanbarren x2
+aetherium_spear :: Aetherium Spear / Aetherium-Speer :: mainhand melee/spear 2H :: epic :: req attack 90 :: dmg 11.3–18.8 @2900ms, precision 0.2 :: mod dex 4
+    <- Schmieden 90 [Forge Aetherium Spear]: Aetherium Bar/Aetheriumbarren x2
+godiron_spear :: Godiron Spear / Götzeneisen-Speer :: mainhand melee/spear 2H :: epic :: req attack 99 :: dmg 13.5–22.6 @2900ms, precision 0.2 :: mod dex 5
+    <- Schmieden 97 [Forge Godiron Spear]: Godiron Bar/Götzeneisenbarren x2
+copper_sword :: Copper Sword / Kupfer-Schwert :: mainhand melee/sword :: common :: req attack 1 :: dmg 0.7–1.2 @2900ms
+    <- Schmieden 1 [Forge Copper Sword]: Copper Bar/Kupferbarren x1
+bronze_sword :: Bronze Sword / Bronze-Schwert :: mainhand melee/sword :: common :: req attack 5 :: dmg 1–2 @2900ms
+    <- Schmieden 5 [Forge Bronze Sword]: Bronze Bar/Bronzebarren x2
+gorehorn_cleaver :: Gorehorn Cleaver / Hornschlächter :: mainhand melee/sword :: rare :: req attack 8 :: dmg 2.2–3.2 @3000ms :: mod con 1 :: FX bleed chance 0.25 mag 1 5000ms
+    <- Maddened Bull/Rasender Bulle (L15; pastures, beast) 1/526 | Elite: Blackhoof the Baleful/Schwarzhuf der Unheilvolle (pastures) 3.0%
+iron_sword :: Iron Sword / Eisen-Schwert :: mainhand melee/sword :: rare :: req attack 10 :: dmg 1.8–3.4 @2900ms
+    <- Schmieden 11 [Forge Iron Sword]: Iron Bar/Eisenbarren x2
+flayers_hook :: Flayer's Hook / Schinderhaken :: mainhand melee/sword :: rare :: req attack 15 :: dmg 2.9–5.4 @2900ms :: FX bleed chance 0.3 mag 2 5000ms
+    <- Elite-Unikat: Gorehook the Flayer/Bluthaken der Schinder (borderlands, Basis Goblin Butcher/Goblin-Schlächter)
+goblin_cleaver :: Goblin Cleaver / Goblin-Schlachtbeil :: mainhand melee/sword :: rare :: req attack 20 :: dmg 3.2–4.9 @2800ms :: mod lck 2 :: FX bleed chance 0.2 mag 1 4000ms
+    <- Goblin Butcher/Goblin-Schlächter (L26; borderlands, humanoid) 1/1111 | Elite: Gorehook the Flayer/Bluthaken der Schinder (borderlands) 1.5%
+steel_sword :: Steel Sword / Stahl-Schwert :: mainhand melee/sword :: rare :: req attack 20 :: dmg 2.3–4.2 @2900ms
+    <- Schmieden 21 [Forge Steel Sword]: Steel Bar/Stahlbarren x2
+steel_warblade :: Steel Warblade / Stahl-Kriegsklinge :: mainhand melee/sword :: rare :: req attack 20 :: dmg 3.2–4.8 @3000ms :: FX bleed chance 0.22 mag 2 5000ms
+    <- Schmieden 29 [Forge Steel Warblade]: Steel Bar/Stahlbarren x3
+blacksteel_sword :: Blacksteel Sword / Schwarzstahl-Schwert :: mainhand melee/sword :: rare :: req attack 30 :: dmg 2.9–5.4 @2900ms
+    <- Schmieden 30 [Forge Blacksteel Sword]: Blacksteel Bar/Schwarzstahlbarren x2
+boneblade :: Boneblade / Knochenklinge :: mainhand melee/sword :: common :: req attack 30 :: dmg 4.1–6.3 @3000ms :: FX execute mag 0.25 thr 0.2
+    <- Skeleton Warrior/Skelettkrieger (L65; crypt, undead) 1/333 | Skeleton Warrior/Skelettkrieger (L65; crypt, undead, nur Dungeon) 1/333 | Skeleton Warrior/Skelettkrieger (L36; slayer_tower, undead, Turm-Etage 2) 1/333
+dustblade :: Dustblade / Staubklinge :: mainhand melee/sword :: common :: req attack 40 :: dmg 5.2–7.9 @3000ms :: FX firstBlood mag 0.25
+    <- Ash Rat/Aschratte (L30; ashfields, beast) 1/833
+mithril_sword :: Mithril Sword / Mithril-Schwert :: mainhand melee/sword :: superRare :: req attack 40 :: dmg 3.5–6.5 @2900ms
+    <- Schmieden 36 [Forge Mithril Sword]: Mithril Bar/Mithrilbarren x2
+adamantium_sword :: Adamantium Sword / Adamantium-Schwert :: mainhand melee/sword :: superRare :: req attack 50 :: dmg 4.4–8.2 @2900ms
+    <- Schmieden 46 [Forge Adamantium Sword]: Adamantium Bar/Adamantiumbarren x2
+briarfang_blade :: Briarfang / Dornfang :: mainhand melee/sword :: superRare :: req attack 50 :: dmg 5.6–10.4 @2900ms :: FX bleed chance 0.3 mag 4 5000ms
+    <- Elite-Unikat: Briarfang the Sleepless/Dornfang der Schlaflose (blackthorn, Basis Thorn Wolf/Dornwolf)
+thornvine_whip :: Thornvine Whip / Dornenranken-Peitsche :: mainhand melee/sword :: rare :: req attack 50 :: dmg 6.4–9.7 @2900ms :: FX bleed chance 0.25 mag 2 4500ms; catalyst 3000ms
+    <- Thorn Wolf/Dornwolf (L54; blackthorn, beast) 1/1667 | Elite: Briarfang the Sleepless/Dornfang der Schlaflose (blackthorn) 1.6%
+runite_sword :: Runite Sword / Runit-Schwert :: mainhand melee/sword :: superRare :: req attack 60 :: dmg 5.6–10.4 @2900ms
+    <- Schmieden 56 [Forge Runite Sword]: Runite Bar/Runitbarren x2
+bloodiron_sword :: Bloodiron Sword / Bluteisen-Schwert :: mainhand melee/sword :: superRare :: req attack 70 :: dmg 6.9–12.8 @2900ms
+    <- Schmieden 66 [Forge Bloodiron Sword]: Bloodiron Bar/Bluteisenbarren x2
+drowned_cutlass :: Drowned Sailor's Cutlass / Entermesser des Ertrunkenen :: mainhand melee/sword :: rare :: req attack 80 :: dmg 13–19 @3000ms :: FX bleed chance 0.2 mag 2 4500ms
+    <- Reef Drowned/Riff-Ertrunkener (L128; coast, undead) 1/2000 | Elite: Saltgrave the Returned/Salzgrab der Wiedergekehrte (coast) 1/123
+titanium_sword :: Titanium Sword / Titan-Schwert :: mainhand melee/sword :: epic :: req attack 80 :: dmg 8.7–16.2 @2900ms
+    <- Schmieden 76 [Forge Titanium Sword]: Titanium Bar/Titanbarren x2
+aetherium_sword :: Aetherium Sword / Aetherium-Schwert :: mainhand melee/sword :: epic :: req attack 90 :: dmg 10.8–20.1 @2900ms
+    <- Schmieden 86 [Forge Aetherium Sword]: Aetherium Bar/Aetheriumbarren x2
+slagforged_sword :: Slagforged Sword / Schlackenschwert :: mainhand melee/sword :: rare :: req attack 90 :: dmg 16.1–24.2 @3000ms :: FX desperation mag 0.3 thr 0.3
+    <- Slag Kobold/Schlackenkobold (L162; slagpit, humanoid) 1/1429
+godiron_sword :: Godiron Sword / Götzeneisen-Schwert :: mainhand melee/sword :: epic :: req attack 99 :: dmg 13.6–25.2 @2900ms
+    <- Schmieden 95 [Forge Godiron Sword]: Godiron Bar/Götzeneisenbarren x2
+copper_longbow :: Normal Longbow / Normaler Langbogen :: mainhand ranged/longbow 2H :: common :: req ranged 1 :: dmg 1–1.5 @3000ms, precision 0.25 :: FX eagleEye
+    <- Bognerei 1 [Carve Normal Longbow]: Normal Log/Normales Holz x2, Sinew Bowstring/Sehnenfaden x1
+bronze_longbow :: Birchwood Longbow / Birkenholz-Langbogen :: mainhand ranged/longbow 2H :: common :: req ranged 5 :: dmg 1.6–2.4 @3000ms, precision 0.25 :: mod lck 1 :: FX eagleEye
+    <- Bognerei 5 [Carve Birchwood Longbow]: Birchwood Log/Birkenholz x3, Sinew Bowstring/Sehnenfaden x1
+iron_longbow :: Oak Longbow / Eichen-Langbogen :: mainhand ranged/longbow 2H :: rare :: req ranged 10 :: dmg 2.1–3.1 @3000ms, precision 0.25 :: mod lck 1 :: FX eagleEye
+    <- Bognerei 10 [Carve Oak Longbow]: Oak Log/Eichenholz x3, Sinew Bowstring/Sehnenfaden x1
+steel_longbow :: Ashbark Longbow / Aschenrinden-Langbogen :: mainhand ranged/longbow 2H :: rare :: req ranged 20 :: dmg 2.6–4 @3000ms, precision 0.25 :: mod lck 1 :: FX eagleEye
+    <- Bognerei 20 [Carve Ashbark Longbow]: Ashbark Log/Aschenrinden-Holz x4, Sinew Bowstring/Sehnenfaden x1
+blacksteel_longbow :: Blackwood Longbow / Schwarzholz-Langbogen :: mainhand ranged/longbow 2H :: rare :: req ranged 30 :: dmg 3.2–4.8 @3000ms, precision 0.25 :: mod lck 1 :: FX eagleEye
+    <- Bognerei 30 [Carve Blackwood Longbow]: Blackwood Log/Schwarzholz x4, Sinew Bowstring/Sehnenfaden x1
+mirrorglass_bow :: Mirrorglass Bow / Spiegelglas-Bogen :: mainhand ranged/longbow 2H :: rare :: req ranged 30 :: dmg 3.9–6.4 @3000ms :: mod lck 1 :: FX frost chance 0.2 mag 1 3500ms
+    <- Gaze Basilisk/Blick-Basilisk (L22; slayer_tower, beast, Turm-Etage 2) 1/1000
+skeletal_longbow :: Skeletal Longbow / Skelett-Langbogen :: mainhand ranged/longbow 2H :: rare :: req ranged 30 :: dmg 3.9–6.6 @3000ms :: mod lck 1 :: FX eagleEye
+    <- Skeleton Archer/Skelett-Bogenschütze (L68; crypt, undead) 1/1250 | Skeleton Archer/Skelett-Bogenschütze (L68; crypt, undead, nur Dungeon) 1/1250 | Skeleton Archer/Skelett-Bogenschütze (L38; slayer_tower, undead, Turm-Etage 2) 1/1250
+ashwood_longbow :: Ashwood Longbow / Aschholz-Langbogen :: mainhand ranged/longbow 2H :: rare :: req ranged 40 :: dmg 4.9–8 @3000ms :: mod lck 1 :: FX eagleEye
+    <- Dust Vulture/Staubgeier (L34; ashfields, beast) 1/1429 | Elite: Carrionwind the Patient/Aaswind der Geduldige (ashfields) 1/118
+mithril_longbow :: Blightwood Longbow / Pestholz-Langbogen :: mainhand ranged/longbow 2H :: superRare :: req ranged 40 :: dmg 4–6.2 @3000ms, precision 0.25 :: mod lck 1 :: FX eagleEye
+    <- Bognerei 40 [Carve Blightwood Longbow]: Blightwood Log/Pestholz x5, Sinew Bowstring/Sehnenfaden x1
+adamantium_longbow :: Ironbark Longbow / Eisenrinden-Langbogen :: mainhand ranged/longbow 2H :: superRare :: req ranged 50 :: dmg 5–7.6 @3000ms, precision 0.25 :: mod lck 2 :: FX eagleEye
+    <- Bognerei 50 [Carve Ironbark Longbow]: Ironbark Log/Eisenrinden-Holz x5, Sinew Bowstring/Sehnenfaden x1
+spectral_hunter_bow :: Spectral Hunter's Bow / Geisterjäger-Bogen :: mainhand ranged/longbow 2H :: superRare :: req ranged 50 :: dmg 6–10.1 @3000ms :: mod dex 1, lck 1 :: FX bounty mag 0.2
+    <- Spectral Stag/Geisterhirsch (L58; blackthorn) 1/1667
+runite_longbow :: Bloodoak Longbow / Bluteichen-Langbogen :: mainhand ranged/longbow 2H :: superRare :: req ranged 60 :: dmg 6.3–9.6 @3000ms, precision 0.25 :: mod lck 2 :: FX eagleEye
+    <- Bognerei 60 [Carve Bloodoak Longbow]: Bloodoak Log/Bluteichen-Holz x5, Sinew Bowstring/Sehnenfaden x1
+frostcaverns_bow :: Frostcaverns Bow / Frostkavernen-Bogen :: mainhand ranged/longbow 2H :: epic :: req ranged 62 :: dmg 7.6–12.7 @3000ms :: mod lck 1 :: FX frost chance 0.3 mag 1 4000ms; frostbite mag 0.25
+    <- Frost Hound/Frosthund (L182; slagpit, beast) 1/2778 | Frost Hound/Frosthund (L74; slayer_tower, beast, Turm-Etage 4) 1/2778
+bloodiron_longbow :: Shadowpine Longbow / Schattenkiefer-Langbogen :: mainhand ranged/longbow 2H :: superRare :: req ranged 70 :: dmg 7.8–11.8 @3000ms, precision 0.25 :: mod lck 2 :: FX eagleEye
+    <- Bognerei 70 [Carve Shadowpine Longbow]: Shadowpine Log/Schattenkiefer-Holz x5, Sinew Bowstring/Sehnenfaden x1
+antler_warbow :: Antler Warbow / Geweih-Kriegsbogen :: mainhand ranged/longbow 2H :: rare :: req ranged 80 :: dmg 12.1–19.9 @3000ms :: mod lck 1 :: FX eagleEye
+    <- Wild Stag/Wildhirsch (L104; wildwood, beast) 1/2000 | Elite: Blackantler the Wrathful/Schwarzgeweih der Zornige (wildwood) 1/133
+stagstride_longbow :: Stagstride Longbow / Hirschlauf-Langbogen :: mainhand ranged/longbow 2H :: superRare :: req ranged 80 :: dmg 11.4–19.4 @2900ms :: mod lck 1 :: FX cooldownOnKill 2000ms
+    <- Wild Stag/Wildhirsch (L104; wildwood, beast) 1/1667 | Elite: Blackantler the Wrathful/Schwarzgeweih der Zornige (wildwood) 1/286
+titanium_longbow :: Wraithwood Longbow / Geisterholz-Langbogen :: mainhand ranged/longbow 2H :: epic :: req ranged 80 :: dmg 9.6–14.7 @3000ms, precision 0.25 :: mod dex 1, lck 1 :: FX eagleEye
+    <- Bognerei 80 [Carve Wraithwood Longbow]: Wraithwood Log/Geisterholz x5, Sinew Bowstring/Sehnenfaden x1
+blackantler_warbow :: Blackantler Warbow / Schwarzgeweih-Kriegsbogen :: mainhand ranged/longbow 2H :: epic :: req ranged 82 :: dmg 12.6–19.2 @3000ms :: FX cooldownOnKill 2000ms
+    <- Elite-Unikat: Blackantler the Wrathful/Schwarzgeweih der Zornige (wildwood, Basis Wild Stag/Wildhirsch)
+abyssal_tide_bow :: Abyssal Tide Bow / Abyssaler Gezeitenbogen :: mainhand ranged/longbow 2H :: epic :: req ranged 90 :: dmg 11.6–19.3 @3000ms :: mod dex 1, lck 2 :: FX frost chance 0.3 mag 1 4000ms; frostbite mag 0.25
+    <- Abyssal Tide Serpent/Abyssale Gezeitenschlange (L155; coast, beast) 1/2000 | Abyssal Tide Serpent/Abyssale Gezeitenschlange (L105; slayer_tower, beast, Turm-Etage 7) 1/2000
+aetherium_longbow :: Bonewood Longbow / Knochenholz-Langbogen :: mainhand ranged/longbow 2H :: epic :: req ranged 90 :: dmg 12.7–19 @3000ms, precision 0.25 :: mod dex 1, lck 1 :: FX eagleEye
+    <- Bognerei 90 [Carve Bonewood Longbow]: Bonewood Log/Knochenholz x6, Sinew Bowstring/Sehnenfaden x1
+censerwood_longbow :: Censerwood Longbow / Weihrauchholz-Langbogen :: mainhand ranged/longbow 2H :: epic :: req ranged 95 :: dmg 14.5–21.7 @3000ms, precision 0.25 :: mod dex 1, lck 2 :: FX eagleEye
+    <- Bognerei 96 [Carve Censerwood Longbow]: Censerwood Log/Weihrauchholz x6, Sinew Bowstring/Sehnenfaden x1
+chainbound_longbow :: Chainbound Longbow / Kettenbogen des Dieners :: mainhand ranged/longbow 2H :: epic :: req ranged 95 :: dmg 16–23.8 @3000ms, precision 0.25 :: mod lck 2 :: FX burn chance 0.35 mag 6 6000ms; eagleEye
+    <- Forsaken Servant/Verlassener Diener (L250; idolhall, demon) 1/1250
+spearthrower_longbow :: Spearthrower Longbow / Speerwerfer-Langbogen :: mainhand ranged/longbow 2H :: epic :: req ranged 95 :: dmg 16–23.8 @3000ms, precision 0.25 :: mod lck 2 :: FX eagleEye; everyNth mag 1 stacks 4
+    <- Siege Idol/Belagerungsgötze (L266; idolhall, construct) 1/1667
+godiron_longbow :: Godwood Longbow / Götzenholz-Langbogen :: mainhand ranged/longbow 2H :: epic :: req ranged 99 :: dmg 15.9–23.8 @3000ms, precision 0.25 :: mod dex 1, lck 3 :: FX eagleEye
+    <- Bognerei 99 [Carve Godwood Longbow]: Godwood Log/Götzenholz x6, Sinew Bowstring/Sehnenfaden x1
+voidwing_greatbow :: Voidwing Greatbow / Leerenschwingen-Großbogen :: mainhand ranged/longbow 2H :: legendary :: req ranged 99 :: dmg 16.7–25 @3000ms :: mod lck 4 :: FX burn chance 0.4 mag 8 6500ms; eagleEye
+    <- Void Titan/Leeren-Titan (L242; highlands) 1/5000 | Void Titan/Leeren-Titan (L107; slayer_tower, Turm-Etage 8) 1/5000
+copper_shortbow :: Normal Shortbow / Normaler Kurzbogen :: mainhand ranged/shortbow 2H :: common :: req ranged 1 :: dmg 1.1–1.4 @2650ms, precision 0.15
+    <- Bognerei 1 [Carve Normal Shortbow]: Normal Log/Normales Holz x2, Sinew Bowstring/Sehnenfaden x1
+bronze_shortbow :: Birchwood Shortbow / Birkenholz-Kurzbogen :: mainhand ranged/shortbow 2H :: common :: req ranged 5 :: dmg 1.6–2.2 @2650ms, precision 0.15
+    <- Bognerei 5 [Carve Birchwood Shortbow]: Birchwood Log/Birkenholz x3, Sinew Bowstring/Sehnenfaden x1
+farmhand_sling :: Farmhand Sling / Knechts-Schleuder :: mainhand ranged/shortbow 2H :: common :: req ranged 5 :: dmg 2–3.2 @2650ms :: mod lck 2 :: FX lootChance mag 0.1
+    <- Chicken/Huhn (L1; pastures, beast) 1/1111
+iron_shortbow :: Oak Shortbow / Eichen-Kurzbogen :: mainhand ranged/shortbow 2H :: rare :: req ranged 10 :: dmg 2.1–2.9 @2650ms, precision 0.15
+    <- Bognerei 10 [Carve Oak Shortbow]: Oak Log/Eichenholz x3, Sinew Bowstring/Sehnenfaden x1
+steel_shortbow :: Ashbark Shortbow / Aschenrinden-Kurzbogen :: mainhand ranged/shortbow 2H :: rare :: req ranged 20 :: dmg 2.6–3.6 @2650ms, precision 0.15 :: mod lck 1
+    <- Bognerei 20 [Carve Ashbark Shortbow]: Ashbark Log/Aschenrinden-Holz x4, Sinew Bowstring/Sehnenfaden x1
+stolen_shortbow :: Stolen Shortbow / Gestohlener Kurzbogen :: mainhand ranged/shortbow 2H :: common :: req ranged 20 :: dmg 3.1–4.7 @2650ms :: mod lck 2 :: FX lootChance mag 0.1
+    <- Goblin/Goblin (L15; borderlands, humanoid) 1/1429 | Goblin Archer/Goblin-Bogenschütze (L22; borderlands, humanoid) 1/714 | Goblin/Goblin (L15; slayer_tower, humanoid, Turm-Etage 1) 1/1429
+blacksteel_shortbow :: Blackwood Shortbow / Schwarzholz-Kurzbogen :: mainhand ranged/shortbow 2H :: rare :: req ranged 30 :: dmg 3.2–4.4 @2650ms, precision 0.15 :: mod lck 1
+    <- Bognerei 30 [Carve Blackwood Shortbow]: Blackwood Log/Schwarzholz x4, Sinew Bowstring/Sehnenfaden x1
+ashfall_recurve :: Ashfall Recurve / Aschfall-Recurvebogen :: mainhand ranged/shortbow 2H :: superRare :: req ranged 40 :: dmg 4.8–7.4 @2650ms :: mod lck 3 :: FX burn chance 0.25 mag 2 4000ms
+    <- Ash Tyrant/Aschtyrann (L45; ashfields) 1/1111
+mithril_shortbow :: Blightwood Shortbow / Pestholz-Kurzbogen :: mainhand ranged/shortbow 2H :: superRare :: req ranged 40 :: dmg 4–5.6 @2650ms, precision 0.15 :: mod lck 1
+    <- Bognerei 40 [Carve Blightwood Shortbow]: Blightwood Log/Pestholz x5, Sinew Bowstring/Sehnenfaden x1
+adamantium_shortbow :: Ironbark Shortbow / Eisenrinden-Kurzbogen :: mainhand ranged/shortbow 2H :: superRare :: req ranged 50 :: dmg 5–6.9 @2650ms, precision 0.15 :: mod lck 1
+    <- Bognerei 50 [Carve Ironbark Shortbow]: Ironbark Log/Eisenrinden-Holz x5, Sinew Bowstring/Sehnenfaden x1
+runite_shortbow :: Bloodoak Shortbow / Bluteichen-Kurzbogen :: mainhand ranged/shortbow 2H :: superRare :: req ranged 60 :: dmg 6.3–8.8 @2650ms, precision 0.15 :: mod lck 2 :: FX momentum mag 0.02 stacks 8
+    <- Bognerei 60 [Carve Bloodoak Shortbow]: Bloodoak Log/Bluteichen-Holz x5, Sinew Bowstring/Sehnenfaden x1
+bloodiron_shortbow :: Shadowpine Shortbow / Schattenkiefer-Kurzbogen :: mainhand ranged/shortbow 2H :: superRare :: req ranged 70 :: dmg 7.8–10.8 @2650ms, precision 0.15 :: mod lck 2 :: FX momentum mag 0.02 stacks 8
+    <- Bognerei 70 [Carve Shadowpine Shortbow]: Shadowpine Log/Schattenkiefer-Holz x5, Sinew Bowstring/Sehnenfaden x1
+driftwood_bow :: Driftwood Bow / Treibholz-Bogen :: mainhand ranged/shortbow 2H :: common :: req ranged 80 :: dmg 12.2–18.3 @2650ms :: mod lck 2 :: FX bleed chance 0.2 mag 1 4000ms
+    <- Mud Crab/Schlickkrabbe (L120; coast, beast) 1/1250 | Reef Drowned/Riff-Ertrunkener (L128; coast, undead) 1/2000 | Elite: Shellfather the Unbroken/Schalenvater der Ungebrochene (coast) 1/133
+titanium_shortbow :: Wraithwood Shortbow / Geisterholz-Kurzbogen :: mainhand ranged/shortbow 2H :: epic :: req ranged 80 :: dmg 9.7–13.5 @2650ms, precision 0.15 :: mod lck 2 :: FX momentum mag 0.02 stacks 8
+    <- Bognerei 80 [Carve Wraithwood Shortbow]: Wraithwood Log/Geisterholz x5, Sinew Bowstring/Sehnenfaden x1
+aetherium_shortbow :: Bonewood Shortbow / Knochenholz-Kurzbogen :: mainhand ranged/shortbow 2H :: epic :: req ranged 90 :: dmg 12.7–17.5 @2650ms, precision 0.15 :: mod dex 1, lck 1 :: FX momentum mag 0.02 stacks 8
+    <- Bognerei 90 [Carve Bonewood Shortbow]: Bonewood Log/Knochenholz x6, Sinew Bowstring/Sehnenfaden x1
+skytalon_recurve :: Skytalon Recurve / Himmelsklaue-Recurvebogen :: mainhand ranged/shortbow 2H :: superRare :: req ranged 90 :: dmg 15.3–23.3 @2650ms :: mod dex 1, lck 1 :: FX shock chance 0.2 mag 0.2 3500ms
+    <- Roc Hunter/Roc-Jäger (L208; highlands, beast) 1/1250 | Roc Hunter/Roc-Jäger (L102; slayer_tower, beast, Turm-Etage 6) 1/1250 | Elite: Stormcrown the Skyfather/Himmelsvater Sturmkrone (highlands) 1/145
+skyfather_recurve :: Skyfather Recurve / Himmelsvater-Recurvebogen :: mainhand ranged/shortbow 2H :: legendary :: req ranged 92 :: dmg 17.2–23.5 @2650ms, precision 0.15 :: FX shock chance 0.3 mag 0.3 4000ms
+    <- Elite-Unikat: Stormcrown the Skyfather/Himmelsvater Sturmkrone (highlands, Basis Roc Hunter/Roc-Jäger)
+broodtalon_bow :: Broodtalon Bow / Brutklauen-Bogen :: mainhand ranged/shortbow 2H :: epic :: req ranged 95 :: dmg 15.9–22 @2650ms, precision 0.15 :: mod lck 2 :: FX bleed chance 0.35 mag 6 6000ms
+    <- Skarn Whelp/Skarnbrut (L247; idolhall, dragonkin) 1/1250
+censerwood_shortbow :: Censerwood Shortbow / Weihrauchholz-Kurzbogen :: mainhand ranged/shortbow 2H :: epic :: req ranged 95 :: dmg 14.5–19.9 @2650ms, precision 0.15 :: mod dex 1, lck 2 :: FX momentum mag 0.02 stacks 8
+    <- Bognerei 96 [Carve Censerwood Shortbow]: Censerwood Log/Weihrauchholz x6, Sinew Bowstring/Sehnenfaden x1
+chiselled_recurve :: Chiselled Recurve / Gemeißelter Recurvebogen :: mainhand ranged/shortbow 2H :: epic :: req ranged 95 :: dmg 15.9–22 @2650ms, precision 0.15 :: mod dex 1, lck 2 :: FX cooldownOnKill 2000ms
+    <- The Expunged Chapel/Die Getilgte Kapelle Abschluss 1.5%
+hollowed_recurve :: Hollowed Recurve / Ausgehöhlter Recurvebogen :: mainhand ranged/shortbow 2H :: epic :: req ranged 95 :: dmg 15.9–22 @2650ms, precision 0.15 :: mod lck 2 :: FX firstStrike mag 1
+    <- Idol Husk/Götzenhülse (L244; idolhall, construct) 1/1250
+godiron_shortbow :: Godwood Shortbow / Götzenholz-Kurzbogen :: mainhand ranged/shortbow 2H :: epic :: req ranged 99 :: dmg 15.9–21.9 @2650ms, precision 0.15 :: mod dex 1, lck 2 :: FX momentum mag 0.02 stacks 8
+    <- Bognerei 99 [Carve Godwood Shortbow]: Godwood Log/Götzenholz x6, Sinew Bowstring/Sehnenfaden x1
+wooden_shield :: Wooden Shield / Holzschild :: offhand :: common :: mod con 1 :: FX antiRegen
+    <- Goblin Shaman/Goblin-Schamane (L18; borderlands, humanoid) 8.0% | Laden 90g
+copper_kiteshield :: Copper Kiteshield / Kupfer-Tropfenschild :: offhand :: common :: req defence 1 :: armor 9.72, block 0.223 :: mod con 1 :: SET Copper Set/Kupfer-Set (9 Teile)
+    <- Schmieden 3 [Forge Copper Kiteshield]: Copper Bar/Kupferbarren x2
+copper_towershield :: Copper Tower Shield / Kupfer-Turmschild :: offhand :: common :: req defence 1 :: armor 9.72, block 0.223 :: mod con 2 :: SET Copper Set/Kupfer-Set (9 Teile)
+    <- Schmieden 4 [Forge Copper Tower Shield]: Copper Bar/Kupferbarren x3
+bronze_kiteshield :: Bronze Kiteshield / Bronze-Tropfenschild :: offhand :: common :: req defence 5 :: armor 10.01, block 0.234 :: mod con 2
+    <- Schmieden 7 [Forge Bronze Kiteshield]: Bronze Bar/Bronzebarren x2
+bronze_towershield :: Bronze Tower Shield / Bronze-Turmschild :: offhand :: common :: req defence 5 :: armor 10.01, block 0.234 :: mod con 3
+    <- Schmieden 8 [Forge Bronze Tower Shield]: Bronze Bar/Bronzebarren x3
+wattle_shield :: Wattle Shield / Flecht-Schild :: offhand :: common :: req defence 5 :: armor 10.39, block 0.248 :: mod con 2 :: FX antiRegen
+    <- Cow/Kuh (L5; pastures, beast) 1/476
+iron_kiteshield :: Iron Kiteshield / Eisen-Tropfenschild :: offhand :: rare :: req defence 10 :: armor 10.39, block 0.248 :: mod con 2 :: SET Iron Set/Eisen-Set (9 Teile)
+    <- Schmieden 14 [Forge Iron Kiteshield]: Iron Bar/Eisenbarren x2
+iron_towershield :: Iron Tower Shield / Eisen-Turmschild :: offhand :: rare :: req defence 10 :: armor 10.39, block 0.248 :: mod con 3 :: SET Iron Set/Eisen-Set (9 Teile)
+    <- Schmieden 17 [Forge Iron Tower Shield]: Iron Bar/Eisenbarren x3
+plaguebone_buckler :: Plaguebone Buckler / Pestknochen-Buckler :: offhand :: common :: req defence 10 :: armor 10.55, block 0.254 :: mod con 2 :: FX antiRegen
+    <- Shambling Carcass/Taumelnde Leiche (L12; slayer_tower, undead, Turm-Etage 1) 1/278
+stormcaller_totem :: Stormcaller Totem / Sturmrufer-Totem :: offhand :: rare :: req magic 10 :: mod int 1, wis 3 :: FX wardSiphon mag 0.08
+    <- Goblin Stormcaller/Goblin-Sturmrufer (L28; borderlands, humanoid) 1/1075
+willowbark_shield :: Willowbark Shield / Weidenbark-Schild :: offhand :: rare :: req defence 12 :: armor 10.55, block 0.254 :: mod con 1
+    <- Handwerk 15 [Carve Willowbark Shield]: Willowbark Log/Weidenbark-Holz x3, Sinew Bowstring/Sehnenfaden x1
+steel_kiteshield :: Steel Kiteshield / Stahl-Tropfenschild :: offhand :: rare :: req defence 20 :: armor 11.22, block 0.276 :: mod con 4 :: SET Steel Set/Stahl-Set (9 Teile)
+    <- Schmieden 24 [Forge Steel Kiteshield]: Steel Bar/Stahlbarren x2
+steel_towershield :: Steel Tower Shield / Stahl-Turmschild :: offhand :: rare :: req defence 20 :: armor 11.22, block 0.276 :: mod con 5 :: SET Steel Set/Stahl-Set (9 Teile)
+    <- Schmieden 27 [Forge Steel Tower Shield]: Steel Bar/Stahlbarren x3
+goblin_buckler :: Goblin Buckler / Goblin-Buckler :: offhand :: common :: req defence 22 :: armor 11.76, block 0.293 :: mod con 2 :: FX antiRegen
+    <- Goblin Spearman/Goblin-Speerträger (L20; borderlands, humanoid) 1/435
+grimwood_shield :: Grimwood Shield / Düsterholz-Schild :: offhand :: common :: req defence 22 :: armor 11.39, block 0.282 :: mod con 2
+    <- Handwerk 25 [Carve Grimwood Shield]: Grimwood Log/Düsterholz x3, Sinew Bowstring/Sehnenfaden x1
+basilisk_scale_shield :: Basilisk Scale Shield / Basilisken-Schuppenschild :: offhand :: rare :: req defence 30 :: armor 13.19, block 0.332 :: mod con 3 :: FX antiRegen
+    <- Gaze Basilisk/Blick-Basilisk (L22; slayer_tower, beast, Turm-Etage 2) 1/833
+blacksteel_kiteshield :: Blacksteel Kiteshield / Schwarzstahl-Tropfenschild :: offhand :: rare :: req defence 30 :: armor 12.14, block 0.304 :: mod con 5
+    <- Schmieden 32 [Forge Blacksteel Kiteshield]: Blacksteel Bar/Schwarzstahlbarren x2
+blacksteel_towershield :: Blacksteel Tower Shield / Schwarzstahl-Turmschild :: offhand :: rare :: req defence 30 :: armor 12.14, block 0.304 :: mod con 6
+    <- Schmieden 33 [Forge Blacksteel Tower Shield]: Blacksteel Bar/Schwarzstahlbarren x3
+cinderhusk_bulwark :: Cinderhusk Bulwark / Glutpanzer-Bollwerk :: offhand :: superRare :: req defence 40 :: armor 14.38, block 0.36 :: FX desperation mag 0.2 thr 0.3
+    <- Elite-Unikat: Cinderhusk the Unbowed/Glutpanzer der Ungebeugte (ashfields, Basis Pitch Beetle/Pechkäfer)
+mithril_kiteshield :: Mithril Kiteshield / Mithril-Tropfenschild :: offhand :: superRare :: req defence 40 :: armor 13.19, block 0.332 :: mod con 6 :: SET Mithril Set/Mithril-Set (9 Teile)
+    <- Schmieden 39 [Forge Mithril Kiteshield]: Mithril Bar/Mithrilbarren x2
+mithril_towershield :: Mithril Tower Shield / Mithril-Turmschild :: offhand :: superRare :: req defence 40 :: armor 13.19, block 0.332 :: mod con 7 :: SET Mithril Set/Mithril-Set (9 Teile)
+    <- Schmieden 42 [Forge Mithril Tower Shield]: Mithril Bar/Mithrilbarren x3
+adamantium_kiteshield :: Adamantium Kiteshield / Adamantium-Tropfenschild :: offhand :: superRare :: req defence 50 :: armor 14.38, block 0.36 :: mod con 7 :: SET Adamantium Set/Adamantium-Set (9 Teile)
+    <- Schmieden 49 [Forge Adamantium Kiteshield]: Adamantium Bar/Adamantiumbarren x2
+adamantium_towershield :: Adamantium Tower Shield / Adamantium-Turmschild :: offhand :: superRare :: req defence 50 :: armor 14.38, block 0.36 :: mod con 8 :: SET Adamantium Set/Adamantium-Set (9 Teile)
+    <- Schmieden 52 [Forge Adamantium Tower Shield]: Adamantium Bar/Adamantiumbarren x3
+bark_bulwark :: Bark Bulwark / Borken-Bollwerk :: offhand :: rare :: req defence 50 :: armor 15.45, block 0.382 :: mod con 4 :: FX antiRegen
+    <- Moss Golem/Moosgolem (L56; blackthorn, construct) 1/1000 | Elite: Oldgrowth the Unrooted/Altwuchs der Entwurzelte (blackthorn) 2.3%
+ashfen_buckler :: Ashfen Buckler / Aschenfilz-Buckler :: offhand :: superRare :: req defence 58 :: armor 15.45, block 0.382 :: mod con 5
+    <- Handwerk 63 [Carve Ashfen Buckler]: Ashfen Log/Aschenfilz-Holz x4, Sinew Bowstring/Sehnenfaden x1
+revenant_greatshield :: Revenant's Greatshield / Revenant-Großschild :: offhand :: epic :: req defence 58 :: armor 16, block 0.393 :: mod con 12 :: FX execute mag 0.25 thr 0.2
+    <- Iron Revenant/Eisenrevenant (L175; slagpit, undead) 1/2778 | Iron Revenant/Eisenrevenant (L56; slayer_tower, undead, Turm-Etage 3) 1/2778 | Elite: Morvane the Reforged/Morvane der Neugeschmiedete (slagpit) 1/111
+runite_kiteshield :: Runite Kiteshield / Runit-Tropfenschild :: offhand :: superRare :: req defence 60 :: armor 15.74, block 0.388 :: mod con 8 :: SET Runite Set/Runit-Set (9 Teile)
+    <- Schmieden 59 [Forge Runite Kiteshield]: Runite Bar/Runitbarren x2
+runite_towershield :: Runite Tower Shield / Runit-Turmschild :: offhand :: superRare :: req defence 60 :: armor 15.74, block 0.388 :: mod con 9 :: SET Runite Set/Runit-Set (9 Teile)
+    <- Schmieden 62 [Forge Runite Tower Shield]: Runite Bar/Runitbarren x3
+bloodiron_kiteshield :: Bloodiron Kiteshield / Bluteisen-Tropfenschild :: offhand :: superRare :: req defence 70 :: armor 17.3, block 0.416 :: mod con 9 :: SET Bloodiron Set/Bluteisen-Set (9 Teile)
+    <- Schmieden 69 [Forge Bloodiron Kiteshield]: Bloodiron Bar/Bluteisenbarren x2
+bloodiron_towershield :: Bloodiron Tower Shield / Bluteisen-Turmschild :: offhand :: superRare :: req defence 70 :: armor 17.3, block 0.416 :: mod con 10 :: SET Bloodiron Set/Bluteisen-Set (9 Teile)
+    <- Schmieden 72 [Forge Bloodiron Tower Shield]: Bloodiron Bar/Bluteisenbarren x3
+gravewarden_greatshield :: Gravewarden Greatshield / Grabwächter-Großschild :: offhand :: superRare :: req defence 70 :: armor 19.1, block 0.457 :: mod con 4 :: FX antiRegen
+    <- Skeleton Spearman/Skelett-Speerträger (L71; crypt, undead) 1/2000
+beastcaller_totem :: Beastcaller Totem / Bestienruf-Totem :: offhand :: rare :: req magic 80 :: mod int 1, wis 2, lck 1 :: FX packLeader mag 0.25
+    <- Gray Wolf/Grauwolf (L97; wildwood, beast) 1/2000 | Elite: Greytooth the Famished/Grauzahn der Ausgehungerte (wildwood) 1/116
+crabshell_bulwark :: Crabshell Bulwark / Krabbenpanzer-Schild :: offhand :: rare :: req defence 80 :: armor 20.76, block 0.48 :: mod con 3 :: FX antiRegen
+    <- Mud Crab/Schlickkrabbe (L120; coast, beast) 1/1250 | Elite: Shellfather the Unbroken/Schalenvater der Ungebrochene (coast) 1.0%
+tidecaller_focus :: Tidecaller Focus / Gezeitenruf-Fokus :: offhand :: rare :: req magic 80 :: mod int 1, wis 3 :: FX wardOnKill mag 6
+    <- Reef Drowned/Riff-Ertrunkener (L128; coast, undead) 1/2000 | Elite: Saltgrave the Returned/Salzgrab der Wiedergekehrte (coast) 1/116
+titanium_kiteshield :: Titanium Kiteshield / Titan-Tropfenschild :: offhand :: epic :: req defence 80 :: armor 19.1, block 0.444 :: mod con 10 :: SET Titanium Set/Titan-Set (9 Teile)
+    <- Schmieden 79 [Forge Titanium Kiteshield]: Titanium Bar/Titanbarren x2
+titanium_towershield :: Titanium Tower Shield / Titan-Turmschild :: offhand :: epic :: req defence 80 :: armor 19.1, block 0.444 :: mod con 11 :: SET Titanium Set/Titan-Set (9 Teile)
+    <- Schmieden 82 [Forge Titanium Tower Shield]: Titanium Bar/Titanbarren x3
+shellfather_aegis :: Shellfather Aegis / Schalenvater-Schild :: offhand :: epic :: req defence 82 :: armor 21.5, block 0.47 :: FX vengeance mag 0.35
+    <- Elite-Unikat: Shellfather the Unbroken/Schalenvater der Ungebrochene (coast, Basis Mud Crab/Schlickkrabbe)
+voidwood_pavise :: Voidwood Pavise / Leerenholz-Pavese :: offhand :: epic :: req defence 88 :: armor 20.76, block 0.466 :: mod con 9
+    <- Handwerk 92 [Carve Voidwood Pavise]: Voidwood Log/Leerenholz x5, Sinew Bowstring/Sehnenfaden x1
+aetherium_kiteshield :: Aetherium Kiteshield / Aetherium-Tropfenschild :: offhand :: epic :: req defence 90 :: armor 21.2, block 0.472 :: mod con 11 :: SET Aetherium Set/Aetherium-Set (9 Teile)
+    <- Schmieden 89 [Forge Aetherium Kiteshield]: Aetherium Bar/Aetheriumbarren x2
+aetherium_towershield :: Aetherium Tower Shield / Aetherium-Turmschild :: offhand :: epic :: req defence 90 :: armor 21.2, block 0.472 :: mod con 12 :: SET Aetherium Set/Aetherium-Set (9 Teile)
+    <- Schmieden 92 [Forge Aetherium Tower Shield]: Aetherium Bar/Aetheriumbarren x3
+godiron_kiteshield :: Godiron Kiteshield / Götzeneisen-Tropfenschild :: offhand :: epic :: req defence 99 :: armor 21.74, block 0.497 :: mod con 12 :: SET Godiron Set/Götzeneisen-Set (9 Teile)
+    <- Schmieden 97 [Forge Godiron Kiteshield]: Godiron Bar/Götzeneisenbarren x2
+godiron_towershield :: Godiron Tower Shield / Götzeneisen-Turmschild :: offhand :: epic :: req defence 99 :: armor 21.74, block 0.497 :: mod con 13 :: SET Godiron Set/Götzeneisen-Set (9 Teile)
+    <- Schmieden 98 [Forge Godiron Tower Shield]: Godiron Bar/Götzeneisenbarren x3
+idol_aegis :: Aegis of the Last Idol / Aegis des Letzten Götzen :: offhand :: godly :: req defence 99 :: armor 21.74, block 0.5 :: mod str 8, con 19, lck 6 :: bonus hpRegenPerSec 0.2
+    <- The Last Idol/Der Letzte Götze (L295; idolhall, construct, nur Dungeon) 1/32258 | Siege Idol/Belagerungsgötze (L266; idolhall, construct) 1/33333 | Sanctum of the Last Idol/Sanktum des Letzten Götzen Abschluss 1/500 | The Expunged Chapel/Die Getilgte Kapelle Abschluss 1/250 | Paragonturm-Truhe ab Etage 50 1.0% | Paragonturm-Truhe ab Etage 100 4.0%
+copper_focus :: Copper Focus / Kupfer-Fokus :: offhand magic/focus :: common :: req magic 1 :: mod wis 1
+    <- Runenkunst 1 [Enchant Copper Focus]: Copper Focus Blank/Kupfer-Fokus-Rohling x1, Dim Essence/Trübessenz x3
+bronze_focus :: Bronze Focus / Bronze-Fokus :: offhand magic/focus :: common :: req magic 5 :: mod wis 1
+    <- Runenkunst 5 [Enchant Bronze Focus]: Bronze Focus Blank/Bronze-Fokus-Rohling x1, Dim Essence/Trübessenz x3
+dim_focus :: Dim Crystal Focus / Trübkristall-Fokus :: offhand magic/focus :: common :: req magic 8 :: mod int 1
+    <- Runenkunst 1 [Enchant Dim Focus]: Copper Focus Blank/Kupfer-Fokus-Rohling x1, Dim Essence/Trübessenz x4
+iron_focus :: Iron Focus / Eisen-Fokus :: offhand magic/focus :: rare :: req magic 10 :: mod int 1, wis 1
+    <- Runenkunst 10 [Enchant Iron Focus]: Iron Focus Blank/Eisen-Fokus-Rohling x1, Dim Essence/Trübessenz x4
+ashtongue_fetish :: Ashtongue Fetish / Aschenzungen-Fetisch :: offhand magic/focus :: superRare :: req magic 18 :: mod int 2, wis 2, lck 1 :: FX catalyst 1500ms
+    <- Elite-Unikat: Vhazrak the Ashtongue/Vhazrak Aschenzunge (borderlands, Basis Goblin Warlock/Goblin-Hexenmeister)
+steel_focus :: Steel Focus / Stahl-Fokus :: offhand magic/focus :: rare :: req magic 20 :: mod int 1, wis 2, lck 1
+    <- Runenkunst 20 [Enchant Steel Focus]: Steel Focus Blank/Stahl-Fokus-Rohling x1, Frost Essence/Frostessenz x3
+frost_focus :: Frost Focus / Frost-Fokus :: offhand magic/focus :: rare :: req magic 22 :: mod int 1
+    <- Runenkunst 25 [Enchant Frost Focus]: Steel Focus Blank/Stahl-Fokus-Rohling x1, Frost Essence/Frostessenz x6, Frost Shard/Frostsplitter x8
+blacksteel_focus :: Blacksteel Focus / Schwarzstahl-Fokus :: offhand magic/focus :: rare :: req magic 30 :: mod int 1, wis 2, lck 1
+    <- Runenkunst 30 [Enchant Blacksteel Focus]: Blacksteel Focus Blank/Schwarzstahl-Fokus-Rohling x1, Frost Essence/Frostessenz x3
+aether_orb :: Aether Orb / Aether-Kugel :: offhand magic/focus :: superRare :: req magic 40 :: mod con 1, int 1
+    <- Runenkunst 45 [Enchant Aether Orb]: Mithril Focus Blank/Mithril-Fokus-Rohling x1, Aether Essence/Aetheressenz x6, Aether Shard/Aethersplitter x8
+mithril_focus :: Mithril Focus / Mithril-Fokus :: offhand magic/focus :: superRare :: req magic 40 :: mod int 2, wis 3, lck 1
+    <- Runenkunst 40 [Enchant Mithril Focus]: Mithril Focus Blank/Mithril-Fokus-Rohling x1, Aether Essence/Aetheressenz x2
+adamantium_focus :: Adamantium Focus / Adamantium-Fokus :: offhand magic/focus :: superRare :: req magic 50 :: mod int 2, wis 3, lck 1
+    <- Runenkunst 50 [Enchant Adamantium Focus]: Adamantium Focus Blank/Adamantium-Fokus-Rohling x1, Aether Essence/Aetheressenz x2
+runite_focus :: Runite Focus / Runit-Fokus :: offhand magic/focus :: superRare :: req magic 60 :: mod int 3, wis 4, lck 1
+    <- Runenkunst 60 [Enchant Runite Focus]: Runite Focus Blank/Runit-Fokus-Rohling x1, Aether Essence/Aetheressenz x3
+void_focus :: Void Focus / Leeren-Fokus :: offhand magic/focus :: superRare :: req magic 65 :: mod int 2, lck 1
+    <- Runenkunst 65 [Enchant Void Focus]: Runite Focus Blank/Runit-Fokus-Rohling x1, Void Shard/Leerensplitter x6, Sapphire/Saphir x1
+bloodiron_focus :: Bloodiron Focus / Bluteisen-Fokus :: offhand magic/focus :: superRare :: req magic 70 :: mod int 3, wis 5, lck 2
+    <- Runenkunst 70 [Enchant Bloodiron Focus]: Bloodiron Focus Blank/Bluteisen-Fokus-Rohling x1, Aether Essence/Aetheressenz x3
+god_focus :: Godspark Focus / Götzenfunken-Fokus :: offhand magic/focus :: epic :: req magic 80 :: mod int 2, lck 2
+    <- Runenkunst 85 [Enchant Godspark Focus]: Titanium Focus Blank/Titan-Fokus-Rohling x1, Void Shard/Leerensplitter x10, Diamond/Diamant x1
+titanium_focus :: Titanium Focus / Titan-Fokus :: offhand magic/focus :: epic :: req magic 80 :: mod int 4, wis 6, lck 2
+    <- Runenkunst 80 [Enchant Titanium Focus]: Titanium Focus Blank/Titan-Fokus-Rohling x1, Void Essence/Leerenessenz x2
+aetherium_focus :: Aetherium Focus / Aetherium-Fokus :: offhand magic/focus :: epic :: req magic 90 :: mod int 5, wis 7, lck 2
+    <- Runenkunst 90 [Enchant Aetherium Focus]: Aetherium Focus Blank/Aetherium-Fokus-Rohling x1, Void Essence/Leerenessenz x3
+furnaceheart_core :: Furnaceheart Core / Ofenherz-Kern :: offhand magic/focus :: epic :: req magic 90 :: mod int 6, wis 8, lck 2 :: FX surplus mag 0.2 thr 0.8
+    <- Elite-Unikat: Furnaceheart the Undying/Ofenherz der Unsterbliche (slagpit, Basis Ember Elemental/Glutelementar)
+emptied_shrine_focus :: Emptied Shrine Focus / Fokus des leeren Schreins :: offhand magic/focus :: epic :: req magic 95 :: mod int 6, wis 8, lck 2 :: FX vengeance mag 0.25
+    <- The Expunged Chapel/Die Getilgte Kapelle Abschluss 1.5%
+godiron_focus :: Godiron Focus / Götzeneisen-Fokus :: offhand magic/focus :: epic :: req magic 99 :: mod int 6, wis 8, lck 2
+    <- Runenkunst 99 [Enchant Godiron Focus]: Godiron Focus Blank/Götzeneisen-Fokus-Rohling x1, Void Essence/Leerenessenz x4, Onyx/Onyx x1
+leather_helm :: Leather Helm / Lederhelm :: helmet :: common :: evasion 4.29 :: mod con 1
+    <- Handwerk 1 [Stitch Rawhide Helm]: Raw Hide/Rohleder x2
+copper_fullhelm :: Copper Full Helm / Kupfer-Vollhelm :: helmet :: common :: req defence 1 :: armor 8.9 :: mod str 1, con 1 :: SET Copper Set/Kupfer-Set (9 Teile)
+    <- Schmieden 3 [Forge Copper Full Helm]: Copper Bar/Kupferbarren x2
+copper_medhelm :: Copper Med Helm / Kupfer-Mittelhelm :: helmet :: common :: req defence 1 :: armor 8.9 :: mod con 1 :: SET Copper Set/Kupfer-Set (9 Teile)
+    <- Schmieden 1 [Forge Copper Med Helm]: Copper Bar/Kupferbarren x1
+bronze_fullhelm :: Bronze Full Helm / Bronze-Vollhelm :: helmet :: common :: req defence 5 :: armor 9.39 :: mod str 1, con 2
+    <- Schmieden 7 [Forge Bronze Full Helm]: Bronze Bar/Bronzebarren x2
+bronze_medhelm :: Bronze Med Helm / Bronze-Mittelhelm :: helmet :: common :: req defence 5 :: armor 9.39 :: mod str 1, con 1
+    <- Schmieden 5 [Forge Bronze Med Helm]: Bronze Bar/Bronzebarren x1
+cowhide_cap :: Cowhide Cap / Rinderleder-Kappe :: helmet :: common :: req ranged 5 :: evasion 7.3 :: mod con 2 :: FX eagleEye
+    <- Chicken/Huhn (L1; pastures, beast) 1/714 | Feral Goat/Wildziege (L12; pastures, beast) 1/556
+cured_leather_cap :: Cured Leather Cap / Gegerbte Lederkappe :: helmet :: common :: req ranged 5 :: evasion 6.5 :: mod con 1 :: SET Cured Leather Set/Gegerbtes-Leder-Set (5 Teile)
+    <- Handwerk 1 [Stitch Leather Cap]: Cured Leather/Gegerbtes Leder x2
+bonepatch_helm :: Bonepatch Helm / Knochenflicken-Helm :: helmet :: common :: req defence 10 :: armor 10.53 :: mod con 2 :: FX healOnKill mag 1
+    <- Goblin/Goblin (L15; borderlands, humanoid) 1/625 | Goblin/Goblin (L15; slayer_tower, humanoid, Turm-Etage 1) 1/625
+buckhide_helm :: Buckhide Coif / Wildleder-Haube :: helmet :: common :: req ranged 10 :: evasion 7.3 :: mod con 1 :: SET Buckhide Set/Wildleder-Set (5 Teile)
+    <- Handwerk 8 [Stitch Buckhide Coif]: Cured Leather/Gegerbtes Leder x3
+iron_fullhelm :: Iron Full Helm / Eisen-Vollhelm :: helmet :: rare :: req defence 10 :: armor 10.01 :: mod str 1, con 3 :: SET Iron Set/Eisen-Set (9 Teile)
+    <- Schmieden 14 [Forge Iron Full Helm]: Iron Bar/Eisenbarren x2
+iron_medhelm :: Iron Med Helm / Eisen-Mittelhelm :: helmet :: rare :: req defence 10 :: armor 10.01 :: mod str 1, con 2 :: SET Iron Set/Eisen-Set (9 Teile)
+    <- Schmieden 10 [Forge Iron Med Helm]: Iron Bar/Eisenbarren x1
+marrow_cap :: Marrow Cap / Mark-Kappe :: helmet :: common :: req defence 10 :: armor 10.53 :: mod con 2 :: FX healOnKill mag 1
+    <- Hollow Marrow/Hohles Mark (L16; slayer_tower, undead, Turm-Etage 1) 1/227
+hardened_leather_helm :: Hardened Leather Helm / Gehärteter Lederhelm :: helmet :: rare :: req ranged 20 :: evasion 9 :: mod con 2 :: SET Hardened Leather Set/Gehärtetes-Leder-Set (5 Teile)
+    <- Handwerk 22 [Craft Hardened Helm]: Hardened Leather/Gehärtetes Leder x2
+steel_fullhelm :: Steel Full Helm / Stahl-Vollhelm :: helmet :: rare :: req defence 20 :: armor 11.34 :: mod str 2, con 3 :: SET Steel Set/Stahl-Set (9 Teile)
+    <- Schmieden 24 [Forge Steel Full Helm]: Steel Bar/Stahlbarren x2
+steel_medhelm :: Steel Med Helm / Stahl-Mittelhelm :: helmet :: rare :: req defence 20 :: armor 11.34 :: mod str 2, con 2 :: SET Steel Set/Stahl-Set (9 Teile)
+    <- Schmieden 20 [Forge Steel Med Helm]: Steel Bar/Stahlbarren x1
+scaled_leather_helm :: Scaled Leather Coif / Schuppenleder-Haube :: helmet :: rare :: req ranged 28 :: evasion 10.36 :: mod dex 1, con 2 :: SET Scaled Leather Set/Schuppenleder-Set (5 Teile)
+    <- Handwerk 28 [Forge Scaled Coif]: Scaled Leather/Schuppenleder x3
+blacksteel_fullhelm :: Blacksteel Full Helm / Schwarzstahl-Vollhelm :: helmet :: rare :: req defence 30 :: armor 12.76 :: mod str 2, con 4
+    <- Schmieden 32 [Forge Blacksteel Full Helm]: Blacksteel Bar/Schwarzstahlbarren x2
+blacksteel_medhelm :: Blacksteel Med Helm / Schwarzstahl-Mittelhelm :: helmet :: rare :: req defence 30 :: armor 12.76 :: mod str 2, con 3
+    <- Schmieden 30 [Forge Blacksteel Med Helm]: Blacksteel Bar/Schwarzstahlbarren x1
+cryptguard_helm :: Cryptguard Helm / Kryptawächter-Helm :: helmet :: rare :: req defence 30 :: armor 14.31 :: mod con 3 :: FX healOnKill mag 2
+    <- Skeleton Warrior/Skelettkrieger (L65; crypt, undead) 1/1111 | Skeleton Warrior/Skelettkrieger (L65; crypt, undead, nur Dungeon) 1/1111 | Skeleton Warrior/Skelettkrieger (L36; slayer_tower, undead, Turm-Etage 2) 1/1111
+shadestalker_hood :: Shade-Stalker Hood / Schattenpirscher-Kapuze :: helmet :: rare :: req defence 30 :: armor 14.31 :: mod con 3 :: FX healOnKill mag 2
+    <- Wailing Shade/Klagender Schatten (L28; slayer_tower, undead, Turm-Etage 2) 1/714
+ash_tyrant_crown :: Ash Tyrant's Crown / Krone des Aschtyrann :: helmet :: epic :: req defence 40 :: armor 15.98 :: mod str 4, con 4, lck 7 :: boost power 1 :: FX healOnKill mag 4
+    <- Ash Tyrant/Aschtyrann (L45; ashfields) 1/3333
+chitin_helm :: Chitin Helm / Chitin-Helm :: helmet :: rare :: req defence 40 :: armor 16.46 :: mod con 2 :: FX healOnKill mag 4
+    <- Pitch Beetle/Pechkäfer (L42; ashfields, beast) 1/1000 | Elite: Cinderhusk the Unbowed/Glutpanzer der Ungebeugte (ashfields) 2.0%
+duskhide_helm :: Duskhide Coif / Dämmerleder-Haube :: helmet :: rare :: req ranged 40 :: evasion 12.4 :: mod dex 1, con 3 :: SET Duskhide Set/Dämmerleder-Set (5 Teile)
+    <- Handwerk 40 [Craft Duskhide Coif]: Scaled Leather/Schuppenleder x3, Mithril Bar/Mithrilbarren x1
+mithril_fullhelm :: Mithril Full Helm / Mithril-Vollhelm :: helmet :: superRare :: req defence 40 :: armor 14.31 :: mod str 3, con 4 :: SET Mithril Set/Mithril-Set (9 Teile)
+    <- Schmieden 39 [Forge Mithril Full Helm]: Mithril Bar/Mithrilbarren x2
+mithril_medhelm :: Mithril Med Helm / Mithril-Mittelhelm :: helmet :: superRare :: req defence 40 :: armor 14.31 :: mod str 3, con 3 :: SET Mithril Set/Mithril-Set (9 Teile)
+    <- Schmieden 35 [Forge Mithril Med Helm]: Mithril Bar/Mithrilbarren x1
+thorncrown :: Thorncrown / Dornenkrone :: helmet :: superRare :: req magic 45 :: ward 48 :: FX antiRegen
+    <- Elite-Unikat: Mother Bramble/Mutter Dorn (blackthorn, Basis Bramble Witch/Rankenhexe)
+adamantium_fullhelm :: Adamantium Full Helm / Adamantium-Vollhelm :: helmet :: superRare :: req defence 50 :: armor 15.98 :: mod str 4, con 4 :: SET Adamantium Set/Adamantium-Set (9 Teile)
+    <- Schmieden 49 [Forge Adamantium Full Helm]: Adamantium Bar/Adamantiumbarren x2
+adamantium_medhelm :: Adamantium Med Helm / Adamantium-Mittelhelm :: helmet :: superRare :: req defence 50 :: armor 15.98 :: mod str 3, con 4 :: SET Adamantium Set/Adamantium-Set (9 Teile)
+    <- Schmieden 45 [Forge Adamantium Med Helm]: Adamantium Bar/Adamantiumbarren x1
+emberforge_helm :: Emberforge Helm / Glutschmiede-Helm :: helmet :: superRare :: req defence 50 :: armor 16.88 :: mod str 2, con 7 :: boost power 1 :: FX healOnKill mag 4
+    <- Ember Elemental/Glutelementar (L168; slagpit) 1/1111 | Ember Elemental/Glutelementar (L50; slayer_tower, Turm-Etage 3) 1/1111 | Elite: Furnaceheart the Undying/Ofenherz der Unsterbliche (slagpit) 2.2%
+stormhide_helm :: Stormhide Helm / Sturmhaut-Helm :: helmet :: superRare :: req ranged 50 :: evasion 16.8 :: mod dex 2, con 5 :: boost ranged 1 :: FX healOnKill mag 6
+    <- Roc Hunter/Roc-Jäger (L208; highlands, beast) 1/1250 | Roc Hunter/Roc-Jäger (L102; slayer_tower, beast, Turm-Etage 6) 1/1250 | Elite: Stormcrown the Skyfather/Himmelsvater Sturmkrone (highlands) 1.3%
+studded_leather_helm :: Studded Leather Helm / Genieteter Lederhelm :: helmet :: rare :: req ranged 50 :: evasion 14.6 :: mod dex 1, con 3 :: SET Studded Leather Set/Genietetes-Leder-Set (5 Teile)
+    <- Handwerk 50 [Craft Studded Helm]: Studded Leather/Genietetes Leder x2
+ironhide_helm :: Ironhide Coif / Eisenleder-Haube :: helmet :: rare :: req ranged 60 :: evasion 16.8 :: mod dex 1, con 4 :: SET Ironhide Set/Eisenleder-Set (5 Teile)
+    <- Handwerk 60 [Craft Ironhide Coif]: Studded Leather/Genietetes Leder x3
+runite_fullhelm :: Runite Full Helm / Runit-Vollhelm :: helmet :: superRare :: req defence 60 :: armor 17.81 :: mod str 5, con 4 :: SET Runite Set/Runit-Set (9 Teile)
+    <- Schmieden 59 [Forge Runite Full Helm]: Runite Bar/Runitbarren x2
+runite_medhelm :: Runite Med Helm / Runit-Mittelhelm :: helmet :: superRare :: req defence 60 :: armor 17.81 :: mod str 4, con 4 :: SET Runite Set/Runit-Set (9 Teile)
+    <- Schmieden 55 [Forge Runite Med Helm]: Runite Bar/Runitbarren x1
+bloodiron_fullhelm :: Bloodiron Full Helm / Bluteisen-Vollhelm :: helmet :: superRare :: req defence 70 :: armor 19.8 :: mod str 6, con 5 :: SET Bloodiron Set/Bluteisen-Set (9 Teile)
+    <- Schmieden 69 [Forge Bloodiron Full Helm]: Bloodiron Bar/Bluteisenbarren x2
+bloodiron_medhelm :: Bloodiron Med Helm / Bluteisen-Mittelhelm :: helmet :: superRare :: req defence 70 :: armor 19.8 :: mod str 5, con 4 :: SET Bloodiron Set/Bluteisen-Set (9 Teile)
+    <- Schmieden 65 [Forge Bloodiron Med Helm]: Bloodiron Bar/Bluteisenbarren x1
+warhide_helm :: Warhide Helm / Kriegsleder-Helm :: helmet :: rare :: req ranged 70 :: evasion 18.93 :: mod dex 1, con 5 :: SET Warhide Set/Kriegsleder-Set (5 Teile)
+    <- Handwerk 70 [Craft Warhide Helm]: Warhide/Kriegsleder x2
+reefscale_helm :: Reefscale Helm / Riffschuppen-Helm :: helmet :: rare :: req defence 80 :: armor 24.41 :: mod con 3 :: FX healOnKill mag 6
+    <- Reef Drowned/Riff-Ertrunkener (L128; coast, undead) 1/1667 | Elite: Saltgrave the Returned/Salzgrab der Wiedergekehrte (coast) 1.4%
+titanium_fullhelm :: Titanium Full Helm / Titan-Vollhelm :: helmet :: epic :: req defence 80 :: armor 21.99 :: mod str 7, con 6 :: SET Titanium Set/Titan-Set (9 Teile)
+    <- Schmieden 79 [Forge Titanium Full Helm]: Titanium Bar/Titanbarren x2
+titanium_medhelm :: Titanium Med Helm / Titan-Mittelhelm :: helmet :: epic :: req defence 80 :: armor 21.99 :: mod str 6, con 5 :: SET Titanium Set/Titan-Set (9 Teile)
+    <- Schmieden 75 [Forge Titanium Med Helm]: Titanium Bar/Titanbarren x1
+wolfpelt_hood :: Wolfpelt Hood / Wolfsfell-Kapuze :: helmet :: rare :: req defence 80 :: armor 24.41 :: mod con 3 :: FX healOnKill mag 6
+    <- Gray Wolf/Grauwolf (L97; wildwood, beast) 1/2000 | Elite: Greytooth the Famished/Grauzahn der Ausgehungerte (wildwood) 1.4%
+dragonhide_helm :: Dragonhide Coif / Drachenleder-Haube :: helmet :: superRare :: req ranged 82 :: evasion 21.49 :: mod dex 1, con 6 :: SET Dragonhide Set/Drachenleder-Set (5 Teile)
+    <- Handwerk 82 [Craft Dragonhide Coif]: Dragonhide/Drachenleder x2
+aetherium_fullhelm :: Aetherium Full Helm / Aetherium-Vollhelm :: helmet :: epic :: req defence 90 :: armor 24.41 :: mod str 9, con 7 :: SET Aetherium Set/Aetherium-Set (9 Teile)
+    <- Schmieden 89 [Forge Aetherium Full Helm]: Aetherium Bar/Aetheriumbarren x2
+aetherium_medhelm :: Aetherium Med Helm / Aetherium-Mittelhelm :: helmet :: epic :: req defence 90 :: armor 24.41 :: mod str 8, con 6 :: SET Aetherium Set/Aetherium-Set (9 Teile)
+    <- Schmieden 85 [Forge Aetherium Med Helm]: Aetherium Bar/Aetheriumbarren x1
+wraithhide_helm :: Wraithhide Coif / Geisterleder-Haube :: helmet :: epic :: req ranged 90 :: evasion 23.2 :: mod dex 2, con 6 :: SET Wraithhide Set/Geisterleder-Set (5 Teile)
+    <- Handwerk 90 [Craft Wraithhide Coif]: Dragonhide/Drachenleder x2, Void Shard/Leerensplitter x3
+starweave_coronet :: Starweave Coronet / Sterngewebe-Krone :: helmet :: epic :: req magic 92 :: ward 109.8 :: mod con 4, int 8, wis 4, lck 1 :: SET Starweave Set/Sterngewebe-Set (5 Teile)
+    <- Schneidern 93 [Bind Starweave Coronet]: Void Shard/Leerensplitter x8, Aether Essence/Aetheressenz x4, Starweave/Sternweb x2
+shadowhide_helm :: Shadowhide Coif / Schattenleder-Haube :: helmet :: epic :: req ranged 95 :: evasion 25.31 :: mod dex 2, con 6 :: SET Shadowhide Set/Schattenleder-Set (5 Teile)
+    <- Handwerk 95 [Craft Shadowhide Coif]: Shadowhide/Schattenleder x2
+godiron_fullhelm :: Godiron Full Helm / Götzeneisen-Vollhelm :: helmet :: epic :: req defence 99 :: armor 25 :: mod str 11, con 8 :: SET Godiron Set/Götzeneisen-Set (9 Teile)
+    <- Schmieden 97 [Forge Godiron Full Helm]: Godiron Bar/Götzeneisenbarren x2
+godiron_medhelm :: Godiron Med Helm / Götzeneisen-Mittelhelm :: helmet :: epic :: req defence 99 :: armor 25 :: mod str 10, con 7 :: SET Godiron Set/Götzeneisen-Set (9 Teile)
+    <- Schmieden 95 [Forge Godiron Med Helm]: Godiron Bar/Götzeneisenbarren x1
+idol_crown :: Crown of the Idol / Krone des Götzen :: helmet :: legendary :: req defence 99 :: armor 28 :: mod str 5, con 10, lck 4 :: bonus hpRegenPerSec 0.3
+    <- Idol Warden/Götzenwächter (L245; idolhall, construct, nur Dungeon) 1/10000 | Wreath Bearer/Kranzträger (L261; idolhall, construct) 1/3333 | Wreath Bearer/Kranzträger (L261; idolhall, construct, nur Dungeon) 1/3333 | Sanctum of the Last Idol/Sanktum des Letzten Götzen Abschluss 2.0% | Elite: The Ninth Warden/Der Neunte Wächter (idolhall) 1/556 | Paragonturm-Truhe ab Etage 20 1.5%
+voidhide_helm :: Voidhide Coif / Leerenleder-Haube :: helmet :: epic :: req ranged 99 :: evasion 27 :: mod dex 2, con 7 :: SET Voidhide Set/Leerenleder-Set (5 Teile)
+    <- Handwerk 99 [Craft Voidhide Coif]: Shadowhide/Schattenleder x3, Void Shard/Leerensplitter x4, Aether Essence/Aetheressenz x2
+leather_body :: Leather Body / Lederwams :: body :: common :: evasion 6.43 :: mod con 1
+    <- Handwerk 1 [Stitch Rawhide Jerkin]: Raw Hide/Rohleder x3
+copper_chainbody :: Copper Chainbody / Kupfer-Kettenhemd :: body :: common :: req defence 1 :: armor 13.35 :: mod con 1 :: SET Copper Set/Kupfer-Set (9 Teile)
+    <- Schmieden 4 [Forge Copper Chainbody]: Copper Bar/Kupferbarren x4
+copper_platebody :: Copper Platebody / Kupfer-Plattenrüstung :: body :: common :: req defence 1 :: armor 13.35 :: mod str 1, con 1 :: SET Copper Set/Kupfer-Set (9 Teile)
+    <- Schmieden 5 [Forge Copper Platebody]: Copper Bar/Kupferbarren x5
+bronze_chainbody :: Bronze Chainbody / Bronze-Kettenhemd :: body :: common :: req defence 5 :: armor 14.08 :: mod con 2
+    <- Schmieden 8 [Forge Bronze Chainbody]: Bronze Bar/Bronzebarren x4
+bronze_platebody :: Bronze Platebody / Bronze-Plattenrüstung :: body :: common :: req defence 5 :: armor 14.08 :: mod str 1, con 2
+    <- Schmieden 9 [Forge Bronze Platebody]: Bronze Bar/Bronzebarren x5
+cowhide_jerkin :: Cowhide Jerkin / Rinderleder-Wams :: body :: rare :: req defence 5 :: armor 15.47 :: mod con 3 :: FX vengeance mag 0.25
+    <- Wild Boar/Wildschwein (L10; pastures, beast) 1/1429 | Elite: Rustbristle the Famished/Rostborste der Ausgehungerte (pastures) 1.6%
+cured_leather_body :: Cured Leather Jerkin / Gegerbtes Lederwams :: body :: common :: req ranged 5 :: evasion 9.8 :: mod con 2 :: SET Cured Leather Set/Gegerbtes-Leder-Set (5 Teile)
+    <- Handwerk 1 [Stitch Leather Jerkin]: Cured Leather/Gegerbtes Leder x4
+buckhide_body :: Buckhide Jerkin / Wildleder-Wams :: body :: common :: req ranged 10 :: evasion 11 :: mod con 2 :: SET Buckhide Set/Wildleder-Set (5 Teile)
+    <- Handwerk 10 [Stitch Buckhide Jerkin]: Cured Leather/Gegerbtes Leder x5, Scarred Hide/Narbenleder x1
+iron_chainbody :: Iron Chainbody / Eisen-Kettenhemd :: body :: rare :: req defence 10 :: armor 15.02 :: mod con 2 :: SET Iron Set/Eisen-Set (9 Teile)
+    <- Schmieden 16 [Forge Iron Chainbody]: Iron Bar/Eisenbarren x4
+iron_platebody :: Iron Platebody / Eisen-Plattenrüstung :: body :: rare :: req defence 10 :: armor 15.02 :: mod str 2, con 2 :: SET Iron Set/Eisen-Set (9 Teile)
+    <- Schmieden 19 [Forge Iron Platebody]: Iron Bar/Eisenbarren x5
+hardened_leather_body :: Hardened Leather Cuirass / Gehärteter Lederkürass :: body :: rare :: req ranged 20 :: evasion 13.5 :: mod con 3 :: SET Hardened Leather Set/Gehärtetes-Leder-Set (5 Teile)
+    <- Handwerk 24 [Craft Hardened Cuirass]: Hardened Leather/Gehärtetes Leder x4
+steel_chainbody :: Steel Chainbody / Stahl-Kettenhemd :: body :: rare :: req defence 20 :: armor 17.01 :: mod con 4 :: SET Steel Set/Stahl-Set (9 Teile)
+    <- Schmieden 26 [Forge Steel Chainbody]: Steel Bar/Stahlbarren x4
+steel_platebody :: Steel Platebody / Stahl-Plattenrüstung :: body :: rare :: req defence 20 :: armor 17.01 :: mod str 3, con 4 :: SET Steel Set/Stahl-Set (9 Teile)
+    <- Schmieden 29 [Forge Steel Platebody]: Steel Bar/Stahlbarren x5
+warband_hauberk :: Warband Hauberk / Kriegsbanden-Panzer :: body :: rare :: req defence 20 :: armor 18.6 :: mod con 3 :: FX vengeance mag 0.25
+    <- Goblin Crossbower/Goblin-Armbruster (L24; borderlands, humanoid) 1/1250
+scaled_leather_body :: Scaled Leather Hauberk / Schuppenleder-Wams :: body :: common :: req ranged 22 :: evasion 14 :: mod con 3 :: SET Scaled Leather Set/Schuppenleder-Set (5 Teile)
+    <- Handwerk 28 [Forge Scaled Hauberk]: Scaled Leather/Schuppenleder x5
+blacksteel_chainbody :: Blacksteel Chainbody / Schwarzstahl-Kettenhemd :: body :: rare :: req defence 30 :: armor 19.15 :: mod con 5
+    <- Schmieden 33 [Forge Blacksteel Chainbody]: Blacksteel Bar/Schwarzstahlbarren x4
+blacksteel_platebody :: Blacksteel Platebody / Schwarzstahl-Plattenrüstung :: body :: rare :: req defence 30 :: armor 19.15 :: mod str 4, con 4
+    <- Schmieden 34 [Forge Blacksteel Platebody]: Blacksteel Bar/Schwarzstahlbarren x5
+ashplate_cuirass :: Ashplate Cuirass / Aschplatten-Kürass :: body :: rare :: req defence 40 :: armor 23.98 :: mod str 2, con 4 :: FX vengeance mag 0.3
+    <- Ash Tyrant/Aschtyrann (L45; ashfields) 1/625
+duskhide_body :: Duskhide Cuirass / Dämmerleder-Kürass :: body :: rare :: req ranged 40 :: evasion 18.6 :: mod dex 1, con 4 :: SET Duskhide Set/Dämmerleder-Set (5 Teile)
+    <- Handwerk 40 [Craft Duskhide Cuirass]: Scaled Leather/Schuppenleder x5, Mithril Bar/Mithrilbarren x1
+mithril_chainbody :: Mithril Chainbody / Mithril-Kettenhemd :: body :: superRare :: req defence 40 :: armor 21.46 :: mod con 6 :: SET Mithril Set/Mithril-Set (9 Teile)
+    <- Schmieden 41 [Forge Mithril Chainbody]: Mithril Bar/Mithrilbarren x4
+mithril_platebody :: Mithril Platebody / Mithril-Plattenrüstung :: body :: superRare :: req defence 40 :: armor 21.46 :: mod str 6, con 3 :: SET Mithril Set/Mithril-Set (9 Teile)
+    <- Schmieden 44 [Forge Mithril Platebody]: Mithril Bar/Mithrilbarren x5
+adamantium_chainbody :: Adamantium Chainbody / Adamantium-Kettenhemd :: body :: superRare :: req defence 50 :: armor 23.98 :: mod con 7 :: SET Adamantium Set/Adamantium-Set (9 Teile)
+    <- Schmieden 51 [Forge Adamantium Chainbody]: Adamantium Bar/Adamantiumbarren x4
+adamantium_platebody :: Adamantium Platebody / Adamantium-Plattenrüstung :: body :: superRare :: req defence 50 :: armor 23.98 :: mod str 7, con 4 :: SET Adamantium Set/Adamantium-Set (9 Teile)
+    <- Schmieden 54 [Forge Adamantium Platebody]: Adamantium Bar/Adamantiumbarren x5
+oldgrowth_plate :: Oldgrowth Plate / Altwuchs-Panzer :: body :: superRare :: req defence 50 :: armor 26.71 :: FX healOnKill mag 6
+    <- Elite-Unikat: Oldgrowth the Unrooted/Altwuchs der Entwurzelte (blackthorn, Basis Moss Golem/Moosgolem)
+slagheart_cuirass :: Slagheart Cuirass / Schlackenherz-Kürass :: body :: superRare :: req defence 50 :: armor 26.71 :: mod str 2, con 8 :: boost power 1 :: FX vengeance mag 0.3
+    <- Slag Abomination/Schlacken-Abomination (L44; slayer_tower, construct, Turm-Etage 3) 1/1250
+studded_leather_body :: Studded Leather Brigandine / Genietete Lederbrigantine :: body :: rare :: req ranged 50 :: evasion 21.9 :: mod dex 1, con 4 :: SET Studded Leather Set/Genietetes-Leder-Set (5 Teile)
+    <- Handwerk 52 [Craft Studded Brigandine]: Studded Leather/Genietetes Leder x4
+slagcarapace_plate :: Slagcarapace Plate / Schlackenpanzer-Rüstung :: body :: epic :: req defence 58 :: armor 26.8 :: mod str 3, con 16 :: boost power 1 :: FX vengeance mag 0.25
+    <- Iron Revenant/Eisenrevenant (L175; slagpit, undead) 1/2778 | Iron Revenant/Eisenrevenant (L56; slayer_tower, undead, Turm-Etage 3) 1/2778 | Elite: Morvane the Reforged/Morvane der Neugeschmiedete (slagpit) 1/111
+runite_chainbody :: Runite Chainbody / Runit-Kettenhemd :: body :: superRare :: req defence 60 :: armor 26.71 :: mod con 8 :: SET Runite Set/Runit-Set (9 Teile)
+    <- Schmieden 61 [Forge Runite Chainbody]: Runite Bar/Runitbarren x4
+runite_platebody :: Runite Platebody / Runit-Plattenrüstung :: body :: superRare :: req defence 60 :: armor 26.71 :: mod str 8, con 5 :: SET Runite Set/Runit-Set (9 Teile)
+    <- Schmieden 64 [Forge Runite Platebody]: Runite Bar/Runitbarren x5
+ironhide_body :: Ironhide Cuirass / Eisenleder-Kürass :: body :: rare :: req ranged 62 :: evasion 25.84 :: mod dex 1, con 5 :: SET Ironhide Set/Eisenleder-Set (5 Teile)
+    <- Handwerk 62 [Craft Ironhide Cuirass]: Studded Leather/Genietetes Leder x5
+bloodiron_chainbody :: Bloodiron Chainbody / Bluteisen-Kettenhemd :: body :: superRare :: req defence 70 :: armor 29.7 :: mod con 9 :: SET Bloodiron Set/Bluteisen-Set (9 Teile)
+    <- Schmieden 71 [Forge Bloodiron Chainbody]: Bloodiron Bar/Bluteisenbarren x4
+bloodiron_platebody :: Bloodiron Platebody / Bluteisen-Plattenrüstung :: body :: superRare :: req defence 70 :: armor 29.7 :: mod str 10, con 7 :: SET Bloodiron Set/Bluteisen-Set (9 Teile)
+    <- Schmieden 74 [Forge Bloodiron Platebody]: Bloodiron Bar/Bluteisenbarren x5
+direhide_jerkin :: Direhide Jerkin / Schreckenfell-Wams :: body :: superRare :: req defence 70, ranged 30 :: evasion 33.21 :: mod con 7 :: FX firstBlood mag 0.25
+    <- Frost Hound/Frosthund (L182; slagpit, beast) 1/2500 | Gray Wolf/Grauwolf (L97; wildwood, beast) 1/2500 | Dire Wolf/Schreckenswolf (L112; wildwood, beast) 1/1429 | Frost Hound/Frosthund (L74; slayer_tower, beast, Turm-Etage 4) 1/2500
+gravesteel_cuirass :: Gravesteel Cuirass / Grabstahl-Kürass :: body :: superRare :: req defence 70 :: armor 32.99 :: mod str 2, con 7 :: boost power 1 :: FX vengeance mag 0.4
+    <- Skeleton Pyroclast/Skelett-Pyroklast (L85; crypt, undead) 1/1429 | Elite: Ossuar the Pyrebound/Ossuar der Glutgebundene (crypt) 1.1%
+pyrebound_vestment :: Pyrebound Vestment / Glutgebundene Robe :: body :: epic :: req magic 70 :: ward 142.85 :: FX gutter mag 0.5
+    <- Elite-Unikat: Ossuar the Pyrebound/Ossuar der Glutgebundene (crypt, Basis Skeleton Pyroclast/Skelett-Pyroklast)
+warhide_body :: Warhide Cuirass / Kriegsleder-Kürass :: body :: rare :: req ranged 70 :: evasion 28.4 :: mod dex 2, con 6 :: SET Warhide Set/Kriegsleder-Set (5 Teile)
+    <- Handwerk 72 [Craft Warhide Cuirass]: Warhide/Kriegsleder x4
+aetherscale_cuirass :: Aetherscale Cuirass / Aetherschuppen-Kürass :: body :: epic :: req defence 80 :: armor 36.61 :: mod con 18, str 3 :: boost power 1 :: FX vengeance mag 0.4
+    <- Void Roc/Leerenroc (L233; highlands, beast, nur Dungeon) 1/5000 | Void Roc/Leerenroc (L94; slayer_tower, beast, Turm-Etage 5) 1/5000 | The Wyvern Lair/Das Wyvernlager Abschluss 1/116
+titanium_chainbody :: Titanium Chainbody / Titan-Kettenhemd :: body :: epic :: req defence 80 :: armor 32.99 :: mod con 10 :: SET Titanium Set/Titan-Set (9 Teile)
+    <- Schmieden 81 [Forge Titanium Chainbody]: Titanium Bar/Titanbarren x4
+titanium_platebody :: Titanium Platebody / Titan-Plattenrüstung :: body :: epic :: req defence 80 :: armor 32.99 :: mod str 13, con 9 :: SET Titanium Set/Titan-Set (9 Teile)
+    <- Schmieden 84 [Forge Titanium Platebody]: Titanium Bar/Titanbarren x5
+bearhide_cuirass :: Bearhide Cuirass / Bärenfell-Kürass :: body :: epic :: req defence 82, ranged 38 :: evasion 35.84 :: mod con 12 :: FX firstBlood mag 0.25
+    <- Elder Bear/Altbär (L120; wildwood, beast, nur Dungeon) 1/5000 | The Wildwood Hunt/Die Wildwald-Jagd Abschluss 1/238
+dragonhide_body :: Dragonhide Cuirass / Drachenleder-Kürass :: body :: superRare :: req ranged 82 :: evasion 32.24 :: mod dex 2, con 8 :: SET Dragonhide Set/Drachenleder-Set (5 Teile)
+    <- Handwerk 82 [Craft Dragonhide Cuirass]: Dragonhide/Drachenleder x4
+krakenhide_cuirass :: Krakenhide Cuirass / Krakenhaut-Kürass :: body :: epic :: req defence 82, ranged 55 :: evasion 35.84 :: mod con 12 :: FX firstBlood mag 0.25
+    <- Deep Kraken/Tiefenkrake (L150; coast, beast) 1/1429 | Deep Kraken/Tiefenkrake (L107; slayer_tower, beast, Turm-Etage 8) 1/1429
+aetherium_chainbody :: Aetherium Chainbody / Aetherium-Kettenhemd :: body :: epic :: req defence 90 :: armor 36.61 :: mod con 11 :: SET Aetherium Set/Aetherium-Set (9 Teile)
+    <- Schmieden 91 [Forge Aetherium Chainbody]: Aetherium Bar/Aetheriumbarren x4
+aetherium_platebody :: Aetherium Platebody / Aetherium-Plattenrüstung :: body :: epic :: req defence 90 :: armor 36.61 :: mod str 18, con 12 :: SET Aetherium Set/Aetherium-Set (9 Teile)
+    <- Schmieden 94 [Forge Aetherium Platebody]: Aetherium Bar/Aetheriumbarren x5
+morvane_warplate :: Morvane's Warplate / Morvanes Kriegsplatte :: body :: epic :: req defence 90 :: armor 37.5 :: FX vengeance mag 0.4
+    <- Elite-Unikat: Morvane the Reforged/Morvane der Neugeschmiedete (slagpit, Basis Iron Revenant/Eisenrevenant)
+wraithhide_body :: Wraithhide Cuirass / Geisterleder-Kürass :: body :: epic :: req ranged 90 :: evasion 34.8 :: mod dex 3, con 9 :: SET Wraithhide Set/Geisterleder-Set (5 Teile)
+    <- Handwerk 90 [Craft Wraithhide Cuirass]: Dragonhide/Drachenleder x4, Void Shard/Leerensplitter x5
+wyvernscale_aegis :: Wyvernscale Aegis / Wyvernschuppen-Aegis :: body :: epic :: req defence 90, ranged 70 :: evasion 37.97 :: mod dex 2, con 20, lck 3 :: boost ranged 1 :: FX firstBlood mag 0.25
+    <- Highland Wyvern/Hochland-Wyvern (L228; highlands, dragonkin) 1/5000 | Skarn Whelp/Skarnbrut (L247; idolhall, dragonkin) 1/2500 | Highland Wyvern/Hochland-Wyvern (L103; slayer_tower, dragonkin, Turm-Etage 7) 1/5000 | The Wyvern Lair/Das Wyvernlager Abschluss 1/111 | Elite: Vessk the Ridgetyrant/Vessk der Grattyrann (highlands) 1/256
+starweave_vestment :: Starweave Vestment / Sterngewebe-Ornat :: body :: epic :: req magic 92 :: ward 164.7 :: mod con 7, int 11, wis 6, lck 2 :: SET Starweave Set/Sterngewebe-Set (5 Teile)
+    <- Schneidern 93 [Bind Starweave Vestment]: Void Shard/Leerensplitter x10, Aether Essence/Aetheressenz x5, Starweave/Sternweb x3
+shadowhide_body :: Shadowhide Cuirass / Schattenleder-Kürass :: body :: epic :: req ranged 95 :: evasion 37.97 :: mod dex 3, con 10 :: SET Shadowhide Set/Schattenleder-Set (5 Teile)
+    <- Handwerk 95 [Craft Shadowhide Cuirass]: Shadowhide/Schattenleder x4
+godiron_chainbody :: Godiron Chainbody / Götzeneisen-Kettenhemd :: body :: epic :: req defence 99 :: armor 37.5 :: mod con 12 :: SET Godiron Set/Götzeneisen-Set (9 Teile)
+    <- Schmieden 98 [Forge Godiron Chainbody]: Godiron Bar/Götzeneisenbarren x4
+godiron_platebody :: Godiron Platebody / Götzeneisen-Plattenrüstung :: body :: epic :: req defence 99 :: armor 37.5 :: mod str 22, con 16 :: SET Godiron Set/Götzeneisen-Set (9 Teile)
+    <- Schmieden 99 [Forge Godiron Platebody]: Godiron Bar/Götzeneisenbarren x6
+voidhide_body :: Voidhide Cuirass / Leerenleder-Kürass :: body :: epic :: req ranged 99 :: evasion 40.5 :: mod dex 3, con 12 :: SET Voidhide Set/Leerenleder-Set (5 Teile)
+    <- Handwerk 99 [Craft Voidhide Cuirass]: Shadowhide/Schattenleder x5, Void Shard/Leerensplitter x6, Aether Essence/Aetheressenz x4
+leather_legs :: Leather Leggings / Lederhose :: legs :: common :: evasion 4.75 :: mod con 1
+    <- Handwerk 1 [Stitch Rawhide Leggings]: Raw Hide/Rohleder x2
+copper_platelegs :: Copper Platelegs / Kupfer-Plattenbeinlinge :: legs :: common :: req defence 1 :: armor 9.79 :: mod str 1, con 1 :: SET Copper Set/Kupfer-Set (9 Teile)
+    <- Schmieden 4 [Forge Copper Platelegs]: Copper Bar/Kupferbarren x3
+bronze_platelegs :: Bronze Platelegs / Bronze-Plattenbeinlinge :: legs :: common :: req defence 5 :: armor 10.33 :: mod str 1, con 2
+    <- Schmieden 8 [Forge Bronze Platelegs]: Bronze Bar/Bronzebarren x3
+cured_leather_legs :: Cured Leather Chaps / Gegerbte Lederbeinlinge :: legs :: common :: req ranged 5 :: evasion 7.2 :: mod con 1 :: SET Cured Leather Set/Gegerbtes-Leder-Set (5 Teile)
+    <- Handwerk 5 [Stitch Leather Chaps]: Cured Leather/Gegerbtes Leder x3
+hide_leggings :: Hide Leggings / Fell-Beinlinge :: legs :: common :: req ranged 5 :: evasion 8.1 :: mod con 2 :: FX momentum mag 0.02 stacks 3
+    <- Wild Boar/Wildschwein (L10; pastures, beast) 1/500 | Feral Goat/Wildziege (L12; pastures, beast) 1/556 | Elite: Rustbristle the Famished/Rostborste der Ausgehungerte (pastures) 2.1%
+buckhide_legs :: Buckhide Leggings / Wildleder-Beinlinge :: legs :: common :: req ranged 10 :: evasion 8.1 :: mod con 1 :: SET Buckhide Set/Wildleder-Set (5 Teile)
+    <- Handwerk 9 [Stitch Buckhide Leggings]: Cured Leather/Gegerbtes Leder x4
+iron_platelegs :: Iron Platelegs / Eisen-Plattenbeinlinge :: legs :: rare :: req defence 10 :: armor 11.02 :: mod str 2, con 1 :: SET Iron Set/Eisen-Set (9 Teile)
+    <- Schmieden 16 [Forge Iron Platelegs]: Iron Bar/Eisenbarren x3
+goblin_warkilt :: Goblin Warkilt / Goblin-Kriegskilt :: legs :: rare :: req defence 20 :: armor 14.46 :: mod con 3 :: FX giantSlayer mag 0.15
+    <- Goblin Butcher/Goblin-Schlächter (L26; borderlands, humanoid) 1/1111 | Elite: Gorehook the Flayer/Bluthaken der Schinder (borderlands) 1.8%
+hardened_leather_legs :: Hardened Leather Greaves / Gehärtete Lederbeinschienen :: legs :: rare :: req ranged 20 :: evasion 9.9 :: mod con 2 :: SET Hardened Leather Set/Gehärtetes-Leder-Set (5 Teile)
+    <- Handwerk 23 [Craft Hardened Greaves]: Hardened Leather/Gehärtetes Leder x3
+steel_platelegs :: Steel Platelegs / Stahl-Plattenbeinlinge :: legs :: rare :: req defence 20 :: armor 12.47 :: mod str 2, con 3 :: SET Steel Set/Stahl-Set (9 Teile)
+    <- Schmieden 26 [Forge Steel Platelegs]: Steel Bar/Stahlbarren x3
+scaled_leather_legs :: Scaled Leather Leggings / Schuppenleder-Beinlinge :: legs :: rare :: req ranged 28 :: evasion 11.4 :: mod con 3 :: SET Scaled Leather Set/Schuppenleder-Set (5 Teile)
+    <- Handwerk 28 [Forge Scaled Leggings]: Scaled Leather/Schuppenleder x4
+blacksteel_platelegs :: Blacksteel Platelegs / Schwarzstahl-Plattenbeinlinge :: legs :: rare :: req defence 30 :: armor 14.04 :: mod str 3, con 3
+    <- Schmieden 33 [Forge Blacksteel Platelegs]: Blacksteel Bar/Schwarzstahlbarren x3
+duskhide_legs :: Duskhide Chaps / Dämmerleder-Beinlinge :: legs :: rare :: req ranged 40 :: evasion 13.64 :: mod dex 1, con 3 :: SET Duskhide Set/Dämmerleder-Set (5 Teile)
+    <- Handwerk 40 [Craft Duskhide Chaps]: Scaled Leather/Schuppenleder x4, Mithril Bar/Mithrilbarren x1
+mithril_platelegs :: Mithril Platelegs / Mithril-Plattenbeinlinge :: legs :: superRare :: req defence 40 :: armor 15.74 :: mod str 4, con 3 :: SET Mithril Set/Mithril-Set (9 Teile)
+    <- Schmieden 41 [Forge Mithril Platelegs]: Mithril Bar/Mithrilbarren x3
+sootscale_greaves :: Sootscale Greaves / Rußschuppen-Beinschienen :: legs :: rare :: req defence 40 :: armor 18.11 :: mod con 3 :: FX giantSlayer mag 0.15
+    <- Pitch Beetle/Pechkäfer (L42; ashfields, beast) 1/1000 | Elite: Cinderhusk the Unbowed/Glutpanzer der Ungebeugte (ashfields) 2.0%
+adamantium_platelegs :: Adamantium Platelegs / Adamantium-Plattenbeinlinge :: legs :: superRare :: req defence 50 :: armor 17.58 :: mod str 4, con 4 :: SET Adamantium Set/Adamantium-Set (9 Teile)
+    <- Schmieden 51 [Forge Adamantium Platelegs]: Adamantium Bar/Adamantiumbarren x3
+forgeplate_greaves :: Forgeplate Greaves / Schmiedeplatten-Beinschienen :: legs :: superRare :: req defence 50 :: armor 19.59 :: mod str 2, con 5 :: boost power 1 :: FX giantSlayer mag 0.2
+    <- Forge Demon/Schmiededämon (L54; slayer_tower, demon, Turm-Etage 3) 1/1111
+mossweave_leggings :: Mossweave Leggings / Moosgewebe-Beinlinge :: legs :: rare :: req defence 50 :: armor 19.59 :: mod con 4 :: FX giantSlayer mag 0.2
+    <- Moss Golem/Moosgolem (L56; blackthorn, construct) 1/1111 | Elite: Oldgrowth the Unrooted/Altwuchs der Entwurzelte (blackthorn) 2.0%
+studded_leather_legs :: Studded Leather Tassets / Genietete Lederbeintaschen :: legs :: rare :: req ranged 50 :: evasion 16.06 :: mod dex 1, con 3 :: SET Studded Leather Set/Genietetes-Leder-Set (5 Teile)
+    <- Handwerk 51 [Craft Studded Tassets]: Studded Leather/Genietetes Leder x3
+runite_platelegs :: Runite Platelegs / Runit-Plattenbeinlinge :: legs :: superRare :: req defence 60 :: armor 19.59 :: mod str 5, con 4 :: SET Runite Set/Runit-Set (9 Teile)
+    <- Schmieden 61 [Forge Runite Platelegs]: Runite Bar/Runitbarren x3
+ironhide_legs :: Ironhide Greaves / Eisenleder-Beinschienen :: legs :: rare :: req ranged 61 :: evasion 18.71 :: mod dex 1, con 4 :: SET Ironhide Set/Eisenleder-Set (5 Teile)
+    <- Handwerk 61 [Craft Ironhide Greaves]: Studded Leather/Genietetes Leder x4
+bloodiron_platelegs :: Bloodiron Platelegs / Bluteisen-Plattenbeinlinge :: legs :: superRare :: req defence 70 :: armor 21.78 :: mod str 7, con 5 :: SET Bloodiron Set/Bluteisen-Set (9 Teile)
+    <- Schmieden 71 [Forge Bloodiron Platelegs]: Bloodiron Bar/Bluteisenbarren x3
+tombplate_greaves :: Tombplate Greaves / Grabplatten-Beinschienen :: legs :: rare :: req defence 70 :: armor 24.19 :: mod con 4 :: FX giantSlayer mag 0.2
+    <- Skeleton Butcher/Skelett-Schlächter (L75; crypt, undead) 1/1250 | Skeleton Butcher/Skelett-Schlächter (L75; crypt, undead, nur Dungeon) 1/1250 | Elite: Marrowcleave the Starving/Markspalter der Darbende (crypt) 1.6%
+warhide_legs :: Warhide Greaves / Kriegsleder-Beinschienen :: legs :: rare :: req ranged 70 :: evasion 20.83 :: mod dex 1, con 5 :: SET Warhide Set/Kriegsleder-Set (5 Teile)
+    <- Handwerk 71 [Craft Warhide Greaves]: Warhide/Kriegsleder x3
+ridgetyrant_greaves :: Ridgetyrant Greaves / Grattyrann-Beinschienen :: legs :: legendary :: req defence 80, ranged 72 :: evasion 31 :: FX desperation mag 0.3 thr 0.3
+    <- Elite-Unikat: Vessk the Ridgetyrant/Vessk der Grattyrann (highlands, Basis Highland Wyvern/Hochland-Wyvern)
+stagleather_chaps :: Stagleather Chaps / Hirschleder-Beinlinge :: legs :: rare :: req defence 80 :: armor 26.85 :: mod con 4 :: FX giantSlayer mag 0.2
+    <- Wild Stag/Wildhirsch (L104; wildwood, beast) 1/1429 | Elite: Blackantler the Wrathful/Schwarzgeweih der Zornige (wildwood) 1.5%
+tidewoven_leggings :: Tidewoven Leggings / Gezeitengewebe-Beinlinge :: legs :: superRare :: req defence 80 :: armor 27.66 :: mod con 7, str 2 :: FX giantSlayer mag 0.2
+    <- Tide Siren/Gezeitensirene (L138; coast) 1/1250 | Tide Siren/Gezeitensirene (L103; slayer_tower, Turm-Etage 7) 1/1250 | Elite: Lorelith of the Drowned Choir/Lorelith vom Ertrunkenen Chor (coast) 1.4%
+titanium_platelegs :: Titanium Platelegs / Titan-Plattenbeinlinge :: legs :: epic :: req defence 80 :: armor 24.19 :: mod str 8, con 7 :: SET Titanium Set/Titan-Set (9 Teile)
+    <- Schmieden 81 [Forge Titanium Platelegs]: Titanium Bar/Titanbarren x3
+dragonhide_legs :: Dragonhide Greaves / Drachenleder-Beinschienen :: legs :: superRare :: req ranged 82 :: evasion 23.64 :: mod dex 2, con 6 :: SET Dragonhide Set/Drachenleder-Set (5 Teile)
+    <- Handwerk 82 [Craft Dragonhide Greaves]: Dragonhide/Drachenleder x3
+aetherium_platelegs :: Aetherium Platelegs / Aetherium-Plattenbeinlinge :: legs :: epic :: req defence 90 :: armor 26.85 :: mod str 11, con 8 :: SET Aetherium Set/Aetherium-Set (9 Teile)
+    <- Schmieden 91 [Forge Aetherium Platelegs]: Aetherium Bar/Aetheriumbarren x3
+frostplate_greaves :: Frostplate Greaves / Frostplatten-Beinschienen :: legs :: epic :: req defence 90 :: armor 28.33 :: mod con 10 :: FX giantSlayer mag 0.2
+    <- Frost Hexer/Eishexer (L188; slagpit, humanoid) 1/2500 | Frost Hexer/Eishexer (L106; slayer_tower, humanoid, Turm-Etage 8) 1/2500 | Elite: Skalva the Rimebound/Skalva die Frostgebundene (slagpit) 1/141
+wraithhide_legs :: Wraithhide Greaves / Geisterleder-Beinschienen :: legs :: epic :: req ranged 90 :: evasion 25.52 :: mod dex 2, con 7 :: SET Wraithhide Set/Geisterleder-Set (5 Teile)
+    <- Handwerk 90 [Craft Wraithhide Greaves]: Dragonhide/Drachenleder x3, Void Shard/Leerensplitter x4
+wyvernscale_greaves :: Wyvernscale Greaves / Wyvernschuppen-Beinschienen :: legs :: epic :: req defence 90, ranged 70 :: evasion 27.84 :: mod dex 2, con 12 :: boost ranged 1 :: FX momentum mag 0.02 stacks 8
+    <- Highland Wyvern/Hochland-Wyvern (L228; highlands, dragonkin) 1/5000 | Highland Wyvern/Hochland-Wyvern (L103; slayer_tower, dragonkin, Turm-Etage 7) 1/5000 | The Wyvern Lair/Das Wyvernlager Abschluss 1/111 | Elite: Vessk the Ridgetyrant/Vessk der Grattyrann (highlands) 1/256
+rimebound_leggings :: Rimebound Leggings / Frostgebundene Beinlinge :: legs :: epic :: req magic 92 :: ward 140.8 :: FX frostbite mag 0.25
+    <- Elite-Unikat: Skalva the Rimebound/Skalva die Frostgebundene (slagpit, Basis Frost Hexer/Eishexer)
+starweave_skirt :: Starweave Skirt / Sterngewebe-Gewand (Beine) :: legs :: epic :: req magic 92 :: ward 120.78 :: mod con 5, int 8, wis 2 :: SET Starweave Set/Sterngewebe-Set (5 Teile)
+    <- Schneidern 93 [Bind Starweave Skirt]: Void Shard/Leerensplitter x9, Aether Essence/Aetheressenz x5, Starweave/Sternweb x3
+shadowhide_legs :: Shadowhide Greaves / Schattenleder-Beinschienen :: legs :: epic :: req ranged 95 :: evasion 27.84 :: mod dex 2, con 8 :: SET Shadowhide Set/Schattenleder-Set (5 Teile)
+    <- Handwerk 95 [Craft Shadowhide Greaves]: Shadowhide/Schattenleder x3
+aetherweave_leggings :: Aetherweave Leggings / Aethergewebe-Beinlinge :: legs :: legendary :: req defence 99 :: armor 30.8 :: mod str 4, con 12, lck 3 :: bonus hpRegenPerSec 0.3
+    <- Dragonhide Skarn/Drachenhaut-Skarn (L275; idolhall, dragonkin, nur Dungeon) 1/10000 | Skarn Whelp/Skarnbrut (L247; idolhall, dragonkin) 1/5000 | Sanctum of the Last Idol/Sanktum des Letzten Götzen Abschluss 2.0% | Paragonturm-Truhe ab Etage 20 1.5%
+godiron_platelegs :: Godiron Platelegs / Götzeneisen-Plattenbeinlinge :: legs :: epic :: req defence 99 :: armor 27.5 :: mod str 14, con 10 :: SET Godiron Set/Götzeneisen-Set (9 Teile)
+    <- Schmieden 98 [Forge Godiron Platelegs]: Godiron Bar/Götzeneisenbarren x3
+voidhide_legs :: Voidhide Greaves / Leerenleder-Beinschienen :: legs :: epic :: req ranged 99 :: evasion 29.7 :: mod dex 2, con 9 :: SET Voidhide Set/Leerenleder-Set (5 Teile)
+    <- Handwerk 99 [Craft Voidhide Greaves]: Shadowhide/Schattenleder x4, Void Shard/Leerensplitter x5, Aether Essence/Aetheressenz x3
+copper_gauntlets :: Copper Gauntlets / Kupfer-Panzerhandschuhe :: gloves :: common :: req defence 1 :: armor 6.23 :: mod con 1 :: SET Copper Set/Kupfer-Set (9 Teile)
+    <- Schmieden 2 [Forge Copper Gauntlets]: Copper Bar/Kupferbarren x1
+bronze_gauntlets :: Bronze Gauntlets / Bronze-Panzerhandschuhe :: gloves :: common :: req defence 5 :: armor 6.57 :: mod str 1, con 1
+    <- Schmieden 6 [Forge Bronze Gauntlets]: Bronze Bar/Bronzebarren x1
+cured_leather_vambraces :: Cured Leather Vambraces / Gegerbte Leder-Armschützer :: gloves :: common :: req ranged 5 :: evasion 4.6 :: mod con 1 :: SET Cured Leather Set/Gegerbtes-Leder-Set (5 Teile)
+    <- Handwerk 3 [Stitch Leather Vambraces]: Cured Leather/Gegerbtes Leder x1
+worn_workgloves :: Worn Workgloves / Abgenutzte Arbeitshandschuhe :: gloves :: common :: req defence 5 :: armor 7.01 :: mod con 2 :: FX desperation mag 0.2 thr 0.3
+    <- Chicken/Huhn (L1; pastures, beast) 1/588
+buckhide_vambraces :: Buckhide Vambraces / Wildleder-Armschützer :: gloves :: common :: req ranged 10 :: evasion 5.2 :: mod con 1 :: SET Buckhide Set/Wildleder-Set (5 Teile)
+    <- Handwerk 8 [Stitch Buckhide Vambraces]: Cured Leather/Gegerbtes Leder x2
+iron_gauntlets :: Iron Gauntlets / Eisen-Panzerhandschuhe :: gloves :: rare :: req defence 10 :: armor 7.01 :: mod str 2, con 1 :: SET Iron Set/Eisen-Set (9 Teile)
+    <- Schmieden 12 [Forge Iron Gauntlets]: Iron Bar/Eisenbarren x1
+hardened_leather_vambraces :: Hardened Leather Vambraces / Gehärtete Leder-Armschützer :: gloves :: rare :: req ranged 20 :: evasion 6.3 :: mod con 2 :: SET Hardened Leather Set/Gehärtetes-Leder-Set (5 Teile)
+    <- Handwerk 22 [Craft Hardened Vambraces]: Hardened Leather/Gehärtetes Leder x1
+rivetfist_gloves :: Rivetfist Gloves / Niethand-Handschuhe :: gloves :: common :: req defence 20 :: armor 8.94 :: mod str 2, con 2 :: FX desperation mag 0.2 thr 0.3
+    <- Goblin Spearman/Goblin-Speerträger (L20; borderlands, humanoid) 1/476
+steel_gauntlets :: Steel Gauntlets / Stahl-Panzerhandschuhe :: gloves :: rare :: req defence 20 :: armor 7.94 :: mod str 3, con 1 :: SET Steel Set/Stahl-Set (9 Teile)
+    <- Schmieden 22 [Forge Steel Gauntlets]: Steel Bar/Stahlbarren x1
+scaled_leather_vambraces :: Scaled Leather Vambraces / Schuppenleder-Armschützer :: gloves :: rare :: req ranged 28 :: evasion 7.25 :: mod con 3 :: SET Scaled Leather Set/Schuppenleder-Set (5 Teile)
+    <- Handwerk 28 [Forge Scaled Vambraces]: Scaled Leather/Schuppenleder x1
+blacksteel_gauntlets :: Blacksteel Gauntlets / Schwarzstahl-Panzerhandschuhe :: gloves :: rare :: req defence 30 :: armor 8.94 :: mod str 3, con 2
+    <- Schmieden 31 [Forge Blacksteel Gauntlets]: Blacksteel Bar/Schwarzstahlbarren x1
+boneknuckle_gauntlets :: Boneknuckle Gauntlets / Knochenknöchel-Stulpen :: gloves :: rare :: req defence 30 :: armor 10.02 :: mod str 2, con 2 :: FX desperation mag 0.2 thr 0.3
+    <- Skeleton Warrior/Skelettkrieger (L65; crypt, undead) 1/1000 | Skeleton Warrior/Skelettkrieger (L65; crypt, undead, nur Dungeon) 1/1000 | Skeleton Warrior/Skelettkrieger (L36; slayer_tower, undead, Turm-Etage 2) 1/1000
+ashen_gauntlets :: Ashen Gauntlets / Aschene Stulpen :: gloves :: common :: req defence 40 :: armor 11.19 :: mod str 2, con 2 :: FX desperation mag 0.2 thr 0.3
+    <- Ash Rat/Aschratte (L30; ashfields, beast) 1/714
+duskhide_vambraces :: Duskhide Vambraces / Dämmerleder-Armschützer :: gloves :: rare :: req ranged 40 :: evasion 8.68 :: mod dex 1, con 3 :: SET Duskhide Set/Dämmerleder-Set (5 Teile)
+    <- Handwerk 40 [Craft Duskhide Vambraces]: Scaled Leather/Schuppenleder x1, Mithril Bar/Mithrilbarren x1
+mithril_gauntlets :: Mithril Gauntlets / Mithril-Panzerhandschuhe :: gloves :: superRare :: req defence 40 :: armor 10.02 :: mod str 4, con 2 :: SET Mithril Set/Mithril-Set (9 Teile)
+    <- Schmieden 37 [Forge Mithril Gauntlets]: Mithril Bar/Mithrilbarren x1
+adamantium_gauntlets :: Adamantium Gauntlets / Adamantium-Panzerhandschuhe :: gloves :: superRare :: req defence 50 :: armor 11.19 :: mod str 5, con 2 :: SET Adamantium Set/Adamantium-Set (9 Teile)
+    <- Schmieden 47 [Forge Adamantium Gauntlets]: Adamantium Bar/Adamantiumbarren x1
+skygrip_gauntlets :: Skygrip Gauntlets / Himmelsgriff-Stulpen :: gloves :: superRare :: req ranged 50 :: evasion 11.76 :: mod dex 2, con 4, lck 3 :: boost ranged 1 :: FX desperation mag 0.3 thr 0.3
+    <- Slag Kobold/Schlackenkobold (L162; slagpit, humanoid) 1/1667 | Roc Hunter/Roc-Jäger (L208; highlands, beast) 1/1250 | Roc Hunter/Roc-Jäger (L102; slayer_tower, beast, Turm-Etage 6) 1/1250 | Elite: Stormcrown the Skyfather/Himmelsvater Sturmkrone (highlands) 1.4%
+studded_leather_vambraces :: Studded Vambraces / Genietete Armschützer :: gloves :: rare :: req ranged 50 :: evasion 10.22 :: mod dex 1, con 3 :: SET Studded Leather Set/Genietetes-Leder-Set (5 Teile)
+    <- Handwerk 50 [Craft Studded Vambraces]: Studded Leather/Genietetes Leder x1
+thornmail_gauntlets :: Thornmail Gauntlets / Dornenpanzer-Stulpen :: gloves :: rare :: req defence 50 :: armor 12.47 :: mod str 2, con 2 :: FX thorns mag 1.5
+    <- Elder Treant/Alter Baumriese (L62; blackthorn) 1/909
+moltengrip_gauntlets :: Moltengrip Gauntlets / Schmelzgriff-Stulpen :: gloves :: superRare :: req defence 55 :: armor 12.47 :: mod str 2, con 3, lck 3 :: boost power 1 :: FX desperation mag 0.2 thr 0.3
+    <- Ember Elemental/Glutelementar (L168; slagpit) 1/1111 | Ember Elemental/Glutelementar (L50; slayer_tower, Turm-Etage 3) 1/1111 | Elite: Furnaceheart the Undying/Ofenherz der Unsterbliche (slagpit) 2.2%
+ironhide_vambraces :: Ironhide Vambraces / Eisenleder-Armschützer :: gloves :: rare :: req ranged 60 :: evasion 11.76 :: mod dex 1, con 5 :: SET Ironhide Set/Eisenleder-Set (5 Teile)
+    <- Handwerk 60 [Craft Ironhide Vambraces]: Studded Leather/Genietetes Leder x2
+runite_gauntlets :: Runite Gauntlets / Runit-Panzerhandschuhe :: gloves :: superRare :: req defence 60 :: armor 12.47 :: mod str 6, con 2 :: SET Runite Set/Runit-Set (9 Teile)
+    <- Schmieden 57 [Forge Runite Gauntlets]: Runite Bar/Runitbarren x1
+bloodiron_gauntlets :: Bloodiron Gauntlets / Bluteisen-Panzerhandschuhe :: gloves :: superRare :: req defence 70 :: armor 13.86 :: mod str 6, con 3 :: SET Bloodiron Set/Bluteisen-Set (9 Teile)
+    <- Schmieden 67 [Forge Bloodiron Gauntlets]: Bloodiron Bar/Bluteisenbarren x1
+warhide_vambraces :: Warhide Vambraces / Kriegsleder-Armschützer :: gloves :: rare :: req ranged 70 :: evasion 13.25 :: mod dex 1, con 5 :: SET Warhide Set/Kriegsleder-Set (5 Teile)
+    <- Handwerk 70 [Craft Warhide Vambraces]: Warhide/Kriegsleder x1
+barnacle_gauntlets :: Barnacle Gauntlets / Seepocken-Stulpen :: gloves :: rare :: req defence 80 :: armor 17.08 :: mod con 2 :: FX desperation mag 0.3 thr 0.3
+    <- Reef Drowned/Riff-Ertrunkener (L128; coast, undead) 1/1667 | Elite: Saltgrave the Returned/Salzgrab der Wiedergekehrte (coast) 1.5%
+clawguard_gloves :: Clawguard Gloves / Klauenwächter-Handschuhe :: gloves :: rare :: req defence 80 :: armor 17.08 :: mod str 2, con 2 :: FX desperation mag 0.3 thr 0.3
+    <- Dire Wolf/Schreckenswolf (L112; wildwood, beast) 1/1111
+titanium_gauntlets :: Titanium Gauntlets / Titan-Panzerhandschuhe :: gloves :: epic :: req defence 80 :: armor 15.39 :: mod str 7, con 3 :: SET Titanium Set/Titan-Set (9 Teile)
+    <- Schmieden 77 [Forge Titanium Gauntlets]: Titanium Bar/Titanbarren x1
+dragonhide_vambraces :: Dragonhide Vambraces / Drachenleder-Armschützer :: gloves :: superRare :: req ranged 82 :: evasion 15.05 :: mod dex 1, con 6 :: SET Dragonhide Set/Drachenleder-Set (5 Teile)
+    <- Handwerk 82 [Craft Dragonhide Vambraces]: Dragonhide/Drachenleder x1
+tideterror_grip :: Grip of the Tideterror / Griff des Gezeitenschreckens :: gloves :: epic :: req magic 88 :: ward 90 :: FX wardSiphon mag 0.08
+    <- Elite-Unikat: Lorelith of the Drowned Choir/Lorelith vom Ertrunkenen Chor (coast, Basis Tide Siren/Gezeitensirene)
+aetherium_gauntlets :: Aetherium Gauntlets / Aetherium-Panzerhandschuhe :: gloves :: epic :: req defence 90 :: armor 17.08 :: mod str 8, con 3 :: SET Aetherium Set/Aetherium-Set (9 Teile)
+    <- Schmieden 87 [Forge Aetherium Gauntlets]: Aetherium Bar/Aetheriumbarren x1
+wraithhide_vambraces :: Wraithhide Vambraces / Geisterleder-Armschützer :: gloves :: epic :: req ranged 90 :: evasion 16.24 :: mod dex 2, con 6 :: SET Wraithhide Set/Geisterleder-Set (5 Teile)
+    <- Handwerk 90 [Craft Wraithhide Vambraces]: Dragonhide/Drachenleder x1, Void Shard/Leerensplitter x2
+starweave_handwraps :: Starweave Handwraps / Sterngewebe-Handwickel :: gloves :: epic :: req magic 92 :: ward 76.86 :: mod con 4, int 8, wis 3 :: SET Starweave Set/Sterngewebe-Set (5 Teile)
+    <- Schneidern 93 [Bind Starweave Handwraps]: Void Shard/Leerensplitter x8, Aether Essence/Aetheressenz x4, Starweave/Sternweb x2
+shadowhide_vambraces :: Shadowhide Vambraces / Schattenleder-Armschützer :: gloves :: epic :: req ranged 95 :: evasion 17.72 :: mod dex 2, con 6 :: SET Shadowhide Set/Schattenleder-Set (5 Teile)
+    <- Handwerk 95 [Craft Shadowhide Vambraces]: Shadowhide/Schattenleder x1
+godiron_gauntlets :: Godiron Gauntlets / Götzeneisen-Panzerhandschuhe :: gloves :: epic :: req defence 99 :: armor 17.5 :: mod str 9, con 4 :: SET Godiron Set/Götzeneisen-Set (9 Teile)
+    <- Schmieden 96 [Forge Godiron Gauntlets]: Godiron Bar/Götzeneisenbarren x1
+voidhide_vambraces :: Voidhide Vambraces / Leerenleder-Armschützer :: gloves :: epic :: req ranged 99 :: evasion 18.9 :: mod dex 2, con 7 :: SET Voidhide Set/Leerenleder-Set (5 Teile)
+    <- Handwerk 99 [Craft Voidhide Vambraces]: Shadowhide/Schattenleder x2, Void Shard/Leerensplitter x3, Aether Essence/Aetheressenz x2
+voidtouched_gauntlets :: Voidtouched Gauntlets / Leerenberührte Stulpen :: gloves :: legendary :: req defence 99 :: armor 19.6 :: mod str 5, con 7, lck 6 :: bonus hpRegenPerSec 0.3
+    <- Aether Wraith/Aetherwraith (L260; idolhall, undead, nur Dungeon) 1/10000 | Forsaken Servant/Verlassener Diener (L250; idolhall, demon) 1/5000 | Sanctum of the Last Idol/Sanktum des Letzten Götzen Abschluss 2.0% | Elite: Hollowveil the Forgotten/Hohlschleier der Vergessene (idolhall) 1/500 | Paragonturm-Truhe ab Etage 20 1.5%
+leather_boots :: Leather Boots / Lederstiefel :: boots :: common :: evasion 3.03 :: mod con 1
+    <- Handwerk 1 [Stitch Rawhide Boots]: Raw Hide/Rohleder x1
+copper_sabatons :: Copper Sabatons / Kupfer-Panzerstiefel :: boots :: common :: req defence 1 :: armor 6.23 :: mod con 1 :: SET Copper Set/Kupfer-Set (9 Teile)
+    <- Schmieden 2 [Forge Copper Sabatons]: Copper Bar/Kupferbarren x1
+bronze_sabatons :: Bronze Sabatons / Bronze-Panzerstiefel :: boots :: common :: req defence 5 :: armor 6.57 :: mod str 1, con 1
+    <- Schmieden 6 [Forge Bronze Sabatons]: Bronze Bar/Bronzebarren x1
+cured_leather_boots :: Cured Leather Boots / Gegerbte Lederstiefel :: boots :: common :: req ranged 5 :: evasion 4.6 :: mod con 1 :: SET Cured Leather Set/Gegerbtes-Leder-Set (5 Teile)
+    <- Handwerk 2 [Stitch Leather Boots]: Cured Leather/Gegerbtes Leder x1
+muckboots :: Muckboots / Miststiefel :: boots :: common :: req defence 5 :: armor 7.01 :: mod con 2 :: FX cooldownOnKill 1000ms
+    <- Cow/Kuh (L5; pastures, beast) 1/500
+buckhide_boots :: Buckhide Boots / Wildleder-Stiefel :: boots :: common :: req ranged 10 :: evasion 5.2 :: mod con 1 :: SET Buckhide Set/Wildleder-Set (5 Teile)
+    <- Handwerk 8 [Stitch Buckhide Boots]: Cured Leather/Gegerbtes Leder x2
+iron_sabatons :: Iron Sabatons / Eisen-Panzerstiefel :: boots :: rare :: req defence 10 :: armor 7.01 :: mod str 1, con 2 :: SET Iron Set/Eisen-Set (9 Teile)
+    <- Schmieden 12 [Forge Iron Sabatons]: Iron Bar/Eisenbarren x1
+scavenger_boots :: Scavenger Boots / Aasfresser-Stiefel :: boots :: common :: req defence 10 :: armor 7.94 :: mod con 2 :: FX cooldownOnKill 1000ms
+    <- Goblin Rogue/Goblin-Schurke (L19; borderlands, humanoid) 1/435 | Goblin Rogue/Goblin-Schurke (L19; slayer_tower, humanoid, Turm-Etage 1) 1/435 | Elite: Vex the Throatfinder/Vex der Kehlenfinder (borderlands) 2.4%
+quietstep_boots :: Quietstep Boots / Leisetritt-Stiefel :: boots :: rare :: req ranged 12 :: evasion 8.7 :: FX firstStrike mag 1
+    <- Elite-Unikat: Vex the Throatfinder/Vex der Kehlenfinder (borderlands, Basis Goblin Rogue/Goblin-Schurke)
+hardened_leather_boots :: Hardened Leather Boots / Gehärtete Lederstiefel :: boots :: rare :: req ranged 20 :: evasion 6.3 :: mod con 2 :: SET Hardened Leather Set/Gehärtetes-Leder-Set (5 Teile)
+    <- Handwerk 22 [Craft Hardened Boots]: Hardened Leather/Gehärtetes Leder x1
+steel_sabatons :: Steel Sabatons / Stahl-Panzerstiefel :: boots :: rare :: req defence 20 :: armor 7.94 :: mod str 2, con 2 :: SET Steel Set/Stahl-Set (9 Teile)
+    <- Schmieden 22 [Forge Steel Sabatons]: Steel Bar/Stahlbarren x1
+scaled_leather_boots :: Scaled Leather Boots / Schuppenleder-Stiefel :: boots :: rare :: req ranged 28 :: evasion 7.25 :: mod con 3 :: SET Scaled Leather Set/Schuppenleder-Set (5 Teile)
+    <- Handwerk 28 [Forge Scaled Boots]: Scaled Leather/Schuppenleder x1
+blacksteel_sabatons :: Blacksteel Sabatons / Schwarzstahl-Panzerstiefel :: boots :: rare :: req defence 30 :: armor 8.94 :: mod str 3, con 2
+    <- Schmieden 31 [Forge Blacksteel Sabatons]: Blacksteel Bar/Schwarzstahlbarren x1
+duskhide_boots :: Duskhide Boots / Dämmerleder-Stiefel :: boots :: rare :: req ranged 40 :: evasion 8.68 :: mod dex 1, con 3 :: SET Duskhide Set/Dämmerleder-Set (5 Teile)
+    <- Handwerk 40 [Craft Duskhide Boots]: Scaled Leather/Schuppenleder x1, Mithril Bar/Mithrilbarren x1
+dustwalker_boots :: Dustwalker Boots / Staubgänger-Stiefel :: boots :: common :: req defence 40 :: armor 11.19 :: mod con 2 :: FX cooldownOnKill 1500ms
+    <- Dust Vulture/Staubgeier (L34; ashfields, beast) 1/588 | Elite: Carrionwind the Patient/Aaswind der Geduldige (ashfields) 1.8%
+mithril_sabatons :: Mithril Sabatons / Mithril-Panzerstiefel :: boots :: superRare :: req defence 40 :: armor 10.02 :: mod str 4, con 2 :: SET Mithril Set/Mithril-Set (9 Teile)
+    <- Schmieden 37 [Forge Mithril Sabatons]: Mithril Bar/Mithrilbarren x1
+adamantium_sabatons :: Adamantium Sabatons / Adamantium-Panzerstiefel :: boots :: superRare :: req defence 50 :: armor 11.19 :: mod str 4, con 3 :: SET Adamantium Set/Adamantium-Set (9 Teile)
+    <- Schmieden 47 [Forge Adamantium Sabatons]: Adamantium Bar/Adamantiumbarren x1
+studded_leather_boots :: Studded Leather Sabatons / Genietete Lederstiefel :: boots :: rare :: req ranged 50 :: evasion 10.22 :: mod dex 1, con 3 :: SET Studded Leather Set/Genietetes-Leder-Set (5 Teile)
+    <- Handwerk 50 [Craft Studded Sabatons]: Studded Leather/Genietetes Leder x1
+tidewalker_boots :: Tidewalker Boots / Gezeitengänger-Stiefel :: boots :: superRare :: req ranged 50 :: evasion 11.76 :: mod dex 2, con 4 :: boost ranged 1 :: FX cooldownOnKill 2000ms
+    <- Tide Siren/Gezeitensirene (L138; coast) 1/1250 | Tide Siren/Gezeitensirene (L103; slayer_tower, Turm-Etage 7) 1/1250 | Elite: Lorelith of the Drowned Choir/Lorelith vom Ertrunkenen Chor (coast) 1.4%
+wildwood_treads :: Wildwood Treads / Wildwald-Schuhe :: boots :: rare :: req defence 50 :: armor 12.47 :: mod con 2 :: FX cooldownOnKill 1500ms
+    <- Spectral Stag/Geisterhirsch (L58; blackthorn) 1/1000
+ironhide_boots :: Ironhide Treads / Eisenleder-Stiefel :: boots :: rare :: req ranged 60 :: evasion 11.76 :: mod dex 1, con 5 :: SET Ironhide Set/Eisenleder-Set (5 Teile)
+    <- Handwerk 60 [Craft Ironhide Treads]: Studded Leather/Genietetes Leder x2
+runite_sabatons :: Runite Sabatons / Runit-Panzerstiefel :: boots :: superRare :: req defence 60 :: armor 12.47 :: mod str 5, con 3 :: SET Runite Set/Runit-Set (9 Teile)
+    <- Schmieden 57 [Forge Runite Sabatons]: Runite Bar/Runitbarren x1
+frostward_treads :: Frostward Treads / Frostschutz-Schuhe :: boots :: epic :: req defence 62 :: armor 14.28 :: mod con 5 :: FX cooldownOnKill 1500ms
+    <- Frost Hound/Frosthund (L182; slagpit, beast) 1/2500 | Frost Hound/Frosthund (L74; slayer_tower, beast, Turm-Etage 4) 1/2500
+bloodiron_sabatons :: Bloodiron Sabatons / Bluteisen-Panzerstiefel :: boots :: superRare :: req defence 70 :: armor 13.86 :: mod str 6, con 3 :: SET Bloodiron Set/Bluteisen-Set (9 Teile)
+    <- Schmieden 67 [Forge Bloodiron Sabatons]: Bloodiron Bar/Bluteisenbarren x1
+gravetread_sabatons :: Gravetread Sabatons / Grabschreiter-Schuhe :: boots :: rare :: req defence 70 :: armor 15.39 :: mod con 2 :: FX cooldownOnKill 2000ms
+    <- Skeleton Spearman/Skelett-Speerträger (L71; crypt, undead) 1/1667
+warhide_boots :: Warhide Treads / Kriegsleder-Stiefel :: boots :: rare :: req ranged 70 :: evasion 13.25 :: mod dex 1, con 5 :: SET Warhide Set/Kriegsleder-Set (5 Teile)
+    <- Handwerk 70 [Craft Warhide Treads]: Warhide/Kriegsleder x1
+padfoot_boots :: Padfoot Boots / Pfotenschritt-Stiefel :: boots :: rare :: req defence 80 :: armor 17.59 :: mod con 2 :: FX cooldownOnKill 2000ms
+    <- Forest Hare/Waldhase (L90; wildwood, beast) 1/1111
+titanium_sabatons :: Titanium Sabatons / Titan-Panzerstiefel :: boots :: epic :: req defence 80 :: armor 15.39 :: mod str 6, con 4 :: SET Titanium Set/Titan-Set (9 Teile)
+    <- Schmieden 77 [Forge Titanium Sabatons]: Titanium Bar/Titanbarren x1
+cloudwalker_boots :: Cloudwalker Boots / Wolkengänger-Stiefel :: boots :: epic :: req ranged 82 :: evasion 16.24 :: mod dex 2, con 5 :: boost ranged 1 :: FX cooldownOnKill 2000ms
+    <- Prayer Eater/Gebetsfresser (L257; idolhall, undead) 1/2000 | Gravecliff Specter/Klippengeist (L237; highlands, undead) 1/2000 | Gravecliff Specter/Klippengeist (L100; slayer_tower, undead, Turm-Etage 6) 1/2000 | Elite: Palemourn the Cliffwarden/Bleichgram der Klippenwächter (highlands) 1/101
+dragonhide_boots :: Dragonhide Boots / Drachenleder-Stiefel :: boots :: superRare :: req ranged 82 :: evasion 15.05 :: mod dex 1, con 6 :: SET Dragonhide Set/Drachenleder-Set (5 Teile)
+    <- Handwerk 82 [Craft Dragonhide Boots]: Dragonhide/Drachenleder x1
+aetherium_sabatons :: Aetherium Sabatons / Aetherium-Panzerstiefel :: boots :: epic :: req defence 90 :: armor 17.08 :: mod str 8, con 4 :: SET Aetherium Set/Aetherium-Set (9 Teile)
+    <- Schmieden 87 [Forge Aetherium Sabatons]: Aetherium Bar/Aetheriumbarren x1
+wraithhide_boots :: Wraithhide Boots / Geisterleder-Stiefel :: boots :: epic :: req ranged 90 :: evasion 16.24 :: mod dex 2, con 6 :: SET Wraithhide Set/Geisterleder-Set (5 Teile)
+    <- Handwerk 90 [Craft Wraithhide Boots]: Dragonhide/Drachenleder x1, Void Shard/Leerensplitter x2
+starweave_sandals :: Starweave Sandals / Sterngewebe-Sandalen :: boots :: epic :: req magic 92 :: ward 76.86 :: mod con 4, int 7, wis 2 :: SET Starweave Set/Sterngewebe-Set (5 Teile)
+    <- Schneidern 93 [Bind Starweave Sandals]: Void Shard/Leerensplitter x8, Aether Essence/Aetheressenz x4, Starweave/Sternweb x2
+shadowhide_boots :: Shadowhide Boots / Schattenleder-Stiefel :: boots :: epic :: req ranged 95 :: evasion 17.72 :: mod dex 2, con 6 :: SET Shadowhide Set/Schattenleder-Set (5 Teile)
+    <- Handwerk 95 [Craft Shadowhide Boots]: Shadowhide/Schattenleder x1
+godiron_sabatons :: Godiron Sabatons / Götzeneisen-Panzerstiefel :: boots :: epic :: req defence 99 :: armor 17.5 :: mod str 9, con 4 :: SET Godiron Set/Götzeneisen-Set (9 Teile)
+    <- Schmieden 96 [Forge Godiron Sabatons]: Godiron Bar/Götzeneisenbarren x1
+idolstep_sabatons :: Idolstep Sabatons / Götzenschritt-Schuhe :: boots :: legendary :: req defence 99 :: armor 19.6 :: mod con 7, lck 3 :: bonus hpRegenPerSec 0.3
+    <- Dragonhide Skarn/Drachenhaut-Skarn (L275; idolhall, dragonkin, nur Dungeon) 1/10000 | Idol Husk/Götzenhülse (L244; idolhall, construct) 1/5000 | Siege Idol/Belagerungsgötze (L266; idolhall, construct) 1/3333 | Sanctum of the Last Idol/Sanktum des Letzten Götzen Abschluss 2.0% | Paragonturm-Truhe ab Etage 20 1.5%
+voidhide_boots :: Voidhide Boots / Leerenleder-Stiefel :: boots :: epic :: req ranged 99 :: evasion 18.9 :: mod dex 2, con 7 :: SET Voidhide Set/Leerenleder-Set (5 Teile)
+    <- Handwerk 99 [Craft Voidhide Boots]: Shadowhide/Schattenleder x2, Void Shard/Leerensplitter x3, Aether Essence/Aetheressenz x2
+arcane_cape :: Arcane Cape / Arkan-Umhang :: cape :: superRare :: mod con 1, int 1 :: boost magic 1
+    <- Schneidern 12 [Stitch Arcane Cape]: Nettlecloth/Nesselstoff x2, Dim Essence/Trübessenz x3
+field_cape :: Tattered Field Cape / Zerschlissener Feldumhang :: cape :: common :: mod con 3 :: FX lootChance mag 0.1
+    <- Wild Boar/Wildschwein (L10; pastures, beast) 1/357 | Elite: Rustbristle the Famished/Rostborste der Ausgehungerte (pastures) 3.0%
+frost_shroud :: Frost Shroud / Frost-Überwurf :: cape :: epic :: mod con 1, int 1, wis 1 :: boost magic 3
+    <- Schneidern 38 [Weave Frost Shroud]: Linen/Leinen x3, Frost Essence/Frostessenz x4
+greytooth_mantle :: Greytooth Mantle / Grauzahn-Mantel :: cape :: legendary :: mod str 5, con 5, dex 2 :: bonus lifesteal 0.03
+    <- Elite-Unikat: Greytooth the Famished/Grauzahn der Ausgehungerte (wildwood, Basis Gray Wolf/Grauwolf)
+hardened_warcape :: Hardened Warcape / Gehärteter Kriegsumhang :: cape :: rare :: mod con 3
+    <- Schneidern 45 [Craft Hardened Warcape]: Thornlinen/Dornleinen x3, Hardened Leather/Gehärtetes Leder x1
+leather_cape :: Leather Cape / Leder-Umhang :: cape :: common :: mod con 2
+    <- Schneidern 8 [Stitch Leather Cape]: Nettlecloth/Nesselstoff x2, Cured Leather/Gegerbtes Leder x1
+leather_warcape :: Leather Warcape / Leder-Kriegsumhang :: cape :: common :: mod con 2
+    <- Schneidern 18 [Stitch Leather Warcape]: Nettlecloth/Nesselstoff x3, Cured Leather/Gegerbtes Leder x1
+palemourn_shroud :: Palemourn Shroud / Bleichgram-Schleier :: cape :: legendary :: mod int 9, wis 9, lck 4 :: FX antiRegen
+    <- Elite-Unikat: Palemourn the Cliffwarden/Bleichgram der Klippenwächter (highlands, Basis Gravecliff Specter/Klippengeist)
+pelt_mantle :: Pelt Mantle / Fell-Mantel :: cape :: rare :: mod con 21 :: FX packLeader mag 0.25
+    <- Wild Stag/Wildhirsch (L104; wildwood, beast) 1/2000 | Elite: Blackantler the Wrathful/Schwarzgeweih der Zornige (wildwood) 1/133
+ranger_cape :: Ranger's Cape / Waldläufer-Umhang :: cape :: rare :: mod dex 1, con 2
+    <- Schneidern 35 [Craft Ranger's Cape]: Linen/Leinen x3, Hardened Leather/Gehärtetes Leder x1
+slagweave_cape :: Slagweave Cape / Schlackengewebe-Umhang :: cape :: epic :: mod str 14, con 4 :: FX giantSlayer mag 0.2
+    <- Voidhusk Crusher/Leeren-Zerschmetterer (L195; slagpit) 1/2000 | Voidhusk Crusher/Leeren-Zerschmetterer (L101; slayer_tower, Turm-Etage 6) 1/2000
+smokeweave_cape :: Smokeweave Cape / Rauchgewebe-Umhang :: cape :: rare :: mod con 3 :: FX antiRegen
+    <- Mire Crawler/Morastkriecher (L38; ashfields, beast) 1/1250 | Elite: Mireclutch the Venomous/Moorgriff der Giftige (ashfields) 2.0%
+void_titan_mantle :: Void Titan's Mantle / Mantel des Leerentitanen :: cape :: legendary :: mod str 4, dex 1, con 4, int 5, wis 5, lck 3 :: bonus hpRegenPerSec 0.12
+    <- Void Titan/Leeren-Titan (L242; highlands) 1/6250 | Void Titan/Leeren-Titan (L107; slayer_tower, Turm-Etage 8) 1/6250
+warbanner_cape :: Tattered Warbanner Cape / Zerfetzter Kriegsbanner-Umhang :: cape :: rare :: mod con 3 :: FX vengeance mag 0.25
+    <- Goblin Warlock/Goblin-Hexenmeister (L30; borderlands, humanoid) 1/1000 | The Goblin Warband/Die Goblin-Kriegsbande Abschluss 1/125 | Elite: Vhazrak the Ashtongue/Vhazrak Aschenzunge (borderlands) 2.5%
+warden_greatcloak :: Warden's Greatcloak / Großumhang des Vogts :: cape :: epic :: mod dex 4, int 7, con 4 :: FX vengeance mag 0.3
+    <- The Forest Warden/Der Waldvogt (L65; blackthorn) 1/2500
+mariner_cloak :: Mariner's Cloak / Seefahrer-Umhang :: cape :: rare :: req ranged 30 :: mod dex 10, con 11 :: FX cooldownOnKill 1500ms
+    <- Tide Siren/Gezeitensirene (L138; coast) 1/1667 | Tide Siren/Gezeitensirene (L103; slayer_tower, Turm-Etage 7) 1/1667 | Elite: Lorelith of the Drowned Choir/Lorelith vom Ertrunkenen Chor (coast) 1/118
+shroud_of_the_dead :: Shroud of the Dead / Leichentuch :: cape :: superRare :: req magic 30 :: mod con 6, int 6, wis 8 :: FX gutter mag 0.5
+    <- Skeleton Ice Mage/Skelett-Eismagier (L80; crypt, undead) 1/1429 | Skeleton Ice Mage/Skelett-Eismagier (L80; crypt, undead, nur Dungeon) 1/1429 | Elite: Hoargrim the Lightless/Raugram der Lichtlose (crypt) 1/101
+storm_mantle :: Storm Mantle / Sturm-Mantel :: cape :: superRare :: req ranged 50 :: mod dex 4, con 7, int 4, wis 4 :: FX catalyst 2000ms
+    <- Storm Roc/Sturm-Roc (L222; highlands, beast, nur Dungeon) 1/1667 | Storm Roc/Sturm-Roc (L104; slayer_tower, beast, Turm-Etage 7) 1/1667 | The Highland Aerie/Der Hochland-Horst Abschluss 1.4%
+voidstalker_cloak :: Voidstalker Cloak / Leerenpirscher-Umhang :: cape :: epic :: req ranged 65 :: mod dex 6, int 8, con 4 :: FX firstStrike mag 1
+    <- Void Stalker/Leerenjäger (L66; slayer_tower, Turm-Etage 4) 1/2500
+last_idol_mantle :: Mantle of the Last Idol / Mantel des Letzten Götzen :: cape :: godly :: req defence 99 :: mod str 5, dex 2, con 6, int 5, wis 5, lck 7 :: bonus hpRegenPerSec 0.2
+    <- The Last Idol/Der Letzte Götze (L295; idolhall, construct, nur Dungeon) 1/32258 | Sanctum of the Last Idol/Sanktum des Letzten Götzen Abschluss 1/500 | The Expunged Chapel/Die Getilgte Kapelle Abschluss 1/250 | Paragonturm-Truhe ab Etage 50 1.0% | Paragonturm-Truhe ab Etage 100 4.0%
+blackhoof_charm :: Blackhoof Talisman / Schwarzhuf-Talisman :: amulet :: superRare :: mod str 5, con 3, lck 1 :: boost power 2 :: FX vengeance mag 0.25
+    <- Elite-Unikat: Blackhoof the Baleful/Schwarzhuf der Unheilvolle (pastures, Basis Maddened Bull/Rasender Bulle)
+bonecharm_amulet :: Bonecharm Amulet / Knochentalisman :: amulet :: rare :: mod str 7, con 8 :: boost power 1 :: FX healOnKill mag 6
+    <- Skeleton Butcher/Skelett-Schlächter (L75; crypt, undead) 1/2000 | Skeleton Butcher/Skelett-Schlächter (L75; crypt, undead, nur Dungeon) 1/2000 | Elite: Marrowcleave the Starving/Markspalter der Darbende (crypt) 1.1%
+bulls_heart_pendant :: Bull's Heart Pendant / Stierherz-Anhänger :: amulet :: superRare :: mod str 3, con 6 :: FX healOnKill mag 3
+    <- Maddened Bull/Rasender Bulle (L15; pastures, beast) 1/1351 | Elite: Blackhoof the Baleful/Schwarzhuf der Unheilvolle (pastures) 1.8%
+carrion_talisman :: Ashlung Talisman / Aschelunge-Talisman :: amulet :: superRare :: mod con 3, int 3, wis 4 :: boost magic 2 :: FX catalyst 2500ms
+    <- Elite-Unikat: Carrionwind the Patient/Aaswind der Geduldige (ashfields, Basis Dust Vulture/Staubgeier)
+drovers_charm :: Drover's Charm / Hirten-Talisman :: amulet :: rare :: mod con 4 :: FX healOnKill mag 2
+    <- Wild Boar/Wildschwein (L10; pastures, beast) 1/1449 | Elite: Rustbristle the Famished/Rostborste der Ausgehungerte (pastures) 1.7%
+emberheart_amulet :: Emberheart Amulet / Glutherz-Amulett :: amulet :: epic :: mod str 10, con 4, lck 2 :: boost power 4 :: FX bounty mag 0.2
+    <- Voidhusk Crusher/Leeren-Zerschmetterer (L195; slagpit) 1/1923 | Voidhusk Crusher/Leeren-Zerschmetterer (L101; slayer_tower, Turm-Etage 6) 1/1923
+fang_pendant :: Fang Pendant / Reißzahn-Anhänger :: amulet :: rare :: mod str 8, con 4, lck 2 :: boost power 1 :: FX healOnKill mag 5
+    <- Dire Wolf/Schreckenswolf (L112; wildwood, beast) 1/833
+felmagician_eye :: Felmagician's Eye / Auge des Felmagiers :: amulet :: superRare :: mod int 4, wis 5 :: boost magic 2 :: FX wardOnKill mag 3
+    <- Goblin Fel Magician/Goblin-Felmagier (L27; borderlands, humanoid) 1/2703
+hollowveil_locket :: Hollowveil Locket / Hohlschleier-Medaillon :: amulet :: legendary :: mod con 5, int 8, wis 7, lck 3 :: boost magic 5 :: FX wardSiphon mag 0.08
+    <- Elite-Unikat: Hollowveil the Forgotten/Hohlschleier der Vergessene (idolhall, Basis Idol Priest/Götzenpriester)
+pearl_of_the_deep :: Pearl of the Deep / Perle der Tiefe :: amulet :: epic :: mod con 11, int 5, wis 9 :: FX healOnKill mag 4
+    <- Deep Kraken/Tiefenkrake (L150; coast, beast) 1/1408 | Deep Kraken/Tiefenkrake (L107; slayer_tower, beast, Turm-Etage 8) 1/1408
+soulflayer_amulet :: Soulflayer's Amulet / Seelenschinder-Amulett :: amulet :: epic :: mod str 12, con 8, lck 3 :: boost power 4 :: FX wardOnKill mag 5
+    <- Soul Flayer/Seelenschinder (L86; slayer_tower, Turm-Etage 5) 1/2041
+soulthorn_pendant :: Soulthorn Pendant / Seelendorn-Anhänger :: amulet :: superRare :: mod str 3, dex 2, con 3, lck 2 :: boost power 2 :: FX antiRegen
+    <- The Forest Warden/Der Waldvogt (L65; blackthorn) 1/909
+stormcore_pendant :: Stormcore Pendant / Sturmkern-Anhänger :: amulet :: epic :: mod dex 2, con 4, int 3, wis 5, lck 4 :: boost magic 4 :: FX wardSiphon mag 0.08
+    <- Storm Roc/Sturm-Roc (L222; highlands, beast, nur Dungeon) 1/5000 | Storm Roc/Sturm-Roc (L104; slayer_tower, beast, Turm-Etage 7) 1/5000 | The Highland Aerie/Der Hochland-Horst Abschluss 1.0%
+garnet_amulet :: Garnet Amulet / Granatamulett :: amulet :: common :: req jewelcrafting 3 :: mod con 2
+    <- Juwelierskunst 3 [Craft Garnet Amulet]: Garnet/Granat x1, Bronze Bar/Bronzebarren x2
+fang_necklace :: Predator Fang Necklace / Raubzahnkette :: amulet :: common :: req jewelcrafting 5 :: mod str 3 :: boost power 1
+    <- Juwelierskunst 5 [String Fang Necklace]: Jagged Fang/Reißzahn x3, Cured Leather/Gegerbtes Leder x1
+soul_amulet :: Soul Amulet / Seelenamulett :: amulet :: rare :: req jewelcrafting 15 :: mod con 1, int 1 :: boost magic 1
+    <- Juwelierskunst 15 [String Soul Amulet]: Soul Opal/Seelenopal x1, Bronze Bar/Bronzebarren x1
+sapphire_amulet :: Sapphire Amulet / Saphiramulett :: amulet :: rare :: req jewelcrafting 18 :: mod con 1, int 2 :: boost magic 1
+    <- Juwelierskunst 18 [Craft Sapphire Amulet]: Sapphire/Saphir x1, Iron Bar/Eisenbarren x2
+gemstone_amulet :: Gemstone Amulet / Edelsteinamulett :: amulet :: rare :: req jewelcrafting 26 :: mod str 1, con 2, lck 1 :: boost attack 1
+    <- Juwelierskunst 26 [Craft Gemstone Amulet]: Cut Gemstone/Geschliffener Edelstein x1, Iron Bar/Eisenbarren x1
+alpha_fang_amulet :: Alpha Fang Amulet / Leitwolf-Amulett :: amulet :: rare :: req jewelcrafting 36 :: mod str 5, lck 1 :: boost power 1
+    <- Juwelierskunst 36 [String Alpha Fang Amulet]: Alpha Fang/Leitwolf-Reißzahn x1, Iron Bar/Eisenbarren x2
+ruby_amulet :: Ruby Amulet / Rubinamulett :: amulet :: rare :: req jewelcrafting 38 :: mod str 4, con 2, lck 1 :: boost power 1
+    <- Juwelierskunst 38 [Craft Ruby Amulet]: Ruby/Rubin x1, Steel Bar/Stahlbarren x2
+bloodstone_amulet :: Bloodstone Amulet / Blutstein-Amulett :: amulet :: superRare :: req jewelcrafting 48 :: armorPen 0.01 :: mod str 3, con 5, lck 2
+    <- Juwelierskunst 48 [Craft Bloodstone Amulet]: Bloodstone/Blutstein x1, Gravesteel Bar/Grabstahlbarren x2
+diamond_amulet :: Diamond Amulet / Diamantamulett :: amulet :: superRare :: req jewelcrafting 60 :: armorPen 0.012 :: mod dex 2, con 7, lck 2
+    <- Juwelierskunst 60 [Craft Diamond Amulet]: Diamond/Diamant x1, Mithril Bar/Mithrilbarren x2
+stormcaller_amulet :: Stormcaller Amulet / Sturmrufer-Amulett :: amulet :: rare :: req jewelcrafting 65 :: mod dex 1, int 7, lck 2 :: boost magic 3
+    <- Juwelierskunst 65 [Forge Stormcaller Amulet]: Storm Core/Sturmkern x1, Runite Bar/Runitbarren x2
+onyx_amulet :: Onyx Amulet / Onyxamulett :: amulet :: superRare :: req jewelcrafting 75 :: armorPen 0.015 :: mod dex 2, con 10, lck 2
+    <- Juwelierskunst 75 [Craft Onyx Amulet]: Onyx/Onyx x1, Runite Bar/Runitbarren x2
+heartforged_pendant :: Heartforged Pendant / Herzgeschmiedetes Amulett :: amulet :: epic :: req jewelcrafting 82 :: mod str 3, dex 1, con 5, int 2, lck 2
+    <- Juwelierskunst 82 [Forge Heartforged Pendant]: Heart of the Idol/Herz des Götzen x1, Godiron Bar/Götzeneisenbarren x2
+voidstone_amulet :: Voidstone Amulet / Leerenstein-Amulett :: amulet :: epic :: req jewelcrafting 88 :: armorPen 0.017 :: mod dex 2, con 11, lck 2
+    <- Juwelierskunst 88 [Craft Voidstone Amulet]: Voidstone/Leerenstein x1, Bloodiron Bar/Bluteisenbarren x2
+godgem_amulet :: Godgem Amulet / Göttenstein-Amulett :: amulet :: epic :: req jewelcrafting 99 :: armorPen 0.018 :: mod dex 2, con 13, lck 3 :: SET Godgem Set/Göttenstein-Set (2 Teile)
+    <- Juwelierskunst 99 [Craft Godgem Amulet]: Godgem/Göttenstein x1, Aetherium Bar/Aetheriumbarren x2
+abyssal_signet :: Abyssal Signet / Abyssaler Siegelring :: ring1 :: epic :: mod dex 3, con 4, int 4, wis 3, lck 3 :: boost magic 4 :: FX wardSiphon mag 0.08
+    <- Abyssal Tide Serpent/Abyssale Gezeitenschlange (L155; coast, beast) 1/2000 | Abyssal Tide Serpent/Abyssale Gezeitenschlange (L105; slayer_tower, beast, Turm-Etage 7) 1/2000
+aetherband_ring :: Aetherband Ring / Aetherreif-Ring :: ring1 :: epic :: mod str 6, dex 2, con 5, lck 4 :: boost power 4 :: FX wardOnKill mag 5
+    <- Void Roc/Leerenroc (L233; highlands, beast, nur Dungeon) 1/4762 | Void Roc/Leerenroc (L94; slayer_tower, beast, Turm-Etage 5) 1/4762 | The Wyvern Lair/Das Wyvernlager Abschluss 1.0%
+alphas_heart_ring :: Alpha's Heart Ring / Leitwolf-Herzring :: ring1 :: epic :: mod str 8, con 6, lck 3 :: boost power 4 :: FX packLeader mag 0.25
+    <- Elder Bear/Altbär (L120; wildwood, beast, nur Dungeon) 1/5000 | The Wildwood Hunt/Die Wildwald-Jagd Abschluss 1/156
+boartusk_ring :: Boar-Tusk Ring / Eberhauer-Ring :: ring1 :: rare :: mod str 2, con 2 :: boost power 1 :: FX giantSlayer mag 0.15
+    <- Maddened Bull/Rasender Bulle (L15; pastures, beast) 1/526 | Elite: Blackhoof the Baleful/Schwarzhuf der Unheilvolle (pastures) 3.0%
+cinderloop_ring :: Cinderloop Ring / Glutschlaufe-Ring :: ring1 :: rare :: mod str 5, con 2, lck 1 :: boost power 1 :: FX bounty mag 0.2
+    <- Ash Tyrant/Aschtyrann (L45; ashfields) 1/435
+cutpurse_ring :: Cutpurse Ring / Beutelschneider-Ring :: ring1 :: common :: mod str 3 :: boost attack 1 :: FX lootChance mag 0.1
+    <- Goblin Rogue/Goblin-Schurke (L19; borderlands, humanoid) 1/455 | Goblin Rogue/Goblin-Schurke (L19; slayer_tower, humanoid, Turm-Etage 1) 1/455 | Elite: Vex the Throatfinder/Vex der Kehlenfinder (borderlands) 2.4%
+doomforged_band :: Doomforged Band / Doom-Schmiede-Ring :: ring1 :: legendary :: mod str 11, con 5, lck 3 :: bonus hpRegenPerSec 0.1 :: boost power 3
+    <- Charred Doomknight/Verkohlter Schicksalsritter (L200; slagpit, undead) 1/10000 | Charred Doomknight/Verkohlter Schicksalsritter (L100; slayer_tower, undead, Turm-Etage 6) 1/10000
+idolbound_signet :: Idolbound Signet / Götzengebundener Siegelring :: ring1 :: legendary :: mod str 10, dex 2, con 8, lck 3 :: bonus hpRegenPerSec 0.3 :: boost attack 3
+    <- Aether Wraith/Aetherwraith (L260; idolhall, undead, nur Dungeon) 1/10000 | Idol Priest/Götzenpriester (L253; idolhall, humanoid) 1/6667 | Sanctum of the Last Idol/Sanktum des Letzten Götzen Abschluss 1.3% | Elite: Hollowveil the Forgotten/Hohlschleier der Vergessene (idolhall) 1/769 | Paragonturm-Truhe ab Etage 20 1/104
+necrosignet_ring :: Necrosignet Ring / Nekrosiegel-Ring :: ring1 :: superRare :: mod str 8, con 5, lck 2 :: boost power 1 :: FX antiRegen
+    <- Necromancer Lord/Nekromantenfürst (L90; crypt, undead) 1/1429 | Necromancer Lord/Nekromantenfürst (L90; crypt, undead, nur Dungeon) 1/1429 | Depths of the Crypt/Tiefen der Krypta Abschluss 2.5%
+ninth_wardens_signet :: Signet of the Ninth Warden / Siegel des Neunten Wächters :: ring1 :: legendary :: mod str 5, con 12, int 4, lck 4 :: bonus hpRegenPerSec 0.12 :: FX bane mag 0.25 vs construct
+    <- Elite-Unikat: The Ninth Warden/Der Neunte Wächter (idolhall, Basis Idol Husk/Götzenhülse)
+soulopal_band :: Soulopal Band / Seelenopal-Reif :: ring1 :: rare :: mod str 7, dex 3, lck 2 :: boost power 1 :: FX wardOnKill mag 4
+    <- The Forest Warden/Der Waldvogt (L65; blackthorn) 1/455
+garnet_ring :: Garnet Ring / Granatring :: ring1 :: common :: req jewelcrafting 1 :: armorPen 0.002 :: mod str 1 :: boost power 1
+    <- Juwelierskunst 1 [Craft Garnet Ring]: Garnet/Granat x1, Copper Bar/Kupferbarren x1
+sapphire_ring :: Sapphire Ring / Saphirring :: ring1 :: common :: req jewelcrafting 15 :: wardBreak 0.006 :: mod int 2, wis 1 :: boost magic 1
+    <- Juwelierskunst 15 [Craft Sapphire Ring]: Sapphire/Saphir x1, Iron Bar/Eisenbarren x1
+warband_signet :: Warband Signet / Kriegsbanden-Siegelring :: ring1 :: rare :: req jewelcrafting 15 :: armorPen 0.004 :: mod str 3 :: boost attack 1
+    <- Juwelierskunst 15 [Engrave Warband Signet]: Warband Seal/Kriegsbanden-Siegel x1, Bronze Bar/Bronzebarren x2
+gemstone_ring :: Gemstone Ring / Edelsteinring :: ring1 :: rare :: req jewelcrafting 20 :: armorPen 0.005 :: mod str 2, con 1, lck 1 :: boost attack 1
+    <- Juwelierskunst 20 [Craft Gemstone Ring]: Cut Gemstone/Geschliffener Edelstein x1, Iron Bar/Eisenbarren x1
+ruby_ring :: Ruby Ring / Rubinring :: ring1 :: common :: req jewelcrafting 34 :: armorPen 0.007 :: mod str 5, con 1, lck 1 :: boost power 2
+    <- Juwelierskunst 34 [Craft Ruby Ring]: Ruby/Rubin x1, Steel Bar/Stahlbarren x1
+bloodstone_ring :: Bloodstone Ring / Blutstein-Ring :: ring1 :: rare :: req jewelcrafting 44 :: armorPen 0.009 :: mod str 5, dex 1, con 1, lck 1 :: boost power 2
+    <- Juwelierskunst 44 [Craft Bloodstone Ring]: Bloodstone/Blutstein x1, Gravesteel Bar/Grabstahlbarren x1
+spellbinder_ring :: Spellbinder Ring / Zauberbinder-Ring :: ring1 :: rare :: req jewelcrafting 46 :: wardBreak 0.014 :: mod int 5, lck 1 :: boost magic 2
+    <- Juwelierskunst 46 [Craft Spellbinder Ring]: Sapphire/Saphir x1, Storm Essence/Sturmessenz x3, Mithril Bar/Mithrilbarren x1
+diamond_ring :: Diamond Ring / Diamantring :: ring1 :: rare :: req jewelcrafting 55 :: armorPen 0.011 :: mod str 3, con 5, lck 2 :: boost attack 3
+    <- Juwelierskunst 55 [Craft Diamond Ring]: Diamond/Diamant x1, Mithril Bar/Mithrilbarren x1
+grave_warden_band :: Grave Warden Band / Grabwächter-Reif :: ring1 :: rare :: req jewelcrafting 55 :: armorPen 0.011 :: mod str 4, con 4, lck 2 :: boost power 3
+    <- Juwelierskunst 55 [Forge Grave Warden Band]: Grave Warden Sigil/Grabwächter-Siegel x1, Steel Bar/Stahlbarren x2
+onyx_ring :: Onyx Ring / Onyxring :: ring1 :: superRare :: req jewelcrafting 70 :: armorPen 0.014 :: mod str 5, dex 1, con 4, lck 3 :: boost power 3 :: SET Warbound (2pc)/Kriegsbund (2-teilig) (2 Teile)
+    <- Juwelierskunst 70 [Craft Onyx Ring]: Onyx/Onyx x1, Runite Bar/Runitbarren x1
+voidstone_ring :: Voidstone Ring / Leerenstein-Ring :: ring1 :: superRare :: req jewelcrafting 85 :: armorPen 0.016 :: mod str 7, dex 1, con 4, lck 3 :: boost power 4
+    <- Juwelierskunst 85 [Craft Voidstone Ring]: Voidstone/Leerenstein x1, Bloodiron Bar/Bluteisenbarren x1
+godgem_ring :: Godgem Ring / Göttenstein-Ring :: ring1 :: epic :: req jewelcrafting 95 :: armorPen 0.018 :: mod str 10, dex 2, con 2, lck 3 :: boost power 4 :: SET Godgem Set/Göttenstein-Set (2 Teile)
+    <- Juwelierskunst 95 [Craft Godgem Ring]: Godgem/Göttenstein x1, Aetherium Bar/Aetheriumbarren x1

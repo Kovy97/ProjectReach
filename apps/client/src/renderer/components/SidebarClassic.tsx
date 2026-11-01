@@ -4,16 +4,17 @@
  * Höhen-Stauchung, Namens-Anpassung über --sb-name-fit). Ergänzt: Scherbenaltar-Eintrag erst nach Freischaltung
  * (prestigeNavVisible, wie in der Reforged-Leiste). Styles: styles/classic-chrome.css (.layout--classic).
  */
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react"; // claude:2026-10-31T14:58:54+01:00 — + Fragment (Narben-Band)
 import { createPortal } from "react-dom";
 import { getSidebarPages } from "../navigation";
 import { SidebarEstates } from "./SidebarEstates";
 import { prestigeNavVisible } from "../util/prestigeNav";
+import { PrestigeRespecGlow, PrestigeRespecRibbon } from "./PrestigeRespecRibbon"; // claude:2026-10-31T14:58:54+01:00 — 1.4.2 Narben-Rückgabe
 import { getSidebarIcon } from "../sidebarIcons";
 import { getSkillIcon } from "../skillIcons";
 import { useGameControl, useGameSelector, useGameState, tupleEquals } from "../game/GameContext";
 import { useI18n } from "../i18n";
-import { computeStats, levelFromXp, xpForLevel, combatLevel } from "@hearthforge/engine";
+import { computeStats, levelFromXp, xpForLevel, combatLevel, prestigeRespecPending, prestigeUnlock } from "@hearthforge/engine"; // claude:2026-10-31T14:58:54+01:00 — + prestigeRespecPending
 import { COMBAT_SKILL_IDS } from "@hearthforge/shared";
 import { content } from "@hearthforge/content";
 import { BlessingPanel } from "./BlessingPanel";
@@ -49,7 +50,11 @@ interface SidebarProps {
 export function SidebarClassic({ activePageId, onNavigate }: SidebarProps): JSX.Element {
   const { t } = useI18n();
   const showPrestige = useGameSelector(prestigeNavVisible);
-  const pages = getSidebarPages().filter((p) => p.id !== "prestige" || showPrestige);
+  // claude:2026-10-31T16:34:28+01:00 — Ideen-Welle 1.4.2: Scherbenaltar vor der Freischaltung grau und gesperrt statt unsichtbar (Tooltip nennt die Voraussetzung).
+  const pages = getSidebarPages();
+  const altarSkills99 = useGameSelector((s) => prestigeUnlock(s, content).skills99);
+  const altarRequired = useGameSelector((s) => prestigeUnlock(s, content).required);
+  const respecPending = useGameSelector(prestigeRespecPending); // claude:2026-10-31T14:58:54+01:00 — 1.4.2 Narben-Rückgabe (wie die Reforged-Leiste)
 
   // Local collapse state for combat sub-skills
   const [combatOpen, setCombatOpen] = useState(false);
@@ -344,15 +349,22 @@ export function SidebarClassic({ activePageId, onNavigate }: SidebarProps): JSX.
           // All other sidebar pages: standard skill button
           const skillLevel = page.skillId !== undefined ? skillLevelGate[1 + pageIdx] ?? null : null;
 
+          // claude:2026-10-31T14:58:54+01:00 — 1.4.2 Narben-Rückgabe: Glut-Band über dem Scherbenaltar-Knopf, Glut-Schein im Knopf.
+          const altarLocked = page.id === "prestige" && !showPrestige;
+          const lockedText = altarLocked ? t("hub.altar.locked").replace("{a}", String(altarSkills99)).replace("{b}", String(altarRequired)) : "";
+          const respecHere = page.id === "prestige" && respecPending && !altarLocked;
           return (
+            <Fragment key={page.id}>
+            {respecHere && <PrestigeRespecRibbon onNavigate={onNavigate} />}
             <button
-              key={page.id}
-              className={`sb-skill-btn ds-button${isActive ? " active" : ""}${isRunning ? " sb-skill-btn--running" : ""}`}
-              onClick={() => onNavigate(page.id)}
+              className={`sb-skill-btn ds-button${isActive ? " active" : ""}${isRunning ? " sb-skill-btn--running" : ""}${respecHere ? " sb-skill-btn--respec" : ""}${altarLocked ? " sb-skill-btn--locked" : ""}`}
+              onClick={altarLocked ? undefined : () => onNavigate(page.id)}
+              aria-disabled={altarLocked || undefined}
               data-guide-id={`sidebar.${page.id}`}
               /* Task #291: title-Tooltip für den Icon-Rail-Kollaps, s. Kommentar oben. */
-              title={t(page.label)}
+              title={altarLocked ? `${t(page.label)} · ${lockedText}` : respecHere ? `${t(page.label)} · ${t("prestige.respec.band")}` : t(page.label)}
             >
+              {respecHere && <PrestigeRespecGlow />}
               {isRunning && <RunningPip label={t("sidebar.activityRunning").replace("{skill}", t(page.label))} />}
 
               {/* Rundes, gerahmtes Skill-Icon */}
@@ -373,6 +385,7 @@ export function SidebarClassic({ activePageId, onNavigate }: SidebarProps): JSX.
                 </span>
               )}
             </button>
+            </Fragment>
           );
         })}
       </nav>

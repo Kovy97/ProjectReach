@@ -59,6 +59,7 @@ const HANDLED: ReadonlySet<AchievementConditionType> = new Set<AchievementCondit
   "farm_plots_planted",
   "deaths",
   "play_hours",
+  "close_wins", // claude:2026-10-31T09:29:00+01:00 — „Heute nicht“: Siege mit höchstens 5 % Leben
   // claude:2026-10-25T10:00:00+02:00 — Raid Gobkha'raz (1.4.0 R10): achievementProgress behandelt die drei Raid-Typen (achievements.ts)
   "raid_boss_kills",
   "raid_clears",
@@ -744,7 +745,10 @@ describe("Achievements 1.2.0 — neue Bedingungstypen", () => {
 
   it("hidden ist reines Anzeige-Metadatum: versteckte Erfolge schalten identisch frei", () => {
     const hidden = content.achievements.filter((a) => a.hidden);
-    expect(hidden.length).toBe(12);
+    // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.2026: versteckt bleiben nur echte Überraschungen (12 → 5).
+    expect(hidden.map((a) => a.id).sort()).toEqual(
+      ["ach_chapter_20", "ach_chapter_21", "ach_deaths_1", "ach_deaths_100", "ach_elite_idol_warden"],
+    );
     const s = fresh();
     s.stats.deaths = 1;
     expect(checkAchievements(s, content)).toContain("ach_deaths_1");

@@ -148,19 +148,60 @@ describe("Siegel-Formel (Balance § 4)", () => {
 describe("Narbenbuch: Content-Baum und Freischaltung", () => {
   const tree = findTalentTree(content, PRESTIGE_TALENT_TREE_ID)!;
 
-  it("Baum `prestige` mit Währung prestigePoints, vier Äste, zwölf Knoten laut Balance § 5 (ohne Rabenvorrat)", () => {
+  // claude:2026-10-30T18:44:00+01:00 — 1.4.2 „Aschesturz 2.0“ (design/1.4.2-aschesturz-spec.md § 3): fünf Äste, 24 Knoten, strenges Raster, 1.217 Narben.
+  it("Baum `prestige` mit Währung prestigePoints, fünf Äste, 24 Knoten laut Spec 1.4.2 § 3 (ohne Rabenvorrat und Glutkern)", () => {
     expect(tree).toBeDefined();
     expect(tree.currency).toBe("prestigePoints");
     expect(tree.unlock).toEqual({ prestigeCount: 1 });
-    expect(tree.branches.map((b) => b.id)).toEqual(["legacy", "haste", "might", "crown"]);
+    expect(tree.branches.map((b) => b.id)).toEqual(["legacy", "haste", "might", "watch", "crown"]);
     expect(tree.nodes.map((n) => n.id)).toEqual([
-      "startingGold", "keepTools", "keepBankStacks", "keepEquipment",
-      "earlyXp", "chronicleRecall", "masteredXp", "dungeonRecall",
-      "maxHp", "damage", "goldFind", "pointsBoost",
+      "startingGold", "keepTools", "keepPurchases", "keepBankStacks", "keepSlayerPoints", "keepEquipment",
+      "earlyXp", "chronicleRecall", "dungeonRecall", "masteredXp", "actionSpeed", "masteryXp",
+      "damage", "maxHp", "goldFind", "foodHeal", "rareDrop",
+      "offlineHours", "workOrders", "huntTraps", "farmPlots", "campBuild",
+      "pointsBoost", "petEcho",
     ]);
-    expect(tree.nodes.some((n) => n.id === "queueSlot")).toBe(false);
+    expect(tree.nodes.some((n) => n.id === "queueSlot" || /glut|ember|core/i.test(n.id))).toBe(false);
     const total = tree.nodes.reduce((sum, n) => sum + n.costPerRank.reduce((a, b) => a + b, 0), 0);
-    expect(total).toBe(489); // Balance 504 − Rabenvorrat 15
+    expect(total).toBe(1217); // Spec § 3 (vorher 489)
+    // Strenges Raster: je Ast genau ein Knoten pro Zeile, Zeilen lückenlos ab 0.
+    for (const br of tree.branches) {
+      const rows = tree.nodes.filter((n) => n.branch === br.id).map((n) => n.row);
+      expect(rows, br.id).toEqual(rows.map((_, i) => i));
+    }
+    // Werte, Kosten und Voraussetzungen exakt nach der Spec-Tabelle.
+    const spec: Record<string, [number[], number[], Array<[string, number]>]> = {
+      startingGold: [[25000, 100000, 400000], [4, 8, 12], []],
+      keepTools: [[1], [8], [["startingGold", 1]]],
+      keepPurchases: [[1], [12], [["keepTools", 1]]],
+      keepBankStacks: [[10, 20, 30], [10, 16, 24], [["keepTools", 1]]],
+      keepSlayerPoints: [[0.25, 0.5, 1], [8, 14, 20], [["keepBankStacks", 1]]],
+      keepEquipment: [[2, 4, 6], [14, 22, 32], [["keepBankStacks", 1]]],
+      earlyXp: [[0.2, 0.4, 0.6, 0.8, 1.0], [4, 6, 8, 10, 14], []],
+      chronicleRecall: [[1], [10], [["earlyXp", 1]]],
+      dungeonRecall: [[1], [8], [["chronicleRecall", 1]]],
+      masteredXp: [[1, 2, 3], [15, 30, 45], [["earlyXp", 1]]],
+      actionSpeed: [[0.04, 0.08, 0.12], [10, 20, 30], [["earlyXp", 2]]],
+      masteryXp: [[0.25, 0.5, 1.0], [8, 16, 24], [["actionSpeed", 1]]],
+      damage: [[0.02, 0.04, 0.06, 0.08, 0.1], [6, 9, 12, 15, 18], []],
+      maxHp: [[0.02, 0.04, 0.06, 0.08, 0.1], [6, 9, 12, 15, 18], []],
+      goldFind: [[0.05, 0.1, 0.15], [15, 20, 25], [["damage", 2]]],
+      foodHeal: [[0.1, 0.2, 0.3], [8, 12, 16], [["maxHp", 2]]],
+      rareDrop: [[0.05, 0.1, 0.15], [15, 25, 35], [["goldFind", 1]]],
+      offlineHours: [[2, 4, 6, 8], [6, 10, 14, 20], []],
+      workOrders: [[0.2, 0.4], [6, 12], [["offlineHours", 1]]],
+      huntTraps: [[1, 2], [10, 20], [["workOrders", 1]]],
+      farmPlots: [[1, 2, 3], [8, 14, 20], [["huntTraps", 1]]],
+      campBuild: [[0.15, 0.3], [8, 16], [["offlineHours", 2]]],
+      pointsBoost: [[0.25, 0.5], [60, 120], [["earlyXp", 3], ["keepEquipment", 1], ["damage", 3]]],
+      petEcho: [[0.35, 0.5], [40, 80], [["pointsBoost", 1]]],
+    };
+    for (const n of tree.nodes) {
+      const [values, costs, req] = spec[n.id]!;
+      expect(n.effect.perRank, `${n.id} Werte`).toEqual(values);
+      expect(n.costPerRank, `${n.id} Kosten`).toEqual(costs);
+      expect((n.requires ?? []).map((r) => [r.node, r.rank]), `${n.id} Voraussetzung`).toEqual(req);
+    }
     for (const n of tree.nodes) {
       expect(n.costPerRank).toHaveLength(n.maxRank);
       expect(n.effect.perRank).toHaveLength(n.maxRank);
@@ -170,12 +211,31 @@ describe("Narbenbuch: Content-Baum und Freischaltung", () => {
     expect(TALENT_EFFECT_FORMAT.prestigeStartingGold).toBe("int");
     expect(TALENT_EFFECT_FORMAT.prestigeKeepBankStacks).toBe("int");
     expect(TALENT_EFFECT_FORMAT.prestigeKeepEquipment).toBe("int");
+    // claude:2026-10-30T18:44:00+01:00 — 1.4.2: Stunden, Fallen und Beete als ganze Zahl, Prozent-Anteile als pct, Bezahlte Rechnung als Schalter.
+    expect(TALENT_EFFECT_FORMAT.offlineHours).toBe("int");
+    expect(TALENT_EFFECT_FORMAT.huntTrapSlots).toBe("int");
+    expect(TALENT_EFFECT_FORMAT.farmPlotSlots).toBe("int");
+    expect(TALENT_EFFECT_FORMAT.prestigeKeepPurchases).toBe("flag");
+    for (const k of ["prestigeKeepSlayerPoints", "actionSpeedPct", "masteryXpPct", "foodHealPct", "rareDropPct", "workOrderRatePct", "campBuildSpeedPct", "petEchoFactor"] as const) {
+      expect(TALENT_EFFECT_FORMAT[k], k).toBe("pct");
+    }
   });
 
-  it("alle sieben Sprachen tragen Namen und Beschreibungen (Overlay eingemischt), {value} bleibt erhalten", () => {
+  it("alle sieben Sprachen tragen Namen, Beschreibungen und Erzählsatz (Overlay eingemischt), {value} bleibt erhalten", () => {
     const langs = ["en", "de", "ru", "zh", "es", "fr", "pt-BR"] as const;
     const rec = (t: unknown): Record<string, string> => t as Record<string, string>;
-    const texts = [tree.name, tree.description!, ...tree.branches.map((b) => b.name), ...tree.nodes.flatMap((n) => [n.name, n.description])].map(rec);
+    // claude:2026-10-30T18:44:00+01:00 — 1.4.2: beide Bäume, jeder Knoten mit `flavor` (ohne {value}).
+    const slayerTree = findTalentTree(content, "slayer")!;
+    for (const n of [...tree.nodes, ...slayerTree.nodes]) {
+      expect(n.flavor, `${n.id} flavor`).toBeDefined();
+      for (const l of langs) expect(rec(n.flavor)[l]!.includes("{value}"), `${n.id} flavor [${l}]`).toBe(false);
+    }
+    const texts = [
+      tree.name,
+      tree.description!,
+      ...tree.branches.map((b) => b.name),
+      ...[...tree.nodes, ...slayerTree.nodes].flatMap((n) => [n.name, n.description, n.flavor!]),
+    ].map(rec);
     for (const t of texts) for (const l of langs) expect(t[l], `${t.en} [${l}]`).toBeTruthy();
     for (const n of tree.nodes) {
       const needsValue = rec(n.description).en!.includes("{value}");
@@ -233,8 +293,8 @@ describe("Jägerkodex-Gate (Chef 18.10.: wirkt nach dem Aufstieg erst wieder ab 
 });
 
 describe("Aufstieg mit Narbenbuch-Knoten", () => {
-  it("Grabmünzen: Startgold 2.500 / 7.500 / 20.000; ohne Rang 0", () => {
-    for (const [rank, gold] of [[0, 0], [1, 2500], [2, 7500], [3, 20000]] as const) {
+  it("Grabmünzen: Startgold 25.000 / 100.000 / 400.000; ohne Rang 0", () => { // claude:2026-10-30T18:44:00+01:00 — 1.4.2
+    for (const [rank, gold] of [[0, 0], [1, 25000], [2, 100000], [3, 400000]] as const) {
       const s = ready();
       s.character.gold = 999_999;
       if (rank > 0) scars(s, { startingGold: rank }); // zweiter Durchgang (Ränge gibt es erst nach einem Aufstieg)
@@ -285,35 +345,36 @@ describe("Aufstieg mit Narbenbuch-Knoten", () => {
     return s;
   }
 
-  it("Vergrabene Truhe: Kandidaten nur Material/Verbrauchsgut (ohne Werkzeug/Schlüssel/Ausrüstung), je ≤ 50 Stück", () => {
+  it("Vergrabene Truhe: Kandidaten nur Material/Verbrauchsgut (ohne Werkzeug/Schlüssel/Ausrüstung), je ≤ 500 Stück", () => { // claude:2026-10-30T18:44:00+01:00 — 1.4.2
     const s = hoarder();
     scars(s, { startingGold: 1, keepTools: 1, keepBankStacks: 1 });
     const pv = prestigeAscendPreview(s, content);
-    expect(pv.stashSlots).toBe(5);
+    expect(pv.stashSlots).toBe(10);
+    expect(PRESTIGE_STASH_STACK_CAP).toBe(500);
     expect(pv.stashStackCap).toBe(PRESTIGE_STASH_STACK_CAP);
     const ids = pv.stashCandidates.map((c) => c.itemId);
     expect(ids).toEqual(expect.arrayContaining(["cooked_shrimp", "onyx", "copper_ore"]));
     expect(ids).not.toContain("iron_pickaxe");
     expect(ids).not.toContain("paragon_key");
     expect(ids).not.toContain(HEIRLOOM_OK.id);
-    expect(pv.stashCandidates.find((c) => c.itemId === "cooked_shrimp")).toEqual({ itemId: "cooked_shrimp", owned: 1049, keep: 50 });
+    expect(pv.stashCandidates.find((c) => c.itemId === "cooked_shrimp")).toEqual({ itemId: "cooked_shrimp", owned: 1049, keep: 500 });
     expect(pv.stashCandidates.find((c) => c.itemId === "onyx")).toEqual({ itemId: "onyx", owned: 30, keep: 30 });
     expect(prestigeStashEligible(content.items.paragon_key)).toBe(false);
 
     expect(ascend(s, content, { stash: ["cooked_shrimp", "onyx"] })).toBe(true);
-    expect(s.bank).toEqual({ iron_pickaxe: 1, cooked_shrimp: 50, onyx: 30 }); // + Werkzeug (Schwielen)
+    expect(s.bank).toEqual({ iron_pickaxe: 1, cooked_shrimp: 500, onyx: 30 }); // + Werkzeug (Schwielen)
   });
 
   it("Vergrabene Truhe: Vorgabe = wertvollste Stapel; zu viele oder ungültige Wahl ⇒ Aufstieg abgelehnt, State unverändert", () => {
     const s = hoarder();
     scars(s, { startingGold: 1, keepTools: 1, keepBankStacks: 1 });
     const pv = prestigeAscendPreview(s, content);
-    expect(pv.stashDefault).toEqual(pv.stashCandidates.slice(0, 5).map((c) => c.itemId));
+    expect(pv.stashDefault).toEqual(pv.stashCandidates.slice(0, 10).map((c) => c.itemId));
 
     const before = JSON.stringify(s);
     expect(prestigeAscendCheck(s, content, { stash: ["onyx", "onyx"] })).toEqual({ ok: false, reason: "stash_invalid" });
     expect(prestigeAscendCheck(s, content, { stash: ["iron_pickaxe"] })).toEqual({ ok: false, reason: "stash_invalid" });
-    expect(prestigeAscendCheck(s, content, { stash: ["a", "b", "c", "d", "e", "f"] })).toEqual({ ok: false, reason: "stash_too_many" });
+    expect(prestigeAscendCheck(s, content, { stash: "abcdefghijk".split("") })).toEqual({ ok: false, reason: "stash_too_many" }); // claude:2026-10-30T18:44:00+01:00 — 11 > 10 Plätze
     expect(ascend(s, content, { stash: ["iron_pickaxe"] })).toBe(false);
     expect(JSON.stringify(s)).toBe(before);
 
@@ -345,7 +406,7 @@ describe("Aufstieg mit Narbenbuch-Knoten", () => {
     scars(s, { startingGold: 1, keepTools: 1, keepBankStacks: 1, keepEquipment: 3 });
 
     const pv = prestigeAscendPreview(s, content);
-    expect(pv.heirloomSlots).toBe(3);
+    expect(pv.heirloomSlots).toBe(6); // claude:2026-10-30T18:44:00+01:00 — 1.4.2: 2/4/6
     expect(pv.heirloomCandidates.some((c) => c.itemId === HEIRLOOM_LOW.id)).toBe(false);
     expect(pv.heirloomCandidates.find((c) => c.instanceId === "inst_40")).toMatchObject({ itemId: HEIRLOOM_OK.id, location: "inventory", count: 1 });
     expect(pv.heirloomCandidates.find((c) => c.itemId === HEIRLOOM_OK2.id && !c.instanceId)).toMatchObject({ count: 2, location: "bank" });
@@ -355,7 +416,7 @@ describe("Aufstieg mit Narbenbuch-Knoten", () => {
       .toEqual({ ok: false, reason: "heirloom_invalid" }); // nur zwei besessen
     expect(prestigeAscendCheck(s, content, { heirlooms: [{ itemId: HEIRLOOM_OK.id, instanceId: "inst_40" }, { itemId: HEIRLOOM_OK.id, instanceId: "inst_40" }] }))
       .toEqual({ ok: false, reason: "heirloom_invalid" });
-    expect(prestigeAscendCheck(s, content, { heirlooms: [1, 2, 3, 4].map(() => ({ itemId: HEIRLOOM_OK2.id })) }))
+    expect(prestigeAscendCheck(s, content, { heirlooms: [1, 2, 3, 4, 5, 6, 7].map(() => ({ itemId: HEIRLOOM_OK2.id })) }))
       .toEqual({ ok: false, reason: "heirloom_too_many" });
 
     const choice = { heirlooms: [{ itemId: HEIRLOOM_OK.id, instanceId: "inst_40" }, { itemId: HEIRLOOM_OK2.id }, { itemId: HEIRLOOM_OK2.id }], stash: [] };
@@ -394,9 +455,9 @@ describe("Aufstieg mit Narbenbuch-Knoten", () => {
     const pv = prestigeAscendPreview(s, content);
     const sorted = [...pv.heirloomCandidates].sort((a, b) => b.requirement - a.requirement);
     expect(pv.heirloomCandidates.map((c) => c.requirement)).toEqual(sorted.map((c) => c.requirement));
-    expect(pv.heirloomDefault).toHaveLength(1);
+    expect(pv.heirloomDefault).toHaveLength(2); // claude:2026-10-30T18:44:00+01:00 — 1.4.2: Rang 1 = zwei Teile (beide Kandidaten)
     expect(pv.unlock.ok).toBe(true);
-    expect(pv.startingGold).toBe(2500);
+    expect(pv.startingGold).toBe(25000);
     expect(pv.summary.stays.pets).toBe(1);
     expect(pv.summary.stays.heldMail).toBe(1);
     expect(pv.summary.goes.totalLevel).toBe(prestigePointsPreview(s, content).totalLevel);
@@ -408,19 +469,20 @@ describe("Aufstieg mit Narbenbuch-Knoten", () => {
 });
 
 describe("Lehrjahre + Handgedächtnis: XP-Faktor an allen Vergabestellen", () => {
+  // claude:2026-10-30T18:44:00+01:00 — 1.4.2: Lehrjahre 0,2–1,0, Handgedächtnis 1/2/3 (E5) und das Zeichen der Asche (+2 % je Sturz, hier count 1).
   it("Faktor: ohne Ränge exakt 1; Lehrjahre nur unter 80; Handgedächtnis nur mit Erfolg und unter 99; additiv", () => {
     const s = fresh();
     expect(prestigeSkillXpMult(s, content, "mining", 0)).toBe(1);
     s.talents = { slayer: { tracking: 5 } };
     expect(prestigeSkillXpMult(s, content, "mining", 0)).toBe(1);
     scars(s, { earlyXp: 3, masteredXp: 1 });
-    expect(prestigeSkillXpMult(s, content, "mining", xpForLevel(50))).toBeCloseTo(1.3, 12);
-    expect(prestigeSkillXpMult(s, content, "mining", xpForLevel(80))).toBe(1);
+    expect(prestigeSkillXpMult(s, content, "mining", xpForLevel(50))).toBeCloseTo(1.62, 12);
+    expect(prestigeSkillXpMult(s, content, "mining", xpForLevel(80))).toBeCloseTo(1.02, 12); // nur Zeichen der Asche
     s.achievements = [...s.achievements, prestigeMasteredAchievementId("mining")];
-    expect(prestigeSkillXpMult(s, content, "mining", xpForLevel(50))).toBeCloseTo(1.8, 12);
-    expect(prestigeSkillXpMult(s, content, "mining", xpForLevel(85))).toBeCloseTo(1.5, 12);
-    expect(prestigeSkillXpMult(s, content, "mining", xpForLevel(99))).toBe(1);
-    expect(prestigeSkillXpMult(s, content, "fishing", xpForLevel(85))).toBe(1); // kein Erfolg für Angeln
+    expect(prestigeSkillXpMult(s, content, "mining", xpForLevel(50))).toBeCloseTo(2.62, 12);
+    expect(prestigeSkillXpMult(s, content, "mining", xpForLevel(85))).toBeCloseTo(2.02, 12);
+    expect(prestigeSkillXpMult(s, content, "mining", xpForLevel(99))).toBeCloseTo(1.02, 12);
+    expect(prestigeSkillXpMult(s, content, "fishing", xpForLevel(85))).toBeCloseTo(1.02, 12); // kein Erfolg für Angeln
     // Gate: ohne Aufstieg (Baum gesperrt) kein Faktor, auch mit Rängen.
     s.prestige.count = 0;
     expect(prestigeSkillXpMult(s, content, "mining", xpForLevel(50))).toBe(1);
@@ -431,7 +493,7 @@ describe("Lehrjahre + Handgedächtnis: XP-Faktor an allen Vergabestellen", () =>
     for (const id of SKILLS) expect(ids.has(prestigeMasteredAchievementId(id)), id).toBe(true);
   });
 
-  it("Skilling (tick.ts): gleiche Abschlüsse, XP × 1,3", () => {
+  it("Skilling (tick.ts): gleiche Abschlüsse, XP × 1,62 (Lehrjahre 3 + Zeichen der Asche)", () => { // claude:2026-10-30T18:44:00+01:00
     const run = (ranks: boolean): number => {
       const s = fresh(1);
       setLevel(s, "woodcutting", 45);
@@ -444,10 +506,10 @@ describe("Lehrjahre + Handgedächtnis: XP-Faktor an allen Vergabestellen", () =>
     };
     const base = run(false);
     expect(base).toBe(10 * content.actions.cut_normal_tree!.xp);
-    expect(run(true)).toBeCloseTo(base * 1.3, 9);
+    expect(run(true)).toBeCloseTo(base * 1.62, 9);
   });
 
-  it("Kampf (combat.ts addXp) und Slayer: derselbe Kill, XP × 1,6 (Lehrjahre 1 + Handgedächtnis 1)", () => {
+  it("Kampf (combat.ts addXp) und Slayer: derselbe Kill, XP × 2,22 (Lehrjahre 1 + Handgedächtnis 1 + Zeichen der Asche)", () => { // claude:2026-10-30T18:44:00+01:00
     const kill = (ranks: boolean): Record<string, number> => {
       const s = fresh(3);
       // Stufe 10: volle Kampf-XP gegen das Huhn (keine Überlevel-Dämpfung) und kein Level-Up in einem Kill
@@ -476,11 +538,11 @@ describe("Lehrjahre + Handgedächtnis: XP-Faktor an allen Vergabestellen", () =>
     expect(gained.length).toBeGreaterThanOrEqual(2);
     for (const k of gained) {
       expect(levelFromXp(xpForLevel(k === "slayer" ? 50 : 10) + b[k]!), `${k} ohne Level-Up`).toBe(k === "slayer" ? 50 : 10);
-      expect(b[k]! / a[k]!, k).toBeCloseTo(1.6, 9); // 1 + 0,1 + 0,5
+      expect(b[k]! / a[k]!, k).toBeCloseTo(2.22, 9); // 1 + 0,2 + 1,0 + 0,02
     }
   });
 
-  it("Farming und Jagen: XP × 1,1 (Lehrjahre 1)", () => {
+  it("Farming und Jagen: XP × 1,22 (Lehrjahre 1 + Zeichen der Asche)", () => { // claude:2026-10-30T18:44:00+01:00
     const seed: ItemDef = { id: "b2_seed", name: "S", type: "material", stackable: true };
     const herb: ItemDef = { id: "b2_herb", name: "H", type: "material", stackable: true };
     const crop: CropDef = { id: "b2_crop", name: "C", seedItem: "b2_seed", yieldItem: "b2_herb", yieldMin: 1, yieldMax: 1, levelRequired: 1, growMs: 60_000, xp: 24, tier: 1 };
@@ -503,7 +565,7 @@ describe("Lehrjahre + Handgedächtnis: XP-Faktor an allen Vergabestellen", () =>
       return s.skills.farming?.xp ?? 0;
     };
     expect(farm(false)).toBe(24);
-    expect(farm(true)).toBeCloseTo(26.4, 9);
+    expect(farm(true)).toBeCloseTo(24 * 1.22, 9);
 
     const hunt = (ranks: boolean, seedNo: number): number => {
       const s = createGame({ name: "J" }, c, seedNo);
@@ -518,7 +580,7 @@ describe("Lehrjahre + Handgedächtnis: XP-Faktor an allen Vergabestellen", () =>
     while (hunt(false, seedNo) === 0 && seedNo < 80) seedNo++;
     const base = hunt(false, seedNo);
     expect(base).toBeGreaterThan(0);
-    expect(hunt(true, seedNo)).toBeCloseTo(base * 1.1, 9);
+    expect(hunt(true, seedNo)).toBeCloseTo(base * 1.22, 9);
   });
 });
 
@@ -584,17 +646,17 @@ describe("Alte Pfade, Narbengewebe, Narbenfaust, Elsternauge", () => {
     expect(isDungeonUnlocked(s, content, gated.id)).toBe(false);
   });
 
-  it("Narbengewebe/Narbenfaust: computeStats maxHp und Schadensspanne × 1,05; ohne Aufstieg wirkungslos", () => {
+  it("Narbengewebe/Narbenfaust: computeStats maxHp und Schadensspanne × 1,10 (E6); ohne Aufstieg wirkungslos", () => { // claude:2026-10-30T18:44:00+01:00
     const s = fresh();
     setLevel(s, "vitality", 40);
     const base = computeStats(s, content);
     scars(s, { maxHp: 5, damage: 5 });
     const st = computeStats(s, content);
-    expect(talentMaxHpMult(s, content)).toBe(1.05);
-    expect(talentDamageMult(s, content)).toBe(1.05);
-    expect(st.maxHp).toBeCloseTo(base.maxHp * 1.05, 9);
-    expect(st.attackDamageMin).toBeCloseTo(base.attackDamageMin * 1.05, 9);
-    expect(st.attackDamageMax).toBeCloseTo(base.attackDamageMax * 1.05, 9);
+    expect(talentMaxHpMult(s, content)).toBe(1.1);
+    expect(talentDamageMult(s, content)).toBe(1.1);
+    expect(st.maxHp).toBeCloseTo(base.maxHp * 1.1, 9);
+    expect(st.attackDamageMin).toBeCloseTo(base.attackDamageMin * 1.1, 9);
+    expect(st.attackDamageMax).toBeCloseTo(base.attackDamageMax * 1.1, 9);
     expect(st.maxHit).toBe(st.attackDamageMax);
     s.prestige.count = 0;
     expect(computeStats(s, content)).toEqual(base);

@@ -1,0 +1,115 @@
+=== TITEL ===
+Grim Reach 1.4.2 - Cinderfall Reborn
+
+=== TEXT (BBCode) ===
+[p][img src="{STEAM_CLAN_IMAGE}/46199651/1b9c3fac87b3d39853654e888fdc93c0391c7070.png"][/img][/p][p]Hunters, [/p][p]this update rebuilds Cinderfall from the ground up, turns the Rewards Shop into something worth saving for, gives the game a proper home screen, and fixes a long list of things you reported.   [/p][hr][/hr][p]
+[/p][h1]Cinderfall Changes[/h1][p]
+[/p][h2]Scar Refunds & Your Progress[/h2][p]
+[/p][list][*][p][b]All spent Scars are refunded.[/b] With the Book of Scars rebuilt, every Scar you previously spent is returned with this update. Open the Shard Altar to spend them in the new tree. A marker on the Shard Altar button reminds you until you have taken a look.
+[/p][/*][*][p][b]Previous Cinderfalls receive retroactive rewards.[/b] Already completed a Cinderfall before 1.4.2? You receive Scars from the newly added sources: the gold you carried, dungeons cleared, and Slayer tasks completed during each earlier run, plus your companions, bestiary progress, achievement points, and first raid clears. These are awarded immediately, without waiting for your next Cinderfall.
+[/p][/*][*][p][b]New Haven no longer resets.[/b] Everything you have built stays with you through every Cinderfall.
+[/p][/*][/list][p]
+[/p][h2]The Rebuilt Book of Scars[/h2][p]
+The Book of Scars now offers [b]24 gifts across five branches[/b]. New additions include:
+
+[/p][list][*][p][b]Long Night:[/b] +2 / 4 / 6 / 8 hours of offline time, reaching up to 19 hours with the Watchtower.
+[/p][/*][*][p][b]Practised Hand:[/b] Gathering, crafting, and thieving actions take up to 12% less time.
+[/p][/*][*][p][b]Mastery Embers:[/b] Up to +100% mastery XP.
+[/p][/*][*][p][b]Emberblood:[/b] Food heals up to 30% more.
+[/p][/*][*][p][b]Keen Eye:[/b] Rare combat drops become up to 15% more likely.
+[/p][/*][*][p][b]Raven Post, Trapper, Seed Vault & Master Builder:[/b] More work orders, extra trap slots, up to three additional farm plots, and faster construction in New Haven.
+[/p][/*][*][p][b]Settled Accounts & Unbroken Trail:[/b] Keep your auto-eat, auto-potion, and bank slots, along with a share of your Slayer points and Quest Tokens.
+[/p][/*][*][p][b]Echo of Companions:[/b] Companions you do not have equipped pass on more of their bonus.
+[/p][/*][/list][p]
+Many existing gifts have also been strengthened: more starting gold, a bigger buried chest, more heirloom pieces, more XP from Apprentice Years and Second Nature, and greater damage and health bonuses.
+
+[/p][h2]More Ways to Earn Scars[/h2][p]
+[/p][list][*][p][b]More than just levels.[/b] Each Cinderfall now also counts the gold you carry, dungeons cleared, Slayer tasks completed, and raid clears.
+[/p][/*][*][p][b]One-time collection rewards.[/b] Every companion you own, every completed bestiary entry, every 100 achievement points, and your first raid clear on each difficulty award Scars at your next Cinderfall.
+[/p][/*][*][p][b]A clearer Shard Altar.[/b] Every source now shows what you have, what it is worth, and how far you are from earning the next Scar.
+[/p][/*][*][p][b]Sign of Ash.[/b] Each completed Cinderfall grants +2% skill XP, up to +20%. No gift required.
+[/p][/*][*][p][b]Chronicle of This Run.[/b] The summary that greets you after a Cinderfall now presents your deeds and levels as cards, with your level 99 skills up front.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Rewards Shop[/h1][p]
+The Rewards Shop is now a single page, with [b]wares on the left and services on the right[/b]. Every completed chapter adds new wares, and you can preview what upcoming chapters will unlock.
+
+[/p][h2]New Ways to Spend Quest Tokens[/h2][p]
+[/p][list][*][p][b]Reroll a Daily Quest:[/b] Replace a quest card with another of the same difficulty and reward. Costs 2 / 3 / 4 tokens, with up to three rerolls per day.
+[/p][/*][*][p][b]Call an Order / Call a Large Order:[/b] The customer with the next work order of that tier arrives after your next gathering or crafting action. The shop also shows how much time remains on the timer.
+[/p][/*][*][p][b]Lesson:[/b] Gain 30 minutes' worth of XP in woodcutting, mining, fishing, foraging, or thieving.
+[/p][/*][*][p][b]Master's Lesson:[/b] Gain an hour's worth of mastery XP for an action of your choice.
+[/p][/*][*][p][b]Companion's Trail:[/b] Bring a missing companion closer, provided you have the required Slayer talent.
+[/p][/*][*][p][b]Fee Writ:[/b] Get 25% off your next raid fee. Available once a week, starting at chapter 20.
+[/p][/*][/list][p]
+[/p][h2]Unlocks & Availability[/h2][p]
+[/p][list][*][p][b]Master's Lesson[/b] unlocks at chapter 4.
+[/p][/*][*][p][b]Call a Large Order[/b] unlocks at chapter 9.
+[/p][/*][*][p]The [b]Contract Token[/b] for Slayer tasks is now available from the start, instead of chapter 20.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Daily Quests into the Queue[/h1][p]
+You asked for it: [b]"Queue all dailies"[/b] adds every open daily quest to your action queue. Each quest card can also be queued individually.
+
+If a crafting quest needs materials you do not have yet, the required gathering steps are automatically queued ahead of it.
+
+[/p][hr][/hr][p]
+[/p][h1]Salvage, the New Way[/h1][p]
+The shop now has a dedicated [b]Salvage tab[/b].
+
+[/p][list][*][p][b]Quick Salvage:[/b] Choose your inventory, bank, or both, select weapons, armour, or jewelry, and salvage all items of one rarity with a single click. You can see exactly what you will receive before confirming.
+[/p][/*][*][p][b]Mass Salvage:[/b] View your inventory and bank side by side, select the items you want to dismantle, and salvage them all at once.
+[/p][/*][*][p][b]Item protection:[/b] Locked items, equipped gear, and items with runes are always excluded from Quick Salvage. Items with a suffix are also protected unless you turn that option off.
+[/p][/*][*][p][b]Clear results:[/b] After every salvage, a summary shows what you received and where it went.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Pinned Recipes[/h1][p]
+Every recipe card now has a [b]pin button[/b]. Pinned recipes appear in a small window that you can move and collapse.
+
+The window shows their ingredients, how many you can craft, and buttons to [b]start crafting, add the recipe to your queue, or jump to its page[/b].
+
+[/p][hr][/hr][p]
+[/p][h1]Slayer[/h1][p]
+[/p][list][*][p][b]Automatic tasks no longer get left behind.[/b] With "Get next task automatically" enabled, a new task joins your queue if combat cannot switch to it immediately. It is placed after your other queued plans, but ahead of any endless entries. Tasks completed in dungeons, raids, or against Champions follow the same rules.
+[/p][/*][*][p][b]Automatic retries after defeat.[/b] If you fall against your current task monster, your hero tries again after a short rest, as long as you have food in your auto-eat slot. After three consecutive defeats without a single kill, the game stops retrying.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Quality of Life[/h1][p]
+[/p][list][*][p][b]Auto-eat and auto-potion use your bank.[/b] Once your inventory runs out, food and potions are taken from your bank. No more falling at night with a full larder.
+[/p][/*][*][p][b]Food estimates before combat.[/b] Combat preparation now shows how long your food is expected to last against the selected target.
+[/p][/*][*][p][b]More useful monster cards.[/b] See time per kill, kills per hour, and XP per hour.
+[/p][/*][*][p][b]Queue templates.[/b] Save up to three queues and load them again with one click.
+[/p][/*][*][p][b]Better offline reports.[/b] The report now tells you when your queue ran empty and how much time went unused.
+[/p][/*][*][p][b]Smoother returns to a minimised game.[/b] Time spent away is now processed in steps with a progress bar, avoiding the brief freeze when you return. You also receive the same report as after loading the game.
+[/p][/*][*][p][b]Gear upgrade markers.[/b] A small marker highlights items in your inventory and bank that are better than what you currently wear in that slot. This can be disabled in the options.
+[/p][/*][*][p][b]Recipe filters and unlock previews.[/b] Recipe pages can show only craftable or unlocked recipes, and display what your next level unlocks. Level-up messages now list newly unlocked recipes too.
+[/p][/*][*][p][b]Clickable quest objectives.[/b] Jump straight to the relevant monster or recipe.
+[/p][/*][*][p][b]Optional desktop notifications.[/b] Receive a notification when your hero falls, your queue finishes, or a Slayer task or large order is completed. Disabled by default and only active while the game is in the background.
+[/p][/*][*][p][b]Shard Altar unlock requirements.[/b] Before it becomes available, the Shard Altar appears greyed out in the sidebar and shows what you need to unlock it.
+[/p][/*][*][p][b]Blood Moon loot indicators.[/b] Kills that awarded double loot during a Blood Moon are now marked.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]A Home Screen[/h1][p]
+[/p][list][*][p][b]A new Main Menu page[/b] brings together your current story chapter, recent activity, daily quests, and key numbers at a glance.
+[/p][/*][*][p]The button that returns you to the title screen is now called [b]"Title Screen"[/b], so the two no longer share a name.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Quests & Achievements[/h1][p]
+[/p][list][*][p]Quest pages have cleaner cards and slimmer frames.
+[/p][/*][*][p]The achievements page has been rebuilt, with categories on the left and a new card layout.
+[/p][/*][*][p]Seven previously hidden achievements are now visible: [b]Feathers Everywhere, Bull-Headed, Rat King, Old Grudge, Feeder of Armies, A Hundred Hours in the Reach,[/b] and [b]Ninefold[/b].
+[/p][/*][*][p][b]"Not Today"[/b] no longer requires 100 deaths. Instead, win a fight with 5% health or less remaining.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Fixes[/h1][p]
+[/p][list][*][p]Fixed an issue where completing a Cinderfall on the same day reset your daily streak and granted a second set of daily quests.
+[/p][/*][*][p]Fixed "Queue all dailies" queuing too few actions when two quests required the same action.
+[/p][/*][*][p]Fixed salvage confirmations opening behind another window.
+[/p][/*][*][p]Fixed Tier IV runes not displaying their fifth ingredient, Relic Dust, and ingredient amounts being cut off in recipes with five ingredients.
+[/p][/*][*][p]Fixed Companion's Trail only counting kills in the companion's own combat style. It now counts every kill; the companion itself still drops in its own style.
+[/p][/*][*][p]Purchased items no longer trigger a "Rare find" notification.
+[/p][/*][*][p]Rerolling a queued daily quest now warns you that its existing queue entries will remain.
+[/p][/*][*][p]Fixed numerous smaller issues with layouts at 1366x768, number formatting, and text across all languages.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[b]Thank you for every report. Keep them coming.[/b][/p]

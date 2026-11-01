@@ -18,6 +18,7 @@ import { initBackgroundAudio } from "./util/backgroundAudio";
 // claude:2026-10-19T10:05:00+02:00 — Oberflächen-Stil (Reforged/Classic) vor dem ersten Render setzen, s. uiStyle.ts.
 import { initUiStyle } from "./uiStyle";
 import { initNavSkin } from "./navSkin"; // claude:2026-10-25T18:09:00+01:00 — Knopf-Stile Seitenleiste/Kopfleiste
+import { earlyAssetLab } from "./devtools/assetLabEarly"; // claude:2026-11-01T11:59:23+01:00 — Werkstatt-CSS vor dem ersten Bild (nur Dev)
 import "./styles/index.css";
 
 // Schriftwahl VOR dem ersten Render anwenden (Chef 31.08.2026), damit die Oberflaeche
@@ -27,6 +28,18 @@ initTextScale();
 initUiStyle();
 initNavSkin(); // claude:2026-10-25T18:09:00+01:00
 initBackgroundAudio();
+// claude:2026-10-30T20:20:00+01:00 — Asset-Werkstatt (Strg+Umschalt+Alt+A) nur im Dev-Server oder im Build mit `ASSET_LAB=1`; sonst fällt der Zweig samt
+// dynamischem Import weg (kein assetLab-Chunk, keine Bild-Liste im Spielerpaket).
+if (import.meta.env.DEV || __ASSET_LAB_BUILD__) {
+  earlyAssetLab(); // claude:2026-11-01T11:59:23+01:00 — gemerktes Werkstatt-CSS sofort setzen (kein Stein-Flackern beim Start)
+  void import("./devtools/assetLabHotkey").then((m) => m.initAssetLabHotkey());
+}
+
+// claude:2026-10-30T21:00:00+01:00 — Dev-UI-Stil „Synty“: CSS und Bilder hängen NUR an diesem dynamischen Import; ohne `SYNTY_UI=1` (und außerhalb des Dev-Servers) fällt der
+// Zweig samt Chunk weg. Der Ausdruck steht wörtlich hier (Konstantenfaltung), s. uiStyle.ts / synty/loader.ts.
+if (import.meta.env.DEV || __SYNTY_UI_BUILD__) {
+  void import("./synty/loader").then((m) => m.initSynty());
+}
 
 const root = document.getElementById("root");
 if (!root) throw new Error("#root nicht gefunden");

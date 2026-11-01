@@ -42,6 +42,20 @@ function prefersReducedMotion(): boolean {
   return typeof window !== "undefined" && (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false);
 }
 
+// claude:2026-11-01T11:14:09+01:00 — Chef 01.11.: „coolere Karten, die stolz das Erreichte zeigen, statt lebloser Leisten“.
+// Taten als Trophäen-Karten mit Symbol, Level als Medaillen-Karten (Ring statt Balken, 99er zuerst und in Gold gefasst),
+// Narbenquellen als Siegel-Karten. Zeitachse, Überspringen und Texte unverändert.
+const DEED_ICON: Record<TileKey, string> = {
+  totalLevel: "overall",
+  skills99: "mastery",
+  chronicle: "quests",
+  paragon: "combat",
+  kills: "slayer",
+  dungeons: "city",
+  achievements: "achievements",
+  pets: "companions",
+};
+
 function skillIcon(id: string): JSX.Element {
   const png = getSkillIcon(id) ?? getSidebarIcon(id);
   if (png) return <img loading="lazy" decoding="async" src={png} alt="" className="alg-skill-icon pixelart" />;
@@ -138,7 +152,7 @@ export function AscendLedger({ summary, onContinue }: { summary: PrestigeRunSumm
       <header className={cls(0, "alg-head")}>
         <div className="alg-eyebrow">{t("prestige.bilanz.run").replace("{n}", String(summary.run))}</div>
         <h2 id="prestige-awakening-title" className="alg-title">{t("prestige.bilanz.title")}</h2>
-        <div className="alg-played">{t("prestige.bilanz.played").replace("{time}", formatPlaytime(summary.playMs))}</div>
+        <div className="alg-played">{t("prestige.bilanz.played").replace("{time}", formatPlaytime(summary.playMs, t))}</div>
       </header>
 
       <div className="alg-body">
@@ -148,10 +162,15 @@ export function AscendLedger({ summary, onContinue }: { summary: PrestigeRunSumm
             {tiles.map((tile, i) => {
               const start = TILE_START + i * TILE_STEP;
               const zero = tile.value <= 0;
+              const landed = eff >= start + COUNT_MS;
+              const icon = getSidebarIcon(DEED_ICON[tile.key]);
               return (
-                <div key={tile.key} className={cls(start, `alg-tile alg-tile--${tile.key}${zero ? " is-zero" : ""}`)}>
-                  <span className="alg-tile-value">{formatNum(zero ? 0 : count_(start, tile.value, COUNT_MS))}</span>
-                  <span className="alg-tile-label">{t(`prestige.bilanz.tile.${tile.key}`)}</span>
+                <div key={tile.key} className={cls(start, `alg-tile alg-tile--${tile.key}${zero ? " is-zero" : ""}${landed ? " is-landed" : ""}`)}>
+                  {icon && <img loading="lazy" decoding="async" src={icon} alt="" className="alg-tile-art" />}
+                  <span className="alg-tile-text">
+                    <span className="alg-tile-value">{formatNum(zero ? 0 : count_(start, tile.value, COUNT_MS))}</span>
+                    <span className="alg-tile-label">{t(`prestige.bilanz.tile.${tile.key}`)}</span>
+                  </span>
                   {tile.key === "skills99" && summary.skills99.length > 0 && (
                     <span className="alg-tile-icons">
                       {summary.skills99.map((id) => (
@@ -166,20 +185,20 @@ export function AscendLedger({ summary, onContinue }: { summary: PrestigeRunSumm
 
           <h3 className={cls(BAR_START - 200, "alg-sub")}>{t("prestige.bilanz.levels")}</h3>
           <div className="alg-skills">
-            {summary.skills.map((sk, i) => {
+            {/* Höchste Stufen zuerst (stabil in Content-Reihenfolge), damit die 99er vorn stehen. */}
+            {[...summary.skills].sort((a, b) => b.level - a.level).map((sk, i) => {
               const start = BAR_START + i * BAR_STEP;
               const at99 = sk.level >= PRESTIGE_SKILL_LEVEL;
               const fill = easeOut((eff - start) / BAR_MS) * Math.min(1, sk.level / PRESTIGE_SKILL_LEVEL);
               const name = tr(content.skills[sk.id]?.name ?? { en: sk.id, de: sk.id });
+              const low = sk.level <= 1;
               return (
-                <div key={sk.id} className={cls(start, `alg-skill${at99 ? " is-99" : ""}`)} title={name}>
-                  {skillIcon(sk.id)}
-                  <span className="alg-skill-name">{name}</span>
-                  <span className="alg-skill-level">{Math.max(1, count_(start, sk.level, BAR_MS))}</span>
-                  <span className="alg-skill-bar" aria-hidden="true">
-                    <span className="alg-skill-fill" style={{ width: `${fill * 100}%` }} />
-                    {at99 && <span className="alg-skill-notch" />}
+                <div key={sk.id} className={cls(start, `alg-skill${at99 ? " is-99" : ""}${low ? " is-low" : ""}`)} title={name}>
+                  <span className="alg-skill-medal" style={{ ["--fill" as string]: `${Math.round(fill * 360)}deg` }}>
+                    {skillIcon(sk.id)}
                   </span>
+                  <span className="alg-skill-level">{Math.max(1, count_(start, sk.level, BAR_MS))}</span>
+                  <span className="alg-skill-name">{name}</span>
                 </div>
               );
             })}
@@ -196,7 +215,8 @@ export function AscendLedger({ summary, onContinue }: { summary: PrestigeRunSumm
                 <div key={row.key} className={cls(start, `alg-row alg-row--${row.kind}`)}>
                   <span className="alg-row-label">{row.label}</span>
                   <span className="alg-row-value">
-                    {row.kind === "subtotal" ? "" : "+ "}
+                    {row.kind === "line" && <ScarGlyph size={14} />}
+                    {row.kind === "subtotal" ? "" : "+"}
                     {formatNum(count_(start, row.value, 450))}
                   </span>
                 </div>

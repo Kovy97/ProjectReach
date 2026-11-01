@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { GameState } from "@hearthforge/shared";
-import { PRESTIGE_HISTORY_MAX, PRESTIGE_UNLOCK_QUEST_ID, SAVE_VERSION, defaultPrestigeRunBaseline, defaultPrestigeState } from "@hearthforge/shared";
+import { PRESTIGE_HISTORY_MAX, PRESTIGE_UNLOCK_QUEST_ID, SAVE_VERSION, defaultPrestigeRunBaseline, defaultPrestigeState, emptyPrestigeRespecRetro } from "@hearthforge/shared"; // claude:2026-10-31T14:58:54+01:00 — + emptyPrestigeRespecRetro (SAVE 102)
 import {
   PRESTIGE_CHARACTER_FIELDS,
   PRESTIGE_STATE_FIELDS,
@@ -21,6 +21,11 @@ import {
   secondPetSlotUnlocked,
   talentEffect,
   xpForLevel, storagePredicate } from "@hearthforge/engine";
+import { erwarteSave99Flaechen } from "./save99-test-helper"; // claude:2026-10-30T19:01:00+01:00 — SAVE 99
+import { erwarteSave100Flaechen } from "./save100-test-helper"; // claude:2026-10-30T22:28:00+01:00 — SAVE 100
+import { erwarteSave101Flaechen } from "./save101-test-helper"; // claude:2026-10-31T11:46:28+01:00 — SAVE 101
+import { erwarteSave103Flaechen } from "./save103-test-helper"; // claude:2026-10-31T16:08:21+01:00 — SAVE 103
+import { erwarteSave102Flaechen } from "./save102-test-helper"; // claude:2026-10-31T14:58:54+01:00 — SAVE 102
 import { deserialize, serialize } from "./index";
 
 // claude:2026-10-17T23:30:00+02:00 — Prestige-Fundament (SAVE 88, 1.3 Welle B1): Migration v87 → v88,
@@ -93,11 +98,13 @@ describe("Sanitize prestige", () => {
       pointsSpent: 0,
       // claude:2026-10-18T19:40:00+02:00 — Welle E1: ohne `runStart` zählt alles ab Spielbeginn, nur die Spielzeit
       // kommt exakt aus dem jüngsten Historien-Eintrag.
-      runStart: { kills: 0, dungeons: 0, achievements: 0, pets: 0, slayerTasks: 0, activePlayMs: 2000 },
+      runStart: { kills: 0, dungeons: 0, achievements: 0, pets: 0, slayerTasks: 0, activePlayMs: 2000, raidClears: { normal: 0, heroic: 0, mythic: 0 } },
       history: [
         { count: 1, points: 40, totalLevel: 1010, skills99: 4, activePlayMs: 1000 },
         { count: 4, points: 50, totalLevel: 1100, skills99: 5, activePlayMs: 2000 },
       ],
+      paid: { pets: [], bestiary: [], ap: 0, raids: [] }, // claude:2026-10-30T19:01:00+01:00 — SAVE 99: Hauptbuch fehlt ⇒ leer (E2)
+      respec142: null, // claude:2026-10-31T14:58:54+01:00 — SAVE 102: Beleg fehlt ⇒ null
     });
   });
 
@@ -126,12 +133,12 @@ describe("Sanitize prestige", () => {
   it("gültiger Zustand ist ein Fixpunkt (Round-Trip byte-gleich)", () => {
     const s = base();
     // claude:2026-10-18T19:40:00+02:00 — Welle E1: mit `runStart` und einem Eintrag mit, einem ohne `tally`.
-    s.prestige = { count: 2, points: 7, pointsSpent: 93, runStart: { kills: 900, dungeons: 4, achievements: 12, pets: 3, slayerTasks: 6, activePlayMs: 20 }, history: [
+    s.prestige = { count: 2, points: 7, pointsSpent: 93, runStart: { kills: 900, dungeons: 4, achievements: 12, pets: 3, slayerTasks: 6, activePlayMs: 20, raidClears: { normal: 0, heroic: 0, mythic: 0 } }, paid: { pets: [], bestiary: [], ap: 0, raids: [] }, history: [ // claude:2026-10-30T18:47:00+01:00 — SAVE 99
       { count: 1, points: 50, totalLevel: 1040, skills99: 4, activePlayMs: 10 },
       { count: 2, points: 50, totalLevel: 1050, skills99: 4, activePlayMs: 20, tally: {
         playMs: 10, chronicleChapter: 23, questsClaimed: 31, kills: 500, dungeons: 2, achievements: 7, petsFound: 1, slayerTasks: 4, paragonBest: 15, gold: 123_456,
       } },
-    ] };
+    ], respec142: null }; // claude:2026-10-31T14:58:54+01:00 — SAVE 102: ohne Rückgabe-Beleg
     const at = 1_760_000_000_000;
     const once = serialize(deserialize(serialize(s, at), content, at)!.state, at);
     const twice = serialize(deserialize(once, content, at)!.state, at);
@@ -149,7 +156,10 @@ describe("v88-Vault-Fixture (nach einem echten Aufstieg gepinnt)", () => {
     const s = deserialize(json, content, raw.savedAt)!.state;
     expect(s.prestige.count).toBe(1);
     expect(s.prestige.history).toHaveLength(1);
-    expect(s.prestige.points).toBe(s.prestige.history[0]!.points);
+    // claude:2026-10-31T14:58:54+01:00 — SAVE 102: der Stand ist von vor 1.4.2 und hat einen Sturz, also zahlt das erste Laden die Sammlung
+    // nach (2 Begleiter × 4 = 8; der v88-Eintrag trägt keine Bilanz, darum keine Nachzahlung für Gold/Dungeons/Slayer).
+    expect(s.prestige.points).toBe(s.prestige.history[0]!.points + 8);
+    expect(s.prestige.respec142).toEqual({ refunded: 0, retro: { ...emptyPrestigeRespecRetro(), pets: 8, total: 8 }, acknowledged: false });
     expect(s.prestige.points).toBeGreaterThan(0);
     expect(s.talents.slayer).toBeDefined();
     expect(Object.keys(s.character.ownedPets).length).toBeGreaterThanOrEqual(2);
@@ -195,6 +205,14 @@ describe("v88-Vault-Fixture (nach einem echten Aufstieg gepinnt)", () => {
     erwartet.state.stats.producedBySkill = {}; // claude:2026-10-24T16:03:31+02:00 — SAVE 95 (Erzeugt je Skill, ohne offene Aufträge leer)
     erwartet.state.slayerAutoTask = false; // claude:2026-10-25T10:32:00+01:00 — SAVE 96 (1.4.1): Auto-Auftrag aus
     erwartet.state.inventory.variantCells = {}; // claude:2026-10-25T18:11:00+01:00 — SAVE 98: neues Feld, das Fixture hat keine reinen Variantengruppen
+    erwarteSave99Flaechen(erwartet.state); // claude:2026-10-30T19:01:00+01:00 — SAVE 99 (1.4.2): Beete 12, Fallen 8, Raid-Laufanker, leeres Hauptbuch
+    erwarteSave100Flaechen(erwartet.state); // claude:2026-10-30T22:28:00+01:00 — SAVE 100 (1.4.2): leeres Kaufbuch, Gebührenschein-Schalter aus
+    erwarteSave101Flaechen(erwartet.state); // claude:2026-10-31T11:46:28+01:00 — SAVE 101 (1.4.2): keine angepinnten Rezepte
+    erwarteSave103Flaechen(erwartet.state); // claude:2026-10-31T16:08:21+01:00 — SAVE 103 (1.4.2): drei leere Warteschlangen-Vorlagen
+    // claude:2026-10-31T14:58:54+01:00 — SAVE 102: Nachzahlung der Sammlung (rotbark + cragmaw = 8 Narben) samt Hauptbuch und Beleg; nichts zurückzugeben.
+    erwartet.state.prestige.points += 8;
+    erwartet.state.prestige.paid.pets = ["rotbark", "cragmaw"];
+    erwarteSave102Flaechen(erwartet.state, { refunded: 0, retro: { ...emptyPrestigeRespecRetro(), pets: 8, total: 8 }, acknowledged: false });
     // claude:2026-10-25T10:32:00+01:00 — SAVE 96 Gutschrift der halbierten Kodex-Ränge (tracking 5 = 2.525, collar 1 = 1.500, lore 2 = 575).
     erwartet.state.slayerPoints += 2525 + 1500 + 575;
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
@@ -205,7 +223,7 @@ describe("v88-Vault-Fixture (nach einem echten Aufstieg gepinnt)", () => {
     const stateKeys = Object.keys(raw.state);
     expect(stateKeys.filter((k) => !(k in PRESTIGE_STATE_FIELDS))).toEqual([]);
     // claude:2026-10-24T17:05:00+02:00 — Felder späterer Versionen fehlen im v88-Pin naturgemäß (SAVE 90: lockedItems).
-    const SPAETER = ["lockedItems", "eventRng", "skillEvents", "workOrders", "raid", "slayerAutoTask"]; // SAVE 90/92/93/96 (claude:2026-10-25T10:32:00+01:00)
+    const SPAETER = ["lockedItems", "eventRng", "skillEvents", "workOrders", "raid", "slayerAutoTask", "tokenShopLedger", "pinnedRecipes", "queueTemplates"]; // SAVE 90/92/93/96 (claude:2026-10-25T10:32:00+01:00), 100 (claude:2026-10-30T22:28:00+01:00), 101 (claude:2026-10-31T11:46:28+01:00), 103 (claude:2026-10-31T16:08:21+01:00)
     expect(Object.keys(PRESTIGE_STATE_FIELDS).filter((k) => !stateKeys.includes(k) && !SPAETER.includes(k))).toEqual([]);
     const charKeys = Object.keys(raw.state.character);
     expect(charKeys.filter((k) => !(k in PRESTIGE_CHARACTER_FIELDS))).toEqual([]);
@@ -262,7 +280,7 @@ describe("Welle B2: Post-Sperre-Flag, Narbenbuch, Jägerkodex-Gate über Save/Lo
     expect(back.talents).toEqual({ slayer: { tracking: 5, collar: 1 }, prestige: { earlyXp: 2, maxHp: 1 } });
     expect(back.character.companionPetId2).toBe(pets[1]);
     expect(secondPetSlotUnlocked(back, content)).toBe(false); // Slayer wieder 1 ⇒ Kodex ruht
-    expect(talentEffect(back, content, "prestigeEarlyXp")).toBeCloseTo(0.2, 12);
+    expect(talentEffect(back, content, "prestigeEarlyXp")).toBeCloseTo(0.4, 12); // claude:2026-10-30T19:01:00+01:00 — 1.4.2: Lehrjahre Rang 2 = +40 % (war +20 %)
     expect(back.mailbox[0]!.prestigeHeld).toBe(true);
     expect(mailCollectBlocked(back, content, back.mailbox[0]!)).toBe("prestige_locked");
   });
@@ -296,7 +314,7 @@ describe("Welle E1: Baselines (runStart) und Bilanz (tally) über Save/Load", ()
     expect(back.prestige.history[0]!.tally).toEqual(TALLY);
     expect(Object.keys(back.prestige.history[0]!.tally!)).toEqual(Object.keys(TALLY));
     for (const h of back.prestige.history.slice(1)) expect("tally" in h, `Eintrag ${h.count}`).toBe(false);
-    expect(back.prestige.runStart).toEqual({ kills: 1, dungeons: 2, achievements: 3, pets: 4, slayerTasks: 5, activePlayMs: 50 });
+    expect(back.prestige.runStart).toEqual({ kills: 1, dungeons: 2, achievements: 3, pets: 4, slayerTasks: 5, activePlayMs: 50, raidClears: { normal: 0, heroic: 0, mythic: 0 } }); // claude:2026-10-30T18:47:00+01:00 — SAVE 99
   });
 
   it("runStart: kaputte Werte ⇒ 0, Fremdschlüssel fallen weg; fehlt/kein Objekt ⇒ Default (Spielzeit aus der Historie)", () => {
@@ -307,8 +325,10 @@ describe("Welle E1: Baselines (runStart) und Bilanz (tally) über Save/Load", ()
       pointsSpent: 0,
       runStart: { kills: -5, dungeons: Number.NaN, achievements: 2.7, pets: "x", slayerTasks: 3, activePlayMs: 99, extra: 1 } as never,
       history: [{ count: 1, points: 40, totalLevel: 1010, skills99: 4, activePlayMs: 777 }],
+      paid: { pets: [], bestiary: [], ap: 0, raids: [] }, // claude:2026-10-30T18:47:00+01:00 — SAVE 99
+      respec142: null, // claude:2026-10-31T14:58:54+01:00 — SAVE 102
     };
-    expect(loadState(s).prestige.runStart).toEqual({ kills: 0, dungeons: 0, achievements: 2, pets: 0, slayerTasks: 3, activePlayMs: 99 });
+    expect(loadState(s).prestige.runStart).toEqual({ kills: 0, dungeons: 0, achievements: 2, pets: 0, slayerTasks: 3, activePlayMs: 99, raidClears: { normal: 0, heroic: 0, mythic: 0 } });
     for (const v of [undefined, null, 7, [1, 2]]) {
       const t = structuredClone(s) as unknown as { prestige: Record<string, unknown> };
       if (v === undefined) delete t.prestige.runStart;
@@ -353,7 +373,8 @@ describe("Welle E1: Baselines (runStart) und Bilanz (tally) über Save/Load", ()
     const { json, raw } = read("v88-synthetic-1.3.0.json");
     const s = deserialize(json, content, raw.savedAt)!.state;
     // Zählerstände beim Aufstieg der Fixture-Kette (danach nur 40 Kupfererz gesammelt, keine Kills/Dungeons).
-    expect(s.prestige.runStart).toEqual({ kills: 4689, dungeons: 0, achievements: 0, pets: 2, slayerTasks: 0, activePlayMs: 1_440_000_000 });
+    // claude:2026-10-30T19:01:00+01:00 — SAVE 99: plus Raid-Laufanker = Stand beim Laden (die v88-Kette hat keinen Raid-Abschluss).
+    expect(s.prestige.runStart).toEqual({ kills: 4689, dungeons: 0, achievements: 0, pets: 2, slayerTasks: 0, activePlayMs: 1_440_000_000, raidClears: { normal: 0, heroic: 0, mythic: 0 } });
     expect(prestigeRunCounters(s)).toEqual(s.prestige.runStart);
     const sum = prestigeRunSummary(s, content);
     expect(sum.run).toBe(2);

@@ -192,3 +192,8 @@
 .itip-set-tier-head { font-weight: 700; }
 .itip-set-tier.on .itip-set-tier-head { color: var(--gold); }
 .itip-set-tier-fx { font-size: var(--fs-sm); line-height: 1.35; }
+
+/* claude:2026-10-30T23:10:00+01:00 — Gebührenschein (1.4.2 L4): Schalter für den Start und für die Warteschlange. */
+.raid-writ { justify-content: flex-start; margin: 0 0 6px; }
+.raid-writ.is-empty { opacity: 0.6; cursor: default; }
+.raid-writ-queue { justify-content: flex-start; margin-top: 6px; }

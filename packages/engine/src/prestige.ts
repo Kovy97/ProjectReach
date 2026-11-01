@@ -8,15 +8,40 @@ import type {
   ItemDef,
   ItemId,
   ItemInstance,
+  MonsterId,
+  PetId,
+  PrestigePaidLedger,
   PrestigeRecord,
+  PrestigeRespec142, // claude:2026-10-31T14:58:54+01:00 — SAVE 102 Rückgabe/Nachzahlung
   PrestigeRunBaseline,
   PrestigeRunTally,
   QuestDef,
+  RaidDifficulty,
   SkillId,
   WeaponStyle,
 } from "@hearthforge/shared";
 import {
+  DUNGEON_VARIANT_PREFIX,
   EQUIP_SLOTS,
+  PRESTIGE_AP_STEP,
+  PRESTIGE_DUNGEON_POINTS_CAP,
+  PRESTIGE_DUNGEON_STEP,
+  PRESTIGE_GOLD_POINTS_CAP,
+  PRESTIGE_GOLD_STEP,
+  PRESTIGE_POINTS_PER_AP_STEP,
+  PRESTIGE_POINTS_PER_BESTIARY_ENTRY,
+  PRESTIGE_POINTS_PER_PET,
+  PRESTIGE_POINTS_PER_RAID_CLEAR,
+  PRESTIGE_POINTS_RAID_FIRST,
+  PRESTIGE_RAID_POINTS_CAP,
+  PRESTIGE_SLAYER_POINTS_CAP,
+  PRESTIGE_SLAYER_STEP,
+  RAID_DIFFICULTIES,
+  defaultPrestigePaidLedger,
+  emptyPrestigeRespecRetro, // claude:2026-10-31T14:58:54+01:00 — SAVE 102
+  PRESTIGE_TALENT_TREE_ID, // claude:2026-10-31T14:58:54+01:00 — SAVE 102: Rückgabe räumt nur diesen Baum
+  earnedAP,
+  totalAP,
   PRESTIGE_CHRONICLE_BONUS_FROM_CHAPTER,
   PRESTIGE_HEIRLOOM_MIN_REQUIREMENT,
   PRESTIGE_PARAGON_FLOOR_STEP,
@@ -48,9 +73,11 @@ import { levelFromXp } from "./leveling";
 import { nextFloat } from "./rng";
 import { computeStats, totalLevel } from "./character";
 import { createGame } from "./state";
-import { questRunBaselines, questStatus, questUnlocked } from "./quests";
+import { carryDailyBoard, questRunBaselines, questStatus, questUnlocked } from "./quests"; // claude:2026-10-31T13:58:31+01:00 — + carryDailyBoard (A1)
 import { mintInstanceId } from "./enchant";
 import { talentEffect } from "./talents";
+import { isDungeonUnlocked } from "./dungeon"; // claude:2026-10-31T15:36:11+01:00 — SAVE 102: Alte-Pfade-Dungeons über die Rückgabe offen halten
+import { monsterKills, seenDropCount } from "./drops"; // claude:2026-10-30T18:44:00+01:00 — 1.4.2 Bestiarium-Quelle
 
 // ───────────────────────────────────────────────────────────────────────────
 // claude:2026-10-17T23:30:00+02:00 — PRESTIGE-FUNDAMENT (1.3, Welle B1, SAVE 88).
@@ -129,7 +156,7 @@ export const PRESTIGE_STATE_FIELDS: Readonly<Record<keyof GameState, PrestigeFie
   capeGranted: "reset",
   capeCeremonySeen: "reset", // Invariante ⊆ masteryCapes
   settings: "keep",
-  quests: "reset", // Neuzustand + Laufanker (questRunBaselines)
+  quests: "reset", // Neuzustand + Laufanker (questRunBaselines); claude:2026-10-31T13:58:31+01:00 — nur das Tagesbrett wandert mit (carryDailyBoard, A1)
   petDropSeq: "keep",
   lastPetDrop: "keep",
   farmPlots: "reset",
@@ -139,7 +166,7 @@ export const PRESTIGE_STATE_FIELDS: Readonly<Record<keyof GameState, PrestigeFie
   slayerStreak: "reset",
   slayerStreakSeq: "keep",
   lastSlayerStreakBonus: "reset",
-  slayerFreeSkipDay: "reset", // hängt am Lager (Trophäenwand), das zurückgesetzt wird
+  slayerFreeSkipDay: "keep", // claude:2026-10-30T18:22:00+01:00 — hängt an der Trophäenwand; New Haven bleibt seit 1.4.2, also bleibt auch der Tages-Stempel (sonst zweiter Gratis-Skip am selben Tag)
   slayerAutoTask: "keep", // claude:2026-10-25T10:32:00+01:00 — Spieler-Vorliebe (1.4.1 S1, Muster thievingRisk)
   talents: "keep", // alle Bäume inkl. Jägerkodex (wirkt erst wieder ab Slayer 85) und Narbenbuch
   petPity: "keep",
@@ -159,11 +186,14 @@ export const PRESTIGE_STATE_FIELDS: Readonly<Record<keyof GameState, PrestigeFie
   lastEliteKill: "reset",
   equipKits: "reset",
   activeKit: "reset",
-  camp: "reset",
+  camp: "keep", // claude:2026-10-30T18:22:00+01:00 — Chef 30.10. (1.4.2): New Haven überlebt den Aschesturz komplett (Gebäude, Karte, Veredelung, Bau-Warteschlange, laufender Bau)
   tavern: "reset",
   huntTraps: "reset",
   huntCatchSeq: "keep",
   prestige: "keep", // fortgeschrieben: count+1, Punkte, Historie
+  tokenShopLedger: "keep", // claude:2026-10-30T22:28:00+01:00 — Belohnungsladen 1.4.2 (L2): Grenzen laufen über den Sturz weiter, sonst schenkte ein Sturz frische Tages-/Wochenkäufe
+  pinnedRecipes: "keep", // claude:2026-10-31T11:46:28+01:00 — Rezepte anpinnen (1.4.2, SAVE 101): Spieler-Vorliebe wie thievingRisk, überlebt den Aschesturz
+  queueTemplates: "keep", // claude:2026-10-31T16:08:21+01:00 — Warteschlangen-Vorlagen (1.4.2, SAVE 103): gespeicherte Planung des Spielers, überlebt den Aschesturz
 };
 
 /** WÄCHTERLISTE (Charakter): jedes CharacterState-Feld genau einmal (Muster PRESTIGE_STATE_FIELDS). */
@@ -242,6 +272,58 @@ export function prestigeUnlock(state: GameState, content: ContentDB): PrestigeUn
   return { ok: skills99 >= PRESTIGE_REQUIRED_99 && chronicleDone, skills99, required: PRESTIGE_REQUIRED_99, chronicleDone };
 }
 
+// ── Narbenquellen (1.4.2 „Aschesturz 2.0“) ─────────────────────────────────
+// claude:2026-10-30T18:44:00+01:00 — design/1.4.2-aschesturz-spec.md § 2: „je Sturz“ (Leistung dieses Durchgangs,
+// × (1 + prestigePointsMult)) und „einmalig“ (Sammlung, über das Hauptbuch `prestige.paid`, ohne Faktor, E1: Auszahlung
+// beim nächsten Aschesturz, E2: Hauptbuch startet leer). Rein lesend, deterministisch, ganzzahlig.
+
+/** Stabile Ids der Narbenquellen (UI-Altar: `t("prestige.source." + id)`, Welle 2). Reihenfolge = Anzeige-Reihenfolge. */
+export type PrestigeSourceId =
+  | "base"
+  | "skills99"
+  | "totalLevel"
+  | "chronicle"
+  | "paragon"
+  | "gold"
+  | "dungeons"
+  | "slayer"
+  | "raid"
+  | "pets"
+  | "bestiary"
+  | "achievements"
+  | "raidFirst";
+
+/** `run` = je Sturz (Leistung dieses Durchgangs, mit Faktor), `once` = einmalig über das Hauptbuch (ohne Faktor). */
+export type PrestigeSourceKind = "run" | "once";
+
+/**
+ * Eine Narbenquelle für die Altar-Anzeige (Spec § 2.4). Mengen-Einheit je Quelle:
+ *  - `base` 1 (dieser Sturz) · `skills99` Fertigkeiten auf 99 · `totalLevel` Gesamtstufe · `chronicle` Kapitel ab 22 ·
+ *    `paragon` beste Etage · `gold` Gold beim Sturz · `dungeons` Dungeon-Abschlüsse dieses Durchgangs ·
+ *    `slayer` Slayer-Aufträge dieses Durchgangs · `raid` Raid-Abschlüsse dieses Durchgangs (alle Stufen);
+ *  - `pets` neue (unbezahlte) Begleiter · `bestiary` neue vollständige Einträge · `achievements` Erfolgspunkte über dem
+ *    bezahlten Stand · `raidFirst` neue Erst-Abschlüsse (Schwierigkeiten).
+ */
+export interface PrestigePointsSource {
+  id: PrestigeSourceId;
+  kind: PrestigeSourceKind;
+  /** Gezählte Menge (Einheit s. oben). */
+  amount: number;
+  /** Narben dieser Quelle (bei `run` vor dem Faktor). */
+  scars: number;
+  /**
+   * Deckel in Narben; null = ohne. Bei `run` je Sturz, bei `once` der Höchstwert der ganzen Sammlung (alle Stürze
+   * zusammen, z. B. 92 für 23 Begleiter).
+   */
+  cap: number | null;
+  /** Fehlende Menge (Einheit wie `amount`) bis zur nächsten Narbe dieser Quelle; null = Deckel erreicht bzw. nichts mehr offen. */
+  next: number | null;
+  /** Nur `once`: schon im Hauptbuch bezahlte Menge (Begleiter, Einträge, AP, Schwierigkeiten). */
+  paid?: number;
+  /** Nur `once`: größte erreichbare Menge laut Content (Begleiter, Einträge, Gesamt-AP, 3 Schwierigkeiten). */
+  total?: number;
+}
+
 export interface PrestigePointsBreakdown {
   /** Grundbetrag je Aufstieg (`PRESTIGE_POINTS_BASE`). */
   fromBase: number;
@@ -257,31 +339,146 @@ export interface PrestigePointsBreakdown {
   paragonBest: number;
   /** Paragon-Anteil, gedeckelt auf `PRESTIGE_PARAGON_POINTS_CAP`. */
   fromParagon: number;
-  /** Summe vor dem Knoten-Multiplikator. */
+  // claude:2026-10-30T18:44:00+01:00 — 1.4.2: neue Quellen „je Sturz“ (Spec § 2.1).
+  /** Gold des Charakters beim Sturz (`character.gold`, ganzzahlig ≥ 0). */
+  gold: number;
+  fromGold: number;
+  /** Dungeon-Abschlüsse dieses Durchgangs (Lebenszeit-Summe − `runStart.dungeons`). */
+  runDungeons: number;
+  fromDungeons: number;
+  /** Slayer-Aufträge dieses Durchgangs (`slayerTasksCompleted` − `runStart.slayerTasks`). */
+  runSlayerTasks: number;
+  fromSlayer: number;
+  /** Raid-Abschlüsse dieses Durchgangs je Schwierigkeit (`raid.clears` − `runStart.raidClears`). */
+  runRaidClears: Record<RaidDifficulty, number>;
+  fromRaid: number;
+  // claude:2026-10-30T18:44:00+01:00 — 1.4.2: einmalige Quellen (Spec § 2.2), nur was noch nicht im Hauptbuch steht.
+  /** Besessene Begleiter, die noch nicht bezahlt sind (Content-Reihenfolge). */
+  newPets: PetId[];
+  fromPets: number;
+  /** Vollständige Bestiarium-Einträge, die noch nicht bezahlt sind (Content-Reihenfolge, Basis-Ids). */
+  newBestiary: MonsterId[];
+  fromBestiary: number;
+  /** Erfolgspunkte über dem bezahlten Stand (`earnedAP` − `paid.ap`, ≥ 0). */
+  apOverPaid: number;
+  fromAchievements: number;
+  /** Raid-Schwierigkeiten mit erstem Abschluss, die noch nicht bezahlt sind (Reihenfolge RAID_DIFFICULTIES). */
+  newRaidFirsts: RaidDifficulty[];
+  fromRaidFirst: number;
+  /** Alle Quellen für die Altar-Anzeige (Spec § 2.4), feste Reihenfolge `PRESTIGE_SOURCE_IDS`. */
+  sources: PrestigePointsSource[];
+  /** Summe „je Sturz“ vor dem Faktor. */
+  runSubtotal: number;
+  /** „Je Sturz“ mit Faktor: floor(runSubtotal × (1 + pointsMult)). */
+  runTotal: number;
+  /** Summe der einmaligen Quellen (ohne Faktor). */
+  onceTotal: number;
+  /** Summe ALLER Quellen vor dem Faktor (= runSubtotal + onceTotal = Σ Zeilen der Aufschlüsselung). */
   subtotal: number;
   /** Anteil aus `prestigePointsMult` („Der tiefere Schnitt"), 0 ohne Rang. */
   pointsMult: number;
-  /** Zuschlag durch `pointsMult` (= total − subtotal). */
+  /** Zuschlag durch `pointsMult` (= runTotal − runSubtotal = total − subtotal). */
   fromMult: number;
-  /** Gutschrift dieses Aufstiegs: floor(subtotal × (1 + pointsMult)). */
+  /** Gutschrift dieses Aufstiegs: runTotal + onceTotal. */
   total: number;
+}
+
+/** Anzeige-Reihenfolge der Narbenquellen (Spec § 2.1 und § 2.2). */
+export const PRESTIGE_SOURCE_IDS: readonly PrestigeSourceId[] = [
+  "base",
+  "skills99",
+  "totalLevel",
+  "chronicle",
+  "paragon",
+  "gold",
+  "dungeons",
+  "slayer",
+  "raid",
+  "pets",
+  "bestiary",
+  "achievements",
+  "raidFirst",
+];
+
+/** Ganzzahl ≥ 0 aus beliebigem Wert (0 bei Müll). */
+function nonNegInt(v: unknown): number {
+  return typeof v === "number" && Number.isFinite(v) && v > 0 ? Math.floor(v) : 0;
+}
+
+/** „Je volle `step` eine Narbe, höchstens `cap`“: Narben und fehlende Menge bis zur nächsten. */
+function stepped(amount: number, step: number, perStep: number, cap: number): { scars: number; next: number | null } {
+  const scars = Math.min(cap, Math.floor(amount / step) * perStep);
+  return { scars, next: scars >= cap ? null : step - (amount % step) };
+}
+
+/** Bestiarium-Index je Content: zählbare Einträge (ohne `dg_`-Varianten) und die Raid-Bosse. Content ist unveränderlich. */
+interface BestiaryIndex {
+  ids: MonsterId[];
+  raidBosses: ReadonlySet<MonsterId>;
+}
+const bestiaryIndexCache = new WeakMap<ContentDB, BestiaryIndex>();
+
+function bestiaryIndex(content: ContentDB): BestiaryIndex {
+  let idx = bestiaryIndexCache.get(content);
+  if (!idx) {
+    const raidBosses = new Set<MonsterId>();
+    for (const raid of content.raids ?? []) for (const room of raid.rooms ?? []) if (room.bossId) raidBosses.add(room.bossId);
+    const ids = Object.keys(content.monsters).filter((id) => !id.startsWith(DUNGEON_VARIANT_PREFIX));
+    idx = { ids, raidBosses };
+    bestiaryIndexCache.set(content, idx);
+  }
+  return idx;
+}
+
+/**
+ * Vollständiger Bestiarium-Eintrag (Spec § 2.2 `bestiary`): mindestens ein Kill (Basis-Id) UND jede `itemId` aus
+ * `monster.loot` in `seenDrops` dieses Monsters; ohne Loot genügt ein Kill. Raid-Bosse (alle `bossId` aus
+ * `content.raids[].rooms`): ein Kill genügt, solange das Bestiarium ihre Raid-Beute nicht zeigt. `dg_`-Varianten sind nie
+ * eigene Einträge. Rein lesend.
+ */
+export function prestigeBestiaryEntryComplete(state: GameState, content: ContentDB, monsterId: MonsterId): boolean {
+  if (monsterId.startsWith(DUNGEON_VARIANT_PREFIX)) return false;
+  const monster = content.monsters[monsterId];
+  if (!monster || monsterKills(state, monsterId) < 1) return false;
+  if (bestiaryIndex(content).raidBosses.has(monsterId)) return true;
+  const { seen, total } = seenDropCount(state, monster);
+  return seen >= total;
+}
+
+/** Hauptbuch des Stands, defensiv gegen handgebaute Alt-States ohne `paid`. */
+function paidLedgerOf(state: GameState): PrestigePaidLedger {
+  return state.prestige?.paid ?? defaultPrestigePaidLedger();
+}
+
+/** Raid-Abschlüsse je Schwierigkeit (defensiv 0). */
+function raidClearsOf(state: GameState): Record<RaidDifficulty, number> {
+  const c = state.raid?.clears;
+  return { normal: nonNegInt(c?.normal), heroic: nonNegInt(c?.heroic), mythic: nonNegInt(c?.mythic) };
 }
 
 /**
  * Punkte-Vorschau für den Altar. claude:2026-10-18T12:00:00+02:00 — kalibrierte Formel (Balance § 4):
  * floor( (BASE + PER_99·min(n99, CORE) + PER_EXTRA_99·max(0, n99 − CORE) + floor(max(0, TL − 1000) / 50)
  *         + 2·Kapitel ≥ 22 + min(10, floor(Paragon-Best / 10))) × (1 + prestigePointsMult) ).
+ * claude:2026-10-30T18:44:00+01:00 — 1.4.2 (Spec § 2): plus Gold, Dungeons, Slayer, Raid (je Sturz, mit Faktor) und die
+ * einmaligen Quellen Begleiter, Bestiarium, Erfolge, Raid-Erstabschluss (ohne Faktor, nur was nicht im Hauptbuch steht).
+ * `total` = floor(runSubtotal × (1 + mult)) + onceTotal = exakt die Gutschrift von `ascend`.
  * Ganzzahlig, rein lesend; alle Zahlen über die PRESTIGE_*-Konstanten in shared.
  */
 export function prestigePointsPreview(state: GameState, content: ContentDB): PrestigePointsBreakdown {
   const fromBase = PRESTIGE_POINTS_BASE;
+  const skillCount = Object.keys(content.skills).length;
   const skills99 = prestigeSkills99(state, content);
-  const core = Math.min(skills99, PRESTIGE_POINTS_CORE_99);
-  const fromSkills = core * PRESTIGE_POINTS_PER_99 + Math.max(0, skills99 - PRESTIGE_POINTS_CORE_99) * PRESTIGE_POINTS_PER_EXTRA_99;
+  const skillScars = (n: number): number =>
+    Math.min(n, PRESTIGE_POINTS_CORE_99) * PRESTIGE_POINTS_PER_99 + Math.max(0, n - PRESTIGE_POINTS_CORE_99) * PRESTIGE_POINTS_PER_EXTRA_99;
+  const fromSkills = skillScars(skills99);
 
   const level = totalLevel(state, content);
   const over = Math.max(0, level - PRESTIGE_TOTAL_LEVEL_THRESHOLD);
   const fromTotalLevel = Math.floor(over / PRESTIGE_TOTAL_LEVEL_STEP) * PRESTIGE_POINTS_PER_TOTAL_LEVEL_STEP;
+  const totalLevelCap =
+    Math.floor(Math.max(0, skillCount * PRESTIGE_SKILL_LEVEL - PRESTIGE_TOTAL_LEVEL_THRESHOLD) / PRESTIGE_TOTAL_LEVEL_STEP) *
+    PRESTIGE_POINTS_PER_TOTAL_LEVEL_STEP;
 
   const known = new Set(content.quests.map((q) => q.id));
   const counted = new Set<string>();
@@ -291,6 +488,11 @@ export function prestigePointsPreview(state: GameState, content: ContentDB): Pre
   }
   const lateChapters = counted.size;
   const fromChronicle = lateChapters * PRESTIGE_POINTS_PER_LATE_CHAPTER;
+  let lateChapterCount = 0;
+  for (const q of content.quests) {
+    const chapter = chronicleChapterNumber(q.id);
+    if (chapter !== null && chapter >= PRESTIGE_CHRONICLE_BONUS_FROM_CHAPTER) lateChapterCount++;
+  }
 
   const best = state.paragon?.best ?? 0;
   const paragonBest = Number.isFinite(best) && best > 0 ? Math.floor(best) : 0;
@@ -299,11 +501,144 @@ export function prestigePointsPreview(state: GameState, content: ContentDB): Pre
     Math.floor(paragonBest / PRESTIGE_PARAGON_FLOOR_STEP) * PRESTIGE_POINTS_PER_PARAGON_STEP,
   );
 
-  const subtotal = fromBase + fromSkills + fromTotalLevel + fromChronicle + fromParagon;
+  // ── 1.4.2: neue Quellen „je Sturz“ ──
+  const runStart = state.prestige?.runStart ?? defaultPrestigeRunBaseline();
+  const now = prestigeRunCounters(state);
+  const gold = nonNegInt(state.character?.gold);
+  const goldStep = stepped(gold, PRESTIGE_GOLD_STEP, 1, PRESTIGE_GOLD_POINTS_CAP);
+  const runDungeons = Math.max(0, now.dungeons - nonNegInt(runStart.dungeons));
+  const dungeonStep = stepped(runDungeons, PRESTIGE_DUNGEON_STEP, 1, PRESTIGE_DUNGEON_POINTS_CAP);
+  const runSlayerTasks = Math.max(0, now.slayerTasks - nonNegInt(runStart.slayerTasks));
+  const slayerStep = stepped(runSlayerTasks, PRESTIGE_SLAYER_STEP, 1, PRESTIGE_SLAYER_POINTS_CAP);
+  const runRaidClears = { normal: 0, heroic: 0, mythic: 0 } as Record<RaidDifficulty, number>;
+  let raidRaw = 0;
+  let raidCount = 0;
+  for (const d of RAID_DIFFICULTIES) {
+    runRaidClears[d] = Math.max(0, now.raidClears[d] - nonNegInt(runStart.raidClears?.[d]));
+    raidRaw += runRaidClears[d] * PRESTIGE_POINTS_PER_RAID_CLEAR[d];
+    raidCount += runRaidClears[d];
+  }
+  const fromRaid = Math.min(PRESTIGE_RAID_POINTS_CAP, raidRaw);
+
+  // ── 1.4.2: einmalige Quellen (Hauptbuch) ──
+  const paid = paidLedgerOf(state);
+  const petIds = Object.keys(content.pets ?? {});
+  const paidPets = new Set(paid.pets);
+  const owned = state.character?.ownedPets ?? {};
+  const newPets = petIds.filter((id) => owned[id] === true && !paidPets.has(id));
+  const fromPets = newPets.length * PRESTIGE_POINTS_PER_PET;
+  const petsPaidKnown = petIds.filter((id) => paidPets.has(id)).length;
+  const petsOpen = petIds.some((id) => owned[id] !== true && !paidPets.has(id));
+
+  const bIdx = bestiaryIndex(content);
+  const paidBestiary = new Set(paid.bestiary);
+  const newBestiary: MonsterId[] = [];
+  let bestiaryOpen = false;
+  for (const id of bIdx.ids) {
+    if (paidBestiary.has(id)) continue;
+    if (prestigeBestiaryEntryComplete(state, content, id)) newBestiary.push(id);
+    else bestiaryOpen = true;
+  }
+  const fromBestiary = newBestiary.length * PRESTIGE_POINTS_PER_BESTIARY_ENTRY;
+  const bestiaryPaidKnown = bIdx.ids.filter((id) => paidBestiary.has(id)).length;
+
+  const apEarned = earnedAP(state, content);
+  const apTotal = totalAP(content);
+  const apPaid = nonNegInt(paid.ap);
+  const apOverPaid = Math.max(0, apEarned - apPaid);
+  const apSteps = Math.floor(apOverPaid / PRESTIGE_AP_STEP);
+  const fromAchievements = apSteps * PRESTIGE_POINTS_PER_AP_STEP;
+  const apCap = Math.floor(apTotal / PRESTIGE_AP_STEP) * PRESTIGE_POINTS_PER_AP_STEP;
+  const apNext = apPaid + (apSteps + 1) * PRESTIGE_AP_STEP <= apTotal ? PRESTIGE_AP_STEP - (apOverPaid % PRESTIGE_AP_STEP) : null;
+
+  const clearsNow = now.raidClears;
+  const paidRaids = new Set(paid.raids);
+  const newRaidFirsts = RAID_DIFFICULTIES.filter((d) => clearsNow[d] >= 1 && !paidRaids.has(d));
+  const fromRaidFirst = newRaidFirsts.reduce((sum, d) => sum + PRESTIGE_POINTS_RAID_FIRST[d], 0);
+  const raidFirstCap = RAID_DIFFICULTIES.reduce((sum, d) => sum + PRESTIGE_POINTS_RAID_FIRST[d], 0);
+  const raidFirstOpen = RAID_DIFFICULTIES.some((d) => clearsNow[d] < 1 && !paidRaids.has(d));
+
+  const runSubtotal =
+    fromBase + fromSkills + fromTotalLevel + fromChronicle + fromParagon + goldStep.scars + dungeonStep.scars + slayerStep.scars + fromRaid;
+  const onceTotal = fromPets + fromBestiary + fromAchievements + fromRaidFirst;
   const mult = talentEffect(state, content, "prestigePointsMult");
   const pointsMult = Number.isFinite(mult) && mult > 0 ? mult : 0;
-  // Winziger Epsilon gegen Darstellungsfehler (z. B. 0,1-Schritte); bei den Content-Werten (0,25) exakt.
-  const total = pointsMult > 0 ? Math.floor(subtotal * (1 + pointsMult) + 1e-9) : subtotal;
+  // Winziger Epsilon gegen Darstellungsfehler (z. B. 0,1-Schritte); bei den Content-Werten (0,25/0,5) exakt.
+  const runTotal = pointsMult > 0 ? Math.floor(runSubtotal * (1 + pointsMult) + 1e-9) : runSubtotal;
+  const subtotal = runSubtotal + onceTotal;
+  const total = runTotal + onceTotal;
+
+  const totalLevelNext =
+    fromTotalLevel >= totalLevelCap
+      ? null
+      : level < PRESTIGE_TOTAL_LEVEL_THRESHOLD
+        ? PRESTIGE_TOTAL_LEVEL_THRESHOLD + PRESTIGE_TOTAL_LEVEL_STEP - level
+        : PRESTIGE_TOTAL_LEVEL_STEP - (over % PRESTIGE_TOTAL_LEVEL_STEP);
+  const sources: PrestigePointsSource[] = [
+    { id: "base", kind: "run", amount: 1, scars: fromBase, cap: fromBase, next: null },
+    { id: "skills99", kind: "run", amount: skills99, scars: fromSkills, cap: skillScars(skillCount), next: skills99 < skillCount ? 1 : null },
+    { id: "totalLevel", kind: "run", amount: level, scars: fromTotalLevel, cap: totalLevelCap, next: totalLevelNext },
+    {
+      id: "chronicle",
+      kind: "run",
+      amount: lateChapters,
+      scars: fromChronicle,
+      cap: lateChapterCount * PRESTIGE_POINTS_PER_LATE_CHAPTER,
+      next: lateChapters < lateChapterCount ? 1 : null,
+    },
+    {
+      id: "paragon",
+      kind: "run",
+      amount: paragonBest,
+      scars: fromParagon,
+      cap: PRESTIGE_PARAGON_POINTS_CAP,
+      next: fromParagon >= PRESTIGE_PARAGON_POINTS_CAP ? null : PRESTIGE_PARAGON_FLOOR_STEP - (paragonBest % PRESTIGE_PARAGON_FLOOR_STEP),
+    },
+    { id: "gold", kind: "run", amount: gold, scars: goldStep.scars, cap: PRESTIGE_GOLD_POINTS_CAP, next: goldStep.next },
+    { id: "dungeons", kind: "run", amount: runDungeons, scars: dungeonStep.scars, cap: PRESTIGE_DUNGEON_POINTS_CAP, next: dungeonStep.next },
+    { id: "slayer", kind: "run", amount: runSlayerTasks, scars: slayerStep.scars, cap: PRESTIGE_SLAYER_POINTS_CAP, next: slayerStep.next },
+    { id: "raid", kind: "run", amount: raidCount, scars: fromRaid, cap: PRESTIGE_RAID_POINTS_CAP, next: fromRaid >= PRESTIGE_RAID_POINTS_CAP ? null : 1 },
+    {
+      id: "pets",
+      kind: "once",
+      amount: newPets.length,
+      scars: fromPets,
+      cap: petIds.length * PRESTIGE_POINTS_PER_PET,
+      next: petsOpen ? 1 : null,
+      paid: petsPaidKnown,
+      total: petIds.length,
+    },
+    {
+      id: "bestiary",
+      kind: "once",
+      amount: newBestiary.length,
+      scars: fromBestiary,
+      cap: bIdx.ids.length * PRESTIGE_POINTS_PER_BESTIARY_ENTRY,
+      next: bestiaryOpen ? 1 : null,
+      paid: bestiaryPaidKnown,
+      total: bIdx.ids.length,
+    },
+    {
+      id: "achievements",
+      kind: "once",
+      amount: apOverPaid,
+      scars: fromAchievements,
+      cap: apCap,
+      next: apNext,
+      paid: apPaid,
+      total: apTotal,
+    },
+    {
+      id: "raidFirst",
+      kind: "once",
+      amount: newRaidFirsts.length,
+      scars: fromRaidFirst,
+      cap: raidFirstCap,
+      next: raidFirstOpen ? 1 : null,
+      paid: RAID_DIFFICULTIES.filter((d) => paidRaids.has(d)).length,
+      total: RAID_DIFFICULTIES.length,
+    },
+  ];
 
   return {
     fromBase,
@@ -315,11 +650,162 @@ export function prestigePointsPreview(state: GameState, content: ContentDB): Pre
     fromChronicle,
     paragonBest,
     fromParagon,
+    gold,
+    fromGold: goldStep.scars,
+    runDungeons,
+    fromDungeons: dungeonStep.scars,
+    runSlayerTasks,
+    fromSlayer: slayerStep.scars,
+    runRaidClears,
+    fromRaid,
+    newPets,
+    fromPets,
+    newBestiary,
+    fromBestiary,
+    apOverPaid,
+    fromAchievements,
+    newRaidFirsts,
+    fromRaidFirst,
+    sources,
+    runSubtotal,
+    runTotal,
+    onceTotal,
     subtotal,
     pointsMult,
-    fromMult: total - subtotal,
+    fromMult: runTotal - runSubtotal,
     total,
   };
+}
+
+/**
+ * claude:2026-10-30T18:44:00+01:00 — 1.4.2 (Spec § 2.2): Hauptbuch NACH einem Aufstieg mit dieser Vorschau. Nimmt genau das
+ * auf, was die Vorschau bezahlt hat (neue Begleiter/Einträge/Erst-Abschlüsse, AP in vollen 100er-Schritten; der Rest bleibt
+ * für später). Vereinigung, nie Verlust: bereits Bezahltes bleibt stehen. Neues Objekt, der alte Stand bleibt unberührt.
+ */
+export function prestigeLedgerAfterAscend(paid: PrestigePaidLedger | undefined, b: PrestigePointsBreakdown): PrestigePaidLedger {
+  const base = paid ?? defaultPrestigePaidLedger();
+  const pets = [...base.pets];
+  for (const id of b.newPets) if (!pets.includes(id)) pets.push(id);
+  const bestiary = [...base.bestiary];
+  const seen = new Set(bestiary);
+  for (const id of b.newBestiary) if (!seen.has(id)) {
+    bestiary.push(id);
+    seen.add(id);
+  }
+  const raids = [...base.raids];
+  for (const d of b.newRaidFirsts) if (!raids.includes(d)) raids.push(d);
+  const ap = nonNegInt(base.ap) + Math.floor(b.apOverPaid / PRESTIGE_AP_STEP) * PRESTIGE_AP_STEP;
+  return { pets, bestiary, ap, raids };
+}
+
+// ── Narben-Rückgabe und Nachzahlung zu 1.4.2 (SAVE 102) ────────────────────
+// claude:2026-10-31T14:58:54+01:00 — Chef-Auftrag 31.10.2026: (1) „falls Leute vorher Aschesturz gemacht haben, dass sie rückwirkend
+// Punkte kriegen“, (2) „bei 1.4.2 für alle die Punkte resetten … damit sie ihre Punkte wieder verteilen“. Einmalig beim ersten
+// Laden eines Stands < 102 (persistence `deserialize`, nach dem Offline-Nachholen). Rein, deterministisch, ganzzahlig.
+
+/** Nachzahlung der Quellen „je Sturz“, die sich aus einer Bilanz rekonstruieren lassen (gold, dungeons, slayer). */
+export interface PrestigeRetroRunScars {
+  gold: number;
+  dungeons: number;
+  slayer: number;
+  /** Zahl der Historien-Einträge mit Bilanz (nur diese zählen). */
+  runs: number;
+}
+
+/**
+ * claude:2026-10-31T14:58:54+01:00 — Nachzahlung für frühere Stürze nach den 1.4.2-Regeln (Spec § 2.1), je Historien-Eintrag mit
+ * `tally` und je Quelle mit ihrem Deckel: `gold` 1 je 250.000 Gold beim Sturz (≤ 20), `dungeons` 1 je 20 Abschlüsse (≤ 10),
+ * `slayer` 1 je 10 Aufträge (≤ 10). Bewusst OHNE „Der tiefere Schnitt“ (einfach und nachvollziehbar, Chef-Auftrag) und ohne
+ * `raid` (je früherem Durchgang nicht rekonstruierbar; ältere Raids deckt einmalig `raidFirst`). Einträge ohne Bilanz zählen 0.
+ */
+export function prestigeRetroRunScars(history: readonly PrestigeRecord[] | undefined): PrestigeRetroRunScars {
+  const out: PrestigeRetroRunScars = { gold: 0, dungeons: 0, slayer: 0, runs: 0 };
+  for (const rec of history ?? []) {
+    const tally = rec?.tally;
+    if (!tally) continue;
+    out.runs++;
+    out.gold += stepped(nonNegInt(tally.gold), PRESTIGE_GOLD_STEP, 1, PRESTIGE_GOLD_POINTS_CAP).scars;
+    out.dungeons += stepped(nonNegInt(tally.dungeons), PRESTIGE_DUNGEON_STEP, 1, PRESTIGE_DUNGEON_POINTS_CAP).scars;
+    out.slayer += stepped(nonNegInt(tally.slayerTasks), PRESTIGE_SLAYER_STEP, 1, PRESTIGE_SLAYER_POINTS_CAP).scars;
+  }
+  return out;
+}
+
+/** Optionen der Rückgabe: `retro` = Stand von vor 1.4.2 (Original-Version < 99), nur dann gibt es die Nachzahlung. */
+export interface PrestigeRespecOptions {
+  retro: boolean;
+}
+
+/**
+ * claude:2026-10-31T14:58:54+01:00 — Einmalige Rückgabe des Narbenbuchs zu 1.4.2 (SAVE 102), IN PLACE:
+ *  A. Alle Ränge im Baum `prestige` (nur dieser, der Jägerkodex bleibt) fallen weg; `points += pointsSpent`, `pointsSpent = 0`.
+ *     Erstattet wird genau das tatsächlich Bezahlte (die Preise 1.4.1 → 1.4.2 sind gleich oder höher, niemand hat überzahlt).
+ *  B. Nur mit `retro` und mindestens einem Sturz: Nachzahlung `prestigeRetroRunScars` für die früheren Stürze plus die Sammlung
+ *     (Begleiter, Bestiarium, Erfolge, Raid-Erstabschluss) JETZT, gerechnet mit derselben `prestigePointsPreview` wie ein Sturz
+ *     und eingetragen über `prestigeLedgerAfterAscend` (der nächste Sturz zahlt nur, was danach dazukommt; nie doppelt).
+ * Danach Leben/Schutz auf das neue Maximum geklemmt (Narbengewebe kann wegfallen). Schreibt `prestige.respec142` (null, wenn weder
+ * zurückgegeben noch nachgezahlt wurde) und liefert ihn. Idempotent: trägt der Stand schon einen Beleg, passiert nichts. Folgen
+ * eines Rang-Verlusts bis zum Neukauf sind verlustfrei (Zusatzbeete/-fallen ruhen samt Inhalt, nichts wird gelöscht; s. Bericht).
+ * claude:2026-10-31T15:36:11+01:00 — Dungeons, die nur über „Alte Pfade“ offen waren, bleiben für den laufenden Durchgang offen (`dungeonsUnlocked`).
+ */
+export function applyPrestigeRespec142(state: GameState, content: ContentDB, opts: PrestigeRespecOptions): PrestigeRespec142 | null {
+  const p = (state.prestige ??= defaultPrestigeState());
+  if (p.respec142) return p.respec142;
+  const refunded = nonNegInt(p.pointsSpent);
+  // claude:2026-10-31T15:36:11+01:00 — Coordinator-Entscheid 31.10.: Dungeons, die gerade nur über „Alte Pfade“ offen sind, bleiben für den laufenden
+  // Durchgang offen (`dungeonsUnlocked`, wird beim nächsten Sturz ohnehin zurückgesetzt). Sonst übersprängen vorgeplante Läufe mit `dungeon_locked`,
+  // bis der Rang neu gekauft ist. Nur was vorher offen und nach der Rückgabe zu wäre; Raid-Räume und der Paragonturm nie.
+  const openBefore =
+    talentEffect(state, content, "prestigeDungeonRecall") > 0
+      ? content.dungeons.filter((d) => !d.raidOnly && isDungeonUnlocked(state, content, d.id)).map((d) => d.id)
+      : [];
+  if (state.talents && PRESTIGE_TALENT_TREE_ID in state.talents) delete state.talents[PRESTIGE_TALENT_TREE_ID];
+  for (const id of openBefore) {
+    if (!isDungeonUnlocked(state, content, id)) (state.dungeonsUnlocked ??= {})[id] = true;
+  }
+  p.points = nonNegInt(p.points) + refunded;
+  p.pointsSpent = 0;
+
+  const retro = emptyPrestigeRespecRetro();
+  if (opts.retro && nonNegInt(p.count) >= 1) {
+    const run = prestigeRetroRunScars(p.history);
+    const b = prestigePointsPreview(state, content);
+    retro.gold = run.gold;
+    retro.dungeons = run.dungeons;
+    retro.slayer = run.slayer;
+    retro.pets = b.fromPets;
+    retro.bestiary = b.fromBestiary;
+    retro.achievements = b.fromAchievements;
+    retro.raidFirst = b.fromRaidFirst;
+    retro.total = run.gold + run.dungeons + run.slayer + b.onceTotal;
+    p.paid = prestigeLedgerAfterAscend(p.paid, b);
+    p.points += retro.total;
+  }
+
+  // Narbengewebe/Narbenfaust können wegfallen: Werte auf das neue Maximum (die Engine klemmt im Tick ohnehin, so passt schon die erste Anzeige).
+  const stats = computeStats(state, content);
+  if (Number.isFinite(stats.maxHp) && state.character.hp > stats.maxHp) state.character.hp = stats.maxHp;
+  if (Number.isFinite(stats.maxWard) && state.character.ward > stats.maxWard) state.character.ward = stats.maxWard;
+
+  p.respec142 = refunded > 0 || retro.total > 0 ? { refunded, retro, acknowledged: false } : null;
+  return p.respec142;
+}
+
+/**
+ * claude:2026-10-31T14:58:54+01:00 — „Verstanden“ am Altar-Hinweis (SAVE 102): setzt `respec142.acknowledged`. false ohne Beleg oder
+ * wenn schon bestätigt (dann bleibt alles unverändert).
+ */
+export function acknowledgePrestigeRespec(state: GameState): boolean {
+  const r = state.prestige?.respec142;
+  if (!r || r.acknowledged) return false;
+  r.acknowledged = true;
+  return true;
+}
+
+/** claude:2026-10-31T14:58:54+01:00 — Zeigt die UI den 1.4.2-Hinweis? Nur mit Beleg, unbestätigt und nach mindestens einem Sturz. Rein lesend. */
+export function prestigeRespecPending(state: GameState): boolean {
+  const r = state.prestige?.respec142;
+  return !!r && !r.acknowledged && (state.prestige?.count ?? 0) >= 1;
 }
 
 /**
@@ -646,6 +1132,29 @@ export interface PrestigeAscendPreview {
   stashCandidates: PrestigeStashCandidate[];
   stashDefault: ItemId[];
   summary: PrestigeAscendSummary;
+  /** claude:2026-10-30T18:44:00+01:00 — 1.4.2 Bezahlte Rechnung / Ungebrochene Fährte: was davon mitkommt. */
+  kept: PrestigeKeptValues;
+}
+
+/** claude:2026-10-30T18:44:00+01:00 — 1.4.2 (Spec § 3): Werte, die Schutz-Talente über den Aufstieg tragen (Vorschau == `ascend`). */
+export interface PrestigeKeptValues {
+  /** Bezahlte Rechnung (`prestigeKeepPurchases`): Auto-Essen-Stufe, Auto-Buff-Freischaltung, gekaufte Bankplätze bleiben. */
+  keepPurchases: boolean;
+  /** Ungebrochene Fährte (`prestigeKeepSlayerPoints`): Anteil 0..1, abgerundet je Währung. */
+  slayerShare: number;
+  /** Slayer-Punkte, die bleiben. */
+  slayerPoints: number;
+  /** Marken (`character.questTokens`), die bleiben. */
+  questTokens: number;
+}
+
+/** Schutz-Talente aus dem ALTEN Stand ausgewertet (rein lesend). */
+export function prestigeKeptValues(state: GameState, content: ContentDB): PrestigeKeptValues {
+  const keepPurchases = talentEffect(state, content, "prestigeKeepPurchases") > 0;
+  const raw = talentEffect(state, content, "prestigeKeepSlayerPoints");
+  const slayerShare = Number.isFinite(raw) && raw > 0 ? Math.min(1, raw) : 0;
+  const keep = (v: unknown): number => (slayerShare > 0 ? Math.floor(positiveInt(v) * slayerShare + 1e-9) : 0);
+  return { keepPurchases, slayerShare, slayerPoints: keep(state.slayerPoints), questTokens: keep(state.character?.questTokens) };
 }
 
 function countTalentRanks(state: GameState): number {
@@ -677,6 +1186,7 @@ export function prestigeAscendPreview(state: GameState, content: ContentDB): Pre
   const heirloomDefault = defaultHeirlooms(hc, heirloomSlots);
   const keepTools = talentEffect(state, content, "prestigeKeepTools") > 0;
   const tools = keepTools ? keptTools(ledger, content, heirloomDefault).plain : [];
+  const kept = prestigeKeptValues(state, content); // claude:2026-10-30T18:44:00+01:00 — 1.4.2
   let equippedPieces = 0;
   for (const slot of EQUIP_SLOTS) if (!isToolSlot(slot) && state.character.equipment?.[slot]) equippedPieces++;
   const itemKinds = new Set<ItemId>(ledger.stackable.keys());
@@ -696,8 +1206,9 @@ export function prestigeAscendPreview(state: GameState, content: ContentDB): Pre
     summary: {
       goes: {
         gold: Math.max(0, Math.floor(state.character.gold ?? 0)),
-        questTokens: Math.max(0, Math.floor(state.character.questTokens ?? 0)),
-        slayerPoints: Math.max(0, Math.floor(state.slayerPoints ?? 0)),
+        // claude:2026-10-30T18:44:00+01:00 — 1.4.2: was die Ungebrochene Fährte trägt, geht nicht.
+        questTokens: Math.max(0, Math.floor(state.character.questTokens ?? 0) - kept.questTokens),
+        slayerPoints: Math.max(0, Math.floor(state.slayerPoints ?? 0) - kept.slayerPoints),
         totalLevel: totalLevel(state, content),
         equippedPieces,
         itemKinds: itemKinds.size,
@@ -712,6 +1223,7 @@ export function prestigeAscendPreview(state: GameState, content: ContentDB): Pre
         heldMail: (state.mailbox ?? []).filter(mailHasContent).length,
       },
     },
+    kept,
   };
 }
 
@@ -756,8 +1268,25 @@ function keptTools(
  *  - `totalLevel`     amount = Gesamtstufe; Punkte je volle `PRESTIGE_TOTAL_LEVEL_STEP` über `PRESTIGE_TOTAL_LEVEL_THRESHOLD`.
  *  - `chronicle`      amount = eingelöste Kapitel ab `PRESTIGE_CHRONICLE_BONUS_FROM_CHAPTER`; je `PRESTIGE_POINTS_PER_LATE_CHAPTER`.
  *  - `paragon`        amount = beste Paragon-Etage; Punkte je volle `PRESTIGE_PARAGON_FLOOR_STEP`, gedeckelt `PRESTIGE_PARAGON_POINTS_CAP`.
+ * claude:2026-10-30T18:44:00+01:00 — 1.4.2 (Spec § 2), Einheiten wie `PrestigePointsSource.amount`:
+ *  - `gold` / `dungeons` / `slayer` / `raid`             je Sturz (mit Faktor).
+ *  - `pets` / `bestiary` / `achievements` / `raidFirst`  einmalig über das Hauptbuch (ohne Faktor).
  */
-export type PrestigePointsLineKey = "base" | "skills99" | "skills99Extra" | "totalLevel" | "chronicle" | "paragon";
+export type PrestigePointsLineKey =
+  | "base"
+  | "skills99"
+  | "skills99Extra"
+  | "totalLevel"
+  | "chronicle"
+  | "paragon"
+  | "gold"
+  | "dungeons"
+  | "slayer"
+  | "raid"
+  | "pets"
+  | "bestiary"
+  | "achievements"
+  | "raidFirst";
 
 /** Feste Reihenfolge der Zeilen (jede Zeile ist IMMER enthalten, auch mit 0 Punkten; die UI darf 0-Zeilen ausblenden). */
 export const PRESTIGE_POINTS_LINE_KEYS: readonly PrestigePointsLineKey[] = [
@@ -767,6 +1296,15 @@ export const PRESTIGE_POINTS_LINE_KEYS: readonly PrestigePointsLineKey[] = [
   "totalLevel",
   "chronicle",
   "paragon",
+  // claude:2026-10-30T18:44:00+01:00 — 1.4.2
+  "gold",
+  "dungeons",
+  "slayer",
+  "raid",
+  "pets",
+  "bestiary",
+  "achievements",
+  "raidFirst",
 ];
 
 /** Eine Zeile der Aufschlüsselung: Menge/Basiswert (fehlt bei `base`) und die daraus entstehenden Narben. */
@@ -779,6 +1317,7 @@ export interface PrestigePointsLine {
 /**
  * Zeilenweise Narben-Aufschlüsselung für die Animation. Invariante: Σ lines.points = subtotal,
  * subtotal + fromMult = total, total = Gutschrift von `ascend` (beides aus `prestigePointsPreview`).
+ * claude:2026-10-30T18:44:00+01:00 — 1.4.2: `fromMult` stammt nur aus den „je Sturz“-Zeilen (`runSubtotal`), die einmaligen Zeilen tragen keinen Faktor.
  */
 export interface PrestigePointsLedger {
   lines: PrestigePointsLine[];
@@ -790,6 +1329,10 @@ export interface PrestigePointsLedger {
   fromMult: number;
   /** Gutschrift dieses Aufstiegs. */
   total: number;
+  /** claude:2026-10-30T18:44:00+01:00 — 1.4.2: Summe der „je Sturz“-Zeilen vor dem Faktor (nur sie trägt `mult`). */
+  runSubtotal: number;
+  /** claude:2026-10-30T18:44:00+01:00 — 1.4.2: Summe der einmaligen Zeilen (Hauptbuch, ohne Faktor). total = floor(runSubtotal × (1 + mult)) + onceTotal. */
+  onceTotal: number;
 }
 
 /**
@@ -817,7 +1360,8 @@ function sumCounts(rec: Readonly<Record<string, number>> | undefined): number {
 
 /**
  * Aktuelle Lebenszeit-Zähler in Baseline-Form (Summe Kills, Summe Dungeon-Abschlüsse, Erfolge, Begleiter,
- * Slayer-Aufträge, aktive Spielzeit). `ascend` schreibt genau das als `prestige.runStart` des neuen Durchgangs.
+ * Slayer-Aufträge, aktive Spielzeit, seit SAVE 99 Raid-Abschlüsse je Schwierigkeit). `ascend` schreibt genau das als
+ * `prestige.runStart` des neuen Durchgangs.
  */
 export function prestigeRunCounters(state: GameState): PrestigeRunBaseline {
   let pets = 0;
@@ -829,6 +1373,7 @@ export function prestigeRunCounters(state: GameState): PrestigeRunBaseline {
     pets,
     slayerTasks: positiveInt(state.slayerTasksCompleted),
     activePlayMs: positiveInt(state.activePlayMs),
+    raidClears: raidClearsOf(state), // claude:2026-10-30T18:44:00+01:00 — SAVE 99: Laufanker der Raid-Quelle
   };
 }
 
@@ -843,8 +1388,17 @@ export function prestigePointsLedger(b: PrestigePointsBreakdown): PrestigePoints
     { key: "totalLevel", amount: b.totalLevel, points: b.fromTotalLevel },
     { key: "chronicle", amount: b.lateChapters, points: b.fromChronicle },
     { key: "paragon", amount: b.paragonBest, points: b.fromParagon },
+    // claude:2026-10-30T18:44:00+01:00 — 1.4.2 (Spec § 2)
+    { key: "gold", amount: b.gold, points: b.fromGold },
+    { key: "dungeons", amount: b.runDungeons, points: b.fromDungeons },
+    { key: "slayer", amount: b.runSlayerTasks, points: b.fromSlayer },
+    { key: "raid", amount: b.runRaidClears.normal + b.runRaidClears.heroic + b.runRaidClears.mythic, points: b.fromRaid },
+    { key: "pets", amount: b.newPets.length, points: b.fromPets },
+    { key: "bestiary", amount: b.newBestiary.length, points: b.fromBestiary },
+    { key: "achievements", amount: b.apOverPaid, points: b.fromAchievements },
+    { key: "raidFirst", amount: b.newRaidFirsts.length, points: b.fromRaidFirst },
   ];
-  return { lines, subtotal: b.subtotal, mult: b.pointsMult, fromMult: b.fromMult, total: b.total };
+  return { lines, subtotal: b.subtotal, mult: b.pointsMult, fromMult: b.fromMult, total: b.total, runSubtotal: b.runSubtotal, onceTotal: b.onceTotal }; // claude:2026-10-30T18:44:00+01:00 — 1.4.2
 }
 
 function buildRunSummary(state: GameState, content: ContentDB, breakdown: PrestigePointsBreakdown): PrestigeRunSummary {
@@ -1047,6 +1601,7 @@ export function ascend(state: GameState, content: ContentDB, choice?: PrestigeAs
   const stash = choice?.stash ?? defaultStash(sc, stashSlots);
   const startingGold = positiveInt(talentEffect(old, content, "prestigeStartingGold"));
   const tools = talentEffect(old, content, "prestigeKeepTools") > 0 ? keptTools(ledger, content, heirlooms) : { plain: [], instances: [] };
+  const kept = prestigeKeptValues(old, content); // claude:2026-10-30T18:44:00+01:00 — 1.4.2 Bezahlte Rechnung / Ungebrochene Fährte
 
   const next = createGame(
     {
@@ -1083,9 +1638,22 @@ export function ascend(state: GameState, content: ContentDB, choice?: PrestigeAs
 
   // Quests: Neuzustand, aber einmalige wie wiederholbare Quests messen ab dem Zählerstand beim Aufstieg.
   next.quests.repeatBaseline = questRunBaselines(next, content);
+  // claude:2026-10-31T13:58:31+01:00 — Befund A1: das Tagesbrett (Karten, eingelöst, Tag) überlebt den Sturz, die Serie damit auch;
+  // offene Karten messen ab hier (quests.ts carryDailyBoard). Sonst zog refreshDailyQuests am selben Tag ein zweites Brett.
+  carryDailyBoard(next, content, old.quests.daily);
 
   // ── Narbenbuch: Grabmünzen, Schwielen, Erbstück, Vergrabene Truhe → neues Lager ──
   next.character.gold += startingGold;
+  // claude:2026-10-30T18:44:00+01:00 — 1.4.2 Bezahlte Rechnung (Spec § 3): gekaufte Komfort-Stufen bleiben. Beim Auto-Trank bleiben Schwelle,
+  // Auto-Buff-Schalter und -Freischaltung; die Trank-Wahl verweist auf das alte Lager und startet leer.
+  if (kept.keepPurchases) {
+    next.character.autoEatTier = old.character.autoEatTier;
+    next.character.autoPotion = { ...old.character.autoPotion, healPotionId: null };
+    next.bankSlotsPurchased = old.bankSlotsPurchased;
+  }
+  // claude:2026-10-30T18:44:00+01:00 — 1.4.2 Ungebrochene Fährte: 25/50/100 % der Slayer-Punkte und Marken (abgerundet).
+  if (kept.slayerPoints > 0) next.slayerPoints = (next.slayerPoints ?? 0) + kept.slayerPoints;
+  if (kept.questTokens > 0) next.character.questTokens = (next.character.questTokens ?? 0) + kept.questTokens;
   const usedIds = new Set<string>();
   for (const m of next.mailbox ?? []) for (const inst of m.instances) usedIds.add(inst.instanceId);
   for (const inst of next.inventory.instances) usedIds.add(inst.instanceId);
@@ -1136,6 +1704,11 @@ export function ascend(state: GameState, content: ContentDB, choice?: PrestigeAs
     pointsSpent: oldPrestige.pointsSpent,
     runStart, // claude:2026-10-18T19:40:00+02:00 — Welle E1: „dieser Durchgang" zählt ab hier
     history: [...oldPrestige.history, record],
+    // claude:2026-10-30T18:44:00+01:00 — SAVE 99 Hauptbuch: genau das, was diese Gutschrift an einmaligen Quellen bezahlt hat (nie doppelt).
+    paid: prestigeLedgerAfterAscend(oldPrestige.paid, preview),
+    // claude:2026-10-31T14:58:54+01:00 — SAVE 102: der Rückgabe-Beleg bleibt unverändert (auch ein noch unbestätigter Hinweis; die
+    // zurückgegebenen Narben stecken ohnehin im Guthaben, das der Sturz fortschreibt).
+    respec142: oldPrestige.respec142 ?? null,
   };
 
   // Abgeleitete Werte nach dem Kopieren neu (Begleiter, Talente, Meisterschaft können maxHp & Co. heben).

@@ -1,0 +1,26 @@
+/* claude:2026-10-31T16:34:28+01:00 — Aufwertungs-Marker ▲ (1.4.2): kleines Dreieck rechts an Ausrüstungszellen in Inventar und Bank.
+   Kein Glühen (Ausrüstung bleibt ohne Schimmer), nur ein dunkler Eisenstreifen mit gedämpftem Grün. */
+.item-cell-upgrade-mark {
+  position: absolute;
+  top: 26%;
+  right: 7%;
+  width: 11px;
+  height: 11px;
+  box-sizing: border-box;
+  background: rgba(14, 12, 10, 0.86);
+  border: 1px solid rgba(143, 191, 106, 0.55);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  z-index: 3;
+}
+.item-cell-upgrade-mark::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -55%);
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 5px solid #8fbf6a;
+}

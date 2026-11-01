@@ -1,14 +1,16 @@
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
-/* ─── Talentbaum (Jagdbuch u. a.) ─────────────────────────────────────────────
-   claude:2026-10-18T00:30:00+02:00 — 1.3.0 Säule 0 (Chef 17.10.). Wiederverwendbare Komponente
-   components/TalentTree.tsx. Material wie die Slayer-Seite: Basalt-Fläche (slayer.css), Knoten-Karten
-   in Leder + Holz-Eckrahmen wie die Belohnungs-Karten, Zustände über Helligkeit, Rahmenton und Pips.
-   Äste = Spalten; schmale Seiten (Container slayer-page) stapeln die Äste. */
+/* ─── Talentbaum (Narbenbuch, Jägerkodex) ─────────────────────────────────────
+   claude:2026-10-30T19:34:00+01:00 — 1.4.2 Optik neu (Chef 30.10.: „Karten teils unterschiedlich groß, furchtbarer
+   Kontrast“, Entscheid E9 „Dunkle Eisenfläche, gleich große Karten“). Strenges Raster: Ast = Spalte, row = Zeile,
+   alle Zeilen gleich hoch (1fr), Karten füllen ihre Zelle. Fläche: Basalt-Textur unter dunklem Schleier, Text hell
+   (Kontrast > 7:1), gesperrt = matte Fläche mit gut lesbarem Text (> 4,5:1). Rahmen: vorhandener Gravewood-Kartenrahmen.
+   Der Baum scrollt waagerecht im eigenen Rahmen; die Ast-Köpfe sind Teil des Rasters und bleiben über ihrer Spalte. */
 
 .talent-tree {
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
+  min-width: 0;
 }
 
 .talent-tree-intro {
@@ -27,179 +29,287 @@
   background: rgba(8, 10, 11, 0.62);
   font-family: var(--font-head);
   font-size: var(--fs-sm);
-  color: #d9c79f;
+  color: #e0cfa8;
 }
 
-.talent-branches {
-  display: grid;
-  grid-template-columns: repeat(var(--talent-cols, 3), minmax(0, 1fr));
-  gap: var(--sp-3);
-  align-items: start;
-}
-
-@container slayer-page (max-width: 899px) {
-  .talent-branches {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-/* claude:2026-10-18T11:30:00+02:00 — R2: Ast ist keine gerahmte Box mehr (Panel > Ast > Karte > Knopf waren vier
-   Ebenen). Struktur nur über Titel + Trennlinie; Karten tragen den einzigen Rahmen. */
-.talent-branch {
+/* Kopfleiste: Guthaben, ausgegeben, optional Zusatz (Narbenbuch: Ertrag des nächsten Aschesturzes). */
+.talent-bar {
   display: flex;
-  flex-direction: column;
-  min-width: 0;
-  padding: 0;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: var(--sp-2) var(--sp-4);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid rgba(155, 112, 62, 0.5);
+  background:
+    linear-gradient(rgba(8, 10, 11, 0.78), rgba(8, 10, 11, 0.86)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 640px 640px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+.talent-bar-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+}
+.talent-bar-label {
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #c9b995;
+}
+.talent-bar-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-head);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: #f0d58c;
+}
+.talent-bar-extra {
+  margin-left: auto;
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  color: #eadfc6;
+}
+.talent-bar-extra strong {
+  color: #f0d58c;
+}
+
+/* Waagerechtes Scrollen im eigenen Rahmen; der Baum behält seine Mindestbreite (keine gequetschten Karten). */
+.talent-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--sp-1) var(--sp-2) var(--sp-3);
+  border: 1px solid rgba(155, 112, 62, 0.34);
+  background: rgba(6, 8, 9, 0.45);
+  scrollbar-color: #7a5a34 #15191b;
+}
+
+.talent-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--talent-cols, 3), minmax(252px, 1fr));
+  grid-template-rows: auto repeat(var(--talent-rows, 1), minmax(176px, 1fr));
+  gap: 18px 28px;
+  min-width: calc(var(--talent-cols, 3) * 252px + (var(--talent-cols, 3) - 1) * 28px);
+  padding: var(--sp-2) var(--sp-3) 0;
 }
 
 .talent-branch-title {
-  margin: 0 0 var(--sp-2);
+  align-self: end;
+  margin: 0;
   padding-bottom: var(--sp-1);
-  border-bottom: 1px solid rgba(216, 192, 106, 0.18);
+  border-bottom: 1px solid rgba(216, 192, 106, 0.4);
   font-family: var(--font-head);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-md);
   letter-spacing: 1px;
   text-transform: uppercase;
   text-align: center;
-  color: #d9c79f;
+  color: #e8c77a;
 }
 
-.talent-node-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-.talent-node-wrap + .talent-node-wrap {
-  margin-top: var(--sp-2);
-}
-
-/* Verbindungslinie zur Voraussetzung direkt darüber: eisengrau, erfüllt = Kupferton. */
-.talent-link {
-  align-self: center;
-  width: 4px;
-  height: 18px;
-  margin: calc(-1 * var(--sp-2)) 0 0;
-  background: linear-gradient(#3c4246, #23272a);
-  border-left: 1px solid #12161a;
-  border-right: 1px solid #12161a;
-}
-.talent-link.is-met {
-  background: linear-gradient(#c08a4a, #8a5a2b);
-}
-
-/* claude:2026-10-18T11:30:00+02:00 — R1/R3: Gravewood-Kartenrahmen wie die Slayer-Shop-Karten (eine Familie
-   je Ebene), alle Schichten über die ganze Box; Zustand „verfügbar" per Fläche statt inset-Linie (R1). */
-.talent-node {
+/* Zelle = ein Rasterfeld; Karte füllt sie vollständig (gleiche Größe überall). */
+.talent-cell {
   position: relative;
   display: flex;
+  min-width: 0;
+}
+.talent-card-tip {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Verbindungen: eisengrau, erfüllt = Kupfer. up = Steg in der Zeilenlücke; start/mid/end = Schiene im Spaltenrand. */
+.talent-rail {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  background: #4d5357;
+  box-shadow: 0 0 0 1px #0b0d0e;
+}
+.talent-rail.is-met {
+  background: #cf9444;
+}
+.talent-rail.is-up {
+  left: 50%;
+  top: -18px;
+  height: 18px;
+  width: 4px;
+  transform: translateX(-50%);
+}
+.talent-rail.is-start,
+.talent-rail.is-mid,
+.talent-rail.is-end {
+  left: -10px;
+  width: 4px;
+}
+.talent-rail.is-lane-b {
+  left: -19px;
+}
+.talent-rail.is-start {
+  top: 50%;
+  bottom: -18px;
+}
+.talent-rail.is-mid {
+  top: -18px;
+  bottom: -18px;
+}
+.talent-rail.is-end {
+  top: -18px;
+  bottom: 50%;
+}
+.talent-rail.is-start::after,
+.talent-rail.is-end::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 10px;
+  height: 4px;
+  background: inherit;
+  box-shadow: 0 0 0 1px #0b0d0e;
+}
+.talent-rail.is-lane-b.is-start::after,
+.talent-rail.is-lane-b.is-end::after {
+  width: 19px;
+}
+.talent-rail.is-start::after {
+  top: 0;
+}
+.talent-rail.is-end::after {
+  bottom: 0;
+}
+
+/* Karte: Basaltfläche unter dunklem Schleier + Gravewood-Kartenrahmen. */
+.talent-node {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: var(--sp-1);
+  gap: var(--sp-2);
   min-width: 0;
   padding: var(--sp-2) var(--sp-3);
   border-style: solid;
   border-color: transparent;
   border-width: 6px;
   border-image: url("../assets/ui/gravewood/v3/frames/card-frame.webp") 48 / 6px;
-  background-color: #0b0f11;
+  background-color: #0c0f10;
   background-image:
-    linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
-  background-size:auto, 640px 640px;
+    linear-gradient(rgba(8, 10, 11, 0.8), rgba(8, 10, 11, 0.88)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 640px 640px;
   background-origin: border-box;
   background-clip: border-box;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.55);
 }
 
-.talent-node.is-locked {
-  filter: brightness(0.62) saturate(0.7);
-}
-.talent-node.is-available {
-  background-image:
-    linear-gradient(rgba(70, 46, 14, 0.38), rgba(5, 8, 10, 0.3)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
-}
+/* Gemeistert: Messing-/Goldrahmen, warm getönte Fläche, volle Pips. */
 .talent-node.is-maxed {
   background-image:
-    linear-gradient(rgba(60, 42, 14, 0.42), rgba(14, 9, 4, 0.6)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
+    linear-gradient(rgba(58, 42, 12, 0.72), rgba(14, 10, 4, 0.9)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  box-shadow: 0 0 0 2px #b8893a, inset 0 0 0 1px rgba(240, 213, 140, 0.35), 0 2px 5px rgba(0, 0, 0, 0.55);
+}
+/* Kaufbar: warmer Glutrahmen. */
+.talent-node.is-available {
+  background-image:
+    linear-gradient(rgba(62, 26, 10, 0.55), rgba(10, 8, 7, 0.88)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  box-shadow: 0 0 0 2px #d0652a, inset 0 0 14px rgba(208, 101, 42, 0.22), 0 2px 5px rgba(0, 0, 0, 0.55);
+}
+/* Zu teuer: neutral, nur der Preis wird rot. */
+/* Gesperrt: matte, flache Fläche; Text bleibt hell genug (kein Abdunkeln per filter). */
+.talent-node.is-locked {
+  background-image:
+    linear-gradient(rgba(20, 23, 25, 0.9), rgba(20, 23, 25, 0.94)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+.talent-node.is-locked .talent-node-icon {
+  opacity: 0.55;
+  filter: grayscale(0.6);
 }
 
 .talent-node-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: var(--sp-2);
+  min-height: 40px;
 }
 
-/* claude:2026-10-18T14:00:00+02:00 — optionales Knotensymbol (Auto-Discovery talents/<baum>/<knoten>.webp). */
+/* optionales Knotensymbol (Auto-Discovery talents/<baum>/<knoten>.webp), feste Größe. */
 .talent-node-icon {
   width: 40px;
   height: 40px;
   object-fit: contain;
   flex-shrink: 0;
 }
-.talent-node-head .talent-node-name {
-  margin-right: auto;
+.talent-node-icon--blank {
+  display: none;
 }
 
 .talent-node-name {
+  margin-right: auto;
+  min-width: 0;
   font-family: var(--font-head);
   font-size: var(--fs-md);
   font-weight: 700;
   line-height: 1.2;
-  color: var(--text);
+  color: #f3ead6;
+  overflow-wrap: anywhere;
 }
 .talent-node.is-maxed .talent-node-name {
-  color: #e8c77a;
+  color: #f0d58c;
+}
+.talent-node.is-locked .talent-node-name {
+  color: #d6c9ad;
 }
 
 .talent-node-lock {
   width: 14px;
   height: 14px;
-  opacity: 0.85;
+  opacity: 0.9;
   flex-shrink: 0;
-}
-
-.talent-node-rank {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
 }
 
 .talent-pips {
   display: inline-flex;
-  gap: 3px;
+  gap: 5px;
+  padding-left: 2px;
 }
 .talent-pip {
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
   transform: rotate(45deg);
-  border: 1px solid #6b5536;
+  border: 1px solid #8a6c42;
   background: #15110c;
 }
 .talent-pip.is-on {
-  border-color: #d6a052;
-  background: linear-gradient(135deg, #e8c77a, #a8732f);
+  border-color: #f0d58c;
+  background: linear-gradient(135deg, #f0d58c, #b8812c);
 }
 
-.talent-node-rank-text {
-  font-family: var(--font-head);
-  font-size: var(--fs-xs);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  color: #b9a888;
-}
-
+/* Wirkung: höchstens drei Zeilen, Zahl hervorgehoben. */
 .talent-node-desc {
   margin: 0;
   font-size: var(--fs-sm);
   line-height: 1.35;
-  color: var(--text);
+  color: #eadfc6;
+  min-height: calc(1.35em * 3);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
 }
-
-.talent-node-next {
-  margin: 0;
-  font-size: var(--fs-xs);
-  color: #c9a46a;
+.talent-node.is-locked .talent-node-desc {
+  color: #cdc2a8;
+}
+.talent-val {
+  color: #f6d98a;
+  font-weight: 700;
 }
 
 .talent-node-foot {
@@ -207,33 +317,110 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--sp-2);
-  margin-top: var(--sp-1);
+  margin-top: auto;
   min-width: 0;
+  min-height: 38px;
+}
+
+.talent-node-rank-text {
+  flex-shrink: 0;
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #cbbd9a;
 }
 
 .talent-node-reason {
   min-width: 0;
   font-size: var(--fs-xs);
-  line-height: 1.2;
-  color: #a99a80;
+  line-height: 1.25;
+  text-align: right;
+  color: #d4c7a8;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 .talent-node-maxed {
   margin-left: auto;
   font-family: var(--font-head);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: #e8c77a;
+  color: #f0d58c;
 }
 
 .btn-iron.talent-buy-btn {
   flex-shrink: 0;
-  min-width: 92px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  min-width: 0;
+  padding-left: var(--sp-2);
+  padding-right: var(--sp-2);
+}
+.talent-buy-label {
+  font-size: var(--fs-xs);
+}
+.talent-buy-cost {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
 }
 .btn-iron.talent-buy-btn.is-short[disabled] {
-  color: var(--danger, #c84a3a);
-  filter: brightness(0.88);
+  filter: none;
+}
+.btn-iron.talent-buy-btn.is-short[disabled] .talent-buy-cost {
+  color: #ff9c86;
+}
+
+/* Detailansicht (Hover/Fokus, CitadelTip). */
+.talent-tip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  max-width: 340px;
+}
+.talent-tip-name {
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: #f0d58c;
+}
+.talent-tip-desc {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  color: #eadfc6;
+}
+.talent-tip-flavor {
+  margin: 0;
+  font-size: var(--fs-sm);
+  font-style: italic;
+  line-height: 1.4;
+  color: #d9cdb2;
+}
+.talent-tip-ranks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--fs-xs);
+  color: #cbbd9a;
+}
+.talent-tip-ranks li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+.talent-tip-ranks li.is-owned {
+  color: #f0d58c;
 }
 
 /* ─── Jagdbuch auf der Begleiter-Seite: effektive Chance, Pech-Schutz, zweiter Platz ─── */
@@ -347,4 +534,71 @@
   font-size: var(--fs-xs);
   letter-spacing: 0.06em;
   white-space: nowrap;
+}
+
+/* claude:2026-10-30T18:06:00+01:00 — Stil-Hinweis unter dem Spur-Balken. */
+.pet-field-pity-note {
+  font-family: var(--font-body);
+  font-variant: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: var(--fs-sm, var(--fs-xs));
+  line-height: 1.4;
+}
+
+/* claude:2026-10-31T14:25:00+01:00 — Fixwelle E3/E4: bei kleinen Fenstern (1366×768) passt der ganze Baum samt Schlussstein ohne
+   Seitwärts-Scrollen; Astnamen (RU) brechen an Silbengrenzen statt mitten im Wort zu kappen. */
+.talent-branch-title {
+  overflow-wrap: break-word;
+  hyphens: auto;
+  line-height: 1.15;
+}
+.talent-node-reason {
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+@media (max-width: 1700px) {
+  .talent-grid {
+    grid-template-columns: repeat(var(--talent-cols, 3), minmax(0, 1fr));
+    grid-template-rows: auto repeat(var(--talent-rows, 1), minmax(150px, 1fr));
+    gap: 14px 10px;
+    min-width: 0;
+    padding: var(--sp-2) var(--sp-2) 0;
+  }
+  .talent-branch-title {
+    font-size: var(--fs-sm);
+    letter-spacing: 0.4px;
+  }
+  .talent-node {
+    padding: var(--sp-2);
+    gap: var(--sp-1);
+  }
+  .talent-scroll {
+    padding: var(--sp-1);
+  }
+  .talent-node-name {
+    font-size: var(--fs-sm);
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  .talent-node-icon {
+    width: 32px;
+    height: 32px;
+  }
+  .talent-node-head {
+    min-height: 32px;
+  }
+  .talent-node-desc {
+    min-height: calc(1.35em * 4);
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+  }
+  .talent-node-foot {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+  .btn-iron.talent-buy-btn {
+    flex-shrink: 1;
+    margin-left: auto;
+  }
 }

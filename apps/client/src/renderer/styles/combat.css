@@ -6766,3 +6766,61 @@
   background-origin: border-box;
   background-clip: border-box;
 }
+
+/* claude:2026-10-31T16:34:28+01:00 — Fixwelle D4: Karten mit aspect-ratio + min-height wurden im Grid NICHT auf die Spaltenbreite gestreckt
+   (Breite = min-height × Verhältnis = 323 px), bei 1366×768 mit offener Warteschlange ragte die rechte Spalte aus dem Rahmen und
+   Texte wurden abgeschnitten. Volle Spaltenbreite erzwingen; im schmalen Zwei-Spalten-Fall gibt die Höhe dem Inhalt nach. */
+.zone-grid > .zone-card.has-bg {
+  width: 100%;
+  justify-self: stretch;
+}
+@container combat-zone (max-width: 800px) {
+  .zone-grid > .zone-card.has-bg:not(.dungeon-card) {
+    aspect-ratio: auto;
+    min-height: 220px;
+  }
+}
+.zone-grid > .zone-card .zone-card-name {
+  overflow-wrap: anywhere;
+  hyphens: auto; /* claude:2026-10-31T16:34:28+01:00 — lange Zonennamen (Schwarzdornwald) brechen um statt abgeschnitten zu werden */
+}
+
+/* claude:2026-10-31T16:34:28+01:00 — Ideen-Welle 1.4.2: Kampfraten auf der Monsterkarte, Essen-Reichweite, Blutmond-Marke. */
+.monster-card-rates {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2px clamp(4px, 1.6cqw, 8px);
+  font-size: clamp(var(--fs-xs), 5.2cqw, var(--fs-xs));
+  color: var(--text-dim, var(--text));
+  line-height: 1.2;
+  text-align: center;
+}
+.monster-card-rates > span { white-space: nowrap; }
+.cl-food-reach {
+  margin: 4px 0 2px;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  background: rgba(0, 0, 0, 0.28);
+  font-size: var(--fs-sm);
+  line-height: 1.25;
+}
+.cl-food-reach.low {
+  border-left-color: #c2453a;
+  color: #e8998f;
+}
+.kill-summary-bloodmoon {
+  align-self: center;
+  margin: 0 auto 4px;
+  padding: 1px 10px;
+  border: 1px solid #b2342b;
+  background: rgba(120, 20, 20, 0.35);
+  color: #f0a79f;
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+}

@@ -1,0 +1,251 @@
+<title>Belohnungsladen 2.0</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&family=Alegreya+Sans:wght@400;500;700&display=swap">
+<style>
+/* Layout: Lesespalte mit breiten Tabellen und Entscheidungs-Karten. Bewusst nur dunkel (Grim-Reach-Look). */
+:root {
+  --basalt: #121214; --panel: #1b1c1f; --panel-2: #23252a; --iron: #3a3d44; --iron-hi: #5a5e68;
+  --bone: #ece4d2; --text: #ddd5c4; --muted: #a39b8b; --ember: #e3893f; --gold: #d9b45f;
+  --new: #86b98f; --no: #d97a6c; --up: #8db3dc;
+  --display: "Cinzel", Georgia, serif; --body: "Alegreya", Georgia, serif; --ui: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+body { background: var(--basalt); color: var(--text); font-family: var(--body); font-size: 17px; line-height: 1.55; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 32px 96px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 52px; }
+.read { max-width: 72ch; }
+h1, h2, h3 { font-family: var(--display); color: var(--bone); text-wrap: balance; margin: 0; font-weight: 700; }
+h1 { font-size: clamp(2rem, 5vw, 3rem); letter-spacing: 0.02em; line-height: 1.1; }
+h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); letter-spacing: 0.03em; }
+h3 { font-size: 1.02rem; letter-spacing: 0.04em; }
+p { margin: 0; }
+section { display: grid; gap: 16px; min-width: 0; }
+b, strong { color: var(--bone); }
+code { font-size: 0.9em; color: var(--gold); }
+.eyebrow { font-family: var(--ui); text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.78rem; color: var(--ember); font-weight: 700; }
+.lead { font-size: 1.13rem; max-width: 70ch; }
+.muted { color: var(--muted); }
+.hero { display: grid; gap: 16px; border-bottom: 1px solid var(--iron); padding-bottom: 30px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.tile { background: var(--panel); border: 1px solid var(--iron); padding: 14px 16px; display: grid; gap: 4px; }
+.tile .k { font-family: var(--ui); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+.tile .v { font-family: var(--display); font-size: 1.4rem; color: var(--bone); font-variant-numeric: tabular-nums; }
+.tile .n { font-family: var(--ui); font-size: 0.86rem; color: var(--muted); }
+ul.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--iron); background: var(--panel); }
+table { border-collapse: collapse; width: 100%; font-family: var(--ui); font-size: 0.95rem; min-width: 680px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #2b2d32; vertical-align: top; }
+th { color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.76rem; background: var(--panel-2); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+.tag { display: inline-block; font-family: var(--ui); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 1px 7px; border: 1px solid currentColor; white-space: nowrap; }
+.tag.new { color: var(--new); } .tag.no { color: var(--no); } .tag.up { color: var(--up); }
+.callout { border-left: 3px solid var(--ember); background: var(--panel); padding: 12px 16px; display: grid; gap: 6px; }
+.phases { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+.phase { background: var(--panel); border: 1px solid var(--iron); padding: 14px 16px; display: grid; gap: 8px; align-content: start; }
+.phase h3 { font-size: 0.96rem; }
+.phase p { font-family: var(--ui); font-size: 0.92rem; }
+.decisions { display: grid; gap: 14px; }
+.dec { background: var(--panel); border: 1px solid var(--iron); padding: 14px 16px; display: grid; gap: 10px; }
+.dec.done { border-color: #4d6b52; }
+.dec .dh { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.dec .did { font-family: var(--display); color: var(--ember); }
+.dec .dq { font-family: var(--display); color: var(--bone); font-size: 1rem; }
+.dec .why { font-family: var(--ui); font-size: 0.92rem; color: var(--muted); }
+.opts { display: grid; gap: 6px; }
+.opt { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; font-family: var(--ui); font-size: 0.95rem; padding: 8px 10px; border: 1px solid #2f3137; cursor: pointer; }
+.opt:hover { border-color: var(--iron-hi); }
+.opt input { margin-top: 4px; accent-color: var(--ember); }
+.opt.rec .ol::after { content: "Empfehlung"; margin-left: 8px; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ember); border: 1px solid var(--ember); padding: 0 5px; }
+.opt .od { display: block; color: var(--muted); font-size: 0.86rem; }
+.note { display: grid; gap: 4px; font-family: var(--ui); font-size: 0.86rem; color: var(--muted); }
+.note textarea { font-family: var(--ui); font-size: 0.95rem; color: var(--bone); background: var(--basalt); border: 1px solid var(--iron); padding: 6px 8px; min-height: 44px; resize: vertical; }
+.dstat { font-family: var(--ui); font-size: 0.82rem; color: var(--muted); min-height: 1.2em; }
+.banner { font-family: var(--ui); font-size: 0.92rem; color: var(--muted); border-left: 3px solid var(--ember); padding: 6px 12px; background: var(--panel); }
+:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) { .opt { transition: border-color 120ms ease; } }
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <span class="eyebrow">Grim Reach · Plan für 1.4.2 · zur Freigabe</span>
+  <h1>Belohnungsladen 2.0</h1>
+  <p class="lead">Der Laden verkauft heute fast nur Dinge, die man ohnehin herstellt. Eine Marke ist im Endgame ein bis drei Sekunden Farmen wert. Der Vorschlag: Marken kaufen künftig Bequemlichkeit, Steuerung und bleibenden Fortschritt, mit Tages- und Wochengrenzen, damit jede Spielphase etwas davon hat.</p>
+  <p class="muted" style="font-family: var(--ui); font-size: 0.92rem;">Grundlage: <code>design/1.4.2-belohnungsladen-plan.md</code> (Balance-Analyse gegen den echten Content, Zahlen mit Fundstellen). Bindende Vorentscheide bleiben: keine Runen, kein Endgame-Essen, Preisdeckel 20 Marken, nichts Kampf-Gegatetes.</p>
+  <div class="tiles">
+    <div class="tile"><span class="k">Marken pro Tag aus Tagesaufgaben</span><span class="v">22–23</span><span class="n">ab Gesamtlevel 300, danach flach bis Level 99</span></div>
+    <div class="tile"><span class="k">Bestand nach einem Monat</span><span class="v">~950–1.200</span><span class="n">heute ohne sinnvollen Ausgabezweck</span></div>
+    <div class="tile"><span class="k">Wert einer Marke heute</span><span class="v">1–3 s Farmen</span><span class="n">neu: rund 5 Minuten Fortschritt</span></div>
+    <div class="tile"><span class="k">Neue Angebote</span><span class="v">8</span><span class="n">alle 54 bisherigen bleiben</span></div>
+  </div>
+</header>
+
+<section>
+  <span class="eyebrow">1 · Befund</span>
+  <h2>Warum der Laden nutzlos wirkt</h2>
+  <ul class="plain read">
+    <li><b>Falsche Ware.</b> Essen, Tränke, Tonika und Saatgut bringen umgerechnet 3 bis 103 Gold je Marke. Ein voller Tagesertrag an Marken ist im Endgame weniger als eine Minute Farmen wert.</li>
+    <li><b>Nichts Bleibendes.</b> Nach den sechs Kapitel-Schmuckstücken (zusammen 97 Marken) gibt es nichts mehr, worauf man spart.</li>
+    <li><b>Das einzig Nützliche kommt zu spät.</b> Die Slayer-Auftragsmarke ist erst ab Chronik-Kapitel 20 freigeschaltet.</li>
+    <li><b>Keine Ziele sichtbar.</b> Gesperrte Regale sind ausgeblendet. Man sieht nie, worauf man hinarbeitet.</li>
+    <li><b>Einkommen flach.</b> Ab Gesamtlevel 300 bringen die Tagesaufgaben 22 bis 23 Marken am Tag, egal wie weit man ist. Dazu kommen einmalig Chronik (75), Auftrags-Quests (177), Erfolgs-Meilensteine (165) und laufend die Slayer-Serie (2 Marken je 5 Aufträge).</li>
+  </ul>
+</section>
+
+<section>
+  <span class="eyebrow">2 · Neues Sortiment</span>
+  <h2>Acht Angebote, die etwas bedeuten</h2>
+  <p class="read">„Dienste“ wirken sofort beim Kauf mit einer Auswahl im Laden (welche Fertigkeit, welche Aktion, welcher Begleiter). Nichts landet im Inventar und nichts verfällt beim Aschesturz. Grenzen zählen pro Kalendertag oder -woche.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Angebot</th><th class="num">Marken</th><th>Grenze</th><th>Ab</th><th>Wirkung</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag new">neu</span> Tagesaufgabe neu würfeln</td><td class="num">2 / 3 / 4</td><td>3 pro Tag</td><td>sofort</td><td>Eine offene Karte wird gegen eine andere derselben Schwierigkeit getauscht. Der Preis steigt mit jedem Wurf am Tag.</td></tr>
+        <tr><td><span class="tag up">früher</span> Slayer-Auftragsmarke</td><td class="num">3</td><td>keine</td><td>sofort (bisher Kapitel 20)</td><td>Slayer-Auftrag tauschen, ohne Punkte oder Serie zu verlieren.</td></tr>
+        <tr><td><span class="tag new">neu</span> Auftrag rufen (Stufe II)</td><td class="num">4</td><td>2 pro Tag</td><td>sofort</td><td>Ein Arbeitsauftrag der Stufe II kommt sofort. Die Arbeit bleibt nötig.</td></tr>
+        <tr><td><span class="tag new">neu</span> Lagerschein</td><td class="num">15</td><td>nur die ersten 5 Bankpakete</td><td>sofort</td><td>+10 Bankplätze ohne Gold. Wertvoll im Frühspiel, später bleibt es Gold.</td></tr>
+        <tr><td><span class="tag new">neu</span> Lehrstunde</td><td class="num">6</td><td>7 pro Woche</td><td>sofort</td><td>30 Minuten XP in einer gewählten Sammel-Fertigkeit (Holzfällen, Bergbau, Angeln, Sammeln, Diebeskunst), nicht auf 99.</td></tr>
+        <tr><td><span class="tag new">neu</span> Meisterlehre</td><td class="num">4</td><td>7 pro Woche</td><td>Kapitel 4</td><td>Meisterschafts-XP von 60 Minuten für eine gewählte Aktion. Meisterschaft übersteht den Aschesturz.</td></tr>
+        <tr><td><span class="tag new">neu</span> Großauftrag rufen (Stufe III)</td><td class="num">12</td><td>2 pro Woche</td><td>Kapitel 9</td><td>Ein Arbeitsauftrag der Stufe III kommt sofort, mit sicherer Werkstattkiste.</td></tr>
+        <tr><td><span class="tag new">neu</span> Gebührenschein</td><td class="num">20</td><td>1 pro Woche</td><td>Kapitel 20</td><td>−25 % auf die nächste Raid-Gebühr (75.000 / 225.000 / 625.000 Gold gespart).</td></tr>
+        <tr><td><span class="tag new">neu</span> Begleiter-Fährte</td><td class="num">15</td><td>1 pro Woche</td><td>Talent „Spur aufgenommen“</td><td>+5 % der Spur-Schwelle für einen gewählten fehlenden Begleiter. Kein Begleiter wird verkauft, nur der Pech-Schutz vorgezogen.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout read">
+    <b>Bewusst nicht dabei</b>
+    <span><span class="tag no">nein</span> Reliktstaub (stammt aus Kampf-Beute, Runen-IV-Zutat) · <span class="tag no">nein</span> Werkstattkisten (Zufallsbehälter, also Lootbox) · <span class="tag no">nein</span> Runen und Endgame-Essen (frühere Entscheide) · <span class="tag no">nein</span> Kosmetik (es gibt kein System dafür) · <span class="tag no">nicht jetzt</span> Offline-Kerze (überschneidet sich mit dem neuen Narbenbuch-Rang „Lange Nacht“).</span>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">3 · Budget</span>
+  <h2>Wer was davon hat</h2>
+  <p class="read">Wer alle Grenzen ausschöpft, gibt höchstens rund 248 Marken pro Woche aus. Dazu kommen unbegrenzt Slayer-Marken und die bisherigen Vorräte.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Spieler</th><th>Einkommen</th><th>Typischer Einkauf</th><th>Ergebnis</th></tr></thead>
+      <tbody>
+        <tr><td>Früh, erste Woche</td><td class="num">~170–220</td><td>2 Lagerscheine, 7 Lehrstunden, 7 Aufträge II, einige Würfe, 3 Slayer-Marken</td><td>spürbar: Bankplätze und Stunden XP statt Essen für 2.000 Gold</td></tr>
+        <tr><td>Endgame, reiner Sammler</td><td class="num">~115–160 / Woche</td><td>Kernpaket ohne Fährte und Raid, etwa 140</td><td>muss wählen, der Laden bleibt ein Ziel</td></tr>
+        <tr><td>Endgame, gemischt</td><td class="num">~190–260 / Woche</td><td>Kernpaket mit Gebührenschein und Fährte, etwa 170–200</td><td>gibt sein Wocheneinkommen sinnvoll aus</td></tr>
+        <tr><td>Slayer-Idler</td><td class="num">~320–400 / Woche</td><td>alles Begrenzte (~250) und Slayer-Marken</td><td>der Überschuss fließt in Marken, die er ohnehin braucht</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">4 · Umsetzung</span>
+  <h2>Vier Schritte</h2>
+  <div class="phases">
+    <div class="phase"><h3>Schritt 0 · sofort</h3><p>Slayer-Auftragsmarke ins offene Regal. Eine Zeile Content, keine Spielstand-Änderung.</p></div>
+    <div class="phase"><h3>Schritt 1 · Fundament</h3><p>Dienste-Liste und ein Kaufbuch für Tages- und Wochengrenzen. Neue Spielstand-Version 100 mit Umstellung, Bereinigung und Vault-Test. Das Kaufbuch bleibt beim Aschesturz.</p></div>
+    <div class="phase"><h3>Schritt 2 · Kern-Dienste</h3><p>Würfeln, Aufträge rufen, Lehrstunde, Lagerschein, Meisterlehre. Laden-Leiste mit Auswahl und Restgrenzen („noch 2 diese Woche“), Würfel-Knopf auf der Tagesaufgaben-Karte, 7 Sprachen.</p></div>
+    <div class="phase"><h3>Schritt 3 · Endgame</h3><p>Gebührenschein (neues Item, Schalter beim Raid-Start) und Begleiter-Fährte.</p></div>
+  </div>
+  <p class="read muted">Die neue Aufgaben-Seite wird gerade schon so gebaut, dass Laden-Karten Limits, Beschreibungen und Angebote ohne Item-Bild können.</p>
+</section>
+
+<section>
+  <span class="eyebrow">5 · Deine Entscheidungen</span>
+  <h2>Zehn Fragen, eine Empfehlung je Frage</h2>
+  <p class="banner" id="decBanner">Deine Auswahl wird gespeichert, sobald du klickst, und ich lese sie direkt aus.</p>
+  <div class="decisions" id="decisions"></div>
+</section>
+</div>
+
+<script>
+const DECISIONS = [
+  { id: "L1", q: "Dienste mit Sofortwirkung im Laden oder alles als Inventar-Gegenstände?", why: "Dienste brauchen eine Auswahl beim Kauf (Fertigkeit, Aktion, Begleiter).", opts: [
+    { k: "a", l: "Dienste mit Sofortwirkung", d: "Kein Inventar, nichts verfällt beim Aschesturz. Gegenstände nur für Gebührenschein und Slayer-Marke.", rec: true },
+    { k: "b", l: "Alles als Gegenstände", d: "Man kann sie sammeln und später benutzen, sie verfallen aber beim Aschesturz mit dem Inventar." } ] },
+  { id: "L2", q: "Tages- und Wochengrenzen mit eigener Spielstand-Version 100 einführen?", why: "Ohne Grenzen müssten die Preise so hoch sein, dass Frühspieler leer ausgehen.", opts: [
+    { k: "a", l: "Ja, eigene Version 100", d: "Sauber getrennt vom Aschesturz (Version 99).", rec: true },
+    { k: "b", l: "In Version 99 einfalten", d: "Eine Umstellung weniger, aber zwei große Themen in einem Schritt." },
+    { k: "c", l: "Keine Grenzen, höhere Preise", d: "" } ] },
+  { id: "L3", q: "Lehrstunde: Fertigkeits-XP gegen Marken erlauben?", why: "Handwerks-XP ohne Material würde die Material-Kette umgehen, bei Leder und Bogenbau sogar die Kampf-Kette.", opts: [
+    { k: "a", l: "Ja, nur die 5 Sammel-Fertigkeiten", d: "", rec: true },
+    { k: "b", l: "Auch Handwerk (ohne Leder und Bogenbau)", d: "" },
+    { k: "c", l: "Nein, keine XP gegen Marken", d: "" } ] },
+  { id: "L4", q: "Raid-Gebührenschein (−25 %, 1 pro Woche, 20 Marken)?", why: "Verkleinert die Gold-Senke des Raids um höchstens ein Viertel eines Laufs pro Woche.", opts: [
+    { k: "a", l: "Ja", d: "Erster echter Endgame-Grund, Marken zu sammeln.", rec: true },
+    { k: "b", l: "Nein", d: "" } ] },
+  { id: "L5", q: "Begleiter-Fährte (+5 % Spur pro Woche, nur mit Talent „Spur aufgenommen“)?", why: "Früher wurde „keine Begleiter im Laden“ entschieden. Hier wird kein Begleiter verkauft, nur der Pech-Schutz vorgezogen.", opts: [
+    { k: "a", l: "Ja, mit Talent-Gate", d: "", rec: true },
+    { k: "b", l: "Streichen", d: "" } ] },
+  { id: "L6", q: "Reliktstaub und Werkstattkisten im Laden?", why: "Staub stammt aus Kampf-Beute und ist Runen-IV-Zutat. Kisten sind Zufallsbehälter, also eine Lootbox-Mechanik.", opts: [
+    { k: "a", l: "Beides nein", d: "", rec: true },
+    { k: "b", l: "Nur Reliktstaub, knapp begrenzt", d: "" },
+    { k: "c", l: "Beides ja", d: "" } ] },
+  { id: "L7", q: "Offline-Kerze (+4 h einmalig)?", why: "Überschneidet sich mit dem neuen Narbenbuch-Rang „Lange Nacht“.", opts: [
+    { k: "a", l: "Nicht in 1.4.2", d: "", rec: true },
+    { k: "b", l: "Ja, mit aufnehmen", d: "" } ] },
+  { id: "L8", q: "Lagerschein (+10 Bankplätze für 15 Marken, nur Pakete 1–5)?", why: "Bankausbau ist bisher reine Gold-Senke. Der Wert liegt im Frühspiel.", opts: [
+    { k: "a", l: "Ja", d: "", rec: true },
+    { k: "b", l: "Nein", d: "" } ] },
+  { id: "L9", q: "Slayer-Auftragsmarke sofort ins offene Regal (heute erst ab Kapitel 20)?", why: "Reiner Content-Fix, kann vorab kommen.", opts: [
+    { k: "a", l: "Ja, sofort", d: "", rec: true },
+    { k: "b", l: "Bleibt ab Kapitel 20", d: "" } ] },
+  { id: "L10", q: "Gesperrte Regale und Dienste sichtbar machen?", why: "Seit August sind gesperrte Regale ausgeblendet. Man sieht nie, worauf man hinarbeitet.", opts: [
+    { k: "a", l: "Nur das nächste gesperrte Regal grau zeigen", d: "Mit Kapitelnamen als Ziel.", rec: true },
+    { k: "b", l: "Alle gesperrten Regale zeigen", d: "" },
+    { k: "c", l: "Ausgeblendet lassen", d: "" } ] },
+];
+const box = document.getElementById("decisions");
+const statusEls = {};
+for (const d of DECISIONS) {
+  const el = document.createElement("article");
+  el.className = "dec"; el.id = `dec-${d.id}`;
+  el.innerHTML = `<div class="dh"><span class="did">${d.id}</span><span class="dq"></span></div><p class="why"></p><div class="opts" role="radiogroup"></div><label class="note" for="note-${d.id}">Anmerkung (optional)<textarea id="note-${d.id}" rows="2"></textarea></label><span class="dstat"></span>`;
+  el.querySelector(".dq").textContent = d.q;
+  el.querySelector(".why").textContent = d.why;
+  el.querySelector(".opts").setAttribute("aria-label", d.q);
+  for (const o of d.opts) {
+    const lab = document.createElement("label");
+    lab.className = `opt${o.rec ? " rec" : ""}`; lab.htmlFor = `${d.id}-${o.k}`;
+    lab.innerHTML = `<input type="radio" name="${d.id}" id="${d.id}-${o.k}" value="${o.k}"><span><span class="ol"></span><span class="od"></span></span>`;
+    lab.querySelector(".ol").textContent = o.l; lab.querySelector(".od").textContent = o.d;
+    el.querySelector(".opts").appendChild(lab);
+  }
+  statusEls[d.id] = el.querySelector(".dstat");
+  box.appendChild(el);
+}
+(async () => {
+  const banner = document.getElementById("decBanner");
+  let db = null;
+  try { db = await window.claude?.use?.("db"); } catch { db = null; }
+  if (!db) { banner.textContent = "Speichern ist in dieser Ansicht nicht verfügbar. Sag mir deine Wahl einfach im Chat."; return; }
+  const col = db.collection("entscheide_laden");
+  const busy = {};
+  const save = async (id) => {
+    if (busy[id]) return; busy[id] = true;
+    const picked = document.querySelector(`input[name="${id}"]:checked`);
+    const note = document.getElementById(`note-${id}`).value.trim();
+    statusEls[id].textContent = "Speichere …";
+    try {
+      await col.doc(id).set({ wahl: picked ? picked.value : null, notiz: note, zeit: new Date().toISOString() });
+      statusEls[id].textContent = "Gespeichert";
+      document.getElementById(`dec-${id}`).classList.toggle("done", !!picked);
+    } catch (e) {
+      statusEls[id].textContent = e && e.code === "invalid_argument" ? "Nur der Besitzer der Seite kann hier speichern." : "Nicht gespeichert, bitte noch einmal klicken.";
+    } finally { busy[id] = false; }
+  };
+  for (const d of DECISIONS) {
+    document.querySelectorAll(`input[name="${d.id}"]`).forEach((r) => r.addEventListener("change", () => save(d.id)));
+    document.getElementById(`note-${d.id}`).addEventListener("change", () => save(d.id));
+  }
+  col.onSnapshot((snap) => {
+    let done = 0;
+    for (const doc of snap.docs) {
+      const v = doc.data() || {}; const id = doc.id;
+      if (!statusEls[id]) continue;
+      if (v.wahl) { const r = document.getElementById(`${id}-${v.wahl}`); if (r && !r.checked) r.checked = true; done++; document.getElementById(`dec-${id}`).classList.add("done"); }
+      const ta = document.getElementById(`note-${id}`);
+      if (ta && document.activeElement !== ta && typeof v.notiz === "string") ta.value = v.notiz;
+    }
+    banner.textContent = done === 0 ? "Deine Auswahl wird gespeichert, sobald du klickst, und ich lese sie direkt aus." : `${done} von ${DECISIONS.length} entschieden. Gespeichert, ich lese sie direkt aus.`;
+  }, () => { banner.textContent = "Die Verbindung zum Speicher ist abgebrochen. Lade die Seite neu."; });
+})();
+</script>

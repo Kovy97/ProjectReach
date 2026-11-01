@@ -67,4 +67,4 @@ TROPHY_HALL,Trophy Hall,Claim the unique trophy of every Champion of the Reach.,
 TRUE_COMPLETIONIST,True Completionist,"Reach the maximum total level of 2,178.",no,ach_total_level_2079 (count 2178),Goldener Pokal mit 22 Skill-Symbolen im Kranz
 ASH_TO_ASH,Ash to Ash,Fall in battle for the first time.,yes,"neu: ach_deaths_1 (deaths, count 1)",Erloschene Fackel in Asche
 THE_NINTH_WARDEN,The Ninth Warden,Defeat the Ninth Warden.,yes,"neu: ach_elite_idol_warden (elite_kills, target elite_idol_warden, count 1)","Neun Wächtermasken, die neunte zerbrochen"
-A_HUNDRED_HOURS,A Hundred Hours in the Reach,Play actively for 100 hours.,yes,"neu: ach_play_hours_100 (play_hours, count 100)",Sanduhr mit Asche statt Sand
+A_HUNDRED_HOURS,A Hundred Hours in the Reach,Play actively for 100 hours.,no,"neu: ach_play_hours_100 (play_hours, count 100)",Sanduhr mit Asche statt Sand

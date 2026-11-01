@@ -103,7 +103,7 @@ function LoadDossier({ slot, onLoad, onDelete, onBeginNew }: LoadDossierProps): 
             <dl className="load-metadata">
               <div>
                 <dt>{t("menu.playtime")}</dt>
-                <dd>{formatPlaytime(summary.activePlayMs ?? summary.elapsedMs)}</dd>
+                <dd>{formatPlaytime(summary.activePlayMs ?? summary.elapsedMs, t)}</dd>
               </div>
               <div>
                 <dt>{t("menu.lastPlayed")}</dt>

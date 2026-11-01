@@ -499,3 +499,12 @@
   .offline-stage-shine { animation: none; }
   .offline-stage-shine { display: none; }
 }
+
+/* claude:2026-10-31T16:34:28+01:00 — Ideen-Welle 1.4.2: Warteschlangen-Leerlauf im Offline-Bericht. */
+.offline-stage-idle-note {
+  margin-top: 4px;
+  color: #e0b36a;
+  font-size: var(--fs-sm);
+  line-height: 1.3;
+}
+.offline-stage-idle-note .muted { color: var(--muted); font-size: var(--fs-xs); }

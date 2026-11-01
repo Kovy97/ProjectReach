@@ -66,6 +66,32 @@ export function isHealPotion(content: ContentDB, itemId: ItemId): boolean {
 }
 
 /**
+ * claude:2026-10-31T16:08:21+01:00 — 1.4.2: Darf Auto-Essen dieses Item als ERSATZ greifen (combat.ts `findNextFood`)? Reine Heilnahrung:
+ * heilendes Consumable ohne Buff (keine Mahlzeit, kein Combo-Food), kein Heiltrank. Eine Quelle für findNextFood und den Essens-Check
+ * des Slayer-Neuversuchs (slayer.ts), ohne Zyklus combat.ts ↔ slayer.ts.
+ */
+export function isAutoEatFallbackFood(content: ContentDB, itemId: ItemId): boolean {
+  const item = content.items[itemId];
+  if (item?.type !== "consumable" || item.buff) return false;
+  if ((item.healAmount ?? 0) <= 0 && (item.healPct ?? 0) <= 0) return false;
+  return !isHealPotion(content, itemId);
+}
+
+/**
+ * claude:2026-10-31T16:08:21+01:00 — 1.4.2: Liegt irgendwo (Inventar oder Lager) Essen, das Auto-Essen als Ersatz greifen würde? Genau
+ * dann liefert `findNextFood` einen Treffer. Rein lesend.
+ */
+export function hasAutoEatFallbackFood(state: GameState, content: ContentDB): boolean {
+  for (const slot of state.inventory.slots) {
+    if (slot && slot.qty > 0 && isAutoEatFallbackFood(content, slot.itemId)) return true;
+  }
+  for (const id of Object.keys(state.bank)) {
+    if ((state.bank[id] ?? 0) > 0 && isAutoEatFallbackFood(content, id)) return true;
+  }
+  return false;
+}
+
+/**
  * Klassifiziert ein Item für den Konsum-Takt. Deckungsgleich mit der Kampf-Domänen-Trennung:
  * Heiltrank ⇒ Trank-Takt, sonstiges heilendes Consumable (Cooking-Food, Combo-Food) ⇒ Ess-Takt,
  * alles ohne Heilwert ⇒ kein Takt.

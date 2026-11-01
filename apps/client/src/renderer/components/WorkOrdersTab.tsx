@@ -24,6 +24,7 @@ import { ConfirmModal, type ConfirmRequest } from "./ConfirmModal"; // claude:20
 import { formatNum } from "../util/format";
 import { fillEventText, orderCustomer } from "../ordersApi";
 import { getPortrait } from "../portraits";
+import { getUiIcon } from "../uiIcons"; // claude:2026-10-30T22:20:00+01:00 — Münz-Symbol der Belohnungs-Chips
 
 function mmss(ms: number): string {
   const s = Math.max(0, Math.ceil(ms / 1000));
@@ -49,6 +50,8 @@ export function OrderTierMark({ tier, compact = false }: { tier: WorkOrderTier; 
   );
 }
 
+const COIN_ICON_URL = getUiIcon("icon_quest_coin");
+
 function OrderHead({ order }: { order: WorkOrder }): JSX.Element {
   const { t, tr } = useI18n();
   const c = orderCustomer(content, order);
@@ -73,9 +76,13 @@ function OrderHead({ order }: { order: WorkOrder }): JSX.Element {
           {t("orders.minutes").replace("{n}", String(order.minutes))}
         </span>
       </div>
+      {/* claude:2026-10-30T22:20:00+01:00 — Belohnung als Chips unter dem Kopf (gleiche Chips wie die Aufgabenkarten) */}
       <div className="work-order-reward">
-        <span>{t("orders.reward.gold").replace("{n}", formatNum(order.gold))}</span>
-        <span>{t("orders.reward.xp").replace("{n}", formatNum(order.xp))}</span>
+        <span className="quest-reward-chip quest-reward-chip--gold">
+          {COIN_ICON_URL && <img loading="lazy" decoding="async" src={COIN_ICON_URL} alt="" className="quest-reward-icon" />}
+          {t("orders.reward.gold").replace("{n}", formatNum(order.gold))}
+        </span>
+        <span className="quest-reward-chip quest-reward-chip--xp">{t("orders.reward.xp").replace("{n}", formatNum(order.xp))}</span>
       </div>
     </div>
   );
@@ -92,8 +99,9 @@ export function WorkOrdersTab(): JSX.Element {
   return (
     <div className="work-orders">
       <p className="muted work-orders-lead">{t("orders.lead")} {t("orders.tiers.lead")}</p>{/* claude:2026-10-25T17:05:00+01:00 — Stufen kurz erklärt (1.4.1) */}
+      <div className="work-orders-grid">{/* claude:2026-10-30T22:20:00+01:00 — Angebot und offene Aufträge als gleich hohe Karten im Raster */}
       {offer && (
-        <div className={`work-order work-order--offer${offer.tier === 3 ? " work-order--tier3" : ""}`}>
+        <div className={`work-order work-order--offer work-order--t${offer.tier ?? ORDER_LEGACY_TIER}${offer.tier === 3 ? " work-order--tier3" : ""}`}>
           <div className="work-order-badge">
             {t("orders.offer.title")} <span className="muted">· {t("orders.offer.expires").replace("{time}", mmss(o?.offerMsLeft ?? 0))}</span>
           </div>
@@ -102,7 +110,7 @@ export function WorkOrdersTab(): JSX.Element {
             <button type="button" className="shop-citadel-btn" onClick={() => declineWorkOrder(state)}>
               {t("orders.decline")}
             </button>
-            <button type="button" className="btn-iron" disabled={open.length >= ORDER_MAX_OPEN} onClick={() => acceptWorkOrder(state)}>
+            <button type="button" className="btn-iron btn-iron--sm" disabled={open.length >= ORDER_MAX_OPEN} onClick={() => acceptWorkOrder(state)}>
               {t("orders.accept")}
             </button>
           </div>
@@ -115,7 +123,7 @@ export function WorkOrdersTab(): JSX.Element {
         const pct = Math.round((p.done / Math.max(1, p.count)) * 100);
         const canDeliver = p.ready && p.stock >= order.count;
         return (
-          <div key={order.id} className={`work-order${p.ready ? " work-order--ready" : ""}${order.tier === 3 ? " work-order--tier3" : ""}`}>{/* claude:2026-10-25T17:05:00+01:00 — Großauftrag hervorgehoben */}
+          <div key={order.id} className={`work-order work-order--t${order.tier ?? ORDER_LEGACY_TIER}${p.ready ? " work-order--ready" : ""}${order.tier === 3 ? " work-order--tier3" : ""}`}>{/* claude:2026-10-25T17:05:00+01:00 — Großauftrag hervorgehoben */}
             <OrderHead order={order} />
             <div className="work-order-progress" aria-label={t("orders.progress")}>
               <div className="work-order-bar">
@@ -149,7 +157,7 @@ export function WorkOrdersTab(): JSX.Element {
               )}
               <button
                 type="button"
-                className="btn-iron"
+                className="btn-iron btn-iron--sm"
                 disabled={!canDeliver}
                 onClick={() => {
                   const deliver = (): void => {
@@ -182,6 +190,7 @@ export function WorkOrdersTab(): JSX.Element {
           </div>
         );
       })}
+      </div>
       {msg && <p className="work-orders-msg">{msg}</p>}
       <ConfirmModal request={confirm} onClose={() => setConfirm(null)} />
     </div>

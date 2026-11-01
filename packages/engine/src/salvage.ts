@@ -21,9 +21,10 @@ import {
 import { dropSourcesOf } from "./drop-sources";
 import { itemTier } from "./tiers";
 import { itemCount, removeInstance, removeItem } from "./inventory";
-import { storagePredicate } from "./storage"; // claude:2026-10-26T06:55:00+02:00 — Bank-Bergung (Chef BG1)
+import { isStorageItem, storagePredicate } from "./storage"; // claude:2026-10-26T06:55:00+02:00 — Bank-Bergung (Chef BG1)
 import { grantLoot } from "./mail";
-import { sellPrice } from "./shop";
+import { equipmentSellKind, sellPrice } from "./shop";
+import type { EquipmentSellFilter } from "./shop"; // claude:2026-10-31T11:16:44+01:00 — Art-Filter der Massen-Bergung
 
 // ── Herkunftsregel ─────────────────────────────────────────────────────────
 
@@ -270,4 +271,198 @@ export function salvageBatch(state: GameState, content: ContentDB, maxRarity: It
     else n += salvageItem(state, content, e.itemId, e.qty);
   }
   return n;
+}
+
+// ── Massen-Bergung (Diablo-3-Stil, Chef 31.10.2026) ────────────────────────
+// claude:2026-10-31T11:16:44+01:00 — Kandidaten, Raritäts-Plan, Vorschau und Sammel-Ausführung über Inventar UND Bank.
+// Keine neue Spielregel: alles läuft über die vier bestehenden Verben (salvageItem/Instance, salvageBankItem/Instance).
+// Deterministisch, kein RNG, kein Save-Feld.
+
+export type SalvageSource = "inventory" | "bank";
+
+export interface SalvageCandidate {
+  source: SalvageSource;
+  itemId: ItemId;
+  /** Instanz-ID bei Einzelstücken, sonst null (ganzer Stapel). */
+  instanceId: string | null;
+  qty: number;
+  rarity: ItemRarity;
+  /** Einzelstück mit Verzauberung (Runen gehen beim Zerlegen verloren). */
+  hasRunes: boolean;
+  /** claude:2026-10-31T13:58:31+01:00 — Befund A3: Einzelstück mit Suffix (Zufallswurf geht beim Zerlegen verloren). */
+  hasSuffix: boolean;
+  /** Gesperrt (Schloss auf Item, Basis oder Instanz). */
+  locked: boolean;
+}
+
+export interface SalvagePick {
+  source: SalvageSource;
+  itemId: ItemId;
+  instanceId: string | null;
+  qty: number;
+}
+
+export interface SalvageSummary {
+  /** Zerlegte (bzw. in der Vorschau: zu zerlegende) Stückzahl. */
+  pieces: number;
+  items: { itemId: ItemId; qty: number }[];
+  dust: number;
+}
+
+export interface SalvageOutcome extends SalvageSummary {
+  /** Einheiten des Ertrags, die direkt ins Materiallager gingen (Einstellung „Material ins Lager“, kein Überlauf). */
+  toStorage: number;
+  /** Einheiten des Ertrags, die wegen vollem Inventar in der Bank gelandet sind. */
+  toBank: number;
+  /** Einheiten des Ertrags, die als Überlauf-Post gelandet sind. */
+  toMail: number;
+}
+
+/** Alle zerlegbaren Einträge in Inventar oder Bank (gesperrte und verzauberte sind markiert, nicht ausgefiltert). */
+export function salvageCandidates(state: GameState, content: ContentDB, source: SalvageSource): SalvageCandidate[] {
+  const out: SalvageCandidate[] = [];
+  const rarityOf = (id: ItemId): ItemRarity => content.items[id]?.rarity ?? "common";
+  if (source === "inventory") {
+    const seen = new Set<ItemId>();
+    for (const slot of state.inventory.slots) {
+      if (!slot || slot.instance || seen.has(slot.itemId)) continue;
+      seen.add(slot.itemId);
+      if (!isSalvageable(content, slot.itemId)) continue;
+      const qty = itemCount(state.inventory, slot.itemId);
+      if (qty <= 0) continue;
+      out.push({ source, itemId: slot.itemId, instanceId: null, qty, rarity: rarityOf(slot.itemId), hasRunes: false, hasSuffix: false, locked: isSalvageLocked(state, slot.itemId) });
+    }
+    for (const inst of state.inventory.instances) {
+      if (!isSalvageable(content, inst.baseItemId)) continue;
+      out.push({
+        source, itemId: inst.baseItemId, instanceId: inst.instanceId, qty: 1, rarity: rarityOf(inst.baseItemId),
+        hasRunes: inst.affixes.length > 0,
+        hasSuffix: !!inst.suffix, // claude:2026-10-31T13:58:31+01:00 — A3
+        locked: isSalvageLocked(state, inst.instanceId) || isSalvageLocked(state, inst.baseItemId),
+      });
+    }
+    return out;
+  }
+  const ordered: ItemId[] = [];
+  const seenBank = new Set<ItemId>();
+  for (const id of state.bankOrder ?? []) if (id && !seenBank.has(id) && (state.bank[id] ?? 0) > 0) { seenBank.add(id); ordered.push(id); }
+  for (const id of Object.keys(state.bank)) if (!seenBank.has(id) && (state.bank[id] ?? 0) > 0) { seenBank.add(id); ordered.push(id); }
+  for (const id of ordered) {
+    if (!isSalvageable(content, id)) continue;
+    out.push({ source, itemId: id, instanceId: null, qty: state.bank[id]!, rarity: rarityOf(id), hasRunes: false, hasSuffix: false, locked: isSalvageLocked(state, id) });
+  }
+  for (const inst of state.bankInstances) {
+    if (!isSalvageable(content, inst.baseItemId)) continue;
+    out.push({
+      source, itemId: inst.baseItemId, instanceId: inst.instanceId, qty: 1, rarity: rarityOf(inst.baseItemId),
+      hasRunes: inst.affixes.length > 0,
+      hasSuffix: !!inst.suffix, // claude:2026-10-31T13:58:31+01:00 — A3
+      locked: isSalvageLocked(state, inst.instanceId) || isSalvageLocked(state, inst.baseItemId),
+    });
+  }
+  return out;
+}
+
+/**
+ * Ergebnis des Raritäts-Knopfs: exakte Rarität, ohne Gesperrte und Verzauberte (und, mit `keepSuffix`, ohne Suffix-Teile);
+ * `protectedCount` zählt, was dabei liegen bleibt.
+ */
+export interface SalvageRarityPlan {
+  picks: SalvagePick[];
+  pieces: number;
+  protectedCount: number;
+}
+
+export function salvageRarityPlan(
+  state: GameState,
+  content: ContentDB,
+  // claude:2026-10-31T13:58:31+01:00 — Befund A3 (Chef-GO): `keepSuffix` (Standard true) lässt Teile mit Suffix liegen, Schalter „Teile mit Suffix behalten“.
+  opts: { sources: SalvageSource[]; rarity: ItemRarity; kind?: EquipmentSellFilter; keepSuffix?: boolean },
+): SalvageRarityPlan {
+  const picks: SalvagePick[] = [];
+  let pieces = 0;
+  let protectedCount = 0;
+  const kind = opts.kind ?? "all";
+  const keepSuffix = opts.keepSuffix !== false; // claude:2026-10-31T13:58:31+01:00 — A3
+  for (const source of opts.sources) {
+    for (const c of salvageCandidates(state, content, source)) {
+      if (c.rarity !== opts.rarity) continue;
+      if (kind !== "all" && equipmentSellKind(content.items[c.itemId]) !== kind) continue;
+      if (c.locked || c.hasRunes || (keepSuffix && c.hasSuffix)) { protectedCount += c.qty; continue; } // claude:2026-10-31T13:58:31+01:00 — A3: Suffix wie Runen
+      picks.push({ source, itemId: c.itemId, instanceId: c.instanceId, qty: c.qty });
+      pieces += c.qty;
+    }
+  }
+  return { picks, pieces, protectedCount };
+}
+
+function addYield(items: Map<ItemId, number>, y: SalvageYield, times: number): number {
+  for (const it of y.items) items.set(it.itemId, (items.get(it.itemId) ?? 0) + it.qty * times);
+  return y.dust * times;
+}
+
+function toSummary(pieces: number, items: Map<ItemId, number>, dust: number): SalvageSummary {
+  return { pieces, items: [...items].filter(([, q]) => q > 0).map(([itemId, qty]) => ({ itemId, qty })), dust };
+}
+
+/** Aggregierte Vorschau (Stück, Material, Reliktstaub) für eine Auswahl. Nicht zerlegbare Picks zählen nicht. */
+export function salvagePreview(content: ContentDB, picks: SalvagePick[]): SalvageSummary {
+  const items = new Map<ItemId, number>();
+  let dust = 0;
+  let pieces = 0;
+  for (const p of picks) {
+    const n = Math.floor(p.qty);
+    const y = Number.isFinite(n) && n > 0 ? salvageYield(content, p.itemId) : null;
+    if (!y) continue;
+    pieces += n;
+    dust += addYield(items, y, n);
+  }
+  return toSummary(pieces, items, dust);
+}
+
+function lootHeld(state: GameState, itemId: ItemId): { bank: number; mail: number } {
+  let mail = 0;
+  for (const m of state.mailbox ?? []) for (const a of m.items) if (a.itemId === itemId) mail += a.qty;
+  return { bank: state.bank[itemId] ?? 0, mail };
+}
+
+/**
+ * Führt eine Auswahl über die vier Verben aus. Jeder Pick wird erst beim Ausführen geprüft (Menge geklemmt, Schloss,
+ * Bestand). Gibt zurück, was wirklich herauskam, und wie viel davon wegen vollem Inventar in Bank oder Post gelandet ist.
+ */
+export function salvagePicks(state: GameState, content: ContentDB, picks: SalvagePick[]): SalvageOutcome {
+  const outputIds = new Set<ItemId>([RELIC_DUST_ITEM_ID]);
+  for (const p of picks) for (const it of salvageYield(content, p.itemId)?.items ?? []) outputIds.add(it.itemId);
+  const before = new Map<ItemId, { bank: number; mail: number }>();
+  for (const id of outputIds) before.set(id, lootHeld(state, id));
+
+  const items = new Map<ItemId, number>();
+  let dust = 0;
+  let pieces = 0;
+  for (const p of picks) {
+    let n: number;
+    if (p.instanceId) {
+      const ok = p.source === "bank" ? salvageBankInstance(state, content, p.instanceId) : salvageInstance(state, content, p.instanceId);
+      n = ok ? 1 : 0;
+    } else if (p.source === "bank") n = salvageBankItem(state, content, p.itemId, p.qty);
+    else n = salvageItem(state, content, p.itemId, p.qty);
+    const y = n > 0 ? salvageYield(content, p.itemId) : null;
+    if (!y) continue;
+    pieces += n;
+    dust += addYield(items, y, n);
+  }
+  // Ausrüstung ist nie ihr eigenes Ertragsmaterial, daher zeigt der Zuwachs in Bank bzw. Post nur den Überlauf.
+  let toStorage = 0;
+  let toBank = 0;
+  let toMail = 0;
+  const storageOn = state.settings?.materialsToStorage !== false;
+  for (const id of outputIds) {
+    const a = before.get(id)!;
+    const b = lootHeld(state, id);
+    const dBank = Math.max(0, b.bank - a.bank);
+    if (storageOn && isStorageItem(content, id)) toStorage += dBank;
+    else toBank += dBank;
+    toMail += Math.max(0, b.mail - a.mail);
+  }
+  return { ...toSummary(pieces, items, dust), toStorage, toBank, toMail };
 }

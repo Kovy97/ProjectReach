@@ -4,6 +4,7 @@ import type {
   ItemId,
   MonsterDef,
   MonsterId,
+  QueuedAction,
   SlayerMasterDef,
   SlayerMasterId,
   SlayerTask,
@@ -20,13 +21,16 @@ import {
   SLAYER_TOWER_FLOOR_THRESHOLDS,
   SLAYER_XP_KILL_FACTOR,
   earlyXpMult,
+  isFightQueueEntry, // claude:2026-10-31T12:30:41+01:00 — 1.4.2: neuer Auftrag ans Queue-Ende (queueSlayerAutoTask)
+  makeFightQueueEntry,
 } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
 import { combatLevel } from "./dungeon";
 import { addItemOrBank, itemCount } from "./inventory";
 import { masterSlayerPointsBonus } from "./capes";
 import { campBoost, campKindAtMaxLevel } from "./camp";
-import { bankCount } from "./bank";
+import { bankCount, stockCount } from "./bank"; // claude:2026-10-31T16:08:21+01:00 — + stockCount (Slayer-Neuversuch, 1.4.2)
+import { hasAutoEatFallbackFood } from "./consume-gate"; // claude:2026-10-31T16:08:21+01:00
 import { nextFloat, nextInt } from "./rng";
 import { isZoneUnlocked } from "./zones";
 import { talentEffect } from "./talents";
@@ -564,6 +568,8 @@ export function recordKillForSlayer(
   grantSlayerXp(state, content, perKillSlayerXp(content, monsterId)); // Pro-Kill-XP für jeden Kill
 
   task.progress++;
+  if (state.combat.slayerRetryDeaths !== undefined) state.combat.slayerRetryDeaths = undefined; // claude:2026-10-31T13:00:41+01:00 — Auftrags-Kill beendet die Todesserie (Neuversuch)
+  if (state.combat.slayerRetryNote !== undefined) state.combat.slayerRetryNote = undefined; // claude:2026-10-31T13:58:31+01:00 — B1: Hinweis fürs Todes-Popup erledigt
   if (task.progress >= task.required) {
     grantSlayerXp(state, content, task.xpReward); // Abschluss-Bonus zusätzlich
     // claude:2026-10-17T20:30:00+02:00 — Gutschrift über slayerTaskPointsPayout (EINE Quelle für Engine,
@@ -643,10 +649,100 @@ export function applySlayerAutoSwitch(
   const qf = state.queueFight;
   const isQueueFight = !!qf && qf.monsterId === cs.monsterId;
   // claude:2026-10-25T11:42:00+01:00 — endlicher Queue-Kampf mit wartenden Einträgen: Queue-Planung geht vor (s. JSDoc).
-  if (isQueueFight && qf!.remaining !== null && state.actionQueue.length > 0) return null;
+  // claude:2026-10-31T12:30:41+01:00 — 1.4.2 (Spieler-Feedback): der neue Auftrag wartet dann am Queue-Ende, statt liegen zu bleiben.
+  // claude:2026-10-31T13:58:31+01:00 — Befund D2: auch wenn dahinter nur Endlos-Einträge warten, KEIN Direktwechsel. Der Rest dieses
+  // endlichen Kampfs ist Planung des Spielers; queueSlayerAutoTask stellt den Auftrag VOR den ersten Endlos-Eintrag, also läuft er
+  // direkt nach dem Rest (beim typischen „Sofort kämpfen“ mit Auftragsgröße ist der Rest 0 und der Auftrag startet im selben Tick).
+  if (isQueueFight && qf!.remaining !== null && state.actionQueue.length > 0) {
+    queueSlayerAutoTask(state, content);
+    return null;
+  }
   if (isQueueFight) state.queueFight = { monsterId: next.id, remaining: qf!.remaining === null ? null : task.required };
   // Gleiches Monster ⇒ der Respawn läuft ohnehin weiter, nur die Queue-Laufzeit (oben) wurde neu gesetzt.
   return next.id === cs.monsterId ? null : next;
+}
+
+/** claude:2026-10-31T13:00:41+01:00 — 1.4.2: so viele Tode in Folge ohne Auftrags-Kill, dann gibt der Neuversuch auf. */
+export const SLAYER_RETRY_MAX_DEATHS = 3;
+
+/** claude:2026-10-31T13:58:31+01:00 — Befund B1: Erholung nach einem Tod gegen das Auftragsmonster, bevor der Neuversuch angreift. */
+export const SLAYER_RETRY_RECOVERY_MS = 30_000;
+
+/**
+ * claude:2026-10-31T13:00:41+01:00 — 1.4.2 (Chef 31.10.: „Wenn es ein Slayer-Task ist, soll man es einfach nochmal probieren.“)
+ * Entscheidet nach einem Tod in einem NORMALEN Kampf (kein Dungeon/Raid/Champion/Turm, prüft tick.ts), ob der Kampf gegen das
+ * aktuelle Auftragsmonster neu startet, statt wie sonst zu enden. `diedAgainst` = Gegner vor dem Kampfschritt (der Tod hat
+ * `monsterId` schon genullt). Sicherung gegen eine endlose Todesschleife (Essen würde über Nacht verbraucht): zählt Tode in
+ * Folge ohne Auftrags-Kill in `combat.slayerRetryDeaths`; beim SLAYER_RETRY_MAX_DEATHS-ten gibt das Spiel auf wie bisher
+ * und setzt den Zähler zurück. Ein Auftrags-Kill setzt ihn ebenfalls zurück (recordKillForSlayer). Kein RNG.
+ * Rückgabe true ⇒ der Aufrufer stellt den Kampf an die Queue-Front.
+ */
+export function slayerRetryAfterDeath(state: GameState, content: ContentDB, diedAgainst: MonsterId): boolean {
+  const task = state.slayerTask;
+  const cs = state.combat;
+  // claude:2026-10-31T13:58:31+01:00 — Befund B1 (Chef-GO): der Tod heilt voll (combat.ts onPlayerDefeated), ein Neuversuch ohne Essen
+  // war damit Gratis-Heilung (ohne Essen 395 statt 4 Kills/h). Neu: nur mit Essen im Auto-Essen-Platz (Bestand im Inventar, die Quelle
+  // von tryAutoEat) und erst nach SLAYER_RETRY_RECOVERY_MS Erholung (Kill-Cooldown, startCombat trägt ihn in den Neustart). Jeder
+  // Aufruf setzt den Popup-Hinweis `slayerRetryNote` neu (ohne passenden Auftrag: weg).
+  cs.slayerRetryNote = undefined;
+  if (!task || task.monsterId !== diedAgainst || task.progress >= task.required) return false;
+  const giveUp = (reason: "deaths" | "noFood" | "unreachable"): false => {
+    cs.slayerRetryDeaths = undefined;
+    cs.slayerRetryNote = { kind: "giveUp", reason };
+    return false;
+  };
+  if (!canFightMonster(state, content, diedAgainst)) return giveUp("unreachable");
+  // claude:2026-10-31T16:08:21+01:00 — 1.4.2 (Chef-GO 31.10.): dieselbe Quelle wie tryAutoEat, also Inventar UND Lager. Ist das gewählte
+  // Essen ganz aufgebraucht, zählt Ersatz-Essen irgendwo (Auto-Essen springt beim nächsten Bissen darauf um, findNextFood).
+  const food = state.character.food;
+  if (!food || (stockCount(state, food) <= 0 && !hasAutoEatFallbackFood(state, content))) return giveUp("noFood");
+  const deaths = (cs.slayerRetryDeaths ?? 0) + 1;
+  if (deaths >= SLAYER_RETRY_MAX_DEATHS) return giveUp("deaths");
+  cs.slayerRetryDeaths = deaths;
+  const resumeInMs = Math.max(SLAYER_RETRY_RECOVERY_MS, cs.cooldownRemainingMs ?? 0);
+  cs.cooldownRemainingMs = resumeInMs;
+  cs.slayerRetryNote = { kind: "retry", attempt: deaths, resumeInMs };
+  return true;
+}
+
+/**
+ * claude:2026-10-31T13:58:31+01:00 — Befund D2: läuft dieser Queue-Eintrag von selbst nie aus? Kampf, Dungeon und Raid mit ∞ sowie eine
+ * ∞-Aktion ohne Material (Sammeln, Diebeskunst: kein natürlicher Stopp, ein Inventar-voll-Stopp schaltet nicht weiter). Eine ∞-Aktion
+ * MIT Material („alles verarbeiten“) endet, sobald das Material aufgebraucht ist, und zählt deshalb als endliche Planung.
+ */
+function isEndlessQueueEntry(content: ContentDB, e: QueuedAction): boolean {
+  if (e.target !== null) return false;
+  if (e.kind !== "action") return true;
+  const action = content.actions[e.actionId];
+  return !!action && !(action.inputs && action.inputs.length > 0);
+}
+
+/**
+ * claude:2026-10-31T12:30:41+01:00 — 1.4.2 (Spieler-Feedback „Aufträge werden automatisch angenommen, aber das Ziel landet nicht
+ * in der Warteschlange“). Hängt den eben automatisch vergebenen Auftrag als Kampf-Eintrag „Ziel × Auftragsgröße“ ans ENDE der
+ * Warteschlange (seit claude:2026-10-31T13:58:31+01:00 vor den ersten Endlos-Eintrag, s. isEndlessQueueEntry), wenn der Kampf nicht direkt wechseln kann: hinter einem endlichen Queue-Kampf wartet noch etwas
+ * (applySlayerAutoSwitch) oder der Auftrag wurde in einem Dungeon-, Champion- oder Turmkampf abgeschlossen (combat.ts).
+ * Die Planung des Spielers läuft zuerst, danach der Auftrag. Kein Eintrag, wenn der Schalter aus ist, das Ziel nicht
+ * bekämpfbar ist (Dungeon-only, Gebiet/Etage gesperrt, Slayer-Anforderung) oder schon ein Kampf gegen dieses Ziel in der
+ * Queue steht. Direktes Anhängen statt enqueueFight: `queuePaused` bleibt unberührt (kein Wiederaufnahme-Signal, das ist
+ * keine Spieler-Eingabe) und slayer.ts importiert actions.ts nicht (actions → slayer). Kein RNG. Rückgabe: eingereiht?
+ */
+export function queueSlayerAutoTask(state: GameState, content: ContentDB): boolean {
+  if (state.slayerAutoTask !== true) return false;
+  const task = state.slayerTask;
+  if (!task || task.progress !== 0) return false;
+  const next = content.monsters[task.monsterId];
+  if (!next || next.dungeonOnly || !canFightMonster(state, content, next.id)) return false;
+  if (!Array.isArray(state.actionQueue)) state.actionQueue = [];
+  // claude:2026-10-31T13:58:31+01:00 — Befund D2: am Queue-Ende hinter einem Endlos-Eintrag (z. B. ∞-Bergbau, von „Sofort kämpfen“ an die
+  // Front geparkt) liefe der Auftrag nie. Darum VOR den ersten Endlos-Eintrag (endliche Einträge davor bleiben vorn), sonst ans Ende.
+  // Die Doppel-Sperre gilt nur für Kämpfe, die vor dieser Stelle stehen, also wirklich noch drankommen.
+  const queue = state.actionQueue;
+  const endless = queue.findIndex((e) => isEndlessQueueEntry(content, e));
+  const at = endless >= 0 ? endless : queue.length;
+  if (queue.slice(0, at).some((e) => isFightQueueEntry(e) && e.monsterId === next.id)) return false;
+  queue.splice(at, 0, makeFightQueueEntry(next.id, task.required));
+  return true;
 }
 
 /**

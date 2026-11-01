@@ -1,7 +1,7 @@
 "appbuild"
 {
 	"appid"	"4915450"
-	"desc"	"Grim Reach 1.4.1 The Hunt Goes On (Slayer-Punkte und Turm, gestufte Auftraege, Verzauberungsseite, Nahkampf-Effekte, Sammelverkauf, Knopf-Stile, Inventar- und Warteschlangen-Fixes)"
+	"desc"	"Grim Reach 1.4.2 Cinderfall Reborn (Aschesturz 2.0 mit neuem Narbenbuch und Nachzahlung, Belohnungsladen-Dienste, Tagesaufgaben einreihen, Zerlegen-Reiter, Rezepte anpinnen, Queue-Vorlagen, Painterly-Look)"
 	"buildoutput"	"G:\GameDev\steam\output\"
 	"contentroot"	"G:\GameDev\apps\client\release\win-unpacked\"
 	"setlive"	""

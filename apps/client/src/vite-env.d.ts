@@ -9,6 +9,14 @@ declare const __APP_VERSION__: string;
  *  Spieler-Build konstant gefaltet, Tree-Shaking-Vertrag bleibt intakt). Gilt für Main UND Renderer. */
 declare const __SCENE_BUILDER_BUILD__: boolean;
 
+/** claude:2026-10-30T20:20:00+01:00 — Asset-Werkstatt-Build (devtools/assetLab.tsx): per Vite-`define` `true` NUR bei `ASSET_LAB=1`, sonst literal
+ *  `false` (Hotkey-Modul und Bild-Glob werden dann nicht ins Paket gebaut). Nur Renderer. */
+declare const __ASSET_LAB_BUILD__: boolean;
+
+/** claude:2026-10-30T20:58:00+01:00 — Dev-UI-Stil „Synty“ (renderer/synty/): per Vite-`define` `true` NUR bei `SYNTY_UI=1`, sonst literal `false` (Stil, CSS und Bilder
+ *  werden dann nicht ins Paket gebaut). Nur Renderer. */
+declare const __SYNTY_UI_BUILD__: boolean;
+
 /** electron-vite: `import x from "./y.png?asset"` liefert den aufgelösten Datei-Pfad als String. */
 declare module "*?asset" {
   const src: string;
@@ -150,6 +158,12 @@ interface CharacterExportBridge {
   characterKit(characterName: string, files: CharacterExportFileInput[]): Promise<CharacterExportResult>;
 }
 
+/** claude:2026-10-31T16:34:28+01:00 — Desktop-Benachrichtigungen (main/notify.ts). */
+interface NotifyBridge {
+  show(title: string, body: string): Promise<boolean>;
+  supported(): Promise<boolean>;
+}
+
 interface HearthforgeBridge {
   platform: NodeJS.Platform;
   app: AppBridge;
@@ -160,6 +174,7 @@ interface HearthforgeBridge {
   shell: ShellBridge;
   bugReport: BugReportBridge;
   export: CharacterExportBridge;
+  notify?: NotifyBridge;
 }
 
 interface Window {

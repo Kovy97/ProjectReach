@@ -119,8 +119,9 @@ describe("prestigeRunSummary: Bilanz des laufenden Durchgangs", () => {
     expect(ascend(s, content)).toBe(true);
 
     expect(s.prestige.runStart).toEqual(counters);
-    expect(s.prestige.runStart).toEqual({ kills: 4626, dungeons: 5, achievements: 5, pets: 2, slayerTasks: 41, activePlayMs: 8_000_000 });
-    expect(Object.keys(s.prestige.runStart)).toEqual([...PRESTIGE_RUN_BASELINE_KEYS]);
+    // claude:2026-10-30T18:44:00+01:00 — SAVE 99: plus Raid-Laufanker (letztes Feld).
+    expect(s.prestige.runStart).toEqual({ kills: 4626, dungeons: 5, achievements: 5, pets: 2, slayerTasks: 41, activePlayMs: 8_000_000, raidClears: { normal: 0, heroic: 0, mythic: 0 } });
+    expect(Object.keys(s.prestige.runStart)).toEqual([...PRESTIGE_RUN_BASELINE_KEYS, "raidClears"]);
     const rec = s.prestige.history.at(-1)!;
     expect(rec.points).toBe(sum.points.total);
     expect(rec.tally).toEqual(tallyOf(sum));
@@ -201,7 +202,7 @@ describe("prestigeRunSummary: Bilanz des laufenden Durchgangs", () => {
 
   it("Baseline über dem aktuellen Zähler (manipuliert) ergibt nie negative Werte", () => {
     const s = fresh();
-    s.prestige.runStart = { kills: 50, dungeons: 9, achievements: 9, pets: 9, slayerTasks: 9, activePlayMs: 1e9 };
+    s.prestige.runStart = { kills: 50, dungeons: 9, achievements: 9, pets: 9, slayerTasks: 9, activePlayMs: 1e9, raidClears: { normal: 9, heroic: 9, mythic: 9 } }; // claude:2026-10-30T18:44:00+01:00 — SAVE 99
     const sum = prestigeRunSummary(s, content);
     for (const k of ["playMs", "kills", "dungeons", "achievements", "petsFound", "slayerTasks"] as const) {
       expect(sum[k], k).toBe(0);
@@ -251,7 +252,9 @@ describe("Narben-Aufschlüsselung (prestigePointsLedger)", () => {
     const sum = prestigeRunSummary(s, content);
     expect(sum.run).toBe(2);
     expect(sum.points.mult).toBe(0.25);
-    expect(sum.points.total).toBe(Math.floor(sum.points.subtotal * 1.25));
+    // claude:2026-10-30T18:44:00+01:00 — 1.4.2: der Faktor wirkt nur auf die „je Sturz“-Zeilen, die einmaligen kommen ohne Faktor dazu.
+    expect(sum.points.total).toBe(Math.floor(sum.points.runSubtotal * 1.25) + sum.points.onceTotal);
+    expect(sum.points.subtotal).toBe(sum.points.runSubtotal + sum.points.onceTotal);
     expect(sum.points.fromMult).toBe(sum.points.total - sum.points.subtotal);
     expect(sum.points.fromMult).toBeGreaterThan(0);
     expect(sumLines(sum)).toBe(sum.points.subtotal);

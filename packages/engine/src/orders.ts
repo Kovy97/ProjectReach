@@ -1,5 +1,6 @@
 import type { ActionDef, ContentDB, GameState, ItemId, ItemInstance, RngState, SkillId, WorkOrder, WorkOrderKind, WorkOrderState, WorkOrderTier } from "@hearthforge/shared";
 import {
+  actionSuccessChance, // claude:2026-10-31T13:58:31+01:00 — Lehrstunde mit Erfolgschance (A2/B2)
   defaultWorkOrderState,
   defaultWorkOrderTierClocks,
   EVENT_CRAFT_SKILLS,
@@ -23,7 +24,7 @@ import { levelFromXp } from "./leveling";
 import { itemCount, removeInstance, removeItem } from "./inventory";
 import { grantLoot } from "./mail";
 import { sellPrice } from "./shop";
-import { goldFindMult, prestigeSkillXpMult } from "./prestige-effects";
+import { goldFindMult, prestigeSkillXpMult, talentWorkOrderRateMult } from "./prestige-effects"; // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Rabenpost
 import { syncProgression } from "./character";
 import { tavernBandMaterials, tavernExpectedQty, tavernHashFloat, tavernMainOutput } from "./tavern";
 
@@ -179,18 +180,25 @@ export function workOrderCandidates(state: GameState, content: ContentDB, skill:
     .map((c) => ({ action: c.action, itemId: c.itemId, perRun: c.perRun, weight: c.lr === top ? ORDER_TOP_TIER_WEIGHT : 1 }));
 }
 
-/** Beste XP je Minute im Skill mit EFFEKTIVER Dauer (Spec §4.5). */
+/**
+ * Beste XP je Minute im Skill mit EFFEKTIVER Dauer (Spec §4.5).
+ * claude:2026-10-31T13:58:31+01:00 — Befunde A2/B2: `successWeighted` (nur die Lehrstunde, token-services.ts) gewichtet Aktionen mit
+ * `successBase` (Diebeskunst) mit ihrer Grund-Erfolgschance `actionSuccessChance(a, level, 0)`, denn Fehlschläge geben keine XP. Ohne
+ * die Option (Aufträge) exakt die alte Rechnung.
+ */
 export function bestEffectiveXpPerMinute(
   state: GameState,
   content: ContentDB,
   skill: SkillId,
   durOf: (a: ActionDef) => number,
+  opts?: { successWeighted?: boolean },
 ): number {
   const level = skillLevel(state, skill);
   let best = 0;
   for (const a of Object.values(content.actions)) {
     if (a.skill !== skill || (a.levelRequired ?? 1) > level || !(a.durationMs > 0)) continue;
-    const rate = (a.xp / Math.max(1, durOf(a))) * 60_000;
+    const chance = opts?.successWeighted && a.successBase !== undefined ? actionSuccessChance(a, level, 0) : 1;
+    const rate = (a.xp / Math.max(1, durOf(a))) * 60_000 * chance;
     if (rate > best) best = rate;
   }
   return best;
@@ -308,7 +316,10 @@ export function onWorkOrderActionCompleted(
   if (!workOrderKindFor(action.skill)) return null;
   const o = workOrdersOf(state);
   const clocks = (o.tierMs ??= defaultWorkOrderTierClocks());
-  const d = Math.max(0, Number.isFinite(effDurMs) ? effDurMs : 0);
+  // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Rabenpost (`workOrderRatePct`): die Uhren laufen × (1 + Wert), also Intervall ÷ (1 + Wert).
+  // Kein zusätzlicher RNG-Zug; ohne Rang Faktor 1 ⇒ bit-identisch. Wirkt sofort auch auf bereits laufende Uhren.
+  const rate = talentWorkOrderRateMult(state, content);
+  const d = Math.max(0, Number.isFinite(effDurMs) ? effDurMs : 0) * rate;
   for (const t of WORK_ORDER_TIERS_DESC) clocks[t] = Math.max(0, (Number.isFinite(clocks[t]) ? clocks[t] : ORDER_TIERS[t].meanIntervalMs) - d); // fehlend/kaputt → Mittelwert (wie Sanitize)
   if (workOrdersFull(state)) return null;
   for (const t of WORK_ORDER_TIERS_DESC) {
@@ -319,6 +330,29 @@ export function onWorkOrderActionCompleted(
     return offer;
   }
   return null;
+}
+
+/**
+ * claude:2026-10-30T22:28:00+01:00 — Belohnungsladen 1.4.2 „Auftrag rufen“ (Stufe II/III): Kann die Stufen-Uhr `tier` vorgezogen
+ * werden? Nein, wenn sie schon auf 0 steht (das Angebot wartet ohnehin auf die nächste Online-Aktion bzw. auf Platz).
+ */
+export function workOrderTierCallable(state: GameState, tier: WorkOrderTier): boolean {
+  const ms = state.workOrders?.tierMs?.[tier];
+  // Fehlende/kaputte Uhr läuft wie im Tick auf den Mittelwert hinaus (> 0) und ist damit rufbar.
+  return !(typeof ms === "number" && Number.isFinite(ms) && ms <= 0);
+}
+
+/**
+ * claude:2026-10-30T22:28:00+01:00 — Stellt die Stufen-Uhr `tier` auf 0. Das Angebot entsteht über den normalen Pfad
+ * (`onWorkOrderActionCompleted` nach der nächsten Online-Aktion eines Auftrags-Skills, Würfe aus `eventRng`); die Arbeit bleibt
+ * nötig. Kein RNG hier. false = Uhr stand schon auf 0 (nichts geändert).
+ */
+export function callWorkOrderTier(state: GameState, tier: WorkOrderTier): boolean {
+  if (!workOrderTierCallable(state, tier)) return false;
+  const o = workOrdersOf(state);
+  const clocks = (o.tierMs ??= defaultWorkOrderTierClocks());
+  clocks[tier] = 0;
+  return true;
 }
 
 /** Online-Uhr: das unbeantwortete Angebot verfällt nach der Laufzeit seiner Stufe (`ORDER_TIERS[tier].offerTtlMs`). */

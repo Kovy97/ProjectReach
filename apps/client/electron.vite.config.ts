@@ -13,6 +13,12 @@ import pkg from "./package.json";
 // bisherigen Spieler-Build (`__SCENE_BUILDER_BUILD__` wird zur literalen Konstante `false`
 // gefaltet, s. README.md "Bundle-Beweis").
 const isSceneBuilderBuild = process.env.SCENE_BUILDER_BUILD === "1";
+// claude:2026-10-30T20:20:00+01:00 — Asset-Werkstatt (Dev-Overlay): nur mit `ASSET_LAB=1` im Paket (sonst literal `false`, Modul samt Bild-Glob
+// entfällt per Dead-Code-Elimination). Im Vite-Dev-Server ist sie immer an (main.tsx prüft zusätzlich `import.meta.env.DEV`).
+const isAssetLabBuild = process.env.ASSET_LAB === "1";
+// claude:2026-10-30T20:58:00+01:00 — Dev-UI-Stil „Synty“: nur mit `SYNTY_UI=1` im Paket (sonst literal `false`; Stil, CSS und Bilder entfallen per Dead-Code-Elimination,
+// weil sie ausschließlich über den dynamischen Import in main.tsx erreichbar sind). Im Vite-Dev-Server immer an (`import.meta.env.DEV`).
+const isSyntyUiBuild = process.env.SYNTY_UI === "1";
 const outRoot = isSceneBuilderBuild ? "out-scenebuilder" : "out";
 
 export default defineConfig({
@@ -43,6 +49,8 @@ export default defineConfig({
       // Injected at build time from package.json; typed in src/vite-env.d.ts.
       __APP_VERSION__: JSON.stringify(pkg.version),
       __SCENE_BUILDER_BUILD__: JSON.stringify(isSceneBuilderBuild),
+      __ASSET_LAB_BUILD__: JSON.stringify(isAssetLabBuild), // claude:2026-10-30T20:20:00+01:00
+      __SYNTY_UI_BUILD__: JSON.stringify(isSyntyUiBuild), // claude:2026-10-30T20:58:00+01:00
     },
     build: {
       outDir: resolve(__dirname, `${outRoot}/renderer`),

@@ -104,6 +104,13 @@ function forEachLocalizableField(
   }
   // #p13 (Chef-GO 25.08.2026, 1.1.0): Token-Shop-Regal-Namen, gleiches Muster wie zones/categories.
   if (db.tokenShopShelves) for (const sh of db.tokenShopShelves) visit(sh, "name", "tokenShopShelves", sh.id);
+  // claude:2026-10-30T22:28:00+01:00 — Belohnungsladen 1.4.2: Dienst-Namen und -Beschreibungen (`tokenServices:<id>:name|description`).
+  if (db.tokenServices) {
+    for (const sv of db.tokenServices) {
+      visit(sv, "name", "tokenServices", sv.id);
+      visit(sv, "description", "tokenServices", sv.id);
+    }
+  }
   // Taverne (1.2.0 „Alive", design/1.2.0-alive/taverne-spec-technik.md §3): Gäste (role/greeting;
   // `name` darf laut Spec bleiben, wird hier trotzdem mitbesucht — ein Overlay-Eintrag ist optional,
   // fehlt er, bleibt der en-Name über resolveText stehen) + Vorlagen-Ansprachen (line).
@@ -127,6 +134,8 @@ function forEachLocalizableField(
       for (const n of tree.nodes) {
         visit(n, "name", "talentNodes", `${tree.id}.${n.id}`);
         visit(n, "description", "talentNodes", `${tree.id}.${n.id}`);
+        // claude:2026-10-30T18:39:00+01:00 — 1.4.2 (Spec § 3): optionaler Erzählsatz der Talentkarte, Schlüssel `talentNodes:<baum>.<knoten>:flavor`.
+        if (n.flavor) visit(n, "flavor", "talentNodes", `${tree.id}.${n.id}`);
       }
     }
   }

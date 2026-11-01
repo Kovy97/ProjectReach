@@ -7,7 +7,16 @@ import type {
   QuestObjective,
   QuestObjectiveType,
   DailyQuestEntry,
+  TokenShopLedger,
+  TokenShopOffer,
 } from "@hearthforge/shared";
+import {
+  defaultTokenShopLedger,
+  recordTokenShopPurchase,
+  tokenShopLedgerUsage,
+  tokenShopLimitRemaining,
+  tokenShopRerolledToday,
+} from "@hearthforge/shared"; // claude:2026-10-30T22:28:00+01:00 — Kaufbuch des Belohnungsladens (SAVE 100)
 import {
   DAILY_QUEST_COUNT,
   DAILY_MAX_PER_DIFFICULTY,
@@ -604,6 +613,31 @@ export function refreshDailyQuests(state: GameState, content: ContentDB, day: nu
   return true;
 }
 
+/**
+ * claude:2026-10-31T13:58:31+01:00 — Befund A1 (Aschesturz am selben Tag): `ascend` baut den Quest-Zustand neu auf (createGame), während
+ * `stats.lastDailyDay` bleibt. Ohne Brett zog `refreshDailyQuests(heute)` danach ein zweites Brett (zweiter Markenbezug am selben Tag)
+ * und setzte die Serie auf 1. Diese Funktion legt das Tagesbrett des alten Stands (Tag, Karten, eingelöst-Flags) in den Neustand;
+ * `refreshDailyQuests` erkennt denselben Tag dann als erledigt und lässt Brett und Serie in Ruhe. Offene Karten messen ab dem
+ * Neustand (Baseline = aktueller roher Zählerstand je Ziel, wie beim Ziehen in refreshDailyQuests), damit nichts sofort erfüllt ist;
+ * angefangener Fortschritt offener Karten beginnt also neu. Eingelöste Karten bleiben eingelöst. Rein, kein RNG.
+ */
+export function carryDailyBoard(next: GameState, content: ContentDB, board: GameState["quests"]["daily"]): void {
+  if (!board || !Array.isArray(board.quests)) return;
+  next.quests.daily = { day: board.day, quests: board.quests.map((d) => ({ questId: d.questId, claimed: d.claimed === true })) };
+  for (const entry of next.quests.daily.quests) {
+    if (entry.claimed) continue;
+    const quest = content.quests.find((q) => q.id === entry.questId);
+    if (!quest) continue;
+    const baseline: Record<number, number> = {};
+    quest.objectives.forEach((o, i) => {
+      baseline[i] = rawProgress(next, content, o);
+    });
+    next.quests.repeatBaseline[quest.id] = baseline;
+    const ci = next.quests.completed.indexOf(quest.id);
+    if (ci >= 0) next.quests.completed.splice(ci, 1);
+  }
+}
+
 /** Ist diese Daily heute bereits eingelöst? */
 export function isDailyClaimed(state: GameState, questId: string): boolean {
   return state.quests.daily.quests.find((d) => d.questId === questId)?.claimed ?? false;
@@ -643,7 +677,8 @@ export function spendQuestTokens(state: GameState, amount: number): boolean {
  *  - `no_space`            Bündel passt weder ins Inventar noch (Auto-Bank) ins Lager — Tokens
  *                          wurden zurückerstattet (No-Loss-Rollback, unverändert seit Task #284).
  */
-export type TokenShopReason = "not_found" | "shelf_locked" | "not_enough_tokens" | "no_space";
+// claude:2026-10-30T22:28:00+01:00 — `limit` (1.4.2 L2): Tages-/Wochengrenze des Angebots (`limitPerDay`/`limitPerWeek`) ist erreicht.
+export type TokenShopReason = "not_found" | "shelf_locked" | "limit" | "not_enough_tokens" | "no_space";
 
 export interface TokenShopResult {
   ok: boolean;
@@ -691,6 +726,9 @@ export function buyTokenShopOffer(state: GameState, content: ContentDB, offerId:
   if (!content.items[offer.itemId]) return { ok: false, reason: "not_found" };
   if (!Number.isInteger(offer.qty) || offer.qty <= 0) return { ok: false, reason: "not_found" };
   if (!isShelfOpen(state, content, offer.shelfId)) return { ok: false, reason: "shelf_locked" };
+  // claude:2026-10-30T22:28:00+01:00 — Grenze je Tag/Woche (1.4.2 L2, Gebührenschein 1/Woche) VOR dem Abbuchen; verbucht wird erst nach der Lieferung.
+  const today = tokenShopToday(state);
+  if (tokenShopLimitRemaining(offer, tokenShopLedgerUsage(state.tokenShopLedger, offer.id, today)) === 0) return { ok: false, reason: "limit" };
   if (!spendQuestTokens(state, offer.tokenCost)) return { ok: false, reason: "not_enough_tokens" };
   const { toInventory, toBank } = addItemOrBank(state, content, offer.itemId, offer.qty);
   const delivered = toInventory + toBank;
@@ -705,7 +743,163 @@ export function buyTokenShopOffer(state: GameState, content: ContentDB, offerId:
     state.character.questTokens += offer.tokenCost;
     return { ok: false, reason: "no_space" };
   }
+  if (offerHasLimit(offer)) recordTokenShopPurchase(tokenShopLedgerOf(state), offer.id, today); // claude:2026-10-30T22:28:00+01:00
   return { ok: true };
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// claude:2026-10-30T22:28:00+01:00 — Belohnungsladen 1.4.2 (Chef-Entscheide L1–L10, design/1.4.2-belohnungsladen-plan.md § 7):
+// Kaufbuch-Zugriff, Status begrenzter Angebote und „Tagesaufgabe neu würfeln“. Keine Zeitquelle in der Engine: „heute“ ist
+// der Daily-Stempel `stats.lastDailyDay` (YYYYMMDD vom Client), der nie rückwärts läuft (refreshDailyQuests).
+// ───────────────────────────────────────────────────────────────────────────
+
+/** claude:2026-10-30T22:28:00+01:00 — „Heute“ für das Kaufbuch: der zuletzt gezogene Daily-Tag (0 = noch nie). */
+export function tokenShopToday(state: GameState): number {
+  const d = state.stats?.lastDailyDay;
+  return typeof d === "number" && Number.isFinite(d) && d > 0 ? Math.floor(d) : 0;
+}
+
+/** claude:2026-10-30T22:28:00+01:00 — Kaufbuch zum Schreiben (handgebaute Alt-States ohne Feld bekommen ein leeres). */
+export function tokenShopLedgerOf(state: GameState): TokenShopLedger {
+  return (state.tokenShopLedger ??= defaultTokenShopLedger());
+}
+
+function offerHasLimit(offer: TokenShopOffer): boolean {
+  return typeof offer.limitPerDay === "number" || typeof offer.limitPerWeek === "number";
+}
+
+/** claude:2026-10-30T22:28:00+01:00 — Lese-Status eines Regal-Angebots für die UI (Gate, Grenze, Preis). */
+export interface TokenShopOfferStatus {
+  id: string;
+  found: boolean;
+  /** Regal noch zu (Kapitel fehlt). */
+  locked: boolean;
+  /** Gate-Quest des Regals (Kapitel-Id), nur wenn gesperrt. */
+  lockQuestId?: string;
+  price: number;
+  affordable: boolean;
+  usedToday: number;
+  usedThisWeek: number;
+  limitPerDay: number | null;
+  limitPerWeek: number | null;
+  /** Restkäufe bis zur engsten Grenze; null = unbegrenzt. */
+  remaining: number | null;
+  /** Erster Grund, der einen Kauf JETZT verhindert (ohne Platzprüfung), sonst fehlt das Feld. */
+  reason?: TokenShopReason;
+}
+
+/** claude:2026-10-30T22:28:00+01:00 — Rein lesend: Gate, Grenze, Preis und Kaufbarkeit eines `tokenShop`-Angebots. */
+export function tokenShopOfferStatus(state: GameState, content: ContentDB, offerId: string): TokenShopOfferStatus {
+  const offer = content.tokenShop?.find((o) => o.id === offerId);
+  if (!offer) {
+    return { id: offerId, found: false, locked: false, price: 0, affordable: false, usedToday: 0, usedThisWeek: 0, limitPerDay: null, limitPerWeek: null, remaining: 0, reason: "not_found" };
+  }
+  const locked = !isShelfOpen(state, content, offer.shelfId);
+  const usage = tokenShopLedgerUsage(state.tokenShopLedger, offer.id, tokenShopToday(state));
+  const remaining = tokenShopLimitRemaining(offer, usage);
+  const affordable = state.character.questTokens >= offer.tokenCost;
+  const reason: TokenShopReason | undefined = locked ? "shelf_locked" : remaining === 0 ? "limit" : !affordable ? "not_enough_tokens" : undefined;
+  const lockQuestId = locked ? content.tokenShopShelves?.find((sh) => sh.id === offer.shelfId)?.requiresQuest : undefined;
+  return {
+    id: offer.id,
+    found: true,
+    locked,
+    ...(lockQuestId ? { lockQuestId } : {}),
+    price: offer.tokenCost,
+    affordable,
+    usedToday: usage.day,
+    usedThisWeek: usage.week,
+    limitPerDay: typeof offer.limitPerDay === "number" ? offer.limitPerDay : null,
+    limitPerWeek: typeof offer.limitPerWeek === "number" ? offer.limitPerWeek : null,
+    remaining,
+    ...(reason ? { reason } : {}),
+  };
+}
+
+/** claude:2026-10-30T22:28:00+01:00 — Gründe, warum eine Tagesaufgabe nicht neu gewürfelt werden kann. */
+export type DailyRerollFail = "invalid_target" | "no_effect";
+
+/**
+ * claude:2026-10-30T22:28:00+01:00 — Darf `questId` heute neu gewürfelt werden, und welche Karten kämen in Frage?
+ * Ziel: eine Karte des heutigen Bretts, nicht eingelöst, nicht erfüllt (weder in `completed` noch Ziele erreicht).
+ * Ersatz: Daily-Pool, gleiche Schwierigkeit UND gleicher Markenlohn (kein Marken-Gewinn: Meister 5 bleibt 5, 8 bleibt 8),
+ * heute vergebbar (`isDailyEligible`), nicht auf dem Brett. Heute schon weggewürfelte Karten (`exclude`) nur, wenn sonst nichts
+ * bleibt. Mix-Garantie: fiele das Brett unter `DAILY_NONCOMBAT_MIN` Nicht-Kampf-Karten, zuerst Nicht-Kampf-Ersatz (falls vorhanden).
+ * Rein, kein RNG, keine Mutation. Reihenfolge = Pool-Reihenfolge (stabil).
+ */
+export function dailyRerollCandidates(
+  state: GameState,
+  content: ContentDB,
+  questId: string,
+  exclude: Iterable<string> = [],
+): { ok: true; candidates: QuestDef[] } | { ok: false; reason: DailyRerollFail } {
+  const board = state.quests.daily.quests;
+  const entry = board.find((d) => d.questId === questId);
+  const quest = content.quests.find((q) => q.id === questId);
+  if (!entry || !quest || !quest.daily) return { ok: false, reason: "invalid_target" };
+  if (entry.claimed || state.quests.completed.includes(questId) || questObjectivesMet(state, content, quest)) {
+    return { ok: false, reason: "invalid_target" };
+  }
+  const onBoard = new Set(board.map((d) => d.questId));
+  const diff = quest.difficulty ?? "medium";
+  const reward = quest.tokenReward ?? 0;
+  const base = dailyPool(content).filter(
+    (q) => !onBoard.has(q.id) && (q.difficulty ?? "medium") === diff && (q.tokenReward ?? 0) === reward && isDailyEligible(state, content, q),
+  );
+  const skip = new Set(exclude);
+  const fresh = base.filter((q) => !skip.has(q.id));
+  let pool = fresh.length > 0 ? fresh : base;
+  if (pool.length === 0) return { ok: false, reason: "no_effect" };
+  if (!isCombatQuest(quest)) {
+    let nonCombatLeft = 0;
+    for (const d of board) {
+      if (d.questId === questId) continue;
+      const q = content.quests.find((x) => x.id === d.questId);
+      if (q && !isCombatQuest(q)) nonCombatLeft += 1;
+    }
+    if (nonCombatLeft < DAILY_NONCOMBAT_MIN) {
+      const keepMix = pool.filter((q) => !isCombatQuest(q));
+      if (keepMix.length > 0) pool = keepMix;
+    }
+  }
+  return { ok: true, candidates: pool };
+}
+
+/**
+ * claude:2026-10-30T22:28:00+01:00 — Tauscht die heutige Tagesaufgabe `questId` gegen eine andere (s. `dailyRerollCandidates`).
+ * Deterministisch: Seed aus Brett-Tag + `salt` (Wurfzähler des Tages), eigener `createRng`, KEIN Zug aus `state.rng`.
+ * Die neue Karte übernimmt den Platz der alten, startet bei 0 (Baseline = aktueller Zählerstand, wie refreshDailyQuests) und
+ * steht nicht in der Einlöse-Liste. Gibt die neue Quest-Id zurück, sonst den Grund (State unverändert).
+ */
+export function rerollDailyQuest(
+  state: GameState,
+  content: ContentDB,
+  questId: string,
+  salt = 0,
+  exclude: Iterable<string> = [],
+): { ok: true; questId: string } | { ok: false; reason: DailyRerollFail } {
+  const pick = dailyRerollCandidates(state, content, questId, exclude);
+  if (!pick.ok) return pick;
+  const day = state.quests.daily.day;
+  const s = Number.isFinite(salt) ? Math.floor(salt) : 0;
+  const rng = createRng((day * 2654435761 + 0x9e3779b9 + s * 40503) >>> 0);
+  const next = pick.candidates[nextInt(rng, 0, pick.candidates.length - 1)]!;
+  const board = state.quests.daily.quests;
+  const idx = board.findIndex((d) => d.questId === questId);
+  board[idx] = { questId: next.id, claimed: false };
+  const baseline: Record<number, number> = {};
+  next.objectives.forEach((o, i) => {
+    baseline[i] = rawProgress(state, content, o);
+  });
+  state.quests.repeatBaseline[next.id] = baseline;
+  const ci = state.quests.completed.indexOf(next.id);
+  if (ci >= 0) state.quests.completed.splice(ci, 1);
+  return { ok: true, questId: next.id };
+}
+
+/** claude:2026-10-30T22:28:00+01:00 — Heute weggewürfelte Karten (Lesehilfe für token-services/UI). */
+export function dailyRerolledToday(state: GameState): readonly string[] {
+  return tokenShopRerolledToday(state.tokenShopLedger, tokenShopToday(state));
 }
 
 /**

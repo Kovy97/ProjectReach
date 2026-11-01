@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ContentDB, CropDef, FarmPlot, GameState, ItemDef } from "@hearthforge/shared";
-import { MAX_FARM_PLOTS, plotsUnlocked } from "@hearthforge/shared";
+import { FARM_PLOT_SLOTS, MAX_FARM_PLOTS, plotsUnlocked } from "@hearthforge/shared";
 import { content } from "@hearthforge/content";
 import { createGame } from "./state";
 import { advance } from "./tick";
@@ -46,7 +46,7 @@ function testContent(): ContentDB {
 describe("farming plots — Datenmodell & createGame", () => {
   it("createGame initialisiert MAX_FARM_PLOTS leere Plots (auto-replant AN)", () => {
     const s = createGame({ name: "X" }, content, 1);
-    expect(s.farmPlots).toHaveLength(MAX_FARM_PLOTS);
+    expect(s.farmPlots).toHaveLength(FARM_PLOT_SLOTS); // claude:2026-10-30T18:44:00+01:00 — SAVE 99: Array 12 (Saatkammer), Stufen-Beete bleiben ≤ MAX_FARM_PLOTS
     for (const p of s.farmPlots) {
       expect(p.cropId).toBeNull();
       expect(p.plantedAtMs).toBe(0);

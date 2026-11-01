@@ -9,6 +9,7 @@ import {
   enqueueAction,
   enqueueActionAtFront,
   hasActionDropSeen,
+  isRecipePinned,
   itemCount,
   levelFromXp,
   masteryLevel,
@@ -20,6 +21,9 @@ import {
   secondPet,
   setActiveAction,
   setThievingRisk,
+  togglePinnedRecipe,
+  nextRecipeUnlock,
+  MAX_PINNED_RECIPES,
 } from "@hearthforge/engine";
 import type { ProjectedQty } from "@hearthforge/engine";
 import type { ActionDef, GameState, LocalizedString, SkillId, ThievingRisk } from "@hearthforge/shared";
@@ -43,11 +47,15 @@ import { computeActionRate, type ActionRate } from "../util/actionRate";
 import { masteryRankTier } from "../util/masteryRank";
 import { type CombatFxLevel, getCombatFxLevel } from "../util/uiPrefs";
 import { consumeSkillJumpTarget, getSkillJumpNav, subscribeSkillJump } from "../util/skillJump";
+import { readRecipeFilter, writeRecipeFilter, unlockNamesText } from "../util/recipeFilter"; // claude:2026-10-31T16:34:28+01:00 — Filter-Chips + Freischaltungs-Text
+import { pushUiToast } from "../util/toastBus"; // claude:2026-10-31T11:59:22+01:00 — Hinweis bei voller Pinnwand (Rezepte anpinnen 1.4.2)
 // Direkt importiert statt über styles/index.css eingehängt — Kollisions-Schutz, gleiches Muster
 // wie components/ItemFilterBar.tsx selbst (index.css ist eine gemeinsame Datei, an der parallel
 // andere Agenten arbeiten können). Liefert nur `.invf-search`, hier ohne die Typ-Filter-Chips der
 // vollen ItemFilterBar (Rezepte haben keine Item-Kategorien) — reine Such-Eingabe im selben Look.
 import "../styles/inv-filter.css";
+// claude:2026-10-31T11:59:22+01:00 — Stern „Anpinnen“ an der Rezeptkarte (Rezepte anpinnen 1.4.2); Stil liegt beim Pin-Fenster.
+import "../styles/pinned-recipes.css";
 
 const LOCKED_ICON_URL = getUiIcon("icon_locked");
 const INV_ICON_URL = getUiIcon("icon_inventory");
@@ -55,6 +63,7 @@ const INV_ICON_URL = getUiIcon("icon_inventory");
 // Meisterschaft, „Herstellbar“). Emoji bleibt der Rückfall, falls die Datei fehlt; ⛏ (Werkzeug-Tempo) hat noch kein Icon.
 const MASTERY_STAR_ICON_URL = getUiIcon("icon_mastery_star");
 const CRAFTING_ICON_URL = getUiIcon("icon_crafting");
+const PIN_ICON_URL = getUiIcon("icon_pin"); // claude:2026-10-31T11:59:22+01:00 — Rezepte anpinnen (Wachssiegel-Nadel mit Stern)
 function inlineUiIcon(url: string | null, emoji: string): JSX.Element | string {
   return url ? <img loading="lazy" decoding="async" src={url} alt="" className="ui-icon" /> : emoji;
 }
@@ -349,8 +358,31 @@ export function SkillPage({ skillId }: { skillId: SkillId }): JSX.Element {
   // eingeklappten Default zurück, ohne dass hier extra aufgeräumt werden muss).
   const [search, setSearch] = useState("");
   const searchNorm = search.trim().toLowerCase();
-  const isSearching = searchNorm.length > 0;
-  const matchesSearch = (a: ActionDef): boolean => tr(a.name).toLowerCase().includes(searchNorm);
+  // claude:2026-10-31T16:34:28+01:00 — Ideen-Welle 1.4.2: Filter-Chips „Herstellbar“ / „Freigeschaltet“ neben der Suche (Zustand in localStorage, eigener Schlüssel).
+  const [recipeFilter, setRecipeFilterState] = useState<{ craftable: boolean; unlocked: boolean }>(() => readRecipeFilter());
+  const setRecipeFilter = (next: { craftable: boolean; unlocked: boolean }): void => {
+    setRecipeFilterState(next);
+    writeRecipeFilter(next);
+  };
+  const filtersOn = recipeFilter.craftable || recipeFilter.unlocked;
+  const isSearching = searchNorm.length > 0 || filtersOn;
+  const matchesSearch = (a: ActionDef): boolean => {
+    if (searchNorm && !tr(a.name).toLowerCase().includes(searchNorm)) return false;
+    if (recipeFilter.unlocked || recipeFilter.craftable) {
+      if (!actionLevelMet(state, content, a.id)) return false;
+    }
+    if (recipeFilter.craftable) {
+      if (a.inputs && !a.inputs.every((i) => itemCount(state.inventory, i.itemId) + bankCount(state, i.itemId) >= i.qty)) return false;
+    }
+    return true;
+  };
+  // Nur bei Levelwechsel neu berechnen (kein 10-Hz-Rechnen).
+  const skillLevelNow = levelFromXp(state.skills[skillId]?.xp ?? 0);
+  const nextUnlock = useMemo(
+    () => nextRecipeUnlock(state, content, skillId),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [skillId, skillLevelNow],
+  );
   const anyMatch = !isSearching || actions.some(matchesSearch);
 
   // Wiki→Rezept-Sprung (util/skillJump.ts): eine Ziel-Aktion, die ItemWikiModal für DIESE
@@ -404,7 +436,8 @@ export function SkillPage({ skillId }: { skillId: SkillId }): JSX.Element {
       raf2 = requestAnimationFrame(() => {
         const el = document.getElementById(`skillcard-${jumpTargetId}`);
         if (el) {
-          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          // claude:2026-10-31T14:05:00+01:00 — block "start" + scroll-margin-top (skills.css): Kartenkopf verschwindet nicht unter der Kopfleiste, auch bei hohen Karten.
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
           el.classList.add("skillcard-jump-highlight");
           setTimeout(() => el.classList.remove("skillcard-jump-highlight"), 1800);
         }
@@ -518,7 +551,33 @@ export function SkillPage({ skillId }: { skillId: SkillId }): JSX.Element {
             placeholder={t("skill.search.placeholder")}
             aria-label={t("skill.search.placeholder")}
           />
+          {/* claude:2026-10-31T16:34:28+01:00 — Filter-Chips (Ideen-Welle 1.4.2). */}
+          <button
+            type="button"
+            className={`invf-chip skill-filter-chip${recipeFilter.craftable ? " active" : ""}`}
+            aria-pressed={recipeFilter.craftable}
+            title={t("skill.filter.craftableHint")}
+            onClick={() => setRecipeFilter({ ...recipeFilter, craftable: !recipeFilter.craftable })}
+          >
+            {t("skill.filter.craftable")}
+          </button>
+          <button
+            type="button"
+            className={`invf-chip skill-filter-chip${recipeFilter.unlocked ? " active" : ""}`}
+            aria-pressed={recipeFilter.unlocked}
+            title={t("skill.filter.unlockedHint")}
+            onClick={() => setRecipeFilter({ ...recipeFilter, unlocked: !recipeFilter.unlocked })}
+          >
+            {t("skill.filter.unlocked")}
+          </button>
         </div>
+      )}
+      {nextUnlock && nextUnlock.actionIds.length > 0 && (
+        <p className="skill-next-unlock muted">
+          {t("skill.nextUnlock")
+            .replace("{n}", String(nextUnlock.level))
+            .replace("{names}", unlockNamesText(nextUnlock.actionIds, (id) => (content.actions[id] ? tr(content.actions[id]!.name) : id), t))}
+        </p>
       )}
       {isSearching && !anyMatch && (
         <p className="muted skill-search-empty">{t("skill.search.noResults")}</p>
@@ -637,6 +696,7 @@ export function SkillPage({ skillId }: { skillId: SkillId }): JSX.Element {
         craftable={craftable}
         projectedRuns={projectedRuns}
         matProjection={matProjection}
+        pinned={isRecipePinned(state, action.id)} // claude:2026-10-31T11:59:22+01:00 — Primitiv-Prop, damit memo() den Stern-Wechsel sieht
       />
     );
   }
@@ -670,6 +730,8 @@ interface ActionCardProps {
   projectedRuns: number;
   /** Je Input der projizierte Bestand, "itemId:qty|itemId:inf" — Primitiv-Prop fürs memo(). */
   matProjection: string;
+  /** claude:2026-10-31T11:59:22+01:00 — Rezept angepinnt (`state.pinnedRecipes`, SAVE 101)? Nur für Rezepte (Aktionen mit Zutaten) relevant. */
+  pinned: boolean;
 }
 
 /**
@@ -702,6 +764,7 @@ const ActionCard = memo(function ActionCard({
   craftable,
   projectedRuns,
   matProjection,
+  pinned,
 }: ActionCardProps): JSX.Element {
   const tooltip = useItemTooltip();
   const fx = effectiveFxLevel();
@@ -749,7 +812,9 @@ const ActionCard = memo(function ActionCard({
   const isCraft = !!action.inputs && action.inputs.length > 0;
   // codex:2026-07-31T19:32:00+02:00 — Layout 01 reserviert exakt vier Ressourcenplätze;
   // Rezepte belegen sie mit bis zu vier realen Inputs, alle übrigen Plätze bleiben ruhige Leerzellen.
-  const resourceInputs = (action.inputs ?? []).slice(0, 4);
+  // claude:2026-10-30T18:06:00+01:00 — T4-Runen haben 5 Inputs (Reliktstaub): ab >4 Inputs 3x2-Rack (6 Plaetze), sonst 2x2.
+  const resourceInputs = (action.inputs ?? []).slice(0, 6);
+  const resourceSlots = resourceInputs.length > 4 ? 6 : 4;
   const req = action.levelRequired ?? 1;
   // Mastery (Langzeit-Progression dieser Aktion). mLvl/mProg kommen als Props vom Parent (s.o.).
   // Die Doppelertrag-Chance (mBonus) kommt jetzt aus derselben Rate-Formel wie oben
@@ -1045,6 +1110,32 @@ const ActionCard = memo(function ActionCard({
           </span>
         )}
         <div className="skillcard-topright">
+          {/* claude:2026-10-31T11:59:22+01:00 — Rezepte anpinnen (1.4.2, Chef-Auftrag): Stern nur an Rezepten (Aktionen mit Zutaten), links neben
+              der Stufe. Klick schaltet um; ist die Pinnwand voll, erklärt ein Hinweis warum (kein stiller Fehlschlag). */}
+          {isCraft && (
+            <button
+              type="button"
+              className={`skillcard-pin${pinned ? " is-pinned" : ""}`}
+              aria-pressed={pinned}
+              title={t(pinned ? "pins.unpin" : "pins.pin")}
+              aria-label={`${t(pinned ? "pins.unpin" : "pins.pin")}: ${tr(action.name)}`}
+              data-bot="recipe-pin"
+              onClick={(e) => {
+                e.stopPropagation();
+                const res = togglePinnedRecipe(state, content, action.id);
+                if (!res.ok && res.reason === "limit") {
+                  pushUiToast({
+                    icon: "★",
+                    iconUrl: PIN_ICON_URL,
+                    title: t("pins.limit.title"),
+                    detail: t("pins.limit.detail").replace("{n}", String(MAX_PINNED_RECIPES)),
+                  });
+                }
+              }}
+            >
+              {PIN_ICON_URL ? <img src={PIN_ICON_URL} alt="" className="skillcard-pin-icon" /> : pinned ? "★" : "☆"}
+            </button>
+          )}
           <span className={levelOk ? "skillcard-lvl" : "skillcard-lvl locked"}>
             {levelOk
               ? t("skill.levelShort").replace("{n}", String(req))
@@ -1159,8 +1250,8 @@ const ActionCard = memo(function ActionCard({
         {/* codex:2026-07-31T19:32:00+02:00 — Vier feste Resource-Slots für 0–4 Inputs.
             Gathering und kurze Rezepte behalten neutrale Reserven statt ihre Geometrie zu ändern. */}
         {resourceInputs.length > 0 && (
-        <div className="skillcard-resource-rack">
-          {Array.from({ length: 4 }, (_, slotIndex) => {
+        <div className={`skillcard-resource-rack${resourceSlots > 4 ? " is-wide" : ""}`}>
+          {Array.from({ length: resourceSlots }, (_, slotIndex) => {
             const inp = resourceInputs[slotIndex];
             if (!inp) {
               return <span key={`empty-${slotIndex}`} className="skillcard-resource-empty" aria-hidden="true" />;

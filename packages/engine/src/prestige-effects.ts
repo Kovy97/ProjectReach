@@ -2,6 +2,8 @@ import type { ContentDB, GameState, SkillId } from "@hearthforge/shared";
 import {
   PRESTIGE_EARLY_XP_LEVEL_CAP,
   PRESTIGE_MASTERED_XP_LEVEL_CAP,
+  TALENT_RARE_DROP_MAX_BASE_CHANCE,
+  prestigeAshSignXp,
   prestigeMasteredAchievementId,
 } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
@@ -54,12 +56,15 @@ export function prestigeSkillMastered(state: GameState, skillId: SkillId): boole
  * Leser: tick.ts (Skilling), combat.ts addXp, slayer.ts, farming.ts, hunting.ts, tavern.ts.
  */
 export function prestigeSkillXpMult(state: GameState, content: ContentDB, skillId: SkillId, xpBefore: number): number {
-  if (!state.talents) return 1;
+  // claude:2026-10-30T18:42:00+01:00 — 1.4.2 „Zeichen der Asche“ (Spec § 2.3, E3): +2 % je bisherigem Aschesturz, höchstens +20 %, ohne Talent und
+  // ohne Stufen-Grenze, additiv zu Lehrjahre/Handgedächtnis. Ohne Aufstieg 0 ⇒ alle Aufrufer bleiben bit-identisch.
+  const sign = prestigeAshSignXp(state.prestige?.count ?? 0);
+  if (!state.talents) return sign > 0 ? 1 + sign : 1;
   const early = talentEffect(state, content, "prestigeEarlyXp");
   const mastered = talentEffect(state, content, "prestigeMasteredXp");
-  if (!(early > 0) && !(mastered > 0)) return 1;
+  if (!(early > 0) && !(mastered > 0)) return sign > 0 ? 1 + sign : 1;
   const level = levelFromXp(xpBefore);
-  let bonus = 0;
+  let bonus = sign;
   if (early > 0 && level < PRESTIGE_EARLY_XP_LEVEL_CAP) bonus += early;
   if (mastered > 0 && level < PRESTIGE_MASTERED_XP_LEVEL_CAP && prestigeSkillMastered(state, skillId)) bonus += mastered;
   return bonus > 0 ? 1 + bonus : 1;
@@ -93,4 +98,53 @@ export function talentMaxHpMult(state: GameState, content: ContentDB): number {
   if (!state.talents) return 1;
   const h = talentEffect(state, content, "maxHpPct");
   return h > 0 ? 1 + h : 1;
+}
+
+// ── 1.4.2 „Aschesturz 2.0“ (design/1.4.2-aschesturz-spec.md § 3) ─────────────
+// claude:2026-10-30T18:42:00+01:00 — Faktoren der neuen Narbenbuch-Knoten. Jeder ist EXAKT 1 (bzw. 0) ohne Rang ⇒ Aufrufer bit-identisch.
+
+/** Dauer-Faktor aller Fertigkeits-Aktionen (`actionSpeedPct`, Geübte Hand; tick.ts `effectiveActionDurationMs`). Ohne Rang 1. */
+export function talentActionDurationMult(state: GameState, content: ContentDB): number {
+  if (!state.talents) return 1;
+  const cut = talentEffect(state, content, "actionSpeedPct");
+  return cut > 0 ? 1 - Math.min(0.5, cut) : 1;
+}
+
+/** Faktor auf Meisterschafts-XP je Abschluss (`masteryXpPct`, Meisterglut; tick.ts). Ohne Rang 1. */
+export function talentMasteryXpMult(state: GameState, content: ContentDB): number {
+  if (!state.talents) return 1;
+  const m = talentEffect(state, content, "masteryXpPct");
+  return m > 0 ? 1 + m : 1;
+}
+
+/** Anteil zusätzlicher Heilung durch Essen (`foodHealPct`, Glutblut; pets.ts `petFoodHealMult`). Ohne Rang 0. */
+export function talentFoodHealBonus(state: GameState, content: ContentDB): number {
+  if (!state.talents) return 0;
+  const h = talentEffect(state, content, "foodHealPct");
+  return h > 0 ? h : 0;
+}
+
+/**
+ * Faktor auf die Schwelle EINES Kampf-Loot-Eintrags (`rareDropPct`, Scharfer Blick): nur Einträge mit Basis-Chance ≤
+ * TALENT_RARE_DROP_MAX_BASE_CHANCE, derselbe Wurf (Muster Jägerkodex „Beute“). Ohne Rang oder bei häufigeren Einträgen 1.
+ * Leser: combat.ts Kill-Tabelle (`rollLootTable`, Andockstelle beim Combat-Dev, s. Bericht 1.4.2 Welle 1).
+ */
+export function talentRareDropMult(state: GameState, content: ContentDB, baseChance: number): number {
+  if (!state.talents || !(baseChance <= TALENT_RARE_DROP_MAX_BASE_CHANCE)) return 1;
+  const r = talentEffect(state, content, "rareDropPct");
+  return r > 0 ? 1 + r : 1;
+}
+
+/** Faktor, mit dem die Arbeitsauftrags-Uhren laufen (`workOrderRatePct`, Rabenpost: Intervall ÷ (1 + Wert); orders.ts). Ohne Rang 1. */
+export function talentWorkOrderRateMult(state: GameState, content: ContentDB): number {
+  if (!state.talents) return 1;
+  const w = talentEffect(state, content, "workOrderRatePct");
+  return w > 0 ? 1 + w : 1;
+}
+
+/** Bauzeit-Faktor neuer New-Haven-Bauten (`campBuildSpeedPct`, Bauherrin; multiplikativ zum Schreibzelt, camp.ts). Ohne Rang 1. */
+export function talentCampBuildMult(state: GameState, content: ContentDB): number {
+  if (!state.talents) return 1;
+  const c = talentEffect(state, content, "campBuildSpeedPct");
+  return c > 0 ? 1 - Math.min(0.9, c) : 1;
 }

@@ -204,6 +204,26 @@
   gap: 6px;
 }
 
+/* claude:2026-10-30T18:06:00+01:00 — 5-6 Inputs (T4-Runen mit Reliktstaub): 3 Spalten x 2 Reihen, kleinere Icons/Zahlen. */
+#root .skillcard-resource-rack.is-wide {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+}
+#root .skillcard-resource-rack.is-wide .mat-chip,
+#root .skillcard-resource-rack.is-wide .skillcard-resource-empty {
+  padding: 2px 3px;
+  flex-direction: column;
+  gap: 1px;
+}
+#root .skillcard-resource-rack.is-wide .mat-img {
+  width: clamp(20px, 5cqw, 28px);
+  height: clamp(20px, 5cqw, 28px);
+}
+#root .skillcard-resource-rack.is-wide .mat-count,
+#root .skillcard-resource-rack.is-wide .mat-count b {
+  font-size: clamp(var(--fs-xs), calc(2.4cqw * var(--text-scale)), max(calc(13px * var(--text-scale)), var(--fs-xs)));
+}
+
 #root .skillcard-resource-rack .mat-chip,
 #root .skillcard-resource-empty {
   min-width: 0;
@@ -854,4 +874,31 @@
 #root .skillcard-output-zone .skillcard-loot .item-chip-img {
   width: clamp(30px, 10cqw, 44px);
   height: clamp(30px, 10cqw, 44px);
+}
+
+/* claude:2026-11-01T11:17:55+01:00 — Chef 01.11. (Screenshot T4-Rune): Bei 5–6 Zutaten (Reliktstaub) liefen die Mengen unten
+   aus den Feldern, weil die !important-Größen des 2×2-Racks (Icon bis 60 px, Zahl bis 24 px) auch das 3×2-Rack trafen.
+   Das breite Rack bekommt eigene, spätere Größen: Icon über der Zahl, beides an der Zellgröße bemessen. */
+#root .skillcard-resource-rack.is-wide .mat-chip {
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  padding: 2px 3px !important;
+}
+#root .skillcard-resource-rack.is-wide .mat-img {
+  width: clamp(22px, 8cqw, 40px) !important;
+  height: clamp(22px, 8cqw, 40px) !important;
+  flex: 0 1 auto;
+  min-height: 0;
+  object-fit: contain; /* wird die Zelle niedriger, schrumpft das Bild statt die Zahl abzuschneiden */
+}
+#root .skillcard-resource-rack.is-wide .mat-count { flex: 0 0 auto; }
+#root .skillcard-resource-rack.is-wide .mat-emoji {
+  font-size: clamp(20px, 7cqw, 34px) !important;
+}
+#root .skillcard-resource-rack.is-wide .mat-count,
+#root .skillcard-resource-rack.is-wide .mat-count b {
+  font-size: clamp(var(--fs-xs), calc(3.6cqw * var(--ac-s, 1)), max(calc(17px * var(--ac-s, 1)), var(--fs-xs))) !important;
+  line-height: 1 !important;
+  white-space: nowrap;
 }

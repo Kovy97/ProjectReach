@@ -1,763 +1,302 @@
-/* claude:2026-10-24T18:38:00+02:00 — W2 Gruppe D: feste px-Schriftgroessen auf --fs-Skala umgestellt (Chef 24.10. Texte zu klein); Woerter min. --fs-xs, Zahlen-Badges --fs-2xs. */
-/* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
-/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
-/* ═══════════════════════════════════════════════════════════
-   ACHIEVEMENTS PAGE — Citadel "trophy room" rework (Task #270)
-   Self-contained: imported directly by AchievementsPage.tsx.
-   Uses fresh `achv-*` classnames so nothing here fights the
-   legacy `ach2-*` rules still living in pages.css (dead weight,
-   left for the CEO to prune later — see task handoff notes).
-   ═══════════════════════════════════════════════════════════ */
+/* claude:2026-10-31T09:50:00+01:00 — Erfolge-Seite neu (Chef-Entscheid 31.10., Mockups design/ui-rework/achievement-mockups):
+   Kacheln = Trophäenregal (Mockup 2), links die Navigationsleiste aus Mockup 1. Ersetzt die Warden-Ledger-Fassung (Leinen-
+   Textur, verschachtelte Rahmen, abgeschnittene Zeilen). Ruhige Basaltflächen, schlanke 1-px-Rahmen, festes Raster, Text >= 7:1.
+   Alle Maße in em der Seitenschrift (--fs-sm), damit sie mit Auflösung und Textgrößen-Option mitwachsen. Neue Klassen `ach3-*`,
+   damit nichts mit den alten `achv-*`-Resten in anderen Dateien kollidiert. */
 
-.achv-page {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+/* Vollhöhen-Seite: Navigationsleiste und Regal scrollen intern, die Seite selbst nicht. */
+.content-body:has(.ach3-page) {
+  overflow-y: hidden;
+  padding: 14px 16px;
 }
-
-/* ─── Hero panel: emblem + title + prominent unlock bar + AP/ring cluster ── */
-.achv-hero {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 26px;
-  flex-wrap: wrap;
-  padding: 22px 28px;
-  background:
-    radial-gradient(ellipse 90% 140% at 8% 15%, rgba(216, 192, 106, 0.10), transparent 62%),
-    linear-gradient(rgba(10, 12, 15, 0.48), rgba(10, 12, 15, 0.55)),
-    url("../assets/bg_black.webp") repeat;
-  border-style: solid;
-  border-color: transparent;
-  border-width: 6px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
-  border-radius: 0;
-  overflow: hidden;
-}
-
-.achv-hero-emblem {
-  width: 84px;
-  height: 84px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at 35% 30%, rgba(216, 192, 106, 0.22), rgba(14, 10, 6, 0.92) 72%);
-  border: 3px solid rgba(216, 192, 106, 0.5);
-  box-shadow: 0 0 24px rgba(216, 192, 106, 0.32), inset 0 0 16px rgba(0, 0, 0, 0.65);
-  font-size: 42px;
-}
-
-.achv-hero-emblem img {
-  width: 52px;
-  height: 52px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 8px rgba(216, 192, 106, 0.5));
-}
-
-.achv-hero-title {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  flex: 1 1 320px;
-  min-width: 260px;
-}
-
-.achv-hero-title h1 {
-  margin: 0;
-  font-family: var(--font-head);
-  font-size: 30px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--gold);
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
-}
-
-.achv-hero-sub {
-  margin: 0;
-  font-size: var(--fs-sm);
-  font-style: italic;
-  color: var(--muted);
-}
-
-.achv-hero-bar-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 6px;
-}
-
-.achv-hero-bar-label {
-  flex-shrink: 0;
-  font-family: var(--font-head);
-  font-size: var(--fs-xs);
-  letter-spacing: 1.4px;
-  text-transform: uppercase;
-  color: var(--accent-2);
-}
-
-.achv-hero-bar-track {
-  flex: 1 1 auto;
-  min-width: 140px;
-  height: 15px;
-  background: var(--bg-deep);
-  border: 1px solid var(--border);
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.7);
-  position: relative;
-  overflow: hidden;
-}
-
-.achv-hero-bar-fill {
+.page-transition:has(> .ach3-page) {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent-2), var(--gold));
-  box-shadow: 0 0 12px rgba(216, 192, 106, 0.55);
-  transition: width 0.4s ease;
+  min-height: 0;
 }
 
-.achv-hero-bar-pct {
-  flex-shrink: 0;
-  font-family: var(--font-head);
-  font-size: var(--fs-sm);
-  color: var(--gold);
-  min-width: 62px;
-  text-align: right;
-}
-
-.achv-hero-stats {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  flex-shrink: 0;
-  margin-left: auto;
-  padding-left: 24px;
-  border-left: 1px solid rgba(216, 192, 106, 0.2);
-}
-
-.achv-hero-ap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-}
-
-.achv-hero-ap-val {
-  font-family: var(--font-head);
-  font-size: var(--fs-2xl);
-  font-weight: 700;
-  color: var(--accent-2);
-  line-height: 1.1;
-}
-
-.achv-hero-ap-label {
-  font-size: var(--fs-xs);
-  letter-spacing: 1.4px;
-  text-transform: uppercase;
-  color: var(--muted);
-  white-space: nowrap;
-}
-
-.achv-hero-ring {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-
-.achv-hero-ring-label {
-  font-size: var(--fs-xs);
-  color: var(--muted);
-  white-space: nowrap;
-  text-align: center;
-}
-
-@media (max-width: 900px) {
-  .achv-hero-stats {
-    margin-left: 0;
-    padding-left: 0;
-    border-left: none;
-    width: 100%;
-    justify-content: space-between;
-    padding-top: 14px;
-    border-top: 1px solid rgba(216, 192, 106, 0.16);
-  }
-}
-
-/* SVG progress ring (shared markup, achv-* renamed from legacy ach2-ring-*) */
-.achv-ring-svg { flex-shrink: 0; }
-.achv-ring-bg { stroke: var(--border); fill: none; }
-.achv-ring-fill {
-  stroke: var(--gold);
-  fill: none;
-  stroke-linecap: round;
-  transition: stroke-dasharray 0.4s ease;
-  filter: drop-shadow(0 0 4px rgba(216, 192, 106, 0.55));
-}
-.achv-ring-text {
-  fill: var(--gold);
-  font-family: var(--font-head);
-  font-size: var(--fs-sm);
-  font-weight: 700;
-}
-
-/* ─── AP-Meilenstein-Leiste (Fun-Sweep Programm Welle II §1): kompakter Fortschrittsstreifen
-   innerhalb der aktuellen 5-%-Bande, mit Token-Vorschau im Text. ─────────────────────────────── */
-.achv-milestone-strip {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  background: linear-gradient(rgba(10, 12, 15, 0.4), rgba(10, 12, 15, 0.4)), url("../assets/bg_black.webp") repeat;
-  border: 1px solid rgba(216, 192, 106, 0.22);
-}
-
-.achv-milestone-icon {
-  flex-shrink: 0;
-  font-size: var(--fs-lg);
-}
-
-.achv-milestone-body {
-  flex: 1 1 auto;
-  min-width: 160px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.achv-milestone-track {
-  height: 8px;
-  background: var(--bg-deep);
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
-
-.achv-milestone-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--accent-2), var(--gold));
-  transition: width 0.4s ease;
-}
-
-.achv-milestone-text {
-  font-size: var(--fs-xs);
-  color: var(--muted);
-}
-
-/* ─── "Kurz davor" (Welle EE, Pip P2) — die nächsten Häkchen, global sortiert, klickbar ──
-   Pip-Urteil: "291 der 474 gesperrten Karten stehen bei 0 % [...] es fehlt eine globale
-   'fast fertig'-Sicht." Kompakte Karten-Reihe, wiederverwendet dieselben Rarity-Farbtöne wie
-   die volle Karte (achv-rarity--*), damit nichts Neues gelernt werden muss. ─────────────────── */
-.achv-almost {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.achv-almost-title {
-  margin: 0;
-  font-size: var(--fs-xs);
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-}
-
-.achv-almost-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.achv-almost-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 260px;
-  padding: 8px 12px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  cursor: pointer;
-  text-align: left;
-  transition: border-color 0.15s, transform 0.1s;
-}
-
-.achv-almost-card:hover {
-  border-color: var(--accent-dim);
-  transform: translateY(-1px);
-}
-
-.achv-almost-card.achv-rarity--uncommon  { border-color: rgba(91, 143, 214, 0.4); }
-.achv-almost-card.achv-rarity--rare      { border-color: rgba(216, 192, 106, 0.45); }
-.achv-almost-card.achv-rarity--epic      { border-color: rgba(170, 80, 200, 0.45); }
-.achv-almost-card.achv-rarity--legendary { border-color: rgba(217, 138, 74, 0.5); }
-
-.achv-almost-emblem {
-  font-size: var(--fs-xl);
-  flex-shrink: 0;
-}
-.achv-almost-emblem img { width: 26px; height: 26px; object-fit: contain; }
-
-.achv-almost-body {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
-  min-width: 0;
-}
-
-.achv-almost-name {
-  font-size: var(--fs-xs);
-  font-weight: 600;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.achv-almost-bar-track {
-  display: block;
-  height: 5px;
-  background: var(--bg-deep);
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
-
-.achv-almost-bar-fill {
-  display: block;
-  height: 100%;
-  background: #79848c;
-}
-.achv-almost-bar-fill.achv-rarity--uncommon  { background: #5b8fd6; }
-.achv-almost-bar-fill.achv-rarity--rare      { background: var(--gold); }
-.achv-almost-bar-fill.achv-rarity--epic      { background: #c080e0; }
-.achv-almost-bar-fill.achv-rarity--legendary { background: #e08030; }
-
-.achv-almost-pct {
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  color: var(--gold);
-  flex-shrink: 0;
-}
-
-/* Kurzer Hervorheb-Puls, wenn per Klick auf eine "Kurz davor"-Karte zur vollen Karte gesprungen wird. */
-@keyframes achv-card-flash {
-  0%, 100% { box-shadow: none; }
-  50% { box-shadow: 0 0 0 3px rgba(216, 192, 106, 0.7), 0 0 20px 4px rgba(216, 192, 106, 0.5); }
-}
-.achv-card--flash {
-  animation: achv-card-flash 0.8s ease-in-out 2;
-}
-@media (prefers-reduced-motion: reduce) {
-  .achv-card--flash { animation: none; outline: 3px solid rgba(216, 192, 106, 0.8); }
-}
-
-/* ─── Kurz-davor-Schimmer (Welle PP, Antizipation-Moment 1b): ≥90% Fortschritt, noch gesperrt.
-   Statischer Glanz-Zustand (hellt die sonst gedimmte gesperrte Karte leicht auf + dünner Gold-
-   Rand) + EINMALIGER Sweep beim Karten-Mount (kein Dauer-Glitzern, s. .achv-card-almost-sweep
-   unten — läuft ohne `forwards` sauber aus). ── */
-.achv-card--almost {
-  filter: saturate(0.92) brightness(0.98);
-  box-shadow:
-    0 0 0 1px rgba(216, 192, 106, 0.24),
-    0 0 16px rgba(216, 192, 106, 0.12);
-}
-
-@keyframes achv-almost-sweep {
-  0%   { transform: translateX(-120%) skewX(-18deg); opacity: 0; }
-  18%  { opacity: 0.85; }
-  100% { transform: translateX(220%) skewX(-18deg); opacity: 0; }
-}
-
-.achv-card-almost-sweep {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 1;
-}
-.achv-card-almost-sweep::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 40%;
-  background: linear-gradient(90deg, transparent, rgba(240, 220, 160, 0.35), transparent);
-  animation: achv-almost-sweep 0.9s ease-out; /* bewusst ohne `forwards`, s. mastery-anticipation.css */
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .achv-card-almost-sweep { display: none; }
-}
-
-/* ─── Controls: filter toggle + category tabs ── */
-.achv-controls {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  padding: 12px 18px;
-  background: linear-gradient(rgba(10, 12, 15, 0.45), rgba(10, 12, 15, 0.5)), url("../assets/bg_black.webp") repeat;
-  border-style: solid;
-  border-color: transparent;
-  border-width: 5px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
-  border-radius: 0;
-}
-
-.achv-filter-group {
-  display: flex;
-  /* Citadel: Holz-9-Slice-Rahmen statt schlichtem 1px-Strich (wie die umgebende .achv-controls-Leiste). */
-  border-style: solid;
-  border-color: transparent;
-  border-width: 4px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
-  border-radius: 0;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.achv-filter-btn {
-  padding: 8px 16px;
-  background: transparent;
-  border: none;
-  border-right: 1px solid var(--border);
-  color: var(--muted);
-  font-family: var(--font-head);
-  font-size: var(--fs-xs);
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: color 0.12s, background 0.12s;
-}
-.achv-filter-btn:last-child { border-right: none; }
-.achv-filter-btn:hover { color: var(--text); background: rgba(255, 255, 255, 0.04); }
-.achv-filter-btn--active { color: var(--gold); background: rgba(216, 192, 106, 0.14); }
-
-.achv-controls-divider {
-  width: 1px;
-  align-self: stretch;
-  background: rgba(216, 192, 106, 0.16);
-  flex-shrink: 0;
-}
-
-.achv-cat-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  flex: 1 1 auto;
-}
-
-.achv-cat-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 14px;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-family: var(--font-head);
-  font-size: var(--fs-xs);
-  letter-spacing: 0.4px;
-  cursor: pointer;
-  transition: color 0.12s, background 0.12s, border-color 0.12s;
-}
-.achv-cat-btn img { width: 1.3em; height: 1.3em; object-fit: contain; }
-.achv-cat-btn:hover { color: var(--text); border-color: var(--accent-2); }
-.achv-cat-btn--active {
-  color: var(--gold);
-  border-color: rgba(216, 192, 106, 0.5);
-  background: rgba(216, 192, 106, 0.1);
-}
-
-/* ─── Category group (shown when "All" categories are active) ── */
-.achv-group {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.achv-group-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 2px 9px;
-  border-bottom: 1px solid rgba(216, 192, 106, 0.22);
-}
-
-.achv-group-icon {
-  width: 26px;
-  height: 26px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--fs-lg);
-}
-.achv-group-icon img { width: 100%; height: 100%; object-fit: contain; }
-
-.achv-group-name {
-  font-family: var(--font-head);
-  font-size: var(--fs-lg);
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.achv-group-count {
-  margin-left: auto;
-  font-family: var(--font-head);
-  font-size: var(--fs-sm);
-  color: var(--muted);
-}
-.achv-group-count strong { color: var(--gold); }
-
-/* ─── Card grid ── */
-.achv-grid {
+.ach3-page {
+  --a3-text: #ece6d6;
+  --a3-muted: #cfcab9;
+  --a3-gold: #dcc46e;
+  --a3-line: #333c44;
+  --a3-line-hi: #4d5963;
+  --a3-basalt:
+    linear-gradient(rgba(12, 14, 17, 0.93), rgba(9, 11, 13, 0.96)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 520px repeat;
+  --a3-rail: 16.5em;
+  --rt-common: #d6d6d6;
+  --rt-uncommon: #9cc2f5;
+  --rt-rare: #e8d283;
+  --rt-epic: #d6adf0;
+  --rt-legendary: #f3ad5c;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 14px;
-}
-
-/* ─── Achievement card — dimmed wood-plaque when locked, warm gold-lit
-   medallion plaque when unlocked. This is the "invitingness" centerpiece. ── */
-.achv-card {
-  position: relative;
-  display: flex;
-  gap: 14px;
-  padding: 15px 16px;
-  background: linear-gradient(rgba(8, 9, 11, 0.58), rgba(8, 9, 11, 0.62)), url("../assets/bg_black.webp") repeat;
-  border-style: solid;
-  border-color: transparent;
-  border-width: 4px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
-  border-radius: 0;
-  filter: saturate(0.72) brightness(0.84);
-  transition: transform 0.15s, filter 0.15s, box-shadow 0.15s;
-  /* Perf-Audit 2026-07-22: 537 Karten auf einmal im DOM — content-visibility überspringt Layout/
-     Paint/Style für Karten außerhalb des Viewports komplett (senkt auch den Mount-Ruckler beim
-     ersten Öffnen). contain-intrinsic-size gibt eine Platzhaltergröße vor, bis eine Karte einmal
-     tatsächlich gerendert wurde, damit die Scrollbar nicht springt. */
-  content-visibility: auto;
-  contain-intrinsic-size: 300px 190px;
-}
-
-.achv-card:hover {
-  transform: translateY(-2px);
-}
-
-.achv-card--unlocked {
-  filter: none;
-  background:
-    linear-gradient(160deg, rgba(96, 70, 24, 0.30), rgba(10, 10, 12, 0.62) 60%),
-    url("../assets/bg_black.webp") repeat;
-  box-shadow:
-    0 0 0 1px rgba(216, 192, 106, 0.28),
-    0 0 22px rgba(216, 192, 106, 0.16),
-    0 8px 20px rgba(0, 0, 0, 0.5);
-}
-.achv-card--unlocked:hover {
-  box-shadow:
-    0 0 0 1px rgba(216, 192, 106, 0.48),
-    0 0 30px rgba(216, 192, 106, 0.28),
-    0 10px 24px rgba(0, 0, 0, 0.55);
-}
-
-/* Corner badge — unlocked laurel-checkmark or locked padlock (real PNGs, emoji fallback).
-   Pinned OUTSIDE the padding box (negative offset) like a medal hung on the plaque's frame
-   corner — keeps it clear of the name/rarity-badge row no matter how long the (German!) name
-   wraps, instead of colliding with it (Sweep note: a two-line "Universalgelehrter" used to
-   collide with this badge when it sat inside the card at top:8/right:8). */
-.achv-card-corner {
-  position: absolute;
-  top: -10px;
-  right: -8px;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--fs-sm);
-  opacity: 0.9;
-  z-index: 2;
-  background: radial-gradient(circle, rgba(10, 8, 6, 0.92) 52%, transparent 74%);
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.8));
-}
-.achv-card-corner img { width: 100%; height: 100%; object-fit: contain; }
-.achv-card:not(.achv-card--unlocked) .achv-card-corner { opacity: 0.42; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.75)) grayscale(0.3); }
-
-.achv-emblem {
-  width: 54px;
-  height: 54px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--fs-2xl);
-  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.06), rgba(10, 8, 6, 0.85) 74%);
-  border: 2px solid #454d54;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
-}
-.achv-emblem img { width: 28px; height: 28px; object-fit: contain; }
-.achv-card:not(.achv-card--unlocked) .achv-emblem { filter: grayscale(0.45); }
-
-.achv-emblem.achv-rarity--common    { border-color: #454d54; }
-.achv-emblem.achv-rarity--uncommon  { border-color: rgba(91, 143, 214, 0.6); box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6), 0 0 10px rgba(91, 143, 214, 0.24); }
-.achv-emblem.achv-rarity--rare      { border-color: rgba(216, 192, 106, 0.65); box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6), 0 0 10px rgba(216, 192, 106, 0.3); }
-.achv-emblem.achv-rarity--epic      { border-color: rgba(170, 80, 200, 0.65); box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6), 0 0 10px rgba(170, 80, 200, 0.3); }
-.achv-emblem.achv-rarity--legendary { border-color: rgba(217, 138, 74, 0.7); box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6), 0 0 14px rgba(217, 138, 74, 0.4); }
-
-.achv-body {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.achv-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.achv-name {
-  font-family: var(--font-head);
-  font-size: var(--fs-sm);
-  letter-spacing: 0.3px;
-  line-height: 1.25;
-  color: var(--text);
-  /* Sweep-Fund T5/T6: `anywhere` brach lange DE/RU-Titel mitten im Wort („UNIVERSALGELE/HRTER",
-     einzelne Buchstaben in eigener Zeile). Jetzt: normale Umbrüche + echte Silbentrennung mit
-     Bindestrich (html[lang] wird vom I18nProvider gesetzt); break-word bleibt als Notanker. */
-  overflow-wrap: break-word;
-  hyphens: auto;
-  /* claude:2026-10-17T14:20:00+02:00 — nur lange Wörter (>= 10 Zeichen, je 5 pro Teil) trennen: kein „Лат-ные“. */
-  hyphenate-limit-chars: 10 5 5;
-}
-.achv-card--unlocked .achv-name { color: var(--gold); }
-
-.achv-badge {
-  flex-shrink: 0;
-  padding: 2px 8px;
-  border-radius: 9px;
-  border: 1px solid var(--border);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.achv-badge.achv-rarity--common    { color: var(--text); border-color: #454d54; background: rgba(255, 255, 255, 0.04); }
-.achv-badge.achv-rarity--uncommon  { color: #8fbfdf; border-color: rgba(91, 143, 214, 0.4); background: rgba(91, 143, 214, 0.08); }
-.achv-badge.achv-rarity--rare      { color: var(--gold); border-color: rgba(216, 192, 106, 0.45); background: rgba(216, 192, 106, 0.08); }
-.achv-badge.achv-rarity--epic      { color: #c080e0; border-color: rgba(170, 80, 200, 0.45); background: rgba(170, 80, 200, 0.08); }
-.achv-badge.achv-rarity--legendary { color: #e08030; border-color: rgba(217, 138, 74, 0.5); background: rgba(217, 138, 74, 0.1); }
-
-.achv-ap {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--font-head);
-  font-size: var(--fs-xs);
-  letter-spacing: 0.4px;
-  color: var(--accent-2);
-}
-
-.achv-desc {
-  margin: 0;
-  font-size: var(--fs-xs);
-  line-height: 1.4;
-  color: var(--muted);
-}
-.achv-card--unlocked .achv-desc { color: #cdbb8e; }
-
-.achv-progress {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: 2px;
-}
-
-.achv-progress-bar {
-  height: 7px;
-  background: var(--bg-deep);
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
-
-.achv-progress-fill {
+  grid-template-columns: var(--a3-rail) minmax(0, 1fr);
+  gap: 0.85em;
   height: 100%;
-  background: #79848c;
+  min-height: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.25;
+  color: var(--a3-text);
+  font-family: var(--font-body);
 }
-.achv-progress-fill.achv-rarity--uncommon  { background: #5b8fd6; }
-.achv-progress-fill.achv-rarity--rare      { background: var(--gold); }
-.achv-progress-fill.achv-rarity--epic      { background: #c080e0; }
-.achv-progress-fill.achv-rarity--legendary { background: #e08030; }
-
-.achv-progress-count {
-  font-size: var(--fs-2xs);
-  color: var(--muted);
-  text-align: right;
+@media (max-width: 1500px) {
+  .ach3-page { --a3-rail: 14.6em; gap: 0.7em; }
 }
 
-.achv-status {
-  margin-top: 2px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.ach3-page h1, .ach3-page h2, .ach3-page h3 { margin: 0; font-weight: 400; }
+.ach3-page button { font-family: inherit; }
+
+/* Rarity-Tokens: --c = Rahmen/Füllung, --t = Textfarbe. */
+.ach3-r-common    { --c: var(--rar-common, #c8c8c8);    --t: var(--rt-common); }
+.ach3-r-uncommon  { --c: var(--rar-uncommon, #5b8fd6);  --t: var(--rt-uncommon); }
+.ach3-r-rare      { --c: var(--rar-rare, #d8c06a);      --t: var(--rt-rare); }
+.ach3-r-epic      { --c: var(--rar-epic, #b07fd8);      --t: var(--rt-epic); }
+.ach3-r-legendary { --c: var(--rar-legendary, #e0902a); --t: var(--rt-legendary); }
+
+.ach3-panel {
+  background: var(--a3-basalt);
+  border: 1px solid var(--a3-line);
+  box-shadow: inset 0 0 0 1px rgba(216, 192, 106, 0.07), 0 0.35em 0.9em rgba(0, 0, 0, 0.4);
+  min-width: 0;
+  min-height: 0;
+}
+.ach3-hd {
   font-family: var(--font-head);
-  font-size: var(--fs-xs);
-  letter-spacing: 0.5px;
-  color: var(--gold);
-}
-
-.achv-footer {
-  padding: 14px 4px 4px;
-  text-align: center;
-  font-size: var(--fs-xs);
-  font-style: italic;
-  color: var(--muted);
-}
-
-@media (max-width: 900px) {
-  .achv-grid { grid-template-columns: 1fr; }
-  .achv-hero { padding: 18px 20px; }
-}
-
-/* ─── Versteckte Erfolge (Achievements 1.2.0 § 2.6): bis zum Unlock eine „???"-Karte mit Schloss —
-   kein Name, keine Beschreibung, kein Balken. Seltenheit/AP bleiben lesbar („wie schwer", nicht „was"). */
-.achv-card--hidden {
-  filter: saturate(0.35) brightness(0.7);
-}
-.achv-card--hidden .achv-name {
-  letter-spacing: 0.22em;
-  color: #8f877a;
-}
-.achv-card--hidden .achv-desc {
-  font-style: italic;
-  color: #7d7669;
-}
-.achv-card--hidden .achv-emblem {
-  border-style: dashed;
-  border-color: #4a5058;
-}
-.achv-card--hidden .achv-emblem img {
-  opacity: 0.65;
-}
-.achv-hidden-lock {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 6px;
-  color: #8f877a;
-  font-size: var(--fs-xs);
-  letter-spacing: 0.06em;
+  font-size: 0.95em;
+  letter-spacing: 0.08em;
+  color: var(--a3-gold);
   text-transform: uppercase;
 }
-.achv-hidden-lock img {
-  width: 14px;
-  height: 14px;
-  object-fit: contain;
-  opacity: 0.7;
+
+/* Balken (gemeinsam): s = Füllung. */
+.ach3-bar {
+  display: block;
+  height: 0.5em;
+  min-width: 3em;
+  background: #05070a;
+  border: 1px solid #3a434b;
+}
+.ach3-bar > s { display: block; height: 100%; background: linear-gradient(#cfae52, #8a6a28); text-decoration: none; }
+.ach3-bar--full > s { background: linear-gradient(#78b564, #3f7432); }
+.ach3-bar--hot > s { background: linear-gradient(#e6c768, #b98a2c); }
+.ach3-bar--lg { height: 0.62em; }
+
+.ach3-check { width: 1em; height: 1em; vertical-align: -0.14em; color: var(--boost, #8fd67b); flex: none; }
+
+/* ───────────────────────── Navigationsleiste ───────────────────────── */
+.ach3-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7em;
+  min-height: 0;
+  min-width: 0;
+}
+.ach3-sum { display: flex; flex-direction: column; gap: 0.3em; padding: 0.75em 0.85em; flex: none; }
+.ach3-big { font-family: var(--font-head); font-size: 2.1em; line-height: 1; color: #f6efdc; white-space: nowrap; }
+.ach3-big small { font-size: 0.48em; color: var(--a3-muted); }
+.ach3-sum-line { font-size: 0.95em; color: var(--a3-muted); }
+.ach3-ms { display: flex; align-items: flex-start; gap: 0.4em; font-size: 0.95em; color: var(--a3-text); }
+.ach3-ms img { width: 1.4em; height: 1.4em; object-fit: contain; flex: none; }
+.ach3-ticks { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 2px; margin-top: 0.15em; }
+.ach3-ticks i { display: block; height: 0.55em; background: #05070a; border: 1px solid #3a434b; }
+.ach3-ticks i.ach3-tick--got { background: #b98a2c; border-color: #d8c06a; }
+.ach3-ticks i.ach3-tick--next { border-color: var(--a3-gold); box-shadow: 0 0 0 1px rgba(220, 196, 110, 0.5); }
+
+.ach3-tools { display: flex; flex-direction: column; gap: 0.5em; padding: 0.55em; flex: none; }
+.ach3-search {
+  display: flex; align-items: center; gap: 0.45em;
+  background: #0b0d10; border: 1px solid var(--a3-line-hi); padding: 0.3em 0.55em;
+}
+.ach3-search img { width: 1.2em; height: 1.2em; object-fit: contain; flex: none; }
+.ach3-search input {
+  all: unset; flex: 1; min-width: 0; font-family: var(--font-body); font-size: 1em; color: var(--a3-text);
+}
+.ach3-search input::placeholder { color: #b4af9f; }
+.ach3-search:focus-within { border-color: var(--a3-gold); }
+.ach3-seg { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--a3-line-hi); }
+.ach3-seg button {
+  all: unset; cursor: pointer; box-sizing: border-box;
+  display: flex; align-items: baseline; justify-content: center; gap: 0.3em;
+  min-width: 0; padding: 0.4em 0.2em; background: #12151a; color: var(--a3-text);
+  font-family: var(--font-head); font-size: 0.92em; letter-spacing: 0; white-space: nowrap; overflow: hidden;
+  border-right: 1px solid var(--a3-line); border-bottom: 1px solid var(--a3-line);
+}
+.ach3-seg button:nth-child(2n) { border-right: 0; }
+.ach3-seg button:nth-child(n + 3) { border-bottom: 0; }
+.ach3-seg button em { font-style: normal; color: var(--a3-muted); font-size: 0.9em; }
+.ach3-seg button:hover { background: #1a1f26; }
+.ach3-seg button.ach3-on { background: #2a2518; color: var(--a3-gold); box-shadow: inset 0 -2px 0 var(--a3-gold); }
+.ach3-seg button.ach3-on em { color: #e8d283; }
+
+.ach3-cats {
+  display: flex; flex-direction: column; flex: 1 1 0; min-height: 0; padding: 0.3em;
+  overflow-y: auto; scrollbar-width: thin; scrollbar-color: #4d5963 #0b0d10;
+}
+.ach3-cat {
+  all: unset; box-sizing: border-box; cursor: pointer;
+  display: grid; grid-template-columns: 1.9em minmax(0, 1fr) auto; grid-template-rows: auto 0.4em;
+  column-gap: 0.55em; row-gap: 0.25em; align-items: center;
+  padding: 0.3em 0.5em; flex: 1 1 0; min-height: 2.5em; max-height: 3.4em;
+  border: 1px solid transparent; border-left: 3px solid transparent;
+}
+.ach3-cat-ico { grid-row: 1 / 3; width: 1.9em; height: 1.9em; display: grid; place-items: center; font-size: 1.3em; }
+.ach3-cat-ico img { width: 100%; height: 100%; object-fit: contain; }
+.ach3-cat-name { font-family: var(--font-head); font-size: 1em; color: var(--a3-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ach3-cat-n { font-family: var(--font-head); font-size: 0.93em; color: var(--a3-muted); }
+.ach3-cat .ach3-bar { grid-column: 2 / 4; height: 0.38em; }
+.ach3-cat:hover { background: rgba(255, 255, 255, 0.04); }
+.ach3-cat.ach3-on { background: rgba(216, 192, 106, 0.08); border-color: rgba(216, 192, 106, 0.35); border-left-color: var(--a3-gold); }
+.ach3-cat.ach3-on .ach3-cat-name { color: var(--a3-gold); }
+
+/* ───────────────────────── Hauptbereich ───────────────────────── */
+.ach3-main { display: flex; flex-direction: column; gap: 0.7em; min-height: 0; min-width: 0; }
+
+.ach3-head { display: flex; align-items: center; gap: 1em; padding: 0.6em 0.9em; flex: none; flex-wrap: wrap; }
+.ach3-title { display: flex; flex-direction: column; gap: 0.1em; }
+.ach3-title h1 {
+  font-family: var(--font-head); font-size: 1.75em; line-height: 1.1; letter-spacing: 0.08em;
+  color: var(--a3-gold); text-transform: uppercase;
+}
+.ach3-title span { color: var(--a3-muted); font-size: 0.95em; }
+.ach3-pills { display: flex; flex-wrap: wrap; gap: 0.45em; margin-left: auto; }
+.ach3-pill {
+  all: unset; cursor: pointer; box-sizing: border-box;
+  display: flex; align-items: center; gap: 0.45em; padding: 0.3em 0.65em;
+  border: 1px solid var(--a3-line-hi); background: #12151a; font-size: 0.95em;
+}
+.ach3-pill i { width: 0.75em; height: 0.75em; border-radius: 50%; background: var(--c); flex: none; }
+.ach3-pill b { font-family: var(--font-head); font-weight: 400; color: var(--t); }
+.ach3-pill span { font-family: var(--font-head); color: var(--a3-muted); }
+.ach3-pill:hover { border-color: var(--c); }
+.ach3-pill:focus-visible, .ach3-cat:focus-visible, .ach3-seg button:focus-visible, .ach3-more:focus-visible, .ach3-tile:focus-visible {
+  outline: 2px solid var(--a3-gold); outline-offset: 1px;
+}
+
+.ach3-shelf {
+  flex: 1 1 0; min-height: 0; padding: 0 0.85em 0.8em;
+  overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: #4d5963 #0b0d10;
+  background: #0b0c0e; border: 1px solid #242b31;
+}
+.ach3-empty { margin: 3em 1em; text-align: center; color: var(--a3-muted); font-size: 1.05em; }
+
+.ach3-sec { margin-bottom: 1em; }
+.ach3-sec > header {
+  display: flex; align-items: center; gap: 0.8em; padding: 0.65em 0 0.5em;
+  position: sticky; top: 0; z-index: 2; background: #0c0e10; border-bottom: 1px solid var(--c);
+}
+.ach3-sec h2 {
+  font-family: var(--font-head); font-size: 1.3em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--t);
+}
+.ach3-sc { font-family: var(--font-head); font-size: 1.05em; color: #f6efdc; white-space: nowrap; }
+.ach3-spa { color: var(--a3-muted); font-size: 0.95em; white-space: nowrap; }
+.ach3-bar--shelf { width: 8em; flex: none; }
+.ach3-bar--shelf > s { background: var(--c); }
+.ach3-more {
+  all: unset; cursor: pointer; box-sizing: border-box; margin-left: auto; white-space: nowrap;
+  font-family: var(--font-head); font-size: 0.95em; letter-spacing: 0.04em; color: #f6eed8;
+  padding: 0.25em 0.8em; border: 1px solid var(--a3-line-hi); background: #161a20;
+}
+.ach3-more:hover { border-color: var(--a3-gold); color: #fff3d2; }
+
+.ach3-grid {
+  list-style: none; margin: 0; padding: 0.75em 0 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(10.6em, 1fr)); gap: 0.65em;
+}
+
+/* Kachel: feste Höhe, damit das Raster ruhig bleibt. */
+.ach3-tile {
+  position: relative; box-sizing: border-box; height: 12.7em; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.25em;
+  padding: 0.6em 0.5em 0.5em;
+  background: var(--a3-basalt); border: 1px solid var(--a3-line); border-top: 3px solid var(--c);
+}
+.ach3-tile--o, .ach3-tile--h { border-top-color: #4a525a; }
+.ach3-tile:hover { border-color: var(--a3-line-hi); border-top-color: var(--c); }
+.ach3-tile--sel, .ach3-tile--sel:hover { border-color: var(--a3-gold); box-shadow: inset 0 0 0 1px rgba(220, 196, 110, 0.35); }
+
+.ach3-med {
+  position: relative; display: grid; place-items: center; flex: none;
+  width: 3.2em; height: 3.2em; border-radius: 50%; box-sizing: border-box;
+  background: radial-gradient(circle at 50% 40%, #2a2d31, #0e1013 75%);
+  border: 2px solid var(--c); box-shadow: inset 0 0 0.5em #000; font-size: 1em;
+}
+.ach3-med img { width: 68%; height: 68%; object-fit: contain; filter: drop-shadow(0 1px 2px #000); }
+.ach3-med--o img { filter: grayscale(1) brightness(0.62) contrast(1.1); }
+.ach3-med--o, .ach3-med--h { border-color: #4a525a; }
+.ach3-med--h img { width: 50%; height: 50%; filter: brightness(1.5); }
+.ach3-med--big { width: 3.9em; height: 3.9em; }
+
+.ach3-name {
+  font-family: var(--font-head); font-weight: 400; font-size: 0.95em; line-height: 1.15; color: #f6efdc;
+  height: 3.45em; display: flex; align-items: center; justify-content: center; width: 100%;
+  overflow: hidden; overflow-wrap: anywhere;
+}
+.ach3-tile--h .ach3-name { letter-spacing: 0.2em; }
+.ach3-meta {
+  display: flex; align-items: center; justify-content: center; gap: 0.3em;
+  font-size: 0.95em; color: var(--a3-muted); white-space: nowrap; max-width: 100%;
+}
+.ach3-meta img { width: 0.95em; height: 0.95em; object-fit: contain; }
+.ach3-tile--u .ach3-meta { color: var(--a3-text); }
+.ach3-tile .ach3-bar { width: 100%; height: 0.4em; }
+.ach3-foot { margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 0.4em; flex-wrap: nowrap; }
+.ach3-ap { font-family: var(--font-head); font-size: 0.95em; color: #f4ecd8; white-space: nowrap; }
+.ach3-steam {
+  display: inline-block; font-family: var(--font-head); font-size: 0.85em; letter-spacing: 0.06em; text-transform: uppercase;
+  color: #cfe0f0; border: 1px solid #4a6580; background: #142130; padding: 0 0.35em; white-space: nowrap;
+}
+
+/* Detailleiste */
+.ach3-detail {
+  flex: none; display: grid; grid-template-columns: auto minmax(0, 1fr) 11em auto; gap: 1em; align-items: center;
+  padding: 0.65em 0.9em; border-top: 3px solid var(--c, var(--a3-line));
+  min-height: 6.4em;
+}
+.ach3-detail--empty { display: flex; justify-content: center; color: var(--a3-muted); border-top-color: var(--a3-line); }
+.ach3-detail-top { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5em; }
+.ach3-detail h3 { font-family: var(--font-head); font-size: 1.25em; color: #f6efdc; line-height: 1.2; }
+.ach3-badge {
+  font-family: var(--font-head); font-size: 0.9em; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--t); border: 1px solid var(--c); padding: 0.05em 0.5em; background: rgba(0, 0, 0, 0.35); white-space: nowrap;
+}
+.ach3-detail-cat { color: var(--a3-muted); font-size: 0.95em; }
+.ach3-detail p { margin: 0.25em 0 0; font-size: 1.02em; line-height: 1.3; color: var(--a3-text); overflow-wrap: anywhere; }
+.ach3-detail-prog { display: flex; flex-direction: column; gap: 0.3em; }
+.ach3-detail-val { font-family: var(--font-head); font-size: 1.05em; color: #f6efdc; }
+.ach3-detail-val--done { color: var(--boost, #8fd67b); }
+.ach3-detail-ap { font-family: var(--font-head); font-size: 1.5em; color: #f4ecd8; white-space: nowrap; }
+
+/* Schmale Fenster (1366): Leiste etwas kompakter, Detail ohne eigene Fortschrittsspalte-Breite. */
+@media (max-width: 1500px) {
+  .ach3-detail { grid-template-columns: auto minmax(0, 1fr) 9em auto; gap: 0.8em; }
+  .ach3-tile { height: 12.4em; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ach3-tile { transition: border-color 0.12s ease; }
+}
+
+/* claude:2026-10-31T10:10:00+01:00 — Kompaktmodus für 1366×768: Kopf einzeilig, Summenfeld und Kategorien enger, damit alle
+   zehn Kategorien ohne Scrollen sichtbar sind und das Regal mehr als anderthalb Kachelreihen zeigt. */
+@media (max-width: 1500px) {
+  .ach3-head { gap: 0.6em; padding: 0.45em 0.7em; flex-wrap: nowrap; }
+  .ach3-title h1 { font-size: 1.45em; }
+  .ach3-pills { gap: 0.3em; flex-wrap: nowrap; }
+  .ach3-pill { padding: 0.25em 0.4em; gap: 0.3em; font-size: 0.86em; }
+  .ach3-pill i { display: none; }
+}
+@media (max-height: 820px) {
+  .ach3-page, .ach3-rail, .ach3-main { gap: 0.5em; }
+  .ach3-page { gap: 0.7em; }
+  .ach3-sum { padding: 0.5em 0.7em; gap: 0.2em; }
+  .ach3-big { font-size: 1.8em; }
+  .ach3-tools { padding: 0.4em; gap: 0.35em; }
+  .ach3-seg button { padding: 0.28em 0.3em; }
+  .ach3-cat { min-height: 1.95em; padding: 0.12em 0.4em; row-gap: 0.15em; }
+  .ach3-cat-ico { width: 1.5em; height: 1.5em; font-size: 1.1em; }
+  .ach3-cat { grid-template-columns: 1.6em minmax(0, 1fr) auto; }
+  .ach3-detail { min-height: 5em; padding: 0.45em 0.8em; }
+  .ach3-detail .ach3-med--big { width: 3.2em; height: 3.2em; }
+  .ach3-detail-ap { font-size: 1.3em; }
+  .ach3-tile { height: 11.9em; }
 }

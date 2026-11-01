@@ -10,6 +10,7 @@ import {
   availableRefineRecipes,
   bankCount,
   campBoost,
+  campBuildDurationMs,
   campBuildSlots,
   advanceCampQueue,
   campBuildStartReason,
@@ -206,9 +207,9 @@ function boostOf(def: CampBuildingDef, level: number): { kind: CampBoostKind | n
  * gibt. Der Anteil selbst kommt aus dem Engine-Lesehook `campBoost`, nicht aus eigener Boost-Mathe.
  * (Sauberer wäre ein Engine-Export `campBuildJobTotalMs` — an den CEO gemeldet.)
  */
+// claude:2026-10-30T19:31:00+01:00 — 1.4.2 Bauherrin: keine eigene Kopie mehr, sondern die Engine-Formel `campBuildDurationMs` (Schreibzelt × Narbenbuch).
 function buildJobTotalMs(state: GameState, baseMs: number): number {
-  const speedCut = Math.max(0, Math.min(0.9, campBoost(state, content, "buildSpeed")));
-  return Math.max(TICK_MS, Math.round(baseMs * (1 - speedCut)));
+  return campBuildDurationMs(state, content, baseMs);
 }
 
 /**
@@ -940,7 +941,7 @@ function BuildingCardImpl({
               })}
             </div>
             <p className="nh-cost-time muted">
-              {t("newhaven.cost.time").replace("{time}", formatEta(levelDef.buildMs, t))}
+              {t("newhaven.cost.time").replace("{time}", formatEta(campBuildDurationMs(state, content, levelDef.buildMs), t) /* claude:2026-10-30T19:31:00+01:00 — Bauherrin */)}
             </p>
             {debugFreeBuild && <p className="nh-debug-free-note">{t("newhaven.debug.freeActive")}</p>}
           </div>
@@ -2424,7 +2425,7 @@ function NewHavenListView({
                     })}
                   </div>
                   <div className="nh-list-build-meta">
-                    <span>{t("newhaven.cost.time").replace("{time}", formatEta(levelDef.buildMs, t))}</span>
+                    <span>{t("newhaven.cost.time").replace("{time}", formatEta(campBuildDurationMs(state, content, levelDef.buildMs), t) /* claude:2026-10-30T19:31:00+01:00 — Bauherrin */)}</span>
                     {core.reason !== "ok" && (
                       <span className="nh-list-reason">
                         {reasonText(state, core.reason, targetLevel, hallName, busyName, questName, t)}

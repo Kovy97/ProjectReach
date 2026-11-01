@@ -1,297 +1,166 @@
-import { memo, useEffect, useState } from "react";
+// claude:2026-10-31T09:45:00+01:00 — Erfolge-Seite neu (Chef-Entscheid 31.10.): Kacheln als Trophäenregal (Mockup 2, gleich große
+// Kacheln, Fächer nach Seltenheit mit Fortschritt je Fach), links die Navigationsleiste aus Mockup 1 (Summe + Meilensteine, Filter
+// Alle/Offen/Fertig/Versteckt mit Zählern, Suche, Kategorien mit Balken). Details erscheinen in einer Leiste unten (Hover/Klick),
+// damit nichts abgeschnitten wird. Hidden-Flag, Bedingungen und Fortschritt kommen generisch aus Content und Engine.
+import { memo, useCallback, useMemo, useRef, useState } from "react";
 import { content } from "@hearthforge/content";
 import { achievementProgress } from "@hearthforge/engine";
 import type { AchievementCategory, AchievementDef, AchievementRarity, LocalizedString } from "@hearthforge/shared";
-import { apMilestoneTokens, earnedAP, totalAP } from "@hearthforge/shared";
+import { achievementPoints, apMilestoneTokens, earnedAP, totalAP } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { formatNum } from "../util/format";
 import { getUiIcon } from "../uiIcons";
-import { effectiveFxLevel } from "../util/fxLevel";
+// Reine Tabelle ohne electron-Import (Wächter-Test steamAchievements.test.ts): welche Erfolge es auch auf Steam gibt.
+import { STEAM_ACHIEVEMENTS } from "../../main/steamAchievements";
 import "../styles/achievements.css";
-// codex:2026-08-03T19:02:00+02:00 — Chef-Abnahme 02: produktive Warden-Ledger-Schicht nach dem Bestandsskin.
-import "../styles/warden-ledger-achievements.css";
 
-/** Welle PP (Kurz-davor-Schimmer, Antizipation-Moment 1b): ab diesem Fortschritt trägt eine
- *  gesperrte Karte den statischen Glanz-Zustand + einmaligen Mount-Sweep (zusätzlich zur
- *  bestehenden globalen "Almost there"-Leiste — hier auf der Karte SELBST, s. Chef-Vorgabe). */
-const ALMOST_THRESHOLD_PCT = 90;
-
-// ── constants ─────────────────────────────────────────────────────────────────
+// ── Konstanten ───────────────────────────────────────────────────────────────
 
 const CATEGORIES: AchievementCategory[] = [
-  "skilling",
-  "combat",
-  "gathering",
-  "crafting",
-  "quests",
-  "wealth",
-  "collection",
-  "exploration",
-  "meta",
+  "skilling", "combat", "gathering", "crafting", "quests", "wealth", "collection", "exploration", "meta",
 ];
 
+/** Fächer von oben nach unten: das Seltenste zuerst (Mockup 2). */
+const RARITIES: AchievementRarity[] = ["legendary", "epic", "rare", "uncommon", "common"];
+
+/** Kacheln pro Fach, bevor „+ n weitere“ den Rest aufklappt (teilbar durch 4, 6 und 8 Spalten). */
+const SHELF_CAP = 24;
+/** Ab diesem Fortschritt färbt sich der Balken einer offenen Kachel „heiß“ (vormals Kurz-davor-Glanz). */
+const ALMOST_THRESHOLD_PCT = 90;
+const MILESTONE_STEPS = Array.from({ length: 20 }, (_, i) => (i + 1) * 5);
+
 const CATEGORY_ICONS: Record<string, string> = {
-  all: "🏆",
-  skilling: "⚒️",
-  combat: "⚔️",
-  gathering: "🌿",
-  crafting: "🔨",
-  quests: "📜",
-  wealth: "💰",
-  collection: "🎁",
-  exploration: "🧭",
-  meta: "⭐",
+  all: "🏆", skilling: "⚒️", combat: "⚔️", gathering: "🌿", crafting: "🔨",
+  quests: "📜", wealth: "💰", collection: "🎁", exploration: "🧭", meta: "⭐",
 };
 
-const TROPHY_ICON_URL = getUiIcon("icon_achievments");
-const UNLOCKED_ICON_URL = getUiIcon("icon_achievement_unlocked");
-const LOCKED_ICON_URL = getUiIcon("icon_locked");
-const MILESTONE_ICON_URL = getUiIcon("icon_ach_milestone");
-const SEARCH_ICON_URL = getUiIcon("icon_ach_search");
-
-/** Geschlossenes Kategorien-Icon-Set (Mira-Set 2026-08-03, Gap-Sweep Priorität A): löst die
- *  vormals gemischte Auswahl (teils andere Themen-Icons, exploration/meta ohne Art → Emoji
- *  sichtbar) durch ein einheitliches monochromes 10er-Set ab — größter Kohäsionsgewinn laut
- *  Sweep. Emoji-Fallback (CATEGORY_ICONS) bleibt als Sicherheitsnetz. */
+/** Geschlossenes Kategorien-Icon-Set (`icon_ach_*`); Emoji nur als Sicherheitsnetz. */
 const CATEGORY_UI: Record<string, string> = {
-  all: "icon_ach_trophy",
-  skilling: "icon_ach_forge",
-  combat: "icon_ach_combat",
-  gathering: "icon_ach_nature",
-  crafting: "icon_ach_craft",
-  quests: "icon_ach_scroll",
-  wealth: "icon_ach_gold",
-  collection: "icon_ach_gift",
-  exploration: "icon_ach_compass",
-  meta: "icon_ach_star",
+  all: "icon_ach_trophy", skilling: "icon_ach_forge", combat: "icon_ach_combat", gathering: "icon_ach_nature",
+  crafting: "icon_ach_craft", quests: "icon_ach_scroll", wealth: "icon_ach_gold", collection: "icon_ach_gift",
+  exploration: "icon_ach_compass", meta: "icon_ach_star",
 };
 
-/** PNG-Icon wenn vorhanden, sonst Emoji-Fallback. */
-function categoryIcon(cat: string): JSX.Element {
-  const name = CATEGORY_UI[cat];
-  const src = name ? getUiIcon(name) : undefined;
-  if (src) {
-    return <img loading="lazy" decoding="async" src={src} alt="" />;
-  }
-  return <>{CATEGORY_ICONS[cat] ?? "🏆"}</>;
-}
+const LOCKED_ICON_URL = getUiIcon("icon_locked");
+const SEARCH_ICON_URL = getUiIcon("icon_ach_search");
+const MILESTONE_ICON_URL = getUiIcon("icon_ach_milestone");
 
-/**
- * Icon eines einzelnen Achievements: das gestaltete Kategorie-PNG, sonst das eigene Emoji.
- *
- * 1.1.0: Die Reihenfolge war verdreht — `def.icon` (Emoji) gewann, und das Kategorie-Icon kam
- * nur zum Zug, wenn keins gesetzt war. Da alle 59 Erfolge ein Emoji tragen, hat man die zehn
- * monochromen PNGs oben nie zu Gesicht bekommen; in der Liste standen stattdessen flache bunte
- * Rechtecke (Buch-Emoji in Orange, Pink, Blau) neben einem goldenen Ring.
- * Der Kommentar ueber CATEGORY_UI beschreibt die Absicht anders herum: die PNGs sollten das
- * uneinheitliche Emoji-Set abloesen, das Emoji nur das Sicherheitsnetz sein. Genau so ist es
- * jetzt — und wo es kein Kategorie-PNG gibt, faellt `categoryIcon` selbst wieder auf ein
- * Emoji zurueck, es geht also nie ein Symbol verloren.
- */
-function achievementIcon(def: AchievementDef): JSX.Element {
-  const kategorieName = CATEGORY_UI[def.category];
-  const kategorieBild = kategorieName ? getUiIcon(kategorieName) : undefined;
-  if (kategorieBild) return <img loading="lazy" decoding="async" src={kategorieBild} alt="" />;
-  if (def.icon) return <>{def.icon}</>;
-  return categoryIcon(def.category);
-}
-
-/** CSS rarity modifier class. */
-const RARITY_CLASS: Record<AchievementRarity, string> = {
-  common: "achv-rarity--common",
-  uncommon: "achv-rarity--uncommon",
-  rare: "achv-rarity--rare",
-  epic: "achv-rarity--epic",
-  legendary: "achv-rarity--legendary",
-};
-
-type FilterMode = "all" | "unlocked" | "locked";
-
-/** Versteckter Erfolg, der noch nicht freigeschaltet ist → Name/Beschreibung/Fortschritt maskieren. */
-function isMasked(def: AchievementDef, unlocked: boolean): boolean {
-  return def.hidden === true && !unlocked;
-}
-
-/** Schloss-Symbol der maskierten Karte (PNG, sonst Emoji). */
-function lockIcon(): JSX.Element {
-  return LOCKED_ICON_URL ? <img loading="lazy" decoding="async" src={LOCKED_ICON_URL} alt="" /> : <>🔒</>;
-}
-
-// ── helpers ──────────────────────────────────────────────────────────────────
+type FilterMode = "all" | "open" | "done" | "hidden";
+const FILTERS: FilterMode[] = ["all", "open", "done", "hidden"];
 
 function clamp(v: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, v));
 }
 
-function rarityAP(rarity: AchievementRarity): number {
-  if (rarity === "common") return 5;
-  if (rarity === "uncommon") return 10;
-  if (rarity === "rare") return 25;
-  if (rarity === "epic") return 50;
-  return 100;
+function categoryIcon(cat: string): JSX.Element {
+  const name = CATEGORY_UI[cat];
+  const src = name ? getUiIcon(name) : undefined;
+  if (src) return <img loading="lazy" decoding="async" src={src} alt="" />;
+  return <>{CATEGORY_ICONS[cat] ?? "🏆"}</>;
 }
 
-// ── ProgressRing ─────────────────────────────────────────────────────────────
+/** Icon eines Erfolgs: das gestaltete Kategorie-PNG, sonst sein Emoji. */
+function achievementIcon(def: AchievementDef): JSX.Element {
+  const name = CATEGORY_UI[def.category];
+  const src = name ? getUiIcon(name) : undefined;
+  if (src) return <img loading="lazy" decoding="async" src={src} alt="" />;
+  if (def.icon) return <>{def.icon}</>;
+  return categoryIcon(def.category);
+}
 
-function ProgressRing({ pct, size = 90 }: { pct: number; size?: number }): JSX.Element {
-  const strokeW = Math.round(size * 0.078);
-  const r = (size - strokeW) / 2;
-  const circ = 2 * Math.PI * r;
-  const filled = clamp(pct / 100, 0, 1) * circ;
-  // Rotate so arc starts at top: offset = circ/4
+function lockIcon(): JSX.Element {
+  return LOCKED_ICON_URL ? <img loading="lazy" decoding="async" src={LOCKED_ICON_URL} alt="" /> : <>🔒</>;
+}
+
+/** Versteckter Erfolg, der noch nicht freigeschaltet ist: Name, Text und Fortschritt bleiben maskiert („???“ + Schloss). */
+function isMasked(def: AchievementDef, unlocked: boolean): boolean {
+  return def.hidden === true && !unlocked;
+}
+
+function pctOf(progress: number, def: AchievementDef): number {
+  return clamp(def.condition.count > 0 ? (progress / def.condition.count) * 100 : 0, 0, 100);
+}
+
+function Check(): JSX.Element {
   return (
-    <svg width={size} height={size} className="achv-ring-svg">
-      <circle cx={size / 2} cy={size / 2} r={r} strokeWidth={strokeW} className="achv-ring-bg" />
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={r}
-        strokeWidth={strokeW}
-        className="achv-ring-fill"
-        style={{
-          strokeDasharray: `${filled} ${circ - filled}`,
-          strokeDashoffset: circ / 4,
-        }}
-      />
-      <text x={size / 2} y={size / 2} textAnchor="middle" dominantBaseline="central" className="achv-ring-text">
-        {pct}%
-      </text>
+    <svg className="ach3-check" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 12.5 9.5 18 20 6.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" />
     </svg>
   );
 }
 
-// ── AchievementCard ───────────────────────────────────────────────────────────
+// ── Kachel ───────────────────────────────────────────────────────────────────
+// Perf: die Kachel hängt an keinem Context; Fortschritt kommt als Prop, memo() verhindert Neuzeichnen pro Tick.
 
-// Perf-Audit 2026-07-22: die Karte holte sich bisher SELBST `useGameState()` und rechnete ihren
-// Fortschritt bei jedem 10-Hz-Tick neu aus — bei 537 Karten macht das jede Karte zu einem eigenen
-// Context-Abonnenten, der bei JEDEM Tick neu rendert (9.372 DOM-Knoten Reconciliation dauerhaft im
-// Idle). Fix: `progress` kommt jetzt vorberechnet als Prop von AchievementsPage (die ohnehin schon
-// EINMAL pro Render `state` liest), die Karte selbst hängt an keinem Context mehr — kombiniert mit
-// `memo()` rendert sie dadurch nur noch neu, wenn sich IHR eigener Fortschritt/Zustand tatsächlich
-// ändert, statt bei jedem Tick unabhängig vom Inhalt.
-const AchievementCard = memo(function AchievementCard({
-  def,
-  unlocked,
-  progress,
-  selected,
-  onSelect,
-  t,
-  tr,
+const Tile = memo(function Tile({
+  def, unlocked, progress, selected, onHover, onSelect, t, tr,
 }: {
   def: AchievementDef;
   unlocked: boolean;
   progress: number;
   selected: boolean;
-  onSelect: () => void;
+  onHover: (id: string | null) => void;
+  onSelect: (id: string) => void;
   t: (k: string) => string;
   tr: (v: LocalizedString) => string;
 }): JSX.Element {
-  const pct = clamp(def.condition.count > 0 ? (progress / def.condition.count) * 100 : 0, 0, 100);
-  const rc = RARITY_CLASS[def.rarity];
-  const ap = rarityAP(def.rarity);
-  const cornerIconUrl = unlocked ? UNLOCKED_ICON_URL : LOCKED_ICON_URL;
-  // Achievements 1.2.0 (§ 2.6): versteckte Erfolge zeigen bis zum Unlock nur „???" + Schloss —
-  // kein Name, keine Beschreibung, kein Fortschrittsbalken (Steam-Parität, keine Story-Spoiler).
-  // Seltenheit und AP bleiben sichtbar (sagen „wie schwer", nicht „was").
   const masked = isMasked(def, unlocked);
-
-  // Welle PP (Antizipation-Moment 1b): derselbe statische Glanz + einmaliger Mount-Sweep wie die
-  // Mastery-Aktionszeile (s. MasteryPage.tsx `almostRank` für die volle Begründung) — hier an den
-  // vorhandenen `pct`-Wert dieser Karte gekoppelt statt an ein Mastery-Level. Maskierte Karten
-  // schimmern nie (der Fortschritt ist ja verborgen).
-  const almost = !unlocked && !masked && pct >= ALMOST_THRESHOLD_PCT;
-  const [sweep, setSweep] = useState(false);
-  useEffect(() => {
-    if (!almost || effectiveFxLevel() === "off") return;
-    setSweep(true);
-    const timer = window.setTimeout(() => setSweep(false), 900);
-    return () => window.clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // codex:2026-08-03T19:18:00+02:00 — Die memoized Karte ist nun eine tastaturbedienbare Ledger-Zeile mit lokaler Auswahl.
+  const pct = pctOf(progress, def);
+  const hot = !unlocked && !masked && pct >= ALMOST_THRESHOLD_PCT;
+  const state = unlocked ? "u" : masked ? "h" : "o";
+  const steam = STEAM_ACHIEVEMENTS[def.id] !== undefined;
+  const ap = t("achievements.ap").replace("{n}", String(achievementPoints(def)));
   return (
-    <div
-      role="button"
+    <li
+      id={`ach3-tile-${def.id}`}
+      className={`ach3-tile ach3-r-${def.rarity} ach3-tile--${state}${selected ? " ach3-tile--sel" : ""}`}
       tabIndex={0}
-      id={`achv-card-${def.id}`}
-      className={`achv-card${unlocked ? " achv-card--unlocked" : ""}${almost ? " achv-card--almost" : ""}${selected ? " achv-card--selected" : ""}${masked ? " achv-card--hidden" : ""}`}
       aria-pressed={selected}
-      onClick={onSelect}
+      onMouseEnter={() => onHover(def.id)}
+      onFocus={() => onHover(def.id)}
+      onBlur={() => onHover(null)}
+      onClick={() => onSelect(def.id)}
       onKeyDown={(event) => {
-        // codex:2026-08-03T19:18:00+02:00 — Enter und Leertaste entsprechen dem Mausklick ohne Scroll-Nebeneffekt.
         if (event.key !== "Enter" && event.key !== " ") return;
         event.preventDefault();
-        onSelect();
+        onSelect(def.id);
       }}
     >
-      {sweep && <span className="achv-card-almost-sweep" aria-hidden="true" />}
-      <div className="achv-card-corner" aria-hidden="true">
-        {cornerIconUrl
-          ? <img loading="lazy" decoding="async" src={cornerIconUrl} alt="" />
-          : unlocked ? "✓" : "🔒"}
-      </div>
-
-      {/* Round rarity-framed medallion — per-achievement icon if set, else category icon. */}
-      <div className={`achv-emblem ${rc}`} aria-hidden="true">
-        {masked ? lockIcon() : achievementIcon(def)}
-      </div>
-
-      {/* Card body */}
-      <div className="achv-body">
-        {/* Header: name + rarity badge */}
-        <div className="achv-head">
-          <span className="achv-name">{masked ? t("achievements.hidden.name") : tr(def.name)}</span>
-          <span className={`achv-badge ${rc}`}>{t(`achievements.rarity.${def.rarity}`)}</span>
-        </div>
-
-        {/* AP value */}
-        <div className="achv-ap">
-          <span aria-hidden="true">
-            {TROPHY_ICON_URL
-              ? <img loading="lazy" decoding="async" src={TROPHY_ICON_URL} alt="" className="ui-icon" />
-              : "🏆"}
-          </span>
-          <span>{ap} AP</span>
-        </div>
-
-        {/* Description */}
-        <p className="achv-desc">{masked ? t("achievements.hidden.desc") : tr(def.description)}</p>
-
-        {/* Progress or unlocked mark */}
+      <span className={`ach3-med ach3-med--${state}`} aria-hidden="true">{masked ? lockIcon() : achievementIcon(def)}</span>
+      <b className="ach3-name">{masked ? t("achievements.hidden.name") : tr(def.name)}</b>
+      <span className="ach3-meta">
         {unlocked ? (
-          <div className="achv-status">✓ {t("achievements.unlocked")}</div>
+          <><Check /> {t("achievements.unlocked")}</>
         ) : masked ? (
-          <div className="achv-hidden-lock">
-            {lockIcon()}
-            <span>{t("achievements.hidden.badge")}</span>
-          </div>
+          <>{lockIcon()} {t("achievements.hidden.badge")}</>
         ) : (
-          <div className="achv-progress">
-            <div className="achv-progress-bar">
-              <div className={`achv-progress-fill ${rc}`} style={{ width: `${pct}%` }} />
-            </div>
-            <span className="achv-progress-count">
-              {formatNum(Math.min(progress, def.condition.count))} / {formatNum(def.condition.count)}
-            </span>
-          </div>
+          <>{formatNum(Math.min(progress, def.condition.count))} / {formatNum(def.condition.count)}</>
         )}
-      </div>
-    </div>
+      </span>
+      <span className={`ach3-bar${unlocked ? " ach3-bar--full" : hot ? " ach3-bar--hot" : ""}`}>
+        <s style={{ width: `${unlocked ? 100 : masked ? 0 : pct}%` }} />
+      </span>
+      <span className="ach3-foot">
+        <span className="ach3-ap">{ap}</span>
+        {steam && <span className="ach3-steam" title={t("achievements.steam.title")}>{t("achievements.steam")}</span>}
+      </span>
+    </li>
   );
 });
 
-// ── AchievementsPage ──────────────────────────────────────────────────────────
+// ── Seite ────────────────────────────────────────────────────────────────────
 
 export function AchievementsPage(): JSX.Element {
   const state = useGameState();
   const { t, tr } = useI18n();
   const [activeCategory, setActiveCategory] = useState<AchievementCategory | "all">("all");
   const [filter, setFilter] = useState<FilterMode>("all");
-  // codex:2026-08-03T19:02:00+02:00 — Rein lokale Ledger-Navigation; weder Suche noch Auswahl werden persistiert.
   const [search, setSearch] = useState("");
-  const [selectedAchievementId, setSelectedAchievementId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [hoverId, setHoverId] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<ReadonlySet<AchievementRarity>>(new Set());
+  const shelfRef = useRef<HTMLDivElement | null>(null);
 
   const allDefs = content.achievements;
   const unlockedIds = new Set(state.achievements);
@@ -299,216 +168,139 @@ export function AchievementsPage(): JSX.Element {
   const total = totalAP(content);
   const earnedCount = allDefs.filter((a) => unlockedIds.has(a.id)).length;
   const totalCount = allDefs.length;
-  const completionPct = totalCount > 0 ? Math.floor((earnedCount / totalCount) * 100) : 0;
-  const apPct = total > 0 ? Math.floor((earned / total) * 100) : 0;
-  // Next milestone: next multiple of 5 above apPct, capped at 100. Fix-Welle CC (Pip, Befund 1):
-  // bei apPct >= 100 gibt es keinen "nächsten" Meilenstein mehr — der Ring-Label-Rendersatz unten
-  // zweigt in diesem Fall auf eine eigene "Vollendet"-Zeile ab, statt widersprüchlich "Next
-  // milestone: 100%" bei bereits 100% zu zeigen.
-  const nextMilestone = Math.min(100, Math.ceil((apPct + 1) / 5) * 5);
+  const donePct = totalCount > 0 ? Math.floor((earnedCount / totalCount) * 100) : 0;
+  const apFillPct = total > 0 ? clamp((earned / total) * 100, 0, 100) : 0;
 
-  // AP-Meilenstein-Leiste (Welle GG → UI, Fun-Sweep Programm Welle II §1): anders als `nextMilestone`
-  // oben (rein aus dem client-seitigen `apPct` hergeleitet, nur für das Ring-Label) liest dies die
-  // AUTORITATIVE Engine-Quelle `state.claimedApMilestones` — der kleinste noch nicht vergebene
-  // 5-%-Schritt plus sein Token-Wert (`apMilestoneTokens`, shared). `null` = alle 20 Schritte
-  // bereits geclaimt (100 % erreicht, Zeremonie bereits gefeiert oder läuft gerade).
-  const claimedMilestones = new Set(state.claimedApMilestones);
-  let nextClaimStep: number | null = null;
-  for (let step = 5; step <= 100; step += 5) {
-    if (!claimedMilestones.has(step)) {
-      nextClaimStep = step;
-      break;
+  // Nächster noch nicht vergebener Meilenstein: autoritativ aus `state.claimedApMilestones` (die Engine löst automatisch ein,
+  // Toast + Zeremonie kommen von dort); die Leiste zeigt nur den Stand.
+  const claimedSteps = new Set(state.claimedApMilestones);
+  const nextClaimStep = MILESTONE_STEPS.find((s) => !claimedSteps.has(s)) ?? null;
+
+  // Fortschritt aller offenen, nicht maskierten Erfolge: nur alle 10 Ticks neu (Sortierung + Kacheln), nicht pro Tick.
+  const progressKey = Math.floor(state.totalTicks / 10);
+  const progressMap = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const def of allDefs) {
+      if (unlockedIds.has(def.id)) map.set(def.id, def.condition.count);
+      else if (!def.hidden) map.set(def.id, achievementProgress(state, def.condition, content));
+      else map.set(def.id, 0);
+    }
+    return map;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [progressKey, state.achievements.length]);
+
+  // Pro Kategorie (ohne Filter/Suche): Basis für Zähler, Balken und Seltenheits-Pillen.
+  const inCategory = (def: AchievementDef): boolean => activeCategory === "all" || def.category === activeCategory;
+  const catDefs = allDefs.filter(inCategory);
+  const filterCounts: Record<FilterMode, number> = {
+    all: catDefs.length,
+    open: catDefs.filter((d) => !unlockedIds.has(d.id)).length,
+    done: catDefs.filter((d) => unlockedIds.has(d.id)).length,
+    hidden: catDefs.filter((d) => d.hidden === true).length,
+  };
+
+  const needle = search.trim().toLocaleLowerCase();
+  const matches = (def: AchievementDef): boolean => {
+    const unlocked = unlockedIds.has(def.id);
+    if (filter === "open" && unlocked) return false;
+    if (filter === "done" && !unlocked) return false;
+    if (filter === "hidden" && def.hidden !== true) return false;
+    if (!needle) return true;
+    // Maskierte Erfolge sind nicht durchsuchbar (auch nicht über die ID, die den Inhalt verrät).
+    if (isMasked(def, unlocked)) return false;
+    return def.id.toLocaleLowerCase().includes(needle)
+      || tr(def.name).toLocaleLowerCase().includes(needle)
+      || tr(def.description).toLocaleLowerCase().includes(needle);
+  };
+
+  // Fächer: je Seltenheit zuerst offene nach Fortschritt (das Nächste vorn), dann maskierte, zuletzt Freigeschaltete.
+  const shelves = RARITIES.map((rarity) => {
+    const all = catDefs.filter((d) => d.rarity === rarity);
+    const shown = all.filter(matches);
+    const rank = (d: AchievementDef): number => (unlockedIds.has(d.id) ? 2 : isMasked(d, false) ? 1 : 0);
+    shown.sort((a, b) => rank(a) - rank(b)
+      || (rank(a) === 0 ? pctOf(progressMap.get(b.id) ?? 0, b) - pctOf(progressMap.get(a.id) ?? 0, a) : 0));
+    return { rarity, all, shown, done: all.filter((d) => unlockedIds.has(d.id)).length };
+  });
+  const shownTotal = shelves.reduce((n, s) => n + s.shown.length, 0);
+
+  const focusId = hoverId ?? selectedId;
+  const focusDef = focusId ? allDefs.find((d) => d.id === focusId) ?? null : null;
+  const focusUnlocked = focusDef ? unlockedIds.has(focusDef.id) : false;
+  const focusProgress = !focusDef ? 0
+    : focusUnlocked ? focusDef.condition.count
+      : isMasked(focusDef, false) ? 0
+        : achievementProgress(state, focusDef.condition, content);
+
+  // claude:2026-10-31T15:12:00+01:00 — C4: stabile Referenz, damit die memoisierten Kacheln nicht bei jedem Tick neu rendern.
+  const onSelectTile = useCallback((id: string) => setSelectedId((cur) => (cur === id ? null : id)), []);
+
+  function pickCategory(cat: AchievementCategory | "all"): void {
+    setActiveCategory(cat);
+    shelfRef.current?.scrollTo({ top: 0 });
+  }
+
+  function jumpToShelf(rarity: AchievementRarity): void {
+    const el = shelfRef.current?.querySelector<HTMLElement>(`[data-shelf="${rarity}"]`);
+    // claude:2026-10-31T15:12:00+01:00 — C5: Position relativ zum Scroll-Container über Rechtecke statt offsetTop (offsetParent war nicht der Container → Sprung zu weit).
+    if (el && shelfRef.current) {
+      const box = shelfRef.current;
+      const top = el.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - 4;
+      box.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
     }
   }
-  const milestoneBandPct = nextClaimStep === null
-    ? 100
-    : clamp(((apPct - (nextClaimStep - 5)) / 5) * 100, 0, 100);
 
-  // Group by category (unfiltered — used both for the "All" trophy-room grouping and the tabs).
-  const byCategory = new Map<AchievementCategory, AchievementDef[]>(
-    CATEGORIES.map((c) => [c, []]),
-  );
-  for (const def of allDefs) {
-    byCategory.get(def.category)?.push(def);
+  function toggleShelf(rarity: AchievementRarity): void {
+    const next = new Set(expanded);
+    if (next.has(rarity)) next.delete(rarity);
+    else next.add(rarity);
+    setExpanded(next);
   }
-
-  const matchesFilter = (def: AchievementDef): boolean =>
-    filter === "unlocked"
-      ? unlockedIds.has(def.id)
-      : filter === "locked"
-        ? !unlockedIds.has(def.id)
-        : true;
-
-  // codex:2026-08-03T19:02:00+02:00 — 537 Einträge bleiben mit Name, Beschreibung und stabiler ID durchsuchbar.
-  const searchNeedle = search.trim().toLocaleLowerCase();
-  const visibleDefs = allDefs.filter(
-    (def) => {
-      if (activeCategory !== "all" && def.category !== activeCategory) return false;
-      if (!matchesFilter(def)) return false;
-      if (!searchNeedle) return true;
-      // Maskierte (versteckte, noch gesperrte) Erfolge sind nicht durchsuchbar — weder Name/Text
-      // noch die ID (die z. B. „chicken" verrät). Sie tauchen nur ohne Suchbegriff als „???" auf.
-      if (isMasked(def, unlockedIds.has(def.id))) return false;
-      return def.id.toLocaleLowerCase().includes(searchNeedle)
-        || tr(def.name).toLocaleLowerCase().includes(searchNeedle)
-        || tr(def.description).toLocaleLowerCase().includes(searchNeedle);
-    },
-  );
-
-  const selectedDef = visibleDefs.find((def) => def.id === selectedAchievementId)
-    ?? visibleDefs[0]
-    ?? null;
-
-  // Welle EE (Pip P2, "Kurz davor"-Leiste): die 3–5 unerledigten Achievements mit dem höchsten
-  // Fortschritt (>50 %), global über alle Kategorien — Daten kommen 1:1 aus `achievementProgress`
-  // (dieselbe Quelle wie jede Karte selbst zeigt), keine neue Berechnung. Pip-Fund: "291 der 474
-  // gesperrten Karten stehen bei 0 % [...] es fehlt eine globale 'fast fertig'-Sicht".
-  // Welle KK (Pip-Retest, "Zielgerade ohne Kompass"): bei 535/537 standen die beiden letzten offenen
-  // Erfolge bei 48 % bzw. 5 % — beide unter der 50-%-Schwelle, die Leiste war leer, ausgerechnet im
-  // Endspurt. Fallback: wenn NICHTS über 50 % steht, die höchsten Kandidaten trotzdem zeigen — die
-  // Leiste bleibt nur leer, wenn wirklich alles erledigt ist.
-  const almostThereCandidates = allDefs
-    .filter((d) => !unlockedIds.has(d.id) && d.condition.count > 0 && !d.hidden)
-    .map((d) => ({
-      def: d,
-      pct: clamp((achievementProgress(state, d.condition, content) / d.condition.count) * 100, 0, 100),
-    }))
-    .filter((x) => x.pct < 100)
-    .sort((a, b) => b.pct - a.pct);
-  const almostThereAbove50 = almostThereCandidates.filter((x) => x.pct > 50);
-  const almostThere = (almostThereAbove50.length > 0 ? almostThereAbove50 : almostThereCandidates).slice(0, 5);
-
-  /** Springt zur Karte: schaltet Kategorie-Tab + Filter passend um (die Karte könnte hinter einem
-   *  anderen Tab/Filter versteckt sein), dann scrollt + hebt kurz hervor. */
-  function jumpToAchievement(def: AchievementDef): void {
-    setActiveCategory(def.category);
-    setFilter("all");
-    setSearch("");
-    setSelectedAchievementId(def.id);
-    window.setTimeout(() => {
-      const el = document.getElementById(`achv-card-${def.id}`);
-      if (!el) return;
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
-      el.classList.add("achv-card--flash");
-      window.setTimeout(() => el.classList.remove("achv-card--flash"), 1600);
-    }, 60);
-  }
-
-  // codex:2026-08-03T19:02:00+02:00 — Das Detailblatt verwendet exakt dieselbe Engine-Fortschrittsquelle wie die Liste.
-  const selectedUnlocked = selectedDef ? unlockedIds.has(selectedDef.id) : false;
-  const selectedMasked = selectedDef ? isMasked(selectedDef, selectedUnlocked) : false;
-  const selectedProgress = selectedDef
-    ? (selectedUnlocked ? selectedDef.condition.count : selectedMasked ? 0 : achievementProgress(state, selectedDef.condition, content))
-    : 0;
-  const selectedPct = selectedDef
-    ? clamp(selectedDef.condition.count > 0 ? (selectedProgress / selectedDef.condition.count) * 100 : 0, 0, 100)
-    : 0;
 
   return (
-    <div className="achv-page achv-page--warden">
-      {/* codex:2026-08-03T19:02:00+02:00 — Kompakte Bilanzleiste statt hoher Trophy-Room-Hero. */}
-      <section className="achv-hero">
-        <div className="achv-hero-emblem" aria-hidden="true">
-          {TROPHY_ICON_URL ? <img loading="lazy" decoding="async" src={TROPHY_ICON_URL} alt="" /> : "🏆"}
-        </div>
-
-        <div className="achv-hero-title">
-          <h1>{t("achievements.title")}</h1>
-          <p className="achv-hero-sub">{t("achievements.subtitle")}</p>
-          <div className="achv-hero-bar-row">
-            <span className="achv-hero-bar-label">{t("achievements.unlockedStat")}</span>
-            <div className="achv-hero-bar-track">
-              <div className="achv-hero-bar-fill" style={{ width: `${completionPct}%` }} />
-            </div>
-            <span className="achv-hero-bar-pct">{formatNum(earnedCount)} / {formatNum(totalCount)}</span>
-          </div>
-        </div>
-
-        <div className="achv-hero-stats">
-          <div className="achv-hero-ap">
-            <span className="achv-hero-ap-val">{formatNum(earned)}</span>
-            <span className="achv-hero-ap-label">{t("achievements.apTotal")}</span>
-          </div>
-          <div className="achv-hero-ring">
-            <ProgressRing pct={apPct} size={72} />
-            <span className="achv-hero-ring-label">
-              {apPct >= 100
+    <div className="ach3-page">
+      {/* ── Navigationsleiste (Mockup 1) ─────────────────────────────────── */}
+      <aside className="ach3-rail">
+        <section className="ach3-panel ach3-sum">
+          <span className="ach3-hd">{t("achievements.apScore")}</span>
+          <span className="ach3-big">{formatNum(earned)} <small>/ {formatNum(total)}</small></span>
+          <span className="ach3-bar ach3-bar--lg"><s style={{ width: `${apFillPct}%` }} /></span>
+          <span className="ach3-sum-line">
+            {t("achievements.summary")
+              .replace("{done}", formatNum(earnedCount))
+              .replace("{total}", formatNum(totalCount))
+              .replace("{pct}", String(donePct))}
+          </span>
+          <span className="ach3-ms">
+            {MILESTONE_ICON_URL && <img src={MILESTONE_ICON_URL} alt="" />}
+            <span>
+              {nextClaimStep === null
                 ? t("achievements.milestonesComplete")
-                : t("achievements.nextMilestone").replace("{pct}", String(nextMilestone))}
+                : t("achievements.milestoneStrip.next")
+                  .replace("{pct}", String(nextClaimStep))
+                  .replace("{tokens}", String(apMilestoneTokens(nextClaimStep)))}
             </span>
-          </div>
-        </div>
-      </section>
-
-      {/* codex:2026-08-03T19:02:00+02:00 — Dreispaltiger Warden Ledger: Register, Liste, Detailblatt. */}
-      <div className="achv-ledger-shell">
-        <aside className="achv-ledger-rail">
-          <div className="achv-ledger-filter-group">
-            {(["all", "unlocked", "locked"] as FilterMode[]).map((f) => (
-              <button
-                type="button"
-                key={f}
-                className={`achv-filter-btn${filter === f ? " achv-filter-btn--active" : ""}`}
-                aria-pressed={filter === f}
-                onClick={() => setFilter(f)}
-              >
-                {t(`achievements.filter.${f}`)}
-              </button>
-            ))}
-          </div>
-
-          <nav className="achv-ledger-categories" aria-label={t("achievements.title")}>
-            <button
-              type="button"
-              className={`achv-ledger-cat${activeCategory === "all" ? " achv-ledger-cat--active" : ""}`}
-              aria-pressed={activeCategory === "all"}
-              onClick={() => setActiveCategory("all")}
-            >
-              <span className="achv-ledger-cat-icon" aria-hidden="true">{categoryIcon("all")}</span>
-              <span>{t("achievements.cat.all")}</span>
-              <strong>{earnedCount} / {totalCount}</strong>
-            </button>
-            {CATEGORIES.map((cat) => {
-              const defs = byCategory.get(cat) ?? [];
-              if (defs.length === 0) return null;
-              const catUnlocked = defs.filter((def) => unlockedIds.has(def.id)).length;
+          </span>
+          <span className="ach3-ticks" role="list" aria-label={t("achievements.apScore")}>
+            {MILESTONE_STEPS.map((step) => {
+              const got = claimedSteps.has(step);
+              const label = t("achievements.milestone.step")
+                .replace("{pct}", String(step))
+                .replace("{tokens}", String(apMilestoneTokens(step)));
               return (
-                <button
-                  type="button"
-                  key={cat}
-                  className={`achv-ledger-cat${activeCategory === cat ? " achv-ledger-cat--active" : ""}`}
-                  aria-pressed={activeCategory === cat}
-                  onClick={() => setActiveCategory(cat)}
-                >
-                  <span className="achv-ledger-cat-icon" aria-hidden="true">{categoryIcon(cat)}</span>
-                  <span>{t(`achievements.cat.${cat}`)}</span>
-                  <strong>{catUnlocked} / {defs.length}</strong>
-                </button>
+                <i
+                  key={step}
+                  role="listitem"
+                  className={`${got ? "ach3-tick--got" : ""}${step === nextClaimStep ? " ach3-tick--next" : ""}`}
+                  title={got ? `${label} · ${t("achievements.milestone.claimed")}` : label}
+                />
               );
             })}
-          </nav>
+          </span>
+        </section>
 
-          {nextClaimStep !== null && (
-            <section className="achv-milestone-strip">
-              <span className="achv-milestone-icon" aria-hidden="true">
-                {MILESTONE_ICON_URL ? <img loading="lazy" decoding="async" src={MILESTONE_ICON_URL} alt="" className="ui-icon" /> : "🏆"}
-              </span>
-              <div className="achv-milestone-body">
-                <div className="achv-milestone-track">
-                  <div className="achv-milestone-fill" style={{ width: `${milestoneBandPct}%` }} />
-                </div>
-                <span className="achv-milestone-text">
-                  {t("achievements.milestoneStrip.next")
-                    .replace("{pct}", String(nextClaimStep))
-                    .replace("{tokens}", String(apMilestoneTokens(nextClaimStep)))}
-                </span>
-              </div>
-            </section>
-          )}
-        </aside>
-
-        <main className="achv-ledger-main">
-          <div className="achv-ledger-search">
+        <section className="ach3-panel ach3-tools">
+          <label className="ach3-search">
             {SEARCH_ICON_URL && <img loading="lazy" decoding="async" src={SEARCH_ICON_URL} alt="" />}
             <input
               type="search"
@@ -517,104 +309,159 @@ export function AchievementsPage(): JSX.Element {
               placeholder={t("inv.filter.searchPlaceholder")}
               aria-label={t("inv.filter.searchPlaceholder")}
             />
-            <span>{formatNum(visibleDefs.length)} / {formatNum(totalCount)}</span>
+          </label>
+          <div className="ach3-seg" role="group">
+            {FILTERS.map((f) => (
+              <button
+                key={f}
+                type="button"
+                className={filter === f ? "ach3-on" : ""}
+                aria-pressed={filter === f}
+                onClick={() => setFilter(f)}
+              >
+                {t(`achievements.filter.${f}`)} <em>{formatNum(filterCounts[f])}</em>
+              </button>
+            ))}
           </div>
+        </section>
 
-          {almostThere.length > 0 && (
-            <section className="achv-almost">
-              <h3 className="achv-almost-title">{t("achievements.almostThere.title")}</h3>
-              <div className="achv-almost-row">
-                {almostThere.slice(0, 3).map(({ def, pct }) => {
-                  const rc = RARITY_CLASS[def.rarity];
-                  return (
-                    <button
-                      key={def.id}
-                      type="button"
-                      className={`achv-almost-card ${rc}`}
-                      title={t("achievements.almostThere.jumpHint")}
-                      onClick={() => jumpToAchievement(def)}
-                    >
-                      <span className="achv-almost-emblem" aria-hidden="true">{achievementIcon(def)}</span>
-                      <span className="achv-almost-body">
-                        <span className="achv-almost-name">{tr(def.name)}</span>
-                        <span className="achv-almost-bar-track">
-                          <span className={`achv-almost-bar-fill ${rc}`} style={{ width: `${pct}%` }} />
-                        </span>
-                      </span>
-                      <span className="achv-almost-pct">{Math.round(pct)}%</span>
+        <nav className="ach3-panel ach3-cats" aria-label={t("achievements.title")}>
+          {(["all", ...CATEGORIES] as const).map((cat) => {
+            const defs = cat === "all" ? allDefs : allDefs.filter((d) => d.category === cat);
+            if (defs.length === 0) return null;
+            const done = defs.filter((d) => unlockedIds.has(d.id)).length;
+            return (
+              <button
+                key={cat}
+                type="button"
+                className={`ach3-cat${activeCategory === cat ? " ach3-on" : ""}`}
+                aria-pressed={activeCategory === cat}
+                onClick={() => pickCategory(cat)}
+              >
+                <span className="ach3-cat-ico" aria-hidden="true">{categoryIcon(cat)}</span>
+                <span className="ach3-cat-name">{t(`achievements.cat.${cat}`)}</span>
+                <span className="ach3-cat-n">{done}/{defs.length}</span>
+                <span className="ach3-bar"><s style={{ width: `${(done / defs.length) * 100}%` }} /></span>
+              </button>
+            );
+          })}
+        </nav>
+      </aside>
+
+      {/* ── Trophäenregal (Mockup 2) ─────────────────────────────────────── */}
+      <section className="ach3-main">
+        <header className="ach3-panel ach3-head">
+          <div className="ach3-title">
+            <h1>{t("achievements.title")}</h1>
+            {/* claude:2026-10-31T15:12:00+01:00 — E9: ohne Filter „138 von 363 freigeschaltet“, mit Filter „94 Einträge“ (vorher „363 von 363“, missverständlich) */}
+            <span>
+              {shownTotal === totalCount
+                ? t("achievements.count").replace("{n}", formatNum(earnedCount)).replace("{total}", formatNum(totalCount))
+                : t("achievements.countFiltered").replace("{n}", formatNum(shownTotal))}
+            </span>
+          </div>
+          <div className="ach3-pills">
+            {shelves.filter((s) => s.all.length > 0).map((s) => (
+              <button key={s.rarity} type="button" className={`ach3-pill ach3-r-${s.rarity}`} onClick={() => jumpToShelf(s.rarity)}>
+                <i aria-hidden="true" />
+                <b>{t(`achievements.rarity.${s.rarity}`)}</b>
+                <span>{s.done}/{s.all.length}</span>
+              </button>
+            ))}
+          </div>
+        </header>
+
+        <div className="ach3-shelf" ref={shelfRef} onMouseLeave={() => setHoverId(null)}>
+          {allDefs.length === 0 ? (
+            <p className="ach3-empty">{t("achievements.empty")}</p>
+          ) : shownTotal === 0 ? (
+            <p className="ach3-empty">{t("achievements.emptyFiltered")}</p>
+          ) : shelves.filter((s) => s.shown.length > 0).map((s) => {
+            const open = expanded.has(s.rarity) || needle !== "";
+            const visible = open ? s.shown : s.shown.slice(0, SHELF_CAP);
+            const rest = s.shown.length - visible.length;
+            const canCollapse = open && needle === "" && s.shown.length > SHELF_CAP;
+            return (
+              <section key={s.rarity} className={`ach3-sec ach3-r-${s.rarity}`} data-shelf={s.rarity}>
+                <header>
+                  <h2>{t(`achievements.rarity.${s.rarity}`)}</h2>
+                  <span className="ach3-sc">{s.done} / {s.all.length}</span>
+                  <span className="ach3-spa">
+                    {t("achievements.shelf.each").replace("{ap}", t("achievements.ap").replace("{n}", String(achievementPoints(s.all[0]!))))}
+                  </span>
+                  <span className="ach3-bar ach3-bar--shelf"><s style={{ width: `${(s.done / s.all.length) * 100}%` }} /></span>
+                  {(rest > 0 || canCollapse) && (
+                    <button type="button" className="ach3-more" onClick={() => toggleShelf(s.rarity)}>
+                      {rest > 0 ? t("achievements.shelf.more").replace("{n}", formatNum(rest)) : t("achievements.shelf.less")}
                     </button>
-                  );
-                })}
-              </div>
-            </section>
-          )}
+                  )}
+                </header>
+                <ul className="ach3-grid">
+                  {visible.map((def) => (
+                    <Tile
+                      key={def.id}
+                      def={def}
+                      unlocked={unlockedIds.has(def.id)}
+                      progress={progressMap.get(def.id) ?? 0}
+                      selected={selectedId === def.id}
+                      onHover={setHoverId}
+                      onSelect={onSelectTile}
+                      t={t}
+                      tr={tr}
+                    />
+                  ))}
+                </ul>
+              </section>
+            );
+          })}
+        </div>
 
-          <div className="achv-ledger-list">
-            {allDefs.length === 0 ? (
-              <div className="placeholder">
-                <div className="placeholder-icon">
-                  {TROPHY_ICON_URL ? <img loading="lazy" decoding="async" src={TROPHY_ICON_URL} alt="" className="ui-icon" /> : "🏆"}
-                </div>
-                <p className="muted">{t("achievements.empty")}</p>
-              </div>
-            ) : visibleDefs.length === 0 ? (
-              <div className="placeholder">
-                <div className="placeholder-icon">
-                  {SEARCH_ICON_URL ? <img loading="lazy" decoding="async" src={SEARCH_ICON_URL} alt="" className="ui-icon" /> : "🔍"}
-                </div>
-                <p className="muted">{t("achievements.emptyFiltered")}</p>
-              </div>
-            ) : visibleDefs.map((def) => {
-              const unlocked = unlockedIds.has(def.id);
-              const progress = unlocked ? def.condition.count : achievementProgress(state, def.condition, content);
-              return (
-                <AchievementCard
-                  key={def.id}
-                  def={def}
-                  unlocked={unlocked}
-                  progress={progress}
-                  selected={selectedDef?.id === def.id}
-                  onSelect={() => setSelectedAchievementId(def.id)}
-                  t={t}
-                  tr={tr}
-                />
-              );
-            })}
-          </div>
-        </main>
-
-        <aside className="achv-ledger-detail">
-          {selectedDef ? (
-            <div className="achv-ledger-detail-plaque">
-              <div className={`achv-ledger-detail-emblem ${RARITY_CLASS[selectedDef.rarity]}`} aria-hidden="true">
-                {selectedMasked ? lockIcon() : achievementIcon(selectedDef)}
-              </div>
-              <h2>{selectedMasked ? t("achievements.hidden.name") : tr(selectedDef.name)}</h2>
-              <span className={`achv-badge ${RARITY_CLASS[selectedDef.rarity]}`}>
-                {t(`achievements.rarity.${selectedDef.rarity}`)}
-              </span>
-              <p>{selectedMasked ? t("achievements.hidden.desc") : tr(selectedDef.description)}</p>
-
-              <div className="achv-ledger-detail-row">
-                <span>{t(`achievements.cat.${selectedDef.category}`)}</span>
-                <strong>{rarityAP(selectedDef.rarity)} AP</strong>
-              </div>
-              <div className="achv-ledger-detail-row">
-                <span>{t("achievements.unlockedStat")}</span>
-                <strong>{selectedMasked ? t("achievements.hidden.name") : `${formatNum(Math.min(selectedProgress, selectedDef.condition.count))} / ${formatNum(selectedDef.condition.count)}`}</strong>
-              </div>
-              <div className="achv-progress-bar">
-                <div className={`achv-progress-fill ${RARITY_CLASS[selectedDef.rarity]}`} style={{ width: `${selectedPct}%` }} />
-              </div>
-              <div className={`achv-ledger-detail-status${selectedUnlocked ? " achv-ledger-detail-status--done" : ""}`}>
-                {selectedUnlocked ? `✓ ${t("achievements.unlocked")}` : `${Math.round(selectedPct)}%`}
-              </div>
-            </div>
-          ) : (
-            <footer className="achv-footer">{t("achievements.footer")}</footer>
-          )}
-        </aside>
-      </div>
+        <DetailBar def={focusDef} unlocked={focusUnlocked} progress={focusProgress} t={t} tr={tr} />
+      </section>
     </div>
+  );
+}
+
+/** Detailleiste: volle Beschreibung, Fortschritt, AP, Seltenheit, Steam; nichts wird abgeschnitten. */
+function DetailBar({ def, unlocked, progress, t, tr }: {
+  def: AchievementDef | null;
+  unlocked: boolean;
+  progress: number;
+  t: (k: string) => string;
+  tr: (v: LocalizedString) => string;
+}): JSX.Element {
+  if (!def) {
+    return <footer className="ach3-panel ach3-detail ach3-detail--empty">{t("achievements.detail.hint")}</footer>;
+  }
+  const masked = isMasked(def, unlocked);
+  const pct = pctOf(progress, def);
+  const steam = STEAM_ACHIEVEMENTS[def.id] !== undefined;
+  return (
+    <footer className={`ach3-panel ach3-detail ach3-r-${def.rarity}`} aria-live="polite">
+      <span className={`ach3-med ach3-med--big ach3-med--${unlocked ? "u" : masked ? "h" : "o"}`} aria-hidden="true">
+        {masked ? lockIcon() : achievementIcon(def)}
+      </span>
+      <div className="ach3-detail-text">
+        <div className="ach3-detail-top">
+          <h3>{masked ? t("achievements.hidden.name") : tr(def.name)}</h3>
+          <span className="ach3-badge">{t(`achievements.rarity.${def.rarity}`)}</span>
+          {steam && <span className="ach3-steam" title={t("achievements.steam.title")}>{t("achievements.steam")}</span>}
+          <span className="ach3-detail-cat">{t(`achievements.cat.${def.category}`)}</span>
+        </div>
+        <p>{masked ? t("achievements.hidden.desc") : tr(def.description)}</p>
+      </div>
+      <div className="ach3-detail-prog">
+        <span className="ach3-hd">{t("achievements.detail.progress")}</span>
+        {masked ? (
+          <span className="ach3-detail-val">{t("achievements.hidden.badge")}</span>
+        ) : unlocked ? (
+          <span className="ach3-detail-val ach3-detail-val--done"><Check /> {t("achievements.unlocked")}</span>
+        ) : (
+          <span className="ach3-detail-val">{formatNum(Math.min(progress, def.condition.count))} / {formatNum(def.condition.count)}</span>
+        )}
+        <span className={`ach3-bar${unlocked ? " ach3-bar--full" : ""}`}><s style={{ width: `${unlocked ? 100 : masked ? 0 : pct}%` }} /></span>
+      </div>
+      <div className="ach3-detail-ap">{t("achievements.ap").replace("{n}", String(achievementPoints(def)))}</div>
+    </footer>
   );
 }

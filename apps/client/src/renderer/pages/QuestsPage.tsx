@@ -1,10 +1,17 @@
 import { WorkOrdersTab } from "../components/WorkOrdersTab"; // claude:2026-10-25T01:30:00+02:00
-import { useEffect, useRef, useState } from "react";
+import { objectiveJump } from "../util/objectiveJump"; // claude:2026-10-31T16:34:28+01:00 — Ziele anklickbar
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
+import { createPortal } from "react-dom"; // claude:2026-10-30T23:10:00+01:00
 import { content } from "@hearthforge/content";
 import {
+  buyTokenService,
   buyTokenShopOffer,
   canClaimQuest,
   claimQuest,
+  dailyQueuePlan,
+  enqueueAllDailyQuests,
+  enqueueDailyQuest,
   isDailyClaimed,
   isShelfOpen,
   objectiveProgress,
@@ -12,11 +19,21 @@ import {
   questStatus,
   questTokenBalance,
   refreshDailyQuests,
+  tokenServiceDefs,
+  tokenServicePreview,
+  tokenServiceStatus,
+  tokenServiceTargets,
+  tokenShopOfferStatus,
 } from "@hearthforge/engine";
-import type { QuestStatus } from "@hearthforge/engine";
-import type { GameState, ItemDef, LocalizedString, QuestDef, QuestObjective, TokenShopOffer } from "@hearthforge/shared";
+import type { TokenServiceStatus, TokenServiceTarget } from "@hearthforge/engine"; // claude:2026-10-30T23:10:00+01:00
+import type { DailyQueuePlan, QuestStatus } from "@hearthforge/engine";
+import type { GameState, ItemDef, LocalizedString, QuestDef, QuestObjective, TokenServiceDef, TokenShopOffer } from "@hearthforge/shared";
 import { ORDER_MAX_OPEN, QUEST_DIFFICULTIES } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
+import { registerEscCloser } from "../util/escStack"; // claude:2026-10-31T14:55:00+01:00
+import { notePurchasedItem } from "../util/toastBus"; // claude:2026-10-31T15:30:00+01:00
+import { formatNum } from "../util/format"; // claude:2026-10-31T14:55:00+01:00
+import { formatEta } from "../util/actionRate"; // claude:2026-10-31T14:55:00+01:00
 import { useI18n } from "../i18n";
 import { getItemImage } from "../items";
 import { getUiIcon } from "../uiIcons";
@@ -82,6 +99,22 @@ const DIFFICULTY_CLASS: Record<string, string> = {
   hard: "daily-diff--hard",
   master: "daily-diff--master",
 };
+
+/** claude:2026-10-31T16:34:28+01:00 — Klick-/Tastatur-Props für ein anklickbares Ziel (leer, wenn es keinen Sprung gibt). */
+function jumpProps(jump: (() => void) | null): { role?: "link"; tabIndex?: number; onClick?: () => void; onKeyDown?: (e: ReactKeyboardEvent) => void } {
+  if (!jump) return {};
+  return {
+    role: "link",
+    tabIndex: 0,
+    onClick: jump,
+    onKeyDown: (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        jump();
+      }
+    },
+  };
+}
 
 /** Objective label — describes what the counter tracks. */
 export function objectiveLabel(
@@ -185,12 +218,14 @@ export function ObjectiveBar({
 }): JSX.Element {
   const pct = clamp(obj.count > 0 ? (progress / obj.count) * 100 : 0, 0, 100);
   const done = progress >= obj.count;
+  const jump = objectiveJump(obj);
   return (
     <div className="quest-obj">
       <div className="quest-obj-head">
         <span
-          className={`quest-obj-label${done ? " quest-obj-label--done" : ""}`}
-          title={objectiveFullTargets(obj, tr)}
+          className={`quest-obj-label${done ? " quest-obj-label--done" : ""}${jump ? " obj-jumpable" : ""}`}
+          title={jump ? (objectiveFullTargets(obj, tr) ?? t("quests.obj.jumpHint")) : objectiveFullTargets(obj, tr)}
+          {...jumpProps(jump)}
         >
           {objectiveLabel(obj, t, tr)}
         </span>
@@ -316,89 +351,411 @@ function QuestTokenBadge({
 // ── Rewards Shop (Task #274/#284) — Offer-Karten + Kauf über buyTokenShopOffer ────────
 
 /**
- * Eine Angebotszeile im Belohnungs-Shop: Item-Bild (getItemImage, Emoji-Fallback) mit Bündelgröße,
- * Name, Token-Preis und Kauf-Knopf. Bei zu wenig Tokens: Knopf gesperrt, Preis rot + Hinweis daneben.
- * claude:2026-10-17T20:10:00+02:00 — Zeile statt 250-px-Karte (Bild | Name / Preis · Kaufen), gleiches
- * Muster wie der Slayer-Belohnungs-Shop; Kauf-Knopf = Standard `.btn-iron--sm`.
+ * claude:2026-10-30T22:05:00+01:00 — Angebotskarte des Belohnungsladens als Hochkant-Karte (Bildband oben, Name, optionaler Text/Limit, Fuß mit Preis
+ * und Kaufen). Die Karte kennt nur Darstellungsdaten, damit spätere Angebotsarten ohne Item-Bild (Symbol), mit
+ * Tages-/Wochenlimit oder mit Beschreibung dieselbe Karte nutzen. Alle Zusatzfelder sind optional.
  */
-function TokenShopOfferCard({
-  offer,
-  balance,
-  onBuy,
-  t,
-  tr,
-}: {
-  offer: TokenShopOffer;
-  balance: number;
+interface ShopCardProps {
+  name: string;
+  /** Item-Bild; fehlt es, steht `symbol` (Emoji/Zeichen) im Bildband. */
+  img?: string | null;
+  symbol?: string;
+  /** Bündelgröße als Badge am Bild (nur bei Items sinnvoll). */
+  qty?: number;
+  cost: number;
+  /** Kurzer Erklärtext (z. B. bei Nicht-Item-Angeboten). */
+  description?: string;
+  /** Limit-Anzeige „2/3 diese Woche“. */
+  limit?: { used: number; max: number; period: "day" | "week" };
+  affordable: boolean;
+  /** Limit erreicht: Knopf gesperrt, Hinweis „Ausverkauft“. */
+  soldOut?: boolean;
+  /** claude:2026-10-30T23:10:00+01:00 — Restgrenze als fertiger Text („noch 2 heute“); ersetzt `limit`, wenn gesetzt. */
+  limitText?: string;
+  /** Eigener Hinweis bei erreichter Grenze („Morgen wieder“), sonst „Ausverkauft“. */
+  soldOutText?: string;
+  /** Gesperrt (Kapitel/Talent fehlt): Karte grau, Bedingung als Text, Knopf aus. */
+  lockedNote?: string;
+  /** Zusatzzeile unter dem Text (z. B. Preisstaffel). */
+  extra?: React.ReactNode;
+  /** Dezente Herkunftsmarke (Kapitelnummer des Regals), nur im Laden. */
+  origin?: string;
   onBuy: () => void;
+  /** Klick auf Bild/Name (Item-Tooltip pinnen); ohne Handler nicht klickbar. */
+  onInspect?: (e: React.MouseEvent) => void;
+  onInspectKey?: (e: ReactKeyboardEvent<HTMLElement>) => void;
   t: (k: string) => string;
-  tr: (v: LocalizedString) => string;
-}): JSX.Element {
-  const item: ItemDef | undefined = content.items[offer.itemId];
-  const img = getItemImage(offer.itemId);
+}
+
+function ShopOfferCard({
+  name, img, symbol, qty, cost, description, limit, limitText, soldOutText, lockedNote, extra, origin, affordable, soldOut, onBuy, onInspect, onInspectKey, t,
+}: ShopCardProps): JSX.Element {
   const tokenSrc = TICKET_ICON_URL;
-  const affordable = balance >= offer.tokenCost;
-  // Chef (2026-07-08): Items im Token-Shop anklickbar — Klick auf Bild/Name pinnt das große
-  // Item-Tooltip zur Inspektion (gleiches Muster wie ItemChip/PouchRow; Kauf bleibt beim Button).
-  const tooltip = useItemTooltip();
-  const inspect = (e: React.MouseEvent): void => {
-    e.stopPropagation();
-    tooltip.pin(offer.itemId, e.clientX, e.clientY, []);
-  };
-  const inspectByKey = (e: React.KeyboardEvent<HTMLElement>): void => {
-    if (e.key !== "Enter" && e.key !== " ") return;
-    e.preventDefault();
-    e.stopPropagation();
-    const rect = e.currentTarget.getBoundingClientRect();
-    tooltip.pin(offer.itemId, rect.left + rect.width / 2, rect.top + rect.height / 2, []);
-  };
+  const buyable = affordable && !soldOut && !lockedNote;
+  const inspectProps = onInspect
+    ? { role: "button" as const, tabIndex: 0, onClick: onInspect, onKeyDown: onInspectKey }
+    : {};
   return (
-    <div className={`quest-shop-offer${affordable ? "" : " quest-shop-offer--locked"}`}>
-      <div
-        className="quest-shop-offer-imgwrap quest-shop-offer-inspect"
-        role="button"
-        tabIndex={0}
-        onClick={inspect}
-        onKeyDown={inspectByKey}
-      >
+    <div className={`quest-shop-offer${buyable ? "" : " quest-shop-offer--locked"}${soldOut ? " quest-shop-offer--soldout" : ""}${lockedNote ? " quest-shop-offer--gated" : ""}`}>
+      <div className={`quest-shop-offer-imgwrap${onInspect ? " quest-shop-offer-inspect" : ""}`} {...inspectProps}>
         {img ? (
           <img loading="lazy" decoding="async" src={img} alt="" className="quest-shop-offer-img" />
         ) : (
-          <span className="quest-shop-offer-emoji" aria-hidden="true">{item?.icon ?? "❔"}</span>
+          <span className="quest-shop-offer-emoji" aria-hidden="true">{symbol ?? "❔"}</span>
         )}
-        <span className="quest-shop-offer-qty">{offer.qty}×</span>
+        {qty !== undefined && <span className="quest-shop-offer-qty">{qty}×</span>}
+        {origin && <span className="quest-shop-offer-origin">{origin}</span>}{/* claude:2026-10-31T10:39:00+01:00 */}
       </div>
-      <span
-        className="quest-shop-offer-name quest-shop-offer-inspect"
-        role="button"
-        tabIndex={0}
-        onClick={inspect}
-        onKeyDown={inspectByKey}
-      >
-        {item ? tr(item.name) : offer.itemId}
-      </span>
-      <div className="quest-shop-offer-price">
+      <div className="quest-shop-offer-body">
+        <span className={`quest-shop-offer-name${onInspect ? " quest-shop-offer-inspect" : ""}`} {...inspectProps}>{name}</span>
+        {description && <p className="quest-shop-offer-desc">{description}</p>}
+        {extra}
+        {limitText ? (
+          <span className="quest-shop-offer-limit">{limitText}</span>
+        ) : limit ? (
+          <span className="quest-shop-offer-limit">
+            {t(`quests.shop.limit.${limit.period}`).replace("{used}", String(limit.used)).replace("{max}", String(limit.max))}
+          </span>
+        ) : null}
+      </div>
+      <div className="quest-shop-offer-foot">
         <span className="quest-shop-offer-cost" title={t("quests.tokens.label")}>
           {tokenSrc ? (
             <img loading="lazy" decoding="async" src={tokenSrc} alt="" className="quest-reward-icon" />
           ) : (
             <span aria-hidden="true">🎟️</span>
           )}
-          <span className="quest-shop-offer-cost-num">{offer.tokenCost}</span>
+          <span className="quest-shop-offer-cost-num">{cost}</span>
         </span>
-        {!affordable && (
-          <span className="quest-shop-offer-hint muted">{t("quests.shop.notEnough")}</span>
+        <button
+          className="btn-iron btn-iron--sm quest-shop-buy-btn"
+          disabled={!buyable}
+          onClick={onBuy}
+          title={lockedNote ?? (soldOut ? soldOutText ?? t("quests.shop.soldOut") : affordable ? undefined : t("quests.shop.notEnough"))}
+        >
+          {t("quests.shop.buy")}
+        </button>
+        {lockedNote ? (
+          <span className="quest-shop-offer-hint quest-shop-offer-gate">{lockedNote}</span>
+        ) : (!affordable || soldOut) && (
+          <span className="quest-shop-offer-hint">{soldOut ? soldOutText ?? t("quests.shop.soldOut") : t("quests.shop.notEnough")}</span>
         )}
       </div>
-      <button
-        className="btn-iron btn-iron--sm quest-shop-buy-btn"
-        disabled={!affordable}
-        onClick={onBuy}
-        title={affordable ? undefined : t("quests.shop.notEnough")}
-      >
-        {t("quests.shop.buy")}
-      </button>
     </div>
+  );
+}
+
+// claude:2026-10-30T23:10:00+01:00 — Belohnungsladen 1.4.2: Hilfen für Dienste und Regal-Angebote (Texte, Sperren, Grenzen).
+type TFn = (k: string) => string;
+type TrFn = (v: LocalizedString) => string;
+
+/** Symbol je Dienstart (Bildband der Karte; Emoji-Rückfall wie bei Angeboten ohne Item-Bild). */
+const SERVICE_SYMBOL: Record<string, string> = {
+  dailyReroll: "🎲",
+  orderCall: "📜",
+  skillLesson: "📖",
+  masteryLesson: "🎓",
+  petTrail: "🐾",
+};
+
+/** „noch 2 heute“ / „noch 5 diese Woche“ aus Restgrenze und Zeitraum; ohne Grenze null. */
+function remainingText(
+  t: TFn,
+  s: { remainingToday: number | null; remainingWeek: number | null },
+): string | null {
+  // Die engere Grenze führt: Tag vor Woche (gleiche Staffel-Regel wie die Engine).
+  if (s.remainingToday !== null) return t("quests.svc.left.day").replace("{n}", String(s.remainingToday));
+  if (s.remainingWeek !== null) return t("quests.svc.left.week").replace("{n}", String(s.remainingWeek));
+  return null;
+}
+
+/** Bedingungstext eines Kapitel-Gates („Öffnet mit Kapitel 4: Aschefelder“). */
+function chapterGateText(t: TFn, tr: TrFn, questId: string | undefined): string {
+  const quest = questId ? content.quests.find((q) => q.id === questId) : undefined;
+  if (!quest) return t("quests.svc.lock.chapterUnknown");
+  const n = questId!.startsWith(CHRONICLE_ID_PREFIX) ? chronicleChapterNumber(questId!) : 0;
+  return n > 0
+    ? t("quests.svc.lock.chapter").replace("{n}", String(n)).replace("{name}", tr(quest.name))
+    : t("quests.svc.lock.quest").replace("{name}", tr(quest.name));
+}
+
+/** Bedingungstext einer Sperre des Dienstes (Kapitel oder Talent mit Namen aus dem Content). */
+function serviceLockText(t: TFn, tr: TrFn, lock: NonNullable<TokenServiceStatus["lock"]>): string {
+  if (lock.kind === "shelf") return chapterGateText(t, tr, lock.questId);
+  const node = lock.treeId && lock.nodeId
+    ? content.talentTrees?.find((tt) => tt.id === lock.treeId)?.nodes.find((n) => n.id === lock.nodeId)
+    : undefined;
+  return node ? t("quests.svc.lock.talent").replace("{name}", tr(node.name)) : t("quests.svc.lock.talentUnknown");
+}
+
+/** Name eines Dienst-Ziels (Fertigkeit, Aktion, Begleiter, Tagesaufgabe). */
+function serviceTargetName(def: TokenServiceDef, target: string, tr: TrFn): string {
+  switch (def.kind) {
+    case "skillLesson": return tr(content.skills[target]?.name ?? { en: target, de: target });
+    case "masteryLesson": return tr(content.actions[target]?.name ?? { en: target, de: target });
+    case "petTrail": return tr(content.pets?.[target]?.name ?? { en: target, de: target });
+    case "dailyReroll": return tr(content.quests.find((q) => q.id === target)?.name ?? { en: target, de: target });
+    default: return target;
+  }
+}
+
+/** Mengen-Text einer Vorschau je Dienstart („+640 XP“, „+120 Meisterschafts-XP“, „2.400 Fehlwürfe gutgeschrieben“). */
+function serviceAmountText(t: TFn, def: TokenServiceDef, amount: number): string {
+  const n = formatNum(amount); // claude:2026-10-31T14:55:00+01:00 — Spielsprache statt Systemsprache (E5)
+  switch (def.kind) {
+    case "skillLesson": return t("quests.svc.amount.xp").replace("{n}", n);
+    case "masteryLesson": return t("quests.svc.amount.mastery").replace("{n}", n);
+    case "petTrail": return t("quests.svc.amount.pity").replace("{n}", n);
+    case "dailyReroll": return t("quests.svc.amount.reroll");
+    default: return t("quests.svc.amount.orderCall");
+  }
+}
+
+/** Fehlertext eines Dienst-Kaufs oder einer Vorschau (alle Gründe der Engine). */
+function serviceReasonText(t: TFn, reason: string | undefined): string {
+  return t(`quests.svc.err.${reason ?? "unknown"}`);
+}
+
+/** Fehlertext eines Regal-Kaufs (`buyTokenShopOffer`), inkl. Grenze. */
+function shopReasonText(t: TFn, reason: string | undefined): string {
+  switch (reason) {
+    case "no_space": return t("quests.shop.noSpace");
+    case "limit": return t("quests.shop.err.limit");
+    case "shelf_locked": return t("quests.shop.err.shelf_locked");
+    case "not_enough_tokens": return t("quests.shop.notEnough");
+    default: return t("quests.shop.err.unknown");
+  }
+}
+
+/**
+ * claude:2026-10-30T23:10:00+01:00 — Kauf-Dialog eines Dienstes: Ziel wählen (Fertigkeit, Aktion mit Fertigkeitsfilter, Begleiter, Tagesaufgabe),
+ * Vorschau der Menge aus `tokenServicePreview`, Bestätigen über `buyTokenService`. Dienste ohne Ziel (Auftrag rufen) zeigen nur die Vorschau.
+ * Die Zielliste wird je Dienst einmal gebildet (Marken/Grenzen ändern die Ziele nicht), die Vorschau liest jeden Render neu.
+ */
+function ServiceDialog({
+  def,
+  onClose,
+  onDone,
+  t,
+  tr,
+}: {
+  def: TokenServiceDef;
+  onClose: () => void;
+  onDone: (text: string, ok: boolean) => void;
+  t: TFn;
+  tr: TrFn;
+}): JSX.Element {
+  const state = useGameState();
+  const status = tokenServiceStatus(state, content, def.id);
+  const [target, setTarget] = useState<string | undefined>(undefined);
+  const [skillFilter, setSkillFilter] = useState<string>("");
+  const [err, setErr] = useState<string | null>(null);
+  const all = useMemo<TokenServiceTarget[]>(() => {
+    const list = tokenServiceTargets(state, content, def.id);
+    // Meisterlehre: Aktionen ohne Wirkung (Meisterschaft am Deckel) sind keine Wahl, nur Rauschen.
+    return def.kind === "masteryLesson" ? list.filter((x) => x.ok) : list;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [def.id]);
+  const skillOfAction = (id: string): string => content.actions[id]?.skill ?? "";
+  const filterSkills = def.kind === "masteryLesson" ? [...new Set(all.map((x) => skillOfAction(x.target)))].filter(Boolean) : [];
+  const rows = def.kind === "masteryLesson" && skillFilter ? all.filter((x) => skillOfAction(x.target) === skillFilter) : all;
+  const preview = tokenServicePreview(state, content, def.id, target);
+  const needsTarget = status.needsTarget;
+  const canConfirm = preview.ok && (!needsTarget || !!target);
+  // claude:2026-10-31T14:55:00+01:00 — C2: Esc schließt den Dienst-Dialog (zentrale Esc-Registry).
+  useEffect(() => registerEscCloser("modal", onClose), [onClose]);
+  // claude:2026-10-31T14:55:00+01:00 — B3: „Auftrag rufen“ zeigt die Restzeit der jeweiligen Stufen-Uhr.
+  const orderClockMs = def.kind === "orderCall" ? (state.workOrders?.tierMs?.[(def.tier ?? 2) as 1 | 2 | 3] ?? 0) : 0;
+
+  const confirm = (): void => {
+    const res = buyTokenService(state, content, def.id, target);
+    if (!res.ok) {
+      setErr(serviceReasonText(t, res.reason));
+      return;
+    }
+    const name = target ? serviceTargetName(def, target, tr) : "";
+    const text =
+      def.kind === "dailyReroll"
+        ? t("quests.svc.done.dailyReroll").replace("{name}", res.questId ? serviceTargetName(def, res.questId, tr) : "")
+        : t(`quests.svc.done.${def.kind}`).replace("{name}", name).replace("{n}", formatNum(res.amount));
+    onDone(text, true);
+    onClose();
+  };
+
+  return createPortal(
+    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
+      <div className="modal quest-svc-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close ds-close-button" onClick={onClose} aria-label={t("common.close")} />
+        <h2 className="quest-svc-modal-title">{tr(def.name)}</h2>
+        <p className="quest-svc-modal-desc">{tr(def.description)}</p>
+        {needsTarget && (
+          <>
+            <div className="quest-svc-modal-label">{t(`quests.svc.pick.${def.kind}`)}</div>
+            {filterSkills.length > 1 && (
+              <div className="quest-svc-filter" role="tablist">
+                <button type="button" className={`quest-shelf-tab${skillFilter === "" ? " is-active" : ""}`} onClick={() => setSkillFilter("")}>
+                  {t("quests.svc.filterAll")}
+                </button>
+                {filterSkills.map((sk) => (
+                  <button
+                    key={sk}
+                    type="button"
+                    className={`quest-shelf-tab${skillFilter === sk ? " is-active" : ""}`}
+                    onClick={() => setSkillFilter(sk)}
+                  >
+                    {tr(content.skills[sk]?.name ?? { en: sk, de: sk })}
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="quest-svc-targets" role="listbox">
+              {rows.length === 0 && <p className="muted">{t("quests.svc.noTargets")}</p>}
+              {rows.map((row) => (
+                <button
+                  key={row.target}
+                  type="button"
+                  role="option"
+                  aria-selected={target === row.target}
+                  disabled={!row.ok}
+                  className={`quest-svc-target${target === row.target ? " is-active" : ""}`}
+                  onClick={() => { setTarget(row.target); setErr(null); }}
+                >
+                  <span className="quest-svc-target-name">
+                    {serviceTargetName(def, row.target, tr)}
+                    {def.kind === "masteryLesson" && (
+                      <span className="quest-svc-target-sub muted"> {tr(content.skills[skillOfAction(row.target)]?.name ?? { en: "", de: "" })}</span>
+                    )}
+                  </span>
+                  <span className="quest-svc-target-amount">
+                    {row.ok
+                      ? serviceAmountText(t, def, row.amount)
+                      : t(def.kind === "dailyReroll" ? `quests.svc.tgt.reroll.${row.reason}` : `quests.svc.tgt.${row.reason ?? "invalid_target"}`)}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+        {def.kind === "orderCall" && (
+          <p className="quest-svc-modal-desc muted">
+            {orderClockMs > 0 ? t("quests.svc.orderClock").replace("{time}", formatEta(orderClockMs, t)) : t("quests.svc.orderClockReady")}
+          </p>
+        )}
+        {def.kind === "dailyReroll" && <p className="quest-svc-modal-desc muted">{t("quests.svc.rerollQueueNote")}</p>}
+        <div className={`quest-svc-preview${preview.ok ? "" : " is-bad"}`} role="status">
+          {preview.ok
+            ? t("quests.svc.previewOk").replace("{what}", serviceAmountText(t, def, preview.amount)).replace("{price}", String(preview.price))
+            : needsTarget && !target && preview.reason === "invalid_target"
+              ? t("quests.svc.pickFirst")
+              : serviceReasonText(t, preview.reason)}
+        </div>
+        {err && <p className="quest-shop-notice" role="alert">{err}</p>}
+        <div className="quit-confirm-actions">
+          <button className="hf-btn" onClick={onClose}>{t("sidebar.quitCancel")}</button>
+          <button className="hf-btn hf-btn--primary" disabled={!canConfirm} onClick={confirm}>
+            {t("quests.svc.confirm").replace("{price}", String(status.price))}
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
+/** Dienst-Karte: Name, Beschreibung, Staffelpreis, Restgrenze, Sperre mit Bedingung (L10). */
+function TokenServiceCard({
+  def,
+  onOpen,
+  t,
+  tr,
+}: {
+  def: TokenServiceDef;
+  onOpen: () => void;
+  t: TFn;
+  tr: TrFn;
+}): JSX.Element {
+  const state = useGameState();
+  const s = tokenServiceStatus(state, content, def.id);
+  const left = remainingText(t, s);
+  const steps = def.tokenCostSteps;
+  const period = s.limitPerDay !== null ? "day" : "week";
+  return (
+    <ShopOfferCard
+      name={tr(def.name)}
+      symbol={SERVICE_SYMBOL[def.kind]}
+      cost={s.price}
+      description={tr(def.description)}
+      extra={
+        steps && steps.length > 1 ? (
+          <span className="quest-svc-steps">{t("quests.svc.steps").replace("{steps}", steps.join(" / "))}</span>
+        ) : undefined
+      }
+      limitText={left ?? undefined}
+      soldOut={s.remaining === 0}
+      soldOutText={t(`quests.svc.back.${period}`)}
+      lockedNote={s.lock ? serviceLockText(t, tr, s.lock) : undefined}
+      affordable={s.affordable}
+      onBuy={onOpen}
+      t={t}
+    />
+  );
+}
+
+/**
+ * Eine Item-Angebotszeile (Katalogangebot -> Karte): Bild/Name anklickbar (Item-Tooltip pinnen, Chef 2026-07-08),
+ * Kauf bleibt beim Knopf. Bei zu wenig Tokens: Knopf gesperrt + Hinweis.
+ * claude:2026-10-30T23:10:00+01:00 — Grenze (Gebührenschein 1/Woche) und Sperre des Regals (L10) kommen aus `tokenShopOfferStatus`.
+ */
+function TokenShopOfferCard({
+  offer,
+  origin,
+  onBuy,
+  t,
+  tr,
+}: {
+  offer: TokenShopOffer;
+  origin?: string;
+  onBuy: () => void;
+  t: TFn;
+  tr: TrFn;
+}): JSX.Element {
+  const state = useGameState();
+  const st = tokenShopOfferStatus(state, content, offer.id);
+  const item: ItemDef | undefined = content.items[offer.itemId];
+  const tooltip = useItemTooltip();
+  const inspect = (e: React.MouseEvent): void => {
+    e.stopPropagation();
+    tooltip.pin(offer.itemId, e.clientX, e.clientY, []);
+  };
+  const inspectByKey = (e: ReactKeyboardEvent<HTMLElement>): void => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    e.preventDefault();
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    tooltip.pin(offer.itemId, rect.left + rect.width / 2, rect.top + rect.height / 2, []);
+  };
+  const left = remainingText(t, {
+    remainingToday: st.limitPerDay !== null ? Math.max(0, st.limitPerDay - st.usedToday) : null,
+    remainingWeek: st.limitPerDay === null && st.limitPerWeek !== null ? Math.max(0, st.limitPerWeek - st.usedThisWeek) : null,
+  });
+  return (
+    <ShopOfferCard
+      name={item ? tr(item.name) : offer.itemId}
+      img={getItemImage(offer.itemId)}
+      symbol={item?.icon}
+      qty={offer.qty}
+      origin={origin}
+      cost={offer.tokenCost}
+      affordable={st.affordable}
+      limitText={left ?? undefined}
+      soldOut={st.remaining === 0}
+      soldOutText={t(`quests.svc.back.${st.limitPerDay !== null ? "day" : "week"}`)}
+      lockedNote={st.locked ? chapterGateText(t, tr, st.lockQuestId) : undefined}
+      onBuy={onBuy}
+      onInspect={inspect}
+      onInspectKey={inspectByKey}
+      t={t}
+    />
   );
 }
 
@@ -406,29 +763,30 @@ function TokenShopOfferCard({
  * Belohnungs-Shop-Tab (Task #284, Regale seit #p13): Angebote aus `content.tokenShop`, gruppiert nach
  * `content.tokenShopShelves` (sortiert nach sortOrder; Angebote ohne Treffer landen defensiv im ersten
  * offenen Regal — Content-Vertrag „Angebote ohne shelfId fallen ins offene Regal"). Kauf läuft über
- * die Engine (`buyTokenShopOffer`: prüft Regal-Gate, dann Tokens, liefert via addItemOrBank). Schlägt
- * ein Kauf trotz genug Tokens fehl, ist das ein Platz-Problem → Inline-Hinweis.
- * Chef 25.08.2026 (Test 1.1.0): gesperrte Regale sind GAR NICHT einsehbar; ein Satz unten sagt nur,
- * DASS mehr kommt.
+ * die Engine (`buyTokenShopOffer`: prüft Regal-Gate, Grenze, dann Tokens, liefert via addItemOrBank).
+ * claude:2026-10-30T23:10:00+01:00 — 1.4.2: oben die Dienstleiste (`tokenServiceDefs`, Sofortwirkung mit Zielwahl im Dialog); zwei Spalten (links Laden als ein Raster, rechts Dienste);
+ * gesperrte Regale erscheinen nur als Vorschau-Karte (31.10.). Jeder Fehlgrund der Engine hat eine Meldung.
  * claude:2026-10-17T20:10:00+02:00 — Regale als Reiterleiste statt Akkordeon: das zuletzt erreichte
- * Regal ist vorgewählt und steht damit sofort im Bild (vorher ganz unten, bei 1366×768 sah man nur
- * zugeklappte Balken). Titel und zweiter Markenbestand entfallen — beides steht schon im Seitenkopf
- * bzw. auf dem Reiter.
+ * Regal ist vorgewählt und steht damit sofort im Bild.
  */
 function RewardsShopPanel({
   t,
   tr,
+  onChanged,
 }: {
-  t: (k: string) => string;
-  tr: (v: LocalizedString) => string;
+  t: TFn;
+  tr: TrFn;
+  /** Seite neu zeichnen (Tagesbrett/Marken können sich geändert haben). */
+  onChanged: () => void;
 }): JSX.Element {
   const state = useGameState();
   const [, setBump] = useState(0);
-  const [spaceNotice, setSpaceNotice] = useState(false);
-  const balance = questTokenBalance(state);
+  const [notice, setNotice] = useState<{ text: string; ok: boolean } | null>(null);
+  const [dialogId, setDialogId] = useState<string | null>(null);
 
   const shelves = [...(content.tokenShopShelves ?? [])].sort((a, b) => a.sortOrder - b.sortOrder);
   const allOffers = [...(content.tokenShop ?? [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+  const services = tokenServiceDefs(content);
   const fallbackShelfId = shelves.find((s) => !s.requiresQuest)?.id ?? shelves[0]?.id;
   const offersByShelf = new Map<string, TokenShopOffer[]>();
   for (const offer of allOffers) {
@@ -437,84 +795,105 @@ function RewardsShopPanel({
     (offersByShelf.get(key) ?? offersByShelf.set(key, []).get(key)!).push(offer);
   }
 
-  // Sichtbar: nur offene Regale mit Ware (gesperrte bleiben verborgen, s. Chef 25.08.).
-  const openShelves = shelves.filter(
-    (s) => isShelfOpen(state, content, s.id) && (offersByShelf.get(s.id)?.length ?? 0) > 0,
-  );
-  // Höchste sortOrder unter den offenen Regalen = "aktuelles" Regal → Vorauswahl.
-  const currentShelfId = openShelves[openShelves.length - 1]?.id;
-  const [activeShelfId, setActiveShelfId] = useState<string | undefined>(currentShelfId);
-  const shownShelf = openShelves.find((s) => s.id === activeShelfId) ?? openShelves[openShelves.length - 1];
-  const shownOffers = shownShelf ? (offersByShelf.get(shownShelf.id) ?? []) : [];
-  const hasLockedShelves = shelves.some(
-    (sh) => !isShelfOpen(state, content, sh.id) && (offersByShelf.get(sh.id)?.length ?? 0) > 0,
-  );
+  // claude:2026-10-31T10:39:00+01:00 — EIN Raster: Waren aller offenen Regale (Startregal zuerst, dann Kapitelreihenfolge), je gesperrtem Regal nur EINE Vorschau-Karte.
+  const listed = shelves.filter((s) => (offersByShelf.get(s.id)?.length ?? 0) > 0);
+  const openShelves = listed.filter((s) => isShelfOpen(state, content, s.id));
+  const lockedShelves = listed.filter((s) => !isShelfOpen(state, content, s.id));
+  const shownOffers = openShelves.flatMap((sh) => (offersByShelf.get(sh.id) ?? []).map((offer) => ({ offer, shelf: sh })));
 
-  const buy = (offerId: string): void => {
-    const res = buyTokenShopOffer(state, content, offerId);
-    // Zu wenig Tokens blockiert der Knopf schon vorher — schlägt der Kauf trotzdem fehl, ist es
-    // praktisch immer „kein Platz" (no_space); andere Reasons zeigen defensiv keinen Hinweis.
-    setSpaceNotice(res.reason === "no_space");
+  const buy = (offer: TokenShopOffer): void => {
+    const bankBefore = state.bank[offer.itemId] ?? 0;
+    const res = buyTokenShopOffer(state, content, offer.id);
+    if (res.ok) {
+      const item = content.items[offer.itemId];
+      // claude:2026-10-31T14:55:00+01:00 — D13: bei vollem Inventar liefert die Engine in die Bank; die Meldung sagt es.
+      const toBank = (state.bank[offer.itemId] ?? 0) > bankBefore;
+      notePurchasedItem(offer.itemId, offer.qty ?? 1); // claude:2026-10-31T15:30:00+01:00 — E10: kein „Seltener Fund!“ für Ladenware
+      setNotice({ text: t(toBank ? "quests.shop.boughtBank" : "quests.shop.bought").replace("{name}", item ? tr(item.name) : offer.itemId), ok: true });
+    } else {
+      setNotice({ text: shopReasonText(t, res.reason), ok: false });
+    }
     setBump((b) => b + 1);
+    onChanged();
   };
 
   const hasOffers = allOffers.length > 0;
+  const dialogDef = dialogId ? services.find((d) => d.id === dialogId) : undefined;
 
   return (
-    <div className="quest-shop-panel">
-      <p className="quest-shop-panel-desc muted">{t("quests.shop.subtitle")}</p>
-      {spaceNotice && (
-        <p className="quest-shop-notice" role="alert">{t("quests.shop.noSpace")}</p>
+    <div className="quest-shop-panel">{/* claude:2026-10-31T10:39:00+01:00 */}
+      <div className="quest-shop-top">
+        <p className="quest-shop-panel-desc muted">{t("quests.shop.subtitle")}</p>
+      </div>
+      {notice && (
+        <p className={`quest-shop-notice${notice.ok ? " quest-shop-notice--ok" : ""}`} role={notice.ok ? "status" : "alert"}>{notice.text}</p>
       )}
-      {!hasOffers ? (
-        <div className="quest-shop-grid quest-shop-grid--empty">
-          <div className="placeholder quest-shop-empty">
-            <div className="placeholder-icon">
-              {TICKET_ICON_URL ? <img loading="lazy" decoding="async" src={TICKET_ICON_URL} alt="" className="ui-icon" /> : "🎟️"}
-            </div>
-            <p className="muted">{t("quests.shop.comingSoon")}</p>
+      <div className="quest-shop-cols">
+        <section className="quest-shop-col quest-shop-col--wares">
+          <div className="quest-shelf-head">
+            <h3 className="quest-shelf-title">{t("quests.shop.title")}</h3>
+            <span className="quest-shelf-head-count muted">{shownOffers.length}</span>
           </div>
-        </div>
-      ) : (
-        <>
-          {openShelves.length > 0 && (
-            <div className="quest-shelf-tabs" role="tablist">
-              {openShelves.map((shelf) => {
-                const active = shelf.id === shownShelf?.id;
+          {!hasOffers ? (
+            <div className="quest-shop-grid quest-shop-grid--empty">
+              <div className="placeholder quest-shop-empty">
+                <div className="placeholder-icon">
+                  {TICKET_ICON_URL ? <img loading="lazy" decoding="async" src={TICKET_ICON_URL} alt="" className="ui-icon" /> : "🎟️"}
+                </div>
+                <p className="muted">{t("quests.shop.comingSoon")}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="quest-shop-grid">
+              {shownOffers.map(({ offer, shelf }) => {
+                const n = shelf.requiresQuest?.startsWith(CHRONICLE_ID_PREFIX) ? chronicleChapterNumber(shelf.requiresQuest) : 0;
                 return (
-                  <button
-                    key={shelf.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={active}
-                    className={`btn-iron btn-iron--sm quest-shelf-tab${active ? " is-active" : ""}`}
-                    onClick={() => setActiveShelfId(shelf.id)}
-                  >
-                    <span className="quest-shelf-name">{tr(shelf.name)}</span>
-                    <span className="quest-shelf-count">{offersByShelf.get(shelf.id)?.length ?? 0}</span>
-                  </button>
+                  <TokenShopOfferCard
+                    key={offer.id}
+                    offer={offer}
+                    origin={n > 0 ? t("quests.shop.origin").replace("{n}", String(n)) : undefined}
+                    onBuy={() => buy(offer)}
+                    t={t}
+                    tr={tr}
+                  />
                 );
               })}
             </div>
           )}
-          <div className="quest-shelf-list">
-            <div className="quest-shop-grid">
-              {shownOffers.map((offer) => (
-                <TokenShopOfferCard
-                  key={offer.id}
-                  offer={offer}
-                  balance={balance}
-                  onBuy={() => buy(offer.id)}
-                  t={t}
-                  tr={tr}
-                />
+          {lockedShelves.length > 0 && (
+            <div className="quest-shop-previews">
+              {lockedShelves.map((shelf) => (
+                <div key={shelf.id} className="quest-shop-preview" title={tr(shelf.name)}>
+                  <span className="quest-shop-preview-lock" aria-hidden="true">🔒</span>
+                  <span className="quest-shop-preview-count">{t("quests.shop.previewMore").replace("{count}", String(offersByShelf.get(shelf.id)?.length ?? 0))}</span>
+                  <span className="quest-shop-preview-gate">{chapterGateText(t, tr, shelf.requiresQuest)}</span>
+                </div>
               ))}
             </div>
-            {hasLockedShelves && (
-              <p className="quest-shelf-more muted">{t("quests.shop.moreShelves")}</p>
-            )}
-          </div>
-        </>
+          )}
+        </section>
+        {services.length > 0 && (
+          <section className="quest-shop-col quest-shop-col--svc">
+            <div className="quest-shelf-head">
+              <h3 className="quest-shelf-title">{t("quests.svc.title")}</h3>
+            </div>
+            <p className="quest-svc-note muted">{t("quests.svc.subtitle")}</p>
+            <div className="quest-svc-list">
+              {services.map((def) => (
+                <TokenServiceCard key={def.id} def={def} onOpen={() => { setNotice(null); setDialogId(def.id); }} t={t} tr={tr} />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+      {dialogDef && (
+        <ServiceDialog
+          def={dialogDef}
+          onClose={() => { setDialogId(null); setBump((b) => b + 1); onChanged(); }}
+          onDone={(text, ok) => setNotice({ text, ok })}
+          t={t}
+          tr={tr}
+        />
       )}
     </div>
   );
@@ -586,11 +965,16 @@ function ChronicleObjectiveRow({
   const pct = clamp(obj.count > 0 ? (progress / obj.count) * 100 : 0, 0, 100);
   const done = progress >= obj.count;
   const where = objectiveLocation(obj, t, tr);
+  const jump = objectiveJump(obj); // claude:2026-10-31T16:34:28+01:00 — Ziel anklickbar (Ideen-Welle 1.4.2)
   return (
     <div className={`chronicle-obj${done ? " chronicle-obj--done" : ""}`}>
       <div className="chronicle-obj-head">
         <span className="chronicle-obj-check" aria-hidden="true">{done ? "✓" : ""}</span>
-        <span className="chronicle-obj-label" title={objectiveFullTargets(obj, tr)}>{objectiveLabel(obj, t, tr)}</span>
+        <span
+          className={`chronicle-obj-label${jump ? " obj-jumpable" : ""}`}
+          title={jump ? (objectiveFullTargets(obj, tr) ?? t("quests.obj.jumpHint")) : objectiveFullTargets(obj, tr)}
+          {...jumpProps(jump)}
+        >{objectiveLabel(obj, t, tr)}</span>
         {where && (
           <span className="chronicle-obj-where" title={t("chronicle.obj.where")}>
             <span aria-hidden="true">
@@ -694,7 +1078,6 @@ function ChronicleStoryTab({
   onClaim: (questId: string) => void;
 }): JSX.Element {
   const state = useGameState();
-  const [historyOpen, setHistoryOpen] = useState(false);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const chapters = chronicleChapters(content);
@@ -726,6 +1109,20 @@ function ChronicleStoryTab({
     <div className="chronicle-tab">
       <header className="chronicle-tab-head">
         <span className="chronicle-tab-kicker">{t("chronicle.title")}</span>
+        {/* claude:2026-10-30T22:05:00+01:00 — Kapitelleiste: ein Segment je Kapitel (geschrieben, laufend, offen), nur Nummern, keine Vorschau. */}
+        <span
+          className="chronicle-strip"
+          role="img"
+          aria-label={t("chronicle.chapterOf")
+            .replace("{n}", String(active ? active.chapter : claimedChapters.length))
+            .replace("{total}", String(chapters.length))}
+        >
+          {chapters.map((q) => {
+            const st = questStatus(state, content, q);
+            const cls = st === "claimed" ? "is-written" : q.id === active?.quest.id ? "is-current" : "";
+            return <i key={q.id} className={cls} title={String(chronicleChapterNumber(q.id)).padStart(2, "0")} />;
+          })}
+        </span>
         <span className="chronicle-tab-counter">
           {t("chronicle.chapterOf")
             .replace("{n}", String(active ? active.chapter : claimedChapters.length))
@@ -791,14 +1188,17 @@ function ChronicleStoryTab({
             ))}
           </div>
 
-          <RewardLine quest={active.quest} t={t} tr={tr} />
-          <ChronicleUnlocksLine questId={active.quest.id} t={t} tr={tr} />
-
-          {active.status === "completed" && (
-            <button className="quest-claim-btn chronicle-stage-claim" onClick={() => onClaim(active.quest.id)}>
-              {t("chronicle.stage.claim")}
-            </button>
-          )}
+          <div className="quest-stage-foot">{/* claude:2026-10-30T22:05:00+01:00 */}
+            <div className="quest-stage-foot-info">
+              <RewardLine quest={active.quest} t={t} tr={tr} />
+              <ChronicleUnlocksLine questId={active.quest.id} t={t} tr={tr} />
+            </div>
+            {active.status === "completed" && (
+              <button className="quest-claim-btn chronicle-stage-claim" onClick={() => onClaim(active.quest.id)}>
+                {t("chronicle.stage.claim")}
+              </button>
+            )}
+          </div>
         </section>
       ) : (
         <section className="chronicle-stage chronicle-stage-complete">
@@ -806,42 +1206,43 @@ function ChronicleStoryTab({
         </section>
       )}
 
-      {claimedChapters.length > 0 && (
-        <section className="chronicle-history">
-          <button
-            type="button"
-            className="chronicle-history-toggle"
-            onClick={() => setHistoryOpen((o) => !o)}
-            aria-expanded={historyOpen}
-          >
-            <span className="chronicle-history-caret">{historyOpen ? "▾" : "▸"}</span>
-            {t("chronicle.history")} ({claimedChapters.length})
-          </button>
-          {historyOpen && (
-            <div className="chronicle-history-list">
-              {claimedChapters.map((q) => {
-                const num = chronicleChapterNumber(q.id);
-                const open = expanded.has(q.id);
-                return (
-                  <div key={q.id} className="chronicle-history-row">
-                    <button
-                      type="button"
-                      className="chronicle-history-row-head"
-                      onClick={() => toggleExpand(q.id)}
-                      aria-expanded={open}
-                    >
-                      <span className="chronicle-history-caret">{open ? "▾" : "▸"}</span>
-                      <span className="chronicle-history-num">{String(num).padStart(2, "0")}</span>
-                      <span className="chronicle-history-name">{tr(q.name)}</span>
-                    </button>
-                    {open && q.loreText && (
-                      <p className="chronicle-history-text">{tr(q.loreText)}</p>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
+      {(active || claimedChapters.length > 0) && (
+        <section className="chronicle-history">{/* claude:2026-10-30T23:20:00+01:00 — Kapitelliste: laufendes Kapitel hervorgehoben oben, geschriebene darunter (neueste zuerst), Chroniktext klappt auf */}
+          <h3 className="chronicle-history-title">
+            {t("chronicle.chapters")} <span className="muted">{claimedChapters.length}/{chapters.length}</span>
+          </h3>
+          <div className="chronicle-history-list">
+            {active && (
+              <div className="chronicle-history-row chronicle-history-row--current">
+                <div className="chronicle-history-row-head">
+                  <span className="chronicle-history-num">{String(active.chapter).padStart(2, "0")}</span>
+                  <span className="chronicle-history-name">{tr(active.quest.name)}</span>
+                  <span className={`quest-status-badge quest-status-badge--${active.status}`}>{t(`quests.status.${active.status}`)}</span>
+                </div>
+              </div>
+            )}
+            {[...claimedChapters].reverse().map((q) => {
+              const num = chronicleChapterNumber(q.id);
+              const open = expanded.has(q.id);
+              return (
+                <div key={q.id} className="chronicle-history-row">
+                  <button
+                    type="button"
+                    className="chronicle-history-row-head"
+                    onClick={() => toggleExpand(q.id)}
+                    aria-expanded={open}
+                  >
+                    <span className="chronicle-history-num">{String(num).padStart(2, "0")}</span>
+                    <span className="chronicle-history-name">{tr(q.name)}</span>
+                    <span className="chronicle-history-caret">{open ? "▾" : "▸"}</span>
+                  </button>
+                  {open && q.loreText && (
+                    <p className="chronicle-history-text">{tr(q.loreText)}</p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </section>
       )}
     </div>
@@ -946,18 +1347,20 @@ function ContractDetailStage({
         </div>
       )}
 
-      <RewardLine quest={quest} t={t} tr={tr} />
-      <ChronicleUnlocksLine questId={quest.id} t={t} tr={tr} />
-
-      {claimable && (
-        <button className="quest-claim-btn chronicle-stage-claim" onClick={onClaim}>
-          {t("quests.claim")}
-        </button>
-      )}
-
-      {status === "claimed" && (
-        <div className="quest-claimed-mark">{t("quests.claimed")}</div>
-      )}
+      <div className="quest-stage-foot">{/* claude:2026-10-30T22:05:00+01:00 */}
+        <div className="quest-stage-foot-info">
+          <RewardLine quest={quest} t={t} tr={tr} />
+          <ChronicleUnlocksLine questId={quest.id} t={t} tr={tr} />
+        </div>
+        {claimable && (
+          <button className="quest-claim-btn chronicle-stage-claim" onClick={onClaim}>
+            {t("quests.claim")}
+          </button>
+        )}
+        {status === "claimed" && (
+          <div className="quest-claimed-mark">{t("quests.claimed")}</div>
+        )}
+      </div>
     </section>
   );
 }
@@ -1076,6 +1479,10 @@ function ContractsTab({
                   >
                     {claimedCount}/{items.length}
                   </span>
+                  {/* claude:2026-10-30T22:05:00+01:00 — schmaler Strangfortschritt unter dem Kopf */}
+                  <span className="quest-strand-bar" aria-hidden="true">
+                    <i style={{ transform: `scaleX(${items.length > 0 ? claimedCount / items.length : 0})` }} />
+                  </span>
                 </button>
                 {!isCollapsed && (
                   <div className="quest-strand-rows">
@@ -1121,15 +1528,46 @@ function ContractsTab({
 
 // ── Daily Quest Card ──────────────────────────────────────────────────────────
 
+/**
+ * claude:2026-10-30T19:05:00+01:00 — Klartext des geplanten Warteschlangen-Eintrags einer Tagesaufgabe
+ * („40 × Kupferbarren schmelzen“, „25 × Huhn“, „3 × Gruft“). Namen aus Content, Format aus i18n.
+ */
+function dailyPlanText(plan: DailyQueuePlan, t: (k: string) => string, tr: (v: LocalizedString) => string): string {
+  // claude:2026-10-30T19:11:00+01:00 — ganze Kette inkl. Zulieferung („60 × Eisenerz abbauen → 25 × Stahl schmelzen“).
+  return (plan.entries ?? (plan.entry ? [plan.entry] : []))
+    .map((e) => {
+      const name =
+        e.kind === "fight" && e.monsterId ? tr(content.monsters[e.monsterId]?.name ?? { en: e.monsterId, de: e.monsterId })
+        : e.kind === "dungeon" && e.dungeonId ? tr(content.dungeons.find((d) => d.id === e.dungeonId)?.name ?? { en: e.dungeonId, de: e.dungeonId })
+        : tr(content.actions[e.actionId]?.name ?? { en: e.actionId, de: e.actionId });
+      return t("quests.daily.queueWhat").replace("{n}", String(e.target ?? plan.runs)).replace("{name}", name);
+    })
+    .join(" → ");
+}
+
+/** claude:2026-10-30T19:11:00+01:00 — Grund, warum eine Tagesaufgabe nicht eingereiht wird (fehlendes Material mit Namen). */
+function dailyReasonText(plan: DailyQueuePlan, t: (k: string) => string, tr: (v: LocalizedString) => string): string {
+  const text = t(`quests.daily.queueReason.${plan.reason ?? "unsupported"}`);
+  if (plan.reason !== "no_materials" || !plan.missingItemId) return text;
+  const item = content.items[plan.missingItemId];
+  return text.replace("{item}", item ? tr(item.name) : plan.missingItemId);
+}
+
 function DailyQuestCard({
   quest,
   onClaim,
+  onQueue,
+  onReroll,
   bump,
   t,
   tr,
 }: {
   quest: QuestDef;
   onClaim: () => void;
+  /** claude:2026-10-30T23:10:00+01:00 — Tagesaufgabe neu würfeln (Dienst `svc_daily_reroll`). */
+  onReroll: () => void;
+  /** claude:2026-10-30T19:05:00+01:00 — Tagesaufgabe einreihen (Spieler-Wunsch). */
+  onQueue: () => void;
   bump: number;
   t: (k: string) => string;
   tr: (v: LocalizedString) => string;
@@ -1139,8 +1577,14 @@ function DailyQuestCard({
   void bump;
   const claimed = isDailyClaimed(state, quest.id);
   const claimable = canClaimQuest(state, content, quest.id);
+  // claude:2026-10-30T19:05:00+01:00 — was der Knopf einreihen würde (oder warum nicht); erfüllt/eingelöst ⇒ nichts zeigen.
+  const plan = !claimed && !claimable ? dailyQueuePlan(state, content, quest.id) : null;
   const diff = quest.difficulty ?? "medium";
   const baseline = state.quests.repeatBaseline[quest.id] ?? {};
+  // claude:2026-10-30T23:10:00+01:00 — Würfel-Knopf nur auf offenen, nicht erfüllten Karten; Preis/Restgrenze aus dem Dienst-Status, Sperrgrund aus der Vorschau.
+  const rerollSvc = !claimed && !claimable && content.tokenServices?.some((d) => d.id === "svc_daily_reroll")
+    ? { status: tokenServiceStatus(state, content, "svc_daily_reroll"), preview: tokenServicePreview(state, content, "svc_daily_reroll", quest.id) }
+    : null;
 
   const cardClass = claimed
     ? "quest-card quest-card--claimed"
@@ -1152,8 +1596,16 @@ function DailyQuestCard({
     <div className={cardClass}>
       <div className="quest-card-head">
         <span className="quest-card-name">{tr(quest.name)}</span>
-        <span className={`daily-diff-badge ${DIFFICULTY_CLASS[diff] ?? ""}`}>
-          {t(`quests.difficulty.${diff}`)}
+        {/* claude:2026-10-30T22:05:00+01:00 — Schwierigkeit und Zustand als Chipgruppe */}
+        <span className="quest-card-badges">
+          <span className={`daily-diff-badge ${DIFFICULTY_CLASS[diff] ?? ""}`}>
+            {t(`quests.difficulty.${diff}`)}
+          </span>
+          {!claimed && (
+            <span className={`quest-status-badge quest-status-badge--${claimable ? "completed" : "active"}`}>
+              {t(`quests.status.${claimable ? "completed" : "active"}`)}
+            </span>
+          )}
         </span>
       </div>
 
@@ -1170,20 +1622,51 @@ function DailyQuestCard({
         })}
       </div>
 
-      {/* Rewards */}
-      <RewardLine quest={quest} t={t} tr={tr} />
+      {/* Rewards + Einlösen im Kartenfuß (claude:2026-10-30T22:05:00+01:00) */}
+      <div className="quest-card-foot">
+        <RewardLine quest={quest} t={t} tr={tr} />
+        {claimable && !claimed && (
+          <button className="quest-claim-btn" onClick={onClaim}>
+            {t("quests.claim")}
+          </button>
+        )}
+        {claimed && (
+          <div className="quest-claimed-mark">{t("quests.daily.claimed")}</div>
+        )}
+        {rerollSvc && rerollSvc.status.found && (
+          <div className="daily-reroll">
+            <button
+              type="button"
+              className="shop-citadel-btn daily-reroll-btn"
+              disabled={!rerollSvc.preview.ok}
+              title={rerollSvc.preview.ok ? t("quests.daily.rerollHint") : t(`quests.daily.rerollWhy.${rerollSvc.preview.reason}`)}
+              onClick={onReroll}
+            >
+              <span aria-hidden="true">🎲</span> {t("quests.daily.reroll").replace("{n}", String(rerollSvc.status.price))}
+            </button>
+            <span className="daily-reroll-left muted">
+              {rerollSvc.status.remainingToday === 0 ? t("quests.svc.back.day") : t("quests.svc.left.day").replace("{n}", String(rerollSvc.status.remainingToday ?? 0))}
+            </span>
+          </div>
+        )}
+      </div>
 
-      {/* Claim button */}
-      {claimable && !claimed && (
-        <button className="quest-claim-btn" onClick={onClaim}>
-          {t("quests.claim")}
-        </button>
+      {/* claude:2026-10-30T19:05:00+01:00 — In die Warteschlange: Plan sichtbar, Grund bei Ablehnung, Materialhinweis beim Herstellen. */}
+      {plan && (
+        <div className="daily-queue-row">
+          {plan.ok ? (
+            <>
+              <span className="daily-queue-plan">{t("quests.daily.queuePlan").replace("{what}", dailyPlanText(plan, t, tr))}</span>
+              <button type="button" className="shop-citadel-btn daily-queue-btn" onClick={onQueue}>
+                {t("quests.daily.queueOne")}
+              </button>
+            </>
+          ) : (
+            <span className={`daily-queue-plan${plan.reason === "no_materials" ? " daily-queue-warn" : " muted"}`}>{dailyReasonText(plan, t, tr)}</span>
+          )}
+        </div>
       )}
 
-      {/* Claimed mark */}
-      {claimed && (
-        <div className="quest-claimed-mark">{t("quests.daily.claimed")}</div>
-      )}
     </div>
   );
 }
@@ -1240,6 +1723,7 @@ export function QuestsPage(): JSX.Element {
   });
   // Local bump counter: incremented on every claim → forces immediate re-render.
   const [bump, setBump] = useState(0);
+  const [queueMsg, setQueueMsg] = useState<string | null>(null); // claude:2026-10-30T19:05:00+01:00 — Ergebnis „Alle einreihen“
 
   // Call refreshDailyQuests on mount and whenever the day changes.
   // This is idempotent: same day → no-op.
@@ -1364,7 +1848,6 @@ export function QuestsPage(): JSX.Element {
         >
           {t("quests.daily.tab.shop")}
         </button>
-        {tab === "daily" && <DailyResetCountdown t={t} />}
       </div>
 
       {/* codex:2026-08-02T00:42:00+02:00 — Feste Contract-Wall-Arbeitsfläche. Nur der aktive
@@ -1407,27 +1890,69 @@ export function QuestsPage(): JSX.Element {
                 <p className="muted">{t("quests.daily.empty")}</p>
               </div>
             ) : (
-              <div className="quests-list">
-                {dailyQuests.map((quest) => (
-                  <DailyQuestCard
-                    key={quest.id}
-                    quest={quest}
-                    bump={bump}
-                    onClaim={() => {
-                      claimQuest(state, content, quest.id);
+              // claude:2026-10-30T19:20:00+01:00 — EIN Kind für `.quests-content > *` (height 100 %): Knopfzeile fest, Kartenwand scrollt.
+              <div className="daily-wall">
+                {/* claude:2026-10-30T19:05:00+01:00 — Spieler-Wunsch: alle offenen Tagesaufgaben auf einen Klick einreihen. */}
+                <div className="daily-queue-all">{/* claude:2026-10-30T22:05:00+01:00 — Werkzeugleiste: Sammelknopf links, Tages-Reset rechts */}
+                  <button
+                    type="button"
+                    className="btn-iron"
+                    onClick={() => {
+                      const plans = enqueueAllDailyQuests(state, content);
+                      const queued = plans.filter((p) => p.ok).length;
+                      const skipped = plans.filter((p) => !p.ok && p.reason !== "claimed" && p.reason !== "done").length;
+                      setQueueMsg(
+                        queued + skipped === 0
+                          ? t("quests.daily.queueAllNone")
+                          : t("quests.daily.queueAllResult").replace("{n}", String(queued)).replace("{m}", String(skipped)),
+                      );
                       setBump((b) => b + 1);
                     }}
-                    t={t}
-                    tr={tr}
-                  />
-                ))}
+                  >
+                    {t("quests.daily.queueAll")}
+                  </button>
+                  {queueMsg && <span className="daily-queue-msg muted" role="status">{queueMsg}</span>}
+                  <DailyResetCountdown t={t} />
+                </div>
+                <div className="daily-scroll">{/* claude:2026-10-30T23:00:00+01:00 — Scroll-Hülle, damit alle Kartenzeilen gleich hoch bleiben */}
+                <div className="quests-list">
+                  {dailyQuests.map((quest) => (
+                    <DailyQuestCard
+                      key={quest.id}
+                      quest={quest}
+                      bump={bump}
+                      onClaim={() => {
+                        claimQuest(state, content, quest.id);
+                        setBump((b) => b + 1);
+                      }}
+                      onQueue={() => {
+                        enqueueDailyQuest(state, content, quest.id);
+                        setQueueMsg(null);
+                        setBump((b) => b + 1);
+                      }}
+                      onReroll={() => {
+                        // claude:2026-10-30T23:10:00+01:00 — gleiche Engine-Funktion wie im Laden; Ergebnis als Zeile in der Werkzeugleiste.
+                        const res = buyTokenService(state, content, "svc_daily_reroll", quest.id);
+                        setQueueMsg(
+                          res.ok
+                            ? t("quests.svc.done.dailyReroll").replace("{name}", res.questId ? tr(content.quests.find((q) => q.id === res.questId)?.name ?? { en: res.questId, de: res.questId }) : "")
+                            : t(`quests.svc.err.${res.reason ?? "unknown"}`),
+                        );
+                        setBump((b) => b + 1);
+                      }}
+                      t={t}
+                      tr={tr}
+                    />
+                  ))}
+                </div>
+                </div>
               </div>
             )}
           </>
         )}
 
         {/* Rewards Shop tab (Task #274/#284) — Offer-Karten, Kauf via buyTokenShopOffer. */}
-        {tab === "shop" && <RewardsShopPanel t={t} tr={tr} />}
+        {tab === "shop" && <RewardsShopPanel t={t} tr={tr} onChanged={() => setBump((b) => b + 1)} />}
         {/* claude:2026-10-25T01:30:00+02:00 — Arbeitsaufträge (1.4.0 AU) */}
         {tab === "orders" && <WorkOrdersTab />}
       </div>

@@ -19,6 +19,32 @@ export function bankCount(state: GameState, itemId: ItemId): number {
   return state.bank[itemId] ?? 0;
 }
 
+/**
+ * claude:2026-10-31T16:08:21+01:00 — 1.4.2 (Auto-Essen/Auto-Trank aus der Bank): Bestand eines Items über Inventar UND Lager (inkl.
+ * Materiallager, beides lebt in `state.bank`). Instanzen zählen nicht (Essen und Tränke sind fungibel). Rein lesend.
+ */
+export function stockCount(state: GameState, itemId: ItemId): number {
+  return itemCount(state.inventory, itemId) + (state.bank[itemId] ?? 0);
+}
+
+/**
+ * claude:2026-10-31T16:08:21+01:00 — 1.4.2: entnimmt bis zu `qty` Stück DIREKT aus dem Lager, ohne Umweg über das Inventar (Muster
+ * „Mahlzeit halten“/Handwerk: kein Inventarplatz nötig). Ein geleertes Fach bleibt leer stehen (`syncBankOrder` nullt es, rückt nichts
+ * nach). Rückgabe: tatsächlich entnommene Menge. Kein RNG.
+ */
+export function takeFromBank(state: GameState, content: ContentDB, itemId: ItemId, qty: number): number {
+  if (!Number.isFinite(qty) || qty <= 0) return 0;
+  const have = state.bank[itemId] ?? 0;
+  const take = Math.min(Math.floor(qty), have);
+  if (take <= 0) return 0;
+  if (have - take > 0) state.bank[itemId] = have - take;
+  else {
+    delete state.bank[itemId];
+    syncBankOrder(state, effectiveBankCapacity(state, content), storagePredicate(content));
+  }
+  return take;
+}
+
 /** Belegte Bank-Slots = Anzahl distinkter eingelagerter Item-Arten (nur mit echtem Bestand &gt;0). */
 export function bankSlotsUsed(state: GameState, content?: ContentDB): number {
   // claude:2026-10-23T21:50:00+02:00 — Materiallager (1.4.0 ML): mit `content` zählt Lagerware nicht als Bankplatz.

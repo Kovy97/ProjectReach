@@ -615,82 +615,108 @@
   color: var(--gold, #d8c06a);
 }
 
-/* Errungenschaften als Kacheln */
-.alg-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-2); }
+/* claude:2026-11-01T11:14:09+01:00 — Chef 01.11.: Karten statt Leisten. Taten = Trophäen-Karten im Eisenrahmen der
+   Hauptmenü-Karten (nav-bronze-lipped-iron, Basalt), Level = Medaillen-Karten mit Ring statt Balken (99er in Gold gefasst,
+   vorn), Narbenquellen = Siegel-Karten, Summe im Eisenrahmen. Weiterhin kein Leuchten. */
+.alg-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-2); }
 .alg-tile {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 2px;
-  padding: 8px 6px;
-  min-height: 62px;
+  justify-content: flex-start;
+  gap: 4px;
+  padding: 8px 6px 6px;
+  min-height: 118px;
   text-align: center;
-  background: linear-gradient(rgba(24, 18, 13, 0.82), rgba(12, 9, 7, 0.82));
-  border: 1px solid #3a2a1e;
-  box-shadow: inset 0 0 0 1px rgba(216, 192, 106, 0.06), 0 1px 4px rgba(0, 0, 0, 0.5);
+  border: 7px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+  background:
+    linear-gradient(rgba(9, 11, 13, 0.84), rgba(7, 9, 11, 0.94)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 420px 420px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55);
 }
-.alg-tile--skills99 { grid-column: span 2; }
-.alg-tile-value { font-family: var(--font-head); font-size: var(--fs-2xl); font-weight: 700; color: var(--text); line-height: 1.1; font-variant-numeric: tabular-nums; }
-.alg-tile-label { font-size: var(--fs-sm); color: var(--muted); line-height: 1.2; }
-.alg-tile.is-zero.is-in { opacity: 0.55; }
+.alg-tile-art { width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.75)); }
+.alg-tile-text { display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 0; }
+.alg-tile-value { font-family: var(--font-head); font-size: var(--fs-2xl); font-weight: 700; color: #f0e3bd; line-height: 1.05; text-shadow: 0 2px 3px #000; font-variant-numeric: tabular-nums; }
+.alg-tile-label { font-size: var(--fs-sm); color: #cfc6b0; line-height: 1.2; overflow-wrap: anywhere; }
+.alg-tile.is-landed .alg-tile-value { animation: alg-stamp 0.32s ease-out; }
+@keyframes alg-stamp {
+  0% { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+.alg.is-skipped .alg-tile-value { animation: none; }
+.alg-tile.is-zero.is-in { opacity: 0.5; }
+.alg-tile.is-zero .alg-tile-art { filter: grayscale(1) brightness(0.7); }
 .alg-tile.is-zero .alg-tile-value { color: var(--muted); }
-.alg-tile-icons { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; margin-top: 2px; }
-.alg-tile-icon { display: inline-flex; width: 20px; height: 20px; }
+.alg-tile-icons { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; }
+.alg-tile-icon { display: inline-flex; width: 18px; height: 18px; }
 
-/* Erreichte Stufen */
-.alg-skills { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 4px 10px; }
+/* Erreichte Level als Medaillen-Karten */
+.alg-skills { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 6px; }
 .alg-skill {
-  display: grid;
-  grid-template-columns: 18px minmax(0, 1fr) auto;
-  grid-template-areas: "icon name level" "bar bar bar";
-  align-items: center;
-  column-gap: 6px;
-  row-gap: 2px;
-}
-.alg-skill-icon { width: 18px; height: 18px; object-fit: contain; image-rendering: pixelated; grid-area: icon; }
-.alg-tile-icon .alg-skill-icon { width: 20px; height: 20px; }
-.alg-skill-emoji { font-size: var(--fs-xs); line-height: 18px; text-align: center; }
-.alg-skill-name { grid-area: name; font-size: var(--fs-sm); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.alg-skill-level { grid-area: level; font-family: var(--font-head); font-size: var(--fs-sm); color: var(--text); font-variant-numeric: tabular-nums; }
-.alg-skill.is-99 .alg-skill-level { color: var(--gold, #d8c06a); font-weight: 700; }
-.alg-skill-bar {
-  grid-area: bar;
   position: relative;
-  height: 5px;
-  background: #15100c;
-  border: 1px solid #2c2118;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 4px 6px;
+  min-width: 0;
+  text-align: center;
+  background: linear-gradient(rgba(18, 15, 11, 0.9), rgba(9, 8, 7, 0.94));
+  border: 1px solid #3a2c1f;
+  box-shadow: inset 0 1px 0 rgba(216, 192, 106, 0.08), 0 2px 6px rgba(0, 0, 0, 0.5);
 }
-.alg-skill-fill { display: block; height: 100%; background: linear-gradient(#8a7a52, #5f5336); }
-.alg-skill.is-99 .alg-skill-fill { background: linear-gradient(#c9b06a, #8f7a3c); }
-/* Kerbe am Balkenende: ein dunkler Schnitt mit hellem Rand, kein Schein. */
-.alg-skill-notch {
-  position: absolute;
-  right: 1px;
-  top: -3px;
-  bottom: -3px;
-  width: 3px;
-  background: #0b0806;
-  border-left: 1px solid #d8c06a;
-  border-right: 1px solid #6b5a30;
-  transform: skewX(-18deg);
+.alg-skill-medal {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #15110d 0 57%, transparent 59%),
+    conic-gradient(#a98f55 var(--fill, 0deg), #2a2119 0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
+.alg-skill-icon { width: 18px; height: 18px; object-fit: contain; image-rendering: pixelated; }
+.alg-skill-medal .alg-skill-icon { width: 28px; height: 28px; }
+.alg-tile-icon .alg-skill-icon { width: 18px; height: 18px; }
+.alg-skill-emoji { font-size: var(--fs-md); line-height: 28px; text-align: center; }
+.alg-skill-level { font-family: var(--font-head); font-size: var(--fs-xl); font-weight: 700; color: #ece3c8; line-height: 1; font-variant-numeric: tabular-nums; text-shadow: 0 1px 2px #000; }
+.alg-skill-name { font-size: var(--fs-xs); color: #bdb39c; line-height: 1.15; overflow-wrap: anywhere; hyphens: auto; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; } /* claude:2026-10-31T16:34:28+01:00 — RU-Fertigkeitsnamen umbrechen (2 Zeilen) statt zu kappen */
+.alg-skill.is-99 {
+  border-color: #a8873e;
+  background: linear-gradient(rgba(42, 32, 15, 0.94), rgba(16, 12, 7, 0.96));
+  box-shadow: inset 0 0 0 1px rgba(232, 199, 122, 0.3), 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+.alg-skill.is-99 .alg-skill-medal { background: radial-gradient(circle, #1c150c 0 57%, transparent 59%), conic-gradient(#e2c27a var(--fill, 0deg), #2a2119 0); }
+.alg-skill.is-99 .alg-skill-level { color: #e8c77a; }
+.alg-skill.is-99::before { content: "★"; position: absolute; top: 2px; right: 5px; font-size: 11px; color: #e8c77a; }
+.alg-skill.is-low.is-in { opacity: 0.55; }
 
-/* Narben-Aufschlüsselung */
-.alg-rows { display: flex; flex-direction: column; }
+/* Narbenquellen als Siegel-Karten */
+.alg-rows { display: flex; flex-direction: column; gap: 5px; }
 .alg-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: var(--sp-3);
-  padding: 6px var(--sp-2);
-  border-bottom: 1px solid rgba(216, 192, 106, 0.14);
+  padding: 7px 10px;
+  background: linear-gradient(90deg, rgba(28, 22, 15, 0.92), rgba(12, 10, 8, 0.9));
+  border: 1px solid #3a2c1f;
+  border-left: 3px solid #8f7a3c;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
   font-family: var(--font-head);
   font-size: var(--fs-md);
   color: var(--text);
 }
-.alg-row-value { color: var(--gold, #d8c06a); white-space: nowrap; font-variant-numeric: tabular-nums; }
-.alg-row--subtotal { border-top: 1px solid rgba(216, 192, 106, 0.4); border-bottom: 0; color: var(--muted); }
+.alg-row-label { min-width: 0; overflow-wrap: anywhere; }
+.alg-row-value { display: inline-flex; align-items: center; gap: 4px; color: var(--gold, #d8c06a); font-size: var(--fs-lg); font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.alg-row--subtotal,
+.alg-row--mult { background: none; border: 0; border-top: 1px dashed rgba(216, 192, 106, 0.3); box-shadow: none; padding: 4px 10px; color: var(--muted); font-size: var(--fs-sm); }
+.alg-row--subtotal .alg-row-value,
+.alg-row--mult .alg-row-value { font-size: var(--fs-md); font-weight: 400; }
 .alg-row--mult .alg-row-label { font-style: italic; }
 .alg-total {
   position: relative;
@@ -700,9 +726,13 @@
   gap: var(--sp-2);
   margin-top: var(--sp-2);
   padding: var(--sp-3) var(--sp-2);
-  border-top: 2px solid rgba(216, 192, 106, 0.5);
-  border-bottom: 2px solid rgba(216, 192, 106, 0.5);
-  background: linear-gradient(rgba(24, 18, 13, 0.7), rgba(12, 9, 7, 0.7));
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+  background:
+    linear-gradient(rgba(9, 11, 13, 0.82), rgba(7, 9, 11, 0.92)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 420px 420px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55);
 }
 .alg-total-value { font-family: var(--font-head); font-size: var(--fs-3xl); font-weight: 700; color: #e8c77a; text-shadow: 0 2px 4px #000; font-variant-numeric: tabular-nums; }
 .alg-note { margin: var(--sp-2) 0 0; font-size: var(--fs-md); line-height: 1.4; color: rgba(228, 218, 200, 0.85); font-style: italic; }
@@ -735,8 +765,14 @@
 @media (max-height: 800px) {
   .alg { gap: var(--sp-2); padding-top: var(--sp-3); padding-bottom: var(--sp-2); }
   .alg-title { font-size: var(--fs-xl); }
-  .alg-tile { min-height: 50px; padding: 5px 6px; }
+  .alg-tile { min-height: 88px; padding: 5px 4px 4px; gap: 2px; } /* claude:2026-11-01T11:14:09+01:00 — Karten kompakt für 1366x768 */
+  .alg-tile-art { width: 32px; height: 32px; }
   .alg-tile-value { font-size: var(--fs-xl); }
+  .alg-skills { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 4px; }
+  .alg-skill { padding: 5px 3px 4px; gap: 2px; }
+  .alg-skill-medal { width: 36px; height: 36px; }
+  .alg-skill-medal .alg-skill-icon { width: 22px; height: 22px; }
+  .alg-skill-level { font-size: var(--fs-lg); }
   .alg-row { padding: 4px var(--sp-2); }
   .alg-total { padding: var(--sp-2); }
   .alg-total-value { font-size: var(--fs-2xl); }
@@ -756,8 +792,11 @@
 @media (min-width: 1800px) and (min-height: 1000px) {
   .modal.prestige-bilanz { width: min(1340px, calc(100vw - 48px)); max-width: min(1340px, calc(100vw - 48px)); }
   .alg { gap: var(--sp-4); padding: var(--sp-5) var(--sp-6) var(--sp-4); }
-  .alg-tile { min-height: 78px; }
-  .alg-skills { grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 7px 14px; }
+  .alg-tile { min-height: 132px; } /* claude:2026-11-01T11:14:09+01:00 — Karten auf großen Bildschirmen */
+  .alg-tile-art { width: 56px; height: 56px; }
+  .alg-skills { grid-template-columns: repeat(auto-fill, minmax(98px, 1fr)); gap: 8px; }
+  .alg-skill-medal { width: 54px; height: 54px; }
+  .alg-skill-medal .alg-skill-icon { width: 32px; height: 32px; }
   .alg-row { padding: 8px var(--sp-2); }
 }
 
@@ -773,3 +812,263 @@
 .ash-notch--inline .ash-notch-cuts { height: 18px; gap: 3px; }
 .ash-notch--inline .ash-notch-cut { width: 4px; height: 16px; }
 .ash-notch--inline .ash-notch-num { font-size: var(--fs-sm, 14px); }
+
+/* ─── Narbenquellen (claude:2026-10-30T19:40:00+01:00, 1.4.2): jede Quelle mit Regel, Stand, Rest und Deckel ─── */
+/* claude:2026-11-01T11:42:05+01:00 — Chef 01.11.: Karten statt Leisten. Zahlende Quellen im Eisenrahmen der Hauptmenü-Karten
+   (nav-bronze-lipped-iron, Basalt) mit Narben-Siegel oben rechts und dem Stand groß in der Mitte; Quellen ohne Narben gedämpft,
+   Deckel als Stempel. Summe und Zeichen der Asche als eigene Karten. Kein Leuchten. */
+.prestige-src-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+  gap: var(--sp-2);
+}
+.prestige-src {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 8px 10px 9px;
+  border: 7px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+  background:
+    linear-gradient(rgba(9, 11, 13, 0.84), rgba(7, 9, 11, 0.94)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 420px 420px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+}
+.prestige-src.is-idle {
+  border-width: 1px;
+  border-image: none;
+  border-color: rgba(155, 112, 62, 0.3);
+  margin: 6px; /* gleiche Außenkante wie die gerahmten Karten */
+  opacity: 0.72;
+  box-shadow: none;
+}
+.prestige-src.is-idle .prestige-src-art { filter: grayscale(0.85) brightness(0.75); }
+.prestige-src-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+.prestige-src-art { width: 40px; height: 40px; object-fit: contain; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.75)); }
+.prestige-src-name {
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  line-height: 1.15;
+  color: #f3ead6;
+  overflow-wrap: anywhere;
+}
+.prestige-src-scars {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px 3px 7px;
+  border: 1px solid rgba(216, 192, 106, 0.55);
+  border-radius: 3px;
+  background: linear-gradient(rgba(52, 38, 16, 0.9), rgba(24, 17, 8, 0.95));
+  font-family: var(--font-head);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: #f0d58c;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.prestige-src.is-idle .prestige-src-scars { border-color: rgba(155, 112, 62, 0.35); background: rgba(12, 10, 8, 0.8); color: #a99a78; }
+.prestige-src-now {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0 6px;
+  padding: 4px 0 2px;
+  text-align: center;
+}
+.prestige-src-amount {
+  font-family: var(--font-head);
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  line-height: 1.05;
+  color: #f0e3bd;
+  text-shadow: 0 2px 3px #000;
+  font-variant-numeric: tabular-nums;
+}
+.prestige-src-amount--text { font-size: var(--fs-xl); }
+.prestige-src-unit { font-family: var(--font-head); font-size: var(--fs-sm); color: #cfc6b0; }
+.prestige-src-stand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  text-align: center;
+}
+.prestige-src-rule,
+.prestige-src-meta {
+  font-family: var(--font-body);
+  font-variant: normal;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.prestige-src-meta {
+  font-size: var(--fs-xs);
+  line-height: 1.3;
+  color: #c9b995;
+}
+.prestige-src-next { color: #e3d3a6; }
+.prestige-src-stamp {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid #c9a24e;
+  transform: rotate(-2deg);
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #f0d58c;
+  background: rgba(44, 31, 12, 0.85);
+}
+.prestige-src-rule {
+  margin: auto 0 0;
+  padding-top: 6px;
+  border-top: 1px solid rgba(216, 192, 106, 0.16);
+  font-size: var(--fs-xs);
+  line-height: 1.35;
+  color: #b9ae95;
+}
+.prestige-src-sums {
+  display: flex;
+  flex-direction: column;
+  max-width: 640px;
+  margin-top: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+  background:
+    linear-gradient(rgba(9, 11, 13, 0.84), rgba(7, 9, 11, 0.94)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 420px 420px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+}
+.prestige-src-sums .prestige-row--total .prestige-row-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-head);
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  color: #e8c77a;
+  text-shadow: 0 2px 3px #000;
+}
+.prestige-src-ash {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-1) var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid rgba(216, 192, 106, 0.4);
+  border-left: 3px solid #8f7a3c;
+  background: linear-gradient(90deg, rgba(28, 22, 15, 0.92), rgba(12, 10, 8, 0.9));
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
+}
+.prestige-src-ash .prestige-src-name { font-size: var(--fs-md); }
+.prestige-src-ash .prestige-src-rule { margin: 0; padding: 0; border: 0; font-size: var(--fs-sm); }
+.prestige-src-ash-now {
+  margin-left: auto;
+  font-family: var(--font-head);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: #f0d58c;
+}
+
+
+/* ─── claude:2026-10-31T14:58:54+01:00 — 1.4.2 Narben-Rückgabe und Nachzahlung (SAVE 102): Kasten ganz oben auf der Altar-Seite (PrestigePage
+   `RespecNotice`), bis „Verstanden“. Rahmen der Altar-Szene (panel-frame) aus dem Bestand, Basalt mit Glut von unten, Knöpfe
+   `.btn-iron` (Hauptknopf) und `.shop-citadel-btn` (Nebenknopf). ─── */
+.prestige-respec {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
+  border-style: solid;
+  border-color: transparent;
+  border-width: 11px;
+  border-image: url("../assets/ui/gravewood/v3/frames/panel-frame.webp") 48 / 11px;
+  background:
+    radial-gradient(ellipse at 50% 120%, rgba(226, 112, 38, 0.38), rgba(226, 112, 38, 0) 70%),
+    linear-gradient(rgba(10, 9, 8, 0.55), rgba(10, 9, 8, 0.78)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 480px repeat;
+  background-origin: border-box;
+  box-shadow: 0 0 18px rgba(226, 112, 38, 0.35), 0 6px 16px rgba(0, 0, 0, 0.6);
+}
+.prestige-respec-title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #ffd59a;
+  text-shadow: 0 1px 2px #000, 0 0 8px rgba(240, 140, 60, 0.5);
+}
+.prestige-respec-text {
+  margin: 0;
+  line-height: 1.45;
+  color: #eadfc8;
+}
+.prestige-respec-retro {
+  font-weight: 700;
+  color: #f2d593;
+}
+.prestige-respec-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-4);
+}
+.prestige-respec-group {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+.prestige-respec-group h4 {
+  margin: 0 0 4px;
+  font-family: var(--font-head);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--gold, #d8c06a);
+}
+.prestige-respec-group ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.prestige-respec-group li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  padding: 2px 8px;
+  background: rgba(0, 0, 0, 0.28);
+  border-left: 2px solid rgba(226, 112, 38, 0.6);
+}
+.prestige-respec-group li b {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #ffd59a;
+  white-space: nowrap;
+}
+.prestige-respec-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: center;
+}

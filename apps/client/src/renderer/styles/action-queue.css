@@ -1004,3 +1004,60 @@
 .queue-row-level {
   font-size: clamp(var(--fs-xs), calc(0.68vw * var(--text-scale)), max(calc(14px * var(--text-scale)), var(--fs-xs)));
 }
+
+/* claude:2026-10-31T16:34:28+01:00 — Ideen-Welle 1.4.2: Warteschlangen-Vorlagen (3 Plätze). */
+.queue-tpl { margin: 2px 0 6px; }
+.queue-tpl-toggle { width: 100%; text-align: left; }
+.queue-tpl-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.3);
+}
+.queue-tpl-slot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 6px;
+  min-width: 0;
+}
+.queue-tpl-name {
+  flex: 1 1 90px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-sm);
+  color: var(--text-dim, var(--text));
+}
+.queue-tpl-slot.filled .queue-tpl-name { color: var(--text); }
+.queue-tpl-actions { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.queue-tpl-edit { display: flex; flex: 1 1 100%; gap: 4px; min-width: 0; }
+.queue-tpl-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 3px 6px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.45);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--fs-sm);
+}
+.queue-tpl-btn {
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  background: rgba(30, 24, 16, 0.7);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+.queue-tpl-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
+.queue-tpl-btn:disabled { opacity: 0.45; cursor: default; }
+.queue-tpl-btn--danger:hover:not(:disabled) { border-color: #c2453a; color: #e8998f; }
+.queue-tpl-msg { font-size: var(--fs-sm); color: var(--gold); }
+.queue-panel-clear.queue-tpl-toggle { color: var(--gold); }

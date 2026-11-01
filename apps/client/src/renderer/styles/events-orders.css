@@ -43,115 +43,7 @@
   background: rgba(60, 40, 18, 0.85);
 }
 
-.work-orders {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  /* claude:2026-10-26T04:20:00+02:00 — Scroll-Vertrag der Contract-Wall (Eltern clippen, das Kind scrollt selbst; wie .quest-shelf-list).
-     Bei 1366×768 lagen die unteren Auftragskarten samt Knöpfen sonst unerreichbar unter dem Rahmen (QA-UI P1). */
-  min-height: 0;
-  overflow-y: auto;
-  scrollbar-gutter: stable;
-  padding-right: 4px;
-}
-.work-orders-lead,
-.work-orders-empty {
-  margin: 0;
-}
-.work-order {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 10px 12px;
-  background:
-    linear-gradient(rgba(14, 11, 8, 0.8), rgba(14, 11, 8, 0.88)),
-    url("../assets/bg_tileable_wood.webp") repeat;
-  background-size: auto, 256px;
-  border: 1px solid rgba(120, 92, 54, 0.55);
-}
-.work-order--offer {
-  border-color: rgba(224, 160, 90, 0.7);
-}
-.work-order--ready {
-  border-color: rgba(140, 190, 110, 0.6);
-}
-.work-order-badge {
-  font-family: var(--font-head);
-  color: #f0b46a;
-  letter-spacing: 0.04em;
-}
-.work-order-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-/* claude:2026-10-25T14:10:00+02:00 — Kunden-Büste (1122x1402) als schmales Hochformat neben dem Auftrags-Item */
-.work-order-portrait {
-  width: 48px;
-  height: 60px;
-  flex: none;
-  object-fit: cover;
-  object-position: top center;
-  border-radius: 3px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
-}
-.work-order-head .item-cell {
-  width: 56px;
-  height: 56px;
-  flex: none;
-}
-.work-order-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-  flex: 1;
-}
-.work-order-customer {
-  font-family: var(--font-head);
-  color: var(--gold, #d8c06a);
-}
-.work-order-line {
-  font-style: italic;
-}
-.work-order-reward {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-  white-space: nowrap;
-  color: #e2c27a;
-}
-.work-order-progress {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.work-order-bar {
-  flex: 1;
-  height: 8px;
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(216, 192, 106, 0.25);
-}
-.work-order-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #8a6a2c, #d8b45a);
-}
-.work-order-warn {
-  color: #e0a15a;
-}
-.work-order-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-}
-.work-order-abandon {
-  margin-right: auto;
-}
-.work-orders-msg {
-  margin: 0;
-  color: #b6d39a;
-}
+/* claude:2026-10-30T23:00:00+01:00 — Auftragskarten (.work-orders, .work-order, -head, -progress, -actions …) wohnen jetzt in quests.css (neues Kartensystem). */
 
 .skill-event-log-list {
   list-style: none;
@@ -182,18 +74,7 @@
   color: var(--gold, #d8c06a);
 }
 
-/* claude:2026-10-24T18:44:00+02:00 — W2 Gruppe D: Auftragskarten und Ereignis-Chips auf die Skala, Kundenbuste und Item groesser (Fliesstext in --font-body). */
-.work-orders-lead, .work-orders-empty { font-family: var(--font-body); font-size: var(--fs-md); line-height: 1.45; }
-.work-order { padding: 14px 16px; gap: 10px; }
-.work-order-portrait { width: clamp(60px, 4.6vw, 92px); height: clamp(75px, 5.75vw, 115px); }
-.work-order-head .item-cell { width: clamp(56px, 4.2vw, 84px); height: clamp(56px, 4.2vw, 84px); }
-.work-order-customer { font-size: var(--fs-md); }
-.work-order-line { font-family: var(--font-body); font-size: var(--fs-md); line-height: 1.35; }
-.work-order-reward { font-size: var(--fs-md); }
-.work-order-badge { font-size: var(--fs-sm); }
-.work-order-warn, .work-orders-msg { font-family: var(--font-body); font-size: var(--fs-sm); }
-.work-order-bar { height: 10px; }
-.work-order-progress { font-size: var(--fs-sm); }
+/* claude:2026-10-24T18:44:00+02:00 — W2 Gruppe D: Ereignis-Log auf die Skala (Auftragskarten: quests.css). */
 .skill-event-log-row { font-size: var(--fs-sm); }
 
 /* claude:2026-10-25T17:05:00+01:00 — Stufen der Arbeitsaufträge (1.4.1, Chef 25.10.2026): Rauten aus dem Talentbaum (.talent-pip, Bestand),
@@ -218,9 +99,6 @@
 }
 .work-order-tier--3 {
   color: #f0b46a;
-}
-.work-order--tier3 {
-  box-shadow: inset 4px 0 0 #b9924a;
 }
 .skill-event-chip .work-order-tier {
   font-size: inherit;

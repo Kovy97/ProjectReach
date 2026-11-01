@@ -1,0 +1,48 @@
+/* claude:2026-10-31T16:34:28+01:00 — Rückkehr-Fortschritt (1.4.2): schmale Eisenleiste oben mittig, sperrt keine Eingaben. */
+.catchup-overlay {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9000;
+  min-width: min(360px, calc(100vw - 32px));
+  padding: 10px 18px 12px;
+  box-sizing: border-box;
+  text-align: center;
+  background: var(--panel, #1e2329);
+  border: 1px solid var(--border-bright, #4d5963);
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.7), 0 6px 18px rgba(0, 0, 0, 0.55);
+  color: var(--text, #ccd5db);
+  pointer-events: none;
+}
+.catchup-title {
+  font-family: var(--font-display, "Cinzel", Georgia, serif);
+  font-size: var(--fs-md, 16px);
+  font-weight: 700;
+  color: var(--gold, #d8c06a);
+  letter-spacing: 0.03em;
+}
+.catchup-sub {
+  margin-top: 2px;
+  font-size: var(--fs-sm, 13px);
+  color: var(--muted, #79848c);
+}
+.catchup-bar {
+  margin-top: 8px;
+  height: 8px;
+  background: var(--slot, #0f1216);
+  border: 1px solid var(--border, #333c44);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.catchup-bar-fill {
+  height: 100%;
+  background: var(--accent, #9a8060);
+  transition: width 0.12s linear;
+}
+.catchup-pct {
+  margin-top: 4px;
+  font-size: var(--fs-xs, 12px);
+  color: var(--accent-2, #b39468);
+}

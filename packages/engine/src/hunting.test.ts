@@ -9,6 +9,7 @@ import {
   HUNT_LOOT_ROLLS_DOUBLED,
   HUNT_SLOT_LEVELS,
   HUNT_TRAP_SLOTS,
+  HUNT_TRAP_SLOTS_TOTAL,
   PET_SKILL_EFFECT_CAP,
   defaultHuntTraps, huntCatchXp, HUNT_FIRST_CATCH_MULT, HUNT_XP_PER_CATCH } from "@hearthforge/shared";
 import { content } from "@hearthforge/content";
@@ -95,7 +96,7 @@ describe("Jagen — Plätze & Katalog", () => {
   it("createGame startet mit HUNT_TRAP_SLOTS leeren Plätzen (Auto-Erneuern AN), Seq 0, Zähler 0", () => {
     const s = game(testContent());
     expect(s.huntTraps).toEqual(defaultHuntTraps());
-    expect(s.huntTraps).toHaveLength(HUNT_TRAP_SLOTS);
+    expect(s.huntTraps).toHaveLength(HUNT_TRAP_SLOTS_TOTAL); // claude:2026-10-30T18:44:00+01:00 — SAVE 99: Array 8 (Fallensteller), Stufen-Plätze bleiben ≤ HUNT_TRAP_SLOTS
     expect(s.huntCatchSeq).toBe(0);
     expect(s.stats.huntCatches).toBe(0);
   });

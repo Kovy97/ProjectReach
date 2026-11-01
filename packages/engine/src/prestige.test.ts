@@ -100,7 +100,7 @@ function ready(seed = 7): GameState {
   s.masteryCapes = { [SKILLS[0]!]: true };
   s.capeGranted = { [SKILLS[0]!]: true };
   s.capeCeremonySeen = { [SKILLS[0]!]: true };
-  s.settings = { autoBank: false, autoParagonAscend: true, estateNotifications: false, materialsToStorage: false, quiverAutoRefill: false, raidAutoContinue: true, raidAutoBuyRestart: true };
+  s.settings = { autoBank: false, autoParagonAscend: true, estateNotifications: false, materialsToStorage: false, quiverAutoRefill: false, raidAutoContinue: true, raidAutoBuyRestart: true, raidUseFeeWrit: true }; // claude:2026-10-30T22:28:00+01:00 — SAVE 100: Gebührenschein-Schalter
   s.thievingRisk = "bold";
   s.slayerPoints = 800;
   s.slayerTasksCompleted = 41;
@@ -212,7 +212,14 @@ describe("Punkte-Vorschau", () => {
     expect(p.fromParagon).toBe(
       Math.min(PRESTIGE_PARAGON_POINTS_CAP, Math.floor(37 / PRESTIGE_PARAGON_FLOOR_STEP) * PRESTIGE_POINTS_PER_PARAGON_STEP),
     );
-    expect(p.subtotal).toBe(p.fromBase + p.fromSkills + p.fromTotalLevel + p.fromChronicle + p.fromParagon);
+    // claude:2026-10-30T18:44:00+01:00 — 1.4.2: „je Sturz“ um Gold/Dungeons/Slayer/Raid erweitert, einmalige Quellen (Hauptbuch) kommen dazu.
+    expect(p.runSubtotal).toBe(
+      p.fromBase + p.fromSkills + p.fromTotalLevel + p.fromChronicle + p.fromParagon + p.fromGold + p.fromDungeons + p.fromSlayer + p.fromRaid,
+    );
+    expect(p.fromGold).toBe(4); // 1.234.567 Gold ⇒ 4 × 250.000
+    expect(p.onceTotal).toBe(p.fromPets + p.fromBestiary + p.fromAchievements + p.fromRaidFirst);
+    expect(p.fromPets).toBe(8); // zwei Begleiter, Hauptbuch leer (E2)
+    expect(p.subtotal).toBe(p.runSubtotal + p.onceTotal);
     expect(p.pointsMult).toBe(0);
     expect(p.total).toBe(p.subtotal);
   });
@@ -281,7 +288,10 @@ describe("Aufstieg", () => {
       count: 1,
       points: preview.total,
       pointsSpent: 0,
-      runStart: { kills: 4626, dungeons: 3, achievements: 5, pets: 2, slayerTasks: 41, activePlayMs: 8_000_000 },
+      runStart: { kills: 4626, dungeons: 3, achievements: 5, pets: 2, slayerTasks: 41, activePlayMs: 8_000_000, raidClears: { normal: 0, heroic: 0, mythic: 0 } },
+      // claude:2026-10-30T18:44:00+01:00 — SAVE 99: das Hauptbuch hält genau fest, was diese Gutschrift an einmaligen Quellen bezahlt hat.
+      paid: { pets: [PETS[0], PETS[1]], bestiary: preview.newBestiary, ap: Math.floor(preview.apOverPaid / 100) * 100, raids: [] },
+      respec142: null, // claude:2026-10-31T14:58:54+01:00 — SAVE 102: kein Rückgabe-Beleg, der Sturz reicht ihn nur durch
       history: [
         {
           count: 1,

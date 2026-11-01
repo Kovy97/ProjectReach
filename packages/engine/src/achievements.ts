@@ -368,6 +368,9 @@ export function achievementProgress(
       return farmPlotsPlanted(state);
     case "deaths":
       return state.stats.deaths;
+    // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10. („Heute nicht“): Siege mit höchstens 5 % Leben (combat.ts `onEnemyDefeated`).
+    case "close_wins":
+      return state.stats.closeWins ?? 0;
     case "play_hours":
       // Aktive Spielzeit (ohne Offline-Catch-up), volle Stunden. `activePlayMs` ist monoton (sanitize
       // klemmt nur nach oben auf elapsedMs) — ein Meilenstein kann also nie „zurückfallen".

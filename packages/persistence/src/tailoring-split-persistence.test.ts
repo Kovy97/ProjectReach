@@ -7,6 +7,10 @@ import { content } from "@hearthforge/content";
 import type { ActionDef, ContentDB, GameState } from "@hearthforge/shared";
 import { LEATHERWORKING_SKILL_ID, SAVE_VERSION, TAILORING_SKILL_ID, defaultPrestigeState } from "@hearthforge/shared";
 import { createGame, levelFromXp, xpForLevel, storagePredicate } from "@hearthforge/engine";
+import { erwarteSave99Flaechen } from "./save99-test-helper"; // claude:2026-10-30T19:01:00+01:00 — SAVE 99
+import { erwarteSave100Flaechen } from "./save100-test-helper"; // claude:2026-10-30T22:28:00+01:00 — SAVE 100
+import { erwarteSave101Flaechen } from "./save101-test-helper"; // claude:2026-10-31T11:46:28+01:00 — SAVE 101
+import { erwarteSave103Flaechen } from "./save103-test-helper"; // claude:2026-10-31T16:08:21+01:00 — SAVE 103
 import { deserialize, serialize, tailoringXpFromCraftLog } from "./index";
 
 /**
@@ -220,6 +224,10 @@ describe("v86-Fixture: Round-Trip mit geteiltem Handwerk", () => {
     erwartet.state.stats.producedBySkill = {}; // claude:2026-10-24T16:03:31+02:00 — SAVE 95 (Erzeugt je Skill, ohne offene Aufträge leer)
     erwartet.state.slayerAutoTask = false; // claude:2026-10-25T10:32:00+01:00 — SAVE 96 (1.4.1): Auto-Auftrag aus
     erwartet.state.inventory.variantCells = {}; // claude:2026-10-25T18:11:00+01:00 — SAVE 98: neues Feld, das Fixture hat keine reinen Variantengruppen
+    erwarteSave99Flaechen(erwartet.state); // claude:2026-10-30T19:01:00+01:00 — SAVE 99 (1.4.2): Beete 12, Fallen 8, Raid-Laufanker, leeres Hauptbuch
+    erwarteSave100Flaechen(erwartet.state); // claude:2026-10-30T22:28:00+01:00 — SAVE 100 (1.4.2): leeres Kaufbuch, Gebührenschein-Schalter aus
+    erwarteSave101Flaechen(erwartet.state); // claude:2026-10-31T11:46:28+01:00 — SAVE 101 (1.4.2): keine angepinnten Rezepte
+    erwarteSave103Flaechen(erwartet.state); // claude:2026-10-31T16:08:21+01:00 — SAVE 103 (1.4.2): drei leere Warteschlangen-Vorlagen
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });

@@ -1,5 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import type { PointerEvent as ReactPointerEvent } from "react";
+import { useState } from "react";
 import { content } from "@hearthforge/content";
 import { isEliteZoneHuntable } from "@hearthforge/engine";
 import type { GameState } from "@hearthforge/shared";
@@ -14,12 +13,12 @@ import {
   setEliteMiniCollapsed,
   setEliteMiniPos,
 } from "../util/uiPrefs";
+import { FLOATING_EDGE_MARGIN, useFloatingPanel } from "../util/useFloatingPanel"; // claude:2026-10-31T11:57:41+01:00 — gemeinsames Fenster-Verhalten (1.4.2)
 import "../styles/elite-mini-window.css";
 
 /** Muss mit `.emw-panel { width: … }` in elite-mini-window.css übereinstimmen — nur für die
  *  Default-Positionsberechnung (rechtsbündig unter der TopBar) beim allerersten Erscheinen. */
 const PANEL_WIDTH = 260;
-const EDGE_MARGIN = 8;
 
 const NO_ACTIVE = ["", "", 0] as const;
 
@@ -60,14 +59,7 @@ function defaultPos(): { x: number; y: number } {
   // (Rand-Handle, bis 256px) kann es einmalig überlappen — das Fenster ist frei verschiebbar,
   // die gewählte Position wird sofort persistiert. right:22px spiegelt .toast-stack (Toasts
   // sitzen unten-rechts, keine Kollision, s. Bericht).
-  return { x: Math.max(EDGE_MARGIN, window.innerWidth - PANEL_WIDTH - 22), y: 190 };
-}
-
-function clamp(pos: { x: number; y: number }, w: number, h: number): { x: number; y: number } {
-  return {
-    x: Math.min(Math.max(EDGE_MARGIN, pos.x), Math.max(EDGE_MARGIN, window.innerWidth - w - EDGE_MARGIN)),
-    y: Math.min(Math.max(EDGE_MARGIN, pos.y), Math.max(EDGE_MARGIN, window.innerHeight - h - EDGE_MARGIN)),
-  };
+  return { x: Math.max(FLOATING_EDGE_MARGIN, window.innerWidth - PANEL_WIDTH - 22), y: 190 };
 }
 
 /**
@@ -89,107 +81,14 @@ export function EliteMiniWindow(): JSX.Element | null {
   const [activeZoneId, activeVariantId, remainingMs] = useGameSelector(activeEliteSelector, tupleEquals);
   const [collapsed, setCollapsed] = useState(getEliteMiniCollapsed);
 
-  const panelRef = useRef<HTMLDivElement>(null);
-  const posRef = useRef<{ x: number; y: number } | null>(null);
-  const dragRef = useRef<{ startX: number; startY: number; startLeft: number; startTop: number; pointerId: number } | null>(null);
-  if (posRef.current === null) posRef.current = getEliteMiniPos() ?? defaultPos();
-
-  const applyPos = (pos: { x: number; y: number }): void => {
-    const el = panelRef.current;
-    if (!el) return;
-    el.style.left = `${pos.x}px`;
-    el.style.top = `${pos.y}px`;
-  };
-
-  // Position VOR dem ersten Paint anwenden (useLayoutEffect statt useEffect, Muster Sidebar-/
-  // TopBar-Rand-Handle) — sonst blitzt das Fenster kurz an der falschen Stelle auf. Läuft
-  // während eines aktiven Drags NICHT (der Drag-Handler bestimmt die Position dann selbst) —
-  // sonst würde der 10-Hz-Countdown-Re-Render (activeZoneId-Tupel ändert sich jeden Tick) die
-  // Zeile mitten im Ziehen auf die alte Position zurückreißen.
-  useLayoutEffect(() => {
-    if (dragRef.current) return;
-    applyPos(posRef.current!);
+  // claude:2026-10-31T11:57:41+01:00 — Positionierung, Drag (Window-Listener + blur), Klemmung und Persistenz liegen jetzt in
+  // util/useFloatingPanel.ts (unverändert herausgezogen, das Pin-Fenster nutzt dasselbe Muster). Verhalten wie bisher.
+  const { panelRef, handleDragStart } = useFloatingPanel({
+    readPos: getEliteMiniPos,
+    writePos: setEliteMiniPos,
+    defaultPos,
+    draggingClass: "emw-panel--dragging",
   });
-
-  // Defensive Re-Klemmung bei Fenstergröße-Änderung (Fenster kann seit dem letzten Speichern
-  // kleiner geworden sein).
-  useEffect(() => {
-    const onResize = (): void => {
-      if (dragRef.current || !panelRef.current) return;
-      const rect = panelRef.current.getBoundingClientRect();
-      const next = clamp({ x: rect.left, y: rect.top }, rect.width, rect.height);
-      posRef.current = next;
-      applyPos(next);
-    };
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
-  /* Chef-Bugfix 2026-07-24 („Fenster klebt manchmal an der Maus"): Vorher wurde die Pointer-
-     Capture auf dem PANEL gesetzt, während Move/Up-Handler auf dem HEADER lagen — nach der
-     Capture werden Events aufs Panel retargetet, wo kein Up-Handler lauscht: Loslassen außerhalb
-     des Headers ging verloren, der Drag blieb aktiv. Jetzt das robuste Muster der Sidebar-/
-     TopBar-Griffe: beim Start Window-Listener registrieren (move/up/cancel + blur für Alt-Tab),
-     beim Ende alle entfernen. Kein setPointerCapture nötig. */
-  const dragCleanupRef = useRef<(() => void) | null>(null);
-
-  const handleDragStart = (e: ReactPointerEvent<HTMLDivElement>): void => {
-    if (e.button !== 0) return;
-    if ((e.target as HTMLElement).closest("button")) return; // Einklapp-Button nicht als Drag werten
-    const el = panelRef.current;
-    if (!el || dragRef.current) return;
-    e.preventDefault();
-    const rect = el.getBoundingClientRect();
-    const drag = { startX: e.clientX, startY: e.clientY, startLeft: rect.left, startTop: rect.top, pointerId: e.pointerId };
-    dragRef.current = drag;
-
-    const removeListeners = (): void => {
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerup", onEnd);
-      window.removeEventListener("pointercancel", onEnd);
-      window.removeEventListener("blur", onBlur);
-      el.classList.remove("emw-panel--dragging");
-      dragRef.current = null;
-      dragCleanupRef.current = null;
-    };
-
-    const onMove = (ev: PointerEvent): void => {
-      if (ev.pointerId !== drag.pointerId) return;
-      el.style.left = `${drag.startLeft + (ev.clientX - drag.startX)}px`;
-      el.style.top = `${drag.startTop + (ev.clientY - drag.startY)}px`;
-    };
-
-    const onEnd = (ev: PointerEvent): void => {
-      if (ev.pointerId !== drag.pointerId) return;
-      removeListeners();
-      const r = el.getBoundingClientRect();
-      const next = clamp({ x: r.left, y: r.top }, r.width, r.height);
-      posRef.current = next;
-      applyPos(next);
-      setEliteMiniPos(next);
-    };
-
-    // Alt-Tab/Fokusverlust mitten im Zug: Drag sauber beenden und letzte Position übernehmen.
-    const onBlur = (): void => {
-      removeListeners();
-      const r = el.getBoundingClientRect();
-      const next = clamp({ x: r.left, y: r.top }, r.width, r.height);
-      posRef.current = next;
-      applyPos(next);
-      setEliteMiniPos(next);
-    };
-
-    dragCleanupRef.current = removeListeners;
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerup", onEnd);
-    window.addEventListener("pointercancel", onEnd);
-    window.addEventListener("blur", onBlur);
-    el.classList.add("emw-panel--dragging");
-  };
-
-  // Unmount mitten im Zug (Champion-Fenster läuft ab): nur Listener abräumen, KEINE Position
-  // persistieren — das Element ist dann ggf. schon aus dem DOM und würde (0,0) speichern.
-  useEffect(() => () => dragCleanupRef.current?.(), []);
 
   const handleToggleCollapsed = (): void => {
     setCollapsed((prev) => {

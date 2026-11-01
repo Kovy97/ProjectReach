@@ -1,39 +1,34 @@
 UPLOAD FERTIG
 =============
 
-Grim Reach 1.4.0 "Feather and Steel" liegt im Depot.
+Grim Reach 1.4.1 "The Hunt Goes On" liegt im Depot.
 
-  BuildID     26188629   (ersetzt 26058141 = 1.3.1)
-  Zeit        24.10.2026, 23:30 (steamcmd-Zeitstempel)
+  BuildID     26201820   (ersetzt 26188629 = 1.4.0)
+  Zeit        25.10.2026, 20:03 (steamcmd-Zeitstempel)
   Depot       4915451 (App 4915450)
-  Paket       apps/client/release/win-unpacked, Version 1.4.0
+  Paket       apps/client/release/win-unpacked, Version 1.4.1
   setlive     LEER - der Build ist NICHT live, das schaltest du in Steamworks
-  Git         main = Tag v1.4.0 (GitHub Kovy97/ProjectReach)
+  Git         main = Tag v1.4.1 = 2780d29 (GitHub Kovy97/ProjectReach), Branch update-1.4.1 gepusht
 
 Verifiziert ueber die steamcmd-Ausgabe:
-"Successfully finished AppID 4915450 build (BuildID 26188629)."
+"Successfully finished AppID 4915450 build (BuildID 26201820)."
 
 Vor dem Upload geprueft (auf genau diesem Stand):
-  Typecheck 5/5, Engine 2102 (24 uebersprungen), Content 483, Persistence 566 inkl. Save-Vault,
-  Client 275, Produktions-Build gruen. Im Paket nachgewiesen: Version 1.4.0, Renderer-JS und -CSS
-  bytegleich mit dem frischen Build, neue Bilder (Eingebung, Goettenstein-Ring, Pastures) und die
-  Fliesstext-Schrift enthalten. Abschlussmessung der Oberflaeche 1366x768 de/ru, Normal und Sehr gross:
-  kein Text unter 13 px, kein Ueberlauf. Assets 213/213.
-  SAVE_VERSION 95 (Migrationen v89 bis v95, alte Spielstaende im Vault getestet).
+  Typecheck 5/5, Engine 2188 (24 uebersprungen), Content 483, Persistence 598 inkl. Save-Vault
+  (neu: v98-synthetic-1.4.1), Client 305, Produktions-Build gruen. Im Paket nachgewiesen: Version 1.4.1,
+  Renderer-JS und -CSS bytegleich mit dem frischen Build, neue Knopf-Texturen und Rahmen enthalten.
+  SAVE_VERSION 98 (Migrationen v96 Slayer-Gutschrift, v97 gestufte Auftraege, v98 feste Variantenzellen).
 
 
 WAS DU NOCH TUN MUSST
 ---------------------
-1. Steamworks -> SteamPipe -> Builds -> Build 26188629 -> Branch "default" -> live setzen.
+1. Steamworks -> SteamPipe -> Builds -> Build 26201820 -> Branch "default" -> live setzen.
 2. Steam-Post veroeffentlichen (Englisch):
-   G:\GameDev\design\steam-post-1.4.0.txt
-   Die Zeilen [IMAGE: ...] durch die hochgeladenen Bilder ersetzen. Die Bilder liegen in
-   G:\GameDev\marketing\1.4.0-media\screenshots\
-3. Optional: Trailer v4 (EN und ZH) in marketing\trailer-v4\ fuer Store-Seite oder Post.
+   G:\GameDev\design\steam-post-1.4.1.txt
 
 
 HINWEISE FUER SPIELER (stehen auch im Post)
 -------------------------------------------
-- Beim ersten Laden ziehen Materialien aus der Bank ins neue Lager; die Bank rueckt einmal zusammen.
-- Bogen, Sehnen und Schnuere gehoeren jetzt zur neuen Fertigkeit Bognerei (Start bei Level 1).
-- Neue Option "Textgroesse" unter der Schriftwahl.
+- Wer Jaegerkodex-Raenge oder Turm-Unikate zum alten Preis gekauft hat, bekommt die Differenz beim ersten Laden gutgeschrieben.
+- Schon angenommene Arbeitsauftraege bleiben mit ihrem Lohn erhalten (als Stufe 2).
+- Variantenzellen im Inventar stehen nach dem ersten Laden genau dort, wo sie vorher angezeigt wurden.

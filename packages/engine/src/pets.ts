@@ -23,6 +23,7 @@ import {
 } from "@hearthforge/shared";
 import { nextFloat } from "./rng";
 import { talentEffect, talentEffectOwned } from "./talents";
+import { talentFoodHealBonus } from "./prestige-effects"; // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Glutblut
 
 /**
  * Pet-/Begleiter-System — reine, deterministische Helfer. Logic-Dev-Revier.
@@ -104,6 +105,8 @@ interface WeightedEffectTable {
   firstId: PetId | null;
   secondId: PetId | null;
   ownedCount: number;
+  /** claude:2026-10-30T18:42:00+01:00 — 1.4.2: Echo-Gewicht (Narbenbuch „Echo der Gefährten“) gehört zum Cache-Schlüssel. */
+  echo: number;
   entries: WeightedEffect[];
 }
 const weightedEffectCache = new WeakMap<ContentDB, WeakMap<object, WeightedEffectTable>>();
@@ -123,13 +126,14 @@ function weightedEffects(state: GameState, content: ContentDB): readonly Weighte
   for (const id in owned) if (owned[id]) ownedCount++;
   const firstId = first?.id ?? null;
   const secondId = second?.id ?? null;
+  const echo = petEchoFactor(state, content); // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Echo der Gefährten
   let byOwned = weightedEffectCache.get(content);
   if (!byOwned) {
     byOwned = new WeakMap();
     weightedEffectCache.set(content, byOwned);
   }
   const hit = byOwned.get(owned);
-  if (hit && hit.firstId === firstId && hit.secondId === secondId && hit.ownedCount === ownedCount) {
+  if (hit && hit.firstId === firstId && hit.secondId === secondId && hit.ownedCount === ownedCount && hit.echo === echo) {
     return hit.entries;
   }
   const entries: WeightedEffect[] = [];
@@ -140,10 +144,10 @@ function weightedEffects(state: GameState, content: ContentDB): readonly Weighte
     for (const id in owned) {
       if (!owned[id] || id === firstId || id === secondId) continue;
       const pet = pets[id];
-      if (pet) entries.push({ eff: pet.skillEffect, weight: PET_ECHO_FACTOR });
+      if (pet) entries.push({ eff: pet.skillEffect, weight: echo });
     }
   }
-  byOwned.set(owned, { firstId, secondId, ownedCount, entries });
+  byOwned.set(owned, { firstId, secondId, ownedCount, echo, entries });
   return entries;
 }
 
@@ -564,7 +568,9 @@ export function petSellBonus(state: GameState, content: ContentDB): number {
  * `foodHealBonus` (Aschbauch „Feinschmecker"). Exakt 1 ohne passenden Begleiter.
  */
 export function petFoodHealMult(state: GameState, content: ContentDB): number {
-  return 1 + globalValue(state, content, "foodHealBonus");
+  // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Glutblut (`foodHealPct`, Spec § 3): EINZIGER Essen-Heilfaktor (Leser combat.ts Auto-Essen und
+  // consumable.ts), daher hier additiv zum Begleiter-Anteil. Ohne Rang exakt der Alt-Wert.
+  return 1 + globalValue(state, content, "foodHealBonus") + talentFoodHealBonus(state, content);
 }
 
 /**
@@ -586,9 +592,21 @@ export function petWardCapacityPct(state: GameState, content: ContentDB): number
 /**
  * claude:2026-10-18T02:00:00+02:00 — Echo-Wert eines Begleiters für die Anzeige: sein gedeckelter
  * skillEffect-Wert × PET_ECHO_FACTOR (0 bei Kinds ohne Bruch-Wert).
+ * claude:2026-10-30T18:42:00+01:00 — 1.4.2: mit `state` + `content` gilt das Echo-Gewicht des Narbenbuchs (`petEchoFactor`).
  */
-export function petEchoValue(pet: PetDef): number {
-  return capSkill(pet.skillEffect.kind, pet.skillEffect.value ?? 0) * PET_ECHO_FACTOR;
+export function petEchoValue(pet: PetDef, state?: GameState, content?: ContentDB): number {
+  const factor = state && content ? petEchoFactor(state, content) : PET_ECHO_FACTOR;
+  return capSkill(pet.skillEffect.kind, pet.skillEffect.value ?? 0) * factor;
+}
+
+/**
+ * claude:2026-10-30T18:42:00+01:00 — 1.4.2 „Echo der Gefährten“ (Spec § 3): Gewicht nicht ausgerüsteter, besessener Begleiter. Narbenbuch
+ * `petEchoFactor` (0,35 / 0,5) ersetzt PET_ECHO_FACTOR (0,25), wenn größer; ohne Rang exakt PET_ECHO_FACTOR.
+ */
+export function petEchoFactor(state: GameState, content: ContentDB): number {
+  if (!state.talents) return PET_ECHO_FACTOR;
+  const v = talentEffect(state, content, "petEchoFactor");
+  return v > PET_ECHO_FACTOR ? Math.min(1, v) : PET_ECHO_FACTOR;
 }
 
 // ── Combat-Ability-API (combat-dev konsumiert NUR das) ──────────────────────
@@ -723,6 +741,39 @@ export function petPityProgress(
   return { count: state.petPity?.[pet.id] ?? 0, threshold: Math.ceil(factor / chance) };
 }
 
+/**
+ * claude:2026-10-30T22:28:00+01:00 — Belohnungsladen 1.4.2 „Begleiter-Fährte“ (L5): Vorschau, um wie viele Fehlwürfe der Pech-Schutz
+ * eines noch FEHLENDEN Begleiters vorgezogen würde: max(1, round(`pct` × Schwelle)), gedeckelt auf die Schwelle.
+ *  - `locked`          kein aktives Talent `petPity` („Spur aufgenommen“, Jägerkodex; ruht nach dem Sturz bis Slayer 85).
+ *  - `invalid_target`  unbekannter oder schon besessener Begleiter, oder einer ohne Drop-Chance.
+ *  - `no_effect`       Spur schon voll (der nächste passende Wurf ist ohnehin garantiert).
+ * Rein, kein RNG.
+ */
+export function petTrailPreview(
+  state: GameState,
+  content: ContentDB,
+  petId: PetId,
+  pct: number,
+): { ok: true; add: number; count: number; threshold: number } | { ok: false; reason: "locked" | "invalid_target" | "no_effect" } {
+  const pet = content.pets?.[petId];
+  if (!pet || state.character.ownedPets[petId]) return { ok: false, reason: "invalid_target" };
+  if (!(talentEffect(state, content, "petPity") > 0)) return { ok: false, reason: "locked" };
+  const pity = petPityProgress(state, content, pet);
+  if (!pity) return { ok: false, reason: "invalid_target" };
+  if (pity.count >= pity.threshold) return { ok: false, reason: "no_effect" };
+  const step = Math.max(1, Math.round(pity.threshold * (Number.isFinite(pct) && pct > 0 ? pct : 0)));
+  const add = Math.min(step, pity.threshold - pity.count);
+  return { ok: true, add, count: pity.count, threshold: pity.threshold };
+}
+
+/** claude:2026-10-30T22:28:00+01:00 — Schreibt die Fährte gut (s. `petTrailPreview`). Gibt die vorgezogenen Fehlwürfe zurück (0 = nichts). */
+export function addPetTrail(state: GameState, content: ContentDB, petId: PetId, pct: number): number {
+  const p = petTrailPreview(state, content, petId, pct);
+  if (!p.ok) return 0;
+  (state.petPity ??= {})[petId] = p.count + p.add;
+  return p.add;
+}
+
 // ── Rare-Drop-Mechanik (Skilling- UND Combat-Seite) ─────────────────────────
 
 /**
@@ -763,7 +814,14 @@ export function tryPetDrop(
     const src = pet.source;
     if (src.kind !== source.kind) continue;
     if (src.kind === "skill" && source.kind === "skill" && src.skill !== source.skill) continue;
-    if (src.kind === "combat" && source.kind === "combat" && src.style !== source.style) continue;
+    if (src.kind === "combat" && source.kind === "combat" && src.style !== source.style) {
+      // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Begleiter-Spur (E10, Spec § 4): ein Kill in einem ANDEREN Stil zählt den Pech-Schutz
+      // dieses Kampf-Begleiters um 1 weiter, nur mit Talent `petPity` und OHNE RNG-Zug (Wurfreihenfolge unverändert).
+      // Gedeckelt auf die Schwelle: ist die Spur voll, fällt er beim nächsten Kill im passenden Stil (Garantie unten).
+      const offPity = petPityProgress(state, content, pet);
+      if (offPity !== null && offPity.count < offPity.threshold) (state.petPity ??= {})[id] = offPity.count + 1;
+      continue;
+    }
 
     // claude:2026-10-18T00:30:00+02:00 — Talente: Chance ×(1+petChanceMult), Pech-Schutz-Garantie.
     // Der nextFloat wird IMMER gezogen (auch bei Garantie) → RNG-Folge unabhängig vom Zählerstand;

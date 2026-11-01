@@ -5,8 +5,12 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { ContentDB, GameState, HuntTrap, HuntZoneDef, ItemDef } from "@hearthforge/shared";
-import { TOOL_SLOTS, BAIT_ITEM_ID, HUNT_FIRST_CATCH_MULT, huntCatchXp, HUNTING_SKILL_ID, HUNT_TRAP_SLOTS, SAVE_VERSION, defaultHuntTraps, defaultPrestigeState, emptyEquipKit, emptyHuntTrap } from "@hearthforge/shared";
+import { TOOL_SLOTS, BAIT_ITEM_ID, HUNT_FIRST_CATCH_MULT, huntCatchXp, HUNTING_SKILL_ID, HUNT_TRAP_SLOTS_TOTAL, SAVE_VERSION, defaultHuntTraps, defaultPrestigeState, emptyEquipKit, emptyHuntTrap } from "@hearthforge/shared";
 import { addItem, advance, createGame, huntBaitCount, huntTrapWaiting, setHuntTrap, xpForLevel, storagePredicate } from "@hearthforge/engine";
+import { erwarteSave99Flaechen } from "./save99-test-helper"; // claude:2026-10-30T19:01:00+01:00 — SAVE 99
+import { erwarteSave100Flaechen } from "./save100-test-helper"; // claude:2026-10-30T22:28:00+01:00 — SAVE 100
+import { erwarteSave101Flaechen } from "./save101-test-helper"; // claude:2026-10-31T11:46:28+01:00 — SAVE 101
+import { erwarteSave103Flaechen } from "./save103-test-helper"; // claude:2026-10-31T16:08:21+01:00 — SAVE 103
 import { deserialize, serialize } from "./index";
 
 /**
@@ -146,6 +150,10 @@ describe("Migration v84 → v85 (Jagen)", () => {
     erwartet.state.stats.producedBySkill = {}; // claude:2026-10-24T16:03:31+02:00 — SAVE 95 (Erzeugt je Skill, ohne offene Aufträge leer)
     erwartet.state.slayerAutoTask = false; // claude:2026-10-25T10:32:00+01:00 — SAVE 96 (1.4.1): Auto-Auftrag aus
     erwartet.state.inventory.variantCells = {}; // claude:2026-10-25T18:11:00+01:00 — SAVE 98: neues Feld, das Fixture hat keine reinen Variantengruppen
+    erwarteSave99Flaechen(erwartet.state); // claude:2026-10-30T19:01:00+01:00 — SAVE 99 (1.4.2): Beete 12, Fallen 8, Raid-Laufanker, leeres Hauptbuch
+    erwarteSave100Flaechen(erwartet.state); // claude:2026-10-30T22:28:00+01:00 — SAVE 100 (1.4.2): leeres Kaufbuch, Gebührenschein-Schalter aus
+    erwarteSave101Flaechen(erwartet.state); // claude:2026-10-31T11:46:28+01:00 — SAVE 101 (1.4.2): keine angepinnten Rezepte
+    erwarteSave103Flaechen(erwartet.state); // claude:2026-10-31T16:08:21+01:00 — SAVE 103 (1.4.2): drei leere Warteschlangen-Vorlagen
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(withoutDiscovered(JSON.parse(serialize(s, raw.savedAt)) as SaveShape)).toEqual(withoutDiscovered(erwartet));
     const again = deserialize(serialize(s, raw.savedAt), content, raw.savedAt)!;
@@ -248,18 +256,19 @@ describe("Sanitize: huntTraps gegen den Content härten", () => {
     expect(t.stats.huntCatches).toBe(0);
   });
 
-  it("Länge exakt HUNT_TRAP_SLOTS: zu kurz aufgefüllt, zu lang gekappt, Müll-Einträge ⇒ leer, Flags strikt boolean", () => {
+  // claude:2026-10-30T19:01:00+01:00 — SAVE 99: die feste Länge ist jetzt HUNT_TRAP_SLOTS_TOTAL (6 Stufen-Plätze + 2 Fallensteller).
+  it("Länge exakt HUNT_TRAP_SLOTS_TOTAL: zu kurz aufgefüllt, zu lang gekappt, Müll-Einträge ⇒ leer, Flags strikt boolean", () => {
     const c = huntContent();
     const short = huntSave(c);
     short.state.huntTraps = short.state.huntTraps.slice(0, 2);
     const s = load(short, c);
-    expect(s.huntTraps).toHaveLength(HUNT_TRAP_SLOTS);
+    expect(s.huntTraps).toHaveLength(HUNT_TRAP_SLOTS_TOTAL);
     expect(s.huntTraps[0]!.zoneId).toBe("pastures");
-    for (let i = 2; i < HUNT_TRAP_SLOTS; i++) expect(s.huntTraps[i]).toEqual(emptyHuntTrap());
+    for (let i = 2; i < HUNT_TRAP_SLOTS_TOTAL; i++) expect(s.huntTraps[i]).toEqual(emptyHuntTrap());
 
     const long = huntSave(c);
     long.state.huntTraps = [...long.state.huntTraps, ...defaultHuntTraps(), ...defaultHuntTraps()];
-    expect(load(long, c).huntTraps).toHaveLength(HUNT_TRAP_SLOTS);
+    expect(load(long, c).huntTraps).toHaveLength(HUNT_TRAP_SLOTS_TOTAL);
 
     const junk = huntSave(c);
     (junk.state.huntTraps as unknown[])[2] = "kaputt";
@@ -356,7 +365,7 @@ describe("v85-Fixture: Round-Trip mit Jagd-Stand", () => {
     const result = deserialize(json, content, raw.savedAt)!;
     expect(result.offlineTicks).toBe(0);
     const s = result.state;
-    expect(s.huntTraps).toHaveLength(HUNT_TRAP_SLOTS);
+    expect(s.huntTraps).toHaveLength(HUNT_TRAP_SLOTS_TOTAL);
     expect(s.skills[HUNTING_SKILL_ID]!.xp).toBeGreaterThan(0);
     expect(s.huntCatchSeq).toBeGreaterThan(0);
     expect(s.stats.huntCatches).toBeGreaterThan(0);
@@ -408,6 +417,10 @@ describe("v85-Fixture: Round-Trip mit Jagd-Stand", () => {
     erwartet.state.stats.producedBySkill = {}; // claude:2026-10-24T16:03:31+02:00 — SAVE 95 (Erzeugt je Skill, ohne offene Aufträge leer)
     erwartet.state.slayerAutoTask = false; // claude:2026-10-25T10:32:00+01:00 — SAVE 96 (1.4.1): Auto-Auftrag aus
     erwartet.state.inventory.variantCells = {}; // claude:2026-10-25T18:11:00+01:00 — SAVE 98: neues Feld, das Fixture hat keine reinen Variantengruppen
+    erwarteSave99Flaechen(erwartet.state); // claude:2026-10-30T19:01:00+01:00 — SAVE 99 (1.4.2): Beete 12, Fallen 8, Raid-Laufanker, leeres Hauptbuch
+    erwarteSave100Flaechen(erwartet.state); // claude:2026-10-30T22:28:00+01:00 — SAVE 100 (1.4.2): leeres Kaufbuch, Gebührenschein-Schalter aus
+    erwarteSave101Flaechen(erwartet.state); // claude:2026-10-31T11:46:28+01:00 — SAVE 101 (1.4.2): keine angepinnten Rezepte
+    erwarteSave103Flaechen(erwartet.state); // claude:2026-10-31T16:08:21+01:00 — SAVE 103 (1.4.2): drei leere Warteschlangen-Vorlagen
     erwartet.state.bankOrder = (erwartet.state.bankOrder ?? []).filter((id): id is string => typeof id === "string" && !storagePredicate(content)(id));
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });

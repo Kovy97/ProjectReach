@@ -1,0 +1,115 @@
+=== TITEL ===
+Grim Reach 1.4.2 - A Queda das Cinzas renasce
+
+=== TEXT (BBCode) ===
+[p][img src="{STEAM_CLAN_IMAGE}/46199651/1b9c3fac87b3d39853654e888fdc93c0391c7070.png"][/img][/p][p]Caçadores, [/p][p]esta atualização reconstrói a Queda das Cinzas do zero, transforma a Loja de recompensas em algo pelo qual vale a pena economizar, dá ao jogo uma tela inicial de verdade e corrige uma longa lista de coisas que vocês relataram.   [/p][hr][/hr][p]
+[/p][h1]Mudanças na Queda das Cinzas[/h1][p]
+[/p][h2]Devolução de cicatrizes e o seu progresso[/h2][p]
+[/p][list][*][p][b]Todas as cicatrizes gastas são devolvidas.[/b] Como o Livro das Cicatrizes foi refeito, todas as cicatrizes que você já gastou voltam para você com esta atualização. Abra o Altar dos Fragmentos para gastá-las na nova árvore. Uma marca no botão do Altar dos Fragmentos lembra você disso até você dar uma olhada.
+[/p][/*][*][p][b]Quedas das Cinzas anteriores recebem recompensas retroativas.[/b] Já concluiu uma Queda das Cinzas antes da 1.4.2? Você recebe cicatrizes das novas fontes: o ouro que você carregava, as masmorras concluídas e as tarefas de Slayer cumpridas em cada jornada anterior, além dos seus companheiros, do seu progresso no bestiário, dos seus pontos de conquista e dos seus primeiros raides concluídos. Elas são entregues na hora, sem esperar a sua próxima Queda das Cinzas.
+[/p][/*][*][p][b]New Haven não é mais reiniciada.[/b] Tudo o que você construiu continua com você a cada Queda das Cinzas.
+[/p][/*][/list][p]
+[/p][h2]O novo Livro das Cicatrizes[/h2][p]
+O Livro das Cicatrizes agora oferece [b]24 dons em cinco ramos[/b]. Entre os novos:
+
+[/p][list][*][p][b]Noite longa:[/b] +2 / 4 / 6 / 8 horas de tempo offline, chegando a até 19 horas com a Torre de Vigia.
+[/p][/*][*][p][b]Mão treinada:[/b] Ações de coleta, fabricação e roubo levam até 12% menos tempo.
+[/p][/*][*][p][b]Brasas da maestria:[/b] Até +100% de XP de maestria.
+[/p][/*][*][p][b]Sangue de brasa:[/b] A comida cura até 30% a mais.
+[/p][/*][*][p][b]Olho atento:[/b] Drops raros de combate ficam até 15% mais prováveis.
+[/p][/*][*][p][b]Correio dos corvos, Armadilheiro, Celeiro de sementes e Mestre de obras:[/b] Mais encomendas, vagas extras de armadilha, até três canteiros a mais e obras mais rápidas em New Haven.
+[/p][/*][*][p][b]Contas acertadas e Trilha intacta:[/b] Você mantém o Auto-Comer, a poção automática e os espaços de banco, além de uma parte dos seus pontos de Slayer e das suas fichas de missão.
+[/p][/*][*][p][b]Eco dos companheiros:[/b] Companheiros que você não equipou repassam mais do bônus deles.
+[/p][/*][/list][p]
+Muitos dons que já existiam também ficaram mais fortes: mais ouro inicial, um Baú enterrado maior, mais peças com Herança, mais XP com Anos de aprendiz e Segunda natureza, e mais dano e vida.
+
+[/p][h2]Mais formas de ganhar cicatrizes[/h2][p]
+[/p][list][*][p][b]Muito mais do que níveis.[/b] Cada Queda das Cinzas agora também conta o ouro que você carrega, as masmorras concluídas, as tarefas de Slayer cumpridas e os raides concluídos.
+[/p][/*][*][p][b]Recompensas únicas por coleções.[/b] Cada companheiro que você tem, cada entrada completa do bestiário, cada 100 pontos de conquista e o seu primeiro raide concluído em cada dificuldade rendem cicatrizes na sua próxima Queda das Cinzas.
+[/p][/*][*][p][b]Um Altar dos Fragmentos mais claro.[/b] Cada fonte agora mostra o que você tem, quanto vale e quanto falta para a próxima cicatriz.
+[/p][/*][*][p][b]Sinal da Cinza.[/b] Cada Queda das Cinzas concluída dá +2% de XP de habilidade, até +20%. Não precisa de nenhum dom.
+[/p][/*][*][p][b]Crônica desta jornada.[/b] O resumo que recebe você depois de uma Queda das Cinzas agora mostra os seus feitos e níveis como cartas, com as suas habilidades de nível 99 na frente.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Loja de recompensas[/h1][p]
+A Loja de recompensas agora é uma página só, com [b]os itens à esquerda e os serviços à direita[/b]. Cada capítulo concluído traz itens novos, e você já pode ver o que os próximos capítulos vão desbloquear.
+
+[/p][h2]Novas formas de gastar fichas de missão[/h2][p]
+[/p][list][*][p][b]Sortear de novo uma missão diária:[/b] Troque uma carta de missão por outra da mesma dificuldade e recompensa. Custa 2 / 3 / 4 fichas, até três vezes por dia.
+[/p][/*][*][p][b]Chamar uma encomenda / Chamar uma grande encomenda:[/b] O cliente com a próxima encomenda desse nível aparece depois da sua próxima ação de coleta ou de artesanato. A loja também mostra quanto tempo ainda falta no cronômetro.
+[/p][/*][*][p][b]Lição:[/b] Ganhe o equivalente a 30 minutos de XP em Corte de Lenha, Mineração, Pesca, Coleta ou Roubo.
+[/p][/*][*][p][b]Lição de mestre:[/b] Ganhe o equivalente a uma hora de XP de maestria para uma ação à sua escolha.
+[/p][/*][*][p][b]Rastro de companheiro:[/b] Aproxima você de um companheiro que ainda falta, desde que você tenha o talento de Slayer necessário.
+[/p][/*][*][p][b]Vale de taxa:[/b] 25% de desconto na sua próxima taxa de raide. Disponível uma vez por semana, a partir do capítulo 20.
+[/p][/*][/list][p]
+[/p][h2]Desbloqueios e disponibilidade[/h2][p]
+[/p][list][*][p]A [b]Lição de mestre[/b] é desbloqueada no capítulo 4.
+[/p][/*][*][p][b]Chamar uma grande encomenda[/b] é desbloqueado no capítulo 9.
+[/p][/*][*][p]A [b]Marca de Contrato[/b] para tarefas de Slayer agora está disponível desde o início, e não só a partir do capítulo 20.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Missões diárias na fila[/h1][p]
+Vocês pediram: [b]"Enfileirar todas"[/b] adiciona todas as missões diárias abertas à sua fila de ações. Cada carta de missão também pode ser enfileirada sozinha.
+
+Se uma missão de fabricação precisar de materiais que você ainda não tem, as etapas de coleta necessárias entram automaticamente na fila antes dela.
+
+[/p][hr][/hr][p]
+[/p][h1]Um novo jeito de desmontar[/h1][p]
+A loja agora tem uma [b]aba Desmontar[/b] própria.
+
+[/p][list][*][p][b]Desmontagem rápida:[/b] Escolha o seu inventário, o banco ou ambos, selecione armas, armaduras ou joias e desmonte com um único clique todos os itens de uma raridade. Antes de confirmar, você vê exatamente o que vai receber.
+[/p][/*][*][p][b]Desmontagem em massa:[/b] Veja o seu inventário e o seu banco lado a lado, marque os itens que você quer desmontar e desmonte tudo de uma vez.
+[/p][/*][*][p][b]Proteção de itens:[/b] Itens travados, equipamento em uso e itens com runas ficam sempre de fora da desmontagem rápida. Itens com sufixo também ficam protegidos, a menos que você desative essa opção.
+[/p][/*][*][p][b]Resultados claros:[/b] Depois de cada desmontagem, um resumo mostra o que você recebeu e para onde foi.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Receitas fixadas[/h1][p]
+Toda carta de receita agora tem um [b]botão para fixar[/b]. As receitas fixadas aparecem numa janelinha que você pode mover e recolher.
+
+A janela mostra os ingredientes, quantas você consegue fabricar e botões para [b]começar a fabricar, colocar a receita na fila ou ir direto para a página dela[/b].
+
+[/p][hr][/hr][p]
+[/p][h1]Slayer[/h1][p]
+[/p][list][*][p][b]Tarefas automáticas não ficam mais para trás.[/b] Com "Obter a próxima tarefa automaticamente" ativado, uma tarefa nova entra na sua fila se o combate não puder mudar para ela na hora. Ela fica depois dos seus outros planos na fila, mas à frente de qualquer entrada infinita. Tarefas concluídas em masmorras, raides ou contra campeões seguem as mesmas regras.
+[/p][/*][*][p][b]Novas tentativas automáticas após uma derrota.[/b] Se você cair diante do monstro da sua tarefa atual, o seu herói tenta de novo após um breve descanso, desde que haja comida no espaço de Auto-Comer. Depois de três derrotas seguidas sem nenhum abate, o jogo para de tentar.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Qualidade de vida[/h1][p]
+[/p][list][*][p][b]Auto-Comer e poção automática usam o seu banco.[/b] Quando o inventário acaba, a comida e as poções saem do banco. Chega de cair de madrugada com a despensa cheia.
+[/p][/*][*][p][b]Estimativa de comida antes do combate.[/b] A preparação para o combate agora mostra quanto tempo a sua comida deve durar contra o alvo escolhido.
+[/p][/*][*][p][b]Cartas de monstro mais úteis.[/b] Veja o tempo por abate, os abates por hora e o XP por hora.
+[/p][/*][*][p][b]Modelos de fila.[/b] Salve até três filas e carregue-as de novo com um clique.
+[/p][/*][*][p][b]Relatórios de ausência melhores.[/b] O relatório agora mostra quando a sua fila esvaziou e quanto tempo ficou sem uso.
+[/p][/*][*][p][b]Volta mais suave a um jogo minimizado.[/b] O tempo fora agora é processado em etapas com uma barra de progresso, sem o breve congelamento ao voltar. Você também recebe o mesmo relatório de quando carrega o jogo.
+[/p][/*][*][p][b]Marcas de melhoria no equipamento.[/b] Uma pequena marca destaca itens no inventário e no banco que são melhores do que o que você usa naquele espaço. Dá para desativá-la nas opções.
+[/p][/*][*][p][b]Filtros de receitas e prévia de desbloqueios.[/b] As páginas de receitas podem mostrar só as receitas fabricáveis ou desbloqueadas, e mostram o que o seu próximo nível desbloqueia. As mensagens de subida de nível agora também listam as receitas recém-desbloqueadas.
+[/p][/*][*][p][b]Objetivos de missão clicáveis.[/b] Vá direto ao monstro ou à receita correspondente.
+[/p][/*][*][p][b]Notificações opcionais na área de trabalho.[/b] Receba um aviso quando o seu herói cair, a sua fila terminar ou uma tarefa de Slayer ou grande encomenda for concluída. Desligadas por padrão e ativas só enquanto o jogo está em segundo plano.
+[/p][/*][*][p][b]Requisitos do Altar dos Fragmentos.[/b] Antes de ficar disponível, o Altar dos Fragmentos aparece acinzentado na barra lateral e mostra o que falta para desbloqueá-lo.
+[/p][/*][*][p][b]Indicadores de saque da Lua de Sangue.[/b] Abates que renderam saque em dobro durante uma Lua de Sangue agora ficam marcados.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Uma tela inicial[/h1][p]
+[/p][list][*][p][b]Uma nova página Menu principal[/b] reúne o seu capítulo atual da crônica, a sua atividade recente, as suas missões diárias e os números mais importantes num relance.
+[/p][/*][*][p]O botão que leva você de volta à tela de título agora se chama [b]"Tela de título"[/b], então os dois não têm mais o mesmo nome.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Missões e conquistas[/h1][p]
+[/p][list][*][p]As páginas de missões têm cartas mais limpas e molduras mais finas.
+[/p][/*][*][p]A página de conquistas foi refeita, com as categorias à esquerda e um novo layout de cartas.
+[/p][/*][*][p]Sete conquistas que estavam ocultas agora estão visíveis: [b]Penas por toda parte, Cabeça-dura, Rei dos ratos, Rixa antiga, Provedor de exércitos, Cem horas no Confim[/b] e [b]Nove vezes[/b].
+[/p][/*][*][p][b]"Hoje não"[/b] não exige mais 100 mortes. Em vez disso, vença um combate com 5% de vida ou menos.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Correções[/h1][p]
+[/p][list][*][p]Uma Queda das Cinzas no mesmo dia zerava a sua sequência diária e entregava um segundo conjunto de missões diárias.
+[/p][/*][*][p]"Enfileirar todas" enfileirava ações de menos quando duas missões precisavam da mesma ação.
+[/p][/*][*][p]A confirmação de desmontagem podia abrir atrás de outra janela.
+[/p][/*][*][p]As runas de nível IV não mostravam o quinto ingrediente, o Pó de relíquia, e as quantidades ficavam cortadas em receitas com cinco ingredientes.
+[/p][/*][*][p]A trilha até um companheiro só contava abates no estilo de combate desse companheiro. Agora ela conta todos os abates, e o companheiro continua caindo só no próprio estilo.
+[/p][/*][*][p]Itens comprados não disparam mais o aviso "Achado raro".
+[/p][/*][*][p]Sortear de novo uma missão diária que já estava na fila agora avisa que as entradas dela continuam na fila.
+[/p][/*][*][p]Muitas correções menores de layout em 1366x768, formatos de número e textos em todos os idiomas.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[b]Obrigado por cada relato. Continuem mandando.[/b][/p]

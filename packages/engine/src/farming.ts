@@ -1,6 +1,6 @@
 import type { ContentDB, CropDef, FarmPlot, GameState, ItemId } from "@hearthforge/shared";
 import { rollEstateEvent } from "./events"; // claude:2026-10-24T23:35:00+02:00 — 1.4.0 EV
-import { CAMP_SPEED_CUT_CAP, plotsUnlocked } from "@hearthforge/shared";
+import { CAMP_SPEED_CUT_CAP, FARM_PLOTS_TALENT_MAX, FARM_PLOT_SLOTS, plotsUnlocked } from "@hearthforge/shared"; // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Saatkammer
 import { levelFromXp } from "./leveling";
 import { nextInt } from "./rng";
 import { addItemOrBank, itemCount } from "./inventory";
@@ -10,6 +10,7 @@ import { petGrowSpeed, tryPetDrop } from "./pets";
 import { masterCropSpeedBonus } from "./capes";
 import { campBoost } from "./camp";
 import { prestigeSkillXpMult } from "./prestige-effects"; // claude:2026-10-18T12:00:00+02:00 — Narbenbuch
+import { talentEffect } from "./talents"; // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Saatkammer
 
 // ───────────────────────────────────────────────────────────────────────────
 // Passives Plot-/Farming-System (design/skills/farming-plots-plan.md).
@@ -212,7 +213,7 @@ export function tickFarmPlots(state: GameState, content: ContentDB, windowMs = 0
   const plots = state.farmPlots;
   if (!Array.isArray(plots) || plots.length === 0) return;
 
-  const unlocked = plotsUnlocked(farmingLevel(state));
+  const unlocked = farmPlotsUnlocked(state, content);
   const windowStartMs = Math.max(0, state.elapsedMs - Math.max(0, windowMs));
 
   for (let i = 0; i < plots.length; i++) {
@@ -300,6 +301,18 @@ export function tickFarmPlots(state: GameState, content: ContentDB, windowMs = 0
 // Plot-API (UI-Lese-/Schreib-Funktionen — Mutationen NICHT in der UI rechnen)
 // ───────────────────────────────────────────────────────────────────────────
 
+/**
+ * claude:2026-10-30T18:42:00+01:00 — 1.4.2 Saatkammer (`farmPlotSlots`): freigeschaltete Beete = Stufen-Beete (`plotsUnlocked`, 3–9) plus
+ * Narbenbuch-Beete (höchstens FARM_PLOTS_TALENT_MAX), gedeckelt auf FARM_PLOT_SLOTS (12, Array-Länge). EINZIGE Quelle für
+ * Tick, Pflanzen, Planen, Wechseln und Anzeige; ohne Rang exakt `plotsUnlocked(level)`. Rein lesend.
+ */
+export function farmPlotsUnlocked(state: GameState, content: ContentDB): number {
+  const base = plotsUnlocked(farmingLevel(state));
+  if (!state.talents) return base;
+  const extra = Math.floor(Math.max(0, Math.min(FARM_PLOTS_TALENT_MAX, talentEffect(state, content, "farmPlotSlots"))));
+  return Math.min(FARM_PLOT_SLOTS, base + extra);
+}
+
 /** Gültiger, vorhandener Plot oder null. */
 function plotAt(state: GameState, plotIndex: number): FarmPlot | null {
   const plots = state.farmPlots;
@@ -320,7 +333,7 @@ export function plantCrop(
 ): boolean {
   const plot = plotAt(state, plotIndex);
   if (!plot) return false;
-  if (plotIndex >= plotsUnlocked(farmingLevel(state))) return false; // gesperrt
+  if (plotIndex >= farmPlotsUnlocked(state, content)) return false; // gesperrt
   if (plot.cropId !== null) return false; // belegt
   if (plot.readyYield > 0) return false; // erst abholbare Ernte einsammeln
   const c = crop(content, cropId);
@@ -372,7 +385,7 @@ export function setNextCrop(
     plot.nextCropId = null;
     return true;
   }
-  if (plotIndex >= plotsUnlocked(farmingLevel(state))) return false; // gesperrt
+  if (plotIndex >= farmPlotsUnlocked(state, content)) return false; // gesperrt
   if (plot.cropId === null) return false; // leeres Beet: dort pflanzt man direkt
   if (plot.cropId === cropId) return false; // nutzlos (== Auto-Nachpflanzen)
   const c = crop(content, cropId);
@@ -392,7 +405,7 @@ export function setNextCrop(
 export function switchToNextCrop(state: GameState, content: ContentDB, plotIndex: number): boolean {
   const plot = plotAt(state, plotIndex);
   if (!plot || plot.cropId === null || plot.nextCropId === null) return false;
-  if (plotIndex >= plotsUnlocked(farmingLevel(state))) return false;
+  if (plotIndex >= farmPlotsUnlocked(state, content)) return false;
   const next = crop(content, plot.nextCropId);
   if (!next || !canSow(state, next)) return false;
   if (!consumeSeed(state, next.seedItem)) return false;
@@ -448,7 +461,7 @@ function nextSeedMissing(state: GameState, content: ContentDB, plot: FarmPlot): 
 /** Berechnet die Anzeige-Werte eines Plots (rein, kein State-Mutieren). */
 export function plotProgress(state: GameState, content: ContentDB, plotIndex: number): PlotProgress {
   const plot = plotAt(state, plotIndex);
-  const locked = plotIndex >= plotsUnlocked(farmingLevel(state));
+  const locked = plotIndex >= farmPlotsUnlocked(state, content);
   if (!plot) {
     return { locked, growing: false, pct: 0, remainingMs: 0, ready: false, nextSeedMissing: false };
   }

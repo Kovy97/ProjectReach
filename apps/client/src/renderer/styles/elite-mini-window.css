@@ -15,7 +15,7 @@
 .emw-panel {
   position: fixed;
   width: 260px;
-  z-index: 900;
+  z-index: 120; /* claude:2026-10-31T13:58:00+01:00 — gleiche Ebene wie das Pin-Fenster: unter Dialogen (200) und Tooltips (500) */
   background:
     linear-gradient(rgba(14, 9, 4, 0.92), rgba(14, 9, 4, 0.92)),
     url("../assets/bg_black.webp") repeat;

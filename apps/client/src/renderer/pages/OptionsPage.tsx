@@ -6,6 +6,7 @@ import { useGameControl, useGameState } from "../game/GameContext";
 import { openBackupsFolder } from "../saves";
 import { AmbientEffectsPrefs, DisplayAudioPrefs, OptRow, OptSection, optBtnCls } from "../components/OptionControls";
 import { BugReportDialog } from "../components/BugReportDialog";
+import { isDesktopNotifyEnabled, isUpgradeMarkerEnabled, setDesktopNotifyEnabled, setUpgradeMarkerEnabled } from "../util/uiPrefs"; // claude:2026-10-31T16:34:28+01:00
 // codex:2026-08-01T13:30:36+02:00 — Options-Kategorien verwenden die skalierbare Ashen-Iron-
 // Iconfamilie; keine plattformabhängigen Emoji-Platzhalter mehr in dieser Seite.
 import iconBug from "../assets/ui/system-icons/bug.svg";
@@ -51,6 +52,9 @@ export function OptionsPage(): JSX.Element {
   // Report-Bug-Feature (Chef-Auftrag 2026-07-18, "ganz oben"-Button + wiederbelebter About-Button
   // teilen sich diese eine Dialog-Instanz — beide öffnen denselben Dialog).
   const [showBugReport, setShowBugReport] = useState(false);
+  // claude:2026-10-31T16:34:28+01:00 — Aufwertungs-Marker und Desktop-Benachrichtigungen (uiPrefs, Browser-Speicher).
+  const [upgradeMarkerOn, setUpgradeMarkerOn] = useState(isUpgradeMarkerEnabled);
+  const [desktopNotifyOn, setDesktopNotifyOn] = useState(isDesktopNotifyEnabled);
 
   const download = (): void => {
     const json = exportSave();
@@ -198,6 +202,28 @@ export function OptionsPage(): JSX.Element {
               {state.settings.raidAutoBuyRestart === true ? t("options.on") : t("options.off")}
             </button>
           </OptRow>
+          {/* claude:2026-10-31T16:34:28+01:00 — Aufwertungs-Marker ▲ (1.4.2, Standard an). */}
+          <OptRow label={t("options.upgradeMarker")} hint={t("options.upgradeMarkerHint")}>
+            <button
+              className={optBtnCls(upgradeMarkerOn)}
+              onClick={() => { setUpgradeMarkerEnabled(!upgradeMarkerOn); setUpgradeMarkerOn(!upgradeMarkerOn); }}
+            >
+              <img src={upgradeMarkerOn ? iconCheckboxOn : iconCheckboxOff} alt="" className="ui-icon" />{" "}
+              {upgradeMarkerOn ? t("options.on") : t("options.off")}
+            </button>
+          </OptRow>
+          {/* claude:2026-10-31T16:34:28+01:00 — Desktop-Benachrichtigungen (1.4.2, Opt-in, nur im Desktop-Spiel). */}
+          {!!window.hearthforge?.notify && (
+            <OptRow label={t("options.desktopNotify")} hint={t("options.desktopNotifyHint")}>
+              <button
+                className={optBtnCls(desktopNotifyOn)}
+                onClick={() => { setDesktopNotifyEnabled(!desktopNotifyOn); setDesktopNotifyOn(!desktopNotifyOn); }}
+              >
+                <img src={desktopNotifyOn ? iconCheckboxOn : iconCheckboxOff} alt="" className="ui-icon" />{" "}
+                {desktopNotifyOn ? t("options.on") : t("options.off")}
+              </button>
+            </OptRow>
+          )}
           <OptRow label={t("options.help")}>
             {/* Startet den Spotlight-Guide (OnboardingGuide.tsx) komplett neu von Schritt 0 —
                 löst den alten, event-basierten reopenOnboarding()-Aufruf ab (das 21-Schritt-Modal

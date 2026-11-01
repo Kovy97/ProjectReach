@@ -32,7 +32,7 @@ export function buildAutoAttachedRows(
   ];
   if (screenLabel) rows.push({ label: t("bugReport.autoAttached.screen"), value: screenLabel });
   if (state) {
-    rows.push({ label: t("bugReport.autoAttached.playtime"), value: formatPlaytime(state.activePlayMs) });
+    rows.push({ label: t("bugReport.autoAttached.playtime"), value: formatPlaytime(state.activePlayMs, t) });
     rows.push({ label: t("bugReport.autoAttached.character"), value: state.character.name });
     rows.push({ label: t("bugReport.autoAttached.totalLevel"), value: String(state.character.totalLevel) });
   }

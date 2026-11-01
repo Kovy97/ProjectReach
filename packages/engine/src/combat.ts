@@ -114,6 +114,7 @@ import {
   PET_FROSTBITE_FREEZE_EVERY,
   PET_POISON_SLOW_PCT,
   ARMOR_PEN_CAP, // claude:2026-10-25T05:40:00+02:00 — Offenes Zeughaus (1.4.0 Raid §7): Deckel bleibt
+  isCloseWin, // claude:2026-10-31T09:29:00+01:00 — knapper Sieg (≤ 5 % Leben) für `stats.closeWins`
 } from "@hearthforge/shared";
 import { nextFloat, nextInt } from "./rng";
 import { blessingChance, blessingMult, shrineAmplifiedMult } from "./blessing";
@@ -130,13 +131,14 @@ import { activeSetEffects, computeStats } from "./character";
 import { combatLevel } from "./dungeon";
 import { itemCount, removeItem } from "./inventory";
 import { grantLoot } from "./mail";
-import { applyConsumableBuff, tickMealKeep, useConsumable } from "./consumable";
-import { isHealPotion } from "./consume-gate";
+import { applyConsumableBuff, tickMealKeep, useConsumableFromStock } from "./consumable"; // claude:2026-10-31T16:08:21+01:00 — Auto-Trank „Inventar, sonst Lager“ (1.4.2)
+import { stockCount, takeFromBank } from "./bank"; // claude:2026-10-31T16:08:21+01:00 — Auto-Essen/Auto-Trank aus der Bank (1.4.2)
+import { isAutoEatFallbackFood, isHealPotion } from "./consume-gate"; // claude:2026-10-31T16:08:21+01:00 — + Ersatz-Essen-Filter (1.4.2)
 import { familyBestiaryComplete, markDropSeen } from "./drops";
 import { talentEffect } from "./talents";
 // claude:2026-10-18T12:00:00+02:00 — Narbenbuch (Prestige Welle B2, Auftrag Logic-Dev mit Revier engine/**):
 // XP-, Gold- und Schadensfaktoren; jeder ist ohne Ränge exakt 1 (bit-identisch).
-import { goldFindMult, prestigeSkillXpMult, talentDamageMult } from "./prestige-effects";
+import { goldFindMult, prestigeSkillXpMult, talentDamageMult, talentRareDropMult } from "./prestige-effects"; // claude:2026-10-30T19:30:00+01:00 — + Scharfer Blick (1.4.2)
 import {
   type ActivePetAbility,
   petCombatAbility,
@@ -150,7 +152,7 @@ import {
 // Etagen-Abschluss in onEnemyDefeated, Tod-Reset in onPlayerDefeated + Aufräum-Zeilen in
 // stopCombat/trackStalemate). Die gesamte Turm-Logik lebt in paragon.ts.
 import { onParagonFloorCleared, paragonCombatMonster, resetParagonOnDeath } from "./paragon";
-import { applySlayerAutoSwitch, canFightMonster, recordKillForSlayer } from "./slayer"; // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S1 Auto-Auftrag
+import { applySlayerAutoSwitch, canFightMonster, queueSlayerAutoTask, recordKillForSlayer } from "./slayer"; // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S1 Auto-Auftrag; claude:2026-10-31T12:30:41+01:00 — + Queue-Ende (1.4.2)
 import { tryCraftSuffix } from "./suffix";
 // Elite-/World-Spawns-Andockstellen (design/elite-spawns-concept.md, Phase 1 — logic-dev-Modul mit
 // EXPLIZITEM GRANT für die vier minimalen Aufrufstellen hier: Monster-Auflösung in combatStep,
@@ -200,19 +202,10 @@ export function findNextFood(state: GameState, content: ContentDB, maxHp: number
   let best: { id: ItemId; heal: number } | null = null;
   let bestCovers = false;
   const seen = new Set<ItemId>();
-  for (const slot of state.inventory.slots) {
-    const id = slot?.itemId;
-    if (!id || seen.has(id)) continue;
-    seen.add(id);
+  const consider = (id: ItemId): void => {
+    // claude:2026-10-31T16:08:21+01:00 — Filter unverändert, jetzt als gemeinsame Quelle (consume-gate.ts `isAutoEatFallbackFood`).
     const item = content.items[id];
-    if (
-      item?.type !== "consumable" ||
-      item.buff ||
-      ((item.healAmount ?? 0) <= 0 && (item.healPct ?? 0) <= 0) ||
-      isHealPotion(content, id)
-    ) {
-      continue;
-    }
+    if (!item || !isAutoEatFallbackFood(content, id)) return;
     const heal = consumableHeal(item, maxHp);
     const covers = heal >= need;
     if (
@@ -224,8 +217,23 @@ export function findNextFood(state: GameState, content: ContentDB, maxHp: number
       best = { id, heal };
       bestCovers = covers;
     }
+  };
+  for (const slot of state.inventory.slots) {
+    const id = slot?.itemId;
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    consider(id);
   }
-  return best?.id ?? null;
+  // claude:2026-10-31T16:08:21+01:00 — 1.4.2 (Chef-GO 31.10.: Auto-Essen zieht aus der Bank nach): erst, wenn im Inventar KEIN passendes
+  // Essen liegt, das Lager durchsuchen (dieselbe Passung). Gleichstand dort nach Item-Id statt Schlüssel-Reihenfolge, damit die Wahl nur
+  // vom Bestand abhängt (offline == online, auch nach Laden/Speichern). Instanzen zählen nicht (Essen ist fungibel).
+  if (best === null) {
+    const bankIds = Object.keys(state.bank)
+      .filter((id) => (state.bank[id] ?? 0) > 0)
+      .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+    for (const id of bankIds) consider(id);
+  }
+  return (best as { id: ItemId; heal: number } | null)?.id ?? null;
 }
 
 /** Isst automatisch gewähltes Essen, wenn die HP unter die Schwelle fallen. */
@@ -240,8 +248,10 @@ function tryAutoEat(state: GameState, content: ContentDB, maxHp: number): void {
   // verfügbares Food im Inventar wechseln (statt aufzuhören zu heilen → Tod). Ist keins mehr da,
   // Auswahl leeren (→ die UI zeigt dann kein „totes" Icon eines aufgebrauchten Foods). Nichts
   // gewählt (null) bleibt unverändert — der Spieler wählt bewusst.
+  // claude:2026-10-31T16:08:21+01:00 — 1.4.2 (Chef-GO 31.10.): „leer“ heißt jetzt Inventar UND Lager leer. Ist das gewählte Essen nur
+  // noch in der Bank, bleibt es gewählt und wird von dort gegessen (unten), statt auf ein anderes Inventar-Essen umzuspringen.
   let foodId = state.character.food;
-  if (foodId && itemCount(state.inventory, foodId) < 1) {
+  if (foodId && stockCount(state, foodId) < 1) {
     foodId = findNextFood(state, content, maxHp);
     state.character.food = foodId;
   }
@@ -256,7 +266,9 @@ function tryAutoEat(state: GameState, content: ContentDB, maxHp: number): void {
   // claude:2026-10-18T02:00:00+02:00 — Aschbauch „Feinschmecker" (foodHealBonus, 1.3.0): Essen heilt × (1 + Anteil).
   // Auto-Eat fasst nie Heiltränke an (findNextFood/selectFood); ohne Begleiter Faktor 1 ⇒ bit-identisch.
   const heal = Math.round(baseHeal * autoEatHealMult(tier) * petFoodHealMult(state, content));
-  removeItem(state.inventory, foodId, 1);
+  // claude:2026-10-31T16:08:21+01:00 — Inventar zuerst, sonst ein Stück direkt aus dem Lager (kein Inventarplatz nötig, Muster „Mahlzeit halten“).
+  if (itemCount(state.inventory, foodId) > 0) removeItem(state.inventory, foodId, 1);
+  else if (takeFromBank(state, content, foodId, 1) < 1) return;
   state.combat.autoEatCooldownMs = AUTO_EAT_COOLDOWN_MS;
   state.character.hp = Math.min(maxHp, state.character.hp + heal);
   // source "food" + itemId (Task #220): der Log/Floating-Text zeigt „geheilt durch <Essen>".
@@ -334,9 +346,11 @@ function tryAutoPotion(state: GameState, content: ContentDB, maxHp: number): voi
   // zählen ebenfalls als Heiltrank. Die eigentliche Heilung läuft über useConsumable (consumableHeal).
   const potItem = content.items[potionId];
   if (!potItem || ((potItem.healAmount ?? 0) <= 0 && (potItem.healPct ?? 0) <= 0)) return;
-  if (itemCount(state.inventory, potionId) < 1) return;
+  // claude:2026-10-31T16:08:21+01:00 — 1.4.2 (Chef-GO 31.10.): Bestand über Inventar UND Lager; der Verzehr nimmt das Inventar zuerst,
+  // sonst ein Stück aus der Bank (consumable.ts `useConsumableFromStock`, gleiche Wirkung und gleicher Takt wie `useConsumable`).
+  if (stockCount(state, potionId) < 1) return;
   const hpBefore = state.character.hp;
-  if (!useConsumable(state, content, potionId)) return;
+  if (!useConsumableFromStock(state, content, potionId)) return;
   state.combat.autoPotionCooldownMs = AUTO_POTION_COOLDOWN_MS;
   const healed = state.character.hp - hpBefore;
   if (healed > 0) {
@@ -507,6 +521,8 @@ export function startCombat(state: GameState, content: ContentDB, monsterId: Mon
     // Clear-Zeremonie-Vertrag (SAVE 83, s. CombatState.lastDungeonClear): eine Queue-Kette
     // Dungeon-Clear → Kampf-Eintrag startet im selben Tick — die Summary wandert mit.
     lastDungeonClear: state.combat.lastDungeonClear,
+    // claude:2026-10-31T13:00:41+01:00 — 1.4.2: Slayer-Neuversuch zählt Tode in Folge über den Neustart hinweg (slayer.ts).
+    slayerRetryDeaths: state.combat.slayerRetryDeaths,
   };
   // Ward-Init (Rüstungs-Trinität §1.4): der Stoff-Held startet jeden Kampf mit vollem Ward-Pool
   // (analog hp/mana). computeStats ist rein/deterministisch — der frische Wert deckt auch einen
@@ -575,6 +591,8 @@ export { isHealPotion } from "./consume-gate";
 /**
  * Alle Heiltränke im Inventar (Kandidaten für den UI-Trank-Picker), dedupliziert in
  * Inventar-Slot-Reihenfolge. Rein lesend, kein RNG.
+ * claude:2026-10-31T16:08:21+01:00 — 1.4.2: danach die Heiltränke aus dem Lager (der Auto-Trank trinkt sie jetzt auch von dort), in
+ * Content-Reihenfolge wie `bankList`; Inventar zuerst (Muster `eligibleMeals`).
  */
 export function eligibleHealPotions(state: GameState, content: ContentDB): ItemId[] {
   const seen = new Set<ItemId>();
@@ -585,7 +603,33 @@ export function eligibleHealPotions(state: GameState, content: ContentDB): ItemI
     seen.add(slot.itemId);
     out.push(slot.itemId);
   }
+  for (const id of Object.keys(content.items)) {
+    if (seen.has(id) || (state.bank[id] ?? 0) < 1 || !isHealPotion(content, id)) continue;
+    seen.add(id);
+    out.push(id);
+  }
   return out;
+}
+
+/**
+ * claude:2026-10-31T16:08:21+01:00 — 1.4.2: Kandidaten für den Essens-Picker (Auto-Essen-Platz): heilende Consumables ohne Heiltränke (die
+ * gehören in den Trank-Platz), mit Bestand in Inventar ODER Lager, in Content-Reihenfolge (Muster der bisherigen UI-Liste). Gültig für
+ * `selectFood`. Rein lesend.
+ */
+export function eligibleFoods(state: GameState, content: ContentDB): ItemId[] {
+  return Object.keys(content.items).filter((id) => {
+    const it = content.items[id]!;
+    if (it.type !== "consumable" || ((it.healAmount ?? 0) <= 0 && (it.healPct ?? 0) <= 0)) return false;
+    return !isHealPotion(content, id) && stockCount(state, id) > 0;
+  });
+}
+
+/**
+ * claude:2026-10-31T16:08:21+01:00 — 1.4.2: Vorrat, aus dem Auto-Essen und Auto-Trank schöpfen (Inventar + Lager). Für die Anzeige der
+ * Platz-Menge in der UI (statt nur `itemCount(inventory)`). Rein lesend.
+ */
+export function autoConsumeStock(state: GameState, itemId: ItemId | null | undefined): number {
+  return itemId ? stockCount(state, itemId) : 0;
 }
 
 /** Wählt den Auto-Heiltrank (null = aus). Analog selectFood: nur echte Heiltränke werden übernommen. */
@@ -1659,6 +1703,10 @@ function onEnemyDefeated(
   const overkill = Math.max(0, -cs.enemyHp);
   cs.kills++;
   state.stats.kills++;
+  // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10. („Heute nicht“): knapper Sieg = Leben nach dem tödlichen Treffer ≤ 5 %
+  // des Maximums. Gemessen VOR allem, was dieser Kill noch auslöst (Respawn, Dungeon-/Raid-Welle, Turm), damit Heilung durch den
+  // Abschluss nicht zählt. Gilt für jeden Kill-Pfad dieser Funktion (Zone, Champion, Dungeon, Raid, Turm). Reiner Vergleich, kein RNG.
+  if (isCloseWin(state.character.hp, stats.maxHp)) state.stats.closeWins = (state.stats.closeWins ?? 0) + 1;
   // Kill-Credit-Alias (Dungeon-Rework-Spec §5.1.4): `dg_*`-Dungeon-Varianten zählen auf die
   // Basis-Id (Kill-Zähler, Slayer-Credit, Collection-Log unten). Normale Monster: creditId = id.
   const creditId = killCreditMonsterId(content, monster.id);
@@ -1675,6 +1723,9 @@ function onEnemyDefeated(
   // claude:2026-10-25T10:32:00+01:00 — 1.4.1 S1: Abschluss merken (mit `slayerAutoTask` ist der nächste Auftrag dann
   // schon vergeben); der Kampfwechsel passiert unten NUR im Respawn-Zweig normaler Kämpfe.
   const slayerTaskDone = recordKillForSlayer(state, content, creditId);
+  // claude:2026-10-31T12:30:41+01:00 — 1.4.2: Dungeon-/Raid-, Champion- und Turmkämpfe wechseln nie auf das neue Auftragsziel
+  // (applySlayerAutoSwitch nur im Respawn normaler Kämpfe). Der automatisch vergebene Auftrag wartet dann am Queue-Ende.
+  if (slayerTaskDone && (cs.dungeonId !== null || cs.paragonFloor || cs.eliteVariantId)) queueSlayerAutoTask(state, content);
   const slayerXpGained = (state.skills.slayer?.xp ?? 0) - slayerXpBefore;
   if (slayerXpGained > 0) {
     const acc = (cs.encounterXp ??= {});
@@ -1755,7 +1806,9 @@ function onEnemyDefeated(
       // Auftragsmonsters; derselbe Draw, nur die Schwelle wächst (Champion-Unikate/Begleiter laufen
       // über eigene Würfe und bleiben unberührt). Ohne Talent ×1 ⇒ bit-identisch.
       const taskMult = taskRareBonus > 0 && roll.chance <= TALENT_RARE_DROP_MAX_BASE_CHANCE ? 1 + taskRareBonus : 1;
-      if (nextFloat(state.rng) <= Math.min(1, roll.chance * rareDropMult * lootChanceMult * taskMult)) {
+      // claude:2026-10-30T19:30:00+01:00 — Narbenbuch „Scharfer Blick“ (1.4.2): gleiche Schwelle, gleicher Wurf, nur seltene Einträge; ohne Rang ×1.
+      const keenMult = talentRareDropMult(state, content, roll.chance);
+      if (nextFloat(state.rng) <= Math.min(1, roll.chance * rareDropMult * lootChanceMult * taskMult * keenMult)) {
         let qty = nextInt(state.rng, roll.min, roll.max);
         // Drop-Suffix-Roll (Phase 2, #128 Abschluss — analog zum Craft-Pfad in tick.ts): jeder
         // gedroppte Equipment-Gegenstand kann einen WoW-Stil Random-Roll-Suffix bekommen. Chance:
@@ -3802,7 +3855,7 @@ function firePetAbility(
       // grantLoot die gesamte `qty` unterbringt, ist der Zugewinn genau `qty` (keine Suffix-Instanz hier).
       grantLoot(state, content, roll.itemId, qty);
       state.stats.itemsGathered += qty;
-      markDropSeen(state, monster.id, roll.itemId);
+      markDropSeen(state, killCreditMonsterId(content, monster.id), roll.itemId); // claude:2026-10-31T14:21:06+01:00 — Sweep A4: Dungeon-Zwilling zählt für die Basis (Bestiarium-Narbenquelle)
       pa.stolenThisEncounter = true; // claude:2026-10-18T02:00:00+02:00
       pushLog(cs, {
         by: "player",

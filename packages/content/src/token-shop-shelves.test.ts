@@ -47,9 +47,12 @@ describe("Token-Shop-Regale (#p13)", () => {
     "chronicle_idol_eye_ring",
     "chronicle_chronicler_signet",
   ]);
+  // claude:2026-10-30T22:28:00+01:00 — Belohnungsladen 1.4.2 (Chef-Entscheid L4 vom 30.10.2026): der Raid-Gebührenschein ist ABSICHTLICH
+  // nur im Laden erhältlich (1/Woche, 20 Marken), wie die Auftragsmarke. Er ist kein Material, er senkt nur eine Gold-Gebühr.
   const CHAPTER_MILESTONE_EXCLUSIVE_IDS = new Set([
     ...CHAPTER_MILESTONE_EQUIPMENT_IDS,
     "chronicle_task_token",
+    "raid_fee_writ",
   ]);
 
   it("genau 6 Regale, eindeutige IDs, aufsteigende sortOrder", () => {

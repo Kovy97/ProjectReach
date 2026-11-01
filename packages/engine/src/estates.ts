@@ -5,9 +5,7 @@
 // „Ländereien“ und die Kopfzeile („Nebenbei: 6 Felder, 4 Fallen“), damit das auch sichtbar wird.
 // Kein Spielstand, kein RNG, keine Mutation.
 import type { ContentDB, GameState } from "@hearthforge/shared";
-import { plotsUnlocked } from "@hearthforge/shared";
-import { levelFromXp } from "./leveling";
-import { plotProgress } from "./farming";
+import { farmPlotsUnlocked, plotProgress } from "./farming"; // claude:2026-10-30T18:42:00+01:00 — 1.4.2: Beete/Fallen samt Narbenbuch
 import { huntTrapSlots, huntTrapWaiting } from "./hunting";
 
 export interface EstateStatus {
@@ -32,7 +30,7 @@ export interface EstateStatus {
 }
 
 export function estateStatus(state: GameState, content: ContentDB): EstateStatus {
-  const unlocked = plotsUnlocked(levelFromXp(state.skills.farming?.xp ?? 0));
+  const unlocked = farmPlotsUnlocked(state, content); // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Saatkammer
   let growing = 0;
   let waiting = 0;
   let empty = 0;
@@ -50,7 +48,7 @@ export function estateStatus(state: GameState, content: ContentDB): EstateStatus
       empty++;
     }
   }
-  const trapsUnlocked = huntTrapSlots(state);
+  const trapsUnlocked = huntTrapSlots(state, content); // claude:2026-10-30T18:42:00+01:00 — 1.4.2 Fallensteller
   let running = 0;
   let trapsWaiting = 0;
   let nextCatch: number | null = null;

@@ -12,7 +12,10 @@
 }
 
 /* codex:2026-07-30T23:19:21+02:00 — Abwesenheitsdauer, Wächterbericht und Fertigkeitszeilen wechseln von Holz auf dunkles Leder. */
-#root :is(.offline-stage-duration, .ofs-warden, .ofs-skill-row) {
+/* claude:2026-11-01T11:28:16+01:00 — Chef 01.11.: Der Wächterbericht (.ofs-warden) liegt im Band .ofs-event-ribbon, das schon Rahmen
+   und Leder trägt; seine eigene zweite Lederfläche wirkte wie ein zweiter Rahmen. .ofs-warden ist jetzt durchsichtig. */
+#root .ofs-event-ribbon .ofs-warden { background: none !important; }
+#root :is(.offline-stage-duration, .ofs-skill-row) {
   background-color: #15110e !important;
   background-image: var(--gw-offline-leather) !important;
   background-position: center !important;

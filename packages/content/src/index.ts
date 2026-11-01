@@ -8490,6 +8490,19 @@ export const content: ContentDB = {
         de: "Eine gestempelte Marke, die Slayer gegen einen frischen Auftrag eintauschen. Würfelt deinen aktiven Slayer-Auftrag gratis neu, ohne deine Serie zu brechen.",
       },
     },
+    // claude:2026-10-30T22:28:00+01:00 — Belohnungsladen 1.4.2 (L4): Raid-Gebührenschein. Nur im Belohnungsladen (`ts_raid_writ_1`, 1/Woche);
+    // kein „Benutzen“, die Engine verbraucht ihn beim Raid-Start (engine/raid.ts `startRaid` mit `useFeeWrit`). Bild folgt (Asset-Liste).
+    raid_fee_writ: {
+      id: "raid_fee_writ",
+      name: { en: "Fee Writ", de: "Gebührenschein" },
+      icon: "📜",
+      type: "consumable", stackable: true, rarity: "rare", value: 15,
+      consumable: { kind: "raidFeeWrit" },
+      description: {
+        en: "A sealed writ that Voss credits toward a raid fee. Use it when you start a raid and you pay a quarter less.",
+        de: "Ein gesiegelter Schein, den Voss auf eine Raid-Gebühr anrechnet. Setzt du ihn beim Start eines Raids ein, zahlst du ein Viertel weniger.",
+      },
+    },
 
     // ════════════════════════════════════════════════════════════════════════
     // Stil-Parität 4a (Chef-GO 26.08.2026): 45 Spiegel-Uniques (design/stil-paritaet-2026-08-26.md
@@ -17155,7 +17168,9 @@ export const content: ContentDB = {
     // Achievements 1.2.0 (Chef-Entscheid 27.08.2026, design/achievements-1.2.0/audit.md § 2):
     // 537 → 311 Erfolge. Kill-Tripel (84 × 10/100/1000) → Zonen-Bestiarium + Bosse; Skill-
     // Leitern 10 → 5 Stufen (25/50/75/90/99); neue Erfolge für Slayer, Champions, New Haven, Runen,
-    // Meisterschaft, Chronik-Kapitel, Bestiarium; 12 versteckte (`hidden: true`, UI zeigt „???").
+    // Meisterschaft, Chronik-Kapitel, Bestiarium; versteckte (`hidden: true`, UI zeigt „???").
+    // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.2026: versteckt bleiben nur echte Überraschungen (12 → 5: Kapitel 20/21,
+    // Neunter Wächter, Asche zu Asche, Heute nicht). Die sieben Fleißaufgaben sind sichtbar; „Heute nicht“ = ein Sieg mit ≤ 5 % Leben.
     // Seltenheit nach Fokus-Stunden (§ 1.6): common < 15 min · uncommon < 2 h · rare 2–15 h ·
     // epic 15–60 h · legendary > 60 h oder Kalender ≥ 30 Tage. KEINE XP-Meilensteine (D2).
     // Behaltene IDs bleiben unverändert (Save + Steam-Mapping apps/client/src/main/steamAchievements.ts);
@@ -17347,10 +17362,10 @@ export const content: ContentDB = {
 
     // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Rasender Bulle)
     // -- Combat: versteckte Kill-Scherze (Audit § 2.6; Huhn/Stier/Ratte behalten ihre alten Ketten-IDs) --
-    { id: "ach_kills_chicken_1000", name: { en: "Feathers Everywhere", de: "Überall Federn" }, description: { en: "Defeat 1,000 chickens.", de: "Besiege 1.000 Hühner." }, category: "combat", rarity: "uncommon", hidden: true, condition: { type: "monster_kills", target: "chicken", count: 1000 } },
-    { id: "ach_kills_bull_boss_100", name: { en: "Bull-Headed", de: "Sturkopf" }, description: { en: "Defeat the Maddened Bull 100 times.", de: "Besiege den Rasenden Bullen 100-mal." }, category: "combat", rarity: "rare", hidden: true, condition: { type: "monster_kills", target: "bull_boss", count: 100 } },
-    { id: "ach_kills_rot_rat_1000", name: { en: "Rat King", de: "Rattenkönig" }, description: { en: "Defeat 1,000 Rot Rats.", de: "Besiege 1.000 Seuchenkratten." }, category: "combat", rarity: "rare", hidden: true, condition: { type: "monster_kills", target: "rot_rat", count: 1000 } },
-    { id: "ach_kills_goblin_warchief_100", name: { en: "Old Grudge", de: "Alte Rechnung" }, description: { en: "Defeat the Goblin Warchief 100 times.", de: "Besiege den Goblin-Kriegshäuptling 100-mal." }, category: "combat", rarity: "epic", hidden: true, condition: { type: "monster_kills", target: "goblin_warchief", count: 100 } },
+    { id: "ach_kills_chicken_1000", name: { en: "Feathers Everywhere", de: "Überall Federn" }, description: { en: "Defeat 1,000 chickens.", de: "Besiege 1.000 Hühner." }, category: "combat", rarity: "uncommon", condition: { type: "monster_kills", target: "chicken", count: 1000 } }, // claude:2026-10-31T09:29:00+01:00 — sichtbar (Chef-Entscheid 31.10.: Fleißaufgabe, keine Überraschung)
+    { id: "ach_kills_bull_boss_100", name: { en: "Bull-Headed", de: "Sturkopf" }, description: { en: "Defeat the Maddened Bull 100 times.", de: "Besiege den Rasenden Bullen 100-mal." }, category: "combat", rarity: "rare", condition: { type: "monster_kills", target: "bull_boss", count: 100 } }, // claude:2026-10-31T09:29:00+01:00 — sichtbar (Chef-Entscheid 31.10.: Fleißaufgabe, keine Überraschung)
+    { id: "ach_kills_rot_rat_1000", name: { en: "Rat King", de: "Rattenkönig" }, description: { en: "Defeat 1,000 Rot Rats.", de: "Besiege 1.000 Seuchenkratten." }, category: "combat", rarity: "rare", condition: { type: "monster_kills", target: "rot_rat", count: 1000 } }, // claude:2026-10-31T09:29:00+01:00 — sichtbar (Chef-Entscheid 31.10.: Fleißaufgabe, keine Überraschung)
+    { id: "ach_kills_goblin_warchief_100", name: { en: "Old Grudge", de: "Alte Rechnung" }, description: { en: "Defeat the Goblin Warchief 100 times.", de: "Besiege den Goblin-Kriegshäuptling 100-mal." }, category: "combat", rarity: "epic", condition: { type: "monster_kills", target: "goblin_warchief", count: 100 } }, // claude:2026-10-31T09:29:00+01:00 — sichtbar (Chef-Entscheid 31.10.: Fleißaufgabe, keine Überraschung)
 
     // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Kanon-Dungeonnamen, Durchläufe, exakte Zählung)
     // -- Combat: Dungeons (6 Leitern unverändert; Hinter dem Thron neu; Gesamt 3; erster/alle Dungeons neu) --
@@ -17398,7 +17413,7 @@ export const content: ContentDB = {
 
     // -- Combat: Tode (versteckt, Audit § 2.6) --
     { id: "ach_deaths_1", name: { en: "Ash to Ash", de: "Asche zu Asche" }, description: { en: "Fall in battle for the first time.", de: "Falle zum ersten Mal im Kampf." }, category: "combat", rarity: "common", hidden: true, condition: { type: "deaths", count: 1 } },
-    { id: "ach_deaths_100", name: { en: "Not Today", de: "Heute nicht" }, description: { en: "Fall in battle 100 times and keep going.", de: "Falle 100-mal im Kampf und mach trotzdem weiter." }, category: "combat", rarity: "rare", hidden: true, condition: { type: "deaths", count: 100 } },
+    { id: "ach_deaths_100", name: { en: "Not Today", de: "Heute nicht" }, description: { en: "Win a fight with 5% health or less.", de: "Gewinne einen Kampf mit höchstens 5 % Leben." }, category: "combat", rarity: "rare", hidden: true, condition: { type: "close_wins", count: 1 } }, // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.: ein Sieg mit ≤ 5 % Leben statt 100 Tode (ID bleibt, bleibt versteckt)
 
     // claude:2026-10-24T20:44:00+02:00 Textpass P5 (Zonen im Genitiv)
     // -- Exploration: Zonen-Bestiarium (je Zone: jedes Wesen ≥ 1 / ≥ 100; Fortschritt = kleinster Kill-Stand der Zone) --
@@ -17550,7 +17565,7 @@ export const content: ContentDB = {
     { id: "ach_craft_10000", name: { en: "Forge Lord", de: "Schmiede-Fürst" }, description: { en: "Craft 10,000 items.", de: "Stelle 10.000 Gegenstände her." }, icon: "🏭", category: "crafting", rarity: "epic", condition: { type: "items_crafted", count: 10000 } },
     { id: "ach_food_100", name: { en: "Field Kitchen", de: "Feldküche" }, description: { en: "Cook 100 portions.", de: "Koche 100 Portionen." }, icon: "🍳", category: "crafting", rarity: "common", condition: { type: "food_cooked", count: 100 } },
     { id: "ach_food_1000", name: { en: "Banquet Master", de: "Bankettmeister" }, description: { en: "Cook 1,000 portions.", de: "Koche 1.000 Portionen." }, icon: "🍲", category: "crafting", rarity: "rare", condition: { type: "food_cooked", count: 1000 } },
-    { id: "ach_food_10000", name: { en: "Feeder of Armies", de: "Heeresverpfleger" }, description: { en: "Cook 10,000 portions.", de: "Koche 10.000 Portionen." }, icon: "🍖", category: "crafting", rarity: "epic", hidden: true, condition: { type: "food_cooked", count: 10000 } },
+    { id: "ach_food_10000", name: { en: "Feeder of Armies", de: "Heeresverpfleger" }, description: { en: "Cook 10,000 portions.", de: "Koche 10.000 Portionen." }, icon: "🍖", category: "crafting", rarity: "epic", condition: { type: "food_cooked", count: 10000 } }, // claude:2026-10-31T09:29:00+01:00 — sichtbar (Chef-Entscheid 31.10.: Fleißaufgabe, keine Überraschung)
     { id: "ach_craft_godiron_sword", name: { en: "Godiron Edge", de: "Götzeneisen-Klinge" }, description: { en: "Forge a Godiron Sword.", de: "Schmiede ein Götzeneisen-Schwert." }, icon: "⚔", category: "crafting", rarity: "epic", condition: { type: "items_crafted", target: "godiron_sword", count: 1 } },
     { id: "ach_craft_voidweave_vestment", name: { en: "Woven from Nothing", de: "Aus dem Nichts gewebt" }, description: { en: "Weave a Voidweave Vestment.", de: "Webe ein Leerengewebe-Ornat." }, icon: "🧵", category: "crafting", rarity: "epic", condition: { type: "items_crafted", target: "voidweave_vestment", count: 1 } },
     { id: "ach_craft_voidhide_body", name: { en: "Skin of the Void", de: "Haut der Leere" }, description: { en: "Craft a Voidhide Cuirass.", de: "Fertige einen Leerenleder-Kürass." }, icon: "🧥", category: "crafting", rarity: "epic", condition: { type: "items_crafted", target: "voidhide_body", count: 1 } },
@@ -17574,10 +17589,10 @@ export const content: ContentDB = {
 
     // -- Meta: aktive Spielzeit (100 h versteckt, Steam A_HUNDRED_HOURS) + Neunfach (versteckt) --
     { id: "ach_play_hours_10", name: { en: "Ten Hours in the Reach", de: "Zehn Stunden im Reach" }, description: { en: "Play actively for 10 hours.", de: "Spiele 10 Stunden aktiv." }, icon: "⏳", category: "meta", rarity: "common", condition: { type: "play_hours", count: 10 } },
-    { id: "ach_play_hours_100", name: { en: "A Hundred Hours in the Reach", de: "Hundert Stunden im Reach" }, description: { en: "Play actively for 100 hours.", de: "Spiele 100 Stunden aktiv." }, icon: "⏳", category: "meta", rarity: "rare", hidden: true, condition: { type: "play_hours", count: 100 } },
+    { id: "ach_play_hours_100", name: { en: "A Hundred Hours in the Reach", de: "Hundert Stunden im Reach" }, description: { en: "Play actively for 100 hours.", de: "Spiele 100 Stunden aktiv." }, icon: "⏳", category: "meta", rarity: "rare", condition: { type: "play_hours", count: 100 } }, // claude:2026-10-31T09:29:00+01:00 — sichtbar (Chef-Entscheid 31.10.: Fleißaufgabe, keine Überraschung)
     { id: "ach_play_hours_500", name: { en: "Five Hundred Hours in the Reach", de: "Fünfhundert Stunden im Reach" }, description: { en: "Play actively for 500 hours.", de: "Spiele 500 Stunden aktiv." }, icon: "⏳", category: "meta", rarity: "epic", condition: { type: "play_hours", count: 500 } },
     { id: "ach_play_hours_1000", name: { en: "A Thousand Hours in the Reach", de: "Tausend Stunden im Reach" }, description: { en: "Play actively for 1,000 hours.", de: "Spiele 1.000 Stunden aktiv." }, icon: "⏳", category: "meta", rarity: "legendary", condition: { type: "play_hours", count: 1000 } },
-    { id: "ach_farm_ninefold", name: { en: "Ninefold", de: "Neunfach" }, description: { en: "Have all nine farm plots planted at once.", de: "Bepflanze alle neun Beete gleichzeitig." }, icon: "🌱", category: "meta", rarity: "rare", hidden: true, condition: { type: "farm_plots_planted", count: 9 } },
+    { id: "ach_farm_ninefold", name: { en: "Ninefold", de: "Neunfach" }, description: { en: "Have all nine farm plots planted at once.", de: "Bepflanze alle neun Beete gleichzeitig." }, icon: "🌱", category: "meta", rarity: "rare", condition: { type: "farm_plots_planted", count: 9 } }, // claude:2026-10-31T09:29:00+01:00 — sichtbar (Chef-Entscheid 31.10.: Fleißaufgabe, keine Überraschung)
   ],
   // Welle D2 (2026-07-13, ceo-run-2026-07-13, design/lore/aschechronik-spec.md §1): Story-Gates
   // (`requiresQuest`) — jede Zone (außer der ersten, `pastures`, und dem eigenständigen
@@ -20422,6 +20437,8 @@ export const content: ContentDB = {
     // Kapitel-Meilenstein (Chef-GO 02 26.08.2026): Ausrüstung im Token-Shop — die #13-Regel „kein
     // Equipment" ist für die 7 neuen chronicle_*-Items bewusst aufgehoben (s. token-shop-shelves.test.ts).
     { id: "ts_wanderers_seal_1",  itemId: "chronicle_wanderers_seal", qty: 1, tokenCost: 16, sortOrder: 95, shelfId: "shelf_open" }, // Kapitel-Meilenstein, idle Rider (lootChance 0.03), kein Kampfwert
+    // claude:2026-10-30T22:28:00+01:00 — Belohnungsladen 1.4.2 (L9): die Slayer-Auftragsmarke liegt jetzt im offenen Regal (bisher erst ab Kapitel 20), Slayer läuft ab Spielbeginn.
+    { id: "ts_task_token_1",      itemId: "chronicle_task_token",   qty: 1,  tokenCost: 3,  sortOrder: 97, shelfId: "shelf_open" }, // niedrig, mehrfach kaufbar: Slayer-Auftrags-Reroll ohne Punkteabzug/Serienbruch
 
     // ═══ Regal 1 „Aschfelder" (chronicle_04, ~L20-40, Herblore/Cooking/Farming-Bänder) ════════
     { id: "ts_ghostfin_pike_50",  itemId: "cooked_ghostfin_pike",   qty: 50, tokenCost: 8,  sortOrder: 110, shelfId: "shelf_ashfields" }, // Fishing L20, heal 6+6.5%
@@ -20484,7 +20501,63 @@ export const content: ContentDB = {
     // Kapitel-Meilensteine (Chef-GO 02 26.08.2026): Chase-Ring des Ladens + mehrfach kaufbare
     // Verbrauchsmarke (Slayer-Auftrags-Reroll, Engine-Kind `slayerReroll` von logic-dev parallel).
     { id: "ts_chronicler_signet_1", itemId: "chronicle_chronicler_signet", qty: 1, tokenCost: 20, sortOrder: 535, shelfId: "shelf_second_volume" }, // Chase des Ladens, idle Rider (+8% Kampf-XP, con3/lck3), kein Kampf-Skill-Boost
-    { id: "ts_task_token_1",      itemId: "chronicle_task_token",   qty: 1,  tokenCost: 3,  sortOrder: 540, shelfId: "shelf_second_volume" }, // niedrig, mehrfach kaufbar — Slayer-Auftrags-Reroll ohne Punkteabzug/Serienbruch
+    // claude:2026-10-30T22:28:00+01:00 — Belohnungsladen 1.4.2 (L4): Raid-Gebührenschein, −25 % auf eine Raid-Gebühr, höchstens einer je Woche.
+    { id: "ts_raid_writ_1",       itemId: "raid_fee_writ",          qty: 1,  tokenCost: 20, sortOrder: 545, shelfId: "shelf_second_volume", limitPerWeek: 1 },
+  ],
+
+  // ── Belohnungsladen 1.4.2: Dienste mit Sofortwirkung (Chef-Entscheide L1–L10 vom 30.10.2026) ──────────────────
+  // claude:2026-10-30T22:28:00+01:00 — Tabelle design/1.4.2-belohnungsladen-plan.md § 4.1 ohne Lagerschein (L8). Lehrstunde nur für die fünf
+  // Sammel-Fertigkeiten (L3), Begleiter-Fährte nur mit Talent „Spur aufgenommen“ (L5). Grenzen über das Kaufbuch (SAVE 100, L2).
+  // Engine: packages/engine/src/token-services.ts. Texte es/fr/pt-BR/ru/zh im Overlay (`tokenServices:<id>:name|description`).
+  tokenServices: [
+    {
+      id: "svc_daily_reroll", kind: "dailyReroll", tokenCost: 2, tokenCostSteps: [2, 3, 4], limitPerDay: 3, shelfId: "shelf_open", sortOrder: 10,
+      name: { en: "Reroll a Daily Quest", de: "Tagesaufgabe neu würfeln" },
+      description: {
+        en: "Trade one open daily quest for another of the same difficulty and reward. Each further roll on the same day costs more.",
+        de: "Tauscht eine offene Tagesaufgabe gegen eine andere derselben Schwierigkeit und Belohnung. Jeder weitere Wurf am selben Tag kostet mehr.",
+      },
+    },
+    {
+      id: "svc_order_call_2", kind: "orderCall", tier: 2, tokenCost: 4, limitPerDay: 2, shelfId: "shelf_open", sortOrder: 20,
+      name: { en: "Call an Order", de: "Auftrag rufen" },
+      description: {
+        en: "A customer with an order turns up after your next task in a gathering or crafting skill. The work itself is still yours to do.",
+        de: "Nach deiner nächsten Arbeit in einem Sammel- oder Handwerksberuf meldet sich ein Kunde mit einem Auftrag. Die Arbeit erledigst du weiterhin selbst.",
+      },
+    },
+    {
+      id: "svc_skill_lesson", kind: "skillLesson", minutes: 30, skills: ["woodcutting", "mining", "fishing", "foraging", "thieving"], tokenCost: 6, limitPerWeek: 7, shelfId: "shelf_open", sortOrder: 30,
+      name: { en: "Lesson", de: "Lehrstunde" },
+      description: {
+        en: "Half an hour with a master of the trade. Grants the experience of 30 minutes at your best action in woodcutting, mining, fishing, foraging or thieving. Skills at level 99 learn nothing more here.",
+        de: "Eine halbe Stunde bei einem Meister des Fachs. Gibt die Erfahrung von 30 Minuten deiner besten Aktion in Holzfällen, Bergbau, Angeln, Sammeln oder Diebeskunst. Fertigkeiten auf Stufe 99 lernen hier nichts mehr.",
+      },
+    },
+    {
+      id: "svc_mastery_lesson", kind: "masteryLesson", minutes: 60, tokenCost: 4, limitPerWeek: 7, shelfId: "shelf_ashfields", sortOrder: 40,
+      name: { en: "Master's Lesson", de: "Meisterlehre" },
+      description: {
+        en: "A master shows you the finer points of one action. Grants the mastery experience of an hour spent on it.",
+        de: "Ein Meister zeigt dir die Feinheiten einer Aktion. Gibt die Meisterschafts-Erfahrung einer Stunde an dieser Aktion.",
+      },
+    },
+    {
+      id: "svc_order_call_3", kind: "orderCall", tier: 3, tokenCost: 12, limitPerWeek: 2, shelfId: "shelf_crypt", sortOrder: 50,
+      name: { en: "Call a Large Order", de: "Großauftrag rufen" },
+      description: {
+        en: "A customer with a large order turns up after your next task in a gathering or crafting skill. Large orders always pay out a workshop crate.",
+        de: "Nach deiner nächsten Arbeit in einem Sammel- oder Handwerksberuf meldet sich ein Kunde mit einem Großauftrag. Großaufträge bringen immer eine Werkstattkiste.",
+      },
+    },
+    {
+      id: "svc_pet_trail", kind: "petTrail", pct: 0.05, requiresTalentEffect: "petPity", tokenCost: 15, limitPerWeek: 1, shelfId: "shelf_open", sortOrder: 60,
+      name: { en: "Companion's Trail", de: "Begleiter-Fährte" },
+      description: {
+        en: "A tracker shows you the trail of a companion you are still missing. Its trail grows at once by 5% of the full bar. Requires the talent On the Trail.",
+        de: "Ein Fährtenleser zeigt dir die Spur eines Begleiters, der dir noch fehlt. Seine Spur wächst sofort um 5 % des vollen Balkens. Braucht das Talent „Spur aufgenommen“.",
+      },
+    },
   ],
 
   // ── Begleiter-Pets (Pet-/Companion-System, ZWEI-EFFEKT-MODELL) ─────────────

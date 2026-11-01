@@ -140,6 +140,8 @@
 @import "./ui14-rahmen.css";
 /* claude:2026-10-24T18:30:00+02:00 — Typografie-Schicht (Fließtext-Schrift), bewusst ZULETZT: s. typography.css. */
 @import "./typography.css";
+/* claude:2026-11-01T12:25:08+01:00 — Painterly-Look 1.4.2 (fest eingebaute Werkstatt-Gestaltung des Chefs), bewusst nach allem. */
+@import "./painterly-142.css";
 
 /* Dev-Zeitraffer: Knopf für die Offline-Demo (Chef-Auftrag 31.08.2026). Bewusst schlicht und
    klar vom Zurücksetzen-Knopf getrennt — das Panel ist ein Werkzeug, kein Spielelement. */

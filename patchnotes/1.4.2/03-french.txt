@@ -1,0 +1,115 @@
+=== TITEL ===
+Grim Reach 1.4.2 - La Chute des Cendres renaît
+
+=== TEXT (BBCode) ===
+[p][img src="{STEAM_CLAN_IMAGE}/46199651/1b9c3fac87b3d39853654e888fdc93c0391c7070.png"][/img][/p][p]Chasseurs, [/p][p]cette mise à jour reconstruit entièrement la Chute des Cendres, fait de la Boutique de récompenses un endroit où il vaut la peine d'économiser, donne au jeu un vrai écran d'accueil et corrige une longue liste de problèmes que vous nous avez signalés.   [/p][hr][/hr][p]
+[/p][h1]Changements de la Chute des Cendres[/h1][p]
+[/p][h2]Cicatrices rendues et ta progression[/h2][p]
+[/p][list][*][p][b]Toutes les cicatrices dépensées te sont rendues.[/b] Comme le Livre des Cicatrices a été refait, chaque cicatrice que tu avais dépensée t'est rendue avec cette mise à jour. Ouvre l'Autel des Éclats pour les dépenser dans le nouvel arbre. Un repère sur le bouton de l'Autel des Éclats te le rappelle tant que tu n'y as pas jeté un œil.
+[/p][/*][*][p][b]Les Chutes des Cendres passées sont récompensées après coup.[/b] Tu as déjà vécu une Chute des Cendres avant la 1.4.2 ? Tu reçois des cicatrices pour les nouvelles sources : l'or que tu portais, les donjons terminés et les tâches de Slayer accomplies pendant chaque parcours précédent, ainsi que tes compagnons, ta progression dans le bestiaire, tes points de succès et tes premiers raids terminés. Elles sont versées tout de suite, sans attendre ta prochaine Chute des Cendres.
+[/p][/*][*][p][b]New Haven n'est plus remis à zéro.[/b] Tout ce que tu as construit reste avec toi à chaque Chute des Cendres.
+[/p][/*][/list][p]
+[/p][h2]Le nouveau Livre des Cicatrices[/h2][p]
+Le Livre des Cicatrices propose désormais [b]24 dons répartis en cinq branches[/b]. Parmi les nouveaux :
+
+[/p][list][*][p][b]Longue nuit :[/b] +2 / 4 / 6 / 8 heures de temps hors ligne, jusqu'à 19 heures avec la Tour de guet.
+[/p][/*][*][p][b]Main exercée :[/b] Les actions de récolte, d'artisanat et de vol durent jusqu'à 12 % de moins.
+[/p][/*][*][p][b]Braises de maîtrise :[/b] Jusqu'à +100 % d'XP de maîtrise.
+[/p][/*][*][p][b]Sang de braise :[/b] La nourriture soigne jusqu'à 30 % de plus.
+[/p][/*][*][p][b]Œil vif :[/b] Le butin rare des combats devient jusqu'à 15 % plus probable.
+[/p][/*][*][p][b]Poste des corbeaux, Trappeur, Grenier à semences et Maître d'œuvre :[/b] Plus de commandes, des emplacements de pièges en plus, jusqu'à trois parcelles supplémentaires et des constructions plus rapides à New Haven.
+[/p][/*][*][p][b]Comptes soldés et Piste intacte :[/b] Tu gardes ton auto-manger, ta potion automatique et tes emplacements de banque, ainsi qu'une part de tes points de Slayer et de tes jetons de quête.
+[/p][/*][*][p][b]Écho des compagnons :[/b] Les compagnons que tu n'as pas équipés transmettent une plus grande part de leur bonus.
+[/p][/*][/list][p]
+Beaucoup de dons existants ont aussi été renforcés : plus d'or de départ, un Coffre enterré plus grand, plus de pièces gardées par Héritage, plus d'XP grâce à Années d'apprentissage et Seconde nature, et davantage de dégâts et de vie.
+
+[/p][h2]Plus de façons de gagner des cicatrices[/h2][p]
+[/p][list][*][p][b]Bien plus que les niveaux.[/b] Chaque Chute des Cendres compte désormais aussi l'or que tu portes, les donjons terminés, les tâches de Slayer accomplies et les raids terminés.
+[/p][/*][*][p][b]Des récompenses uniques pour tes collections.[/b] Chaque compagnon que tu possèdes, chaque entrée complète du bestiaire, chaque tranche de 100 points de succès et ton premier raid terminé dans chaque difficulté rapportent des cicatrices à ta prochaine Chute des Cendres.
+[/p][/*][*][p][b]Un Autel des Éclats plus clair.[/b] Chaque source indique désormais ce que tu as, ce que ça vaut et ce qu'il te manque avant la prochaine cicatrice.
+[/p][/*][*][p][b]Signe de la Cendre.[/b] Chaque Chute des Cendres accomplie donne +2 % d'XP de compétence, jusqu'à +20 %. Aucun don requis.
+[/p][/*][*][p][b]Chronique de ce parcours.[/b] Le résumé qui t'accueille après une Chute des Cendres présente désormais tes hauts faits et tes niveaux sous forme de cartes, avec tes compétences de niveau 99 en tête.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Boutique de récompenses[/h1][p]
+La Boutique de récompenses tient désormais sur une seule page, avec [b]les articles à gauche et les services à droite[/b]. Chaque chapitre terminé ajoute de nouveaux articles, et tu peux voir à l'avance ce que les prochains chapitres débloqueront.
+
+[/p][h2]Nouvelles façons de dépenser tes jetons de quête[/h2][p]
+[/p][list][*][p][b]Relancer une quête quotidienne :[/b] Échange une carte de quête contre une autre de même difficulté et de même récompense. Coûte 2 / 3 / 4 jetons, jusqu'à trois relances par jour.
+[/p][/*][*][p][b]Appeler une commande / Appeler une grande commande :[/b] Le client avec la prochaine commande de ce palier se présente après ta prochaine action de récolte ou d'artisanat. La boutique indique aussi combien de temps il reste au minuteur.
+[/p][/*][*][p][b]Leçon :[/b] Gagne l'équivalent de 30 minutes d'XP en Bûcheronnage, Minage, Pêche, Cueillette ou Vol.
+[/p][/*][*][p][b]Leçon de maître :[/b] Gagne l'équivalent d'une heure d'XP de maîtrise pour l'action de ton choix.
+[/p][/*][*][p][b]Piste de compagnon :[/b] Rapproche-toi d'un compagnon qui te manque, à condition d'avoir le talent de Slayer requis.
+[/p][/*][*][p][b]Bon de frais :[/b] 25 % de réduction sur tes prochains frais de raid. Disponible une fois par semaine, à partir du chapitre 20.
+[/p][/*][/list][p]
+[/p][h2]Déblocages et disponibilité[/h2][p]
+[/p][list][*][p]La [b]Leçon de maître[/b] se débloque au chapitre 4.
+[/p][/*][*][p][b]Appeler une grande commande[/b] se débloque au chapitre 9.
+[/p][/*][*][p]Le [b]Jeton de Contrat[/b] pour les tâches de Slayer est désormais disponible dès le début, et non plus à partir du chapitre 20.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Les quêtes quotidiennes dans la file[/h1][p]
+À la demande générale : [b]« Tout mettre en file »[/b] ajoute chaque quête quotidienne ouverte à ta file d'actions. Chaque carte de quête peut aussi être mise en file séparément.
+
+Si une quête de fabrication demande des matériaux que tu n'as pas encore, les étapes de récolte nécessaires sont automatiquement placées devant elle dans la file.
+
+[/p][hr][/hr][p]
+[/p][h1]Une nouvelle façon de démonter[/h1][p]
+La boutique a désormais son propre [b]onglet Démonter[/b].
+
+[/p][list][*][p][b]Démontage rapide :[/b] Choisis ton inventaire, ta banque ou les deux, sélectionne les armes, les armures ou les bijoux, puis démonte d'un seul clic tous les objets d'une rareté. Tu vois exactement ce que tu obtiendras avant de confirmer.
+[/p][/*][*][p][b]Démontage en masse :[/b] Affiche ton inventaire et ta banque côte à côte, coche les objets dont tu veux te débarrasser et démonte-les tous d'un coup.
+[/p][/*][*][p][b]Protection des objets :[/b] Les objets verrouillés, l'équipement porté et les objets avec des runes sont toujours exclus du démontage rapide. Les objets avec un suffixe sont aussi protégés, sauf si tu désactives cette option.
+[/p][/*][*][p][b]Des résultats clairs :[/b] Après chaque démontage, un résumé montre ce que tu as obtenu et où c'est allé.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Recettes épinglées[/h1][p]
+Chaque carte de recette a désormais un [b]bouton pour l'épingler[/b]. Les recettes épinglées apparaissent dans une petite fenêtre que tu peux déplacer et replier.
+
+La fenêtre affiche leurs ingrédients, combien tu peux en fabriquer et des boutons pour [b]lancer la fabrication, mettre la recette en file ou aller directement à sa page[/b].
+
+[/p][hr][/hr][p]
+[/p][h1]Slayer[/h1][p]
+[/p][list][*][p][b]Les tâches automatiques ne sont plus laissées de côté.[/b] Si « Obtenir la tâche suivante automatiquement » est activé et que ton combat ne peut pas passer tout de suite à la nouvelle tâche, celle-ci rejoint ta file. Elle se place après tes autres plans en file, mais avant toute entrée infinie. Les tâches terminées en donjon, en raid ou contre des champions suivent les mêmes règles.
+[/p][/*][*][p][b]Nouvelles tentatives automatiques après une défaite.[/b] Si tu tombes face au monstre de ta tâche actuelle, ton héros retente après un court repos, tant qu'il reste de la nourriture dans ton emplacement d'auto-manger. Après trois défaites d'affilée sans une seule victoire, le jeu arrête de réessayer.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Confort de jeu[/h1][p]
+[/p][list][*][p][b]L'auto-manger et la potion automatique puisent dans ta banque.[/b] Quand ton inventaire est vide, la nourriture et les potions sont prises dans ta banque. Fini de tomber en pleine nuit avec un garde-manger plein.
+[/p][/*][*][p][b]Estimation de la nourriture avant le combat.[/b] La préparation du combat indique désormais combien de temps ta nourriture devrait tenir contre la cible choisie.
+[/p][/*][*][p][b]Des cartes de monstre plus utiles.[/b] Elles affichent le temps par élimination, les éliminations par heure et l'XP par heure.
+[/p][/*][*][p][b]Modèles de file.[/b] Enregistre jusqu'à trois files et recharge-les d'un clic.
+[/p][/*][*][p][b]De meilleurs rapports d'absence.[/b] Le rapport t'indique désormais quand ta file s'est vidée et combien de temps est resté inutilisé.
+[/p][/*][*][p][b]Un retour plus fluide sur un jeu réduit.[/b] Le temps passé loin est désormais rattrapé par étapes avec une barre de progression, ce qui évite le bref gel au retour. Tu reçois aussi le même rapport qu'après un chargement.
+[/p][/*][*][p][b]Marqueurs d'amélioration sur l'équipement.[/b] Un petit marqueur signale les objets de ton inventaire et de ta banque qui sont meilleurs que ce que tu portes dans cet emplacement. Tu peux le désactiver dans les options.
+[/p][/*][*][p][b]Filtres de recettes et aperçu des déblocages.[/b] Les pages de recettes peuvent n'afficher que les recettes fabricables ou débloquées, et montrent ce que ton prochain niveau débloque. Le message de niveau supérieur liste aussi les recettes nouvellement débloquées.
+[/p][/*][*][p][b]Objectifs de quête cliquables.[/b] Va directement au monstre ou à la recette concernés.
+[/p][/*][*][p][b]Notifications de bureau optionnelles.[/b] Reçois une notification quand ton héros tombe, quand ta file est terminée ou quand une tâche de Slayer ou une grande commande est accomplie. Désactivées par défaut et actives uniquement quand le jeu est en arrière-plan.
+[/p][/*][*][p][b]Conditions de l'Autel des Éclats.[/b] Avant que tu puisses l'utiliser, l'Autel des Éclats apparaît grisé dans la barre latérale et indique ce qu'il te faut pour le débloquer.
+[/p][/*][*][p][b]Butin de la Lune de Sang signalé.[/b] Les victoires qui ont rapporté un butin doublé pendant une Lune de Sang sont désormais signalées.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Un écran d'accueil[/h1][p]
+[/p][list][*][p][b]Une nouvelle page Menu principal[/b] rassemble ton chapitre actuel de la chronique, tes dernières activités, tes quêtes quotidiennes et les chiffres clés en un coup d'œil.
+[/p][/*][*][p]Le bouton qui ramène à l'écran titre s'appelle désormais [b]« Écran titre »[/b], pour que les deux ne portent plus le même nom.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Quêtes et succès[/h1][p]
+[/p][list][*][p]Les pages de quêtes ont des cartes plus nettes et des cadres plus fins.
+[/p][/*][*][p]La page des succès a été reconstruite, avec les catégories à gauche et une nouvelle disposition des cartes.
+[/p][/*][*][p]Sept succès auparavant cachés sont désormais visibles : [b]Des plumes partout, Tête de mule, Roi des rats, Vieille rancune, Nourricier des armées, Cent heures dans le Confin[/b] et [b]Neuf fois[/b].
+[/p][/*][*][p][b]« Pas aujourd'hui »[/b] n'exige plus 100 morts. Gagne plutôt un combat avec 5 % de vie ou moins.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Correctifs[/h1][p]
+[/p][list][*][p]Une Chute des Cendres le même jour remettait à zéro ta série quotidienne et distribuait un second lot de quêtes quotidiennes.
+[/p][/*][*][p]« Tout mettre en file » en mettait trop peu quand deux quêtes demandaient la même action.
+[/p][/*][*][p]La confirmation de démontage pouvait s'ouvrir derrière une autre fenêtre.
+[/p][/*][*][p]Les runes de rang IV n'affichaient pas leur cinquième ingrédient, la Poussière de relique, et les quantités étaient coupées dans les recettes à cinq ingrédients.
+[/p][/*][*][p]La piste vers un compagnon ne comptait que les victoires dans le style de combat de ce compagnon. Elle compte désormais chaque victoire, mais le compagnon lui-même ne tombe toujours que dans son propre style.
+[/p][/*][*][p]Les objets achetés ne déclenchent plus la notification « Trouvaille rare ».
+[/p][/*][*][p]Relancer une quête quotidienne déjà en file t'avertit désormais que ses entrées existantes restent dans la file.
+[/p][/*][*][p]De nombreuses petites corrections de mise en page en 1366x768, de formats de nombres et de textes dans toutes les langues.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[b]Merci pour chaque signalement. Continuez comme ça ![/b][/p]

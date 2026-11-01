@@ -1,0 +1,142 @@
+Grim Reach 1.4.2 - Cinderfall Reborn
+
+Hunters,
+
+this update rebuilds the Cinderfall from the ground up, turns the Rewards Shop into something worth saving
+for, gives the game a real home screen and fixes a long list of things you reported. Saves stay compatible
+as always.
+
+[IMAGE: Book of Scars, full tree]
+
+CINDERFALL REBORN
+
+- Because the Book of Scars is rebuilt, every scar you have spent comes back to you with this update. Open
+  the Shard Altar and spend them again in the new tree. A marker on the Shard Altar button reminds you until
+  you have seen it.
+- Already went through a Cinderfall before 1.4.2? You also get back pay for the new scar sources: the gold
+  you carried, dungeons and Slayer tasks of each earlier run, plus your companions, bestiary, achievement
+  points and first raid clears, paid right now instead of at your next Cinderfall.
+- New Haven no longer resets. Everything you built stays through every Cinderfall.
+- The Book of Scars has grown to 24 gifts in five branches. New among them:
+  - Long Night: +2 / 4 / 6 / 8 hours of offline time (up to 19 hours with the watchtower).
+  - Practised Hand: gathering, crafting and thieving actions take up to 12% less time.
+  - Mastery Embers: up to +100% mastery XP.
+  - Emberblood: food heals up to 30% more.
+  - Keen Eye: rare combat drops become up to 15% more likely.
+  - Raven Post, Trapper, Seed Vault, Master Builder: more work orders, extra trap slots, up to three extra
+    farm plots and faster building in New Haven.
+  - Settled Accounts and Unbroken Trail: keep your auto-eat, auto-potion and bank slots, and a share of
+    your Slayer points and Quest Tokens.
+  - Echo of Companions: companions you don't have equipped pass on more of their bonus.
+- Many existing gifts are stronger: more starting gold, bigger buried chest, more heirloom pieces, more XP
+  from Apprentice Years and Second Nature, more damage and health.
+- Scars now come from much more than levels. Each Cinderfall also counts the gold you carry, dungeons
+  cleared, Slayer tasks and raid clears. Collections pay once, the next time you fall: every companion you
+  own, every completed bestiary entry, every 100 achievement points and your first raid clear on each
+  difficulty.
+- The Shard Altar explains every source: what you have, what it is worth and how far it is to the next scar.
+- Sign of Ash: every Cinderfall you have done gives +2% skill XP, up to +20%. No gift needed.
+- The Chronicle of This Run that greets you after a Cinderfall now shows your deeds and levels as cards,
+  with your level 99 skills up front.
+
+[IMAGE: Shard Altar with scar sources]
+
+REWARDS SHOP
+
+- The shop is now one page: wares on the left, services on the right. Every chapter you finish adds new
+  wares, and you can see what the next chapters will bring.
+- New for Quest Tokens:
+  - Reroll a Daily Quest: swap a card for another of the same difficulty and reward (2 / 3 / 4 tokens,
+    three times a day).
+  - Call an Order / Call a Large Order: the customer with the next work order of that tier turns up after
+    your next action in a gathering or crafting skill. The shop shows how long the clock still runs.
+  - Lesson: 30 minutes of XP in woodcutting, mining, fishing, foraging or thieving.
+  - Master's Lesson: an hour of mastery XP for an action of your choice.
+  - Companion's Trail: brings a missing companion closer, if you have the Slayer talent for it.
+  - Fee Writ: 25% off your next raid fee, once a week (from chapter 20).
+- Master's Lesson opens with chapter 4, Call a Large Order with chapter 9.
+- The Contract Token for Slayer tasks is now on sale from the start instead of chapter 20.
+
+DAILY QUESTS INTO THE QUEUE
+
+- You asked for it: "Queue all dailies" puts every open daily quest into your queue, each card can be queued
+  on its own too. If a craft needs materials you don't have yet, the gathering steps are queued in front of
+  it.
+
+[IMAGE: Daily quests with queue button]
+
+SALVAGE, THE NEW WAY
+
+- The shop has a new Salvage tab.
+- Quick salvage: pick inventory, bank or both, weapons, armour or jewelry, then salvage all items of one
+  rarity with one click. You see exactly what you get before you confirm.
+- Mass salvage: your inventory and your bank side by side. Tick what you want gone and salvage it all at
+  once.
+- Locked items, equipped gear and items with runes are never part of a quick salvage. Items with a suffix are
+  kept too, unless you switch that off.
+- After every salvage you see what came out and where it went.
+
+PINNED RECIPES
+
+- Every recipe card has a pin. Pinned recipes show up in a small window you can move and fold away, with
+  their ingredients, how many you can make, and buttons to start, queue or jump to the recipe.
+
+SLAYER
+
+- With "Get next task automatically", a new task is never left behind any more. If your fight can't switch
+  to it right away because other plans are waiting, it joins your queue after them, ahead of any endless
+  entries. Tasks finished in dungeons, raids or against Champions are queued the same way.
+- If you fall against your current task monster, you try again after a short rest, as long as you have food
+  in your auto-eat slot. After three falls in a row without a single kill the game stops trying.
+
+QUALITY OF LIFE
+
+- Auto-eat and auto-potion now take food and potions from your bank once your inventory runs out. No more
+  falling at night with a full larder.
+- The combat preparation shows how long your food will last against the chosen target.
+- Monster cards show time per kill, kills per hour and XP per hour.
+- Queue templates: save up to three queues and load them again with one click.
+- The offline report tells you when your queue ran empty and how much time went unused.
+- Coming back to a minimised game no longer freezes it for a moment: the time away is caught up in steps
+  with a progress bar, and you get the same report as after loading.
+- A small marker shows gear in your inventory and bank that is better than what you wear in that slot. You
+  can switch it off in the options.
+- Recipe pages can show only craftable or unlocked recipes and tell you what your next level unlocks. The
+  level-up message lists the new recipes too.
+- Quest objectives are clickable and take you to the monster or recipe.
+- Optional desktop notifications when your hero falls, your queue is done or a Slayer task or large order is
+  finished (off by default, only while the game is in the background).
+- The Shard Altar shows up greyed out in the sidebar before you can use it, with what you need to unlock it.
+- Kills during a Blood Moon that doubled your loot are now marked.
+
+A HOME SCREEN
+
+- New Main Menu page: your current story chapter, what you did last, your daily quests and the most
+  important numbers at a glance.
+- The button that leads back to the title screen is now called "Title Screen", so the two no longer share a
+  name.
+
+[IMAGE: Main Menu page]
+
+QUESTS AND ACHIEVEMENTS
+
+- The quest pages have new, cleaner cards and slimmer frames.
+- The achievements page is rebuilt with categories on the left and a new card layout.
+- Seven achievements that were hidden are now visible: Feathers Everywhere, Bull-Headed, Rat King, Old
+  Grudge, Feeder of Armies, A Hundred Hours in the Reach and Ninefold.
+- "Not Today" no longer asks you to die 100 times. Win a fight with 5% health or less instead.
+
+FIXES
+
+- A Cinderfall on the same day reset your daily streak and handed out a second set of daily quests.
+- "Queue all dailies" queued too little when two quests needed the same action.
+- The salvage confirmation could open behind another window.
+- Tier IV runes did not show their fifth ingredient (Relic Dust), and with five ingredients the amounts
+  could be cut off.
+- The companion trail only counted kills in the companion's own combat style. It now counts every kill, the
+  companion still drops in its own style.
+- Bought items no longer pop up as a "Rare find".
+- Rerolling a queued daily quest now tells you that its queue entries stay.
+- Many smaller fixes for layout at 1366x768, number formats, and texts in all languages.
+
+Thank you for every report. Keep them coming.

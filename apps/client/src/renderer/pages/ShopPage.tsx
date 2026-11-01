@@ -38,6 +38,8 @@ import {
   StackQtyPopup,
   VariantListPopup,
 } from "../components/MassSellPopups";
+import { SalvageTab } from "../components/SalvageTab"; // claude:2026-10-31T11:30:30+01:00 — Reiter Zerlegen (Massen-Bergung)
+import { consumeRequestedShopTab } from "../navigation";
 import { EquipmentSellModal } from "../components/EquipmentSellModal"; // claude:2026-10-25T10:32:00+01:00 — Sammelverkauf (1.4.1 K1)
 import { NpcGreeting } from "../components/NpcGreeting";
 import { activeEliteZoneName, resolveNpcVoiceKey } from "../util/npcVoice";
@@ -1194,6 +1196,17 @@ function SellTab(): JSX.Element {
 
 // ─── ShopPage ────────────────────────────────────────────────────────────────
 
+// claude:2026-10-31T11:30:30+01:00 — Reiter-Reihenfolge Kaufen | Verkaufen | Zerlegen.
+const SHOP_TABS = ["buy", "sell", "salvage"] as const;
+type ShopTab = (typeof SHOP_TABS)[number];
+
+function SalvageTabIcon({ size = 22 }: { size?: number }): JSX.Element {
+  const src = getItemImage("relic_dust");
+  return src
+    ? <img loading="lazy" decoding="async" src={src} alt="" className="shopv2-tab-icon pixelart" style={{ width: size, height: size }} />
+    : <span>⚒</span>;
+}
+
 export function ShopPage(): JSX.Element {
   const state = useGameState();
   const { t, tr } = useI18n();
@@ -1203,7 +1216,8 @@ export function ShopPage(): JSX.Element {
   // (App.tsx `animatedGold`). Respektiert fxLevel/prefers-reduced-motion selbst (s.
   // util/useAnimatedNumber.ts `shouldAnimateNumbers`) → hier kein weiteres Gating nötig.
   const animatedGold = useAnimatedNumber(gold, 400);
-  const [activeTab, setActiveTab] = useState<"buy" | "sell">("buy");
+  // claude:2026-10-31T11:30:30+01:00 — dritter Reiter „Zerlegen“; ein Sprung von der Charakterseite („Beute zerlegen …“) landet direkt dort.
+  const [activeTab, setActiveTab] = useState<ShopTab>(() => consumeRequestedShopTab() ?? "buy");
 
   // Chef-GO Hotkeys (2026-07-09): Buy/Sell-Wechsel per Pfeiltasten links/rechts oder Q/E — BEWUSST
   // NICHT Tab (Accessibility: Tab muss frei für Fokus-Navigation bleiben). Nur aktiv, solange die
@@ -1216,8 +1230,9 @@ export function ShopPage(): JSX.Element {
       const tag = el?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || el?.isContentEditable) return;
       const key = e.key.toLowerCase();
-      if (e.key === "ArrowLeft" || key === "q") setActiveTab("buy");
-      else if (e.key === "ArrowRight" || key === "e") setActiveTab("sell");
+      // claude:2026-10-31T11:30:30+01:00 — drei Reiter: schrittweise, am Rand bleibt der Wechsel stehen (kein Umlauf).
+      const step = e.key === "ArrowLeft" || key === "q" ? -1 : e.key === "ArrowRight" || key === "e" ? 1 : 0;
+      if (step !== 0) setActiveTab((cur) => SHOP_TABS[Math.min(SHOP_TABS.length - 1, Math.max(0, SHOP_TABS.indexOf(cur) + step))]!);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -1270,6 +1285,13 @@ export function ShopPage(): JSX.Element {
             >
               <PouchIcon size={20} /> {t("shop.sell")}
             </button>
+            {/* claude:2026-10-31T11:30:30+01:00 — Reiter Zerlegen (Diablo-3-Schmied, Chef 31.10.2026) */}
+            <button
+              className={`shopv2-maintab${activeTab === "salvage" ? " active" : ""}`}
+              onClick={() => setActiveTab("salvage")}
+            >
+              <SalvageTabIcon size={20} /> {t("shop.salvage")}
+            </button>
           </div>
           {/* Dezenter Hotkey-Hinweis (Chef-GO) — unsichtbar-für-Casuals, aber auffindbar für
               Power-User: kleine Pfeile unter den Haupt-Tabs + Tooltip mit Q/E-Alternative. */}
@@ -1281,7 +1303,7 @@ export function ShopPage(): JSX.Element {
       </div>
 
       <div className="shopv2-body ds-frame">
-        {activeTab === "buy" ? <BuyTab /> : <SellTab />}
+        {activeTab === "buy" ? <BuyTab /> : activeTab === "sell" ? <SellTab /> : <SalvageTab />}
       </div>
     </div>
   );

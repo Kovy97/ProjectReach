@@ -12,7 +12,8 @@ import { content } from "./index";
  *     (`ach_total_level_2079 (count 1980)` heißt laut CSV jetzt `ach_total_level_1980`).
  *  2. Hidden-Flag stimmt mit der CSV überein (kein Spoiler im Spiel, wo Steam versteckt).
  *  3. Keine doppelten IDs, jede Bedingung trägt count > 0, Zielgröße ≈ 330 (D1: 537 → ~330),
- *     genau 12 versteckte (§ 2.6), keine XP-Meilensteine (D2: kein `skill_xp`).
+ *     genau 5 versteckte (§ 2.6; claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.2026: 12 → 5, nur echte Überraschungen),
+ *     keine XP-Meilensteine (D2: kein `skill_xp`).
  *  4. Spielersichtbare Texte: max. 1 Gedankenstrich je Text (Hausregel „natürliche Spieltexte").
  *  5. Overlay-Vollständigkeit: jeder Erfolg trägt name UND description in allen 5 Overlay-Sprachen
  *     (die Kill-Tripel sind weg, dafür ist der Rest komplett übersetzt — verwaiste Keys wären harmlos,
@@ -78,13 +79,16 @@ describe("Achievements 1.2.0 — Katalog-Wächter", () => {
     }
   });
 
-  it("Katalog: keine Duplikate, count > 0, ~330 Erfolge, 12 versteckte, keine XP-Meilensteine", () => {
+  it("Katalog: keine Duplikate, count > 0, ~330 Erfolge, 5 versteckte, keine XP-Meilensteine", () => {
     const ids = content.achievements.map((a) => a.id);
     expect(new Set(ids).size).toBe(ids.length);
     for (const a of content.achievements) expect(a.condition.count, a.id).toBeGreaterThan(0);
     expect(content.achievements.length).toBeGreaterThanOrEqual(300);
     expect(content.achievements.length).toBeLessThanOrEqual(380); // claude:2026-10-25T05:25:00+02:00 — 1.4.0 Raid: 22 interne Raid-Erfolge
-    expect(content.achievements.filter((a) => a.hidden).length).toBe(12);
+    // claude:2026-10-31T09:29:00+01:00 — Chef-Entscheid 31.10.2026: versteckt nur Kapitel 20/21, Neunter Wächter, erster Tod, „Heute nicht“.
+    expect(content.achievements.filter((a) => a.hidden).map((a) => a.id).sort()).toEqual(
+      ["ach_chapter_20", "ach_chapter_21", "ach_deaths_1", "ach_deaths_100", "ach_elite_idol_warden"],
+    );
     expect(content.achievements.some((a) => (a.condition.type as string) === "skill_xp")).toBe(false);
     // Kill-Tripel sind Geschichte: kein Monster hat mehr die 10/100/1000-Leiter.
     const chains = new Map<string, number[]>();

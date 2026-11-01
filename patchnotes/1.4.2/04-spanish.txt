@@ -1,0 +1,115 @@
+=== TITEL ===
+Grim Reach 1.4.2 - La Caída de Ceniza renace
+
+=== TEXT (BBCode) ===
+[p][img src="{STEAM_CLAN_IMAGE}/46199651/1b9c3fac87b3d39853654e888fdc93c0391c7070.png"][/img][/p][p]Cazadores, [/p][p]esta actualización reconstruye la Caída de Ceniza desde cero, convierte la Tienda de recompensas en algo por lo que merece la pena ahorrar, le da al juego una pantalla de inicio de verdad y corrige una larga lista de cosas que nos habéis hecho llegar.   [/p][hr][/hr][p]
+[/p][h1]Cambios en la Caída de Ceniza[/h1][p]
+[/p][h2]Devolución de cicatrices y tu progreso[/h2][p]
+[/p][list][*][p][b]Se devuelven todas las cicatrices gastadas.[/b] Como el Libro de las Cicatrices se ha rehecho, con esta actualización recuperas todas las cicatrices que habías gastado. Abre el Altar de los Fragmentos para gastarlas en el nuevo árbol. Una marca en el botón del Altar de los Fragmentos te lo recordará hasta que le hayas echado un vistazo.
+[/p][/*][*][p][b]Las Caídas de Ceniza anteriores reciben un pago atrasado.[/b] ¿Ya completaste una Caída de Ceniza antes de la 1.4.2? Recibes cicatrices de las nuevas fuentes: el oro que llevabas, las mazmorras completadas y las tareas de Slayer terminadas en cada partida anterior, además de tus compañeros, tu progreso en el bestiario, tus puntos de logro y tus primeras incursiones completadas. Se entregan al instante, sin esperar a tu próxima Caída de Ceniza.
+[/p][/*][*][p][b]New Haven ya no se reinicia.[/b] Todo lo que has construido se queda contigo en cada Caída de Ceniza.
+[/p][/*][/list][p]
+[/p][h2]El nuevo Libro de las Cicatrices[/h2][p]
+El Libro de las Cicatrices ofrece ahora [b]24 dones repartidos en cinco ramas[/b]. Entre los nuevos:
+
+[/p][list][*][p][b]Noche larga:[/b] +2 / 4 / 6 / 8 horas de tiempo sin conexión, hasta 19 horas con la Atalaya.
+[/p][/*][*][p][b]Mano experta:[/b] Las acciones de recolección, fabricación y hurto tardan hasta un 12 % menos.
+[/p][/*][*][p][b]Brasas de maestría:[/b] Hasta un +100 % de XP de maestría.
+[/p][/*][*][p][b]Sangre de brasa:[/b] La comida cura hasta un 30 % más.
+[/p][/*][*][p][b]Ojo avizor:[/b] El botín raro de combate es hasta un 15 % más probable.
+[/p][/*][*][p][b]Correo de cuervos, Trampero, Granero de semillas y Maestro de obras:[/b] Más encargos, plazas de trampa extra, hasta tres parcelas más y obras más rápidas en New Haven.
+[/p][/*][*][p][b]Cuentas saldadas y Rastro intacto:[/b] Conservas el auto-comer, la poción automática y las ranuras de banco, además de una parte de tus puntos de Slayer y de tus fichas de misión.
+[/p][/*][*][p][b]Eco de los compañeros:[/b] Los compañeros que no llevas equipados transmiten más de su bonificación.
+[/p][/*][/list][p]
+Muchos dones que ya existían también se han reforzado: más oro inicial, un Cofre enterrado más grande, más piezas con Reliquia, más XP con Años de aprendiz y Segunda naturaleza, y más daño y salud.
+
+[/p][h2]Más formas de ganar cicatrices[/h2][p]
+[/p][list][*][p][b]Mucho más que niveles.[/b] Cada Caída de Ceniza cuenta ahora también el oro que llevas, las mazmorras completadas, las tareas de Slayer terminadas y las incursiones completadas.
+[/p][/*][*][p][b]Recompensas únicas por colecciones.[/b] Cada compañero que tienes, cada entrada completa del bestiario, cada 100 puntos de logro y tu primera incursión completada en cada dificultad dan cicatrices en tu próxima Caída de Ceniza.
+[/p][/*][*][p][b]Un Altar de los Fragmentos más claro.[/b] Cada fuente muestra ahora lo que tienes, lo que vale y cuánto te falta para la próxima cicatriz.
+[/p][/*][*][p][b]Señal de la Ceniza.[/b] Cada Caída de Ceniza completada da un +2 % de XP de habilidad, hasta un +20 %. No requiere ningún don.
+[/p][/*][*][p][b]Crónica de esta travesía.[/b] El resumen que te recibe tras una Caída de Ceniza muestra ahora tus hazañas y niveles como cartas, con tus habilidades de nivel 99 en primer lugar.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Tienda de recompensas[/h1][p]
+La Tienda de recompensas es ahora una sola página, con [b]los artículos a la izquierda y los servicios a la derecha[/b]. Cada capítulo completado añade artículos nuevos, y puedes ver de antemano lo que desbloquearán los próximos capítulos.
+
+[/p][h2]Nuevas formas de gastar fichas de misión[/h2][p]
+[/p][list][*][p][b]Volver a sortear una misión diaria:[/b] Cambia una carta de misión por otra de la misma dificultad y recompensa. Cuesta 2 / 3 / 4 fichas, hasta tres veces al día.
+[/p][/*][*][p][b]Llamar un encargo / Llamar un gran encargo:[/b] El cliente con el siguiente encargo de ese nivel llega tras tu próxima acción de recolección o de artesanía. La tienda también muestra cuánto tiempo le queda al temporizador.
+[/p][/*][*][p][b]Lección:[/b] Obtén el equivalente a 30 minutos de XP en Tala, Minería, Pesca, Recolección o Hurto.
+[/p][/*][*][p][b]Lección de maestro:[/b] Obtén el equivalente a una hora de XP de maestría para la acción que elijas.
+[/p][/*][*][p][b]Rastro de compañero:[/b] Te acerca a un compañero que te falta, siempre que tengas el talento de Slayer necesario.
+[/p][/*][*][p][b]Vale de cuota:[/b] Un 25 % de descuento en tu próxima cuota de incursión. Disponible una vez por semana, a partir del capítulo 20.
+[/p][/*][/list][p]
+[/p][h2]Desbloqueos y disponibilidad[/h2][p]
+[/p][list][*][p]La [b]Lección de maestro[/b] se desbloquea en el capítulo 4.
+[/p][/*][*][p][b]Llamar un gran encargo[/b] se desbloquea en el capítulo 9.
+[/p][/*][*][p]La [b]Marca de Contrato[/b] para las tareas de Slayer está disponible desde el principio en lugar de a partir del capítulo 20.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Misiones diarias a la cola[/h1][p]
+A petición popular: [b]«Poner todas en cola»[/b] añade todas las misiones diarias abiertas a tu cola de acciones. Cada carta de misión también se puede poner en cola por separado.
+
+Si una misión de fabricación necesita materiales que aún no tienes, los pasos de recolección necesarios se ponen en cola automáticamente por delante.
+
+[/p][hr][/hr][p]
+[/p][h1]Una nueva forma de desguazar[/h1][p]
+La tienda tiene ahora su propia [b]pestaña Desguazar[/b].
+
+[/p][list][*][p][b]Desguace rápido:[/b] Elige tu inventario, tu banco o ambos, selecciona armas, armaduras o joyas y desguaza con un solo clic todos los objetos de una rareza. Antes de confirmar ves exactamente lo que vas a obtener.
+[/p][/*][*][p][b]Desguace masivo:[/b] Ve tu inventario y tu banco uno al lado del otro, marca los objetos de los que quieras deshacerte y desguázalos todos de una vez.
+[/p][/*][*][p][b]Protección de objetos:[/b] Los objetos bloqueados, el equipo que llevas puesto y los objetos con runas quedan siempre fuera del desguace rápido. Los objetos con sufijo también están protegidos, salvo que desactives esa opción.
+[/p][/*][*][p][b]Resultados claros:[/b] Después de cada desguace, un resumen muestra lo que has obtenido y adónde ha ido.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Recetas fijadas[/h1][p]
+Cada carta de receta tiene ahora un [b]botón para fijarla[/b]. Las recetas fijadas aparecen en una pequeña ventana que puedes mover y plegar.
+
+La ventana muestra sus ingredientes, cuántas puedes fabricar y botones para [b]empezar a fabricar, poner la receta en cola o ir directamente a su página[/b].
+
+[/p][hr][/hr][p]
+[/p][h1]Slayer[/h1][p]
+[/p][list][*][p][b]Las tareas automáticas ya no se quedan atrás.[/b] Con «Obtener la siguiente tarea automáticamente» activado, una tarea nueva se une a tu cola si el combate no puede pasar a ella de inmediato. Se coloca detrás de tus otros planes en cola, pero por delante de cualquier entrada infinita. Las tareas terminadas en mazmorras, incursiones o contra campeones siguen las mismas reglas.
+[/p][/*][*][p][b]Reintentos automáticos tras una derrota.[/b] Si caes ante el monstruo de tu tarea actual, tu héroe vuelve a intentarlo tras un breve descanso, siempre que tengas comida en tu ranura de auto-comer. Tras tres derrotas seguidas sin una sola baja, el juego deja de reintentarlo.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Calidad de vida[/h1][p]
+[/p][list][*][p][b]El auto-comer y la poción automática usan tu banco.[/b] Cuando se agota tu inventario, la comida y las pociones se toman del banco. Se acabó caer de noche con la despensa llena.
+[/p][/*][*][p][b]Estimación de comida antes del combate.[/b] La preparación del combate muestra ahora cuánto se espera que dure tu comida contra el objetivo elegido.
+[/p][/*][*][p][b]Cartas de monstruo más útiles.[/b] Muestran el tiempo por baja, las bajas por hora y la XP por hora.
+[/p][/*][*][p][b]Plantillas de cola.[/b] Guarda hasta tres colas y vuelve a cargarlas con un clic.
+[/p][/*][*][p][b]Mejores informes de ausencia.[/b] El informe te dice ahora cuándo se vació tu cola y cuánto tiempo quedó sin aprovechar.
+[/p][/*][*][p][b]Vuelta más fluida a un juego minimizado.[/b] El tiempo de ausencia se procesa ahora por pasos con una barra de progreso, lo que evita la breve congelación al volver. Además recibes el mismo informe que al cargar la partida.
+[/p][/*][*][p][b]Marcas de mejora en el equipo.[/b] Una pequeña marca señala los objetos de tu inventario y tu banco que son mejores que lo que llevas en esa ranura. Puedes desactivarla en las opciones.
+[/p][/*][*][p][b]Filtros de recetas y vista previa de desbloqueos.[/b] Las páginas de recetas pueden mostrar solo las recetas fabricables o desbloqueadas, y muestran qué desbloquea tu próximo nivel. Los avisos de subida de nivel también enumeran ahora las recetas recién desbloqueadas.
+[/p][/*][*][p][b]Objetivos de misión clicables.[/b] Ve directamente al monstruo o a la receta correspondiente.
+[/p][/*][*][p][b]Notificaciones de escritorio opcionales.[/b] Recibe un aviso cuando tu héroe cae, tu cola termina o se completa una tarea de Slayer o un gran encargo. Desactivadas por defecto y activas solo con el juego en segundo plano.
+[/p][/*][*][p][b]Requisitos del Altar de los Fragmentos.[/b] Antes de estar disponible, el Altar de los Fragmentos aparece en gris en la barra lateral y muestra lo que necesitas para desbloquearlo.
+[/p][/*][*][p][b]Indicadores de botín de la Luna de Sangre.[/b] Las bajas que dieron botín doble durante una Luna de Sangre ahora aparecen marcadas.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Una pantalla de inicio[/h1][p]
+[/p][list][*][p][b]Una nueva página Menú principal[/b] reúne tu capítulo actual de la crónica, tu actividad reciente, tus misiones diarias y las cifras clave de un vistazo.
+[/p][/*][*][p]El botón que te devuelve a la pantalla de título se llama ahora [b]«Pantalla de título»[/b], así que los dos ya no comparten nombre.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Misiones y logros[/h1][p]
+[/p][list][*][p]Las páginas de misiones tienen cartas más limpias y marcos más finos.
+[/p][/*][*][p]La página de logros se ha rehecho, con las categorías a la izquierda y un nuevo diseño de cartas.
+[/p][/*][*][p]Siete logros que estaban ocultos ahora son visibles: [b]Plumas por todas partes, Cabezota, Rey de las ratas, Vieja deuda, Proveedor de ejércitos, Cien horas en el Confín[/b] y [b]Nueve veces[/b].
+[/p][/*][*][p][b]«Hoy no»[/b] ya no exige 100 muertes. Ahora tienes que ganar un combate con un 5 % de salud o menos.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[/p][h1]Correcciones[/h1][p]
+[/p][list][*][p]Una Caída de Ceniza el mismo día reiniciaba tu racha diaria y repartía una segunda tanda de misiones diarias.
+[/p][/*][*][p]«Poner todas en cola» ponía en cola demasiado poco cuando dos misiones necesitaban la misma acción.
+[/p][/*][*][p]La confirmación de desguace podía abrirse detrás de otra ventana.
+[/p][/*][*][p]Las runas de rango IV no mostraban su quinto ingrediente, el Polvo de reliquia, y las cantidades se cortaban en las recetas con cinco ingredientes.
+[/p][/*][*][p]La pista hacia un compañero solo contaba las bajas en el estilo de combate de ese compañero. Ahora cuenta todas las bajas, aunque el compañero sigue cayendo solo en su propio estilo.
+[/p][/*][*][p]Los objetos comprados ya no activan el aviso «Hallazgo raro».
+[/p][/*][*][p]Al volver a sortear una misión diaria que ya estaba en cola, ahora se te avisa de que sus entradas en la cola se mantienen.
+[/p][/*][*][p]Muchas correcciones menores de diseño a 1366x768, de formatos numéricos y de textos en todos los idiomas.
+[/p][/*][/list][p]
+[/p][hr][/hr][p]
+[b]Gracias por cada informe. ¡Seguid enviándolos![/b][/p]

@@ -10,8 +10,10 @@
  */
 import { useSyncExternalStore } from "react";
 
-export const UI_STYLES = ["reforged", "classic"] as const;
-export type UiStyle = (typeof UI_STYLES)[number];
+export type UiStyle = "reforged" | "classic" | "synty";
+// claude:2026-10-30T20:58:00+01:00 — „synty“ (Dev-Stil, renderer/synty/) ist nur im Dev-Server oder im Build mit `SYNTY_UI=1` wählbar; sonst fällt ein gespeicherter Stil
+// „synty“ in ladeUiStyle() auf Reforged zurück. Der Ausdruck steht hier wörtlich, damit er im Spielerpaket zu `false` gefaltet wird.
+export const UI_STYLES: readonly UiStyle[] = import.meta.env.DEV || __SYNTY_UI_BUILD__ ? ["reforged", "classic", "synty"] : ["reforged", "classic"];
 
 export const DEFAULT_UI_STYLE: UiStyle = "reforged";
 
@@ -20,6 +22,7 @@ const STORAGE_KEY = "hearthforge:uiStyle";
 export const UI_STYLE_LABEL_KEY: Record<UiStyle, string> = {
   reforged: "options.uiStyle.reforged",
   classic: "options.uiStyle.classic",
+  synty: "options.uiStyle.synty", // claude:2026-10-30T20:58:00+01:00
 };
 
 function istGueltig(wert: string | null): wert is UiStyle {

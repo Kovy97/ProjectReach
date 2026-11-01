@@ -1,6 +1,7 @@
 import { SHOW_ITEM_TIERS } from "../featureFlags";
 import { inventarRaster } from "../inventoryLayout";
 import { ITEM_RARITIES } from "@hearthforge/shared"; // claude:2026-10-23T23:10:00+02:00 — Bergung: Rarität-Rang
+import { requestShopTab } from "../navigation"; // claude:2026-10-31T11:30:30+01:00
 import { SalvageBatchModal, SalvageConfirmModal } from "../components/SalvageModals"; // claude:2026-10-23T23:10:00+02:00 — Bergung (1.4.0)
 import { Fragment, useRef, useState, type CSSProperties, type ReactElement, type KeyboardEvent, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -126,7 +127,8 @@ const ALL_PORTRAITS = listPortraits();
 
 // ── main component ───────────────────────────────────────────────────────────
 
-export function CharacterPage(): JSX.Element {
+// claude:2026-10-31T11:30:30+01:00 — onNavigate: „Beute zerlegen …“ springt in den Laden-Reiter Zerlegen (ohne Weiterleitung bleibt der alte Dialog).
+export function CharacterPage({ onNavigate }: { onNavigate?: (id: string) => void } = {}): JSX.Element {
   const state = useGameState();
   const { t, tr, locale } = useI18n();
   const c = state.character;
@@ -311,6 +313,9 @@ export function CharacterPage(): JSX.Element {
         label: t("tavern.crate.open"),
         onClick: () => setCrateItemId(itemId),
       });
+    } else if (it?.type === "consumable" && it.consumable?.kind === "raidFeeWrit") {
+      // claude:2026-10-30T23:10:00+01:00 — Gebührenschein: kein „Benutzen“ (Engine liefert consumeFailReason = "raid_only"); er wird beim Raid-Start eingesetzt,
+      // der Hinweis steht im Tooltip (item.consumable.raidFeeWrit).
     } else if (it?.type === "consumable") {
       // Konsum-Abklingzeit (Engine, consume-gate.ts): `useConsumable` liefert im Kampf `false`,
       // solange der Ess-/Trank-Takt läuft (oder während der Kill-Verschnaufpause). Ohne
@@ -744,7 +749,11 @@ export function CharacterPage(): JSX.Element {
               {t("char.sortApply")}
             </button>
             {/* claude:2026-10-23T23:10:00+02:00 — Bergung: Sammel-Knopf „Beute zerlegen …“ (1.4.0 BG). */}
-            <button type="button" className="cs-inv-sortbtn" onClick={() => setSalvageBatchOpen(true)}>
+            <button type="button" className="cs-inv-sortbtn" onClick={() => {
+              if (!onNavigate) { setSalvageBatchOpen(true); return; }
+              requestShopTab("salvage"); // claude:2026-10-31T11:30:30+01:00
+              onNavigate("shop");
+            }}>
               {t("salvage.batchButton")}
             </button>
           </div>

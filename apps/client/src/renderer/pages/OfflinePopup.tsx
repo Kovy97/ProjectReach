@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { stopReasonKey } from "../util/stopReason";
 import { content } from "@hearthforge/content";
 import { campBoost } from "@hearthforge/engine";
-import { ITEM_RARITIES, MAX_OFFLINE_MS } from "@hearthforge/shared";
+import { CAMP_MAX_OFFLINE_BONUS_MS, ITEM_RARITIES, MAX_OFFLINE_MS, effectiveMaxOfflineMs } from "@hearthforge/shared";
 import type { OfflineSummaryUI } from "../game/GameContext";
 import { useGameControl, useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
@@ -21,6 +21,8 @@ import { useAnimatedNumber } from "../util/useAnimatedNumber";
 import emblSkull from "../assets/ui/emblem_skull.svg";
 import "../styles/offline-stage.css";
 
+// claude:2026-10-31T16:34:28+01:00 — Ab dieser Leerlaufdauer erscheint der Hinweis „Plane mehr ein“.
+const OFFLINE_IDLE_NOTE_MS = 15 * 60_000;
 const GOLD_ICON_URL = getUiIcon("icon_goldcoin");
 const ACHIEVEMENT_ICON_URL = getUiIcon("icon_achievement_unlocked");
 // Chef-Fund 19.07.: Stern-Emoji im XP-Medaillon obwohl icon_xp längst gebunden ist — die
@@ -220,6 +222,13 @@ export function OfflinePopup({
   // ausgewiesen — der Cap-Hinweis nannte nur die gedeckelte Dauer, nie WARUM sie höher ist als die
   // Basis 8 h. Derselbe Engine-Lesehook wie `effectiveMaxOfflineMs` (shared), keine zweite Summe.
   const campOfflineBonus = Math.max(0, campBoost(state, content, "offlineCapMs"));
+  // claude:2026-10-30T19:31:00+01:00 — 1.4.2 „Lange Nacht“: Narbenbuch-Anteil in Stunden = Gesamt-Cap − Basis − (geklemmter) Wachturm-Anteil.
+  const talentOfflineHours = Math.max(
+    0,
+    Math.round(
+      (effectiveMaxOfflineMs(state, content) - MAX_OFFLINE_MS - Math.min(CAMP_MAX_OFFLINE_BONUS_MS, campOfflineBonus)) / 3_600_000,
+    ),
+  );
 
   // Stopp-Grund ausweisen (Task AA-3): `state.lastStop` ist das Skilling-Pendant zu
   // `combatStopReason` oben (Material leer/Inventar voll statt Kampf-Patt) — lebt in der Engine
@@ -266,7 +275,7 @@ export function OfflinePopup({
             <p className="offline-stage-subtitle">{t("offline.stage.subtitle")}</p>
           </div>
           <div className="ofs-summary-stat ofs-summary-stat--duration">
-            <strong>{formatPlaytime(o.ms)}</strong>
+            <strong>{formatPlaytime(o.ms, t)}</strong>
             <span>{t("offline.stage.awayLabel")}</span>
           </div>
           {o.gold > 0 && (
@@ -304,7 +313,7 @@ export function OfflinePopup({
             <span className="ofs-warden-mark" aria-hidden="true">✥</span>
             <div>
               <p className="ofs-warden-frame">
-                {t("offline.warden.frame").replace("{time}", formatPlaytime(o.ms))}
+                {t("offline.warden.frame").replace("{time}", formatPlaytime(o.ms, t))}
               </p>
               <div className="ofs-warden-lines">
                 {wardenLines.map((line) => (
@@ -313,12 +322,24 @@ export function OfflinePopup({
                   </p>
                 ))}
               </div>
+              {/* claude:2026-10-31T16:34:28+01:00 — Ideen-Welle 1.4.2: Leerlauf der Warteschlange (nur ab 15 min, sonst Rauschen). */}
+              {(o.idleMs ?? 0) >= OFFLINE_IDLE_NOTE_MS && (
+                <p className="offline-stage-idle-note">
+                  {t("offline.idle.note")
+                    .replace("{after}", formatPlaytime(o.idleFromMs ?? 0, t))
+                    .replace("{idle}", formatPlaytime(o.idleMs ?? 0, t))}
+                  <br />
+                  <span className="muted">{t("offline.idle.tip")}</span>
+                </p>
+              )}
               {isCapped && (
                 <p className="offline-stage-cap-note">
                   {t("offline.duration.cappedNote")
-                    .replace("{cap}", formatPlaytime(o.ms))
-                    .replace("{time}", formatPlaytime(realMs))}
+                    .replace("{cap}", formatPlaytime(o.ms, t))
+                    .replace("{time}", formatPlaytime(realMs, t))}
                   {campOfflineBonus > 0 && <><br /><CampBoostNote kind="offlineCapMs" value={campOfflineBonus} t={t} /></>}
+                  {/* claude:2026-10-30T19:31:00+01:00 — Narbenbuch-Anteil (neuer Schlüssel offline.duration.talentNote, {n} = Stunden) */}
+                  {talentOfflineHours > 0 && <><br />{t("offline.duration.talentNote").replace("{n}", String(talentOfflineHours))}</>}
                 </p>
               )}
             </div>

@@ -21,6 +21,8 @@ export * from "./mastery";
 export * from "./bank";
 export * from "./drops";
 export * from "./quests";
+export * from "./token-services"; // claude:2026-10-30T22:28:00+01:00 — Belohnungsladen 1.4.2: Dienste + Kaufbuch
+export * from "./dailyQueue"; // claude:2026-10-30T19:05:00+01:00 — Tagesaufgaben in die Warteschlange (Spieler-Wunsch)
 export * from "./pets";
 export * from "./talents";
 export * from "./prestige"; // claude:2026-10-17T23:30:00+02:00 — Prestige-Fundament (SAVE 88)
@@ -48,3 +50,6 @@ export * from "./orders"; // Arbeitsaufträge (1.4.0 AU)
 export * from "./raid"; // claude:2026-10-25T03:05:00+02:00 — Raid (1.4.0 Welle 4)
 export * from "./estates"; // claude:2026-10-23T18:45:00+02:00 — Ländereien (1.4.0) // claude:2026-10-23T18:00:00+02:00 — Stufen-Anzeige (1.4.0)
 export * from "./features";
+export * from "./pins"; // claude:2026-10-31T11:46:28+01:00 — Rezepte anpinnen (1.4.2, SAVE 101)
+export * from "./queueTemplates"; // claude:2026-10-31T16:08:21+01:00 — Warteschlangen-Vorlagen (1.4.2, SAVE 103)
+export * from "./recipeUnlocks"; // claude:2026-10-31T16:08:21+01:00 — nächste Rezept-Freischaltung / Levelaufstieg-Toast (1.4.2)

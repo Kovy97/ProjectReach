@@ -1,6 +1,7 @@
 import type { ContentDB, GameState } from "@hearthforge/shared";
 import { deriveEventRngSeed } from "./events"; // claude:2026-10-24T23:45:00+02:00
-import { defaultRaidState, defaultSkillEventState, defaultWorkOrderState } from "@hearthforge/shared";
+import { defaultRaidState, defaultSkillEventState, defaultTokenShopLedger, defaultWorkOrderState } from "@hearthforge/shared"; // claude:2026-10-30T22:28:00+01:00 — Kaufbuch (SAVE 100)
+import { emptyQueueTemplates } from "@hearthforge/shared"; // claude:2026-10-31T16:08:21+01:00 — Warteschlangen-Vorlagen (SAVE 103)
 import { BASE_INVENTORY_SLOTS, DEFAULT_THIEVING_RISK, SAVE_VERSION, defaultCampState, defaultEquipKits, defaultFarmPlots, defaultTavernState, defaultHuntTraps, defaultParagonState, defaultPrestigeState, defaultQuestState, defaultSettings, newGameOnboarding } from "@hearthforge/shared";
 import { createRng } from "./rng";
 import { syncActiveKit } from "./loadouts";
@@ -67,6 +68,7 @@ export function createGame(
       producedBySkill: {}, // claude:2026-10-24T16:03:31+02:00 — erzeugte Stücke je Skill (SAVE 95, Arbeitsaufträge, QA-Runde 2 Werkstatt B2)
       huntCatches: 0,
       huntCatchesById: {},
+      closeWins: 0, // claude:2026-10-31T09:29:00+01:00 — Siege mit höchstens 5 % Leben (SAVE 100, „Heute nicht“)
     },
     achievements: [],
     // AP-Meilensteine (SAVE 66, Welle GG): frisch = nichts vergeben; die Zähler starten bei 0
@@ -180,6 +182,12 @@ export function createGame(
     // claude:2026-10-17T23:30:00+02:00 — Prestige (SAVE 88): erster Durchgang, keine Punkte, keine Historie.
     // engine/prestige.ts `ascend` überschreibt das Feld im Neustand mit dem fortgeschriebenen Zustand.
     prestige: defaultPrestigeState(),
+    // claude:2026-10-30T22:28:00+01:00 — Belohnungsladen 1.4.2 (SAVE 100): leeres Kaufbuch, noch keine Grenze verbraucht.
+    tokenShopLedger: defaultTokenShopLedger(),
+    // claude:2026-10-31T11:46:28+01:00 — Rezepte anpinnen (1.4.2, SAVE 101): noch nichts angepinnt. Verben nur über engine/pins.ts.
+    pinnedRecipes: [],
+    // claude:2026-10-31T16:08:21+01:00 — Warteschlangen-Vorlagen (1.4.2, SAVE 103): drei leere Plätze. Verben nur über engine/queueTemplates.ts.
+    queueTemplates: emptyQueueTemplates(),
   };
 
   // Start-Ausrüstung an den gewählten Stil koppeln und sofort ausrüsten, damit der
