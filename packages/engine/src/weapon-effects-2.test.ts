@@ -631,6 +631,23 @@ describe("Effekt-Familie: Ressourcen & Sustain (§2.1)", () => {
     expect(hpBase - hpGutter).toBeGreaterThan(10);
   });
 
+  // claude:2026-11-06T09:19:32+01:00 — Spieler-Report 04.11.: Tick-Anzeige ohne gutter (3 statt 4,5). Angezeigt wird jetzt der echte Schaden.
+  it("gutter: die angezeigte DoT-Tick-Zahl enthält den Bonus (10/s Blutung → 15)", () => {
+    const bleed = eff("bleed", { chance: 1, magnitude: 10, durationMs: 60_000 });
+    const ticks = (extra: WeaponEffect[]): number[] => {
+      const c = withContent([meleeWeapon([bleed, ...extra])]);
+      const s = newFight(c, "fx_weapon");
+      advance(s, c, 4_000);
+      return s.combat.log.filter((e) => e.kind === "dot" && e.by === "player" && e.status === "bleed").map((e) => e.amount);
+    };
+    const withGutter = ticks([eff("gutter", { magnitude: 0.5 })]);
+    const base = ticks([]);
+    expect(base.length).toBeGreaterThan(0);
+    expect(withGutter.length).toBeGreaterThan(0);
+    expect(new Set(base)).toEqual(new Set([10]));
+    expect(new Set(withGutter)).toEqual(new Set([15]));
+  });
+
   it("catalyst: eigene Status halten +3 s länger (burn 3 s → 6 s beim Anlegen)", () => {
     const burn = eff("burn", { chance: 1, magnitude: 1, durationMs: 3_000 });
     const firstBurnMs = (extra: WeaponEffect[]): number => {

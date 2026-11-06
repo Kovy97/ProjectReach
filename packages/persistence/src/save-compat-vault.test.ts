@@ -838,6 +838,23 @@ describe("Save-Kompat-Vault v103 (1.4.2): Warteschlangen-Vorlagen bleiben", () =
     ]);
     expect(s.actionQueue).toEqual([]);
     expect(s.prestige.respec142?.acknowledged).toBe(true); // der v102-Inhalt reist unverändert mit
+    // claude:2026-11-06T09:37:55+01:00 — SAVE 104: das v103-Fixture ist nicht mehr der aktuelle Stand, darum Fixpunkt statt Byte-Gleichheit; die
+    // Byte-Gleichheit prüft jetzt der v104-Block.
+    expect(serialize(s, parsed.savedAt)).toBe(serialize(deserialize(serialize(s, parsed.savedAt), content, parsed.savedAt)!.state, parsed.savedAt));
+  });
+});
+
+// claude:2026-11-06T09:37:55+01:00 — Hotfix 1.4.2.2 (SAVE 104, Begleiter-Spur-Nachzahlung): `v104-synthetic-1.4.2.2.json` über die REALE KETTE aus dem
+// v103-Fixture (Laden + serialize beim v103-savedAt). Das Fixture hat kein Spur-Talent, daher ändert sich gegenüber v103 nur `version`;
+// die Nachzahlung selbst prüft save104-pet-trail-repay.test.ts. Generator war ein Einmal-Test, danach gelöscht.
+describe("Save-Kompat-Vault v104 (1.4.2.2): Begleiter-Spur-Nachzahlung", () => {
+  it("v104-synthetic-1.4.2.2.json: Version 104, Inhalt wie v103, byte-gleich", () => {
+    const raw = readFileSync(join(VAULT_DIR, "v104-synthetic-1.4.2.2.json"), "utf-8");
+    const parsed = JSON.parse(raw) as { savedAt: number; version: number };
+    expect(parsed.version).toBe(104);
+    const s = deserialize(raw, content, parsed.savedAt)!.state;
+    expect(s.queueTemplates[0]?.name).toBe("Morgenrunde"); // der v103-Inhalt reist unverändert mit
+    expect(s.petPity).toEqual((JSON.parse(raw) as { state: { petPity: unknown } }).state.petPity); // ohne Spur-Talent keine Nachzahlung
     expect(serialize(s, parsed.savedAt)).toBe(raw);
   });
 });

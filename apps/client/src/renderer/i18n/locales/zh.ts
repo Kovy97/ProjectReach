@@ -234,6 +234,8 @@ export const zh: Record<string, string> = {
     "raid.writ.none": "入场费凭证在奖励商店出售。",
     "raid.writ.queue": "排队的团队副本在你有凭证时也会使用",
     "item.consumable.raidFeeWrit": "开始团队副本时自动使用，入场费减少四分之一。",
+    "item.consumable.workCrate": "打开可获得三种该阶级的材料，每种 3 到 8 个，并有小概率获得一枚附魔符文。可从背包或银行中打开。", // claude:2026-11-06T09:21:02+01:00 — Bug-Report 06.11.: Kisten zeigten den rohen Schlüssel item.consumable.workCrate
+    "item.consumable.blackMarketCrate": "打开可获得两种该阶级的材料、一件装备，有时还有稀有物品。可从背包或银行中打开。",
     "quests.contracts.lines": "任务线",
     "nav.totalLevel": "总等级",
     // Navigation items
@@ -3245,6 +3247,9 @@ export const zh: Record<string, string> = {
     "combat.loot.championGroup": "王者战利品",
     "combat.loot.hint": "每次击杀的几率，每次掉落的数量",
     "options.textSizeHintPct": "在 {min}% 到 {max}% 之间缩放所有文字，但不缩放界面。仅对本设备生效。",
+    // claude:2026-11-06T11:52:01+01:00 — Hotfix 1.4.2.2: Interface-Größe (Spieler-Report 4K/250 %), s. uiZoom.ts.
+    "options.uiZoom": "界面大小",
+    "options.uiZoomHint": "缩小整个界面，让屏幕上显示更多内容。适用于大屏幕或较高的 Windows 缩放，例如 4K 电视。仅对本设备生效。",
     "options.muteInBackground": "后台时静音",
     "options.muteInBackgroundHint": "游戏窗口在后台或最小化时，音乐和音效会静音；回到游戏后继续播放。",
     "slayer.autoTask.label": "自动领取下一个任务",

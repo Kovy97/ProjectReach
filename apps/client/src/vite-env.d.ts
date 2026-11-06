@@ -164,6 +164,11 @@ interface NotifyBridge {
   supported(): Promise<boolean>;
 }
 
+/** claude:2026-11-06T11:52:01+01:00 — Interface-Größe (renderer/uiZoom.ts): echter Seiten-Zoom über webFrame, 0,5–1. */
+interface UiBridge {
+  setZoom(factor: number): void;
+}
+
 interface HearthforgeBridge {
   platform: NodeJS.Platform;
   app: AppBridge;
@@ -175,6 +180,7 @@ interface HearthforgeBridge {
   bugReport: BugReportBridge;
   export: CharacterExportBridge;
   notify?: NotifyBridge;
+  ui?: UiBridge; // claude:2026-11-06T11:52:01+01:00
 }
 
 interface Window {

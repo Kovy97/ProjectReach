@@ -1,7 +1,7 @@
 "appbuild"
 {
 	"appid"	"4915450"
-	"desc"	"Grim Reach 1.4.2.1 Hotfix (Heute nicht: Sieg mit hoechstens 20 Prozent Leben statt 5)"
+	"desc"	"Grim Reach 1.4.2.2 Hotfix (Rueckkehr aus Taskleiste ohne Bericht, Begleiter-Spur-Nachzahlung SAVE 104, DoT-Anzeige, Kistentexte, Tagesaufgaben, Interface-Groesse)"
 	"buildoutput"	"G:\GameDev\steam\output\"
 	"contentroot"	"G:\GameDev\apps\client\release\win-unpacked\"
 	"setlive"	""

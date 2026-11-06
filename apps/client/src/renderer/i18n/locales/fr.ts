@@ -205,6 +205,8 @@ export const fr: Record<string, string> = {
     "raid.writ.none": "Les bons de frais se vendent à la Boutique des récompenses.",
     "raid.writ.queue": "Les raids en file utilisent aussi un bon de frais si tu en as un",
     "item.consumable.raidFeeWrit": "Utilisé automatiquement au début d'un raid. Les frais baissent d'un quart.",
+    "item.consumable.workCrate": "Ouvre-la pour obtenir trois matériaux de son palier, de 3 à 8 chacun, avec une petite chance d'obtenir une rune d'enchantement. S'ouvre depuis l'inventaire ou la banque.", // claude:2026-11-06T09:21:02+01:00 — Bug-Report 06.11.: Kisten zeigten den rohen Schlüssel item.consumable.workCrate
+    "item.consumable.blackMarketCrate": "Ouvre-la pour obtenir deux matériaux de son palier, une pièce d'équipement et parfois quelque chose de rare. S'ouvre depuis l'inventaire ou la banque.",
     "quests.contracts.lines": "Fils de contrats",
     "nav.totalLevel": "Niveau total",
     // Navigation items
@@ -3249,6 +3251,9 @@ export const fr: Record<string, string> = {
     "combat.loot.championGroup": "Butin de champion",
     "combat.loot.hint": "Chance par victoire, quantité par trouvaille",
     "options.textSizeHintPct": "Ajuste tous les textes entre {min} et {max} % sans zoomer sur l'interface. Réglage propre à cet appareil.",
+    // claude:2026-11-06T11:52:01+01:00 — Hotfix 1.4.2.2: Interface-Größe (Spieler-Report 4K/250 %), s. uiZoom.ts.
+    "options.uiZoom": "Taille de l'interface",
+    "options.uiZoomHint": "Réduit toute l'interface pour afficher davantage à l'écran. Utile sur les grands écrans ou avec une mise à l'échelle Windows élevée, par exemple sur une TV 4K. Réglage propre à cet appareil.",
     "options.muteInBackground": "Couper le son en arrière-plan",
     "options.muteInBackgroundHint": "La musique et les effets se taisent tant que la fenêtre du jeu est en arrière-plan ou réduite, puis reprennent à ton retour.",
     "slayer.autoTask.label": "Obtenir la tâche suivante automatiquement",

@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer, webFrame } from "electron";
 
 /**
  * Sichere Brücke zwischen Renderer und Main. Die Save-Funktionen kapseln die
@@ -57,6 +57,15 @@ contextBridge.exposeInMainWorld("hearthforge", {
       ipcRenderer.invoke("window:set-window-mode", mode),
   },
   // claude:2026-10-31T16:34:28+01:00 — Desktop-Benachrichtigungen (main/notify.ts): zeigt nur bei NICHT fokussiertem Fenster.
+  // claude:2026-11-06T11:52:01+01:00 — Interface-Größe (renderer/uiZoom.ts, Hotfix 1.4.2.2): echter Chromium-Seitenzoom,
+  // nur verkleinern (0,5–1), damit das Fenster nie weniger CSS-Pixel bekommt als seine Mindestgröße.
+  ui: {
+    setZoom: (factor: number): void => {
+      const f = Number(factor);
+      if (!Number.isFinite(f)) return;
+      webFrame.setZoomFactor(Math.min(1, Math.max(0.5, f)));
+    },
+  },
   notify: {
     show: (title: string, body: string): Promise<boolean> => ipcRenderer.invoke("notify:show", title, body),
     supported: (): Promise<boolean> => ipcRenderer.invoke("notify:supported"),

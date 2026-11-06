@@ -232,6 +232,8 @@ export const es: Record<string, string> = {
     "raid.writ.none": "Los salvoconductos de cuota se venden en la Tienda de Recompensas.",
     "raid.writ.queue": "Las incursiones en cola también usan un salvoconducto de cuota si tienes uno",
     "item.consumable.raidFeeWrit": "Se usa automáticamente al iniciar una incursión. La cuota baja una cuarta parte.",
+    "item.consumable.workCrate": "Ábrela para obtener tres materiales de su nivel, de 3 a 8 de cada uno, con una pequeña probabilidad de una runa de encantamiento. Se abre desde el inventario o el banco.", // claude:2026-11-06T09:21:02+01:00 — Bug-Report 06.11.: Kisten zeigten den rohen Schlüssel item.consumable.workCrate
+    "item.consumable.blackMarketCrate": "Ábrela para obtener dos materiales de su nivel, una pieza de equipo y a veces algo raro. Se abre desde el inventario o el banco.",
     "quests.contracts.lines": "Líneas de encargos",
     "nav.totalLevel": "Nivel total",
     "nav.character": "Personaje",
@@ -3205,6 +3207,9 @@ export const es: Record<string, string> = {
     "combat.loot.championGroup": "Botín de campeón",
     "combat.loot.hint": "Probabilidad por victoria, cantidad por hallazgo",
     "options.textSizeHintPct": "Ajusta todos los textos entre el {min} % y el {max} % sin hacer zoom en la interfaz. Solo se guarda en este dispositivo.",
+    // claude:2026-11-06T11:52:01+01:00 — Hotfix 1.4.2.2: Interface-Größe (Spieler-Report 4K/250 %), s. uiZoom.ts.
+    "options.uiZoom": "Tamaño de la interfaz",
+    "options.uiZoomHint": "Reduce toda la interfaz para que quepa más en pantalla. Útil en pantallas grandes o con un escalado de Windows alto, por ejemplo en un televisor 4K. Solo se guarda en este dispositivo.",
     "options.muteInBackground": "Silenciar en segundo plano",
     "options.muteInBackgroundHint": "La música y los efectos se silencian mientras la ventana del juego está en segundo plano o minimizada, y vuelven cuando regresas.",
     "slayer.autoTask.label": "Obtener la siguiente tarea automáticamente",

@@ -279,6 +279,8 @@ const en = {
     "raid.writ.none": "Fee writs are sold in the Rewards Shop.",
     "raid.writ.queue": "Queued runs use a fee writ too, when you have one",
     "item.consumable.raidFeeWrit": "Used automatically when you start a raid. The fee is a quarter lower.",
+    "item.consumable.workCrate": "Open it for three materials of its tier, 3 to 8 of each, with a small chance of an enchanting rune. Opens from your inventory or bank.", // claude:2026-11-06T09:21:02+01:00 — Bug-Report 06.11.: Kisten zeigten den rohen Schlüssel item.consumable.workCrate
+    "item.consumable.blackMarketCrate": "Open it for two materials of its tier, a piece of gear and sometimes something rare. Opens from your inventory or bank.",
     // Contracts tab master-detail (Chef-Auftrag Welle X, 2026-07-16). Strand headers themselves
     // reuse an existing quest name (tr(strand.rootName)) — no bespoke i18n key per strand.
     "quests.contracts.lines": "Quest Lines",
@@ -3527,6 +3529,9 @@ const en = {
     "combat.loot.championGroup": "Champion loot",
     "combat.loot.hint": "Chance per kill, amount when it drops",
     "options.textSizeHintPct": "Scales all text between {min}% and {max}% without zooming the interface. Saved on this device only.",
+    // claude:2026-11-06T11:52:01+01:00 — Hotfix 1.4.2.2: Interface-Größe (Spieler-Report 4K/250 %), s. uiZoom.ts.
+    "options.uiZoom": "Interface size",
+    "options.uiZoomHint": "Shrinks the whole interface so more fits on screen. Helps on large screens or with high Windows scaling, for example a 4K TV. Saved on this device only.",
     "options.muteInBackground": "Mute in background",
     "options.muteInBackgroundHint": "Music and sound effects go quiet while the game window is in the background or minimized, and resume when you return.",
     "slayer.autoTask.label": "Get next task automatically",
@@ -3889,6 +3894,8 @@ const de: Record<keyof typeof en, string> = {
     "raid.writ.none": "Gebührenscheine gibt es im Belohnungsladen.",
     "raid.writ.queue": "Auch Warteschlangen-Läufe setzen einen Gebührenschein ein, wenn du einen hast",
     "item.consumable.raidFeeWrit": "Wird beim Raid-Start automatisch eingesetzt. Die Gebühr sinkt um ein Viertel.",
+    "item.consumable.workCrate": "Öffnen gibt drei Materialien ihrer Stufe, je 3 bis 8, und mit etwas Glück eine Verzauberungsrune. Lässt sich aus Inventar oder Bank öffnen.", // claude:2026-11-06T09:21:02+01:00 — Bug-Report 06.11.: Kisten zeigten den rohen Schlüssel item.consumable.workCrate
+    "item.consumable.blackMarketCrate": "Öffnen gibt zwei Materialien ihrer Stufe, ein Ausrüstungsteil und manchmal etwas Seltenes. Lässt sich aus Inventar oder Bank öffnen.",
     "quests.contracts.lines": "Auftragsstränge",
     "quests.contracts.allClaimed": "Jeder Auftrag ist erfüllt. Die Tafel ist leer, vorerst.",
     "nav.totalLevel": "Gesamtlevel",
@@ -6997,6 +7004,9 @@ const de: Record<keyof typeof en, string> = {
     "combat.loot.championGroup": "Champion-Beute",
     "combat.loot.hint": "Chance pro Sieg, Menge pro Fund",
     "options.textSizeHintPct": "Skaliert alle Texte zwischen {min} und {max} %, ohne die Oberfläche zu zoomen. Gilt nur für dieses Gerät.",
+    // claude:2026-11-06T11:52:01+01:00 — Hotfix 1.4.2.2: Interface-Größe (Spieler-Report 4K/250 %), s. uiZoom.ts.
+    "options.uiZoom": "Interface-Größe",
+    "options.uiZoomHint": "Verkleinert die ganze Oberfläche, damit mehr auf den Bildschirm passt. Hilft bei großen Bildschirmen oder hoher Windows-Skalierung, etwa an einem 4K-Fernseher. Gilt nur für dieses Gerät.",
     "options.muteInBackground": "Im Hintergrund stumm",
     "options.muteInBackgroundHint": "Musik und Effekte schweigen, solange das Spielfenster im Hintergrund oder minimiert ist, und laufen weiter, sobald du zurückkehrst.",
     "slayer.autoTask.label": "Nächsten Auftrag automatisch holen",

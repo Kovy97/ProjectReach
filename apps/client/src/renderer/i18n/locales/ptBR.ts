@@ -230,6 +230,8 @@ export const ptBR: Record<string, string> = {
     "raid.writ.none": "Selos de taxa são vendidos na Loja de Recompensas.",
     "raid.writ.queue": "Raides na fila também usam um selo de taxa, se você tiver um",
     "item.consumable.raidFeeWrit": "Usado automaticamente ao iniciar um raide. A taxa cai um quarto.",
+    "item.consumable.workCrate": "Abra para receber três materiais do nível dela, de 3 a 8 de cada, com uma pequena chance de uma runa de encantamento. Abre pelo inventário ou pelo banco.", // claude:2026-11-06T09:21:02+01:00 — Bug-Report 06.11.: Kisten zeigten den rohen Schlüssel item.consumable.workCrate
+    "item.consumable.blackMarketCrate": "Abra para receber dois materiais do nível dela, uma peça de equipamento e às vezes algo raro. Abre pelo inventário ou pelo banco.",
     "quests.contracts.lines": "Linhas de contratos",
     "nav.totalLevel": "Nível Total",
     "nav.character": "Personagem",
@@ -3203,6 +3205,9 @@ export const ptBR: Record<string, string> = {
     "combat.loot.championGroup": "Saque de campeão",
     "combat.loot.hint": "Chance por vitória, quantidade por achado",
     "options.textSizeHintPct": "Ajusta todos os textos entre {min}% e {max}% sem dar zoom na interface. Vale só para este dispositivo.",
+    // claude:2026-11-06T11:52:01+01:00 — Hotfix 1.4.2.2: Interface-Größe (Spieler-Report 4K/250 %), s. uiZoom.ts.
+    "options.uiZoom": "Tamanho da interface",
+    "options.uiZoomHint": "Reduz toda a interface para caber mais na tela. Ajuda em telas grandes ou com escala alta do Windows, por exemplo numa TV 4K. Vale só para este dispositivo.",
     "options.muteInBackground": "Silenciar em segundo plano",
     "options.muteInBackgroundHint": "Música e efeitos sonoros ficam em silêncio enquanto a janela do jogo está em segundo plano ou minimizada e voltam quando você retorna.",
     "slayer.autoTask.label": "Obter a próxima tarefa automaticamente",

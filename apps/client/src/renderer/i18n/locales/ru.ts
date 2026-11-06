@@ -233,6 +233,8 @@ export const ru: Record<string, string> = {
     "raid.writ.none": "Квитанции на взнос продаются в магазине наград.",
     "raid.writ.queue": "Рейды из очереди тоже тратят квитанцию на взнос, если она есть",
     "item.consumable.raidFeeWrit": "Тратится автоматически при начале рейда. Взнос уменьшается на четверть.",
+    "item.consumable.workCrate": "Откройте, чтобы получить три материала её уровня, от 3 до 8 штук каждого, и с небольшим шансом руну зачарования. Открывается из инвентаря или банка.", // claude:2026-11-06T09:21:02+01:00 — Bug-Report 06.11.: Kisten zeigten den rohen Schlüssel item.consumable.workCrate
+    "item.consumable.blackMarketCrate": "Откройте, чтобы получить два материала её уровня, предмет снаряжения и иногда что-то редкое. Открывается из инвентаря или банка.",
     "quests.contracts.lines": "Цепочки контрактов",
     "nav.totalLevel": "Общий уровень",
     // Navigation items
@@ -3247,6 +3249,9 @@ export const ru: Record<string, string> = {
     "combat.loot.championGroup": "Добыча чемпиона",
     "combat.loot.hint": "Шанс за победу, количество за находку",
     "options.textSizeHintPct": "Меняет размер всего текста от {min} до {max} %, не масштабируя интерфейс. Действует только на этом устройстве.",
+    // claude:2026-11-06T11:52:01+01:00 — Hotfix 1.4.2.2: Interface-Größe (Spieler-Report 4K/250 %), s. uiZoom.ts.
+    "options.uiZoom": "Размер интерфейса",
+    "options.uiZoomHint": "Уменьшает весь интерфейс, чтобы на экран помещалось больше. Полезно на больших экранах или при высоком масштабе Windows, например на 4K-телевизоре. Действует только на этом устройстве.",
     "options.muteInBackground": "Без звука в фоне",
     "options.muteInBackgroundHint": "Музыка и звуковые эффекты стихают, пока окно игры в фоне или свёрнуто, и возвращаются, когда ты вернёшься.",
     "slayer.autoTask.label": "Брать следующее задание автоматически",

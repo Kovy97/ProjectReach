@@ -766,6 +766,38 @@ export function petTrailPreview(
   return { ok: true, add, count: pity.count, threshold: pity.threshold };
 }
 
+/**
+ * claude:2026-11-06T09:37:55+01:00 — SAVE 104 (Hotfix 1.4.2.2, Chef 06.11.2026 „bis halber Balken“, Spieler-Report Emilion): Nachzahlung der Begleiter-Spur
+ * für die Zeit bis 1.4.1, in der Kills in anderen Stilen nicht zählten. Je FEHLENDEM Kampf-Begleiter:
+ * Spur = max(alt, min(⌈Schwelle / 2⌉, Lebenszeit-Kills)). Schwelle wie `petPityProgress`, aber aus den GEKAUFTEN Rängen
+ * (`talentEffectOwned`), damit die Nachzahlung auch greift, wenn der Kodex nach einem Aschesturz bis Slayer 85 ruht. Nur mit Talent
+ * `petPity`; Berufs-Begleiter bleiben unberührt. Rein, kein RNG, idempotent (max statt Summe). Gibt je Begleiter das Plus zurück.
+ */
+export function repayPetTrail(state: GameState, content: ContentDB): Record<PetId, number> {
+  const out: Record<PetId, number> = {};
+  const factor = talentEffectOwned(state, content, "petPity");
+  const pets = content.pets;
+  if (!(factor > 0) || !pets) return out;
+  const kills = Math.max(0, Math.floor(Number.isFinite(state.stats?.kills) ? state.stats.kills : 0));
+  if (kills <= 0) return out;
+  const bonus = talentEffectOwned(state, content, "petChanceMult");
+  for (const id of Object.keys(pets)) {
+    const pet = pets[id];
+    if (!pet || pet.source.kind !== "combat" || state.character.ownedPets[id]) continue;
+    const base = Math.max(0, pet.dropChance);
+    const chance = bonus > 0 ? Math.min(1, base * (1 + bonus)) : base;
+    if (!(chance > 0)) continue;
+    const cap = Math.ceil(Math.ceil(factor / chance) / 2);
+    const old = Math.max(0, Math.floor(state.petPity?.[id] ?? 0));
+    const next = Math.max(old, Math.min(cap, kills));
+    if (next > old) {
+      (state.petPity ??= {})[id] = next;
+      out[id] = next - old;
+    }
+  }
+  return out;
+}
+
 /** claude:2026-10-30T22:28:00+01:00 — Schreibt die Fährte gut (s. `petTrailPreview`). Gibt die vorgezogenen Fehlwürfe zurück (0 = nichts). */
 export function addPetTrail(state: GameState, content: ContentDB, petId: PetId, pct: number): number {
   const p = petTrailPreview(state, content, petId, pct);

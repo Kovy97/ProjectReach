@@ -1615,7 +1615,8 @@ function DailyQuestCard({
       <div className="quest-objectives">
         {quest.objectives.map((obj, i) => {
           const base = baseline[i] ?? 0;
-          const prog = objectiveProgress(state, content, obj, base);
+          // claude:2026-11-06T09:25:18+01:00 — Spieler-Report 03.11. (Ali): nach dem Einlösen zählte der Balken weiter hoch. Eingelöst = am Ziel eingefroren.
+          const prog = claimed ? obj.count : objectiveProgress(state, content, obj, base);
           return (
             <ObjectiveBar key={i} obj={obj} progress={prog} t={t} tr={tr} />
           );

@@ -13,6 +13,7 @@ import { getSceneBuilderZoneId, SceneBuilderApp } from "./components/arena25d/bu
 import { initFontChoice } from "./fontChoice";
 // claude:2026-10-24T18:20:00+02:00 — Textgröße (Normal/Groß/Sehr groß), s. textScale.ts.
 import { initTextScale } from "./textScale";
+import { initUiZoom } from "./uiZoom"; // claude:2026-11-06T11:52:01+01:00 — Interface-Größe (Hotfix 1.4.2.2)
 // claude:2026-10-25T10:30:00+01:00 — 1.4.1 A1 „Im Hintergrund stumm“: Fokus-/Sichtbarkeits-Wächter, s. util/backgroundAudio.ts.
 import { initBackgroundAudio } from "./util/backgroundAudio";
 // claude:2026-10-19T10:05:00+02:00 — Oberflächen-Stil (Reforged/Classic) vor dem ersten Render setzen, s. uiStyle.ts.
@@ -25,6 +26,7 @@ import "./styles/index.css";
 // nicht sichtbar von der Vorgabe auf die gewaehlte Schrift umspringt.
 initFontChoice();
 initTextScale();
+initUiZoom(); // claude:2026-11-06T11:52:01+01:00 — vor dem ersten Render, kein sichtbares Umspringen
 initUiStyle();
 initNavSkin(); // claude:2026-10-25T18:09:00+01:00
 initBackgroundAudio();

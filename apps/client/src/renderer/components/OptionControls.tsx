@@ -57,6 +57,7 @@ import {
   ladeTextScale,
   setzeTextScale,
 } from "../textScale";
+import { UI_ZOOM_PRESETS, ladeUiZoom, setzeUiZoom } from "../uiZoom"; // claude:2026-11-06T11:52:01+01:00 — Interface-Größe (Hotfix 1.4.2.2)
 import { UI_STYLES, UI_STYLE_LABEL_KEY, setzeUiStyle, useUiStyle } from "../uiStyle";
 import { NAV_SKINS, NAV_SKIN_LABEL_KEY, setzeNavSkin, useNavSkin } from "../navSkin"; // claude:2026-10-25T18:09:00+01:00 — Knopf-Stile
 import "../styles/options.css";
@@ -227,6 +228,7 @@ export function DisplayAudioPrefs(): JSX.Element {
   // dieselbe Mechanik wie die Sprachwahl. Begruendung in renderer/fontChoice.ts.
   const [font, setFontState] = useState<FontChoice>(ladeFontChoice);
   const [textScale, setTextScaleState] = useState<number>(ladeTextScale);
+  const [uiZoom, setUiZoomState] = useState<number>(ladeUiZoom); // claude:2026-11-06T11:52:01+01:00
   const [muteInBackground, setMuteInBackgroundState] = useState(isMuteInBackground());
   // claude:2026-10-19T10:05:00+02:00 — Chef 19.10.: Oberflächen-Stil Reforged/Classic (uiStyle.ts), wirkt sofort.
   const uiStyle = useUiStyle();
@@ -259,6 +261,7 @@ export function DisplayAudioPrefs(): JSX.Element {
   const changeCombatFx = (level: CombatFxLevel): void => { setCombatFxLevel(level); setCombatFxState(level); };
   const changeFont = (wahl: FontChoice): void => { setzeFontChoice(wahl); setFontState(wahl); };
   const changeTextScale = (pct: number): void => { setTextScaleState(setzeTextScale(pct)); };
+  const changeUiZoom = (pct: number): void => { setUiZoomState(setzeUiZoom(pct)); }; // claude:2026-11-06T11:52:01+01:00
   const toggleMuteInBackground = (): void => { const next = !muteInBackground; setMuteInBackground(next); setMuteInBackgroundState(next); };
 
   return (
@@ -375,6 +378,18 @@ export function DisplayAudioPrefs(): JSX.Element {
                 </button>
               ))}
             </div>
+          </div>
+        </OptRow>
+
+        {/* claude:2026-11-06T11:52:01+01:00 — Hotfix 1.4.2.2 (Spieler-Report 4K/250 %): verkleinert die ganze Oberfläche per
+            echtem Seitenzoom (uiZoom.ts). Knöpfe statt Regler, weil ein Regler beim Ziehen unter der Maus mitschrumpft. */}
+        <OptRow label={t("options.uiZoom")} hint={t("options.uiZoomHint")}>
+          <div className="opz-segment">
+            {UI_ZOOM_PRESETS.map((pct) => (
+              <button key={pct} className={optBtnCls(uiZoom === pct)} onClick={() => changeUiZoom(pct)}>
+                {pct}%
+              </button>
+            ))}
           </div>
         </OptRow>
       </OptSection>

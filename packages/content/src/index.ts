@@ -18062,12 +18062,14 @@ export const content: ContentDB = {
     { id: "adamantium", name: { en: "Adamantium", de: "Adamantium" } },
     { id: "runite", name: { en: "Runite", de: "Runit" } },
     { id: "bloodiron", name: { en: "Bloodiron", de: "Bluteisen" } },
+    // Shop-Purge (CEO 2026-07-11): "void" = Tool-Capstone ohne eigenen Barren-Tier (Runit-Barren
+    // + void_essence, s. forge_void_sickle) — kein Rüstungs-/Waffen-Tier, nur Werkzeuge.
+    // claude:2026-11-06T12:23:44+01:00 — Hotfix 1.4.2.2 (Spieler-Report Reihenfolge): stand als L65-Tier ganz hinten nach
+    // Götzeneisen (L95); jetzt bei seinem Level hinter Bluteisen (L65). Nur Anzeigereihenfolge, ID unverändert.
+    { id: "void", name: { en: "Voidsteel", de: "Leerenstahl" } },
     { id: "titanium", name: { en: "Titanium", de: "Titan" } },
     { id: "aetherium", name: { en: "Aetherium", de: "Aetherium" } },
     { id: "godiron", name: { en: "Godiron", de: "Götzeneisen" } },
-    // Shop-Purge (CEO 2026-07-11): "void" = Tool-Capstone ohne eigenen Barren-Tier (Runit-Barren
-    // + void_essence, s. forge_void_sickle) — kein Rüstungs-/Waffen-Tier, nur Werkzeuge.
-    { id: "void", name: { en: "Voidsteel", de: "Leerenstahl" } },
     // Leatherworking/Crafting-Leder-Tiers
     { id: "leather_raw", name: { en: "Rawhide", de: "Rohleder" } },
     { id: "leather_cured", name: { en: "Cured", de: "Gegerbt" } },
@@ -18097,8 +18099,9 @@ export const content: ContentDB = {
     { id: "robe_ember", name: { en: "Ember Robes", de: "Glut-Roben" } },
     { id: "robe_aether", name: { en: "Aether Robes", de: "Aether-Roben" } },
     { id: "robe_arcane", name: { en: "Arcane Robes", de: "Arkane Roben" } },
-    { id: "robe_runewoven", name: { en: "Runewoven Robes", de: "Runenwirk-Roben" } },
+    // claude:2026-11-06T12:23:44+01:00 — Hotfix 1.4.2.2 (Spieler-Report): Dämmergewebe (L63) vor Runenwirk (L71), vorher vertauscht.
     { id: "robe_duskweave", name: { en: "Duskweave Robes", de: "Dämmergewebe-Roben" } },
+    { id: "robe_runewoven", name: { en: "Runewoven Robes", de: "Runenwirk-Roben" } },
     { id: "robe_godspark", name: { en: "Godspark Vestments", de: "Götzenfunken-Ornat" } },
     // Rüstungs-Trinität / Itemization 2.5 (armor-trinity-spec §11): Zwischen-Tier L85→L99.
     { id: "robe_starweave", name: { en: "Starweave Vestments", de: "Sterngewebe-Ornat" } },

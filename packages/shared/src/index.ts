@@ -805,7 +805,11 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //     Aschesturz. Migration < 103: `[null, null, null]`. Sanitize (jede Version): genau 3 Plätze, Name String ohne Steuerzeichen, getrimmt und
 //     gekürzt, Einträge nur mit bekannten Aktions-/Monster-/Dungeon-/Raid-Ids (Muster `actionQueue`), Ziel endliche positive Ganzzahl oder
 //     null, höchstens 30; fehlt/kaputt ⇒ leer. Keine ID-Änderung, nichts geht verloren.
-export const SAVE_VERSION = 103;
+// 104: Begleiter-Spur-Nachzahlung (Hotfix 1.4.2.2, Chef 06.11.2026, Spieler-Report Emilion; claude:2026-11-06T09:37:55+01:00): bis 1.4.1 zählte der
+//     Pech-Schutz nur Kills im Stil des Begleiters. Migration < 104 (persistence `deserialize`, nach dem Offline-Nachholen): je FEHLENDEM
+//     Kampf-Begleiter `petPity` = max(alt, min(⌈Schwelle/2⌉, stats.kills)), nur mit gekauftem Talent „Spur aufgenommen“ (auch wenn der
+//     Kodex nach einem Sturz ruht). engine `repayPetTrail`. Kein neues Feld, keine ID-Änderung, nichts geht verloren; idempotent.
+export const SAVE_VERSION = 104;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die

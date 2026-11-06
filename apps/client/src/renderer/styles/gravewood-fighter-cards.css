@@ -506,6 +506,25 @@
   }
 }
 
+/* claude:2026-11-06T11:52:01+01:00 — Hotfix 1.4.2.2: Ab 110 % Textgröße brachen auf schmalen Karten die Werte-Namen mitten im Wort
+   um („DEFENC E“, Englisch ohne Silbentrennung). Dann stehen die Werte einspaltig und jeder Name hat die volle Breite.
+   Bei 100 % bleibt alles zweispaltig wie bisher. */
+@container (max-width: 440px) {
+  :root[data-text-scale] #root .monster-card-stats.stat-line {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Auch bei 100 % fehlten auf 1080p (drei Karten à ~340 px) ein paar Pixel: „ACCURA CY“. Ohne Sperrung und mit einem
+     Zahlenfeld, das nur so breit ist wie die Zahl, passt der Name wieder in eine Zeile; zweispaltig wie bisher. */
+  #root .monster-card-stats.stat-line .stat-line-item-label {
+    letter-spacing: 0;
+  }
+
+  #root .monster-card-stats.stat-line .stat-line-item-value {
+    min-width: 0;
+  }
+}
+
 @media (max-width: 1180px) {
   /* codex:2026-08-03T14:52:00+02:00 — Schmalere Spielfenster reduzieren Spaltenzahl statt Karteninhalt zu quetschen. */
   #root .monster-grid {

@@ -2503,7 +2503,9 @@ function tickEnemyEffects(
     let perSec = e.magnitude;
     const rate = enemyDotRate(cs, ctx, e);
     if (rate) {
-      perSec = rate.perSec;
+      // claude:2026-11-06T09:19:32+01:00 — Spieler-Report 04.11. (Glutgebundene Robe, gutter +50 %): die Tick-Zahl zeigte rate.perSec
+      // OHNE gutter/Narbenbuch/Status-vs-Ward, abgezogen wurde rate.total (Gift 3 angezeigt, 4,5 geschadet). Anzeige = echter Schaden.
+      perSec = rate.total;
       cs.enemyHp -= rate.total * (TICK_MS / 1000);
     } else if (e.type === "frost") frost = true;
     // shock/void: keine Tick-Wirkung — Verzögerung passiert bei der Anwendung, Entzug ist ein

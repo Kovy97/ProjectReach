@@ -25,7 +25,7 @@ import type { CharacterCreation } from "@hearthforge/engine";
 import { deserialize, parseSummary, serialize } from "@hearthforge/persistence";
 import { content } from "@hearthforge/content";
 import { baueDemoOfflineSummary } from "../devOfflineDemo";
-import { CATCHUP_THRESHOLD_MS, buildCatchUpSummary, catchUpSavedAt, extendCatchUp, startCatchUp, stepCatchUp } from "../util/catchUp"; // claude:2026-10-31T16:34:28+01:00
+import { CATCHUP_THRESHOLD_MS, catchUpSavedAt, extendCatchUp, startCatchUp, stepCatchUp } from "../util/catchUp"; // claude:2026-10-31T16:34:28+01:00
 import type { CatchUpJob } from "../util/catchUp"; // claude:2026-10-31T16:34:28+01:00
 import { CatchUpOverlay } from "../components/CatchUpOverlay"; // claude:2026-10-31T16:34:28+01:00
 import { DesktopNotifier } from "../components/DesktopNotifier"; // claude:2026-10-31T16:34:28+01:00
@@ -140,10 +140,10 @@ interface GameControl {
   dismissOffline: () => void;
   /**
    * claude:2026-10-31T16:34:28+01:00 — 1.4.2: Fortschritt der Rückkehr aus dem Hintergrund. Solange ein großer Zeitsprung
-   * (> 5 min, z. B. nach Minimieren) in Häppchen nachgeholt wird, steht hier der Stand; sonst `null`. Danach öffnet sich die
-   * Rückkehr-Karte über `offlineSummary` wie nach dem Laden.
+   * (> 5 min, z. B. nach Minimieren) in Häppchen nachgeholt wird, steht hier der Stand; sonst `null`. Seit 1.4.2.2
+   * (claude:2026-11-06T09:25:18+01:00, Spieler-Reports) öffnet sich danach KEINE Rückkehr-Karte mehr; still wie vor 1.4.2.
    */
-  catchUp: { doneMs: number; totalMs: number } | null;
+  catchUp: { doneMs: number; totalMs: number; startedAt: number } | null; // claude:2026-11-06T09:25:18+01:00 startedAt: Band erst nach CATCHUP_BAR_DELAY_MS
   /**
    * Dev-Werkzeug (Chef-Auftrag 31.08.2026): oeffnet die "Waehrend du weg warst"-Buehne mit
    * Demo-Daten in JEDEM Abschnitt, damit man das Layout beurteilen kann, ohne acht Stunden
@@ -266,7 +266,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
   const [offlineSummary, setOfflineSummary] = useState<OfflineSummaryUI | null>(null);
   // claude:2026-10-31T16:34:28+01:00 — Rückkehr in Häppchen (util/catchUp.ts): laufender Auftrag + Anzeigestand.
   const catchUpRef = useRef<CatchUpJob | null>(null);
-  const [catchUp, setCatchUp] = useState<{ doneMs: number; totalMs: number } | null>(null);
+  const [catchUp, setCatchUp] = useState<{ doneMs: number; totalMs: number; startedAt: number } | null>(null);
   const [saveRecovery, setSaveRecovery] = useState<{ restoredFromMs: number } | null>(null);
   // Autosave-Vertrauens-Häkchen: s. GameControl.saveTick-Doc.
   const [saveTick, setSaveTick] = useState(0);
@@ -710,7 +710,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
     let last = performance.now();
     let lastRender = last;
     let simulationAccumulatorMs = 0;
-    let catchUpRealMs = 0; // claude:2026-10-31T16:34:28+01:00 — ungekappter Rückstand des laufenden Auftrags (Cap-Hinweis der Karte)
+    let catchUpStartedAt = 0; // claude:2026-11-06T09:25:18+01:00 — Beginn des laufenden Rückkehr-Auftrags (performance.now), fürs verzögerte Band
     // codex:2026-07-31T00:32:37+02:00 — Simulation unabhängig von 60/120/165-Hz-Monitoren auf
     // maximal 30 Hz bündeln. Die gesamte verstrichene Zeit wird weiterhin an `advance` übergeben;
     // Spieltempo/Offline-Ertrag bleiben identisch, nur redundante Engine-Aufrufe entfallen.
@@ -734,24 +734,27 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
       if (stateRef.current && !catchUpRef.current && !transferBusyRef.current && dt > CATCHUP_THRESHOLD_MS) {
         // Der Rückstand ist ab jetzt Sache des Auftrags; der Live-Akkumulator bleibt leer.
         catchUpRef.current = startCatchUp(stateRef.current, content, dt, Date.now());
-        catchUpRealMs = rawDt;
         simulationAccumulatorMs = 0;
-        setCatchUp({ doneMs: 0, totalMs: dt });
+        catchUpStartedAt = now;
+        setCatchUp({ doneMs: 0, totalMs: dt, startedAt: now });
       } else if (catchUpRef.current) {
         extendCatchUp(catchUpRef.current, dt);
       }
       const job = catchUpRef.current;
       if (job && stateRef.current) {
         // Ein Häppchen je Frame (~10 min Spielzeit), Eingaben und Anzeige bleiben dazwischen bedienbar.
-        const finished = stepCatchUp(job, content);
+        // claude:2026-11-06T09:25:18+01:00 — Spieler-Reports nach 1.4.2 (Chef 06.11.): Nach dem Zurückholen aus der Taskleiste erschien „Während du weg
+        // warst“ (gab es vorher nie) und manchmal blieb das Fenster schwarz. Jetzt: (1) KEIN Rückkehr-Bericht mehr, nur still
+        // nachrechnen wie vor 1.4.2, aber ohne Einfrieren; (2) das Band erscheint erst, wenn es länger dauert
+        // (CatchUpOverlay); (3) ein Fehler in einem Häppchen beendet nur den Auftrag, nie den Spielloop (sonst stand alles).
+        let finished = false;
+        try {
+          finished = stepCatchUp(job, content);
+        } catch (err) {
+          console.error("Rückkehr-Nachholen abgebrochen:", err);
+          finished = true;
+        }
         if (finished) {
-          const summary = buildCatchUpSummary(job, content);
-          const hasGains = summary.xp > 0 || summary.gold > 0 || Object.keys(summary.items).length > 0;
-          const wasIdle = job.before.monsterId === null && job.before.dungeonId === null && !(job.before.activeActionId);
-          const emptyReturn = !hasGains && (summary.deaths ?? 0) === 0 && !summary.combatStopped && wasIdle && summary.ms > EMPTY_RETURN_MS;
-          if ((summary.ms > 60_000 && hasGains) || emptyReturn) {
-            setOfflineSummary({ ...summary, realMs: Math.max(catchUpRealMs, summary.ms), emptyReturn });
-          }
           catchUpRef.current = null;
           setCatchUp(null);
           void saveGame();
@@ -760,7 +763,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
           notifyTick();
         } else if (now - lastRender >= RENDER_INTERVAL_MS) {
           lastRender = now;
-          setCatchUp({ doneMs: job.doneMs, totalMs: job.totalMs });
+          setCatchUp({ doneMs: job.doneMs, totalMs: job.totalMs, startedAt: catchUpStartedAt });
           setTick((t) => (t + 1) % 1_000_000);
           notifyTick();
         }

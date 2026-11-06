@@ -124,6 +124,7 @@ import type { InventoryState } from "@hearthforge/shared"; // claude:2026-10-25T
 import { cleanPinnedRecipes } from "@hearthforge/engine"; // claude:2026-10-31T11:46:28+01:00 — Rezepte anpinnen (SAVE 101): Lade-Härtung der Pins
 import { cleanQueueTemplates } from "@hearthforge/engine"; // claude:2026-10-31T16:08:21+01:00 — Warteschlangen-Vorlagen (SAVE 103): Lade-Härtung
 import { applyPrestigeRespec142 } from "@hearthforge/engine"; // claude:2026-10-31T14:58:54+01:00 — SAVE 102: Narben-Rückgabe und Nachzahlung 1.4.2
+import { repayPetTrail } from "@hearthforge/engine"; // claude:2026-11-06T09:37:55+01:00 — SAVE 104: Begleiter-Spur-Nachzahlung
 import { createOfflineIdleTally } from "@hearthforge/engine"; // claude:2026-10-31T16:08:21+01:00 — Offline-Bericht: Leerlauf (1.4.2, transient)
 import { actionLevelMet, MAX_STACK, deriveEventRngSeed, isQuiverItem, offhandFitsMain, storagePredicate, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isHealPotion, resolveLeftRaidFight, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotOwned, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
 
@@ -4875,6 +4876,12 @@ export function deserialize(
   // schon trägt (z. B. ein gehobener Stand mit verfälschter Version), bleibt unberührt; ein zweites Laden desselben Alt-Stands rechnet aus
   // denselben Rohdaten dasselbe. Kein Gegenstand, keine Instanz und keine Narbe geht verloren.
   if (originalVersion < 102 && !hadRespecRecord) applyPrestigeRespec142(state, content, { retro: originalVersion < 99 });
+
+  // ── Begleiter-Spur-Nachzahlung (SAVE_VERSION 103 → 104, Hotfix 1.4.2.2, Chef 06.11.2026) ──
+  // claude:2026-11-06T09:37:55+01:00 — Bis 1.4.1 zählte der Pech-Schutz nur Kills im Stil des jeweiligen Begleiters (1.4.2 E10 behob das nur für die Zukunft).
+  // Je fehlendem Kampf-Begleiter wird die Spur auf max(alt, min(halbe Schwelle, Lebenszeit-Kills)) gehoben, nur mit gekauftem Talent.
+  // Nach dem Offline-Nachholen wie SAVE 102; idempotent (max), ein zweites Laden desselben Alt-Stands rechnet dasselbe.
+  if (originalVersion < 104) repayPetTrail(state, content);
 
   // — Bank-Platzierung (SAVE 87): ALLERLETZTER Schritt des Ladens. `sanitizeState` reicht nicht,
   //   weil DANACH noch der Offline-Nachhol-Tick laeuft und dabei Bank-Bestand verbraucht (im

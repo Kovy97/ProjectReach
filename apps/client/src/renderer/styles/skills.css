@@ -2671,7 +2671,9 @@ button.skilloverview-card {
    ─────────────────────────────────────────────────────────────────────────── */
 .farm-overview-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(max(160px, calc((100% - 70px) / 6)), 1fr));
+  /* claude:2026-11-06T11:52:01+01:00 — Hotfix 1.4.2.2 (Spieler-Report 4K/250 %): Mindestbreite 160 → 240 px, mitwachsend mit der
+     Textgröße. Vorher blieben es auch in engen Fenstern 6 Spalten mit schmalen, sehr hohen Karten; bei 1920 bleibt es bei 6. */
+  grid-template-columns: repeat(auto-fill, minmax(max(calc(240px * var(--text-scale, 1)), calc((100% - 70px) / 6)), 1fr));
   gap: 14px;
   margin-bottom: 8px;
 }
